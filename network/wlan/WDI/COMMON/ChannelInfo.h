@@ -10,11 +10,11 @@
 
 #define CHNL_RUN_ABOVE_40MHZ(_pMgntInfo)	\
 		(((_pMgntInfo)->dot11CurrentChannelBandWidth >= CHANNEL_WIDTH_40)?TRUE:FALSE)
-		
+
 #define CHNL_RUN_ABOVE_80MHZ(_pMgntInfo)	\
 		(((_pMgntInfo)->dot11CurrentChannelBandWidth >= CHANNEL_WIDTH_80)?TRUE:FALSE)
 
-u1Byte	
+u1Byte
 CHNL_GetCenterFrequency(
 	IN	u1Byte				Channel,
 	IN	CHANNEL_WIDTH		ChnlBW,
@@ -35,7 +35,7 @@ CHNL_IsLegalChannel(
 	);
 
 
-BOOLEAN 
+BOOLEAN
 CHNL_IsLegal5GChannel(
 	IN PADAPTER			Adapter,
 	IN u1Byte			channel
@@ -94,9 +94,9 @@ CHNL_SetBwChnlCallback(
 CHANNEL_WIDTH
 CHNL_CheckChnlPlanWithBW(
 	IN	PADAPTER			pAdapter,
-	IN	u1Byte				PrimaryChnl,	
-	IN	CHANNEL_WIDTH		Bandwidth,	
-	IN	EXTCHNL_OFFSET		BwOffset	
+	IN	u1Byte				PrimaryChnl,
+	IN	CHANNEL_WIDTH		Bandwidth,
+	IN	EXTCHNL_OFFSET		BwOffset
 	);
 
 

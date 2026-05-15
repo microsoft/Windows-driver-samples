@@ -52,8 +52,8 @@ UINT32 WindowsFirewallAcquireFirewallCategory();
 
 /**
  @framework_function="WindowsFirewallNotification"
- 
-   Purpose:  Notification used to take firewall categories from Windows Firewall when MPSSvc 
+
+   Purpose:  Notification used to take firewall categories from Windows Firewall when MPSSvc
              transitions to a running                                                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -136,8 +136,8 @@ DWORD WindowsFirewallNotifyThreadStartRoutine(_In_ LPVOID lpThreadParameter)
 
 /**
  @framework_function="WindowsFirewallReleaseFirewallCategory"
- 
-   Purpose:  Relinquish ownership of the Firewall Category back to Windows Firewall and 
+
+   Purpose:  Relinquish ownership of the Firewall Category back to Windows Firewall and
              unregister as a Firewall product.                                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -166,8 +166,8 @@ VOID WindowsFirewallReleaseFirewallCategory()
 
 /**
  @framework_function="WindowsFirewallAcquireFirewallCategory"
- 
-   Purpose:  Take ownership from Windows Firewall of the Firewall Category and register as a 
+
+   Purpose:  Take ownership from Windows Firewall of the Firewall Category and register as a
              Firewall product so as to be displayed in the Windows Firewall User Interface.     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

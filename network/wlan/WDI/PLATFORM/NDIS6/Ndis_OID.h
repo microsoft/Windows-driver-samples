@@ -14,7 +14,7 @@
 
 typedef struct __RT_OID_ENTRY
 {
-	u4Byte 		Oid;	
+	u4Byte 		Oid;
 	char			szID[RT_OID_ENTRY_STRING_SIZE]; 		// The string name of this OID
 
 	NDIS_STATUS (*Func)(							// The OID handler function
@@ -25,5 +25,5 @@ typedef struct __RT_OID_ENTRY
 }RT_OID_ENTRY, *PRT_OID_ENTRY;
 
 
-	
+
 #endif

@@ -12,7 +12,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -64,10 +64,10 @@
 
 /**
  @private_function="PrvHlprUserNameGetCurrent"
- 
+
    Purpose:  Allocate memory and return a string representation of the current user name.       <br>
                                                                                                 <br>
-   Notes:    The caller is responsible for freeing any allocated memory using 
+   Notes:    The caller is responsible for freeing any allocated memory using
              HLPR_DELETE_ARRAY()                                                                <br>
                                                                                                 <br>
    MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/Windows/Desktop/MS724432.aspx              <br>
@@ -131,7 +131,7 @@ PWSTR PrvHlprUserNameGetCurrent()
 
 /**
  @helper_function="HlprSIDDestroy"
- 
+
    Purpose:  Free an allocated SID.                                                   <br>
                                                                                       <br>
    Notes:                                                                             <br>
@@ -154,12 +154,12 @@ VOID HlprSIDDestroy(_Inout_ SID** ppSID)
 /**
  @helper_function="HlprSIDCreate"
 
-   Purpose:  Allocate memory and populate with a SID for either the specified account name and 
+   Purpose:  Allocate memory and populate with a SID for either the specified account name and
              type (SID_NAME_USE), or a well-known SID based on the type (WELL_KNOWN_SID_TYPE).  <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using HlprSIDDestroy(). <br>
                                                                                                 <br>
-   MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/AA379594.aspx                              <br> 
+   MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/AA379594.aspx                              <br>
 */
 _At_(*ppSID, _Pre_ _Null_)
 _When_(return != NO_ERROR, _At_(*ppSID, _Post_ _Null_))
@@ -269,7 +269,7 @@ UINT32 HlprSIDCreate(_Outptr_result_bytebuffer_(*pSIDSize) SID** ppSID,
          !IsValidSid(*ppSID))
       {
          status = ERROR_INVALID_SID;
-      
+
          HlprLogError(L"HlprSIDCreate : IsValidSid() [status: %#x]",
                       status);
 
@@ -312,7 +312,7 @@ UINT32 HlprSIDCreate(_Outptr_result_bytebuffer_(*pSIDSize) SID** ppSID,
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using HlprSIDDestroy(). <br>
                                                                                                 <br>
-   MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/AA379594.aspx                              <br> 
+   MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/AA379594.aspx                              <br>
 */
 _At_(*ppSID, _Pre_ _Null_)
 _When_(return != NO_ERROR, _At_(*ppSID, _Post_ _Null_))
@@ -369,8 +369,8 @@ UINT32 HlprSIDGetForCurrentUser(_Outptr_result_bytebuffer_(*pSIDSize) SID** ppSI
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using HlprSIDDestroy(). <br>
                                                                                                 <br>
-   MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/AA446585.aspx                              <br> 
-             HTTP://MSDN.Microsoft.com/En-US/Library/AA379151.aspx                              <br> 
+   MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/AA446585.aspx                              <br>
+             HTTP://MSDN.Microsoft.com/En-US/Library/AA379151.aspx                              <br>
 */
 _At_(*ppSID, _Pre_ _Null_)
 _When_(return != NO_ERROR, _At_(*ppSID, _Post_ _Null_))

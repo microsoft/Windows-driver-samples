@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //
 //       NotifyPendNotification
@@ -19,7 +19,7 @@
 //       <Module>
 //          Notify               -     Function is located in sys\NotifyFunctions\
 //       <Scenario>
-//          PendNotification     -     Function demonstates use of notifications for callouts 
+//          PendNotification     -     Function demonstates use of notifications for callouts
 //                                        pending authorization or endpoint closure  requests.
 //
 //   Author:
@@ -28,7 +28,7 @@
 //   Revision History:
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
-//      December  13,   2013  -     1.1   -  Creation 
+//      December  13,   2013  -     1.1   -  Creation
 //                                          (replaces NotifyFuncitons_PendAuthorizationCallouts.h)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////

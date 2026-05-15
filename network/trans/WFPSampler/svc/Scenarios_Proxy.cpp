@@ -12,7 +12,7 @@
 //
 //      <Scope><Object><Action><Modifier>
 //      <Scope><Object><Action>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -29,7 +29,7 @@
 //          {
 //            Add           - Function adds objects.
 //            Remove        - Function removes objects.
-//            Invoke        - Function implements the scenario based on parameters passed from the 
+//            Invoke        - Function implements the scenario based on parameters passed from the
 //                               commandline interface (WFPSampler.exe).
 //          }
 //       <Modifier>
@@ -54,9 +54,9 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Prune filters for enumeration, fix legacy proxying by 
-//                                              injection, and limit scenario to only the supported 
-//                                              layers 
+//      December  13,   2013  -     1.1   -  Prune filters for enumeration, fix legacy proxying by
+//                                              injection, and limit scenario to only the supported
+//                                              layers
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,10 +64,10 @@
 
 /**
  @private_function="PrvScenarioProxyDeleteFwpmObjects"
- 
+
    Purpose:  Function that disables the SCENARIO_PROXY scenarios.                               <br>
                                                                                                 <br>
-   Notes:    Scenario removes the filters using specified filtering conditions at the specified 
+   Notes:    Scenario removes the filters using specified filtering conditions at the specified
              layer.  The associated callout and provider contexts are removed as well.          <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -340,16 +340,16 @@ UINT32 PrvScenarioProxyDeleteFwpmObjects(_In_ const FWPM_FILTER* pFilter,
 
 /**
  @private_function="PrvScenarioProxyAddFwpmObjects"
- 
+
    Purpose:  Function that enables the SCENARIO_PROXY scenarios.                                <br>
                                                                                                 <br>
-   Notes:    Scenario adds a filter using specified filtering conditions to the specified layer. 
-             This filter is associated with WFPSampler's default sublayer and provider.  The 
+   Notes:    Scenario adds a filter using specified filtering conditions to the specified layer.
+             This filter is associated with WFPSampler's default sublayer and provider.  The
              appropriate callout and provider context are added and associated with the filter. <br>
                                                                                                 <br>
-             If proxying by injection, then both the OUTBOUND_TRANSPORT and INBOUND_IPPACKET 
-             objects are added.  This has the limitation of not working with IPsec, however 
-             proxing using INBOUND_TRANSPORT has the limitation of not working with TCP and 
+             If proxying by injection, then both the OUTBOUND_TRANSPORT and INBOUND_IPPACKET
+             objects are added.  This has the limitation of not working with IPsec, however
+             proxing using INBOUND_TRANSPORT has the limitation of not working with TCP and
              connected UDP.                                                                     <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -395,7 +395,7 @@ UINT32 PrvScenarioProxyAddFwpmObjects(_In_ const FWPM_FILTER* pFilter,
       HLPR_BAIL_ON_FAILURE(status);
 
       providerContext.displayData.name        = L"WFPSampler's Proxy ProviderContext";
-      providerContext.displayData.description = L"Instructs the driver where to proxy the socket or connection";      
+      providerContext.displayData.description = L"Instructs the driver where to proxy the socket or connection";
       providerContext.providerKey             = (GUID*)&WFPSAMPLER_PROVIDER;
       providerContext.type                    = FWPM_GENERAL_CONTEXT;
       providerContext.dataBuffer              = &byteBlob;
@@ -611,7 +611,7 @@ UINT32 PrvScenarioProxyAddFwpmObjects(_In_ const FWPM_FILTER* pFilter,
 
 /**
  @scenario_function="ScenarioProxyRemove"
- 
+
    Purpose:  Function that removes corresponding objects for a previously added SCENARIO_PROXY. <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -631,10 +631,10 @@ UINT32 ScenarioProxyRemove(_In_ const FWPM_FILTER* pFilter,
 
 /**
  @scenario_function="ScenarioProxyAdd"
- 
+
    Purpose:  Scenario which will proxy either a connection or a socket to a new endpoint.       <br>
                                                                                                 <br>
-   Notes:    Adds a filter which references one of the WFPSAMPLER_CALLOUT_PROXY callouts for 
+   Notes:    Adds a filter which references one of the WFPSAMPLER_CALLOUT_PROXY callouts for
              the provided layer.                                                                <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -652,7 +652,7 @@ UINT32 ScenarioProxyAdd(_In_ const FWPM_FILTER* pFilter,
 
 /**
  @rpc_function="RPCInvokeScenarioProxy"
- 
+
    Purpose:  RPC exposed function used to dipatch the scenario routines for SCENARIO_PROXY.     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

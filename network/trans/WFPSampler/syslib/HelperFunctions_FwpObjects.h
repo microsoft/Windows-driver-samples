@@ -6,7 +6,7 @@
 //      HelperFunctions_FwpObjects.h
 //
 //   Abstract:
-//      This module contains prototypes for kernel helper functions that allocate, populate, purge, 
+//      This module contains prototypes for kernel helper functions that allocate, populate, purge,
 //         and free structures in memory.
 //
 //   Author:
@@ -16,11 +16,11 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      March     11,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Add support for multiple injectors and add 
-//                                              KrnlHlprFwpValueGetStringForFwpsIncomingValue, 
+//      December  13,   2013  -     1.1   -  Add support for multiple injectors and add
+//                                              KrnlHlprFwpValueGetStringForFwpsIncomingValue,
 //                                              KrnlHlprFwpsRedirectHandleCreate,
 //                                              KrnlHlprFwpsRedirecthandleDestroy,
-//                                              KrnlHlprFwpsLayerIsDiscard, 
+//                                              KrnlHlprFwpsLayerIsDiscard,
 //                                              KrnlHlprFwpsLayerIDToString functions.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////

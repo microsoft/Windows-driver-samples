@@ -144,11 +144,11 @@ enum _TDLS_AGGR_RATIO{
 	TDLS_AGGR_RATIO_20MHZ	= 1,
 	TDLS_AGGR_RATIO_40MHZ	= 2
 };
-	
+
 enum _TDLSSecurityState{
 	TDLSStateSuccess = 0,
 	TDLSStateDiscard = 1,
-	TDLSStateFail = 2	
+	TDLSStateFail = 2
 };
 
 enum _TDLS_CS_STAGE{
@@ -300,7 +300,7 @@ typedef struct _TDLS_LINK_INFO{
 	BOOLEAN				BssbShortGIEnabled;
 	LINK_CAP			BssCapInfo;
 	RT_ENC_ALG			BssEncAlgorithm;
-	
+
 	// Link maintenance
 	u2Byte				KeepConnectCount;
 
@@ -329,7 +329,7 @@ typedef struct _TDLS_BLOCKED_RECORD{
 	ReadEF2Byte((pu1Byte)(_pStart))
 #define GET_TDLS_RSNIE_PAIRWISESUITECOUNT(_pStart)\
 	ReadEF2Byte((pu1Byte)(_pStart)+6)
-	
+
 
 typedef struct _FAST_BSS_TRANSITION{
 	u1Byte				MICControl[2];
@@ -408,7 +408,7 @@ typedef struct _TDLS_RECORD{
 	u1Byte					PTICount;
 	BOOLEAN					bEnableCS;
 	u1Byte					RejectCnt;	// For marvell
-	BOOLEAN					bSupportChnlSwitch;	// Support Channel Switch	
+	BOOLEAN					bSupportChnlSwitch;	// Support Channel Switch
 	TDLS_CHNLSWITCH_INFO	ChnlSwitchInfo;
 	u2Byte					CSstate;
 	u1Byte					TargetState;
@@ -422,7 +422,7 @@ typedef struct _TDLS_RECORD{
 
 typedef struct _TDLS_TINFO{
 	DECLARE_RT_OBJECT(_TDLS_TINFO);
-	
+
 	BOOLEAN				bTDLSEnable;
 	BOOLEAN				bDMEnable;
 	BOOLEAN				bEnableHT;
@@ -462,12 +462,12 @@ typedef struct _TDLS_TINFO{
 	BOOLEAN				bKeepTPKTimer;
 	u1Byte				SwitchChannel;
 	BOOLEAN				SwitchBandwidth40MHz;
-	
+
 	RT_LIST_ENTRY		TDLS_Admit_List;
 	RT_LIST_ENTRY		TDLS_Unused_List;
 	TDLS_RECORD			TDLSRecord[MAX_TDLS_PAIR];
 	u1Byte				NumInAdmitList;
-	
+
 	BOOLEAN				bAcceptWeakSec;
 }TDLS_TINFO, *PTDLS_TINFO;
 

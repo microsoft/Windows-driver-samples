@@ -7,7 +7,7 @@
  * Note:	We define different command packets' structure and defintion.
  *			Please refer to doc ws-06-0063-rtl8190-command-packet-specification.
  *			1. The defintiion and structure will be the same in DRV and FW.
- *			
+ *
  *
  * Export:	Constants, macro, functions(API), global variables(None).
  *
@@ -15,8 +15,8 @@
  *			.....For example.
  *
  * History:
- *		Data		Who		Remark 
- *      01/15/2007  MHC    	Create initial version. Define comadn packet 
+ *		Data		Who		Remark
+ *      01/15/2007  MHC    	Create initial version. Define comadn packet
  *							structure and element definition.
  *		01/16/2007	MHC		According to document, we add defintion in dedicated
  *							field and corresponding structure.
@@ -24,7 +24,7 @@
  *							from firmware.
  *		10/09/2007	MHC		Accept all USB/PCI structure and enum. Nerge the
  *							same structure or constant definition.
- * 
+ *
  *****************************************************************************/
  /* Check to see if the file has been included already.  */
 #ifndef	__HAL90_CMD_PKT_H__
@@ -124,7 +124,7 @@ typedef 	int  			(*INTFUNCPTR) (void);
 /*--------------------------Define Parameters-------------------------------*/
 
 
-/*------------------------------Define structure----------------------------*/ 
+/*------------------------------Define structure----------------------------*/
 /* Define different command packet structure. */
 /* 1. RX side: TX feedback packet. */
 
@@ -139,44 +139,44 @@ typedef struct tag_Cmd_Pkt_Tx_Feedback
 	UINT8	Length;				/* Command packet length. */
 	/* 2007/07/05 MH Change tx feedback info field. */
 	/*------TX Feedback Info Field */
-	UINT8	TID:4;				/* */	
-	UINT8	Fail_Reason:3;		/* */		
-	UINT8	TOK:1;				/* Transmit ok. */		
+	UINT8	TID:4;				/* */
+	UINT8	Fail_Reason:3;		/* */
+	UINT8	TOK:1;				/* Transmit ok. */
 	UINT8	Reserve1:4;			/* */
 	UINT8	Pkt_Type:2;		/* */
 	UINT8	Bandwidth:1;		/* */
-	UINT8	Qos_Pkt:1;			/* */	
-	
-	// DWORD 1	
+	UINT8	Qos_Pkt:1;			/* */
+
+	// DWORD 1
 	UINT8	Reserve2;			/* */
 	/*------TX Feedback Info Field */
 	UINT8	Retry_Cnt;			/* */
 	UINT16	Pkt_ID;				/* */
-	
-	// DWORD 3	
+
+	// DWORD 3
 	UINT16	Seq_Num;			/* */
 	UINT8	S_Rate;				/* Start rate. */
 	UINT8	F_Rate;				/* Final rate. */
-	
-	// DWORD 4	
+
+	// DWORD 4
 	UINT8	S_RTS_Rate;			/* */
 	UINT8	F_RTS_Rate;			/* */
 	UINT16	pkt_length;			/* */
-	
-	// DWORD 5	
-	UINT16	Reserve3;			/* */	
-	UINT16	Duration;			/* */	
+
+	// DWORD 5
+	UINT16	Reserve3;			/* */
+	UINT16	Duration;			/* */
 }CMPK_TXFB_T;
 
 // For USB
-/* 2. RX side: Interrupt status packet. It includes Beacon State, 
+/* 2. RX side: Interrupt status packet. It includes Beacon State,
 	  Beacon Timer Interrupt and other useful informations in MAC ISR Reg. */
 typedef struct tag_Cmd_Pkt_Interrupt_Status
 {
 	UINT8	Element_ID;			/* Command packet type. */
 	UINT8	Length;				/* Command packet length. */
 	UINT16	Reserve;
-	UINT32	InterruptStatus;				/* Interrupt Status. */	
+	UINT32	InterruptStatus;				/* Interrupt Status. */
 }CMPK_INTR_STA_T;
 
 // For PCI
@@ -185,8 +185,8 @@ typedef struct tag_Cmd_Pkt_Beacon_State
 {
 	UINT8	Element_ID;			/* Command packet type. */
 	UINT8	Length;				/* Command packet length. */
-	UINT16	BOK:1;				/* Beacon info. */	
-	UINT16	Reserve:15;			/* Beacon info. */	
+	UINT16	BOK:1;				/* Beacon info. */
+	UINT16	Reserve:15;			/* Beacon info. */
 }CMPK_BCN_STA_T;
 
 
@@ -214,7 +214,7 @@ typedef struct tag_Cmd_Pkt_Set_Configuration
 
 
 
-/* 4. Both side : TX/RX query configuraton packet. The query structure is the 
+/* 4. Both side : TX/RX query configuraton packet. The query structure is the
       same as set configuration. */
 #define		CMPK_QUERY_CFG_T	CMPK_SET_CFG_T
 
@@ -223,36 +223,36 @@ typedef struct tag_Cmd_Pkt_Set_Configuration
 typedef struct tag_Tx_Stats_Feedback // PJ quick rxcmd 09042007
 {
 	// For endian transfer --> Driver will not the same as firmware structure.
-	// DW 0	
-	UINT16	Reserve1;			
+	// DW 0
+	UINT16	Reserve1;
 	UINT8 	Length;				// Command packet length
 	UINT8 	Element_ID;			// Command packet type
-	
-	// DW 1	
+
+	// DW 1
 	UINT16	TxFail;				// Tx Fail count
 	UINT16 	TxOK;				// Tx ok count
-	
+
 	// DW 2
 	UINT16	TxMCOK;  			// tx multicast
-	UINT16 	TxRetry;			// Tx Retry count	
-	
+	UINT16 	TxRetry;			// Tx Retry count
+
 	// DW 3
 	UINT16  TxUCOK;				// tx unicast
-	UINT16	TxBCOK;  			// tx broadcast	
-	
+	UINT16	TxBCOK;  			// tx broadcast
+
 	// DW 4
 	UINT16	TxBCFail;			//
-	UINT16	TxMCFail;			//	
-	
+	UINT16	TxMCFail;			//
+
 	// DW 5
 	UINT16	Reserve2;			//
 	UINT16	TxUCFail;			//
-	
+
 	// DW 6-8
-	UINT32	TxMCLength;	
+	UINT32	TxMCLength;
 	UINT32	TxBCLength;
 	UINT32	TxUCLength;
-	
+
 	// DW 9
 	UINT16	Reserve3_23;
 	UINT8	Reserve3_1;
@@ -265,41 +265,41 @@ typedef struct tag_Tx_Stats_Feedback // PJ quick rxcmd 09042007
 typedef struct tag_Rx_Debug_Message_Feedback
 {
 	// For endian transfer --> for driver
-	// DW 0	
-	UINT16	Reserve1;			
+	// DW 0
+	UINT16	Reserve1;
 	UINT8 	Length;				// Command packet length
 	UINT8 	Element_ID;			// Command packet type
-	
+
 	// DW 1-??
 	// Variable debug message.
-	
+
 }CMPK_RX_DBGINFO_T;
 
 
 /* 2008/03/20 MH Define transmit rate history. For big endian format. */
 typedef struct tag_Tx_Rate_History
-{	
+{
 	// For endian transfer --> for driver
-	// DW 0		
+	// DW 0
 	UINT8 	Element_ID;			// Command packet type
 	UINT8 	Length;				// Command packet length
-	UINT16	Reserved1;				
-	
+	UINT16	Reserved1;
+
 	// DW 1-2	CCK rate counter
 	UINT16 	CCK[4];
-	
+
 	// DW 3-6
 	UINT16 	OFDM[8];
-	
+
 	// DW 7-14
 	//UINT16	MCS_BW0_SG0[16];
-	
+
 	// DW 15-22
 	//UINT16	MCS_BW1_SG0[16];
-	
+
 	// DW 23-30
 	//UINT16	MCS_BW0_SG1[16];
-	
+
 	// DW 31-38
 	//UINT16	MCS_BW1_SG1[16];
 
@@ -308,17 +308,17 @@ typedef struct tag_Tx_Rate_History
 	// DW 23-30	BW=0 SG=1
 	// DW 31-38	BW=1 SG=1
 	UINT16	HT_MCS[4][16];
-	
+
 }CMPK_TX_RAHIS_T;
 
 /* Define element ID of command packet. */
 typedef enum tag_Command_Packet_Directories
-{    
+{
     RX_TX_FEEDBACK = 0,
 
-    RX_BEACON_STATE			= 1,    
+    RX_BEACON_STATE			= 1,
     TX_SET_CONFIG				= 2,
-    BOTH_QUERY_CONFIG			= 3,    
+    BOTH_QUERY_CONFIG			= 3,
     RX_TX_STATUS				= 4,
     RX_DBGINFO_FEEDBACK		= 5,
     RX_TX_PER_PKT_FEEDBACK		= 6,
@@ -330,13 +330,13 @@ typedef enum tag_Command_Packet_Directories
 
 /* Define packet type. */
 typedef enum tag_Packet_Type
-{    
+{
     TYPE_PACKET_BROADCAST = 0,
-    TYPE_PACKET_MULTICAST,    
-    TYPE_PACKET_UNICAST,    
+    TYPE_PACKET_MULTICAST,
+    TYPE_PACKET_UNICAST,
     TYPE_PACKET_TYPE_MAX
 }CMPK_PKT_TYPE_E;
-/*------------------------------Define structure----------------------------*/ 
+/*------------------------------Define structure----------------------------*/
 
 
 /*------------------------Export global variable----------------------------*/

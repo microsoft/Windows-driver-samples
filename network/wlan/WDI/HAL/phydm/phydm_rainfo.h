@@ -188,7 +188,7 @@ typedef struct _Rate_Adaptive_Table_ {
 
 	#if (defined(CONFIG_RA_DYNAMIC_RTY_LIMIT))
 	u1Byte per_rate_retrylimit_20M[ODM_NUM_RATE_IDX];
-	u1Byte per_rate_retrylimit_40M[ODM_NUM_RATE_IDX];	
+	u1Byte per_rate_retrylimit_40M[ODM_NUM_RATE_IDX];
 	u1Byte			retry_descend_num;
 	u1Byte			retrylimit_low;
 	u1Byte			retrylimit_high;

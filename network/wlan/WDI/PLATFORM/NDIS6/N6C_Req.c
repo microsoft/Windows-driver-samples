@@ -163,7 +163,7 @@ RT_OID_ENTRY RT_SUPPORT_OIDs[]=
 		N63C_OID_DOT11_POWER_MGMT_MODE_STATUS
 	},
 	{
-		OID_PACKET_COALESCING_FILTER_MATCH_COUNT,   // Query 
+		OID_PACKET_COALESCING_FILTER_MATCH_COUNT,   // Query
 		OID_STR_WRAPPER("OID_PACKET_COALESCING_FILTER_MATCH_COUNT"),
 		N63C_OID_PACKET_COALESCING_FILTER_MATCH_COUNT
 	},
@@ -181,7 +181,7 @@ RT_OID_ENTRY RT_SUPPORT_OIDs[]=
 		N62C_OID_DOT11_DELETE_MAC
 	},
 
-	// Native 802.11 Extensible AP OIDs 
+	// Native 802.11 Extensible AP OIDs
 	{
 		OID_DOT11_INCOMING_ASSOCIATION_DECISION,
 		OID_STR_WRAPPER("OID_DOT11_INCOMING_ASSOCIATION_DECISION"),
@@ -229,7 +229,7 @@ RT_OID_ENTRY RT_SUPPORT_OIDs[]=
 		OID_STR_WRAPPER("OID_DOT11_ASSOCIATION_PARAMS"),
 		N62C_OID_DOT11_ASSOCIATION_PARAMS
 	},
-		
+
 	// Power Management OID
 	{
 		OID_PM_GET_PROTOCOL_OFFLOAD,
@@ -269,49 +269,49 @@ RT_OID_ENTRY RT_SUPPORT_OIDs[]=
 		N62C_OID_RECEIVE_FILTER_SET_FILTER
 	},
 	{
-		OID_RECEIVE_FILTER_CLEAR_FILTER,   // Set 
+		OID_RECEIVE_FILTER_CLEAR_FILTER,   // Set
 		OID_STR_WRAPPER("OID_RECEIVE_FILTER_CLEAR_FILTER"),
 		N62C_OID_RECEIVE_FILTER_CLEAR_FILTER
 	},
 	{
-		OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES,   // Query 
+		OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES,   // Query
 		OID_STR_WRAPPER("OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES"),
 		N62C_OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES
 	},
 	{
-		OID_RECEIVE_FILTER_CURRENT_CAPABILITIES,   // Query 
+		OID_RECEIVE_FILTER_CURRENT_CAPABILITIES,   // Query
 		OID_STR_WRAPPER("OID_RECEIVE_FILTER_CURRENT_CAPABILITIES"),
 		N62C_OID_RECEIVE_FILTER_SET_FILTER
-	}, 
+	},
 	/*
 	{
-		OID_PACKET_COALESCING_FILTER_MATCH_COUNT,   // Query 
+		OID_PACKET_COALESCING_FILTER_MATCH_COUNT,   // Query
 		OID_STR_WRAPPER("OID_PACKET_COALESCING_FILTER_MATCH_COUNT"),
 		N62C_OID_RECEIVE_FILTER_SET_FILTER
 	},
 	*/
 	//====================
-	/*  Need to check support or Not 
+	/*  Need to check support or Not
 	{
-		OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES,   // Query 
+		OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES,   // Query
 		OID_STR_WRAPPER("OID_PACKET_COALESCING_FILTER_MATCH_COUNT"),
 		N62C_OID_RECEIVE_FILTER_SET_FILTER
 	},
 	{
-		OID_RECEIVE_FILTER_ENUM_FILTERS,   // method 
+		OID_RECEIVE_FILTER_ENUM_FILTERS,   // method
 		OID_STR_WRAPPER("OID_PACKET_COALESCING_FILTER_MATCH_COUNT"),
 		N62C_OID_RECEIVE_FILTER_SET_FILTER
 	},
 	{
-		OID_RECEIVE_FILTER_PARAMETERS,   // method 
+		OID_RECEIVE_FILTER_PARAMETERS,   // method
 		OID_STR_WRAPPER("OID_PACKET_COALESCING_FILTER_MATCH_COUNT"),
 		N62C_OID_RECEIVE_FILTER_SET_FILTER
 	},
 	{
-		OID_RECEIVE_FILTER_CURRENT_CAPABILITIES,   // Query 
+		OID_RECEIVE_FILTER_CURRENT_CAPABILITIES,   // Query
 		OID_STR_WRAPPER("OID_PACKET_COALESCING_FILTER_MATCH_COUNT"),
 		N62C_OID_RECEIVE_FILTER_SET_FILTER
-	}, 
+	},
 	*/
 
 	// Others
@@ -324,9 +324,9 @@ RT_OID_ENTRY RT_SUPPORT_OIDs[]=
 
 // NDIS 6.0-6.1 OID
 	{
-		OID_DOT11_CURRENT_OPERATION_MODE, 
-		OID_STR_WRAPPER("OID_DOT11_CURRENT_OPERATION_MODE"), 
-		N6C_OID_DOT11_CURRENT_OPERATION_MODE	
+		OID_DOT11_CURRENT_OPERATION_MODE,
+		OID_STR_WRAPPER("OID_DOT11_CURRENT_OPERATION_MODE"),
+		N6C_OID_DOT11_CURRENT_OPERATION_MODE
 	},
 	{
 		OID_DOT11_FLUSH_BSS_LIST,
@@ -349,117 +349,117 @@ RT_OID_ENTRY RT_SUPPORT_OIDs[]=
 		N6C_OID_DOT11_NIC_POWER_STATE
 	},
 	{
-		OID_DOT11_RESET_REQUEST, 
+		OID_DOT11_RESET_REQUEST,
 		OID_STR_WRAPPER("OID_DOT11_RESET_REQUEST"),
 		N6C_OID_DOT11_RESET_REQUEST
 	},
 	{
-		OID_DOT11_DESIRED_PHY_LIST, 
+		OID_DOT11_DESIRED_PHY_LIST,
 		OID_STR_WRAPPER("OID_DOT11_DESIRED_PHY_LIST"),
 		N6C_OID_DOT11_DESIRED_PHY_LIST
 	},
 	{
-		OID_DOT11_AUTO_CONFIG_ENABLED, 
+		OID_DOT11_AUTO_CONFIG_ENABLED,
 		OID_STR_WRAPPER("OID_DOT11_AUTO_CONFIG_ENABLED"),
 		N6C_OID_DOT11_AUTO_CONFIG_ENABLED
 	},
 	{
-		OID_DOT11_BEACON_PERIOD, 
+		OID_DOT11_BEACON_PERIOD,
 		OID_STR_WRAPPER("OID_DOT11_BEACON_PERIOD"),
 		N6C_OID_DOT11_BEACON_PERIOD
 	},
 	{
-		OID_DOT11_DTIM_PERIOD, 
+		OID_DOT11_DTIM_PERIOD,
 		OID_STR_WRAPPER("OID_DOT11_DTIM_PERIOD"),
 		N6C_OID_DOT11_DTIM_PERIOD
 	},
 	{
-		OID_DOT11_DESIRED_SSID_LIST, 
+		OID_DOT11_DESIRED_SSID_LIST,
 		OID_STR_WRAPPER("OID_DOT11_DESIRED_SSID_LIST"),
 		N6C_OID_DOT11_DESIRED_SSID_LIST
 	},
 	{
-		OID_GEN_CURRENT_PACKET_FILTER, 
+		OID_GEN_CURRENT_PACKET_FILTER,
 		OID_STR_WRAPPER("OID_GEN_CURRENT_PACKET_FILTER"),
 		N6C_OID_GEN_CURRENT_PACKET_FILTER
 	},
 	{
-		OID_DOT11_CURRENT_CHANNEL, 
+		OID_DOT11_CURRENT_CHANNEL,
 		OID_STR_WRAPPER("OID_DOT11_CURRENT_CHANNEL"),
 		N6C_OID_DOT11_CURRENT_CHANNEL
 	},
 	{
-		OID_DOT11_DISCONNECT_REQUEST, 
+		OID_DOT11_DISCONNECT_REQUEST,
 		OID_STR_WRAPPER("OID_DOT11_DISCONNECT_REQUEST"),
 		N6C_OID_DOT11_DISCONNECT_REQUEST
 	},
 	{
-		OID_DOT11_CONNECT_REQUEST, 
+		OID_DOT11_CONNECT_REQUEST,
 		OID_STR_WRAPPER("OID_DOT11_CONNECT_REQUEST"),
 		N6C_OID_DOT11_CONNECT_REQUEST
 	},
 	{
-		OID_GEN_LINK_PARAMETERS, 
+		OID_GEN_LINK_PARAMETERS,
 		OID_STR_WRAPPER("OID_GEN_LINK_PARAMETERS"),
 		N6C_OID_GEN_LINK_PARAMETERS
 	},
 	{
-		OID_DOT11_SAFE_MODE_ENABLED, 
+		OID_DOT11_SAFE_MODE_ENABLED,
 		OID_STR_WRAPPER("OID_DOT11_SAFE_MODE_ENABLED"),
 		N6C_OID_DOT11_SAFE_MODE_ENABLED
 	},
 	{
-		OID_DOT11_CURRENT_PHY_ID, 
+		OID_DOT11_CURRENT_PHY_ID,
 		OID_STR_WRAPPER("OID_DOT11_CURRENT_PHY_ID"),
 		N6C_OID_DOT11_CURRENT_PHY_ID
 	},
 	{
-		OID_GEN_SUPPORTED_LIST, 
+		OID_GEN_SUPPORTED_LIST,
 		OID_STR_WRAPPER("OID_GEN_SUPPORTED_LIST"),
 		N6C_OID_GEN_SUPPORTED_LIST
 	},
 	{
-		OID_GEN_VENDOR_DRIVER_VERSION, 
+		OID_GEN_VENDOR_DRIVER_VERSION,
 		OID_STR_WRAPPER("OID_GEN_VENDOR_DRIVER_VERSION"),
 		N6C_OID_GEN_VENDOR_DRIVER_VERSION
 	},
 	{
-		OID_PNP_CAPABILITIES, 
+		OID_PNP_CAPABILITIES,
 		OID_STR_WRAPPER("OID_PNP_CAPABILITIES"),
 		N6C_OID_PNP_CAPABILITIES
 	},
 	{
-		OID_PNP_QUERY_POWER, 
+		OID_PNP_QUERY_POWER,
 		OID_STR_WRAPPER("OID_PNP_QUERY_POWER"),
 		N6C_OID_PNP_QUERY_POWER
 	},
 	{
-		OID_PNP_ENABLE_WAKE_UP, 
+		OID_PNP_ENABLE_WAKE_UP,
 		OID_STR_WRAPPER("OID_PNP_ENABLE_WAKE_UP"),
 		N6C_OID_PNP_ENABLE_WAKE_UP
 	},
 	{
-		OID_DOT11_CURRENT_TX_ANTENNA, 
+		OID_DOT11_CURRENT_TX_ANTENNA,
 		OID_STR_WRAPPER("OID_DOT11_CURRENT_TX_ANTENNA"),
 		N6C_OID_DOT11_CURRENT_TX_ANTENNA
 	},
 	{
-		OID_DOT11_CURRENT_RX_ANTENNA, 
+		OID_DOT11_CURRENT_RX_ANTENNA,
 		OID_STR_WRAPPER("OID_DOT11_CURRENT_RX_ANTENNA"),
 		N6C_OID_DOT11_CURRENT_RX_ANTENNA
 	},
 	{
-		OID_PNP_ADD_WAKE_UP_PATTERN, 
+		OID_PNP_ADD_WAKE_UP_PATTERN,
 		OID_STR_WRAPPER("OID_PNP_ADD_WAKE_UP_PATTERN"),
 		N6C_OID_PNP_ADD_WAKE_UP_PATTERN
 	},
 	{
-		OID_PNP_REMOVE_WAKE_UP_PATTERN, 
+		OID_PNP_REMOVE_WAKE_UP_PATTERN,
 		OID_STR_WRAPPER("OID_PNP_REMOVE_WAKE_UP_PATTERN"),
 		N6C_OID_PNP_REMOVE_WAKE_UP_PATTERN
 	},
 	{
-		OID_PNP_SET_POWER, 
+		OID_PNP_SET_POWER,
 		OID_STR_WRAPPER("OID_PNP_SET_POWER"),
 		N6C_OID_PNP_SET_POWER
 	}
@@ -479,7 +479,7 @@ TranslateRtBssToNdisBss(
 {
 	PMGNT_INFO			pMgntInfo = &(Adapter->MgntInfo);
 	PNDIS_WLAN_BSSID_EX	pNdisBss = (PNDIS_WLAN_BSSID_EX)pNBss;
-	
+
 	PlatformZeroMemory(pNdisBss, sizeof(NDIS_WLAN_BSSID_EX));
 
 	CopyMem(pNdisBss->MacAddress, pRtBss->bdBssIdBuf, 6);
@@ -495,7 +495,7 @@ TranslateRtBssToNdisBss(
 	pNdisBss->Privacy = (pRtBss->bdCap & cPrivacy) ? TRUE : FALSE;
 
 	pNdisBss->Rssi = ( (pRtBss->RSSI+1)>>1 ) - 95;
-	
+
 	//HCT12.0 NDTest
 	switch(pRtBss->wirelessmode)
 	{
@@ -518,9 +518,9 @@ TranslateRtBssToNdisBss(
 	default:
 		RT_TRACE(COMP_DBG, DBG_LOUD, ("TranslateRtBssToNdisBss default Ndis802_11DS \n"));
 		pNdisBss->NetworkTypeInUse = Ndis802_11DS;
-		break;			
+		break;
 	}
-	
+
 	pNdisBss->Configuration.Length = sizeof(NDIS_802_11_CONFIGURATION);
 	pNdisBss->Configuration.BeaconPeriod = pRtBss->bdBcnPer;
 	pNdisBss->Configuration.ATIMWindow = pRtBss->bdIbssParms.atimWin;
@@ -548,9 +548,9 @@ TranslateRtBssToNdisBss(
 	{
 		pNdisBss->Length = sizeof(NDIS_WLAN_BSSID_EX);
 	}
-	
+
 	// <RJ_TODO> This is a 4-byte alignment, shall we align it to 8 byte for X64???
-	pNdisBss->Length = (pNdisBss->Length+3)&0xfffffffc; 
+	pNdisBss->Length = (pNdisBss->Length+3)&0xfffffffc;
 }
 
 
@@ -564,23 +564,23 @@ Query_802_11_CAPABILITY(
 	pu4Byte			pulOutLen
 )
 {
-	static NDIS_802_11_AUTHENTICATION_ENCRYPTION szAuthEnc[] = 
+	static NDIS_802_11_AUTHENTICATION_ENCRYPTION szAuthEnc[] =
 	{
-		{Ndis802_11AuthModeOpen, Ndis802_11EncryptionDisabled}, 
+		{Ndis802_11AuthModeOpen, Ndis802_11EncryptionDisabled},
 		{Ndis802_11AuthModeOpen, Ndis802_11Encryption1Enabled},
-		{Ndis802_11AuthModeShared, Ndis802_11EncryptionDisabled}, 
+		{Ndis802_11AuthModeShared, Ndis802_11EncryptionDisabled},
 		{Ndis802_11AuthModeShared, Ndis802_11Encryption1Enabled},
-		{Ndis802_11AuthModeWPA, Ndis802_11Encryption2Enabled}, 
+		{Ndis802_11AuthModeWPA, Ndis802_11Encryption2Enabled},
 		{Ndis802_11AuthModeWPA, Ndis802_11Encryption3Enabled},
-		{Ndis802_11AuthModeWPAPSK, Ndis802_11Encryption2Enabled}, 
+		{Ndis802_11AuthModeWPAPSK, Ndis802_11Encryption2Enabled},
 		{Ndis802_11AuthModeWPAPSK, Ndis802_11Encryption3Enabled},
-		{Ndis802_11AuthModeWPANone, Ndis802_11Encryption2Enabled}, 
+		{Ndis802_11AuthModeWPANone, Ndis802_11Encryption2Enabled},
 		{Ndis802_11AuthModeWPANone, Ndis802_11Encryption3Enabled},
-		{Ndis802_11AuthModeWPA2, Ndis802_11Encryption2Enabled}, 
+		{Ndis802_11AuthModeWPA2, Ndis802_11Encryption2Enabled},
 		{Ndis802_11AuthModeWPA2, Ndis802_11Encryption3Enabled},
-		{Ndis802_11AuthModeWPA2PSK, Ndis802_11Encryption2Enabled}, 
+		{Ndis802_11AuthModeWPA2PSK, Ndis802_11Encryption2Enabled},
 		{Ndis802_11AuthModeWPA2PSK, Ndis802_11Encryption3Enabled}
-	};	
+	};
 	static ULONG	ulNumOfPairSupported = sizeof(szAuthEnc)/sizeof(NDIS_802_11_AUTHENTICATION_ENCRYPTION);
 	NDIS_802_11_CAPABILITY * pCap = (NDIS_802_11_CAPABILITY *)pucBuf;
 	pu1Byte	pucAuthEncryptionSupported = (pu1Byte)pCap->AuthenticationEncryptionSupported;
@@ -589,8 +589,8 @@ Query_802_11_CAPABILITY(
 	pCap->Length = sizeof(NDIS_802_11_CAPABILITY);
 	if(ulNumOfPairSupported > 1 )
 		pCap->Length += 	(ulNumOfPairSupported-1) * sizeof(NDIS_802_11_AUTHENTICATION_ENCRYPTION);
-	
-	pCap->Version = 2;	
+
+	pCap->Version = 2;
 	pCap->NoOfPMKIDs = NUM_PMKID_CACHE;	// It MUST be set between 3~16, or WZC won't show WPA2 related option in profile.
 	pCap->NoOfAuthEncryptPairsSupported = ulNumOfPairSupported;
 
@@ -665,18 +665,18 @@ N6CQueryInformationHandleCustomizedWifiDirectOids(
 		{
 			if(pMgntInfo->bDisableRtkSupportedP2P)
 			{
-				RT_TRACE_F(COMP_P2P, DBG_WARNING, 
+				RT_TRACE_F(COMP_P2P, DBG_WARNING,
 					("Ignore query of 0x%08X because bDisableRtkSupportedP2P is turned on\n", Oid));
 				Status = NDIS_STATUS_NOT_SUPPORTED;
 				break;
 			}
-			
+
 			if(InformationBufferLength < sizeof(u4Byte))
 			{
 				*BytesNeeded = sizeof(u4Byte);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
-			} 
+			}
 
 			*((pu4Byte)InformationBuffer) = (GET_P2P_INFO(pAdapter))->P2PVersion; //(u4Byte)P2P_VERSION;
 			*BytesWritten = sizeof(u4Byte);
@@ -684,23 +684,23 @@ N6CQueryInformationHandleCustomizedWifiDirectOids(
 			bInformationCopied = TRUE;
 		}
 		break;
-	
+
 	case OID_RT_P2P_MAX_VERSION:
 		{
 			if(pMgntInfo->bDisableRtkSupportedP2P)
 			{
-				RT_TRACE_F(COMP_P2P, DBG_WARNING, 
+				RT_TRACE_F(COMP_P2P, DBG_WARNING,
 					("Ignore query of 0x%08X because bDisableRtkSupportedP2P is turned on\n", Oid));
 				Status = NDIS_STATUS_NOT_SUPPORTED;
 				break;
 			}
-			
+
 			if(InformationBufferLength < sizeof(u4Byte))
 			{
 				*BytesNeeded = sizeof(u4Byte);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
-			} 
+			}
 
 			*((pu4Byte)InformationBuffer) = (u4Byte)P2P_VERSION;
 			*BytesWritten = sizeof(u4Byte);
@@ -713,12 +713,12 @@ N6CQueryInformationHandleCustomizedWifiDirectOids(
 		{
 			if(pMgntInfo->bDisableRtkSupportedP2P)
 			{
-				RT_TRACE_F(COMP_P2P, DBG_WARNING, 
+				RT_TRACE_F(COMP_P2P, DBG_WARNING,
 					("Ignore query of 0x%08X because bDisableRtkSupportedP2P is turned on\n", Oid));
 				Status = NDIS_STATUS_NOT_SUPPORTED;
 				break;
 			}
-				
+
 			ulInfo = MgntActQuery_P2PMode(pAdapter);
 			//RT_TRACE(COMP_P2P, DBG_LOUD, ("OID_RT_P2P_MODE: %u\n", ulInfo));
 		}
@@ -743,20 +743,20 @@ N6CQueryInformationHandleCustomizedWifiDirectOids(
 	case OID_RT_P2P_GO_INTENT:
 		{
 			PP2P_INFO pP2PInfo = GET_P2P_INFO(pAdapter);
-			
+
 			if( InformationBufferLength < sizeof(ucInfo) )
 			{
 				*BytesNeeded = sizeof(ucInfo);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
-			} 
+			}
 
 			ucInfo = pP2PInfo->GOIntent >> 1;
 			pInfo = (PVOID) &ucInfo;
 			ulInfoLen = sizeof(ucInfo);
-			
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
-				("Get OID_RT_P2P_GO_INTENT: %u\n", 
+
+			RT_TRACE(COMP_P2P, DBG_LOUD,
+				("Get OID_RT_P2P_GO_INTENT: %u\n",
 				ucInfo));
 		}
 		break;
@@ -773,8 +773,8 @@ N6CQueryInformationHandleCustomizedWifiDirectOids(
 				break;
 			}
 
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
-				("OID_RT_P2P_CAPABILITY: current DC=%u, GC=%u\n", 
+			RT_TRACE(COMP_P2P, DBG_LOUD,
+				("OID_RT_P2P_CAPABILITY: current DC=%u, GC=%u\n",
 				pP2PInfo->DeviceCapability, pP2PInfo->GroupCapability));
 
 			*pDevCap = pP2PInfo->DeviceCapability;
@@ -831,13 +831,13 @@ N6CQueryInformationHandleCustomizedWifiDirectOids(
 				Status = NDIS_STATUS_BUFFER_TOO_SHORT;
 				break;
 			}
-			
+
 			CopySsid(SsidBuf, *pSsidLen, pP2PInfo->SSIDPostfixBuf, pP2PInfo->SSIDPostfixLen);
 
 			RT_PRINT_STR(COMP_P2P, DBG_LOUD, "OID_RT_P2P_GO_SSID\n", SsidBuf, *pSsidLen);
 
 			*BytesWritten = *pSsidLen + 1;
-			
+
 			ulInfoLen = *BytesWritten;
 			bInformationCopied = TRUE;
 		}
@@ -856,14 +856,14 @@ N6CQueryInformationHandleCustomizedWifiDirectOids(
 				Status = NDIS_STATUS_BUFFER_TOO_SHORT;
 				break;
 			}
-			else if((GET_P2P_INFO(pAdapter)->P2PVersion == 2 || GET_P2P_INFO(pAdapter)->P2PVersion == 3) 
+			else if((GET_P2P_INFO(pAdapter)->P2PVersion == 2 || GET_P2P_INFO(pAdapter)->P2PVersion == 3)
 				&& InformationBufferLength < sizeof(P2P_DEVICE_DESCRIPTOR_V2))
 			{
 				*BytesNeeded = sizeof(P2P_DEVICE_DESCRIPTOR_V2);
 				Status = NDIS_STATUS_BUFFER_TOO_SHORT;
 				break;
 			}
-			
+
 			*BytesWritten = MgntActQuery_P2PSelfDeviceDescriptor(pAdapter, InformationBuffer);
 			bInformationCopied = TRUE;
 
@@ -880,7 +880,7 @@ N6CQueryInformationHandleCustomizedWifiDirectOids(
 			PlatformMoveMemory(InformationBuffer, (GET_P2P_INFO(pAdapter))->InterfaceAddress, 6);
 
 			RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, "Get OID_RT_P2P_INTERFACE_ADDRESS: ", InformationBuffer);
-			
+
 			*BytesWritten = 6;
 			bInformationCopied = TRUE;
 		}
@@ -896,7 +896,7 @@ N6CQueryInformationHandleCustomizedWifiDirectOids(
 			PlatformMoveMemory(InformationBuffer, (GET_P2P_INFO(pAdapter))->DeviceAddress, 6);
 
 			RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, "Get OID_RT_P2P_DEVICE_ADDRESS: ", InformationBuffer);
-			
+
 			*BytesWritten = 6;
 			bInformationCopied = TRUE;
 		}
@@ -904,20 +904,20 @@ N6CQueryInformationHandleCustomizedWifiDirectOids(
 	case OID_RT_P2P_OP_CHANNEL:
 		{
 			PP2P_INFO pP2PInfo = GET_P2P_INFO(pAdapter);
-			
+
 			if( InformationBufferLength < sizeof(ucInfo) )
 			{
 				*BytesNeeded = sizeof(ucInfo);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
-			} 
+			}
 
 			ucInfo = pP2PInfo->OperatingChannel;
 			pInfo = (PVOID) &ucInfo;
 			ulInfoLen = sizeof(ucInfo);
-			
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
-				("Get OID_RT_P2P_OP_CHANNEL: %u\n", 
+
+			RT_TRACE(COMP_P2P, DBG_LOUD,
+				("Get OID_RT_P2P_OP_CHANNEL: %u\n",
 				ucInfo));
 		}
 		break;
@@ -928,14 +928,14 @@ N6CQueryInformationHandleCustomizedWifiDirectOids(
 				*BytesNeeded = sizeof(ucInfo);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
-			} 
+			}
 
 			MgntActQuery_P2PListenChannel(pAdapter, &ucInfo);
 			pInfo = (PVOID) &ucInfo;
 			ulInfoLen = sizeof(ucInfo);
-			
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
-				("Get OID_RT_P2P_LISTEN_CHANNEL: %u\n", 
+
+			RT_TRACE(COMP_P2P, DBG_LOUD,
+				("Get OID_RT_P2P_LISTEN_CHANNEL: %u\n",
 				ucInfo));
 		}
 		break;
@@ -950,7 +950,7 @@ N6CQueryInformationHandleCustomizedWifiDirectOids(
 
 			((pu2Byte)InformationBuffer)[0] = (u2Byte)(GET_P2P_INFO(pAdapter))->ExtListenTimingPeriod;
 			((pu2Byte)InformationBuffer)[1] = (u2Byte)(GET_P2P_INFO(pAdapter))->ExtListenTimingDuration;
-			
+
 			*BytesWritten = sizeof(u2Byte) * 2;
 			bInformationCopied = TRUE;
 		}
@@ -958,29 +958,29 @@ N6CQueryInformationHandleCustomizedWifiDirectOids(
 	case OID_RT_P2P_GO_NEGO_RESULT:
 		{
 			PP2P_INFO pP2PInfo = GET_P2P_INFO(pAdapter);
-			
+
 			if( InformationBufferLength < sizeof(ucInfo) )
 			{
 				*BytesNeeded = sizeof(ucInfo);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
-			} 
+			}
 
 			ucInfo = pP2PInfo->PreviousGONegoResult;
 			pInfo = (PVOID) &ucInfo;
 			ulInfoLen = sizeof(ucInfo);
-			
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
-				("Get OID_RT_P2P_GO_NEGO_RESULT: %u\n", 
+
+			RT_TRACE(COMP_P2P, DBG_LOUD,
+				("Get OID_RT_P2P_GO_NEGO_RESULT: %u\n",
 				ucInfo));
 		}
 		break;
 	case OID_RT_P2P_CHANNEL_LIST:
 		RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_P2P_CHANNEL_LIST\n") );
 		{
-			if(MgntActQuery_P2PChannelList(pAdapter, 
-				(u4Byte)InformationBufferLength, 
-				(pu1Byte)InformationBuffer, 
+			if(MgntActQuery_P2PChannelList(pAdapter,
+				(u4Byte)InformationBufferLength,
+				(pu1Byte)InformationBuffer,
 				(pu1Byte)InformationBuffer + 1) == RT_STATUS_SUCCESS)
 			{
 				*BytesWritten = *((pu1Byte)InformationBuffer) + 1;
@@ -1004,8 +1004,8 @@ N6CQueryInformationHandleCustomizedWifiDirectOids(
 				*BytesNeeded = sizeof(u2Byte);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
-			} 
-			
+			}
+
 			if(RT_STATUS_SUCCESS == P2PGetServiceFragThreshold(pAdapter, (pu2Byte)InformationBuffer))
 			{
 				Status = NDIS_STATUS_FAILURE;
@@ -1024,11 +1024,11 @@ N6CQueryInformationHandleCustomizedWifiDirectOids(
 			}
 		}
 		break;
-		
+
 	}
 
 	if(Status == NDIS_STATUS_SUCCESS)
-	{        
+	{
 		if(ulInfoLen <= InformationBufferLength)
 		{
 			// Copy result into InformationBuffer
@@ -1093,25 +1093,25 @@ N6CQueryInformationHandleCustomized11nOids(
 	case OID_RT_GET_11N_MIMPO_RSSI:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_GET_11N_MIMPO_RSSI\n"));
 		//DbgPrint("Query OID_RT_GET_11N_MIMPO_RSSI\n");
-		{	
+		{
 			MIMO_RSSI	reportRSSI;
-			
+
 			if(InformationBufferLength < sizeof(MIMO_RSSI))
 			{
 				*BytesNeeded = sizeof(MIMO_RSSI);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
 			}
-			
+
 			reportRSSI.EnableAntenna = 0x0f;
 			reportRSSI.AntennaA = pAdapter->RxStats.RxRSSIPercentage[ODM_RF_PATH_A];
 			reportRSSI.AntennaB = pAdapter->RxStats.RxRSSIPercentage[ODM_RF_PATH_B];
 			reportRSSI.AntennaC = pAdapter->RxStats.RxRSSIPercentage[ODM_RF_PATH_C];
 			reportRSSI.AntennaD = pAdapter->RxStats.RxRSSIPercentage[ODM_RF_PATH_D];
 			reportRSSI.Average = GET_UNDECORATED_AVERAGE_RSSI(pAdapter);
-						
-			PlatformMoveMemory( InformationBuffer, 
-								&(reportRSSI), sizeof(MIMO_RSSI));			
+
+			PlatformMoveMemory( InformationBuffer,
+								&(reportRSSI), sizeof(MIMO_RSSI));
 			*BytesWritten = sizeof(MIMO_RSSI);
 		}
 		return Status;
@@ -1122,11 +1122,11 @@ N6CQueryInformationHandleCustomized11nOids(
 			RT_DISP(FIOCTL, IOCTL_STATE, ("[BT]Query OID_RT_MOTOR_BT_802_11_PAL\n"));
 			return Status;
 		}
-		
+
 		//break;
 	case OID_RT_GET_11N_MIMPO_EVM:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_GET_11N_MIMPO_EVM\n"));
-		{	
+		{
 
 			MIMO_EVM	reportEVM;
 
@@ -1140,8 +1140,8 @@ N6CQueryInformationHandleCustomized11nOids(
 			reportEVM.EVM1 = pAdapter->RxStats.RxEVMPercentage[0];
 			reportEVM.EVM2 = pAdapter->RxStats.RxEVMPercentage[1];
 
-			PlatformMoveMemory( InformationBuffer, 
-								&(reportEVM), sizeof(MIMO_EVM));			
+			PlatformMoveMemory( InformationBuffer,
+								&(reportEVM), sizeof(MIMO_EVM));
 			*BytesWritten = sizeof(MIMO_EVM);
 
 		}
@@ -1156,7 +1156,7 @@ N6CQueryInformationHandleCustomized11nOids(
 			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, MgntActQuery_RT_11N_INITIAL_TX_RATES:%d Mbps\n",ulInfo/10000));
 		}
 		break;
-		
+
 	case OID_RT_11N_TX_RETRY_COUNT://added by vivi, 20080604
 		ulInfo =(u4Byte) pAdapter->TxStats.NumTxRetryCount;
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_RT_11N_TX_RETRY_COUNT:%d Mbps\n",ulInfo));
@@ -1165,14 +1165,14 @@ N6CQueryInformationHandleCustomized11nOids(
 	case OID_RT_11N_UI_SHOW_TX_RATE:        //Add by Jacken 2008/04/14
 		ulInfo = (MgntActQuery_RT_11N_USER_SHOW_RATES(pAdapter,FALSE, FALSE)/2)*10000;
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, MgntActQuery_RT_11N_USER_SHOW_RATES-TX:%d Mbps\n",ulInfo/10000));
-		break;	
+		break;
 
 	case OID_RT_11N_UI_SHOW_RX_RATE:        //Add by Jacken 2008/05/12
 		ulInfo = (MgntActQuery_RT_11N_USER_SHOW_RATES(pAdapter,TRUE, FALSE)/2)*10000;
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, MgntActQuery_RT_11N_USER_SHOW_RATES-RX:%d Mbps\n",ulInfo/10000));
-		break;	
+		break;
 
-	case OID_RT_CURRENT_BANDWIDTH:	
+	case OID_RT_CURRENT_BANDWIDTH:
 		ulInfo = pMgntInfo->dot11CurrentChannelBandWidth;
 		break;
 
@@ -1188,7 +1188,7 @@ N6CQueryInformationHandleCustomized11nOids(
 			{
 				ulInfoLen = *BytesWritten = ChnlLen;
 				bInformationCopied = TRUE;
-			}	
+			}
 		}
 		break;
 
@@ -1206,7 +1206,7 @@ N6CQueryInformationHandleCustomized11nOids(
 			bInformationCopied = TRUE;
 		}
 		break;
-	
+
 	case OID_RT_11N_FORCED_LDPC:
 		{
 			PRT_NDIS_COMMON			pNdisCommon = pAdapter->pNdisCommon;
@@ -1214,7 +1214,7 @@ N6CQueryInformationHandleCustomized11nOids(
 			ulInfoLen = 1;
 		}
 		break;
-	
+
 	case OID_RT_11N_FORCED_STBC:
 		{
 			PRT_NDIS_COMMON			pNdisCommon = pAdapter->pNdisCommon;
@@ -1222,19 +1222,19 @@ N6CQueryInformationHandleCustomized11nOids(
 			ulInfoLen = 1;
 		}
 		break;
-		
+
 	case OID_RT_BAND_SELECT:
 		{
-			ulInfo = pMgntInfo->RegPreferBand;		
+			ulInfo = pMgntInfo->RegPreferBand;
 			RT_TRACE(COMP_OID_SET,DBG_LOUD,("Qyery PreferBand=%d\n", pMgntInfo->RegPreferBand));
 			ulInfoLen = 4;
 		}
 		break;
-		
+
 	}
 
 	if(Status == NDIS_STATUS_SUCCESS)
-	{        
+	{
 		if(ulInfoLen <= InformationBufferLength)
 		{
 			// Copy result into InformationBuffer
@@ -1373,12 +1373,12 @@ N6CQueryInformationHandleCustomizedSecurityOids(
 			PNDIS_802_11_ASSOCIATION_INFORMATION pAssocInfo = (PNDIS_802_11_ASSOCIATION_INFORMATION)(pMgntInfo->SecurityInfo.AssocInfo);
 
 			MgntActQuery_802_11_ASSOCIATION_INFORMATION(pAdapter, pAssocInfo);
-	
+
 			pInfo = pAssocInfo;
 			ulInfoLen = sizeof(NDIS_802_11_ASSOCIATION_INFORMATION) +	\
 											pAssocInfo->RequestIELength + 				\
 											pAssocInfo->ResponseIELength;
-	
+
 			RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_802_11_ASSOCIATION_INFORMATION, length=%d\n", ulInfoLen ) );
 			RT_PRINT_DATA( COMP_SEC, DBG_LOUD, "pInfo", pInfo, ulInfoLen );
 		}
@@ -1395,14 +1395,14 @@ N6CQueryInformationHandleCustomizedSecurityOids(
 				else
 					ulInfo = pMgntInfo->SecurityInfo.EncryptionStatus;
 				break;
-				
+
 			case RT802_11Encryption2Enabled:
 				if( pMgntInfo->SecurityInfo.KeyLen[PAIRWISE_KEYIDX] == 0)
 					ulInfo = RT802_11Encryption2KeyAbsent;
 				else
 					ulInfo = pMgntInfo->SecurityInfo.EncryptionStatus;
 				break;
-				
+
 			case RT802_11Encryption3Enabled:
 				// For AES, Added by Annie, 2005-09-15.
 				if( pMgntInfo->SecurityInfo.KeyLen[PAIRWISE_KEYIDX] == 0)	// Should I check pMgntInfo->SecurityInfo.AESKeyBuf len???
@@ -1443,7 +1443,7 @@ N6CQueryInformationHandleCustomizedSecurityOids(
 	}
 
 	if(Status == NDIS_STATUS_SUCCESS)
-	{        
+	{
 		if(ulInfoLen <= InformationBufferLength)
 		{
 			// Copy result into InformationBuffer
@@ -1516,7 +1516,7 @@ N6CQueryInformationHandleCustomizedOids(
 		{
 			Status = NDIS_STATUS_ADAPTER_NOT_READY;
 		}
-		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_802_11_BSSID: %02X:%02X:%02X:%02X:%02X:%02X\n", 
+		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_802_11_BSSID: %02X:%02X:%02X:%02X:%02X:%02X\n",
 			pMgntInfo->Bssid[0], pMgntInfo->Bssid[1], pMgntInfo->Bssid[2], pMgntInfo->Bssid[3], pMgntInfo->Bssid[4], pMgntInfo->Bssid[5]));
 		break;
 
@@ -1556,7 +1556,7 @@ N6CQueryInformationHandleCustomizedOids(
 			u2Byte SupportedBand = pAdapter->HalFunc.GetSupportedWirelessModeHandler(pAdapter);
 			u1Byte index, num=0;
 
-			struct{WIRELESS_MODE wm; NDIS_802_11_NETWORK_TYPE nt; } BandSetList[3] = 
+			struct{WIRELESS_MODE wm; NDIS_802_11_NETWORK_TYPE nt; } BandSetList[3] =
 				{	{WIRELESS_MODE_B, Ndis802_11DS},
 					{(WIRELESS_MODE_N_5G|WIRELESS_MODE_A), Ndis802_11OFDM5},
 					{(WIRELESS_MODE_AC_24G|WIRELESS_MODE_N_24G|WIRELESS_MODE_G), Ndis802_11OFDM24}	};
@@ -1628,12 +1628,12 @@ N6CQueryInformationHandleCustomizedOids(
 				*BytesNeeded = sizeof(s4Byte);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
-			} 
-			
+			}
+
 			*((ps4Byte)InformationBuffer) = MgntActQuery_TX_POWER_DBM(pAdapter);
 
 			ulInfoLen = sizeof(s4Byte);
-			*BytesWritten = ulInfoLen; 
+			*BytesWritten = ulInfoLen;
 			bInformationCopied = TRUE;
 
 			RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_TX_POWER: %d dBm\n", *((ps4Byte)InformationBuffer)));
@@ -1656,7 +1656,7 @@ N6CQueryInformationHandleCustomizedOids(
 			pAdapter->HalFunc.GetHalDefVarHandler(pAdapter, HAL_DEF_MAX_TX_POWER_DBM, ((pu1Byte)InformationBuffer + 4));
 
 			ulInfoLen = 2 * sizeof(s4Byte);
-			*BytesWritten = ulInfoLen; 
+			*BytesWritten = ulInfoLen;
 			bInformationCopied = TRUE;
 			RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_TX_POWER_RANGE: min = %d dBm, max = %d\n", *((ps4Byte)InformationBuffer), *(((ps4Byte)InformationBuffer + 1))));
 		}
@@ -1674,9 +1674,9 @@ N6CQueryInformationHandleCustomizedOids(
 
 			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_802_11_RSSI: PWDBAllCnt  %d PWDBAllOLDCnt %d\n", pAdapter->RxStats.PWDBAllCnt, pAdapter->RxStats.PWDBAllOldCnt));
 			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_802_11_RSSI: diff  %d pwdbdiff %d\n", diff, pwdball_diff));
-			
+
 			pAdapter->RxStats.PWDBAllOldCnt = pAdapter->RxStats.PWDBAllCnt;
-			
+
 			if(diff >= 3)	// calculate more than 3 times of rssi
 			{
 				lInfo = (((pwdball_diff/diff)+1)>>1)-95;
@@ -1735,7 +1735,7 @@ N6CQueryInformationHandleCustomizedOids(
 
 	case OID_802_11_RTS_THRESHOLD:
 	case OID_RT_802_11_RTS_THRESHOLD:
-		ulInfo = (ULONG)MgntActQuery_802_11_RTS_THRESHOLD(pAdapter); 
+		ulInfo = (ULONG)MgntActQuery_802_11_RTS_THRESHOLD(pAdapter);
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_802_11_RTS_THRESHOLD: %d\n", ulInfo));
 		break;
 
@@ -1782,7 +1782,7 @@ N6CQueryInformationHandleCustomizedOids(
 			pNdisCommon->TmpConfig80211.FHConfig.DwellTime = 0;
 
 			pInfo = &(pNdisCommon->TmpConfig80211);
-			ulInfoLen = pNdisCommon->TmpConfig80211.Length;	
+			ulInfoLen = pNdisCommon->TmpConfig80211.Length;
 		}
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_802_11_CONFIGURATION: \n"));
 		break;
@@ -1802,7 +1802,7 @@ N6CQueryInformationHandleCustomizedOids(
 		{
 			*((pu4Byte)InformationBuffer) = pNdisCommon->RegPowerSaveMode;
 			*((pu4Byte)((pu1Byte)InformationBuffer + 4)) = (u4Byte)pMgntInfo->PsPollType;
-			// Setup variables to return. 
+			// Setup variables to return.
 			*BytesWritten = 8;
 			bInformationCopied = TRUE;
 		}
@@ -1814,7 +1814,7 @@ N6CQueryInformationHandleCustomizedOids(
 		//TODO:
 		ulInfo = Ndis802_11PrivFilterAcceptAll;
 		RT_TRACE( COMP_OID_QUERY,  DBG_WARNING, ("OID_802_11_PRIVACY_FILTER Querying (Warning: Old OID in NDIS5, do nothing)\n") );
-		break;	
+		break;
 
 	case OID_RT_GET_SCAN_IN_PROGRESS:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("===> Query OID_RT_GET_SCAN_IN_PROGRESS.\n"));
@@ -1831,13 +1831,13 @@ N6CQueryInformationHandleCustomizedOids(
 			if (pAdapter->RxStats.SignalQuality >= 80)
 			{
 				ulInfo = 100;
-			}			
+			}
 			else if (pAdapter->RxStats.SignalQuality <= 79)
 			{
 				ulInfo = pAdapter->RxStats.SignalQuality+20;
 			}
 
-			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("OID_RT_GET_SIGNAL_QUALITY %x.\n", ulInfo));	
+			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("OID_RT_GET_SIGNAL_QUALITY %x.\n", ulInfo));
 
 		}
 		else
@@ -1876,7 +1876,7 @@ N6CQueryInformationHandleCustomizedOids(
 		}
 		else if(ACTING_AS_AP(pAdapter) ||IsExtAPModeExist(pAdapter))
 		{
-			//sherry added for ui show correct channel for AP mode 20110517		
+			//sherry added for ui show correct channel for AP mode 20110517
 			ulInfo = pMgntInfo->dot11CurrentChannelNumber;
 		}
 
@@ -1887,7 +1887,7 @@ N6CQueryInformationHandleCustomizedOids(
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("<=== Query OID_RT_GET_CHANNEL: %d\n", ulInfo));
 		break;
 
-		
+
 	case OID_RT_GET_CHANNEL_LIST:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("===> Query OID_RT_GET_CHANNEL_LIST.\n"));
 		{
@@ -1898,9 +1898,9 @@ N6CQueryInformationHandleCustomizedOids(
 			RT_CHNL_LIST_ENTRY		ChnlListEntryArray[MAX_CHANNEL_NUM] = {0};
 			u1Byte		ChannelLen;
 			BOOLEAN		bIndicateToUI = FALSE;
-			
 
-			
+
+
 			if(IS_DUAL_BAND_SUPPORT(pAdapter))
 			{
 				ChannelLen = RtGetDualBandChannel(pAdapter, ChnlListEntryArray);
@@ -1927,8 +1927,8 @@ N6CQueryInformationHandleCustomizedOids(
 
 				ChannelLen =  pChannelList->ChannelLen;
 			}
-		
-			
+
+
 
 			RT_TRACE(COMP_OID_QUERY, DBG_LOUD,("OID_RT_EASY_COCURRENT_GET_CHANNEL_INFO channelLen 2 %d \n",ChannelLen));
 
@@ -1939,8 +1939,8 @@ N6CQueryInformationHandleCustomizedOids(
 			}
 
 			cbBufSizeRequired = 2 + ChannelLen;
-				
-			// Check output buffer length. 
+
+			// Check output buffer length.
 			if(InformationBufferLength < cbBufSizeRequired)
 			{
 				*BytesNeeded = cbBufSizeRequired;
@@ -1949,9 +1949,9 @@ N6CQueryInformationHandleCustomizedOids(
 			}
 
 			pList = (pu1Byte)InformationBuffer;
-			// A tag identified by UI. 
-			pList[0] = 0xAA;	
-			
+			// A tag identified by UI.
+			pList[0] = 0xAA;
+
 			for(i = 0; i < ChannelLen; i++)
 			{
 				bIndicateToUI = FALSE;
@@ -1980,9 +1980,9 @@ N6CQueryInformationHandleCustomizedOids(
 			}
 
 			// Length of channel list.
-			pList[1] = chnlcount; 
+			pList[1] = chnlcount;
 			cbBufSizeRequired = chnlcount + 2;
-			// Setup variables to return. 
+			// Setup variables to return.
 			*BytesWritten = cbBufSizeRequired;
 			bInformationCopied = TRUE;
 		}
@@ -2018,13 +2018,13 @@ N6CQueryInformationHandleCustomizedOids(
 
 				ChannelLen =  pChannelList->ChannelLen;
 			}
-			
+
 
 			RT_TRACE(COMP_EASY_CONCURRENT,DBG_LOUD,("OID_RT_EASY_COCURRENT_GET_CHANNEL_INFO channelLen 2 %d \n",ChannelLen));
 
 			cbBufSizeRequired = 2 + ChannelLen;
-				
-			// Check output buffer length. 
+
+			// Check output buffer length.
 			if(InformationBufferLength < cbBufSizeRequired)
 			{
 				*BytesNeeded = cbBufSizeRequired;
@@ -2033,8 +2033,8 @@ N6CQueryInformationHandleCustomizedOids(
 			}
 
 			pList = (pu1Byte)InformationBuffer;
-			// A tag identified by UI. 
-			pList[0] = 0xAA;	
+			// A tag identified by UI.
+			pList[0] = 0xAA;
 
 			{
 				for(i = 0; i < ChannelLen; i++)
@@ -2057,7 +2057,7 @@ N6CQueryInformationHandleCustomizedOids(
 
 					if(bIndicateToUI)
 					{
-//change by ylb  for UI get channel num error 20110906	
+//change by ylb  for UI get channel num error 20110906
 							pList[chnlcount+2] = pChannelList->ChnlListEntry[i].ChannelNum;
 						chnlcount++;
 					}
@@ -2067,15 +2067,15 @@ N6CQueryInformationHandleCustomizedOids(
 			}
 
 			// Length of channel list.
-			pList[1] = chnlcount; 
+			pList[1] = chnlcount;
 
 			cbBufSizeRequired = chnlcount + 2;
-			// Setup variables to return. 
+			// Setup variables to return.
 			*BytesWritten = cbBufSizeRequired;
 			bInformationCopied = TRUE;
 		}
 		RT_TRACE(COMP_EASY_CONCURRENT,DBG_LOUD,(" <==== OID_RT_EASY_COCURRENT_GET_CHANNEL_INFO\n"));
-	 	break;		
+	 	break;
 
 	case OID_RT_GET_TOTAL_TX_BYTES:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("===> Query OID_RT_GET_TOTAL_TX_BYTES.\n"));
@@ -2110,27 +2110,27 @@ N6CQueryInformationHandleCustomizedOids(
 			// Get supported wireless mode.
 			btSupportedWirelessMode = pAdapter->HalFunc.GetSupportedWirelessModeHandler(pAdapter);
 
-			// Fill up return parameter according to supported wireless mode. 
+			// Fill up return parameter according to supported wireless mode.
  			// In high byte of a WORD, e.g. 0x07 means a(bit 2),g(bit 1),b(bit 0).
 			if(btSupportedWirelessMode & WIRELESS_MODE_B)
 			{
-				ulInfo |= 0x0100; 
+				ulInfo |= 0x0100;
 			}
 			if(btSupportedWirelessMode & WIRELESS_MODE_G)
 			{
-				ulInfo |= 0x0200; 
+				ulInfo |= 0x0200;
 			}
 			if(btSupportedWirelessMode & WIRELESS_MODE_A)
 			{
-				ulInfo |= 0x0400; 
+				ulInfo |= 0x0400;
 			}
 			if(btSupportedWirelessMode & WIRELESS_MODE_N_24G)
 			{
-				ulInfo |= 0x0800; 
+				ulInfo |= 0x0800;
 			}
 			if(btSupportedWirelessMode & WIRELESS_MODE_N_5G)
 			{
-				ulInfo |= 0x1000; 
+				ulInfo |= 0x1000;
 			}
 		}
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("<=== Query OID_RT_SUPPORTED_WIRELESS_MODE: %x\n", ulInfo));
@@ -2141,55 +2141,55 @@ N6CQueryInformationHandleCustomizedOids(
 			WIRELESS_MODE WirelessMode;
 
 			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("===> Query OID_RT_WIRELESS_MODE.\n"));
-			
-			// Check output buffer length. 
+
+			// Check output buffer length.
 			if(InformationBufferLength < sizeof(WIRELESS_MODE))
 			{
 				*BytesNeeded = sizeof(WIRELESS_MODE);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
 			}
-	
+
 			// Get wireless mode.
 			WirelessMode = MgntActQuery_802_11_WIRELESS_MODE(pAdapter);
 
-			// Fill up paramters to return. 
+			// Fill up paramters to return.
 			*((WIRELESS_MODE*)InformationBuffer) = WirelessMode;
 			*BytesWritten = sizeof(WIRELESS_MODE);
 			bInformationCopied = TRUE;
-	
+
 			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("<=== Query OID_RT_WIRELESS_MODE: %d\n", WirelessMode));
 		}
-		break; 
+		break;
 
 	case OID_RT_CURRENT_WLRELESSMODE:
 		{
 			WIRELESS_MODE WirelessMode;
 
 			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("===> Query OID_RT_CURRENT_WLRELESSMODE.\n"));
-			
-			// Check output buffer length. 
+
+			// Check output buffer length.
 			if(InformationBufferLength < sizeof(WIRELESS_MODE))
 			{
 				*BytesNeeded = sizeof(WIRELESS_MODE);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
 			}
-	
+
 			// Get wireless mode.
 			WirelessMode = pAdapter->MgntInfo.dot11CurrentWirelessMode;
 
-			// Fill up paramters to return. 
+			// Fill up paramters to return.
 			*((WIRELESS_MODE*)InformationBuffer) = WirelessMode;
 			*BytesWritten = sizeof(WIRELESS_MODE);
 			bInformationCopied = TRUE;
-	
+
 			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("<=== Query OID_RT_CURRENT_WLRELESSMODE: %d\n", WirelessMode));
 		}
 
 	case OID_RT_GET_DRIVER_UP_DELTA_TIME:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("===> Query OID_RT_GET_DRIVER_UP_DELTA_TIME.\n"));
-		{	
+		{
 			u8Byte now_time;
 
 			now_time = PlatformGetCurrentTime(); // in micro-second.
@@ -2356,15 +2356,15 @@ N6CQueryInformationHandleCustomizedOids(
 			WIRELESS_MODE WirelessMode;
 
 			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("===> Query OID_RT_GET_BSS_WIRELESS_MODE.\n"));
-			
-			// Check output buffer length. 
+
+			// Check output buffer length.
 			if(InformationBufferLength < sizeof(WIRELESS_MODE))
 			{
 				*BytesNeeded = sizeof(WIRELESS_MODE);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
 			}
-	
+
 			// Get wireless mode of current BSS.
 			if(pMgntInfo->mAssoc || pMgntInfo->mIbss)
 			{
@@ -2372,26 +2372,26 @@ N6CQueryInformationHandleCustomizedOids(
 			}
 			else
 			{
-				WirelessMode = WIRELESS_MODE_UNKNOWN; 
+				WirelessMode = WIRELESS_MODE_UNKNOWN;
 			}
 
-			// Fill up paramters to return. 
+			// Fill up paramters to return.
 			*((WIRELESS_MODE*)InformationBuffer) = WirelessMode;
 			*BytesWritten = sizeof(WIRELESS_MODE);
 			bInformationCopied = TRUE;
-	
+
 			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("<=== Query OID_RT_GET_BSS_WIRELESS_MODE: %d\n", WirelessMode));
 		}
-		break; 
+		break;
 
 	case OID_RT_AP_GET_CURRENT_TIME_STAMP:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("===> Query OID_RT_AP_GET_CURRENT_TIME_STAMP.\n"));
 		{
 			PADAPTER pTargetAdapter = GetDefaultAdapter(pAdapter); // get the first AP mode. Neo Test 123, But this oid need to be modified for more APs.
-			
+
 			//
-			// <Roger_Notes> We shall redirect to proper adapter for UI query. 
-			// Otherwise, UI would retrieve abnormal value. 
+			// <Roger_Notes> We shall redirect to proper adapter for UI query.
+			// Otherwise, UI would retrieve abnormal value.
 			// Added by Roger, 2009.10.07.
 			//
 			while(pTargetAdapter != NULL)
@@ -2428,13 +2428,13 @@ N6CQueryInformationHandleCustomizedOids(
 			PADAPTER pTargetAdapter = GetDefaultAdapter(pAdapter);
 
 			//
-			// <Roger_Notes> We shall redirect to proper adapter for UI query. 
-			// Otherwise, UI would retrieve abnormal value. 
+			// <Roger_Notes> We shall redirect to proper adapter for UI query.
+			// Otherwise, UI would retrieve abnormal value.
 			// Added by Roger, 2009.10.07.
 			//
 
 			// Determine size of buffer needed.
-			if(InformationBufferLength < ulBufRequired) 
+			if(InformationBufferLength < ulBufRequired)
 			{
 				*BytesNeeded = ulBufRequired;
 				*BytesWritten = 0;
@@ -2452,7 +2452,7 @@ N6CQueryInformationHandleCustomizedOids(
 				pTargetAdapter = GetNextExtAdapter(pTargetAdapter);
 			}
 
-			// Initialize output buffer. 
+			// Initialize output buffer.
 			PlatformZeroMemory(InformationBuffer, ulBufRequired);
 
 			// Fill up total size and size of each entry.
@@ -2478,7 +2478,7 @@ N6CQueryInformationHandleCustomizedOids(
 				}
 			}
 
-			*BytesWritten = ulBufRequired; 
+			*BytesWritten = ulBufRequired;
 			bInformationCopied = TRUE;
 		}
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("<=== Query OID_RT_AP_GET_ASSOCIATED_STATION_LIST.\n"));
@@ -2489,7 +2489,7 @@ N6CQueryInformationHandleCustomizedOids(
 			ulInfo = pMgntInfo->bDisableScanByOID;
 		}
 		break;
-	
+
 	case OID_RT_MH_VENDER_ID:	// Added by Annie, 2005-07-20.
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("OID_RT_MH_VENDER_ID(): Query OID_RT_MH_VENDER_ID. (MeetingHouse)\n"));
 		{
@@ -2519,7 +2519,7 @@ N6CQueryInformationHandleCustomizedOids(
 			}
 			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("OID_RT_RF_OFF: eRfPowerState: 0x%X,  RFOff: 0x%X\n", eRfPowerState, ulInfo));
 		}
-		break;		
+		break;
 
 	case OID_RT_DBG_COMPONENT:
 		ul64Info = GlobalDebugComponents;
@@ -2547,15 +2547,15 @@ N6CQueryInformationHandleCustomizedOids(
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_FILTER_DEFAULT_PERMITED\n"));
 		{
 			ulInfo = (ULONG)(pMgntInfo->bDefaultPermited);
-			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_FILTER_DEFAULT_PERMITED:  %d\n", ulInfo));			
+			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_FILTER_DEFAULT_PERMITED:  %d\n", ulInfo));
 		}
 		break;
-		
+
 	case OID_RT_MAC_FILTER_TYPE:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_MAC_FILTER_TYPE\n"));
 		{
 			ulInfo = (ULONG)(pMgntInfo->LockType);
-			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_MAC_FILTER_TYPE:  %d\n", ulInfo));			
+			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_MAC_FILTER_TYPE:  %d\n", ulInfo));
 		}
 		break;
 
@@ -2570,14 +2570,14 @@ N6CQueryInformationHandleCustomizedOids(
 				LockListSize = sizeof(u4Byte) + pMgntInfo->LockedSTACount*6;
 			else if(pMgntInfo->LockType ==MAC_FILTER_REJECT)
 				LockListSize = sizeof(u4Byte) + pMgntInfo->LockedSTACount_Reject*6;
-			
+
 			if( InformationBufferLength < LockListSize )
 			{
 				*BytesNeeded = LockListSize;
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
 			}
-							
+
 			if(pMgntInfo->LockType == MAC_FILTER_ACCEPT)
 			{
 				*pNumOfLockedAddr = pMgntInfo->LockedSTACount;
@@ -2590,17 +2590,17 @@ N6CQueryInformationHandleCustomizedOids(
 				PlatformMoveMemory( pLockListBuffer, pMgntInfo->LockedSTAList_Reject, pMgntInfo->LockedSTACount_Reject*6  );
 				RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_LOCKED_STA_ADDRESS: LockedSTACount_Reject=%d\n", pMgntInfo->LockedSTACount_Reject));
 			}
-			
+
 			*BytesWritten = LockListSize;
 			bInformationCopied = TRUE;
 
-			
+
 //			RT_PRINT_ADDRS(COMP_OID_QUERY, DBG_LOUD, ("Locked STA Address"), LockListBuffer, pMgntInfo->LockedSTACount );
 			RT_PRINT_DATA(COMP_OID_QUERY, DBG_LOUD, ("InformationBuffer"), InformationBuffer, InformationBufferLength );
 		}
 		break;
-		
-	case OID_RT_GET_DEFAULT_KEY_ID:                                             	
+
+	case OID_RT_GET_DEFAULT_KEY_ID:
 		{
 			if( InformationBufferLength < sizeof(usInfo) )
 			{
@@ -2623,7 +2623,7 @@ N6CQueryInformationHandleCustomizedOids(
 				*BytesNeeded = sizeof(usInfo);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
-			} 
+			}
 
 			usInfo = pMgntInfo->dot11BeaconPeriod;
 			pInfo = (PVOID) &usInfo;
@@ -2639,7 +2639,7 @@ N6CQueryInformationHandleCustomizedOids(
 				*BytesNeeded = sizeof(usInfo);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
-			} 
+			}
 
 			usInfo = (USHORT)pMgntInfo->dot11DtimPeriod;
 			pInfo = (PVOID) &usInfo;
@@ -2655,7 +2655,7 @@ N6CQueryInformationHandleCustomizedOids(
 				*BytesNeeded = sizeof(ucInfo);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
-			} 
+			}
 
 			switch(pMgntInfo->dot11CurrentPreambleMode)
 			{
@@ -2690,7 +2690,7 @@ N6CQueryInformationHandleCustomizedOids(
 				*BytesNeeded = sizeof(ucInfo);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
-			} 
+			}
 
 			ucInfo = (ACTING_AS_AP(pAdapter)  == TRUE) ? 1 : 0;
 			pInfo = (PVOID) &ucInfo;
@@ -2703,13 +2703,13 @@ N6CQueryInformationHandleCustomizedOids(
 			int		i;
 			UCHAR count_temp = 0;
 			PRT_WLAN_STA			CurrAsocEntry =pMgntInfo->AsocEntry ;
-			
+
 			if( InformationBufferLength < sizeof(ucInfo) )
 			{
 				*BytesNeeded = sizeof(ucInfo);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
-			} 
+			}
 			for(i = 0; i < ASSOCIATE_ENTRY_NUM; i++)
 			{
 				if( CurrAsocEntry[i].bUsed &&  CurrAsocEntry[i].bAssociated)
@@ -2730,31 +2730,31 @@ N6CQueryInformationHandleCustomizedOids(
 
 			if( (InformationBufferLength-1) > length_temp || (InformationBufferLength-1) ==0)
 				InformationBufferLength = length_temp+1;
-			
+
 			((pu1Byte)InformationBuffer)[0] = (UCHAR)InformationBufferLength-1;
 			HAL_ReadCloudKey_Ex(pAdapter,(UCHAR)InformationBufferLength-1,offset,(pu1Byte)InformationBuffer+1);
 
 			ulInfoLen = InformationBufferLength;
-			*BytesWritten = InformationBufferLength; 
-			
+			*BytesWritten = InformationBufferLength;
+
 			bInformationCopied = TRUE;
-		
-			RT_PRINT_DATA( COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_AP_GET_CLOUD_KEY_EX: "), 
+
+			RT_PRINT_DATA( COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_AP_GET_CLOUD_KEY_EX: "),
 				InformationBuffer, ulInfoLen );
 		}
 		break;
 	case OID_RT_AP_SET_BEACON_START:
 		{
 			PMGNT_INFO 	pDefMgntInfo = GetDefaultMgntInfo(pAdapter);
-			
+
 			if( InformationBufferLength < sizeof(ucInfo) )
 			{
 				*BytesNeeded = sizeof(ucInfo);
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
-			} 
+			}
 
-			//2014/02/22 MH We can not read USB reg here otherwise the TX pause will be incorrect. 
+			//2014/02/22 MH We can not read USB reg here otherwise the TX pause will be incorrect.
 			pDefMgntInfo->DelayApBeaconCnt = (u1Byte)pDefMgntInfo->Regbcndelay;
 
 			ucInfo =TRUE;
@@ -2795,7 +2795,7 @@ N6CQueryInformationHandleCustomizedOids(
 			pu1Byte	pWdsApList = (pu1Byte)InformationBuffer + sizeof(u4Byte);
 			u4Byte	ListSize = sizeof(u4Byte) + 1*6;
 
-			if( InformationBufferLength < ListSize ) 
+			if( InformationBufferLength < ListSize )
 			{
 				*BytesNeeded = ListSize;
 				*BytesWritten = 0;
@@ -2803,18 +2803,18 @@ N6CQueryInformationHandleCustomizedOids(
 			}
 
 			// Note that, in current architecture, we only support 1 WDS AP.
-			// For more than one WDS AP to support, we must implment "learning" 
+			// For more than one WDS AP to support, we must implment "learning"
 			// and "802.1d spanning tree". 2006.06.12, by rcnjko.
 			*pNumOfWdsAp = 1;
 			PlatformMoveMemory( pWdsApList, pMgntInfo->WdsApAddr, 1*6 );
 			*BytesWritten = ListSize;
 			bInformationCopied = TRUE;
 
-			RT_PRINT_DATA(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_AP_WDS_AP_LIST: "), 
+			RT_PRINT_DATA(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_AP_WDS_AP_LIST: "),
 				InformationBuffer, ListSize );
 		}
 		break;
-		
+
 	case OID_RT_GET_PSP_XLINK_STATUS:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_GET_PSP_XLINK_STATUS:\n"));
 		{
@@ -2824,14 +2824,14 @@ N6CQueryInformationHandleCustomizedOids(
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
 			}
-			
+
 			ucInfo = pMgntInfo->bDefaultPSPXlinkMode; // return default settings ONLY which was set by UI or registry.
 			pInfo = &ucInfo;
 			ulInfoLen = sizeof(ucInfo);
 
 		}
 		break;
-		
+
 	case OID_RT_GET_WMM_ENABLE:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_GET_WMM_ENABLE:\n"));
 		{
@@ -2841,7 +2841,7 @@ N6CQueryInformationHandleCustomizedOids(
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
 			}
-			
+
 			if (pMgntInfo->pStaQos->QosCapability & QOS_WMM)
 			{
 				ulInfo = TRUE;
@@ -2863,11 +2863,11 @@ N6CQueryInformationHandleCustomizedOids(
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
 			}
-			
+
 			ulInfo = pMgntInfo->pStaQos->b4ac_Uapsd & 0x0F;
 		}
 		break;
-	
+
 	case OID_RT_DOT11D:
 		{
 			ucInfo = IS_DOT11D_ENABLE(pMgntInfo);
@@ -2882,7 +2882,7 @@ N6CQueryInformationHandleCustomizedOids(
 			if( !MgntActQuery_DrvLogTypeList(
 					pAdapter,
 					InformationBufferLength,
-					(PDRV_LOG_TYPE_LIST_T)InformationBuffer, 
+					(PDRV_LOG_TYPE_LIST_T)InformationBuffer,
 					BytesWritten,
 					BytesNeeded))
 			{
@@ -2899,7 +2899,7 @@ N6CQueryInformationHandleCustomizedOids(
 			if( !MgntActQuery_DrvLogAttrList(
 					pAdapter,
 					InformationBufferLength,
-					(PDRV_LOG_ATTR_LIST_T)InformationBuffer, 
+					(PDRV_LOG_ATTR_LIST_T)InformationBuffer,
 					BytesWritten,
 					BytesNeeded))
 			{
@@ -2925,7 +2925,7 @@ N6CQueryInformationHandleCustomizedOids(
 					pAdapter,
 					*pLogType,
 					InformationBufferLength,
-					(PDRV_LOG_DATA_LIST_T)InformationBuffer, 
+					(PDRV_LOG_DATA_LIST_T)InformationBuffer,
 					BytesWritten,
 					BytesNeeded))
 			{
@@ -3022,12 +3022,12 @@ N6CQueryInformationHandleCustomizedOids(
 
 	case OID_RT_GET_ROAM_COUNT:
 		{
-			
+
 			pMgntInfo->RoamingCount=256;
 			usInfo=pMgntInfo->RoamingCount;
 			pInfo=(PVOID )&usInfo;
 			ulInfoLen=sizeof(usInfo);
-			
+
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("Query OID_RT_GET_ROAM_COUNT: \n"));
 			break;
 		}
@@ -3036,14 +3036,14 @@ N6CQueryInformationHandleCustomizedOids(
 			pMgntInfo->DisconnectCount=65500;
 			usInfo=pMgntInfo->DisconnectCount;
 			pInfo=(PVOID )&usInfo;
-			ulInfoLen=sizeof(usInfo);	
+			ulInfoLen=sizeof(usInfo);
 
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("Query OID_RT_GET_DISASSOC_COUNT: \n"));
 			break;
-		}	
+		}
 
 	case OID_RT_HOST_SUSPEND_STATUS:
-		pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_FPGA_SUSPEND_STATUS, (pu1Byte)(&ulInfo));		
+		pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_FPGA_SUSPEND_STATUS, (pu1Byte)(&ulInfo));
 		break;
 
 	case OID_RT_AP_GET_VWIFI_STATUS:
@@ -3054,7 +3054,7 @@ N6CQueryInformationHandleCustomizedOids(
 		}
 
         case OID_RT_ANTENNA_DETECTED_INFO:
-		{	
+		{
 			#if(defined(CONFIG_ANT_DETECTION))
 			if(InformationBufferLength < sizeof(ANT_DETECTED_INFO))
 			{
@@ -3063,16 +3063,16 @@ N6CQueryInformationHandleCustomizedOids(
 				*BytesWritten = 0;
 				return Status;
 			}
-			
+
 			PlatformZeroMemory(InformationBuffer, sizeof(ANT_DETECTED_INFO));
 
 			// Retrieve previous antenna detection information in initialization process, added by Roger, 2012.11.27.
 			pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_ANTENNA_DETECTED_INFO , (pu1Byte)InformationBuffer);
-			
+
 			ulInfoLen = sizeof(ANT_DETECTED_INFO);
-			*BytesWritten = ulInfoLen; 
+			*BytesWritten = ulInfoLen;
 			bInformationCopied = TRUE;
-			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_ANTENNA_DETECTED_INFO: \n"));			
+			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_ANTENNA_DETECTED_INFO: \n"));
 			#endif
 			break;
 		}
@@ -3089,7 +3089,7 @@ N6CQueryInformationHandleCustomizedOids(
 			ulInfo = (u4Byte)pMgntInfo->bStopScan;
 		}
 		break;
-		
+
 	case OID_RT_FORCED_DATA_RATE:
 		{
 			*BytesNeeded = sizeof(u1Byte);
@@ -3107,7 +3107,7 @@ N6CQueryInformationHandleCustomizedOids(
 #endif
 			{
 				Status = NDIS_STATUS_NOT_SUPPORTED;
-				return Status;					
+				return Status;
 			}
 			*BytesWritten = ulInfoLen;
 			bInformationCopied = TRUE;
@@ -3121,7 +3121,7 @@ N6CQueryInformationHandleCustomizedOids(
 			*BytesWritten = 4;
 			for(i=0;i<pCusBSSIDList->NumberOfItems;i++)
 			{
-				
+
 				NdisMoveMemory(pCusBSSIDList->bssidentry[i].SsIdBuf,pMgntInfo->bssDesc4Query[i].bdSsIdBuf,pMgntInfo->bssDesc4Query[i].bdSsIdLen);
 				pCusBSSIDList->bssidentry[i].SsIdLen = pMgntInfo->bssDesc4Query[i].bdSsIdLen;
 				NdisMoveMemory(pCusBSSIDList->bssidentry[i].BssIdBuf,pMgntInfo->bssDesc4Query[i].bdBssIdBuf,6);
@@ -3139,7 +3139,7 @@ N6CQueryInformationHandleCustomizedOids(
 	}
 
 	if(Status == NDIS_STATUS_SUCCESS)
-	{        
+	{
 		if(ulInfoLen <= InformationBufferLength)
 		{
 			// Copy result into InformationBuffer
@@ -3182,9 +3182,9 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 	ULONG					ulInfoLen = sizeof(ulInfo);
 	ULONG					ulBytesAvailable = ulInfoLen;
 	BOOLEAN					bInformationCopied = FALSE;
-	
+
 	FunctionIn(COMP_OID_QUERY);
-	
+
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
 
@@ -3197,7 +3197,7 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 
 	case OID_RT_PRO_GET_PHY_PARAM_VERSION:
 	case OID_RT_DEVICE_ID_INFO:
-		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_DEVICE_ID_INFO: \n"));	
+		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_DEVICE_ID_INFO: \n"));
 		{
 			PRT_SDIO_ID_INFO	pSdioIdInfo = (PRT_SDIO_ID_INFO)InformationBuffer;
 
@@ -3210,10 +3210,10 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 
 			// Fill up member of RT_DEVICE_ID_HEADER.
 			pSdioIdInfo->DevIDHeader.RtWlanDevTag = RT_DEVICE_ID_INFO_TAG;
-			
+
 			pSdioIdInfo->DevIDHeader.ChipID	= GET_CHIP_ID(Adapter);
 			pSdioIdInfo->DevIDHeader.ChipVer = GET_CHIP_VERSION(Adapter);
-			
+
 			pSdioIdInfo->DevIDHeader.BusType = RT_DEVICE_ID_SDIO;
 
 			RT_TRACE(COMP_INIT, DBG_LOUD, ("chip id 0x%x chipver 0x%x\n", pSdioIdInfo->DevIDHeader.ChipID, pSdioIdInfo->DevIDHeader.ChipVer));
@@ -3225,19 +3225,19 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 			pSdioIdInfo->VID = 0x024c;
 			pSdioIdInfo->PID = 0x8723;
 			pSdioIdInfo->RevID = 0;
-			pSdioIdInfo->InterfaceIdx = 0;	
+			pSdioIdInfo->InterfaceIdx = 0;
 
 			*BytesWritten = sizeof(RT_SDIO_ID_INFO);
 			bInformationCopied = TRUE;
 
-			RT_TRACE(COMP_MP,DBG_LOUD,("==>OID_RT_DEVICE_ID_INFO, (ChipID, ChipVer) = (0x%X, 0x%X)\n", 
-                        pSdioIdInfo->DevIDHeader.ChipID, pSdioIdInfo->DevIDHeader.ChipVer));  
+			RT_TRACE(COMP_MP,DBG_LOUD,("==>OID_RT_DEVICE_ID_INFO, (ChipID, ChipVer) = (0x%X, 0x%X)\n",
+                        pSdioIdInfo->DevIDHeader.ChipID, pSdioIdInfo->DevIDHeader.ChipVer));
 			RT_TRACE(COMP_MP, DBG_LOUD, ("===> OID_RT_DEVICE_ID_INFO: Adapter->HardwareType = %d\n", Adapter->HardwareType));
 		}
 		break;
 
 	case OID_RT_PRO8187_WI_POLL:
-		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_PRO8187_WI_POLL: \n"));	
+		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_PRO8187_WI_POLL: \n"));
 		{
 			PRT8187DBGWIPARAM pWIParam = (PRT8187DBGWIPARAM)InformationBuffer;
 			PRT_NDIS_DBG_CONTEXT pDbgCtx = &(Adapter->ndisDbgCtx);
@@ -3248,14 +3248,14 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 			{
 				pDbgCtx = &(GetDefaultAdapter(Adapter)->ndisDbgCtx);
 			}
-	
+
 			if(InformationBufferLength < sizeof(ULONG)*4)
 			{
 				*BytesNeeded = sizeof(ULONG)*4;
 				*BytesWritten = 0;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
 			}
-	
+
 			if(pDbgCtx->bDbgWorkItemInProgress)
 			{ // DbgWorkItem is in progress.
 				pWIParam->bDbgActCompleted = FALSE;
@@ -3265,7 +3265,7 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 			{ // DbgWorkItem is completed.
 				pWIParam->bDbgActCompleted = TRUE;
 				pWIParam->IoValue = pDbgCtx->DbgIoValue;
-				
+
 				pWIParam->outLen = pDbgCtx->DbgOutLen;
 				if((InformationBufferLength>=sizeof(RT8187DBGWIPARAM)) && (pWIParam->outLen>0))
 				{
@@ -3285,17 +3285,17 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 			ulInfo = HAL_GetCutVersion(Adapter);
 			ulInfoLen = 4;
 		}
-		break;		
-
-
-	case OID_RT_PRO_GET_EFUSE_UTILIZE:	
-		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_PRO_GET_EFUSE_UTILIZE\n"));
-		Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_EFUSE_USAGE, (pu1Byte)&ulInfo);		
 		break;
 
-	case OID_RT_PRO_CHK_AUTOLOAD:	
+
+	case OID_RT_PRO_GET_EFUSE_UTILIZE:
+		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_PRO_GET_EFUSE_UTILIZE\n"));
+		Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_EFUSE_USAGE, (pu1Byte)&ulInfo);
+		break;
+
+	case OID_RT_PRO_CHK_AUTOLOAD:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_RT_PRO_CHK_AUTOLOAD\n"));
-		Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_AUTOLOAD_STATUS, (pu1Byte)&ulInfo );		
+		Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_AUTOLOAD_STATUS, (pu1Byte)&ulInfo );
 		break;
 
 	case OID_RT_PRO_READ_MAC_ADDRESS:
@@ -3310,10 +3310,10 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("===> Query OID_RT_PRO_READ_REGISTRY.\n"));
 
 		Status = OIDQ_RTKReadReg(
-					Adapter, 
-					InformationBuffer, 
-					InformationBufferLength, 
-					BytesWritten, 
+					Adapter,
+					InformationBuffer,
+					InformationBufferLength,
+					BytesWritten,
 					BytesNeeded,
 					&ulInfo);
 
@@ -3326,10 +3326,10 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("===> Query OID_RT_PRO_READ_REGISTRY_SIC.\n"));
 
 		Status = OIDQ_RTKReadRegSIC(
-					Adapter, 
-					InformationBuffer, 
-					InformationBufferLength, 
-					BytesWritten, 
+					Adapter,
+					InformationBuffer,
+					InformationBufferLength,
+					BytesWritten,
 					BytesNeeded,
 					&ulInfo);
 
@@ -3339,7 +3339,7 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 		break;
 
 	case OID_RT_PRO_READ_BB_REG:
-		// 
+		//
 		// Ported from 85B MP, by Bruce, 2007-1-19.
 		//
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("===> Query OID_RT_PRO_READ_BB_REG.\n"));
@@ -3360,10 +3360,10 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 			ulRegOffset = *((ULONG*)InformationBuffer);
 			ulBeOFDM = ((*((ULONG*)InformationBuffer+1)) == TRUE)?0:1;
 			pInfo = ((ULONG*)InformationBuffer)+2;
-			
+
 			ulRegValue = 0x00000000 | (ulBeOFDM << 24); // OFDM or CCK read.
 			ulRegValue |= (ulRegOffset & 0x7f); // Offset.
-			PlatformEFIOWrite4Byte(Adapter, BBAddr, ulRegValue);			
+			PlatformEFIOWrite4Byte(Adapter, BBAddr, ulRegValue);
 			uData = PlatformEFIORead1Byte(Adapter, PhyDataR);
 			*((ULONG*)pInfo) = uData;
 		}
@@ -3377,7 +3377,7 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 	case OID_RT_PRO_QUERY_EEPROM_TYPE:
 		switch(Adapter->EepromAddressSize)
 		{
-			case 4: 
+			case 4:
 				ulInfo = 3; // For E-Fuse. added by Roger, 2008.11.10.
 				break;
 			case 6:
@@ -3403,22 +3403,22 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 			if(InformationBufferLength < sizeof(ULONG)*2)
 			{
 				Status = NDIS_STATUS_INVALID_LENGTH;
-				*BytesNeeded = sizeof(ULONG)*2;				
+				*BytesNeeded = sizeof(ULONG)*2;
 				return Status;
 			}
 			// Get offset and data width.
 			ulRegOffset = *((ULONG*)InformationBuffer);
 			ulRegDataWidth = *((ULONG*)InformationBuffer+1);
-			
+
 			switch(ulRegDataWidth)
 			{
-			case 1:			
+			case 1:
 				ulInfo = ReadEEprom(Adapter, (u2Byte)(ulRegOffset >> 1));
 				if(ulRegOffset % 2 == 1)
 					ulInfo >>= 8;
 				ulInfo &= 0xFF;
 				break;
-				
+
 			case 2:
 				ulInfo = ReadEEprom(Adapter, (u2Byte)(ulRegOffset >> 1));
 				ulInfo &= 0xFFFF;
@@ -3431,7 +3431,7 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 		}
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("<=== Query OID_RT_PRO_READ_EEPROM.\n"));
 		break;
-		
+
 	case OID_RT_PRO_READ_EFUSE:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("===> Query OID_RT_PRO_READ_EFUSE.\n"));
 		{
@@ -3443,7 +3443,7 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 			if(InformationBufferLength < sizeof(ULONG)*2)
 			{
 				Status = NDIS_STATUS_INVALID_LENGTH;
-				*BytesNeeded = sizeof(ULONG)*2;				
+				*BytesNeeded = sizeof(ULONG)*2;
 				return Status;
 			}
 			// Get offset and data width.
@@ -3458,7 +3458,7 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 				EFUSE_MaskedShadowRead(Adapter, 1, (u2Byte)(ulRegOffset), (UINT32 *)&value);
 				ulInfo = (u1Byte)value;
 				break;
-				
+
 			case 2:
 				EFUSE_MaskedShadowRead(Adapter, 2, (u2Byte)(ulRegOffset), (UINT32 *)&value);
 				ulInfo = (u2Byte)value;
@@ -3488,7 +3488,7 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 			if(InformationBufferLength < sizeof(ULONG)*2)
 			{
 				Status = NDIS_STATUS_INVALID_LENGTH;
-				*BytesNeeded = sizeof(ULONG)*2;				
+				*BytesNeeded = sizeof(ULONG)*2;
 				return Status;
 			}
 			// Get offset and data width.
@@ -3503,7 +3503,7 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 				EFUSE_ShadowReadBT(Adapter, 1, (u2Byte)(ulRegOffset), (UINT32 *)&value);
 				ulInfo = (u1Byte)value;
 				break;
-				
+
 			case 2:
 				EFUSE_ShadowReadBT(Adapter, 2, (u2Byte)(ulRegOffset), (UINT32 *)&value);
 				ulInfo = (u2Byte)value;
@@ -3532,8 +3532,8 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 		{
 			ULONG	ulRegOffset;
 			ULONG	ulRegDataWidth;
-			ULONG	RF_PATH;	
-			
+			ULONG	RF_PATH;
+
 			//
 			// Add in the future. Since we cannot call HAL related function in \PLATFORM
 			//
@@ -3549,7 +3549,7 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 		}
 		RT_TRACE(COMP_MP, DBG_LOUD, ("<=== Query OID_RT_PRO_RF_READ_REGISTRY.\n"));
 		break;
-		
+
 	case OID_RT_INACTIVE_PS:
 		{
 			//
@@ -3572,7 +3572,7 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("Query OID_RT_INACTIVE_PS: %u\n", ulInfo));
 		}
 		break;
-		
+
 	case OID_RT_CUSTOMER_ID_INFO:
 		{
 			if( InformationBufferLength < sizeof(RT_CUSTOMER_ID) )
@@ -3590,7 +3590,7 @@ N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
 
 
 	if(Status == NDIS_STATUS_SUCCESS)
-	{        
+	{
 		if(ulInfoLen <= InformationBufferLength)
 		{
 			// Copy result into InformationBuffer
@@ -3646,16 +3646,16 @@ N6CQueryInformation(
 
 	// Moved From Orginal MPQueryInformation Query OID ----------------------------------------------------------------------------------------------
 	Status = N6CQueryInformationHandleCustomizedOriginalMPQueryOid(
- 			pAdapter, 
-			Oid, 
+ 			pAdapter,
+			Oid,
 			InformationBuffer,
-			InformationBufferLength, 
-			BytesWritten, 
+			InformationBufferLength,
+			BytesWritten,
 			BytesNeeded
 		);
-	
+
 	if(Status != NDIS_STATUS_NOT_RECOGNIZED)
-	{	
+	{
 		// The Customized OID has been handled.
 		return Status;
 	}
@@ -3681,18 +3681,18 @@ N6CQueryInformation(
 
 	// Handle the Customized Wapi Oids --------------------------------------------------------------------------
 	Status = WAPI_OidHandler(
-			pAdapter, 
+			pAdapter,
 			1, //N6 Platform
 			0, //Query OID
-			Oid, 
+			Oid,
 			InformationBuffer,
-			InformationBufferLength, 
-			BytesWritten, 
+			InformationBufferLength,
+			BytesWritten,
 			BytesNeeded
 		);
-	
+
 	if(Status != NDIS_STATUS_NOT_RECOGNIZED)
-	{	
+	{
 		// The Customized OID has been handled.
 		return Status;
 	}
@@ -3703,16 +3703,16 @@ N6CQueryInformation(
 
 	// Handle the Customized WifiDirect Oids --------------------------------------------------------------------------
 	Status = N6CQueryInformationHandleCustomizedWifiDirectOids(
-			pAdapter, 
-			Oid, 
+			pAdapter,
+			Oid,
 			InformationBuffer,
-			InformationBufferLength, 
-			BytesWritten, 
+			InformationBufferLength,
+			BytesWritten,
 			BytesNeeded
 		);
-	
+
 	if(Status != NDIS_STATUS_NOT_RECOGNIZED)
-	{	
+	{
 		// The Customized OID has been handled.
 		return Status;
 	}
@@ -3723,36 +3723,36 @@ N6CQueryInformation(
 
 	// Handle the Customized 11n Oids --------------------------------------------------------------------------
 	Status = N6CQueryInformationHandleCustomized11nOids(
-			pAdapter, 
-			Oid, 
+			pAdapter,
+			Oid,
 			InformationBuffer,
-			InformationBufferLength, 
-			BytesWritten, 
+			InformationBufferLength,
+			BytesWritten,
 			BytesNeeded
 		);
-	
+
 	if(Status != NDIS_STATUS_NOT_RECOGNIZED)
-	{	
+	{
 		// The Customized OID has been handled.
 		return Status;
 	}
 	else Status = NDIS_STATUS_SUCCESS;
 	// --------------------------------------------------------------------------------------------------
 
-	
+
 
 	// Handle the Customized Security Oids --------------------------------------------------------------------
 	Status = N6CQueryInformationHandleCustomizedSecurityOids(
-			pAdapter, 
-			Oid, 
+			pAdapter,
+			Oid,
 			InformationBuffer,
-			InformationBufferLength, 
-			BytesWritten, 
+			InformationBufferLength,
+			BytesWritten,
 			BytesNeeded
 		);
-	
+
 	if(Status != NDIS_STATUS_NOT_RECOGNIZED)
-	{	
+	{
 		// The Customized OID has been handled.
 		return Status;
 	}
@@ -3761,19 +3761,19 @@ N6CQueryInformation(
 
 
 
-	
+
 	// Handle the Customized Oids --------------------------------------------------------------------------
 	Status = N6CQueryInformationHandleCustomizedOids(
-			pAdapter, 
-			Oid, 
+			pAdapter,
+			Oid,
 			InformationBuffer,
-			InformationBufferLength, 
-			BytesWritten, 
+			InformationBufferLength,
+			BytesWritten,
 			BytesNeeded
 		);
-	
+
 	if(Status != NDIS_STATUS_NOT_RECOGNIZED)
-	{	
+	{
 		// The Customized OID has been handled.
 		return Status;
 	}
@@ -3783,7 +3783,7 @@ N6CQueryInformation(
 
 
 	// ============================================================================================
-	// The following are the OIDs from the NDIS 6.x, including the Customized OIDs with the same meanings. Please be organized. 
+	// The following are the OIDs from the NDIS 6.x, including the Customized OIDs with the same meanings. Please be organized.
 	// ============================================================================================
 
 
@@ -3811,7 +3811,7 @@ N6CQueryInformation(
 
 	case OID_GEN_MEDIA_CAPABILITIES:
 		ulInfo = NDIS_MEDIA_CAP_TRANSMIT | NDIS_MEDIA_CAP_RECEIVE;
-		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_GEN_MEDIA_CAPABILITIES: %d\n",ulInfo));        	
+		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_GEN_MEDIA_CAPABILITIES: %d\n",ulInfo));
 		break;
 
 	case OID_GEN_VENDOR_ID:
@@ -3829,7 +3829,7 @@ N6CQueryInformation(
 		usInfo = (USHORT) NIC_DRIVER_VERSION60;
 		pInfo = (PVOID) &usInfo;
 		ulInfoLen = sizeof(USHORT);
-		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_GEN_DRIVER_VERSION:%08x\n",usInfo));            
+		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_GEN_DRIVER_VERSION:%08x\n",usInfo));
 		break;
 
 	case OID_GEN_CURRENT_LOOKAHEAD:
@@ -3837,16 +3837,16 @@ N6CQueryInformation(
 		if(pNdisCommon->ulLookAhead == 0)
 			pNdisCommon->ulLookAhead = pNdisCommon->MaxPktSize - NIC_HEADER_SIZE;
 		ulInfo = pNdisCommon->ulLookAhead;
-		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_GEN_CURRENT_LOOKAHEAD or OID_GEN_MAXIMUM_LOOKAHEAD: %d\n",ulInfo));            
-		break;      
+		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_GEN_CURRENT_LOOKAHEAD or OID_GEN_MAXIMUM_LOOKAHEAD: %d\n",ulInfo));
+		break;
 
 	case OID_GEN_MAXIMUM_FRAME_SIZE:
-		ulInfo = pNdisCommon->MaxPktSize - NIC_HEADER_SIZE; 
+		ulInfo = pNdisCommon->MaxPktSize - NIC_HEADER_SIZE;
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_GEN_MAXIMUM_FRAME_SIZE:%d\n",ulInfo));
 		break;
 
 	case OID_GEN_MAXIMUM_TOTAL_SIZE:
-		ulInfo = pNdisCommon->MaxPktSize; 
+		ulInfo = pNdisCommon->MaxPktSize;
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_GEN_MAXIMUM_TOTAL_SIZE:%d\n",ulInfo));
 		break;
 
@@ -3873,10 +3873,10 @@ N6CQueryInformation(
 	case OID_GEN_MAC_OPTIONS:
 		ulInfo =	NDIS_MAC_OPTION_TRANSFERS_NOT_PEND |
 // 20100309 Joseph: Modified for software "Chinasec" BSOD issue.
-// If we do not indicate NDIS_MAC_OPTION_COPY_LOOKAHEAD_DATA flag, Chinasec BSOD in higher layer 
+// If we do not indicate NDIS_MAC_OPTION_COPY_LOOKAHEAD_DATA flag, Chinasec BSOD in higher layer
 //when sending Tx buffer to do NDIS miniport driver after connection.
 //#if COALESCE_RECEIVED_PACKET
-					NDIS_MAC_OPTION_COPY_LOOKAHEAD_DATA | 
+					NDIS_MAC_OPTION_COPY_LOOKAHEAD_DATA |
 //#endif
 					NDIS_MAC_OPTION_NO_LOOPBACK;
 
@@ -3886,16 +3886,16 @@ N6CQueryInformation(
 			ulInfo |= NDIS_MAC_OPTION_8021P_PRIORITY;
 		}
 
-		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_GEN_MAC_OPTIONS:%08x\n", ulInfo));                    
+		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_GEN_MAC_OPTIONS:%08x\n", ulInfo));
 		break;
 
-	case OID_GEN_LINK_SPEED:		
+	case OID_GEN_LINK_SPEED:
 		ulInfo = (MgntActQuery_RT_11N_USER_SHOW_RATES(pAdapter , pMgntInfo->bForcedShowRxRate, FALSE)/2)*10000;
 
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_GEN_LINK_SPEED:%d Mbps\n",ulInfo/10000));
 		break;
 
-	case OID_GEN_MEDIA_CONNECT_STATUS: 
+	case OID_GEN_MEDIA_CONNECT_STATUS:
        	 //
        	 // We will always report connected. The nwifi IM driver
        	 // takes care of the logic of this for the miniport.
@@ -3911,7 +3911,7 @@ N6CQueryInformation(
 			ulInfo = NdisMediaStateDisconnected;
 			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_GEN_MEDIA_CONNECT_STATUS: NdisMediaStateDisconnected\n"));
 		}
-		
+
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_GEN_MEDIA_CONNECT_STATUS: NdisMediaStateConnected\n"));
 		break;
 
@@ -3993,7 +3993,7 @@ N6CQueryInformation(
 		Status = NDIS_STATUS_NOT_SUPPORTED;
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_FFP_SUPPORT: (not supported)\n"));
 		break;
-	
+
 	case OID_GEN_SUPPORTED_GUIDS:
 		Status = NDIS_STATUS_NOT_SUPPORTED;
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_GEN_SUPPORTED_GUIDS: (not supported)\n"));
@@ -4001,7 +4001,7 @@ N6CQueryInformation(
 
 	case OID_GEN_MAXIMUM_SEND_PACKETS:
 		ulInfo = NIC_MAX_SEND_PACKETS;
-		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_GEN_MAXIMUM_SEND_PACKETS:%d\n",ulInfo));                        
+		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_GEN_MAXIMUM_SEND_PACKETS:%d\n",ulInfo));
 		break;
 
 	case OID_802_3_PERMANENT_ADDRESS:
@@ -4011,14 +4011,14 @@ N6CQueryInformation(
 		break;
 
 	case OID_802_3_CURRENT_ADDRESS:
-		pInfo = pAdapter->CurrentAddress;		
+		pInfo = pAdapter->CurrentAddress;
 		ulInfoLen = ETH_LENGTH_OF_ADDRESS;
-		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_802_3_CURRENT_ADDRESS:%02x:%02x:%02x:%02x:%02x:%02x\n", pAdapter->CurrentAddress[0], pAdapter->CurrentAddress[1], pAdapter->CurrentAddress[2], pAdapter->CurrentAddress[3], pAdapter->CurrentAddress[4], pAdapter->CurrentAddress[5]));            
+		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_802_3_CURRENT_ADDRESS:%02x:%02x:%02x:%02x:%02x:%02x\n", pAdapter->CurrentAddress[0], pAdapter->CurrentAddress[1], pAdapter->CurrentAddress[2], pAdapter->CurrentAddress[3], pAdapter->CurrentAddress[4], pAdapter->CurrentAddress[5]));
 		break;
 
 	case OID_802_3_MAXIMUM_LIST_SIZE:
 		ulInfo = MAX_MCAST_LIST_NUM;
-		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_802_3_MAXIMUM_LIST_SIZE:%d\n",ulInfo));                        
+		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query Information, OID_802_3_MAXIMUM_LIST_SIZE:%d\n",ulInfo));
 		break;
 
 	case OID_802_3_MULTICAST_LIST:
@@ -4037,7 +4037,7 @@ N6CQueryInformation(
 			bInformationCopied = TRUE;
 		}
 		break;
-		
+
 	// 2006.10.26, by shien chang.
 	case OID_DOT11_OPERATION_MODE_CAPABILITY:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_OPERATION_MODE_CAPABILITY:\n"));
@@ -4066,7 +4066,7 @@ N6CQueryInformation(
 
 	case OID_DOT11_STATISTICS:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_STATISTICS:\n"));
-		{		
+		{
 			return N6CQuery_DOT11_STATISTICS(
 				pAdapter,
 				InformationBuffer,
@@ -4085,7 +4085,7 @@ N6CQueryInformation(
 			{
 				*BytesNeeded = len;
 				*BytesWritten = 0;
-				return NDIS_STATUS_BUFFER_TOO_SHORT;			
+				return NDIS_STATUS_BUFFER_TOO_SHORT;
 			}
 
 			Status = N6CQuery_DOT11_DESIRED_BSS_TYPE(pAdapter, pBssType);
@@ -4096,7 +4096,7 @@ N6CQueryInformation(
 			}
 		}
 		break;
-		
+
 	case OID_DOT11_MEDIA_STREAMING_ENABLED:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_MEDIA_STREAMING_ENABLED:\n"));
 		{
@@ -4138,7 +4138,7 @@ N6CQueryInformation(
 				BytesNeeded);
 		}
 		break;
-		
+
 	case OID_DOT11_IBSS_PARAMS:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_IBSS_PARAMS:\n"));
 		{
@@ -4150,7 +4150,7 @@ N6CQueryInformation(
 				BytesNeeded);
 		}
 		break;
-		
+
 	case OID_DOT11_PERMANENT_ADDRESS:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_PERMANENT_ADDRESS:\n"));
 		{
@@ -4169,7 +4169,7 @@ N6CQueryInformation(
 			bInformationCopied = TRUE;
 		}
 		break;
-		
+
 	case OID_DOT11_CURRENT_ADDRESS:
 	case OID_DOT11_MAC_ADDRESS:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_CURRENT_ADDRESS or OID_DOT11_MAC_ADDRESS:\n"));
@@ -4190,7 +4190,7 @@ N6CQueryInformation(
 			bInformationCopied = TRUE;
 		}
 		break;
-		
+
 	// 2006.11.01, by shien chang.
 	case OID_DOT11_STATION_ID:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_STATION_ID:\n"));
@@ -4202,7 +4202,7 @@ N6CQueryInformation(
 			}
 
 			PlatformMoveMemory(
-				InformationBuffer, 
+				InformationBuffer,
 				pAdapter->CurrentAddress,
 				*BytesNeeded);
 			bInformationCopied = TRUE;
@@ -4228,9 +4228,9 @@ N6CQueryInformation(
 	case OID_DOT11_REG_DOMAINS_SUPPORT_VALUE:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_REG_DOMAINS_SUPPORT_VALUE:\n"));
 		{
-			PDOT11_REG_DOMAINS_SUPPORT_VALUE pValue = 
+			PDOT11_REG_DOMAINS_SUPPORT_VALUE pValue =
 				(PDOT11_REG_DOMAINS_SUPPORT_VALUE)InformationBuffer;
-			
+
 			*BytesNeeded = sizeof(DOT11_REG_DOMAINS_SUPPORT_VALUE);
 			if ( InformationBufferLength < *BytesNeeded )
 			{
@@ -4275,7 +4275,7 @@ N6CQueryInformation(
 			ulInfoLen = *BytesNeeded;
 		}
 		break;
-	
+
 	case OID_DOT11_UNICAST_USE_GROUP_ENABLED:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_UNICAST_USE_GROUP_ENABLED:\n"));
 		{
@@ -4329,7 +4329,7 @@ N6CQueryInformation(
 		break;
 
 	case  OID_DOT11_CURRENT_FREQUENCY:
-	case  OID_DOT11_CURRENT_CHANNEL: 
+	case  OID_DOT11_CURRENT_CHANNEL:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_CURRENT_CHANNEL:\n"));
 		{
 			*BytesNeeded = sizeof(ULONG);
@@ -4341,7 +4341,7 @@ N6CQueryInformation(
 
 			if(pMgntInfo->mAssoc || pMgntInfo->mIbss)
 			{
-				
+
 			#if (MULTICHANNEL_SUPPORT == 1)
 				if(MultiChannelSwitchNeeded(pAdapter))
 				{
@@ -4352,12 +4352,12 @@ N6CQueryInformation(
 					RT_TRACE(COMP_MULTICHANNEL, DBG_LOUD, ("MultiChannelGetPortConnected20MhzChannel: %d\n", ulInfo));
 				}
 				else
-			#endif				
+			#endif
 				{
 					ulInfo = pMgntInfo->dot11CurrentChannelNumber;
 				}
 
-				
+
 				RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("A: channel: %u:\n", ulInfo));
 			}
 			else
@@ -4383,7 +4383,7 @@ N6CQueryInformation(
 			}
 			ulInfoLen = sizeof(ULONG);
 
-			
+
 		}
 		break;
 
@@ -4399,8 +4399,8 @@ N6CQueryInformation(
                     );
 		}
 		break;
-		
-	case OID_DOT11_SUPPORTED_DATA_RATES_VALUE: 
+
+	case OID_DOT11_SUPPORTED_DATA_RATES_VALUE:
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_SUPPORTED_DATA_RATES_VALUE:\n"));
 		{
 			return N6CQuery_DOT11_Supported_DataRates(
@@ -4412,22 +4412,22 @@ N6CQueryInformation(
                     );
 		}
 		break;
-		
+
 	case OID_DOT11_MULTI_DOMAIN_CAPABILITY_IMPLEMENTED:
 	case OID_DOT11_MULTI_DOMAIN_CAPABILITY_ENABLED:
 	case OID_DOT11_COUNTRY_STRING:
 		Status = NDIS_STATUS_NOT_SUPPORTED;
 		break;
-		
+
 	case OID_DOT11_SUPPORTED_TX_ANTENNA:
-		{		
+		{
 			return N6CQuery_DOT11_Tx_Antenna(
 					pAdapter,
 					InformationBuffer,
 					InformationBufferLength,
 					BytesWritten,
 					BytesNeeded);
-		}	
+		}
 		break;
 
 	// Added by Annie, 2006-10-09.
@@ -4476,9 +4476,9 @@ N6CQueryInformation(
 	// Added by Annie, 2006-10-13.
 	case OID_DOT11_CIPHER_DEFAULT_KEY_ID:
 		RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_CIPHER_DEFAULT_KEY_ID, 0x%08x\n", Oid) );
-		{		
+		{
 			PRT_SECURITY_T		pSecInfo = &(pAdapter->MgntInfo.SecurityInfo);
-			
+
 			if (InformationBufferLength < sizeof(u4Byte))
 			{
 				*BytesNeeded = sizeof(u4Byte);
@@ -4510,7 +4510,7 @@ N6CQueryInformation(
 		{
 			return N6CQuery_DOT11_SUPPORTED_MULTICAST_ALGORITHM_PAIR(
 						pAdapter,
-						InformationBuffer,			
+						InformationBuffer,
 						InformationBufferLength,
 						BytesWritten,
 						BytesNeeded
@@ -4537,10 +4537,10 @@ N6CQueryInformation(
 						pPMKIDList,
 						InformationBufferLength
 						);
-			
+
 			if (Status == NDIS_STATUS_SUCCESS)
 			{
-				*BytesWritten = pPMKIDList->uNumOfEntries * sizeof(DOT11_PMKID_ENTRY) + 
+				*BytesWritten = pPMKIDList->uNumOfEntries * sizeof(DOT11_PMKID_ENTRY) +
 								FIELD_OFFSET(DOT11_PMKID_LIST, PMKIDs);
 				bInformationCopied = TRUE;
 			}
@@ -4594,10 +4594,10 @@ N6CQueryInformation(
 		}
 		break;
 
-	// 061012, by rcnjko. 
+	// 061012, by rcnjko.
 	case OID_DOT11_MPDU_MAX_LENGTH:
 		RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_MPDU_MAX_LENGTH\n") );
-		{ 
+		{
 			*BytesNeeded = sizeof(u4Byte);
 			if( InformationBufferLength < *BytesNeeded )
 			{
@@ -4611,10 +4611,10 @@ N6CQueryInformation(
 		}
 		break;
 
-	// 061012, by rcnjko. 
+	// 061012, by rcnjko.
 	case OID_DOT11_ATIM_WINDOW:
 		RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_ATIM_WINDOW\n") );
-		{ 
+		{
 			*BytesNeeded = sizeof(ULONG);
 			if( InformationBufferLength < *BytesNeeded )
 			{
@@ -4634,9 +4634,9 @@ N6CQueryInformation(
 		break;
 
 #if 0	// Move to OID Protal - 2011.09.22
-	// 061012, by rcnjko. 
+	// 061012, by rcnjko.
 	case OID_DOT11_NIC_POWER_STATE:
-		{ 
+		{
 			RT_RF_POWER_STATE rfState;
 
 			*BytesNeeded = sizeof(BOOLEAN);
@@ -4645,12 +4645,12 @@ N6CQueryInformation(
 				*BytesWritten = 0;
 				Status = NDIS_STATUS_BUFFER_OVERFLOW;
 				break;
-			} 
+			}
 
 			pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_RF_STATE, (pu1Byte)(&rfState));
 			if (rfState == eRfOff)
 			{
-				if (pMgntInfo->RfOffReason >= RF_CHANGE_BY_HW) 
+				if (pMgntInfo->RfOffReason >= RF_CHANGE_BY_HW)
 				{
 					ulInfo = FALSE;
 				}
@@ -4665,22 +4665,22 @@ N6CQueryInformation(
 			}
 			ulInfoLen = *BytesNeeded;
 		}
-		RT_TRACE( COMP_OID_QUERY|COMP_RF, DBG_LOUD, ("Query OID_DOT11_NIC_POWER_STATE rf %d\n", ulInfo) );		
+		RT_TRACE( COMP_OID_QUERY|COMP_RF, DBG_LOUD, ("Query OID_DOT11_NIC_POWER_STATE rf %d\n", ulInfo) );
 		break;
 #endif
 
 	// 2006.11.02, by shien chang.
 	case OID_DOT11_HARDWARE_PHY_STATE:
-		{ 
+		{
 			RT_RF_POWER_STATE rfState;
-			
+
 			*BytesNeeded = sizeof(BOOLEAN);
 			if( InformationBufferLength < *BytesNeeded )
 			{
 				*BytesWritten = 0;
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				break;
-			} 
+			}
 
 			pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_RF_STATE, (pu1Byte)(&rfState));
 			if (rfState == eRfOff)
@@ -4703,18 +4703,18 @@ N6CQueryInformation(
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_HARDWARE_PHY_STATE: rf %d\n", ulInfo));
 		break;
 
-		
-	// 061014, by rcnjko. 
+
+	// 061014, by rcnjko.
 	case OID_DOT11_OPTIONAL_CAPABILITY:
 		RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_OPTIONAL_CAPABILITY\n") );
-		{ 
+		{
 			*BytesNeeded = sizeof(DOT11_OPTIONAL_CAPABILITY);
 			if( InformationBufferLength < *BytesNeeded )
 			{
 				*BytesWritten = 0;
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				break;
-			} 
+			}
 
 			Status = N6CQuery_DOT11_OPTIONAL_CAPABILITY(pAdapter, InformationBuffer);
 			if (Status == NDIS_STATUS_SUCCESS)
@@ -4726,17 +4726,17 @@ N6CQueryInformation(
 		}
 		break;
 
-	// 061014, by rcnjko. 
+	// 061014, by rcnjko.
 	case OID_DOT11_CURRENT_OPTIONAL_CAPABILITY:
 		RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_CURRENT_OPTIONAL_CAPABILITY\n") );
-		{ 
+		{
 			*BytesNeeded = sizeof(DOT11_OPTIONAL_CAPABILITY);
 			if( InformationBufferLength < *BytesNeeded )
 			{
 				*BytesWritten = 0;
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				break;
-			} 
+			}
 
 			Status = N6CQuery_DOT11_CURRENT_OPTIONAL_CAPABILITY(pAdapter, InformationBuffer);
 			if (Status == NDIS_STATUS_SUCCESS)
@@ -4748,17 +4748,17 @@ N6CQueryInformation(
 		}
 		break;
 
-	// 061014, by rcnjko. 
+	// 061014, by rcnjko.
 	case OID_DOT11_CF_POLLABLE:
 		RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_CF_POLLABLE\n") );
-		{ 
+		{
 			*BytesNeeded = sizeof(BOOLEAN);
 			if( InformationBufferLength < *BytesNeeded )
 			{
 				*BytesWritten = 0;
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				break;
-			} 
+			}
 
 			Status = N6CQuery_DOT11_CF_POLLABLE(pAdapter, InformationBuffer);
 			if (Status == NDIS_STATUS_SUCCESS)
@@ -4770,13 +4770,13 @@ N6CQueryInformation(
 		}
 		break;
 
-	// 061014, by rcnjko. 
+	// 061014, by rcnjko.
 	case OID_RT_OPERATIONAL_RATE_SET:
 	case OID_DOT11_OPERATIONAL_RATE_SET:
 		RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_OPERATIONAL_RATE_SET\n") );
-		{ 
+		{
 			return N6CQuery_DOT11_OPERATIONAL_RATE_SET(
-					pAdapter, 
+					pAdapter,
 					InformationBuffer,
 					InformationBufferLength,
 					BytesWritten,
@@ -4784,35 +4784,35 @@ N6CQueryInformation(
 		}
 		break;
 
-	// 061014, by rcnjko. 
+	// 061014, by rcnjko.
 	case OID_RT_RTS_THRESHOLD:
 	case OID_DOT11_RTS_THRESHOLD:
 		RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_RTS_THRESHOLD\n") );
-		{ 
+		{
 			*BytesNeeded = sizeof(ULONG);
 			if( InformationBufferLength < *BytesNeeded )
 			{
 				*BytesWritten = 0;
 				Status = NDIS_STATUS_BUFFER_OVERFLOW;
 				break;
-			} 
+			}
 
 			ulInfo = MgntActQuery_802_11_RTS_THRESHOLD(pAdapter);
 			ulInfoLen = sizeof(ULONG);
 		}
 		break;
-		
-	// 061014, by rcnjko. 
+
+	// 061014, by rcnjko.
 	case OID_DOT11_SHORT_RETRY_LIMIT:
 		RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_SHORT_RETRY_LIMIT\n") );
-		{ 
+		{
 			*BytesNeeded = sizeof(ULONG);
 			if( InformationBufferLength < *BytesNeeded )
 			{
 				*BytesWritten = 0;
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				break;
-			} 
+			}
 
 			Status = N6CQuery_DOT11_SHORT_RETRY_LIMIT(pAdapter, InformationBuffer);
 			if (Status == NDIS_STATUS_SUCCESS)
@@ -4824,17 +4824,17 @@ N6CQueryInformation(
 		}
 		break;
 
-	// 061014, by rcnjko. 
+	// 061014, by rcnjko.
 	case OID_DOT11_LONG_RETRY_LIMIT:
 		RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_LONG_RETRY_LIMIT\n") );
-		{ 
+		{
 			*BytesNeeded = sizeof(ULONG);
 			if( InformationBufferLength < *BytesNeeded )
 			{
 				*BytesWritten = 0;
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				break;
-			} 
+			}
 
 			Status = N6CQuery_DOT11_LONG_RETRY_LIMIT(pAdapter, InformationBuffer);
 			if (Status == NDIS_STATUS_SUCCESS)
@@ -4846,35 +4846,35 @@ N6CQueryInformation(
 		}
 		break;
 
-	// 061014, by rcnjko. 
+	// 061014, by rcnjko.
 	case OID_RT_FRAGMENTATION_THRESHOLD:
 	case OID_DOT11_FRAGMENTATION_THRESHOLD:
 		RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_FRAGMENTATION_THRESHOLD\n") );
-		{ 
+		{
 			*BytesNeeded = sizeof(ULONG);
 			if( InformationBufferLength < *BytesNeeded )
 			{
 				*BytesWritten = 0;
 				Status = NDIS_STATUS_BUFFER_OVERFLOW;
 				break;
-			} 
+			}
 
 			ulInfo = MgntActQuery_802_11_FRAGMENTATION_THRESHOLD(pAdapter);
 			ulInfoLen = *BytesNeeded;
 		}
 		break;
 
-	// 061014, by rcnjko. 
+	// 061014, by rcnjko.
 	case OID_DOT11_MAX_TRANSMIT_MSDU_LIFETIME:
 		RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_MAX_TRANSMIT_MSDU_LIFETIME\n") );
-		{ 
+		{
 			*BytesNeeded = sizeof(ULONG);
 			if( InformationBufferLength < *BytesNeeded )
 			{
 				*BytesWritten = 0;
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				break;
-			} 
+			}
 
 			Status = N6CQuery_DOT11_MAX_TRANSMIT_MSDU_LIFETIME(pAdapter, InformationBuffer);
 			if (Status == NDIS_STATUS_SUCCESS)
@@ -4886,17 +4886,17 @@ N6CQueryInformation(
 		}
 		break;
 
-	// 061014, by rcnjko. 
+	// 061014, by rcnjko.
 	case OID_DOT11_MAX_RECEIVE_LIFETIME:
 		RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_MAX_RECEIVE_LIFETIME\n") );
-		{ 
+		{
 			*BytesNeeded = sizeof(ULONG);
 			if( InformationBufferLength < *BytesNeeded )
 			{
 				*BytesWritten = 0;
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				break;
-			} 
+			}
 
 			Status = N6CQuery_DOT11_MAX_RECEIVE_LIFETIME(pAdapter, InformationBuffer);
 			if (Status == NDIS_STATUS_SUCCESS)
@@ -4908,13 +4908,13 @@ N6CQueryInformation(
 		}
 		break;
 
-	// 061014, by rcnjko. 
+	// 061014, by rcnjko.
 	case OID_DOT11_SUPPORTED_PHY_TYPES:
 		RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_SUPPORTED_PHY_TYPES\n") );
-		{ 
+		{
 			Status = N6CQuery_DOT11_SUPPORTED_PHY_TYPES(
-						pAdapter, 
-						InformationBuffer, 
+						pAdapter,
+						InformationBuffer,
 						InformationBufferLength,
 						BytesWritten,
 						BytesNeeded);
@@ -4929,12 +4929,12 @@ N6CQueryInformation(
 	case OID_DOT11_MULTICAST_LIST:
 		{
 			Status = N6CQuery_DOT11_MULTICAST_LIST(
-						pAdapter, 
-						InformationBuffer, 
+						pAdapter,
+						InformationBuffer,
 						InformationBufferLength,
 						BytesWritten,
 						BytesNeeded);
-			
+
 			if (Status == NDIS_STATUS_SUCCESS)
 			{
 				ulInfoLen = *BytesWritten;
@@ -4943,7 +4943,7 @@ N6CQueryInformation(
 			RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_MULTICAST_LIST num of multicast address:%d\n", pAdapter->MCAddrCount));
 		}
 		break;
-		
+
 	case OID_RT_QUERY_IS_MP_CHIP:
 		{
 			PHAL_DATA_TYPE	pHalData = GET_HAL_DATA(pAdapter);
@@ -4963,7 +4963,7 @@ N6CQueryInformation(
 
 		ulInfo = pAdapter->pNdisCommon->dot11SelectedPhyId;
 		PlatformMoveMemory(InformationBuffer, &ulInfo, sizeof(ULONG));
-		*BytesWritten = sizeof(ULONG);	
+		*BytesWritten = sizeof(ULONG);
 
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query OID_DOT11_CURRENT_PHY_ID: phyid%d\n", ulInfo));
 		break;
@@ -4977,7 +4977,7 @@ N6CQueryInformation(
 			*BytesWritten = 0;
 			return NDIS_STATUS_BUFFER_TOO_SHORT;
 		}
-		
+
 		DbgPrint( "Query OID_DOT11_SUPPORTED_POWER_LEVELS\n" );
 		*BytesWritten = sizeof(ULONG) * 9;
 		PlatformZeroMemory( InformationBuffer, sizeof(ULONG) * 9 );
@@ -4987,7 +4987,7 @@ N6CQueryInformation(
 	case OID_DOT11_BEACON_PERIOD:
 	{
 		PMGNT_INFO		pMgntInfo = &pAdapter->MgntInfo;
-		
+
 		// Clean output variables -----------------------------------
 		*BytesWritten = 0;
 		*BytesNeeded = 0;
@@ -5001,15 +5001,15 @@ N6CQueryInformation(
 			Status = NDIS_STATUS_INVALID_STATE;
 			return Status;
 		}
-				
+
 		*BytesNeeded = sizeof(ULONG);
 		if( InformationBufferLength < *BytesNeeded )
 		{
 			*BytesWritten = 0;
 			Status = NDIS_STATUS_INVALID_LENGTH;
 			return Status;
-		} 
-		
+		}
+
 		Status = N6CQuery_DOT11_BEACON_PERIOD(pAdapter, (PULONG) InformationBuffer );
 
 		if (Status == NDIS_STATUS_SUCCESS)
@@ -5021,15 +5021,15 @@ N6CQueryInformation(
 	}
 
 	// <LAST_OID_QUERY>
-	
+
 	default:
-		// This OID is not common one handled by USB and PCI. 
+		// This OID is not common one handled by USB and PCI.
 		Status = NDIS_STATUS_INVALID_OID;
 		break;
 	}
 
 	if(Status == NDIS_STATUS_SUCCESS)
-	{        
+	{
 		if(ulInfoLen <= InformationBufferLength)
 		{
 			// Copy result into InformationBuffer
@@ -5073,7 +5073,7 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 
 	*BytesRead = 0;
 	*BytesNeeded = 0;
-	
+
 	switch(Oid)
 	{
 	default:
@@ -5089,9 +5089,9 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 				*BytesNeeded = 7;
 				return	NDIS_STATUS_INVALID_LENGTH;
 			}
-			
+
 			(GET_P2P_INFO(pAdapter))->bAcceptInvitation = *((PBOOLEAN)((pu1Byte)InformationBuffer + 0));
-			PlatformMoveMemory((GET_P2P_INFO(pAdapter))->AccpetInvitationDeviceAddress, 
+			PlatformMoveMemory((GET_P2P_INFO(pAdapter))->AccpetInvitationDeviceAddress,
 				(pu1Byte)InformationBuffer + 1, 6);
 		}
 		break;
@@ -5101,12 +5101,12 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 
 			if(pMgntInfo->bDisableRtkSupportedP2P)
 			{
-				RT_TRACE_F(COMP_P2P, DBG_WARNING, 
+				RT_TRACE_F(COMP_P2P, DBG_WARNING,
 					("Ignore set of 0x%08X because bDisableRtkSupportedP2P is turned on\n", Oid));
 				Status = NDIS_STATUS_NOT_SUPPORTED;
 				break;
 			}
-			
+
 			if(InformationBufferLength < sizeof(u4Byte))
 			{
 				*BytesNeeded = sizeof(u4Byte);
@@ -5119,11 +5119,11 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 			{
 				return NDIS_STATUS_NOT_SUPPORTED;
 			}
-			
+
 			(GET_P2P_INFO(pAdapter))->P2PVersion = verToSet;
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("Set OID_RT_P2P_VERSION to %u\n", verToSet));
 		}
-		break;	
+		break;
 	case OID_RT_P2P_MODE:
 		{
 			u4Byte index = 0;
@@ -5135,7 +5135,7 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 
 			if(pMgntInfo->bDisableRtkSupportedP2P)
 			{
-				RT_TRACE_F(COMP_P2P, DBG_WARNING, 
+				RT_TRACE_F(COMP_P2P, DBG_WARNING,
 					("Ignore set of 0x%08X because bDisableRtkSupportedP2P is turned on\n", Oid));
 				Status = NDIS_STATUS_NOT_SUPPORTED;
 				break;
@@ -5145,17 +5145,17 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 			{
 				*BytesNeeded = sizeof(BOOLEAN) * 2 + sizeof(u1Byte) * 3;
 				RT_TRACE(COMP_P2P, DBG_LOUD,
-					("Set OID_RT_P2P_MODE: invalid length(%d < %d)\n", 
+					("Set OID_RT_P2P_MODE: invalid length(%d < %d)\n",
 					InformationBufferLength, *BytesNeeded));
 				return	NDIS_STATUS_INVALID_LENGTH;
 			}
 
 			bP2PMode = *((PBOOLEAN)((pu1Byte)InformationBuffer + index));
 			index += sizeof(BOOLEAN);
-			
+
 			bGO = *((PBOOLEAN)((pu1Byte)InformationBuffer + index));
 			index += sizeof(BOOLEAN);
-			
+
 			ListenChannel = *((pu1Byte)((pu1Byte)InformationBuffer + index));
 			index += sizeof(u1Byte);
 
@@ -5164,10 +5164,10 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 
 			GOIntent = *((pu1Byte)((pu1Byte)InformationBuffer + index));
 			index += sizeof(u1Byte);
-				
-			MgntActSet_P2PMode(pAdapter, 
-				bP2PMode, 
-				bGO, 
+
+			MgntActSet_P2PMode(pAdapter,
+				bP2PMode,
+				bGO,
 				ListenChannel,
 				IntendedOpChannel,
 				GOIntent);
@@ -5180,31 +5180,31 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 			{
 				*BytesNeeded = sizeof(u1Byte);
 				RT_TRACE(COMP_OID_SET, DBG_WARNING,
-					("Set OID_RT_ROAM_FAKE_SIGNAL: invalid length(%d < %d)\n", 
+					("Set OID_RT_ROAM_FAKE_SIGNAL: invalid length(%d < %d)\n",
 					InformationBufferLength, *BytesNeeded));
 				return	NDIS_STATUS_INVALID_LENGTH;
-			}			
+			}
 			pMgntInfo->RegFakeRoamSignal[0] = *((pu1Byte)InformationBuffer);
 			pMgntInfo->RegFakeRoamSignal[1] = *((pu1Byte)InformationBuffer + 1);
 			RT_TRACE_F(COMP_OID_SET, DBG_LOUD, ("RegFakeRoamSignal[0] = %d, RegFakeRoamSignal[1] = %d\n", pMgntInfo->RegFakeRoamSignal[0], pMgntInfo->RegFakeRoamSignal[1]));
 		}
 		break;
-		
-	case OID_RT_P2P_PROVISION_IE: 
+
+	case OID_RT_P2P_PROVISION_IE:
 		{
 			if(InformationBufferLength < sizeof(u1Byte))
 			{
 				*BytesNeeded = sizeof(u1Byte);
 				RT_TRACE(COMP_P2P, DBG_LOUD,
-					("Set OID_RT_P2P_PROVISION_IE: invalid length(%d < %d)\n", 
+					("Set OID_RT_P2P_PROVISION_IE: invalid length(%d < %d)\n",
 					InformationBufferLength, *BytesNeeded));
 				return	NDIS_STATUS_INVALID_LENGTH;
 			}
-			
+
 			MgntActSet_P2PProvisionIE(pAdapter, InformationBuffer, (u1Byte)InformationBufferLength);
 		}
 		break;
-	case OID_RT_P2P_FLUSH_SCAN_LIST: 
+	case OID_RT_P2P_FLUSH_SCAN_LIST:
 		{
 			RT_TRACE(COMP_OID_SET, DBG_LOUD,
 				("Set OID_RT_P2P_FLUSH_SCAN_LIST:\n"));
@@ -5217,13 +5217,13 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 			{
 				*BytesNeeded = sizeof(P2P_PROVISIONING_RESULT);
 				RT_TRACE(COMP_P2P, DBG_LOUD,
-					("Set OID_RT_P2P_PROVISIONING_RESULT: invalid length(%d < %d)\n", 
+					("Set OID_RT_P2P_PROVISIONING_RESULT: invalid length(%d < %d)\n",
 					InformationBufferLength, *BytesNeeded));
 				return	NDIS_STATUS_INVALID_LENGTH;
 			}
 
 			RT_TRACE(COMP_P2P, DBG_LOUD,
-					("Set OID_RT_P2P_PROVISIONING_RESULT: %u\n", 
+					("Set OID_RT_P2P_PROVISIONING_RESULT: %u\n",
 					*(PP2P_PROVISIONING_RESULT)InformationBuffer));
 			MgntActSet_P2PProvisioningResult(pAdapter, *(PP2P_PROVISIONING_RESULT)InformationBuffer);
 		}
@@ -5232,16 +5232,16 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 		{
 			PP2P_INFO pP2PInfo;
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("OID_RT_P2P_DEVICE_DISCOVERY\n"));
-			
+
 			if(InformationBufferLength < sizeof(u1Byte))
 			{
 				*BytesNeeded = sizeof(u1Byte);
 				RT_TRACE(COMP_P2P, DBG_LOUD,
-					("Set OID_RT_P2P_DEVICE_DISCOVERY: invalid length(%d < %d)\n", 
+					("Set OID_RT_P2P_DEVICE_DISCOVERY: invalid length(%d < %d)\n",
 					InformationBufferLength, *BytesNeeded));
 				return	NDIS_STATUS_INVALID_LENGTH;
 			}
-			
+
 			pP2PInfo = GET_P2P_INFO(pAdapter);
 
 			P2PResetCommonChannelArrivingProcess(pP2PInfo);
@@ -5256,13 +5256,13 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 			*BytesNeeded = sizeof(u1Byte) * 6;
 			if(InformationBufferLength < *BytesNeeded)
 			{
-				
+
 				RT_TRACE(COMP_P2P, DBG_LOUD,
-					("Set OID_RT_P2P_CONNECT_REQUEST: invalid length(%d < %d)\n", 
+					("Set OID_RT_P2P_CONNECT_REQUEST: invalid length(%d < %d)\n",
 					InformationBufferLength, *BytesNeeded));
 				return	NDIS_STATUS_INVALID_LENGTH;
 			}
-			
+
 			if(!P2PConnect(GET_P2P_INFO(pAdapter), (pu1Byte)InformationBuffer))
 			{
 				return NDIS_STATUS_FAILURE;
@@ -5279,7 +5279,7 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 			if(InformationBufferLength < sizeof(P2P_LIB_INVITATION_REQ_CONTEXT))
 			{
 				*BytesNeeded = sizeof(P2P_LIB_INVITATION_REQ_CONTEXT);
-				RT_TRACE(COMP_P2P, DBG_LOUD, ("Set OID_RT_P2P_INVITE_PEER: invalid length(%d < %d)\n", 
+				RT_TRACE(COMP_P2P, DBG_LOUD, ("Set OID_RT_P2P_INVITE_PEER: invalid length(%d < %d)\n",
 					InformationBufferLength, *BytesNeeded));
 				return	NDIS_STATUS_INVALID_LENGTH;
 			}
@@ -5296,13 +5296,13 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 			{
 				*BytesNeeded = sizeof(u1Byte);
 				RT_TRACE(COMP_P2P, DBG_LOUD,
-					("Set OID_RT_P2P_GO_INTENT: invalid length(%d < %d)\n", 
+					("Set OID_RT_P2P_GO_INTENT: invalid length(%d < %d)\n",
 					InformationBufferLength, *BytesNeeded));
 				return	NDIS_STATUS_INVALID_LENGTH;
 			}
-			
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
-				("Set OID_RT_P2P_GO_INTENT: from %u to %u with TieBreaker: %u unchanged\n", 
+
+			RT_TRACE(COMP_P2P, DBG_LOUD,
+				("Set OID_RT_P2P_GO_INTENT: from %u to %u with TieBreaker: %u unchanged\n",
 				pP2PInfo->GOIntent >> 1, *((pu1Byte)InformationBuffer), bTieBreaker));
 
 			pP2PInfo->GOIntent = ((*((pu1Byte)InformationBuffer) << 1) | bTieBreaker);
@@ -5316,7 +5316,7 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 			{
 				*BytesNeeded = sizeof(u1Byte) * 6;
 				RT_TRACE(COMP_P2P, DBG_LOUD,
-					("Set OID_RT_P2P_DEVICE_DISCOVERABILITY_REQ: invalid length(%d < %d)\n", 
+					("Set OID_RT_P2P_DEVICE_DISCOVERABILITY_REQ: invalid length(%d < %d)\n",
 					InformationBufferLength, *BytesNeeded));
 				return	NDIS_STATUS_INVALID_LENGTH;
 			}
@@ -5330,14 +5330,14 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 			{
 				*BytesNeeded = 6 + sizeof(u2Byte);
 				RT_TRACE(COMP_P2P, DBG_LOUD,
-					("Set OID_RT_P2P_PROVISION_DISCOVERY: invalid length(%d < %d)\n", 
+					("Set OID_RT_P2P_PROVISION_DISCOVERY: invalid length(%d < %d)\n",
 					InformationBufferLength, *BytesNeeded));
 				return	NDIS_STATUS_INVALID_LENGTH;
 			}
 
 			GET_P2P_INFO(pAdapter)->ProvisionReqRetryCnt = 0;
-			if(!P2PProvisionDiscovery(GET_P2P_INFO(pAdapter), 
-				(pu1Byte)InformationBuffer, 
+			if(!P2PProvisionDiscovery(GET_P2P_INFO(pAdapter),
+				(pu1Byte)InformationBuffer,
 				*(pu2Byte)((pu1Byte)InformationBuffer + 6)))
 			{
 				return NDIS_STATUS_FAILURE;
@@ -5363,8 +5363,8 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 			pP2PInfo->DeviceCapability = DevCap;
 			pP2PInfo->GroupCapability = GrpCap;
 
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
-				("OID_RT_P2P_CAPABILITY: set DC=%u, GC=%u\n", 
+			RT_TRACE(COMP_P2P, DBG_LOUD,
+				("OID_RT_P2P_CAPABILITY: set DC=%u, GC=%u\n",
 				pP2PInfo->DeviceCapability, pP2PInfo->GroupCapability));
 
 			//P2PDumpDeviceCapability(pP2PInfo->DeviceCapability);
@@ -5453,7 +5453,7 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 	case OID_RT_P2P_POWER_SAVE:
 		{
 			PP2P_POWERSAVE_SET	pP2pPs;
-			
+
 			*BytesNeeded = sizeof(P2P_POWERSAVE_SET);
 			if(InformationBufferLength < *BytesNeeded)
 				return NDIS_STATUS_INVALID_LENGTH;
@@ -5481,9 +5481,9 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 					pP2PInfo->State));
 				return NDIS_STATUS_FAILURE;
 			}
-			
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
-				("Set OID_RT_P2P_OP_CHANNEL: from %u to %u\n", 
+
+			RT_TRACE(COMP_P2P, DBG_LOUD,
+				("Set OID_RT_P2P_OP_CHANNEL: from %u to %u\n",
 				pP2PInfo->OperatingChannel, *(pu1Byte)InformationBuffer));
 
 			pP2PInfo->OperatingChannel = *(pu1Byte)InformationBuffer;
@@ -5518,7 +5518,7 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 
 			if(!P2P_ENABLED(pP2PInfo))
 			{
-				RT_TRACE(COMP_P2P, DBG_LOUD, 
+				RT_TRACE(COMP_P2P, DBG_LOUD,
 				("Set OID_RT_P2P_EXTENDED_LISTEN_TIMING: P2P NOT enabled\n"));
 				break;
 			}
@@ -5531,15 +5531,15 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 			Duration= *((pu2Byte)((pu1Byte)InformationBuffer + index));
 			index += sizeof(u2Byte);
 
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
-				("Set OID_RT_P2P_EXTENDED_LISTEN_TIMING: bOn: %u, period: %u(ms), duration: %u(ms)\n", 
+			RT_TRACE(COMP_P2P, DBG_LOUD,
+				("Set OID_RT_P2P_EXTENDED_LISTEN_TIMING: bOn: %u, period: %u(ms), duration: %u(ms)\n",
 				bOn, Period, Duration));
 
 			pP2PInfo->bSendProbeReqInExtendedListen = bOn;
 			pP2PInfo->ExtListenTimingPeriod = Period;
 			pP2PInfo->ExtListenTimingDuration = Duration;
 		}
-		break;		
+		break;
 
 	case OID_RT_P2P_SERVICE_DISCOVERY_REQ:
 		{
@@ -5552,11 +5552,11 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 				return NDIS_STATUS_INVALID_LENGTH;
 			}
 
-			if(InformationBufferLength < 
-				FIELD_OFFSET(P2P_SD_REQ_CONTEXT, ServiceReqTLVList) + 
+			if(InformationBufferLength <
+				FIELD_OFFSET(P2P_SD_REQ_CONTEXT, ServiceReqTLVList) +
 				sizeof(P2P_SERVICE_REQ_TLV) * pServiceQueryContent->ServiceReqTLVSize)
 			{
-				*BytesNeeded = FIELD_OFFSET(P2P_SD_REQ_CONTEXT, ServiceReqTLVList) + 
+				*BytesNeeded = FIELD_OFFSET(P2P_SD_REQ_CONTEXT, ServiceReqTLVList) +
 					sizeof(P2P_SERVICE_REQ_TLV) * pServiceQueryContent->ServiceReqTLVSize;
 				return NDIS_STATUS_INVALID_LENGTH;
 			}
@@ -5566,7 +5566,7 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 			P2PServiceDiscoveryReq(pP2PInfo, pServiceQueryContent);
 		}
 		break;
-	case OID_RT_P2P_SERVICE_DISCOVERY_RSP:	
+	case OID_RT_P2P_SERVICE_DISCOVERY_RSP:
 		{
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("Set OID_RT_P2P_SERVICE_DISCOVERY_RSP\n"));
 			if(InformationBufferLength < (ULONG)FIELD_OFFSET(P2P_SD_RSP_CONTEXT, ServiceRspTLVList))
@@ -5574,7 +5574,7 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 				*BytesNeeded = FIELD_OFFSET(P2P_SD_RSP_CONTEXT, ServiceRspTLVList);
 				return NDIS_STATUS_INVALID_LENGTH;
 			}
-			
+
 			P2PServiceDiscoveryRsp(GET_P2P_INFO(pAdapter), (PP2P_SD_RSP_CONTEXT)InformationBuffer);
 		}
 		break;
@@ -5593,18 +5593,18 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 				Status = NDIS_STATUS_FAILURE;
 			}
 		}
-		break;		
+		break;
 	case OID_RT_P2P_GO_BEACON_INTERVAL:
 			{
 				PP2P_INFO pP2PInfo = GET_P2P_INFO(pAdapter);
-		
+
 				if(InformationBufferLength < sizeof(u2Byte))
 				{
 					*BytesNeeded = sizeof(u2Byte);
 					RT_TRACE(COMP_P2P, DBG_LOUD,("Set OID_RT_P2P_GO_BEACON_INTERVAL: invalid length(%d < %d)\n", InformationBufferLength, *BytesNeeded));
 					return NDIS_STATUS_INVALID_LENGTH;
 				}
-		
+
 				P2PGOSetBeaconInterval(pP2PInfo, *(pu2Byte)InformationBuffer);
 			}
 			break;
@@ -5619,9 +5619,9 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 				RT_TRACE(COMP_P2P, DBG_LOUD,("Set OID_RT_P2P_GO_NEGO_RESULT: invalid length(%d < %d)\n", InformationBufferLength, *BytesNeeded));
 				return	NDIS_STATUS_INVALID_LENGTH;
 			}
-			
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
-				("Set OID_RT_P2P_GO_NEGO_RESULT: from %u to %u \n", 
+
+			RT_TRACE(COMP_P2P, DBG_LOUD,
+				("Set OID_RT_P2P_GO_NEGO_RESULT: from %u to %u \n",
 				pP2PInfo->PreviousGONegoResult, *(pu1Byte)InformationBuffer));
 
 			pP2PInfo->PreviousGONegoResult = *(pu1Byte)InformationBuffer;
@@ -5639,7 +5639,7 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 				RT_TRACE(COMP_P2P, DBG_LOUD,("Set OID_RT_P2P_GO_PREPROVISIONING: invalid length(%d < %d)\n", InformationBufferLength, *BytesNeeded));
 				return	NDIS_STATUS_INVALID_LENGTH;
 			}
-			
+
 			SsidLen = *(pu4Byte)InformationBuffer;
 
 			if(InformationBufferLength < sizeof(u4Byte) + SsidLen)
@@ -5655,7 +5655,7 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 			RT_PRINT_STR(COMP_P2P, DBG_LOUD, "Set OID_RT_P2P_GO_PREPROVISIONING: SSID:", pP2PInfo->SSIDBuf, pP2PInfo->SSIDLen);
 
 			P2PDeviceDiscoveryComplete(pP2PInfo, FALSE);
-			
+
 			pP2PInfo->ConnectionContext.bGoingToBeGO = TRUE;
 			pP2PInfo->State = P2P_STATE_PRE_PROVISIONING;
 			PlatformCancelTimer(pAdapter, &pP2PInfo->P2PMgntTimer);
@@ -5686,7 +5686,7 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 			PP2P_PROFILE_LIST pProfileList = NULL;
 
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("Set OID_RT_P2P_PROFILE_LIST\n"));
-			
+
 			if(InformationBufferLength < (ULONG)FIELD_OFFSET(P2P_PROFILE_LIST, profileList))
 			{
 				*BytesNeeded = FIELD_OFFSET(P2P_PROFILE_LIST, profileList);
@@ -5718,7 +5718,7 @@ N6CSetInformationHandleCustomizedWifiDirectOids(
 			Status = NdisStatusFromRtStatus(P2P_SetP2PGoFullSSID(pAdapter, (pu1Byte)InformationBuffer, InformationBufferLength));
 		}
 		break;
-	
+
 	}
 
 	return Status;
@@ -5747,7 +5747,7 @@ N6CSetInformationHandleCustomized11nOids(
 
 	*BytesRead = 0;
 	*BytesNeeded = 0;
-	
+
 	switch(Oid)
 	{
 	default:
@@ -5760,7 +5760,7 @@ N6CSetInformationHandleCustomized11nOids(
 		{
 
 		//Keep for debug usb3.0 20120907
-#if (HAL_8812A_USB == 1)			
+#if (HAL_8812A_USB == 1)
 			PRT_USB_DEVICE		pDevice;
 			u1Byte direction;
 
@@ -5775,7 +5775,7 @@ N6CSetInformationHandleCustomized11nOids(
 				RT_TRACE(COMP_OID_SET, DBG_LOUD,( "Wrong parameters!\n" ));
 
 			RT_TRACE(COMP_OID_SET, DBG_LOUD,( "Set pipe reset!\n" ));
-#endif				
+#endif
 		}
 		break;
 
@@ -5784,7 +5784,7 @@ N6CSetInformationHandleCustomized11nOids(
 			HAL_DATA_TYPE	*pHalData	= GET_HAL_DATA(pAdapter);
 			pHalData->AMPDUBurstMode =  (*(pu1Byte)InformationBuffer);
 			DbgPrint("OID_RT_AMPDU_BURST_MODE: %d\n", pHalData->AMPDUBurstMode);
-		}	
+		}
 		break;
 
 	case OID_RT_AMPDU_BURST_NUM:
@@ -5792,7 +5792,7 @@ N6CSetInformationHandleCustomized11nOids(
 			HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(pAdapter);
 			pHalData->AMPDUBurstNum = (*(pu1Byte)InformationBuffer);
 			DbgPrint("OID_RT_AMPDU_BURST_NUM: %d\n", pHalData->AMPDUBurstNum);
-		}	
+		}
 		break;
 
 	case OID_RT_AUTO_AMPDU_BURST_ENABLE:
@@ -5826,7 +5826,7 @@ N6CSetInformationHandleCustomized11nOids(
 			pNdisCommon->RegRxHignTPThreshold = (u2Byte)(*(pu1Byte)InformationBuffer);
 			pHalData->RxHignTPThreshold = pNdisCommon->RegRxHignTPThreshold;
 		}
-		break;		
+		break;
 
 	case OID_RT_BEAMFORMING_START:
 		{
@@ -5839,7 +5839,7 @@ N6CSetInformationHandleCustomized11nOids(
 				RT_TRACE_F(COMP_OID_SET, DBG_WARNING, ("[WARNING] OID_RT_BEAMFORMING_START, invalid buffer length (%d)!\n", InformationBufferLength));
 				*BytesNeeded = 8;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
-			}	
+			}
 			cpMacAddr(RA, (pu1Byte)InformationBuffer+3);
 			Mode = (*((pu1Byte)InformationBuffer)  >>  4) & 0xf;
 			BW = *((pu1Byte)(InformationBuffer)) & 0xf;
@@ -5867,8 +5867,8 @@ N6CSetInformationHandleCustomized11nOids(
 				RT_TRACE_F(COMP_OID_SET, DBG_WARNING, ("[WARNING] OID_RT_BEAMFORMING_PERIOD, invalid buffer length (%d)!\n", InformationBufferLength));
 				*BytesNeeded = 4;
 				return NDIS_STATUS_BUFFER_TOO_SHORT;
-			}	
-			
+			}
+
 			Mode = (*((pu1Byte)InformationBuffer)  >>  4) & 0xf;
 			BW = *((pu1Byte)(InformationBuffer)) & 0xf;
 			Idx = *((pu1Byte)InformationBuffer+1);
@@ -5876,7 +5876,7 @@ N6CSetInformationHandleCustomized11nOids(
 		}
 		break;
 
-	
+
 
 	case OID_RT_ADCSMP_TRIG:
 		{
@@ -5891,17 +5891,17 @@ N6CSetInformationHandleCustomized11nOids(
 			PollingTime =( (*((pu1Byte)InformationBuffer+5)) << 8) | (*((pu1Byte)InformationBuffer+4));
 
 			ADCSmp_Set(pAdapter, TrigSel, TrigSigSel, DmaDataSigSel, TriggerTime, PollingTime);
-		}	
+		}
 		break;
 
 	case OID_RT_ADCSMP_STOP:
 		ADCSmp_Stop(pAdapter);
 		break;
-		
+
 	case OID_RT_11N_TX_RATE_DISPLAY:
 		pMgntInfo->OSTxRateDisplayType = *((pu1Byte)InformationBuffer);
 		break;
-		
+
 	case OID_RT_11N_FORCED_ADDBA:
 		{
 			PRT_HIGH_THROUGHPUT	pHTInfo = GET_HT_INFO(pMgntInfo);
@@ -5919,18 +5919,18 @@ N6CSetInformationHandleCustomized11nOids(
 
 			if(pExtAdapter != NULL)
 				pExtHTInfo = pExtAdapter->MgntInfo.pHTInfo;
-			
+
 			pHTInfo->ForcedAMPDUMode = *((pu1Byte)InformationBuffer);
 			if(pExtHTInfo != NULL)
 				pExtHTInfo->ForcedAMPDUFactor = pHTInfo->ForcedAMPDUMode;
 
 			switch(pHTInfo->ForcedAMPDUMode)
-			{					
+			{
 				case HT_AMPDU_AUTO:
 				case HT_AMPDU_DISABLE:
 					// Do nothing
 					break;
-					
+
 				case HT_AMPDU_ENABLE:
 					// Verify input paramter.
 					if(InformationBufferLength < 2)
@@ -5947,14 +5947,14 @@ N6CSetInformationHandleCustomized11nOids(
 						Status = NDIS_STATUS_INVALID_DATA;
 						return Status;
 					}
-					
+
 					pHTInfo->ForcedAMPDUFactor = nAMPDU_Ability&0x07;
 					pHTInfo->ForcedMPDUDensity = (nAMPDU_Ability>>4)&0x07;
 					if(pExtHTInfo != NULL)
 					{
 						pExtHTInfo->ForcedAMPDUFactor = pHTInfo->ForcedAMPDUFactor ;
 						pExtHTInfo->ForcedMPDUDensity = pHTInfo->ForcedMPDUDensity;
-					}	
+					}
 					break;
 			}
 		}
@@ -5968,7 +5968,7 @@ N6CSetInformationHandleCustomized11nOids(
 
 			HT_MGNT_SET_AMSDU(pAdapter, (HT_AMSDU_MODE_E)*((pu1Byte)InformationBuffer));
 			switch(pHTInfo->ForcedAMSDUMode)
-			{					
+			{
 				case HT_AMSDU_AUTO:
 				case HT_AMSDU_DISABLE:
 					{
@@ -5990,7 +5990,7 @@ N6CSetInformationHandleCustomized11nOids(
 					}
 					break;
 
-				
+
 				case HT_AMSDU_ENABLE:
 				case HT_AMSDU_WITHIN_AMPDU:
 					if(InformationBufferLength < 5)
@@ -6005,7 +6005,7 @@ N6CSetInformationHandleCustomized11nOids(
 					if(nAMSDU_SizeType > 6)
 					{
 						Status = NDIS_STATUS_INVALID_DATA;
-						return Status;					
+						return Status;
 					}
 
 					nAMSDU_MaxSize= ( (*((pu1Byte)InformationBuffer+2)) << 8) | (*((pu1Byte)InformationBuffer+3));
@@ -6013,7 +6013,7 @@ N6CSetInformationHandleCustomized11nOids(
 					if(nAMSDU_SizeType == 0 && nAMSDU_MaxSize == 0 )
 					{
 						Status = NDIS_STATUS_INVALID_DATA;
-						return Status;					
+						return Status;
 					}
 
 					switch(nAMSDU_SizeType)
@@ -6038,22 +6038,22 @@ N6CSetInformationHandleCustomized11nOids(
 						break;
 						default:
 						pHTInfo->ForcedAMSDUMaxSize = AMSDU_SIZE_UNSPECIFED;
-						break;				
+						break;
 					}
-					
+
 					nAMSDU_MaxNum = *((pu1Byte)InformationBuffer+4);
 
 					if(pHTInfo->ForcedAMSDUMode == HT_AMSDU_WITHIN_AMPDU && nAMSDU_MaxNum < 1 )
 					{
 						Status = NDIS_STATUS_INVALID_DATA;
-						return Status;					
+						return Status;
 					}
-					
+
 					pHTInfo->ForcedAMSDUMaxNum =nAMSDU_MaxNum;
 					break;
 			}
 
-			//DbgPrint(	"AMSDU mode %d AMSDU size %d AMSDU Num %d\n", 
+			//DbgPrint(	"AMSDU mode %d AMSDU size %d AMSDU Num %d\n",
 			//			pHTInfo->ForcedAMSDUMode, pHTInfo->ForcedAMSDUMaxSize, pHTInfo->ForcedAMSDUMaxNum);
 		}
 		break;
@@ -6061,15 +6061,15 @@ N6CSetInformationHandleCustomized11nOids(
 	case OID_RT_11N_FORCED_SHORTGI:
 		{
 			PRT_HIGH_THROUGHPUT	pHTInfo = GET_HT_INFO(pMgntInfo);
-				
+
 			if(*((pu1Byte)InformationBuffer) > 2)
 			{
 				Status = NDIS_STATUS_INVALID_DATA;
-				return Status;					
+				return Status;
 			}
-			
+
 			pHTInfo->ForcedShortGI = (*((pu1Byte)InformationBuffer));
-				
+
 		}
 		break;
 
@@ -6079,11 +6079,11 @@ N6CSetInformationHandleCustomized11nOids(
 				(rtStatus = MgntActSet_802_11_LDPC_MODE(pAdapter, InformationBuffer, InformationBufferLength)))
 			{
 				Status = NDIS_STATUS_INVALID_DATA;
-				return Status;					
+				return Status;
 			}
-			
+
 		}
-		break;	
+		break;
 
 	case OID_RT_11N_FORCED_STBC:
 		{
@@ -6091,11 +6091,11 @@ N6CSetInformationHandleCustomized11nOids(
 				(rtStatus = MgntActSet_802_11_STBC_MODE(pAdapter, InformationBuffer, InformationBufferLength)))
 			{
 				Status = NDIS_STATUS_INVALID_DATA;
-				return Status;					
+				return Status;
 			}
-			
+
 		}
-		break;	
+		break;
 
 	case OID_RT_11N_MIMOPS_MODE:
 		{
@@ -6104,7 +6104,7 @@ N6CSetInformationHandleCustomized11nOids(
 			if((NewMimoPsMode == 2) || (NewMimoPsMode > 3))
 			{
 				Status = NDIS_STATUS_INVALID_DATA;
-				return Status;				
+				return Status;
 			}
 
 			// get first Adapter with AP mode.
@@ -6159,7 +6159,7 @@ N6CSetInformationHandleCustomized11nOids(
 				BOOLEAN 	bRxReorderEnable;
 				u1Byte		RxReorderWinSize;
 				u1Byte		RxReorderPendingTime; // ms
-				
+
 				// Get forced data rate to set.
 				bRxReorderEnable = (*((u1Byte*)InformationBuffer)==1)?TRUE:FALSE;
 
@@ -6186,7 +6186,7 @@ N6CSetInformationHandleCustomized11nOids(
 						Status = NDIS_STATUS_INVALID_DATA;
 						return Status;
 					}
-					
+
 					pMgntInfo->pHTInfo->bCurRxReorderEnable = TRUE;
 					pMgntInfo->pHTInfo->RxReorderWinSize = RxReorderWinSize;
 					pMgntInfo->pHTInfo->RxReorderPendingTime = RxReorderPendingTime;
@@ -6197,7 +6197,7 @@ N6CSetInformationHandleCustomized11nOids(
 					PRX_REORDER_ENTRY pRxReorderEntry;
 
 					PlatformAcquireSpinLock(pAdapter, RT_RX_SPINLOCK);
-		
+
 					while(&pRxTS->TsCommonInfo.List != &pMgntInfo->Rx_TS_Admit_List)
 					{
 						PlatformCancelTimer(pAdapter, &pRxTS->RxPktPendingTimer);
@@ -6207,7 +6207,7 @@ N6CSetInformationHandleCustomized11nOids(
 							pRxReorderEntry = (PRX_REORDER_ENTRY)RTRemoveHeadList(&pRxTS->RxPendingPktList);
 							pRxTS->RxBatchCount--;
 							CountRxStatistics(pAdapter, pRxReorderEntry->pRfd);
-							/*if(pAdapter->bInHctTest && 
+							/*if(pAdapter->bInHctTest &&
 								pRxReorderEntry->pRfd->FragLength == pRxReorderEntry->pRfd->PacketLength&&
 								pAdapter->ForHctTest < 25 )
 							{
@@ -6225,7 +6225,7 @@ N6CSetInformationHandleCustomized11nOids(
 				}
 			}
 			break;
-	
+
 	case OID_RT_11N_DYNAMIC_TX_POWER_CONTROL:       //Dynamic Tx power for near/far range enable/Disable  , by Jacken , 2008-03-06
 			if( *((pu1Byte)InformationBuffer) == 0 )
 			{
@@ -6237,7 +6237,7 @@ N6CSetInformationHandleCustomized11nOids(
 				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_11N_DYNAMIC_TX_POWER_CONTROL: enable\n"));
 				pMgntInfo->bDynamicTxPowerEnable = TRUE;
 			}
-		break;	
+		break;
       case   OID_RT_11N_TX_POWER_TRAINING:
 	  		if( *((pu1Byte)InformationBuffer) == 0 )
 			{
@@ -6250,10 +6250,10 @@ N6CSetInformationHandleCustomized11nOids(
 				pMgntInfo->bDisableTXPowerTraining = FALSE;
 			}
 			//This oid only valid when tx power training function excuted by fw
-			// when media connect ,set bSetTXPowerTrainingByOid TRUE ,and dm_RefreshRateAdaptiveMask() 
-			//will update H2CCMD TO FW to disable or enable tx power training, 
-                     pMgntInfo->bSetTXPowerTrainingByOid = TRUE;			
-		break;	
+			// when media connect ,set bSetTXPowerTrainingByOid TRUE ,and dm_RefreshRateAdaptiveMask()
+			//will update H2CCMD TO FW to disable or enable tx power training,
+                     pMgntInfo->bSetTXPowerTrainingByOid = TRUE;
+		break;
 
 	case   OID_RT_11N_DISABLE_TX_POWER_BY_RATE:
 			if( *((pu1Byte)InformationBuffer) == 1 )
@@ -6265,11 +6265,11 @@ N6CSetInformationHandleCustomized11nOids(
 			{
 				pMgntInfo->bDisableTXPowerByRate = FALSE;
 			}
-	
-		 break; 
+
+		 break;
 
 
-		
+
 	//added just for debug. Dump all regs' value. by wl.
 	case OID_RT_11N_DUMP_REGS:
 		{
@@ -6283,14 +6283,14 @@ N6CSetInformationHandleCustomized11nOids(
 
 			if( *((pu1Byte)InformationBuffer) == 1 )
 			{
-				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Dump regs' value:::\n"));				
+				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Dump regs' value:::\n"));
 				pMgntInfo->bDumpRegs= TRUE;
 			}
-			
+
 			*BytesRead = InformationBufferLength;
 		}
-		break;	
-        // add for 92d rx batch indicate	
+		break;
+        // add for 92d rx batch indicate
 	case OID_RT_11N_SET_RX_FAST_BATCH_NUM:
 		{
 			if(InformationBufferLength < sizeof(u1Byte))
@@ -6300,19 +6300,19 @@ N6CSetInformationHandleCustomized11nOids(
 				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_11N_DUMP_REGS: invalid length(%d), BytesNeeded: %d !!!\n", InformationBufferLength, *BytesNeeded));
 				return Status;
 			}
-		
+
 			pMgntInfo->NumforRxFastbatch= *((pu1Byte)InformationBuffer);
 			if( pMgntInfo->NumforRxFastbatch<1 )
 			{
-				
+
 				pMgntInfo->NumforRxFastbatch = 1;
 			}
-			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set RX fast batch Indication num:%d.\n",pMgntInfo->NumforRxFastbatch));				
-			
+			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set RX fast batch Indication num:%d.\n",pMgntInfo->NumforRxFastbatch));
+
 			*BytesRead = InformationBufferLength;
 		}
 		break;
-			
+
 	case OID_RT_11N_TDLS_ENABLE:
 		{
 			TDLS_SetConfiguration(pAdapter, InformationBuffer, (u1Byte)InformationBufferLength);
@@ -6329,8 +6329,8 @@ N6CSetInformationHandleCustomized11nOids(
 			pMgntInfo->RegPreferBand = *((pu2Byte)InformationBuffer);
 			RT_TRACE(COMP_OID_SET,DBG_LOUD,("RegPreferBand=%d\n", pMgntInfo->RegPreferBand));
 		}
-		break;	
-	
+		break;
+
 	case OID_RT_CUSTOMER_WOW_S5_INFO:
 		{
 			RT_TRACE(COMP_OID_SET, DBG_LOUD,("===> OID_RT_CUSTOMER_WOW_S5_INFO \n"));
@@ -6344,7 +6344,7 @@ N6CSetInformationHandleCustomized11nOids(
 			MgntActSet_S5_WAKEUP_INFO(pAdapter, (pu1Byte)InformationBuffer , InformationBufferLength);
 		}
 	break;
-	
+
 	case OID_RT_CUSTOMER_WOW_S5_SUPPORT :
 		{
 			ULONG		bEnableS5;
@@ -6368,10 +6368,10 @@ N6CSetInformationHandleCustomized11nOids(
 				pMgntInfo->bReceiveSystemPSOID = FALSE;
 				RT_TRACE(COMP_TEST, DBG_LOUD, ("OID_RT_CUSTOMER_WOW_S5_SUPPORT disenable S5\n"));
 			}
-			
+
 		}
 	break;
-	
+
 	}
 
 	return Status;
@@ -6398,7 +6398,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 
 	*BytesRead = 0;
 	*BytesNeeded = 0;
-	
+
 	switch(Oid)
 	{
 	default:
@@ -6415,7 +6415,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 			BOOLEAN				IsGroup = FALSE;
 			BOOLEAN				IsGroupTransmitKey = FALSE;
 			pu1Byte				pKeyRSC = (pu1Byte)&key->KeyRSC;
-	
+
 			RT_TRACE(COMP_OID_SET, DBG_LOUD,("===> Set OID_802_11_ADD_KEY, key->Length=%d\n", key->Length ));
 			RT_PRINT_DATA(COMP_OID_SET, DBG_TRACE, "OID_802_11_ADD_KEY InformationBuffer", InformationBuffer, key->Length );
 
@@ -6423,11 +6423,11 @@ N6CSetInformationHandleCustomizedSecurityOids(
 			if(key->KeyIndex == 0xc0000001)
 			{
 				RT_TRACE(COMP_SEC, DBG_LOUD,("[Note] KeyIndex is 0xc0000001\n"));
-			
+
 				pNdisCommon->RegWepEncStatus = pNdisCommon->WepEncStatusBeforeWpaVerify;
 				pNdisCommon->RegEncAlgorithm = pNdisCommon->EncAlgorithmBeforeWpaVerify;
 				pNdisCommon->RegAuthentAlg = pNdisCommon->AuthentAlgBeforeWpaVerify;
-	
+
 				N6RestoreLastInitSetting(pAdapter);
 			}
 
@@ -6441,7 +6441,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 					Status = NDIS_STATUS_INVALID_DATA;
 					return Status;
 				}
-				
+
 				if(key->KeyIndex & 0x0fffffff)
 				{
 					//kcwu:
@@ -6475,7 +6475,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 					// 2005.10.17, by rcnjko.
 					if(key->KeyLength == 32)
 					{
-						key->KeyLength = 16; 
+						key->KeyLength = 16;
 					}
 					else
 					{
@@ -6485,8 +6485,8 @@ N6CSetInformationHandleCustomizedSecurityOids(
 				}
 
 				// Check key length for WEP. For NDTEST, 2005.01.27, by rcnjko.
-				if(	
-					(pMgntInfo->SecurityInfo.PairwiseEncAlgorithm == RT_ENC_ALG_WEP40 && key->KeyLength != 5) || 
+				if(
+					(pMgntInfo->SecurityInfo.PairwiseEncAlgorithm == RT_ENC_ALG_WEP40 && key->KeyLength != 5) ||
 					(pMgntInfo->SecurityInfo.PairwiseEncAlgorithm == RT_ENC_ALG_WEP104 && key->KeyLength != 13)
 				)
 				{
@@ -6512,7 +6512,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 			else
 			{ // Group key
 				RT_TRACE(COMP_SEC, DBG_LOUD,("OID_802_11_ADD_KEY: +++++ Group key +++++\n"));
-				
+
 				if(pMgntInfo->mIbss && !MacAddr_isBcst(key->BSSID))
 				{
 					RT_TRACE(COMP_SEC, DBG_LOUD,("<=== SetInfo, OID_802_11_ADD_KEY: pMgntInfo.mIbss && !MacAddr_isBcst(key->BSSID)\n"));
@@ -6539,7 +6539,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 						// We should not reject the WEP key with length 5 or 13 in this case.
 						//
 						// - Added by Annie, 2006-05-10. -
-						
+
 						RT_TRACE( COMP_SEC, DBG_LOUD, ("OID_802_11_ADD_KEY[Group]: Not to Check key length 32 for TKIP because we'e in RT_SEC_LVL_NONE.\n") );
 					}
 					else
@@ -6552,8 +6552,8 @@ N6CSetInformationHandleCustomizedSecurityOids(
 
 				// Check key length for AES
 				// For NDTEST, we allow keylen=32 in this case. 2005.01.27, by rcnjko.
-				else if(pMgntInfo->SecurityInfo.GroupEncAlgorithm == RT_ENC_ALG_AESCCMP  && 
-						(key->KeyLength != 16 && key->KeyLength != 32) ) 
+				else if(pMgntInfo->SecurityInfo.GroupEncAlgorithm == RT_ENC_ALG_AESCCMP  &&
+						(key->KeyLength != 16 && key->KeyLength != 32) )
 				{
 					if( pMgntInfo->SecurityInfo.SecLvl == RT_SEC_LVL_NONE )
 					{
@@ -6581,7 +6581,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 				IsGroup = TRUE;
 
 				// Added for WPA2-PSK. added by Annie, 2005-09-23.
-				// Moved by Bruce to pass PMK of WMM WPA2 test, by Bruce, 2007-11-07. 
+				// Moved by Bruce to pass PMK of WMM WPA2 test, by Bruce, 2007-11-07.
 				PlatformRequestPreAuthentication( pAdapter, PRE_AUTH_INDICATION_REASON_ASSOCIATION );
 
 				// Check the group key. Added by Annie, 2005-07-06.
@@ -6609,7 +6609,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 			{
 				Status = NDIS_STATUS_INVALID_DATA;
 			}
-			
+
 			return Status;
 		}
 		break;
@@ -6627,7 +6627,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 			BOOLEAN			IsDefaultKeyId;
 
 			RT_TRACE(COMP_SEC, DBG_LOUD, ("Set OID_802_11_ADD_WEP\n"));
-			
+
 			key = (NDIS_802_11_WEP *)InformationBuffer;
 			KeyIndex = key->KeyIndex;
 			KeyLength = key->KeyLength;
@@ -6640,19 +6640,19 @@ N6CSetInformationHandleCustomizedSecurityOids(
 			RT_TRACE( COMP_SEC, DBG_TRACE, ("\tKeyLength = %d\n", KeyLength) );
 			RT_TRACE( COMP_SEC, DBG_TRACE, ("\tKeyMaterial = %13s\n", KeyMaterial) );
 			RT_TRACE( COMP_SEC, DBG_TRACE, ("\tIsDefaultKey = %d\n", IsDefaultKey) );
-			
+
 			if( (KeyLength == 5) && (KeyIndex < 4) )
 			{
 				EncAlgorithm = RT_ENC_ALG_WEP40;
 				// For WPA Verify.
-				pNdisCommon->RegWepEncStatus = REG_WEP_STATUS_WEP64; 
+				pNdisCommon->RegWepEncStatus = REG_WEP_STATUS_WEP64;
 				PlatformMoveMemory((PVOID)&(pNdisCommon->RegDefaultKeyBuf[KeyIndex]), (PVOID)KeyMaterial, KeyLength);
 			}
 			else if( (KeyLength == 13) && (KeyIndex < 4) )
 			{
 				EncAlgorithm = RT_ENC_ALG_WEP104;
 				// For WPA Verify.
-				pNdisCommon->RegWepEncStatus = REG_WEP_STATUS_WEP128; 
+				pNdisCommon->RegWepEncStatus = REG_WEP_STATUS_WEP128;
 				PlatformMoveMemory((PVOID)&(pNdisCommon->RegDefaultKeyWBuf[KeyIndex]), (PVOID)KeyMaterial, KeyLength);
 			}
 			else
@@ -6709,7 +6709,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 			PNDIS_802_11_REMOVE_KEY	key = (PNDIS_802_11_REMOVE_KEY)InformationBuffer;
 			BOOLEAN					IsGroup = (key->KeyIndex & 0x4000000)?FALSE:TRUE;
 			RT_ENC_ALG				EncAlgorithm = (IsGroup)?pMgntInfo->SecurityInfo.GroupEncAlgorithm:pMgntInfo->SecurityInfo.PairwiseEncAlgorithm;
-			
+
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_802_11_REMOVE_KEY\n"));
 
 
@@ -6718,7 +6718,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 			// BIT30 => 1: Pairwise
 			//                0: Group
 			// Other bits => 0
-			
+
 			if(key->KeyIndex & 0xbffffffc)
 			{
 				Status = NDIS_STATUS_INVALID_DATA;
@@ -6745,7 +6745,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 		}
 
 		// NDIS_802_11_ENCRYPTION_STATUS should be the same as RT_802_11_ENCRYPTION_STATUS
-		// which is defined by KcWu. 2004.09.23, by rcnjko. 
+		// which is defined by KcWu. 2004.09.23, by rcnjko.
 		pMgntInfo->SecurityInfo.EncryptionStatus = *(RT_802_11_ENCRYPTION_STATUS*)InformationBuffer;
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_802_11_ENCRYPTION_STATUS: %d\n", *(PNDIS_802_11_ENCRYPTION_STATUS)InformationBuffer));
 
@@ -6788,9 +6788,9 @@ N6CSetInformationHandleCustomizedSecurityOids(
 			pMgntInfo->SecurityInfo.EncryptionHeadOverhead = WEP_IV_LEN;
 			pMgntInfo->SecurityInfo.EncryptionTailOverhead = WEP_ICV_LEN;
 			// For WPA Verify.
-			// WEP64 or WEP128 should be determined in OID_802_11_ADD_WEP later. 
+			// WEP64 or WEP128 should be determined in OID_802_11_ADD_WEP later.
 			// 2004.11.24, by rcnjko.
-			pNdisCommon->RegWepEncStatus = REG_WEP_STATUS_WEP64; 
+			pNdisCommon->RegWepEncStatus = REG_WEP_STATUS_WEP64;
 			pNdisCommon->RegEncAlgorithm = REG_WEP_Encryption;
 
 			break;
@@ -6806,9 +6806,9 @@ N6CSetInformationHandleCustomizedSecurityOids(
 			//2004/06/25, kcwu_comment, The EncryptionTailOverhead only includes WEP IV, and doesn't include TKIP MIC
 			pMgntInfo->SecurityInfo.EncryptionTailOverhead = WEP_ICV_LEN;
 			// For WPA Verify.
-			pNdisCommon->RegWepEncStatus = REG_WEP_STATUS_NO_WEP; 
+			pNdisCommon->RegWepEncStatus = REG_WEP_STATUS_NO_WEP;
 			pNdisCommon->RegEncAlgorithm = REG_TKIPv2_Encryption;
-			// Emily. 
+			// Emily.
 			// [AnnieWorkaround] Default value changed from CAM_AES to CAM_TKIP by Annie for solving WPA-none problem.
 			// In Ad-Hoc mode, use encryption TKIP (authmode=WPA-None).
 			// If upper layer is windows zero-config, OID_802_11_ADD_KEY is called before OID_802_11_ENCRYPTION_STATUS.
@@ -6816,12 +6816,12 @@ N6CSetInformationHandleCustomizedSecurityOids(
 			// At least, If we go into this case, we set default EncAlgo as CAM_TKIP to config correct CAM.
 			// - Annie, 2005-08-16.
 			if( (pNdisCommon->EncAlgorithmBeforeWpaVerify!=REG_WAPI_PSK) || FALSE == WAPI_QuerySetVariable(pAdapter, WAPI_QUERY, WAPI_VAR_WAPISUPPORT, 0))
-			{//Temply add to  solve UI Switch problem which cause wapi msk tx key invalid   zhiyuan 2009/12/22				
+			{//Temply add to  solve UI Switch problem which cause wapi msk tx key invalid   zhiyuan 2009/12/22
 
 			        if(pMgntInfo->Regdot11networktype == RT_JOIN_NETWORKTYPE_ADHOC && !(ACTING_AS_AP(pAdapter) ))
 			        {
 				        u1Byte CAM_CONST_BROAD[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-				        pAdapter->HalFunc.SetKeyHandler(pAdapter, 
+				        pAdapter->HalFunc.SetKeyHandler(pAdapter,
 												0,					//KeyIndex,
 												CAM_CONST_BROAD,
 												TRUE,				//IsGroup,
@@ -6844,14 +6844,14 @@ N6CSetInformationHandleCustomizedSecurityOids(
 			pMgntInfo->SecurityInfo.EncryptionHeadOverhead = EXT_IV_LEN;
 			pMgntInfo->SecurityInfo.EncryptionTailOverhead = AES_MIC_LEN;
 			// For WPA Verify.
-			pNdisCommon->RegWepEncStatus = REG_WEP_STATUS_NO_WEP; 
+			pNdisCommon->RegWepEncStatus = REG_WEP_STATUS_NO_WEP;
 			pNdisCommon->RegEncAlgorithm = REG_AESCCMP_Encryption;
 #else
 			// For HCT 12.1 test if we have not yet implemented AES, 2005.07.11, by rcnjko.
 			Status = NDIS_STATUS_NOT_SUPPORTED;
 			return Status;
 #endif
-			// Emily. 
+			// Emily.
 			// [AnnieWorkaround] Default value changed from CAM_AES to CAM_TKIP by Annie for solving WPA-none problem.
 			// In Ad-Hoc mode, use encryption TKIP (authmode=WPA-None).
 			// If upper layer is windows zero-config, OID_802_11_ADD_KEY is called before OID_802_11_ENCRYPTION_STATUS.
@@ -6859,11 +6859,11 @@ N6CSetInformationHandleCustomizedSecurityOids(
 			// At least, If we go into this case, we set default EncAlgo as CAM_TKIP to config correct CAM.
 			// - Annie, 2005-08-16.
 			if( (pNdisCommon->EncAlgorithmBeforeWpaVerify!=REG_WAPI_PSK) || FALSE == WAPI_QuerySetVariable(pAdapter, WAPI_QUERY, WAPI_VAR_WAPISUPPORT, 0))
-			{//Temply add to  solve UI Switch problem which cause wapi msk tx key invalid   zhiyuan 2009/12/22				
+			{//Temply add to  solve UI Switch problem which cause wapi msk tx key invalid   zhiyuan 2009/12/22
 			        if(pMgntInfo->Regdot11networktype == RT_JOIN_NETWORKTYPE_ADHOC && !(ACTING_AS_AP(pAdapter) ))
 			        {
 				        u1Byte CAM_CONST_BROAD[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-				        pAdapter->HalFunc.SetKeyHandler(pAdapter, 
+				        pAdapter->HalFunc.SetKeyHandler(pAdapter,
 												0,					//KeyIndex,
 												CAM_CONST_BROAD,
 												TRUE,				//IsGroup,
@@ -6878,7 +6878,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 		case Wapi_Certificate:
 			WAPI_SecFuncHandler(WAPI_SETAUTHENCRYPTSTATE,pAdapter,(PVOID)&Oid,InformationBuffer);
 			break;
-			
+
 		default:
 			RT_TRACE(COMP_SEC, DBG_LOUD, ("\tdefault\n"));
 			pMgntInfo->SecurityInfo.PairwiseEncAlgorithm = RT_ENC_ALG_NO_CIPHER;
@@ -6903,7 +6903,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 			if( pMgntInfo->Regdot11networktype == RT_JOIN_NETWORKTYPE_ADHOC &&
 			     MgntActQuery_ApType(pAdapter) == RT_AP_TYPE_NONE )
 			{
-				RT_TRACE(COMP_SEC , DBG_LOUD , ("==>Win7 we used SW in AD-HOT \n"));			
+				RT_TRACE(COMP_SEC , DBG_LOUD , ("==>Win7 we used SW in AD-HOT \n"));
 				SecSetSwEncryptionDecryption( pAdapter , TRUE , TRUE );
 			}
 			else if( pMgntInfo->SecurityInfo.PairwiseEncAlgorithm == RT_ENC_ALG_WEP104 ||
@@ -6917,7 +6917,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 				RT_TRACE(COMP_SEC , DBG_LOUD , ("==>Win7 we used HW in default !! \n"));
 				SecSetSwEncryptionDecryption( pAdapter , FALSE , FALSE );
 			}
-				
+
 	 		pAdapter->HalFunc.EnableHWSecCfgHandler(pAdapter);
 		}
 
@@ -6941,7 +6941,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 		}
 
 		// Update STA's RSNIE.
-		if( pMgntInfo->SecurityInfo.EncryptionStatus !=Wapi_Encryption && pMgntInfo->SecurityInfo.EncryptionStatus != Wapi_Certificate) 
+		if( pMgntInfo->SecurityInfo.EncryptionStatus !=Wapi_Encryption && pMgntInfo->SecurityInfo.EncryptionStatus != Wapi_Certificate)
 			SecConstructRSNIE(pAdapter);
 
 		*BytesRead = InformationBufferLength;
@@ -6959,12 +6959,12 @@ N6CSetInformationHandleCustomizedSecurityOids(
 		{
 			PRT_SECURITY_T pSecInfo = &(pMgntInfo->SecurityInfo);
 			PNDIS_802_11_ASSOCIATION_INFORMATION pAssocInfo = (PNDIS_802_11_ASSOCIATION_INFORMATION)InformationBuffer;
-	
+
 			if( pAssocInfo->RequestIELength != 0)
 			{
-				// do not copy field [Element id] and [Length] 
+				// do not copy field [Element id] and [Length]
 				PlatformMoveMemory(
-						pSecInfo->RSNIE.Octet, 
+						pSecInfo->RSNIE.Octet,
 						(pu1Byte)InformationBuffer + pAssocInfo->OffsetRequestIEs + 2,
 						pAssocInfo->RequestIELength - 2);
 				pSecInfo->RSNIE.Length = (u1Byte)pAssocInfo->RequestIELength - 2;
@@ -6999,7 +6999,7 @@ N6CSetInformationHandleCustomizedSecurityOids(
 				*BytesNeeded = sizeof(NDIS_802_11_AUTHENTICATION_MODE );
 				return Status;
 			}
-			
+
 			authmode = *(RT_AUTH_MODE*)InformationBuffer;
 
 			// For WPA Verify.
@@ -7100,19 +7100,19 @@ N6CSetInformationHandleCustomizedSecurityOids(
 				*BytesNeeded = sizeof(KeyId);
 				return Status;
 			}
-	
+
 			// Get default key id to set.
 			KeyId = *((u2Byte*)InformationBuffer);
 
 			// Set default key id: 0 ~ 3.
 			KeyId &= 0x3;
-			// The following code will cause 8187 failed to link to AP.	
+			// The following code will cause 8187 failed to link to AP.
 			pMgntInfo->SecurityInfo.DefaultTransmitKeyIdx = (u1Byte)KeyId;
 			pNdisCommon->RegDefaultKeyId = (u1Byte)KeyId;
 		}
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_SET_DEFAULT_KEY_ID.\n"));
 		break;
-		
+
 
 	}
 	return Status;
@@ -7138,18 +7138,18 @@ N6CSetInformationHandleCustomizedNANOids(
 
 	*BytesRead = 0;
 	*BytesNeeded = 0;
-	
+
 	switch(Oid)
-	{		
-#if (NAN_SUPPORT == 1)	
-	case OID_RT_NAN_TEST: 
+	{
+#if (NAN_SUPPORT == 1)
+	case OID_RT_NAN_TEST:
 		{
 
 			u4Byte cmd = 0;
 			u4Byte ID = 0, Port = 0, cmdid = 0, Para = 0;
 			RT_TRACE(COMP_NAN, DBG_LOUD, ("===> Set OID_RT_NAN_TEST CMD = 0x%X, len = %d\n", *((pu4Byte)InformationBuffer), InformationBufferLength));
 
-			if (InformationBufferLength == sizeof(u4Byte)) { 
+			if (InformationBufferLength == sizeof(u4Byte)) {
 				cmd = *((pu4Byte)InformationBuffer);
 				ID = cmd & 0xFF;
 				Port = (cmd & 0xFF00) >> 8;
@@ -7157,7 +7157,7 @@ N6CSetInformationHandleCustomizedNANOids(
 				Para = (cmd & 0xFF000000) >> 24;
 
 				RT_TRACE(COMP_NAN, DBG_LOUD, ("===> ID=0x%X, Port=0x%X, cmdid=0x%X, Para=0x%X\n", ID,Port,cmdid,Para));
-				
+
 				if (ID == 0x29)
 					NAN_DbgCtrlOperation(pAdapter, Port, cmdid, Para);
 				else if (ID == 0x30)
@@ -7172,8 +7172,8 @@ N6CSetInformationHandleCustomizedNANOids(
 			RT_TRACE(COMP_NAN, DBG_LOUD, ("<=== Set OID_RT_NAN_TEST CMD = 0x%X\n", cmd));
 		}
 		break;
-		
-	case OID_RT_NAN_SDF: 
+
+	case OID_RT_NAN_SDF:
 		{
 			RT_TRACE(COMP_NAN, DBG_LOUD, ("===> Set OID_RT_NAN_SDF, len = %d\n", InformationBufferLength));
 			{
@@ -7182,7 +7182,7 @@ N6CSetInformationHandleCustomizedNANOids(
 				u1Byte			 u1bTxRate;
 				OCTET_STRING	 ocPacketToSend;
 				NAN_SDF_CONTEXT 		FakeSDFCtx;
-				
+
 				if (InformationBufferLength < 4){
 					u1Byte Dest[6] = {0x00, 0xE0, 0x4c, 0x81, 0x88, 0xbf};
 					u1Byte Dest_b[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
@@ -7199,19 +7199,19 @@ N6CSetInformationHandleCustomizedNANOids(
 					}
 					else
 						PlatformMoveMemory(pNanInfo->SDFCtx.PeerAddr, Dest_b, 6);
-					
+
 					PlatformMoveMemory(pNanInfo->SDFCtx.SDAttibute.ServiceID, ServiceID, 6);
 					pNanInfo->SDFCtx.SDAttibute.InstanceID = 0x88;
 					pNanInfo->SDFCtx.ConfigPara.TimeToLive = 0xFFFFFFFF;
 					goto test_SDF;
 				}
-				
+
 				if( InformationBufferLength < 16 )	// 16 = 6(peer addr) + 9(SDA Mandatory) + 1(Configuration Parameters)
 				{
 					Status = NDIS_STATUS_INVALID_LENGTH;
 					return Status;
 				}
-				
+
 				u2bPacketLength = sizeof(InformationBuffer);
 				if( InformationBufferLength < (ULONG)(u2bPacketLength)-1)
 				{
@@ -7219,7 +7219,7 @@ N6CSetInformationHandleCustomizedNANOids(
 					*BytesNeeded = u2bPacketLength;
 					return Status;
 				}
-		
+
 				PlatformMoveMemory(pNanInfo->SDFCtx.PeerAddr, InformationBuffer, sizeof(u1Byte)*6);
 				PlatformMoveMemory(&pNanInfo->SDFCtx.SDAttibute,((u1Byte*)(InformationBuffer)+ sizeof(u1Byte)*6), sizeof(NAN_SD_ATTRIBUTE));
 				PlatformMoveMemory(&pNanInfo->SDFCtx.ConfigPara,((u1Byte*)(InformationBuffer)+ sizeof(u1Byte)*6 + sizeof(NAN_SD_ATTRIBUTE)), sizeof(NAN_SDF_CONFIG_PARA));
@@ -7227,7 +7227,7 @@ test_SDF:
 
 				pNanInfo->SDFCtx.bIsContentUpdated = TRUE;
 				//pNanInfo->SDFCtx.bIsContentUpdatedUnicast = TRUE;
-#if (WPP_SOFTWARE_TRACE == 0)				
+#if (WPP_SOFTWARE_TRACE == 0)
 				RT_PRINT_ADDR(COMP_NAN, DBG_LOUD, "OID_RT_NAN_SDF: Addr = ", pNanInfo->SDFCtx.PeerAddr);
 				RT_PRINT_DATA(COMP_NAN, DBG_LOUD, ("ServiceID = "), pNanInfo->SDFCtx.SDAttibute.ServiceID, 6);
 				RT_TRACE(COMP_NAN, DBG_LOUD, ("InstanceID = %d, ReqID = %d, ServiceCtrl = 0x%02X\n", pNanInfo->SDFCtx.SDAttibute.InstanceID, pNanInfo->SDFCtx.SDAttibute.RequestorID, pNanInfo->SDFCtx.SDAttibute.ServiceControl));
@@ -7253,7 +7253,7 @@ test_SDF:
 					pNanInfo->SDFCtx.ConfigPara.TransmissionPriority, pNanInfo->SDFCtx.ConfigPara.SDFDelay));
 				RT_PRINT_ADDR(COMP_NAN, DBG_LOUD, "Dest Addr = ", pNanInfo->SDFCtx.ConfigPara.DestAddr);
 
-				RT_TRACE(COMP_NAN, DBG_LOUD, ("bIsTimeToSend = %d\n", pNanInfo->SDFCtx.bIsTimeToSend));	
+				RT_TRACE(COMP_NAN, DBG_LOUD, ("bIsTimeToSend = %d\n", pNanInfo->SDFCtx.bIsTimeToSend));
 			}
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_SEND_SPECIFIC_PACKET.\n"));
 		}
@@ -7301,7 +7301,7 @@ test_SDF:
 				pNanInfo->bAppendFurtherAvailability = TRUE;
 			}
 		}
-		break;	
+		break;
 
 	case OID_RT_NAN_FURTHER_AVAILABILITY_RX:
 		{
@@ -7367,14 +7367,14 @@ N6CSetInformationHandleCustomizedOids(
 
 	*BytesRead = 0;
 	*BytesNeeded = 0;
-	
+
 	switch(Oid)
 	{
 	default:
 		// Can not find the OID specified
 		Status = NDIS_STATUS_NOT_RECOGNIZED;
 		break;
-		
+
 	case OID_802_11_BSSID:
 	case OID_RT_802_11_BSSID:
 		if(InformationBufferLength < 6)
@@ -7401,22 +7401,22 @@ N6CSetInformationHandleCustomizedOids(
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				return Status;
 			}
-			
+
 			//2004/08/05, kcwu, for NDTEST 1c_wlan_bssidlist
-			//Driver must set NDIS_802_11_BSSID_LIST_EX->NumberOfItems to 0 
+			//Driver must set NDIS_802_11_BSSID_LIST_EX->NumberOfItems to 0
 			//when a scan is performed while the radio is off
 			//Notice: It should be set to FALSE in OID_802_11_INFRASTRUCTURE_MODE,
 			//           But we make it change here
 			pNdisCommon->KeepDisconnectFlag = FALSE;
 			//==
-			
+
 			ssid = (PNDIS_802_11_SSID)InformationBuffer;
 			if( ssid->SsidLength > 32 )
 			{
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				return Status;
 			}
-	
+
 #if RTL819X_NO_SCAN_AFTER_LINK
 			if(!pMgntInfo->bMediaConnect){
 				RT_TRACE(COMP_SEND, DBG_LOUD, ("==m==>Scan <==m==\n"));
@@ -7465,7 +7465,7 @@ N6CSetInformationHandleCustomizedOids(
 			return Status;
 		}
 
-		// <RJ_TODO> MgntActSet_802_11_TX_POWER_LEVEL() does not set tx power in mW. 
+		// <RJ_TODO> MgntActSet_802_11_TX_POWER_LEVEL() does not set tx power in mW.
 		MgntActSet_802_11_TX_POWER_LEVEL( pAdapter, (*(pu4Byte)InformationBuffer) );
 		*BytesRead = 4;
 
@@ -7473,7 +7473,7 @@ N6CSetInformationHandleCustomizedOids(
 		break;
 
 	case OID_RT_TX_POWER_LEVEL:
-		{	
+		{
 			s4Byte	powerLevel =0;
 			if( InformationBufferLength < sizeof(s4Byte) )
 			{
@@ -7481,7 +7481,7 @@ N6CSetInformationHandleCustomizedOids(
 				*BytesNeeded = sizeof(s4Byte);
 				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_TX_POWER_LEVEL: invalid length(%d), BytesNeeded: %d !!!\n", InformationBufferLength, *BytesNeeded));
 				return Status;
-			} 
+			}
 			powerLevel = *((s4Byte*)InformationBuffer);
 			pNdisCommon->RegTxPowerLevel = powerLevel;
 			pMgntInfo->TxPowerLevel = pNdisCommon->RegTxPowerLevel;
@@ -7500,13 +7500,13 @@ N6CSetInformationHandleCustomizedOids(
 				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_TX_POWER: invalid length(%d), BytesNeeded: %d !!!\n", InformationBufferLength, *BytesNeeded));
 				return Status;
 
-			} 
+			}
 
 			powerInDbm = *((s4Byte*)InformationBuffer);
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_TX_POWER: %d dBm\n", powerInDbm));
 			// Save the user's power.
 			pMgntInfo->ClientConfigPwrInDbm = powerInDbm;
-			MgntActSet_TX_POWER_DBM(pAdapter, powerInDbm);	
+			MgntActSet_TX_POWER_DBM(pAdapter, powerInDbm);
 
 			*BytesRead = InformationBufferLength;
 		}
@@ -7553,7 +7553,7 @@ N6CSetInformationHandleCustomizedOids(
 				RT_TRACE(COMP_OID_SET, DBG_WARNING, ("Set OID_802_11_INFRASTRUCTURE_MODE: unknown type: 0x%X\n", *(PNDIS_802_11_NETWORK_INFRASTRUCTURE)InformationBuffer));
 				break;
 			}
-	
+
 			if(ACTING_AS_AP(pAdapter) )
 			{ // 070125, rcnjko.
 				pMgntInfo->Regdot11networktype = RT_JOIN_NETWORKTYPE_INFRA;
@@ -7599,10 +7599,10 @@ N6CSetInformationHandleCustomizedOids(
 			Status = NDIS_STATUS_INVALID_LENGTH;
 			goto set_oid_exit;
 		}
-		
+
 		if(1){
 			u2Byte ratelen = (u2Byte)InformationBufferLength;
-			
+
 			ratelen = (ratelen<8) ? ratelen : 8;
 			//ShuChen TODO: save desired rate
 			//NdisMoveMemory(&Adapter->NdisDesiredRate[0], InformationBuffer, ratelen);
@@ -7634,7 +7634,7 @@ N6CSetInformationHandleCustomizedOids(
 			if(ChnlNum > 0)
 			{
 				MgntActSet_802_11_CONFIGURATION(
-					pAdapter, 
+					pAdapter,
 					(u2Byte)((pNdisCommon->RegBeaconPeriod != 0) ? pMgntInfo->Regdot11BeaconPeriod : (u2Byte)pConfigToSet->BeaconPeriod), // Do not change beacon interval if user had specified beacon interval for debug purpose. 2005.04.18, by rcnjko.
 					(u1Byte)ChnlNum);
 			}
@@ -7664,7 +7664,7 @@ N6CSetInformationHandleCustomizedOids(
 			RT_PS_MODE rtPsModeToSet;
 			PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 
-			if( (InformationBuffer == NULL) || 
+			if( (InformationBuffer == NULL) ||
 				(InformationBufferLength < sizeof(NDIS_802_11_POWER_MODE)) )
 			{
 				Status = NDIS_STATUS_INVALID_LENGTH;
@@ -7691,7 +7691,7 @@ N6CSetInformationHandleCustomizedOids(
 					pPSC->bLeisurePs= FALSE;
 				MgntActSet_802_11_PowerSaveMode(pAdapter, rtPsModeToSet);
 				//2008.08.25
-				if( (pNdisCommon->RegLeisurePsMode) && (rtPsModeToSet == eActive) 
+				if( (pNdisCommon->RegLeisurePsMode) && (rtPsModeToSet == eActive)
 					&& (! pAdapter->bInHctTest ) )
 				{
 					// Auto LeisurePs based on AC or Battery.
@@ -7701,8 +7701,8 @@ N6CSetInformationHandleCustomizedOids(
 							pPSC->bLeisurePs= TRUE;
 						else if(pPSC->PowerProfile == NdisPowerProfileAcOnLine )
 							pPSC->bLeisurePs= FALSE;
-						
-						// NdisDevicePnPEventSurpriseRemoved isn't called. 
+
+						// NdisDevicePnPEventSurpriseRemoved isn't called.
 						else
 							pPSC->bLeisurePs= TRUE;
 					}
@@ -7734,7 +7734,7 @@ N6CSetInformationHandleCustomizedOids(
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===> Set OID_802_11_BSSID_LIST_SCAN.\n"));
 		if(pMgntInfo->SnifferTurnOnFlag)
 			break;
-#if RTL819X_NO_SCAN_AFTER_LINK		
+#if RTL819X_NO_SCAN_AFTER_LINK
 		if(!pMgntInfo->bMediaConnect){
 			RT_TRACE(COMP_SEND, DBG_LOUD, ("==m==> Scan <==m==\n"));
 			MgntActSet_802_11_BSSID_LIST_SCAN(pAdapter);
@@ -7752,7 +7752,7 @@ N6CSetInformationHandleCustomizedOids(
 			Status = NDIS_STATUS_INVALID_LENGTH;
 			return Status;
 		}
-		else 
+		else
 		{
 			NDIS_802_11_TEST* Test = (PNDIS_802_11_TEST)InformationBuffer;
 
@@ -7785,7 +7785,7 @@ N6CSetInformationHandleCustomizedOids(
 	case OID_RT_SET_CHANNEL:
 		{
 			u1Byte btChannel;
-			
+
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===> Set OID_RT_SET_CHANNEL\n"));
 
 			// Verify input paramter.
@@ -7800,10 +7800,10 @@ N6CSetInformationHandleCustomizedOids(
 			btChannel = *((u1Byte*)InformationBuffer);
 
 			//
-			// 2012/06/08 MH Dirty fix for adhoc set channel under adhoc mode? 
+			// 2012/06/08 MH Dirty fix for adhoc set channel under adhoc mode?
 			// Before RT UI set channel, the scan process will be called at first and then
 			// the set channel process will be aborted. Need to investigate later!?
-			// 			
+			//
 			{
 				u1Byte		delay = 0;
 				PMGNT_INFO	pMgntInfo = &pAdapter->MgntInfo;
@@ -7814,13 +7814,13 @@ N6CSetInformationHandleCustomizedOids(
 					//DbgPrint("scan in progress we can nnot set channel otherwise this will be aborted delay=%d\n", delay);
 				}
 			}
-			
+
 			// Switch channel.
 			if(MgntActSet_802_11_REG_20MHZ_CHANNEL_AND_SWITCH(pAdapter, btChannel) != TRUE)
 			{
 				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("!!! Failed to switch to the channel, %d\n", btChannel));
 			}
-			
+
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_SET_CHANNEL: %d\n",btChannel));
 		}
 		break;
@@ -7891,7 +7891,7 @@ N6CSetInformationHandleCustomizedOids(
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===> Set OID_RT_SET_CHANNELPLAN\n"));
 		{
 			u2Byte ChannelPlan;
-			
+
 			// Verify input paramter
 			if(InformationBufferLength < sizeof(u2Byte))
 			{
@@ -7916,7 +7916,7 @@ N6CSetInformationHandleCustomizedOids(
 		{
 			u1Byte		DataRate;
 			PADAPTER 	pExtAdapter = NULL;
-	
+
 			// Verify input paramter.
 			if(InformationBufferLength < sizeof(DataRate))
 			{
@@ -7929,7 +7929,7 @@ N6CSetInformationHandleCustomizedOids(
 			DataRate = *((u1Byte*)InformationBuffer);
 
 			// Check if it is valid for current wireless mode.
-			if(!MgntIsRateValidForWirelessMode(DataRate, pMgntInfo->dot11CurrentWirelessMode) && 
+			if(!MgntIsRateValidForWirelessMode(DataRate, pMgntInfo->dot11CurrentWirelessMode) &&
 				DataRate != 0 ) // 0 stands for Auto.
 			{
 				Status = NDIS_STATUS_INVALID_DATA;
@@ -7938,7 +7938,7 @@ N6CSetInformationHandleCustomizedOids(
 			}
 
 			// Set data rate forced.
-			pExtAdapter = GetDefaultAdapter(pAdapter);		
+			pExtAdapter = GetDefaultAdapter(pAdapter);
 			while(pExtAdapter !=NULL){
 				pExtAdapter->MgntInfo.ForcedDataRate = (u2Byte)DataRate;
 				pExtAdapter = GetNextExtAdapter(pExtAdapter);
@@ -7948,7 +7948,7 @@ N6CSetInformationHandleCustomizedOids(
 
 			if(InformationBufferLength > 1)
 			{
-				pExtAdapter = GetDefaultAdapter(pAdapter);		
+				pExtAdapter = GetDefaultAdapter(pAdapter);
 				while(pExtAdapter !=NULL){
 					pExtAdapter->MgntInfo.ForcedTxDisableRateFallBack = *((u1Byte*)InformationBuffer+1);
 					pExtAdapter = GetNextExtAdapter(pExtAdapter);
@@ -7959,7 +7959,7 @@ N6CSetInformationHandleCustomizedOids(
 
 	case OID_RT_WIRELESS_MODE_FOR_SCAN_LIST:
 		//
-		// It changes the behavior when we report scan result to upper layer. 
+		// It changes the behavior when we report scan result to upper layer.
 		// See OID_802_11_BSSID_LIST for details.  2005.01.13, by rcnjko.
 		//
 		{
@@ -8008,11 +8008,11 @@ N6CSetInformationHandleCustomizedOids(
 		{
 			PADAPTER pDefAdapter =  GetDefaultAdapter(pAdapter);
 			PMGNT_INFO pDefMgntInfo = &(pDefAdapter->MgntInfo);
-			
+
 			*BytesRead = sizeof(BOOLEAN);
 			pMgntInfo->bDisableScanByOID = *((BOOLEAN*)InformationBuffer);
 			pDefMgntInfo->bDisableScanByOID = *((BOOLEAN*)InformationBuffer);
-			
+
 			if(pMgntInfo->bDisableScanByOID)
 			{
 				if(MgntScanInProgress(pDefMgntInfo) == TRUE && MgntIsLinkInProgress(pDefMgntInfo) == FALSE)
@@ -8021,7 +8021,7 @@ N6CSetInformationHandleCustomizedOids(
 		}
 		RT_TRACE(COMP_SCAN, DBG_LOUD, ("<=== Set OID_RT_SET_SCAN_OPERATION %d.\n", pMgntInfo->bDisableScanByOID));
 		break;
-	
+
 
 	case OID_RT_AP_SWITCH_INTO_AP_MODE:
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===> Set OID_RT_AP_SWITCH_INTO_AP_MODE.\n"));
@@ -8037,14 +8037,14 @@ N6CSetInformationHandleCustomizedOids(
 				// Switch to AP mode.
 				MgntActSet_ApMode(pAdapter, TRUE);
 				break;
-			}	
+			}
 		}
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_AP_SWITCH_INTO_AP_MODE.\n"));
 		break;
 
 	case OID_RT_AP_SET_DTIM_PERIOD:
 		{
-			u1Byte u1DtimPeriod; 
+			u1Byte u1DtimPeriod;
 
 			// Verify input paramter.
 			if(InformationBufferLength < sizeof(u1Byte))
@@ -8062,7 +8062,7 @@ N6CSetInformationHandleCustomizedOids(
 
 	case OID_RT_SET_BCN_INTVL:
 		{
-			u2Byte u2BcnIntv; 
+			u2Byte u2BcnIntv;
 
 			// Verify input paramter.
 			if(InformationBufferLength < sizeof(u2Byte))
@@ -8102,7 +8102,7 @@ N6CSetInformationHandleCustomizedOids(
 				Status = NDIS_STATUS_INVALID_DATA;
 				return Status;
 			}
-			
+
 			FillOctetString(osPassphrase, pRtPassphrase->Passphrase, ((u2Byte)pRtPassphrase->Length));
 			//PRINT_DATA(("Set OID_RT_AP_SET_PASSPHRASE: "), osPassphrase.Octet, osPassphrase.Length);
 
@@ -8124,7 +8124,7 @@ N6CSetInformationHandleCustomizedOids(
 				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===> Set OID_RT_SEND_SPECIFIC_PACKET  NDIS_STATUS_INVALID_LENGTH.\n"));
 				return Status;
 			}
-			
+
 			// Get packet lengh, in unit of byte.
 			u2bPacketLength = *((pu2Byte)InformationBuffer);
 			if( InformationBufferLength < (ULONG)(16 + u2bPacketLength))
@@ -8135,23 +8135,23 @@ N6CSetInformationHandleCustomizedOids(
 				return Status;
 			}
 			RT_TRACE(COMP_MP, DBG_LOUD, ("[Debug] u2bPacketLength = %d.\n", u2bPacketLength));
-			
+
 			// Get data rate, in unit of 0.5 Mbps.
 			u1bTxRate = *((pu1Byte)InformationBuffer + 2);
 			RT_TRACE(COMP_MP, DBG_LOUD, ("[Debug] u1bTxRate = %d.\n", u1bTxRate));
-			
+
 			// Get number of sending packet.
 			u2bTxNumber = *(pu2Byte)( (pu1Byte)InformationBuffer+3 );
 			RT_TRACE(COMP_MP, DBG_LOUD, ("[Debug] u2bTxNumber = %d.\n", u2bTxNumber));
-			
+
 			// Get packet to send, it should be an 802.11 frame with CRC append.
 			FillOctetString(ocPacketToSend, ((pu1Byte)InformationBuffer + 16), u2bPacketLength);
 			RT_PRINT_DATA(COMP_MP, DBG_LOUD, "[Debug] ocPacketToSend:\n", ((pu1Byte)InformationBuffer + 16), u2bPacketLength);
-			
+
 			// Send the specific packet.
 			if( u2bTxNumber == 0 )
 				u2bTxNumber = 1;		// At least send one packet. Added by Annie, 2006-03-27.
-			
+
 			for( idx=0; idx<u2bTxNumber; idx++ )
 			{
 				if( !MgntSendSpecificPacket(pAdapter, &ocPacketToSend, u1bTxRate) )
@@ -8183,7 +8183,7 @@ N6CSetInformationHandleCustomizedOids(
 				*BytesNeeded = 16;
 				return Status;
 			}
-			
+
 			// Get packet length, in unit of byte.
 			u2bPacketLength = *((pu2Byte)InformationBuffer);
 			if( InformationBufferLength < (ULONG)(16 + u2bPacketLength))
@@ -8202,7 +8202,7 @@ N6CSetInformationHandleCustomizedOids(
 			u2bTxNumber = *(pu2Byte)( (pu1Byte)InformationBuffer+3 );
 
 			RT_TRACE(COMP_MP, DBG_LOUD, ("[Debug] u2bTxNumber = %d.\n", u2bTxNumber));
-			
+
 			// Get packet to send, it should be an 802.11 frame (start with 24 bytes header).
 			FillOctetString(ocPacketToSend, ((pu1Byte)InformationBuffer + 16), u2bPacketLength);
 
@@ -8211,7 +8211,7 @@ N6CSetInformationHandleCustomizedOids(
 			// Send the specific packet.
 			if( u2bTxNumber == 0 )
 				u2bTxNumber = 1;		// At least send one packet. Added by Annie, 2006-03-27.
-			
+
 			//RT_PRINT_DATA(COMP_MP, DBG_LOUD, "[Debug] CurrentAddress:\n", pAdapter->CurrentAddress, 6);
 			//RT_PRINT_DATA(COMP_MP, DBG_LOUD, "[Debug] ocPacketToSend::\n", ocPacketToSend.Octet, ocPacketToSend.Length); // For debug purpose
 
@@ -8224,8 +8224,8 @@ N6CSetInformationHandleCustomizedOids(
 				RT_TRACE(COMP_MP, DBG_LOUD, ("[Debug] return FALSE for MptTag != 0x10ec8139.\n"));
 			}
 
-			
-			
+
+
 			for( idx=0; idx<u2bTxNumber; idx++ )
 			{
 				if( !MgntSendSpecificPacket(pAdapter, &ocPacketToSend, u1bTxRate) )
@@ -8235,7 +8235,7 @@ N6CSetInformationHandleCustomizedOids(
 					return Status;
 				}
 			}
-			
+
 		}
 		RT_TRACE(COMP_MP, DBG_LOUD, ("<=== Set OID_RT_SEND_SPECIFIC_PACKET_MP.\n"));
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_SEND_SPECIFIC_PACKET_MP.\n"));
@@ -8261,7 +8261,7 @@ N6CSetInformationHandleCustomizedOids(
 				*BytesNeeded = 16;
 				return Status;
 			}
-			
+
 			// Get packet length, in unit of byte.
 			u2bPacketLength = *((pu2Byte)InformationBuffer);
 			if( InformationBufferLength < (ULONG)(16 + u2bPacketLength))
@@ -8280,7 +8280,7 @@ N6CSetInformationHandleCustomizedOids(
 			u2bTxNumber = *(pu2Byte)( (pu1Byte)InformationBuffer+3 );
 
 			RT_TRACE(COMP_MP, DBG_LOUD, ("[Debug] u2bTxNumber = %d.\n", u2bTxNumber));
-			
+
 			// Get packet to send, it should be an 802.11 frame (start with 24 bytes header).
 			FillOctetString(ocPacketToSend, ((pu1Byte)InformationBuffer + 16), u2bPacketLength);
 
@@ -8289,7 +8289,7 @@ N6CSetInformationHandleCustomizedOids(
 			// Send the specific packet.
 			if( u2bTxNumber == 0 )
 				u2bTxNumber = 1;		// At least send one packet. Added by Annie, 2006-03-27.
-			
+
 			//RT_PRINT_DATA(COMP_MP, DBG_LOUD, "[Debug] CurrentAddress:\n", pAdapter->CurrentAddress, 6);
 			//RT_PRINT_DATA(COMP_MP, DBG_LOUD, "[Debug] ocPacketToSend::\n", ocPacketToSend.Octet, ocPacketToSend.Length); // For debug purpose
 
@@ -8302,8 +8302,8 @@ N6CSetInformationHandleCustomizedOids(
 				RT_TRACE(COMP_MP, DBG_LOUD, ("[Debug] return FALSE for MptTag != 0x10ec8139.\n"));
 			}
 
-			
-			
+
+
 			for( idx=0; idx<u2bTxNumber; idx++ )
 			{
 				if( !MgntSendSpecificPacket(pAdapter, &ocPacketToSend, u1bTxRate) )
@@ -8312,7 +8312,7 @@ N6CSetInformationHandleCustomizedOids(
 					return Status;
 				}
 			}
-			
+
 		}
 		RT_TRACE(COMP_MP, DBG_LOUD, ("<=== Set OID_RT_SEND_ONE_PACKET_MP.\n"));
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_SEND_ONE_PACKET_MP.\n"));
@@ -8334,7 +8334,7 @@ N6CSetInformationHandleCustomizedOids(
 				*BytesNeeded = 16;
 				return Status;
 			}
-			
+
 			// Get packet lengh, in unit of byte.
 			u2bPacketLength = *((pu2Byte)InformationBuffer);
 			if( InformationBufferLength < (ULONG)(16 + u2bPacketLength))
@@ -8349,7 +8349,7 @@ N6CSetInformationHandleCustomizedOids(
 
 			// Get number of sending packet.
 			u2bTxNumber = *(pu2Byte)( (pu1Byte)InformationBuffer+3 );
-			
+
 			// Get packet to send, it should be an 802.11 frame with CRC append.
 			FillOctetString(ocPacketToSend, ((pu1Byte)InformationBuffer + 16), u2bPacketLength);
 			//PRINT_DATA("ocPacketToSend", ocPacketToSend.Octet, ocPacketToSend.Length); // For debug purpose, 2005.12.23, by rcnjko.
@@ -8357,7 +8357,7 @@ N6CSetInformationHandleCustomizedOids(
 			// Send the specific packet.
 			if( u2bTxNumber == 0 )
 				u2bTxNumber = 1;		// At least send one packet. Added by Annie, 2006-03-27.
-			
+
 			for( idx=0; idx<u2bTxNumber; idx++ )
 			{
 				if( !MgntSendRawPacket(pAdapter, &ocPacketToSend, u1bTxRate) )
@@ -8434,7 +8434,7 @@ N6CSetInformationHandleCustomizedOids(
 		}
 		RT_TRACE( COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_HIDDEN_SSID: %d\n", pMgntInfo->bHiddenSSID) );
 		break;
-		
+
 	case OID_RT_AP_GET_CLOUD_KEY_EX:
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===> Set OID_RT_AP_GET_CLOUD_KEY_EX.\n"));
 		{
@@ -8458,12 +8458,12 @@ N6CSetInformationHandleCustomizedOids(
 		}
 		RT_TRACE( COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_AP_GET_CLOUD_KEY_EX\n") );
 		break;
-		
+
 	case OID_RT_FILTER_DEFAULT_PERMITED:
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===> Set OID_RT_FILTER_DEFAULT_PERMITED.\n"));
 		{
 			BOOLEAN bPermited;
-				
+
 			if((InformationBufferLength == 0)||(InformationBuffer == 0))
 			{
 				RT_TRACE( COMP_OID_SET, DBG_LOUD, ("Set OID_RT_FILTER_DEFAULT_PERMITED: Invalid Length!\n") );
@@ -8472,27 +8472,27 @@ N6CSetInformationHandleCustomizedOids(
 			}
 
 			bPermited = (BOOLEAN)*( (pu1Byte)InformationBuffer );	// The first double word
-			
+
 			pMgntInfo->bDefaultPermited = bPermited;
-			
+
 			if(pMgntInfo->bDefaultPermited)
 				pMgntInfo->LockType = MAC_FILTER_ACCEPT;
 			else
 				pMgntInfo->LockType = MAC_FILTER_REJECT;
-			
+
 			pMgntInfo->LockedSTACount = 0;
 			pMgntInfo->LockedSTACount_Reject= 0;
-			
+
 			*BytesRead = InformationBufferLength;
 		}
 		RT_TRACE( COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_FILTER_DEFAULT_PERMITED\n") );
-		break;	
-		
+		break;
+
 	case OID_RT_MAC_FILTER_TYPE:
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===> Set OID_RT_MAC_FILTER_TYPE.\n"));
 		{
 			u1Byte	MacFilterType;
-				
+
 			if((InformationBufferLength == 0)||(InformationBuffer == 0))
 			{
 				RT_TRACE( COMP_OID_SET, DBG_LOUD, ("Set OID_RT_MAC_FILTER_TYPE: Invalid Length!\n") );
@@ -8501,14 +8501,14 @@ N6CSetInformationHandleCustomizedOids(
 			}
 
 			MacFilterType = *( (pu1Byte)InformationBuffer );	// The first double word
-			
+
 			if(MacFilterType > 2)
 			{
 				RT_TRACE( COMP_OID_SET, DBG_LOUD, ("Set OID_RT_MAC_FILTER_TYPE: Invalid Data!\n") );
 				Status = NDIS_STATUS_INVALID_DATA;
 				return Status;
 			}
-			
+
 			pMgntInfo->LockType = MacFilterType;
 			if(pMgntInfo->LockType == MAC_FILTER_DISABLE)
 			{
@@ -8517,18 +8517,18 @@ N6CSetInformationHandleCustomizedOids(
 				PlatformZeroMemory( pMgntInfo->LockedSTAList, MAX_LOCKED_STA_LIST_NUM*6 );
 				PlatformZeroMemory( pMgntInfo->LockedSTAList_Reject, MAX_LOCKED_STA_LIST_NUM*6 );
 			}
-			
+
 			*BytesRead = InformationBufferLength;
 		}
 		RT_TRACE( COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_MAC_FILTER_TYPE\n") );
-		
-		break;	
+
+		break;
 
 	case OID_RT_LOCKED_STA_ADDRESS:
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===> Set OID_RT_LOCKED_STA_ADDRESS.\n"));
 		{
 			u4Byte	NumOfLockedAddr;
-				
+
 			if(	(InformationBufferLength == 0)			||
 				(InformationBuffer == 0)					||
 				( (InformationBufferLength-4)%6 != 0 )	||
@@ -8541,7 +8541,7 @@ N6CSetInformationHandleCustomizedOids(
 			}
 
 			NumOfLockedAddr = *( (pu4Byte)InformationBuffer );	// The first double word
-			
+
 			if(	(NumOfLockedAddr > MAX_LOCKED_STA_LIST_NUM)	||
 				((NumOfLockedAddr*6+4) != InformationBufferLength)
 				)
@@ -8561,7 +8561,7 @@ N6CSetInformationHandleCustomizedOids(
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===> Set OID_RT_FILTER_STA_ADDRESS.\n"));
 		{
 			u4Byte	NumOfLockedAddr;
-				
+
 			if(	(InformationBufferLength == 0)			||
 				(InformationBuffer == 0)					||
 				( (InformationBufferLength-4)%6 != 0 )	||
@@ -8574,7 +8574,7 @@ N6CSetInformationHandleCustomizedOids(
 			}
 
 			NumOfLockedAddr = *( (pu4Byte)InformationBuffer );	// The first double word
-			
+
 			if(	(NumOfLockedAddr > MAX_LOCKED_STA_LIST_NUM)	||
 				((NumOfLockedAddr*6+4) != InformationBufferLength)
 				)
@@ -8588,7 +8588,7 @@ N6CSetInformationHandleCustomizedOids(
 				MgntActSet_Accepted_STA_Address( pAdapter, (pu1Byte)InformationBuffer+4, NumOfLockedAddr );
 			else if(pMgntInfo->LockType == MAC_FILTER_REJECT)
 				MgntActSet_Rejected_STA_Address( pAdapter, (pu1Byte)InformationBuffer+4, NumOfLockedAddr );
-			
+
 			*BytesRead = InformationBufferLength;
 		}
 		RT_TRACE( COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_FILTER_STA_ADDRESS\n") );
@@ -8603,7 +8603,7 @@ N6CSetInformationHandleCustomizedOids(
 			return Status;
 		}
 
-		pMgntInfo->WdsMode = *((pu1Byte)InformationBuffer);	
+		pMgntInfo->WdsMode = *((pu1Byte)InformationBuffer);
 		*BytesRead = InformationBufferLength;
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_AP_WDS_MODE: %d\n", pMgntInfo->WdsMode));
 		break;
@@ -8624,12 +8624,12 @@ N6CSetInformationHandleCustomizedOids(
 			pWdsApList = (pu1Byte)InformationBuffer + sizeof(u4Byte);
 			PlatformMoveMemory(pMgntInfo->WdsApAddr, pWdsApList, 6);
 			*BytesRead = InformationBufferLength;
-			RT_TRACE(COMP_OID_SET, DBG_LOUD, 
-				("Set OID_RT_AP_WDS_AP_LIST: %02X-%02X-%02X-%02X-%02X-%02X\n", 
+			RT_TRACE(COMP_OID_SET, DBG_LOUD,
+				("Set OID_RT_AP_WDS_AP_LIST: %02X-%02X-%02X-%02X-%02X-%02X\n",
 				pMgntInfo->WdsApAddr[0], pMgntInfo->WdsApAddr[1], pMgntInfo->WdsApAddr[2], pMgntInfo->WdsApAddr[3], pMgntInfo->WdsApAddr[4], pMgntInfo->WdsApAddr[5] ));
 		}
 		break;
-	
+
 	case OID_RT_SET_PSP_XLINK_STATUS:
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_SET_PSP_XLINK_STATUS:\n"));
 		{
@@ -8655,16 +8655,16 @@ N6CSetInformationHandleCustomizedOids(
 			MgntActSet_802_11_WMM_MODE(pAdapter, *((PBOOLEAN)InformationBuffer));
 		}
 		break;
-		
+
 	case OID_RT_SET_WMM_UAPSD_ENABLE:
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_SET_WMM_UAPSD_ENABLE:\n"));
-		{	
+		{
 			if ( InformationBufferLength < sizeof(AC_UAPSD) )
 			{
 				*BytesNeeded = sizeof(AC_UAPSD);
 				return NDIS_STATUS_INVALID_LENGTH;
 			}
-			
+
 			MgntActSet_802_11_WMM_UAPSD(GetDefaultAdapter(pAdapter), (AC_UAPSD)(*((pu1Byte)InformationBuffer)));
 
 		}
@@ -8722,21 +8722,21 @@ N6CSetInformationHandleCustomizedOids(
 				}
 
 				Protection_CCA	 	= *((u1Byte*)InformationBuffer) & 0x0f;
-					
+
 				Protection_Rate 		= *((pu1Byte)InformationBuffer+1);
 
 				Protection_RtsFrame     = *((pu1Byte)InformationBuffer+2) >> 4;
 				Protection_CtsFrame 	= *((pu1Byte)InformationBuffer+2) & 0x0f;
 
-				
+
 				Protection_BW 		= *((pu1Byte)InformationBuffer+3) >> 4;
 				Protection_SC 		= *((pu1Byte)InformationBuffer+3) & 0x0f;
 
-				if(	Protection_CtsFrame > 1 || Protection_RtsFrame > 1 || 
+				if(	Protection_CtsFrame > 1 || Protection_RtsFrame > 1 ||
 					Protection_BW > 3 || Protection_SC > 3 || Protection_CCA > 2)
 				{
 					Status = NDIS_STATUS_INVALID_DATA;
-					return Status;					
+					return Status;
 				}
 
 				pMgntInfo->ForcedProtectionMode = PROTECTION_MODE_FORCE_ENABLE;
@@ -8747,7 +8747,7 @@ N6CSetInformationHandleCustomizedOids(
 				pMgntInfo->ForcedProtectSC 	= Protection_SC;
 				pMgntInfo->ForcedProtectCCA	= Protection_CCA;
 //				DbgPrint("Protection Mode %d Rate %d RTS %d CTS %d BW %d SC %d CCA %d\n",
-//					pMgntInfo->ForcedProtectionMode, pMgntInfo->ForcedProtectRate>>1, pMgntInfo->bForcedProtectRTSFrame, 
+//					pMgntInfo->ForcedProtectionMode, pMgntInfo->ForcedProtectRate>>1, pMgntInfo->bForcedProtectRTSFrame,
 //					pMgntInfo->bForcedProtectCTSFrame, pMgntInfo->ForcedProtectBW, pMgntInfo->ForcedProtectSC, pMgntInfo->ForcedProtectCCA);
 			}
 			else
@@ -8757,10 +8757,10 @@ N6CSetInformationHandleCustomizedOids(
 			}
 		}
 		break;
-		
+
 	case OID_RT_RF_OFF:
 		RT_TRACE( COMP_OID_SET, DBG_LOUD, ("Set OID_RT_RF_OFF\n") );
-		{ 
+		{
 			BOOLEAN bRfOff = FALSE;
 
 			*BytesNeeded = sizeof(BOOLEAN);
@@ -8768,7 +8768,7 @@ N6CSetInformationHandleCustomizedOids(
 			{
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				break;
-			} 
+			}
 			bRfOff = *((PBOOLEAN)InformationBuffer);
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("OID_RT_RF_OFF: bRfOff(%d)\n", bRfOff));
 
@@ -8780,7 +8780,7 @@ N6CSetInformationHandleCustomizedOids(
 	//Turbo mode mechanism, added by Roger. 2007.02.06.
 	case OID_RT_TURBOMODE:
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===> Set OID_RT_TURBOMODE\n"));
-		{	
+		{
 			// Verify input.
 			if( (InformationBuffer == NULL) || (InformationBufferLength == 0) )
 			{
@@ -8793,28 +8793,28 @@ N6CSetInformationHandleCustomizedOids(
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_TURBOMODE.\n"));
 		*BytesRead = InformationBufferLength;
 		break;
-	
-#if (WPS_SUPPORT == 1)		
+
+#if (WPS_SUPPORT == 1)
 	// SimpleConfig ,By CCW copy from 818x
 	case OID_RT_SimpleConfScan:
 		{
 			PSIMPLE_CONFIG_T pSimpleConfig = GET_SIMPLE_CONFIG(pMgntInfo);
 
-			RT_PRINT_DATA(COMP_MLME, DBG_LOUD, 
-				"Set OID_RT_SimpleConfScan\n", 
+			RT_PRINT_DATA(COMP_MLME, DBG_LOUD,
+				"Set OID_RT_SimpleConfScan\n",
 				InformationBuffer, InformationBufferLength);
 
 			//
 			// 2011-05-13 modify by hpfan, for WSC IE support fragment
-			// 
- 
+			//
+
 			// buffer format:
 			// 1-byte: switch of simple config mode [BIT0] + IE length high byte [BIT7 ~ BIT1]
 			// 1-byte: length of IE low byte
 			// n-byte: content of IE.
 			//
 
-			// 
+			//
 			// buffer format: [Support 1byte IE length]
 			// 1-byte: switch of simple config mode.
 			// 1-byte: length of IE.
@@ -8857,11 +8857,11 @@ N6CSetInformationHandleCustomizedOids(
 				{
 					IELen += ( ((*(PUCHAR)InformationBuffer) >> 1) << 8 );
 				}
-				
+
 				//
 				// Validate IE length. 35 is mimmum IE size.
 				//
-				if( (InformationBufferLength < (ULONG)(IELen)) ||  // IELen+1 will cause all IE data drop,Because IElen = InformationBufferLength ;			
+				if( (InformationBufferLength < (ULONG)(IELen)) ||  // IELen+1 will cause all IE data drop,Because IElen = InformationBufferLength ;
 					IELen < 35 || IELen > MAX_SIMPLE_CONFIG_IE_LEN_V2)
 				{
 					Status = NDIS_STATUS_INVALID_LENGTH;
@@ -8877,16 +8877,16 @@ N6CSetInformationHandleCustomizedOids(
 				{
 					pSimpleConfig->bAPEnabled = TRUE;
 				}
-				
+
 				//
 				// Enable Simple Config and update IE.
 				//
 				pSimpleConfig->IELen = IELen;
 				PlatformFillMemory(pSimpleConfig->IEBuf,MAX_SIMPLE_CONFIG_IE_LEN_V2 ,0);
-				CopyMem(pSimpleConfig->IEBuf, 
-						((u1Byte *)InformationBuffer + 2), 
+				CopyMem(pSimpleConfig->IEBuf,
+						((u1Byte *)InformationBuffer + 2),
 						pSimpleConfig->IELen);
-				
+
 				*BytesRead = InformationBufferLength;
 			}
 			else
@@ -8910,11 +8910,11 @@ N6CSetInformationHandleCustomizedOids(
 				{
 					IELen += ( ((*(PUCHAR)InformationBuffer) >> 1) << 8 );
 				}
-				
+
 				//
 				// Validate IE length. 35 is mimmum IE size.
 				//
-				if( (InformationBufferLength < (ULONG)(IELen)) ||  // IELen+1 will cause all IE data drop,Because IElen = InformationBufferLength ;			
+				if( (InformationBufferLength < (ULONG)(IELen)) ||  // IELen+1 will cause all IE data drop,Because IElen = InformationBufferLength ;
 					IELen < 35 || IELen > MAX_SIMPLE_CONFIG_IE_LEN_V2 )
 				{
 					Status = NDIS_STATUS_INVALID_LENGTH;
@@ -8923,13 +8923,13 @@ N6CSetInformationHandleCustomizedOids(
 					pSimpleConfig->bEnabled = FALSE;
 					return Status;
 				}
-				
+
 				// Verify if AP mode exist
 				if(IsExtAPModeExist(pAdapter))
 				{
 					pSimpleConfig->bAPEnabled = TRUE;
 				}
-				
+
 				//
 				// Enable Simple Config and update IE.
 				//
@@ -8938,10 +8938,10 @@ N6CSetInformationHandleCustomizedOids(
 				pSimpleConfig->bEnabled = TRUE;
 				pSimpleConfig->IELen = IELen;
 				PlatformFillMemory(pSimpleConfig->IEBuf,MAX_SIMPLE_CONFIG_IE_LEN_V2,0);
-				CopyMem(pSimpleConfig->IEBuf, 
-						((u1Byte *)InformationBuffer + 2), 
+				CopyMem(pSimpleConfig->IEBuf,
+						((u1Byte *)InformationBuffer + 2),
 						pSimpleConfig->IELen);
-				
+
 				*BytesRead = InformationBufferLength;
 			}
 		}
@@ -8983,7 +8983,7 @@ N6CSetInformationHandleCustomizedOids(
 
 	case OID_RT_WPS_LED_CTL_START:
 		{
-			
+
 			if( InformationBufferLength < sizeof(u1Byte))
 			{
 				Status = NDIS_STATUS_INVALID_LENGTH;
@@ -8991,11 +8991,11 @@ N6CSetInformationHandleCustomizedOids(
 				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_WPS_LED_CTL_START: invalid length(%d), BytesNeeded: %d !!!\n", InformationBufferLength, *BytesNeeded));
 				return Status;
 			}
-			
+
 			if( *((pu1Byte)InformationBuffer) == 0 )
 			{
 				pAdapter->HalFunc.LedControlHandler(pAdapter, LED_CTL_STOP_WPS);
-				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_WPS_LED_CTL_START: stop LED blinking SUCCESS\n"));				
+				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_WPS_LED_CTL_START: stop LED blinking SUCCESS\n"));
 			}
 			else if( *((pu1Byte)InformationBuffer) == 1 )
 			{
@@ -9003,7 +9003,7 @@ N6CSetInformationHandleCustomizedOids(
 				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_WPS_LED_CTL_START: start LED blinking 0.3s\n"));
 			}
 			else if( *((pu1Byte)InformationBuffer) == 2 )
-			{				
+			{
 				pAdapter->HalFunc.LedControlHandler(pAdapter, LED_CTL_START_WPS_BOTTON);
 				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_WPS_LED_CTL_START_BOTTON: start LED blinking 0.3s\n"));
 			}
@@ -9015,13 +9015,13 @@ N6CSetInformationHandleCustomizedOids(
 			else if ( *((pu1Byte)InformationBuffer) == 4 )
 			{
 				pAdapter->HalFunc.LedControlHandler(pAdapter, LED_CTL_STOP_WPS_FAIL_OVERLAP);
-				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_WPS_LED_CTL_START_BOTTON: stop LED blinking fail session overlap\n"));			
+				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_WPS_LED_CTL_START_BOTTON: stop LED blinking fail session overlap\n"));
 			}
 			else
-			{				
-				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_WPS_LED_CTL_START_BOTTON: WRONG parameter\n"));			
+			{
+				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_WPS_LED_CTL_START_BOTTON: WRONG parameter\n"));
 			}
-			
+
 			*BytesRead = InformationBufferLength;
 		}
 		break;
@@ -9046,7 +9046,7 @@ N6CSetInformationHandleCustomizedOids(
 	case OID_RT_CUSTOMIZED_SCAN:
 		{
 			RT_TRACE(COMP_OID_SET , DBG_LOUD, ("Set OID_RT_CUSTOMIZED_SCAN:\n"));
-			N6CSet_DOT11_CUSTOMIZED_SCAN_REQUEST(GetDefaultAdapter(pAdapter), 
+			N6CSet_DOT11_CUSTOMIZED_SCAN_REQUEST(GetDefaultAdapter(pAdapter),
 				InformationBuffer,
 				InformationBufferLength,
 				BytesRead,
@@ -9067,8 +9067,8 @@ N6CSetInformationHandleCustomizedOids(
 				pPSC->bDisableLPSByOID = FALSE;
 				// Return LPS by UpdateLPSStatus(). by tynli. 2011.01.04.
 				pAdapter->HalFunc.UpdateLPSStatusHandler(
-						pAdapter, 
-						pPSC->RegLeisurePsMode, 
+						pAdapter,
+						pPSC->RegLeisurePsMode,
 						pPSC->RegPowerSaveMode);
 				RT_TRACE(COMP_OID_SET, DBG_LOUD,("Set OID_RT_CONTROL_LPS: Recover LPS. bLeisurePs=%d\n", pPSC->bLeisurePs));
 			}
@@ -9110,7 +9110,7 @@ N6CSetInformationHandleCustomizedOids(
 			RT_TRACE(COMP_OID_SET, DBG_LOUD,("Set OID_RT_CLEAR_ANTENNA_TEST_VAL\n"));
 		}
 		break;
-			
+
 	case OID_RT_11N_TDLS_ENABLE:
 		{
 			TDLS_SetConfiguration(pAdapter, InformationBuffer, InformationBufferLength);
@@ -9129,11 +9129,11 @@ N6CSetInformationHandleCustomizedOids(
 			}
 			MgntActSet_802_11_CustomizedAsocIE(pAdapter, InformationBuffer, (u1Byte)InformationBufferLength);
 		}
-		break;	
+		break;
 
 		case OID_RT_LC_STOP_SCAN:
 			{
-				
+
 				if(InformationBufferLength < sizeof(ULONG))
 				{
 					Status = NDIS_STATUS_INVALID_LENGTH;
@@ -9148,7 +9148,7 @@ N6CSetInformationHandleCustomizedOids(
 
 					case 1:
 						pMgntInfo->bStopScan = TRUE;
-						// 
+						//
 						MgntDisconnect(pAdapter, unspec_reason);
 
 						break;
@@ -9157,7 +9157,7 @@ N6CSetInformationHandleCustomizedOids(
 						break;
 				}
 			}
-			break;		
+			break;
 
 		case OID_RT_PNP_POWER:
 		{
@@ -9179,7 +9179,7 @@ N6CSetInformationHandleCustomizedOids(
 				(rtStatus = MgntActSet_WPS_Information(pAdapter, InformationBuffer, (u2Byte)InformationBufferLength)))
 			{
 				Status = NDIS_STATUS_INVALID_DATA;
-				return Status;					
+				return Status;
 			}
 #else
 			return NDIS_STATUS_FAILURE;
@@ -9198,14 +9198,14 @@ N6CSetInformationHandleCustomizedOids(
 	case OID_RT_FORCED_BUG_CHECK:
 		{
 			//
-			// <Roger_Notes> Add forced bug check operation(OID_RT_FORCED_BUG_CHECK) to observe some specific HW behavior, 
+			// <Roger_Notes> Add forced bug check operation(OID_RT_FORCED_BUG_CHECK) to observe some specific HW behavior,
 			// e.g., to check whether SDIO device will be recognized by device management after unexpected system restart
 			// 2014.07.05.
 			//
 			KeBugCheckEx(
-				OID_RT_FORCED_BUG_CHECK, 
-				(ULONG) GET_RT_SDIO_DEVICE(pAdapter)->CurrentPowerState, 
-				(ULONG)pDefaultAdapter->bSurpriseRemoved,				 
+				OID_RT_FORCED_BUG_CHECK,
+				(ULONG) GET_RT_SDIO_DEVICE(pAdapter)->CurrentPowerState,
+				(ULONG)pDefaultAdapter->bSurpriseRemoved,
 				(ULONG)pDefaultAdapter->bDriverStopped,
 				(ULONG)pDefaultAdapter->bEnterPnpSleep);
 		}
@@ -9234,21 +9234,21 @@ N6CSetInformation(
 	PRT_NDIS6_COMMON		pNdisCommon = pAdapter->pNdisCommon;
 	PADAPTER				pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	NDIS_STATUS				Status = NDIS_STATUS_SUCCESS;
-	
+
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("====> N6CSetInformation, OID=0x%08x\n", Oid));
 
 	// Moved From Orginal MPSetInformation Set OID (Too Many Interface Dependent OIDs; therefore, separate them into different files) ---
 	Status = InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
-			MiniportAdapterContext, 
-			Oid, 
+			MiniportAdapterContext,
+			Oid,
 			InformationBuffer,
-			InformationBufferLength, 
-			BytesRead, 
+			InformationBufferLength,
+			BytesRead,
 			BytesNeeded
 		);
-	
+
 	if(Status != NDIS_STATUS_NOT_RECOGNIZED)
-	{	
+	{
 		// The Customized Wifi-Direct OID has been handled.
 		return Status;
 	}
@@ -9263,7 +9263,7 @@ N6CSetInformation(
 	{
 		// This Oid has been responded to by the MpEventQueryInformation function
         	// We will not handle this Oid and return to the OS.
-       
+
 		RT_TRACE(COMP_CCX, DBG_TRACE,  ("Oid intercepted by CCX EventSetInformation! Status 0x%08x\n", Status));
 		return Status;
 	}
@@ -9273,16 +9273,16 @@ N6CSetInformation(
 
 	// Handle the Wifi-Direct Customized Oids -----------------------------------------------------------------
 	Status = N6CSetInformationHandleCustomizedWifiDirectOids(
-			MiniportAdapterContext, 
-			Oid, 
+			MiniportAdapterContext,
+			Oid,
 			InformationBuffer,
-			InformationBufferLength, 
-			BytesRead, 
+			InformationBufferLength,
+			BytesRead,
 			BytesNeeded
 		);
-	
+
 	if(Status != NDIS_STATUS_NOT_RECOGNIZED)
-	{	
+	{
 		// The Customized Wifi-Direct OID has been handled.
 		return Status;
 	}
@@ -9292,18 +9292,18 @@ N6CSetInformation(
 
 	// Handle the WAPI Customized Oids ---------------------------------------------------------------------
 	Status = WAPI_OidHandler(
-			pAdapter, 
+			pAdapter,
 			1, //N6 Platform
 			1, //Set OID
-			Oid, 
+			Oid,
 			InformationBuffer,
-			InformationBufferLength, 
-			BytesRead, 
+			InformationBufferLength,
+			BytesRead,
 			BytesNeeded
 		);
-	
+
 	if(Status != NDIS_STATUS_NOT_RECOGNIZED)
-	{	
+	{
 		// The Customized WAPI OID has been handled.
 		return Status;
 	}
@@ -9313,16 +9313,16 @@ N6CSetInformation(
 
 	// Handle the Customized 11n Oids -----------------------------------------------------------------------
 	Status = N6CSetInformationHandleCustomized11nOids(
-			MiniportAdapterContext, 
-			Oid, 
+			MiniportAdapterContext,
+			Oid,
 			InformationBuffer,
-			InformationBufferLength, 
-			BytesRead, 
+			InformationBufferLength,
+			BytesRead,
 			BytesNeeded
 		);
-	
+
 	if(Status != NDIS_STATUS_NOT_RECOGNIZED)
-	{	
+	{
 		// The Customized 11n OID has been handled.
 		return Status;
 	}
@@ -9332,35 +9332,35 @@ N6CSetInformation(
 
 	// Handle the Customized Security Oids --------------------------------------------------------------------------
 	Status = N6CSetInformationHandleCustomizedSecurityOids(
-			MiniportAdapterContext, 
-			Oid, 
+			MiniportAdapterContext,
+			Oid,
 			InformationBuffer,
-			InformationBufferLength, 
-			BytesRead, 
+			InformationBufferLength,
+			BytesRead,
 			BytesNeeded
 		);
-	
+
 	if(Status != NDIS_STATUS_NOT_RECOGNIZED)
-	{	
+	{
 		// The Customized OID has been handled.
 		return Status;
 	}
 	else Status = NDIS_STATUS_SUCCESS;
 	// --------------------------------------------------------------------------------------------------
-	
+
 
 	// Handle the Customized NAN Oids --------------------------------------------------------------------------
 	Status = N6CSetInformationHandleCustomizedNANOids(
-			MiniportAdapterContext, 
-			Oid, 
+			MiniportAdapterContext,
+			Oid,
 			InformationBuffer,
-			InformationBufferLength, 
-			BytesRead, 
+			InformationBufferLength,
+			BytesRead,
 			BytesNeeded
 		);
 
 	if(Status != NDIS_STATUS_NOT_RECOGNIZED)
-	{	
+	{
 		// The Customized NAN OID has been handled.
 		return Status;
 	}
@@ -9369,16 +9369,16 @@ N6CSetInformation(
 
 	// Handle the Customized Oids --------------------------------------------------------------------------
 	Status = N6CSetInformationHandleCustomizedOids(
-			MiniportAdapterContext, 
-			Oid, 
+			MiniportAdapterContext,
+			Oid,
 			InformationBuffer,
-			InformationBufferLength, 
-			BytesRead, 
+			InformationBufferLength,
+			BytesRead,
 			BytesNeeded
 		);
-	
+
 	if(Status != NDIS_STATUS_NOT_RECOGNIZED)
-	{	
+	{
 		// The Customized OID has been handled.
 		return Status;
 	}
@@ -9388,9 +9388,9 @@ N6CSetInformation(
 
 
 	// ============================================================================================
-	// The following are the OIDs from the NDIS 6.x, including the Customized OIDs with the same meanings. Please be organized. 
+	// The following are the OIDs from the NDIS 6.x, including the Customized OIDs with the same meanings. Please be organized.
 	// ============================================================================================
-	
+
 	*BytesRead = 0;
 	*BytesNeeded = 0;
 
@@ -9419,7 +9419,7 @@ N6CSetInformation(
 
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_802_3_MULTICAST_LIST: \n"));
 		break;
-		
+
 	case OID_DOT11_DESIRED_BSS_TYPE:
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_DOT11_DESIRED_BSS_TYPE:\n"));
 		{
@@ -9439,7 +9439,7 @@ N6CSetInformation(
 			}
 		}
 		break;
-		
+
 	case OID_DOT11_MEDIA_STREAMING_ENABLED:
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_DOT11_MEDIA_STREAMING_ENABLED::\n"));
 		{
@@ -9483,7 +9483,7 @@ N6CSetInformation(
 					BytesNeeded);
 		}
 		break;
-		
+
 	case OID_DOT11_IBSS_PARAMS:
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_DOT11_IBSS_PARAMS:\n"));
 		{
@@ -9495,7 +9495,7 @@ N6CSetInformation(
 					BytesNeeded);
 		}
 		break;
-		
+
 	// 2006.10.31, by shien chang.
 	case OID_RT_FRAGMENTATION_THRESHOLD:
 	case OID_DOT11_FRAGMENTATION_THRESHOLD:
@@ -9508,7 +9508,7 @@ N6CSetInformation(
 			}
 
 			MgntActSet_802_11_FRAGMENTATION_THRESHOLD( pAdapter, *((pu2Byte)InformationBuffer) );
-			*BytesRead = sizeof(ULONG);	
+			*BytesRead = sizeof(ULONG);
 		}
 		break;
 
@@ -9538,10 +9538,10 @@ N6CSetInformation(
 			// Clear content of bssDesc4Query[].
 			PlatformZeroMemory( pMgntInfo->bssDesc4Query, sizeof(RT_WLAN_BSS)*MAX_BSS_DESC);
 			pMgntInfo->NumBssDesc4Query = 0;
-			RT_TRACE(COMP_SCAN, DBG_LOUD, 
+			RT_TRACE(COMP_SCAN, DBG_LOUD,
 				("[REDX]: OID_DOT11_FLUSH_BSS_LIST(), clear NumBssDesc4Query\n"));
 			MgntClearRejectedAsocAP(pAdapter);
-			
+
 			*BytesRead = 0;
 		}
 		break;
@@ -9570,14 +9570,14 @@ N6CSetInformation(
 					BytesNeeded);
 		}
 		break;
-		
+
 	case OID_DOT11_DATA_RATE_MAPPING_TABLE:
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_DOT11_DATA_RATE_MAPPING_TABLE:\n"));
 		{
 
 		}
 		break;
-		
+
 	case OID_DOT11_MULTI_DOMAIN_CAPABILITY_ENABLED:
 	case OID_DOT11_COUNTRY_STRING:
 		Status = NDIS_STATUS_NOT_SUPPORTED;
@@ -9590,7 +9590,7 @@ N6CSetInformation(
 		{
 			return N6CSet_DOT11_ENABLED_AUTHENTICATION_ALGORITHM(
 					pAdapter,
-					InformationBuffer, 
+					InformationBuffer,
 					InformationBufferLength,
 					BytesRead,
 					BytesNeeded);
@@ -9602,7 +9602,7 @@ N6CSetInformation(
 		RT_TRACE( COMP_OID_SET, DBG_LOUD, ("Set OID_DOT11_ENABLED_UNICAST_CIPHER_ALGORITHM\n") );
 		{
 			return N6CSet_DOT11_ENABLED_UNICAST_CIPHER_ALGORITHM(
-					pAdapter, 
+					pAdapter,
 					InformationBuffer,
 					InformationBufferLength,
 					BytesRead,
@@ -9615,9 +9615,9 @@ N6CSetInformation(
 	case OID_DOT11_ENABLED_MULTICAST_CIPHER_ALGORITHM:
 		RT_TRACE( COMP_OID_SET, DBG_LOUD, ("Set OID_DOT11_ENABLED_MULTICAST_CIPHER_ALGORITHM, 0x%08x\n", Oid) );
 		{
-			return N6CSet_DOT11_ENABLED_MULTICAST_CIPHER_ALGORITHM( 
+			return N6CSet_DOT11_ENABLED_MULTICAST_CIPHER_ALGORITHM(
 					pAdapter,
-					InformationBuffer, 
+					InformationBuffer,
 					InformationBufferLength,
 					BytesRead,
 					BytesNeeded
@@ -9633,14 +9633,14 @@ N6CSetInformation(
 			if(CurrIrql < DISPATCH_LEVEL)
 			{
 				KeRaiseIrql(DISPATCH_LEVEL, &CurrIrql);
-			
+
 				Status = N6CSet_DOT11_CIPHER_DEFAULT_KEY(
-							pAdapter, 
+							pAdapter,
 							InformationBuffer,
 							InformationBufferLength,
 							BytesRead,
 							BytesNeeded);
-				
+
 				KeLowerIrql(CurrIrql);
 			}
 		}
@@ -9652,7 +9652,7 @@ N6CSetInformation(
 		{
 			PRT_SECURITY_T		pSecInfo = &(pAdapter->MgntInfo.SecurityInfo);
 			u4Byte				ulKey;
-			
+
 			if (InformationBufferLength < sizeof(u4Byte))
 			{
 				*BytesNeeded = sizeof(u4Byte);
@@ -9665,7 +9665,7 @@ N6CSetInformation(
 			{
 				return NDIS_STATUS_INVALID_DATA;
 			}
-			
+
 			if(WAPI_QuerySetVariable(pAdapter, WAPI_QUERY, WAPI_VAR_WAPIENABLE, 0))
 				return NDIS_STATUS_SUCCESS;
 
@@ -9686,17 +9686,17 @@ N6CSetInformation(
 				KeRaiseIrql(DISPATCH_LEVEL, &CurrIrql);
 
 				Status = N6CSet_DOT11_CIPHER_KEY_MAPPING_KEY(
-						pAdapter, 
+						pAdapter,
 						InformationBuffer,
 						InformationBufferLength,
 						BytesRead,
 						BytesNeeded);
-				
+
 				KeLowerIrql(CurrIrql);
 			}
 		}
 		break;
-		
+
 	// Added by Annie, 2006-10-09.
 	case OID_DOT11_PMKID_LIST:
 		RT_TRACE( COMP_OID_SET, DBG_LOUD, ("Set OID_DOT11_PMKID_LIST, 0x%08x\n", Oid) );
@@ -9716,7 +9716,7 @@ N6CSetInformation(
 		break;
 
 	case OID_RT_DISCONNECT_REQUEST:
-		RT_TRACE( COMP_WPS, DBG_LOUD, ("WPS Set DISCONEECT REQUEST\n") );		
+		RT_TRACE( COMP_WPS, DBG_LOUD, ("WPS Set DISCONEECT REQUEST\n") );
 		{
 			Status = N6CSet_DOT11_DISCONNECT_REQUEST(
 						pAdapter,
@@ -9737,7 +9737,7 @@ N6CSetInformation(
 			{
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				break;
-			} 
+			}
 
 			Status = N6CSet_DOT11_POWER_MGMT_REQUEST(pAdapter, InformationBuffer);
 			*BytesRead = *BytesNeeded;
@@ -9759,29 +9759,29 @@ N6CSetInformation(
 		break;
 	//
 
-	// 061012, by rcnjko. 
+	// 061012, by rcnjko.
 	case OID_DOT11_ATIM_WINDOW:
 		RT_TRACE( COMP_OID_SET, DBG_LOUD, ("Set OID_DOT11_ATIM_WINDOW\n") );
-		{ 
+		{
 			*BytesNeeded = sizeof(ULONG);
 			if( InformationBufferLength < *BytesNeeded )
 			{
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				break;
-			} 
+			}
 
 			Status = N6CSet_DOT11_ATIM_WINDOW(pAdapter, InformationBuffer);
 			*BytesRead = *BytesNeeded;
 		}
 		break;
 
-	// 061014, by rcnjko. 
+	// 061014, by rcnjko.
 	case OID_RT_OPERATIONAL_RATE_SET:
 	case OID_DOT11_OPERATIONAL_RATE_SET:
 		RT_TRACE( COMP_OID_SET, DBG_LOUD, ("Set OID_DOT11_OPERATIONAL_RATE_SET\n") );
-		{ 
+		{
 			return N6CSet_DOT11_OPERATIONAL_RATE_SET(
-						pAdapter, 
+						pAdapter,
 						InformationBuffer,
 						InformationBufferLength,
 						BytesRead,
@@ -9831,13 +9831,13 @@ N6CSetInformation(
 			*BytesRead = *BytesNeeded;
 		}
 		break;
-		
+
 	case  OID_DOT11_CURRENT_CHANNEL:
-	case  OID_DOT11_CURRENT_FREQUENCY:	
+	case  OID_DOT11_CURRENT_FREQUENCY:
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_DOT11_CURRENT_CHANNEL:\n"));
 		{
 			u1Byte btChannel;
-			
+
 			*BytesNeeded = sizeof(ULONG);
 			if ( InformationBufferLength < *BytesNeeded )
 			{
@@ -9851,7 +9851,7 @@ N6CSetInformation(
 			}
 		}
 		break;
-		
+
 	case OID_DOT11_MULTICAST_LIST:
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_DOT11_MULTICAST_LIST:\n"));
 		{
@@ -9897,7 +9897,7 @@ N6CSetInformation(
 			RT_TRACE(COMP_OID_SET,DBG_LOUD,("set oid OID_RT_11N_IQK_TRIGGER\n"));
 			PlatformScheduleWorkItem(&(pHalData->IQKTriggerWorkItem));
 		}
-		break;	
+		break;
 
 	case	OID_RT_PRO_TRIGGER_LCK:
 		{
@@ -9906,7 +9906,7 @@ N6CSetInformation(
 			RT_TRACE(COMP_OID_SET,DBG_LOUD,("set oid OID_RT_PRO_TRIGGER_LCK\n"));
 			PlatformScheduleWorkItem(&(pHalData->LCKTriggerWorkItem));
 		}
-		break;		
+		break;
 
 	case	OID_RT_PRO_TRIGGER_DPK:
 		{
@@ -9914,13 +9914,13 @@ N6CSetInformation(
 			RT_TRACE(COMP_OID_SET,DBG_LOUD,("set oid OID_RT_PRO_TRIGGER_DPK\n"));
 			PlatformScheduleWorkItem(&(pHalData->DPKTriggerWorkItem));
 		}
-		break;			
+		break;
 
 		// This is added for nested OID from CcxHandleNicSpecificExtension()
 		case OID_DOT11_CURRENT_PHY_ID:
 		{
 			ULONG PhyId = *(PULONG)InformationBuffer;
-			
+
 			*BytesNeeded = sizeof(ULONG);
 			if ( InformationBufferLength < *BytesNeeded )
 			{
@@ -9968,7 +9968,7 @@ N6CSetInformation(
 
 			tempAutoConfigEnable=ALLOWED_AUTO_CONFIG_FLAGS & *((PULONG)InformationBuffer);
 			pAdapter->pNdisCommon->dot11AutoConfigEnabled = tempAutoConfigEnable;
-				
+
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<===Set OID_DOT11_AUTO_CONFIG_ENABLED:\n"));
 		}
 		break;
@@ -10021,14 +10021,14 @@ N6CQuerySetInformation(
 	if (ndisStatus != NDIS_STATUS_INVALID_OID)
 	{
        	 //
-       	 // This Oid has been responded to by the MpEventQueryInformation function 
+       	 // This Oid has been responded to by the MpEventQueryInformation function
        	 // We will not handle this Oid and return to the OS.
        	 //
        	RT_TRACE(COMP_OID_QUERY, DBG_LOUD,  ("==>Oid intercepted by WAPI_EventQuerySetInformation! Status 0x%08x\n", ndisStatus));
 		return ndisStatus;
 	}
-	
-	//CCX Add for process IHV DLL Set OID down to Driver	
+
+	//CCX Add for process IHV DLL Set OID down to Driver
 	ndisStatus = NDIS_STATUS_SUCCESS;
 	if (ndisStatus != NDIS_STATUS_INVALID_OID)
 	{
@@ -10046,7 +10046,7 @@ N6CQuerySetInformation(
 		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query/Set OID_Unknown: %08X\n", Oid));
 		ndisStatus = NDIS_STATUS_INVALID_OID;
 		break;
-	
+
 	case OID_RT_WFD_REQUEST:
 		rtStatus = WFD_Reqeust(
 					Adapter,
@@ -10110,7 +10110,7 @@ N6CompletePendedOID(
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<===N6CompletePendedOID  \n" ));
 		return FALSE;
 	}
-	
+
 	//RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===>N6CompletePendedOID   PendedRequest %08X \n",pNdisCommon->PendedRequest  ));
 	Oid = pNdisCommon->PendedRequest->DATA.METHOD_INFORMATION.Oid;
 
@@ -10134,7 +10134,7 @@ N6CompletePendedOID(
 			if(Oid == OID_PNP_SET_POWER)
 				bComplete = TRUE;
 			break;
-			
+
 		case RT_PENDED_OID_CREATE_DELETE_MAC:
 			if(Oid == OID_DOT11_CREATE_MAC || Oid == OID_DOT11_DELETE_MAC)
 				bComplete = TRUE;
@@ -10149,20 +10149,20 @@ N6CompletePendedOID(
 		tmpPendedRequest = pNdisCommon->PendedRequest;
 		pNdisCommon->PendedRequest = NULL;
 	}
-	
+
 	PlatformReleaseSpinLock(Adapter, RT_PENDED_OID_SPINLOCK);
 
 	if(bComplete)
 	{
-		RT_TRACE(COMP_OID_SET, DBG_LOUD, 
+		RT_TRACE(COMP_OID_SET, DBG_LOUD,
 			("N6CompletePendedOID(): Complete pended OID(0x%08X)\n", Oid));
 
 		N6C_DOT11_DUMP_OID(Oid);
 
 		RT_CLEAR_DRV_STATE(Adapter, DrvStateNdisReqPended);
-		
+
 		NdisOIDHistoryUpdate(Adapter, tmpPendedRequest, RT_OID_HISTORY_COMPLETE);
-			
+
 		NdisMOidRequestComplete(
 			pNdisCommon->hNdisAdapter,
 			tmpPendedRequest,
@@ -10172,7 +10172,7 @@ N6CompletePendedOID(
 	}
 	else
 	{
-		RT_TRACE(COMP_OID_QUERY, DBG_LOUD, 
+		RT_TRACE(COMP_OID_QUERY, DBG_LOUD,
 			("N6CompletePendedOID(): Pended OID(0x%08X) does not match input OID type(%d)\n",
 			Oid, OidType));
 		return FALSE;
@@ -10183,18 +10183,18 @@ NDIS_STATUS
 N6CProcessOidRequest(
 	IN  PADAPTER	pAdapter,
 	IN  PNDIS_OID_REQUEST   NdisRequest,
-	IN  BOOLEAN bSelfMadeNdisRequest	
+	IN  BOOLEAN bSelfMadeNdisRequest
 )
 {
 	PADAPTER		pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_NOT_RECOGNIZED;
 	u2Byte			i = 0;
 	u4Byte			portType = 0;
-		
+
 	// OID callback functions ------------------------------------------------------------
 	// 	Hope: Let all NDIS OIDs be handled here with one entry point
 	portType = pTargetAdapter->pNdis62Common->PortType;
-		
+
 	for(i = 0 ; i < sizeof(RT_SUPPORT_OIDs)/sizeof(RT_OID_ENTRY); i++)
 	{
 		if(NdisRequest->DATA.QUERY_INFORMATION.Oid == RT_SUPPORT_OIDs[i].Oid)
@@ -10210,9 +10210,9 @@ N6CProcessOidRequest(
 				RT_TRACE(COMP_OID_SET, DBG_LOUD,
 					("[OID], %s to Port(%d) PortType(%d)\n", RT_SUPPORT_OIDs[i].szID, NdisRequest->PortNumber, portType));
 			}
-			
+
 			ndisStatus = RT_SUPPORT_OIDs[i].Func(pAdapter, NdisRequest);
-		
+
 			return ndisStatus;
 		}
 	}
@@ -10224,7 +10224,7 @@ N6CProcessOidRequest(
 	// Hope: Let the following be only customized oids: However, it is not now: 2012.06.08
 	// ===============================================================
 
-		
+
 	switch (NdisRequest->RequestType)
 	{
 		case NdisRequestQueryInformation:
@@ -10280,7 +10280,7 @@ N6C_OID_DOT11_FLUSH_BSS_LIST(
 	PADAPTER	pAdapter,
 	PNDIS_OID_REQUEST  NdisRequest
 	)
-{	
+{
 	PADAPTER		pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PMGNT_INFO		pDefaultMgntInfo = &pDefaultAdapter->MgntInfo;
 	PMGNT_INFO		pMgntInfo = &pAdapter->MgntInfo;
@@ -10291,7 +10291,7 @@ N6C_OID_DOT11_FLUSH_BSS_LIST(
 		return NDIS_STATUS_NOT_SUPPORTED;
 
 	RT_TRACE(COMP_MLME,DBG_LOUD, ("====>N6C_OID_DOT11_FLUSH_BSS_LIST\n"));
-	
+
 	// when flush, should set this variable.
 	pMgntInfo->bFlushScanList = TRUE;
 
@@ -10305,7 +10305,7 @@ N6C_OID_DOT11_FLUSH_BSS_LIST(
 	//
 	PlatformZeroMemory( pDefaultMgntInfo->bssDesc4Query, sizeof(RT_WLAN_BSS)*MAX_BSS_DESC);
 	pDefaultMgntInfo->NumBssDesc4Query = 0;
-	RT_TRACE(COMP_SCAN, DBG_LOUD, 
+	RT_TRACE(COMP_SCAN, DBG_LOUD,
 		("[REDX]: N6C_OID_DOT11_FLUSH_BSS_LIST(), clear NumBssDesc4Query\n"));
 	MgntClearRejectedAsocAP(pDefaultAdapter);
 
@@ -10313,7 +10313,7 @@ N6C_OID_DOT11_FLUSH_BSS_LIST(
 	{
 		PlatformZeroMemory( pMgntInfo->bssDesc4Query, sizeof(RT_WLAN_BSS)*MAX_BSS_DESC);
 		pMgntInfo->NumBssDesc4Query = 0;
-		RT_TRACE(COMP_SCAN, DBG_LOUD, 
+		RT_TRACE(COMP_SCAN, DBG_LOUD,
 			("[REDX]: N6C_OID_DOT11_FLUSH_BSS_LIST(), clear NumBssDesc4Query Non def adapter\n"));
 		PlatformZeroMemory( pMgntInfo->bssDesc, sizeof(RT_WLAN_BSS)*MAX_BSS_DESC );
 		pMgntInfo->NumBssDesc = 0;
@@ -10335,12 +10335,12 @@ N6C_OID_DOT11_SCAN_REQUEST(
 	PADAPTER 		pClientPort = NULL;
 	PADAPTER		pTargetAdapter = NULL;
 	PP2P_INFO		pP2PInfo = NULL;
-	
+
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("N6C_OID_DOT11_SCAN_REQUEST(): Oid(%#x)--->\n", NdisRequest->DATA.METHOD_INFORMATION.Oid));
 	N6C_DOT11_DUMP_OID(NdisRequest->DATA.METHOD_INFORMATION.Oid);
-	
+
 	//
-	// 2013/02/05 MH Add for NEC special request in Vista. When stram mode is 
+	// 2013/02/05 MH Add for NEC special request in Vista. When stram mode is
 	// enabled do not scan.
 	//
 
@@ -10357,7 +10357,7 @@ N6C_OID_DOT11_SCAN_REQUEST(
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("N6C_OID_DOT11_SCAN_REQUEST(): return by NDIS_STATUS_NOT_SUPPORTED\n"));
 		return NDIS_STATUS_NOT_SUPPORTED;
 	}
-	
+
 {
 	// Reject the scan request to the Wi-Fi direct port -----------------------------
 	pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte) NdisRequest->PortNumber);
@@ -10376,7 +10376,7 @@ N6C_OID_DOT11_SCAN_REQUEST(
 		RT_TRACE(COMP_OID_SET , DBG_LOUD, ("%s: NDIS_STATUS_INVALID_OID because of not port 0.\n", __FUNCTION__));
 		return NDIS_STATUS_INVALID_OID;
 	}
-	
+
 	// Block scan for a while if P2P handshake is going now.
 	if(GetFirstClientPort(pAdapter) || GetFirstGOPort(pAdapter))
 	{
@@ -10387,19 +10387,19 @@ N6C_OID_DOT11_SCAN_REQUEST(
 		}
 		else if(0 != pTargetAdapter->LastScanCompleteTime && PlatformGetCurrentTime() < pTargetAdapter->LastScanCompleteTime + P2P_BLOCK_NORMAL_SCAN_PERIOD)
 		{
-			RT_TRACE_F(COMP_OID_SET, DBG_WARNING, ("[WARNING] Last scan complete time less than %d us, return NDIS_STATUS_DOT11_MEDIA_IN_USE!\n", P2P_BLOCK_NORMAL_SCAN_PERIOD));		
-			
+			RT_TRACE_F(COMP_OID_SET, DBG_WARNING, ("[WARNING] Last scan complete time less than %d us, return NDIS_STATUS_DOT11_MEDIA_IN_USE!\n", P2P_BLOCK_NORMAL_SCAN_PERIOD));
+
 			return NDIS_STATUS_DOT11_MEDIA_IN_USE;
 		}
 	}
-	
+
 	// Only scan in the idle device port ----------------------------
 	pDevicePort = GetFirstDevicePort(pAdapter);
-	
+
 	if(pDevicePort != NULL)
 	{
 		pP2PInfo = GET_P2P_INFO(pDevicePort);
-		
+
 		if(pP2PInfo->State != P2P_STATE_INITIALIZED /*&& pP2PInfo->State != P2P_STATE_DISABLED*/)
 		{
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("%s: NDIS_STATUS_DOT11_MEDIA_IN_USE\n", __FUNCTION__));
@@ -10412,8 +10412,8 @@ N6C_OID_DOT11_SCAN_REQUEST(
 		{
 			// Postpone the extended listening for a while
 			P2PExtendedListenResetCounter(pP2PInfo);
-			
-			// Stop potential device port extended listening 
+
+			// Stop potential device port extended listening
 			P2PScanListCeaseScan(pP2PInfo);
 
 			// Delay for a while for running ScanTimer callback by context switch
@@ -10427,7 +10427,7 @@ N6C_OID_DOT11_SCAN_REQUEST(
 	if(pClientPort != NULL)
 	{
 		pP2PInfo = GET_P2P_INFO(pClientPort);
-		
+
 		if(P2P_CLIETN_JOIN_GROUP_WPS_STATE_NONE != pP2PInfo->ClientJoinGroupContext.WpsState)
 		{
 			RT_TRACE_F(COMP_OID_SET, DBG_LOUD, ("NDIS_STATUS_DOT11_MEDIA_IN_USE\n"));
@@ -10443,14 +10443,14 @@ N6C_OID_DOT11_SCAN_REQUEST(
 
 	N6WriteEventLog(pAdapter, RT_SCAN_START, 0);
 
-	ndisStatus = N6CSet_DOT11_SCAN_REQUEST(pDefaultAdapter, 
+	ndisStatus = N6CSet_DOT11_SCAN_REQUEST(pDefaultAdapter,
 		NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 		NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 		(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
 		(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded);
 
 	//DbgPrint("<===N6C_OID_DOT11_SCAN_REQUEST(), !ndisStatus   %x\n",ndisStatus);
-	
+
 	return ndisStatus;
 
 }

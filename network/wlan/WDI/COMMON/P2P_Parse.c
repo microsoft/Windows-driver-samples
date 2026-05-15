@@ -16,10 +16,10 @@ RT_STATUS
 p2p_parse_Status(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 1) 
+	if(len < 1)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -38,10 +38,10 @@ RT_STATUS
 p2p_parse_MinorReasonCode(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 1) 
+	if(len < 1)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -51,7 +51,7 @@ p2p_parse_MinorReasonCode(
 	msg->minorReasonCode = data[0];
 
 	RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("%u\n", msg->minorReasonCode));
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -60,10 +60,10 @@ RT_STATUS
 p2p_parse_Capability(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 2) 
+	if(len < 2)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -76,7 +76,7 @@ p2p_parse_Capability(
 	// pDevDescriptor->Role = P2P_GO;
 
 	RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("devCap: 0x%02X, grpCap: 0x%02X\n", msg->devCap, msg->grpCap));
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -85,10 +85,10 @@ RT_STATUS
 p2p_parse_DevId(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 6) 
+	if(len < 6)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -98,7 +98,7 @@ p2p_parse_DevId(
 	msg->devIdDevAddr = data;
 
 	//RT_TRACE_F(COMP_P2P, msg->dbgLevel, (MACSTR "\n", MAC2STR(msg->devIdDevAddr)));
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -107,10 +107,10 @@ RT_STATUS
 p2p_parse_GoIntent(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 1) 
+	if(len < 1)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -120,7 +120,7 @@ p2p_parse_GoIntent(
 	msg->goIntent = data[0];
 
 	RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("intent: %u, tie: %u\n", msg->goIntent >> 1, msg->goIntent & 0x01));
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -129,10 +129,10 @@ RT_STATUS
 p2p_parse_ConfigTimeout(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 2) 
+	if(len < 2)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -143,7 +143,7 @@ p2p_parse_ConfigTimeout(
 	msg->cliConfigTimeout = data[1];
 
 	RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("goConfigTimeout: %u, cliConfigTimeout: %u\n", msg->goConfigTimeout, msg->cliConfigTimeout));
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -152,10 +152,10 @@ RT_STATUS
 p2p_parse_ListenChannel(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 5) 
+	if(len < 5)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -164,11 +164,11 @@ p2p_parse_ListenChannel(
 	msg->_listenChannel = data;
 	msg->listenChannel = data[4];
 
-	RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("country: %c%c(0x%02x), class: %u, channel: %u\n", 
+	RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("country: %c%c(0x%02x), class: %u, channel: %u\n",
 		data[0], data[1], data[2],
 		data[3],
 		msg->listenChannel));
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -177,10 +177,10 @@ RT_STATUS
 p2p_parse_GrpBssid(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 6) 
+	if(len < 6)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -190,7 +190,7 @@ p2p_parse_GrpBssid(
 	msg->grpBssid = data;
 
 	//RT_TRACE_F(COMP_P2P, msg->dbgLevel, (MACSTR "\n", MAC2STR(msg->grpBssid)));
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -199,10 +199,10 @@ RT_STATUS
 p2p_parse_ExtListenTiming(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 4) 
+	if(len < 4)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -213,7 +213,7 @@ p2p_parse_ExtListenTiming(
 	msg->extListenInterval = ReadEF2Byte(data + 2);
 
 	RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("period: %u (ms), interval: %u (ms)\n", msg->extListenPeriod, msg->extListenInterval));
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -222,10 +222,10 @@ RT_STATUS
 p2p_parse_IntendedIntfAddr(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 6) 
+	if(len < 6)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -235,7 +235,7 @@ p2p_parse_IntendedIntfAddr(
 	msg->intfAddr = data;
 
 	//RT_TRACE_F(COMP_P2P, msg->dbgLevel, (MACSTR "\n", MAC2STR(msg->intfAddr)));
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -244,10 +244,10 @@ RT_STATUS
 p2p_parse_Manageability(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 1) 
+	if(len < 1)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -257,7 +257,7 @@ p2p_parse_Manageability(
 	msg->manageability = data[0];
 
 	RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("%u\n", msg->manageability));
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -266,12 +266,12 @@ RT_STATUS
 p2p_parse_ChannelList(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
 	const u1Byte				*pos = data;
-	
-	if(len < 3) 
+
+	if(len < 3)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -279,18 +279,18 @@ p2p_parse_ChannelList(
 
 	msg->_channelList = data;
 	msg->channelListLen = len;
-	
+
 	msg->channelListCountry = pos;
 	pos += 3;
-	
+
 	msg->channelEntryList = pos;
 	msg->channelEntryListLen = (u2Byte)(data + len - pos);
 
-	RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("country: %c%c(0x%02x)\n", 
+	RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("country: %c%c(0x%02x)\n",
 		msg->channelListCountry[0], msg->channelListCountry[1], msg->channelListCountry[2]));
 
 	RT_PRINT_DATA(COMP_P2P, msg->dbgLevel, "ChannelEntryList:\n", msg->channelEntryList, msg->channelEntryListLen);
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -299,12 +299,12 @@ RT_STATUS
 p2p_parse_NoA(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
 	const u1Byte				*pos = data;
-	
-	if(len < 2) 
+
+	if(len < 2)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -315,7 +315,7 @@ p2p_parse_NoA(
 
 	msg->noaIndex = pos[0];
 	pos += 1;
-	
+
 	msg->noaCtWindowAndOppPsParam = pos[0];
 	pos += 1;
 
@@ -325,7 +325,7 @@ p2p_parse_NoA(
 	RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("index: %u, ctWindowAndOppPsParam: 0x%02X\n", msg->noaIndex, msg->noaCtWindowAndOppPsParam));
 
 	RT_PRINT_DATA(COMP_P2P, msg->dbgLevel, "NoA Descriptors:\n", msg->noaDescriptors, msg->noaDescriptorLen);
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -334,13 +334,13 @@ RT_STATUS
 p2p_parse_DevInfo(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
 	const u1Byte				*pos = data;
 	u1Byte						devNameLen = 0;
-	
-	if(len < 6 + 2 + 8 + 1) 
+
+	if(len < 6 + 2 + 8 + 1)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -399,7 +399,7 @@ p2p_parse_DevInfo(
 		//MAC2STR(msg->devInfoDevAddr),
 		//ReadN2H2BYTE(msg->primDevType + 0), ReadN2H4BYTE(msg->primDevType + 2), ReadN2H2BYTE(msg->primDevType + 6),
 		//msg->configMethod));
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -408,10 +408,10 @@ RT_STATUS
 p2p_parse_GrpInfo(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 0) 
+	if(len < 0)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -423,7 +423,7 @@ p2p_parse_GrpInfo(
 
 	//RT_TRACE_F(COMP_P2P, msg->dbgLevel, (""));
 	RT_PRINT_DATA(COMP_P2P, msg->dbgLevel, "Group Info:\n", msg->cliInfoDescList, msg->cliInfoDescListLen);
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -432,12 +432,12 @@ RT_STATUS
 p2p_parse_GrpId(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
 	const u1Byte				*pos = data;
-	
-	if(len < 6 || 6 + 32 < len) 
+
+	if(len < 6 || 6 + 32 < len)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -460,7 +460,7 @@ p2p_parse_GrpId(
 
 	//RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("grpDevAddr: " MACSTR "\n", MAC2STR(msg->grpDevAddr)));
 	RT_PRINT_STR(COMP_P2P, msg->dbgLevel, "grpSsid:\n", msg->grpSsid, msg->grpSsidLen);
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -469,20 +469,20 @@ RT_STATUS
 p2p_parse_Interface(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
 	const u1Byte				*pos = data;
 	u1Byte						itIntfAddr = 0;
-	
-	if(len < 6 + 1) 
+
+	if(len < 6 + 1)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
 	}
 
 	msg->_intf = data;
-	
+
 	msg->intfDevAddr = pos;
 	pos += 6;
 
@@ -501,7 +501,7 @@ p2p_parse_Interface(
 	RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("intf addr list:\n"));
 	//for(itIntfAddr = 0; itIntfAddr < msg->intfAddrCount; itIntfAddr++)
 		//RT_TRACE_F(COMP_P2P, msg->dbgLevel, (MACSTR "\n", MAC2STR(msg->intfAddrList + 6 * itIntfAddr)));
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -510,10 +510,10 @@ RT_STATUS
 p2p_parse_OpChannel(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 5) 
+	if(len < 5)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -522,11 +522,11 @@ p2p_parse_OpChannel(
 	msg->_opChannel = data;
 	msg->opChannel = data[4];
 
-	RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("country: %c%c(0x%02x), class: %u, channel: %u\n", 
+	RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("country: %c%c(0x%02x), class: %u, channel: %u\n",
 		data[0], data[1], data[2],
 		data[3],
 		msg->opChannel));
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -535,10 +535,10 @@ RT_STATUS
 p2p_parse_InvitationFlags(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 1) 
+	if(len < 1)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -559,11 +559,11 @@ RT_STATUS
 p2p_parse_SvcHash(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
 	u2Byte						itSvcHash = 0;
-	if(len < 6) 
+	if(len < 6)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -587,10 +587,10 @@ RT_STATUS
 p2p_parse_SessionInfoDataInfo(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 0) 
+	if(len < 0)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -611,10 +611,10 @@ RT_STATUS
 p2p_parse_ConnCap(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 1) 
+	if(len < 1)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -633,19 +633,19 @@ RT_STATUS
 p2p_parse_AdvId(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
 	const u1Byte				*pos = data;
-	
-	if(len < 4 + 6) 
+
+	if(len < 4 + 6)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
 	}
 
 	msg->_advId = data;
-	
+
 	msg->advId = ReadEF4Byte(pos);
 	pos += 4;
 
@@ -670,8 +670,8 @@ p2p_parse_AdvSvcDesc(
 	)
 {
 	const u1Byte				*pos = data;
-	
-	if(len < 4 + 2 + 1) 
+
+	if(len < 4 + 2 + 1)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -708,12 +708,12 @@ RT_STATUS
 p2p_parse_AdvSvc(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
 	const u1Byte				*pos = data;
-	
-	if(len < 0) 
+
+	if(len < 0)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -746,12 +746,12 @@ RT_STATUS
 p2p_parse_SessionId(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
 	const u1Byte				*pos = data;
-	
-	if(len < 4 + 6) 
+
+	if(len < 4 + 6)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -774,10 +774,10 @@ RT_STATUS
 p2p_parse_FeatureCap(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg	
+	OUT P2P_MESSAGE				*msg
 	)
 {
-	if(len < 2) 
+	if(len < 2)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid length: %u\n", len));
 		return RT_STATUS_INVALID_LENGTH;
@@ -797,91 +797,91 @@ p2p_parse_Attributes(
 	IN  u1Byte					id,
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg 
+	OUT P2P_MESSAGE				*msg
 	)
 {
 	RT_STATUS					status = RT_STATUS_SUCCESS;
-	
+
 	switch(id)
 	{
 	default:
 		break;
-		
+
 	case P2P_ATTR_STATUS:
 		status = p2p_parse_Status(len, data, msg); break;
-		
+
 	case P2P_ATTR_MINOR_REASON_CODE:
 		status = p2p_parse_MinorReasonCode(len, data, msg); break;
-		
+
 	case P2P_ATTR_CAPABILITY:
 		status = p2p_parse_Capability(len, data, msg); break;
-		
+
 	case P2P_ATTR_DEVICE_ID:
 		status = p2p_parse_DevId(len, data, msg); break;
-		
+
 	case P2P_ATTR_GROUP_OWNER_INTENT:
 		status = p2p_parse_GoIntent(len, data, msg); break;
-		
+
 	case P2P_ATTR_CONFIGURATION_TIMEOUT:
 		status = p2p_parse_ConfigTimeout(len, data, msg); break;
-		
+
 	case P2P_ATTR_LISTEN_CHANNEL:
 		status = p2p_parse_ListenChannel(len, data, msg); break;
-		
+
 	case P2P_ATTR_GROUP_BSSID:
 		status = p2p_parse_GrpBssid(len, data, msg); break;
-		
+
 	case P2P_ATTR_EXT_LISTEN_TIMING:
 		status = p2p_parse_ExtListenTiming(len, data, msg); break;
-		
+
 	case P2P_ATTR_INTENDED_INTERFACE_ADDRESS:
 		status = p2p_parse_IntendedIntfAddr(len, data, msg); break;
-		
+
 	case P2P_ATTR_MANAGEABILITY:
 		status = p2p_parse_Manageability(len, data, msg); break;
-		
+
 	case P2P_ATTR_CHANNEL_LIST:
 		status = p2p_parse_ChannelList(len, data, msg); break;
-		
+
 	case P2P_ATTR_NOTICE_OF_ABSENCE:
 		status = p2p_parse_NoA(len, data, msg); break;
-		
+
 	case P2P_ATTR_DEVICE_INFO:
 		status = p2p_parse_DevInfo(len, data, msg); break;
-		
+
 	case P2P_ATTR_GROUP_INFO:
 		status = p2p_parse_GrpInfo(len, data, msg); break;
-		
+
 	case P2P_ATTR_GROUP_ID:
 		status = p2p_parse_GrpId(len, data, msg); break;
-		
+
 	case P2P_ATTR_INTERFACE:
 		status = p2p_parse_Interface(len, data, msg); break;
-		
+
 	case P2P_ATTR_OP_CHANNEL:
 		status = p2p_parse_OpChannel(len, data, msg); break;
-		
+
 	case P2P_ATTR_INVITATION_FLAGS:
 		status = p2p_parse_InvitationFlags(len, data, msg); break;
 
 	case P2P_ATTR_SVC_HASH:
 		status = p2p_parse_SvcHash(len, data, msg); break;
-		
+
 	case P2P_ATTR_SESSION_INFO_DATA_INFO:
 		status = p2p_parse_SessionInfoDataInfo(len, data, msg); break;
-		
+
 	case P2P_ATTR_CONN_CAP_INFO:
 		status = p2p_parse_ConnCap(len, data, msg); break;
-		
+
 	case P2P_ATTR_ADV_ID_INFO:
 		status = p2p_parse_AdvId(len, data, msg); break;
-		
+
 	case P2P_ATTR_ADV_SVC_INFO:
 		status = p2p_parse_AdvSvc(len, data, msg); break;
-		
+
 	case P2P_ATTR_SESSION_ID_INFO:
 		status = p2p_parse_SessionId(len, data, msg); break;
-		
+
 	case P2P_ATTR_FEATURE_CAP_INFO:
 		status = p2p_parse_FeatureCap(len, data, msg); break;
 	}
@@ -891,7 +891,7 @@ p2p_parse_Attributes(
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("parse attr id %u failed, status: 0x%X, attr content:\n", id, status));
 		RT_PRINT_DATA(COMP_P2P, DBG_WARNING, __FUNCTION__, data, len);
 	}
-	
+
 	return status;
 }
 
@@ -901,7 +901,7 @@ p2p_parse_WpsAttributes(
 	IN  u2Byte					type,
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_MESSAGE				*msg 
+	OUT P2P_MESSAGE				*msg
 	)
 {
 	RT_STATUS					status = RT_STATUS_SUCCESS;
@@ -911,7 +911,7 @@ p2p_parse_WpsAttributes(
 
 	switch(type)
 	{
-	default: 
+	default:
 		break;
 
 	case ATTR_CONFIG_METHODS:
@@ -936,7 +936,7 @@ p2p_parse_WpsAttributes(
 		RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("Device Name:\n"));
 		RT_PRINT_DATA(COMP_P2P, msg->dbgLevel, "", msg->_wpsDevName, msg->wpsDevNameLen);
 		break;
-		
+
 	case ATTR_DEV_PASSWORD_ID:
 		if(len < 2)
 		{
@@ -947,7 +947,7 @@ p2p_parse_WpsAttributes(
 		msg->wpsDevPasswordId = ReadN2H2BYTE(data);
 		RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("dev password id: 0x%04X\n", msg->wpsDevPasswordId));
 		break;
-	
+
 	case ATTR_MANUFACTURER:
 		if(64 < len)
 		{
@@ -959,7 +959,7 @@ p2p_parse_WpsAttributes(
 		RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("Manufacturer:\n"));
 		RT_PRINT_DATA(COMP_P2P, msg->dbgLevel, "", msg->_wpsManufacturer, msg->wpsManufacturerLen);
 		break;
-	
+
 	case ATTR_MODEL_NAME:
 		if(32 < len)
 		{
@@ -971,7 +971,7 @@ p2p_parse_WpsAttributes(
 		RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("Model Name:\n"));
 		RT_PRINT_DATA(COMP_P2P, msg->dbgLevel, "", msg->_wpsModelName, msg->wpsModelNameLen);
 		break;
-		
+
 	case ATTR_MODEL_NUMBER:
 		if(32 < len)
 		{
@@ -983,7 +983,7 @@ p2p_parse_WpsAttributes(
 		RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("Model Number:\n"));
 		RT_PRINT_DATA(COMP_P2P, msg->dbgLevel, "", msg->_wpsModelNumber, msg->wpsModelNumberLen);
 		break;
-	
+
 	case ATTR_SERIAL_NUMBER:
 		if(32 < len)
 		{
@@ -995,7 +995,7 @@ p2p_parse_WpsAttributes(
 		RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("Serial Number:\n"));
 		RT_PRINT_DATA(COMP_P2P, msg->dbgLevel, "", msg->_wpsSerialNumber, msg->wpsSerialNumberLen);
 		break;
-	
+
 	case ATTR_PRIMARY_DEV_TYPE:
 		if(len < 8)
 		{
@@ -1005,22 +1005,22 @@ p2p_parse_WpsAttributes(
 		msg->_wpsPrimaryDevType = data;
 		msg->wpsPrimaryDevTypeLen = len;
 		RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("PrimDevType(id-oui-subid): %u-0x%08X-%u\n",
-			ReadN2H2BYTE(msg->_wpsPrimaryDevType + 0), 
-			ReadN2H4BYTE(msg->_wpsPrimaryDevType + 2), 
+			ReadN2H2BYTE(msg->_wpsPrimaryDevType + 0),
+			ReadN2H4BYTE(msg->_wpsPrimaryDevType + 2),
 			ReadN2H2BYTE(msg->_wpsPrimaryDevType + 6)));
 		break;
-		
+
 	case ATTR_SECONDARY_DEV_TYPE_LIST:
 		msg->_wpsSecDevTypeList = data;
 		msg->wpsSecDevTypeListLen = len;
 		msg->wpsSecDevTypeNum = 0;
-		
+
 		while(pos + 8 <= end)
 		{
 			RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("SecDevType(id-oui-subid)[%u]: %u-0x%08X-%u\n",
 				msg->wpsSecDevTypeNum,
-				ReadN2H2BYTE(pos + 0), 
-				ReadN2H4BYTE(pos + 2), 
+				ReadN2H2BYTE(pos + 0),
+				ReadN2H4BYTE(pos + 2),
 				ReadN2H2BYTE(pos + 6)));
 			msg->wpsSecDevTypeNum++;
 
@@ -1072,7 +1072,7 @@ p2p_parse_VendorIEConcat(
 {
 	OCTET_STRING				osIEs;
 	OCTET_STRING				osie;
-	const u1Byte				*end, *pos;				
+	const u1Byte				*end, *pos;
 
 	pos = ies;
 	end = ies + iesLen;
@@ -1085,7 +1085,7 @@ p2p_parse_VendorIEConcat(
 	while(osie.Length)
 	{
 		if(4 <= osie.Length)
-		{// for case length equals to 4, FrameBuf_Add_Data will simply copies nothing 
+		{// for case length equals to 4, FrameBuf_Add_Data will simply copies nothing
 			// Copy P2P Attributes, skip OUI (3) and OUI type (1)
 			FrameBuf_Add_Data(pBuf, osie.Octet + 4, osie.Length - 4);
 		}
@@ -1096,12 +1096,12 @@ p2p_parse_VendorIEConcat(
 		}
 
 		pos = osie.Octet + osie.Length;
-		
+
 		FillOctetString(osIEs, pos, (u2Byte)(end - pos));
 
 		osie = IEGetElement(osIEs, EID_Vendor, ouiType, OUI_SUBTYPE_DONT_CARE);
 	}
-	
+
 	return;
 }
 
@@ -1178,7 +1178,7 @@ p2p_parse_ValidateAttribute(
 	)
 {
 	u2Byte					attrLen = 0;
-	
+
 	// Check if we can read the length field
 	if(end < pos + 3)
 	{
@@ -1205,7 +1205,7 @@ static
 RT_STATUS
 p2p_parse_P2PIe(
 	IN  const FRAME_BUF			*pAttr,		// a series of P2P attributes
-	OUT P2P_MESSAGE				*msg 
+	OUT P2P_MESSAGE				*msg
 	)
 {
 	RT_STATUS					status = RT_STATUS_SUCCESS;
@@ -1215,7 +1215,7 @@ p2p_parse_P2PIe(
 	while(pos < end)
 	{
 		u2Byte					attrLen = 0;
-		
+
 		// Check if we can read the length field
 		if(end < pos + 3)
 		{
@@ -1246,14 +1246,14 @@ p2p_parse_P2PIe(
 		// Parse next attribute
 		pos += 3 + attrLen;
 	}
-	
+
 	return status;
 }
 
 RT_STATUS
 p2p_parse_WpsIe(
 	IN  const FRAME_BUF			*pAttr,
-	OUT P2P_MESSAGE				*msg 
+	OUT P2P_MESSAGE				*msg
 	)
 {
 	RT_STATUS					status = RT_STATUS_SUCCESS;
@@ -1264,7 +1264,7 @@ p2p_parse_WpsIe(
 	{
 		u2Byte					type = 0;
 		u2Byte					len = 0;
-		
+
 		// Check if we can read the length field
 		if(end < pos + 4)
 		{
@@ -1300,7 +1300,7 @@ p2p_parse_WpsIe(
 		// Parse next attribute
 		pos += len;
 	}
-	
+
 	return status;
 }
 
@@ -1309,7 +1309,7 @@ RT_STATUS
 p2p_parse_Ies(
 	IN  const OCTET_STRING		*posMpdu,
 	IN  u4Byte					dbgLevel,
-	OUT P2P_MESSAGE				*msg 
+	OUT P2P_MESSAGE				*msg
 	)
 {
 	RT_STATUS					status = RT_STATUS_SUCCESS;
@@ -1328,7 +1328,7 @@ p2p_parse_Ies(
 	{
 		/* WPS IE */
 		p2p_parse_AssembleIe(posMpdu->Octet, posMpdu->Length, OUI_SUB_SimpleConfig, &msg->wpsAttributes);
-		
+
 		if(FrameBuf_Length(&msg->wpsAttributes))
 		{
 			if(RT_STATUS_SUCCESS != (status = p2p_parse_WpsIe(&msg->wpsAttributes, msg)))
@@ -1338,10 +1338,10 @@ p2p_parse_Ies(
 				break;
 			}
 		}
-		
+
 		/* P2P IE */
 		p2p_parse_AssembleIe(posMpdu->Octet, posMpdu->Length, OUI_SUB_WIFI_DIRECT, &msg->p2pAttributes);
-		
+
 		if(FrameBuf_Length(&msg->p2pAttributes))
 		{
 			if(RT_STATUS_SUCCESS == (status = p2p_parse_P2PIe(&msg->p2pAttributes, msg)))
@@ -1369,7 +1369,7 @@ p2p_parse_Ies(
 			msg->devAddr = msg->sa;
 		}
 	}while(FALSE);
-	
+
 	if(RT_STATUS_SUCCESS != status)
 	{
 		p2p_parse_FreeMessage(msg);
@@ -1384,7 +1384,7 @@ p2p_parse_Ies(
 		if(os.Length <= 32)
 		{
 			p2p_MoveMemory(msg->ssidBuf, os.Octet, os.Length);
-		
+
 			msg->_ssid = msg->ssidBuf;
 			msg->ssidLen = (u1Byte)os.Length;
 			RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("ssid:\n"));
@@ -1398,13 +1398,13 @@ p2p_parse_Ies(
 
 	/* DS Param */
 	os = PacketGetElement(*posMpdu, EID_DSParms, OUI_SUB_DONT_CARE, OUI_SUBTYPE_DONT_CARE);
-	
+
 	if(os.Length)
 	{
 		if(os.Length == 1)
 		{
 			p2p_MoveMemory(msg->dsParamBuf, os.Octet, os.Length);
-			
+
 			msg->_dsParam = msg->dsParamBuf;
 			msg->dsParam = os.Octet[0];
 			RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("DS Param: %u\n", msg->dsParam));
@@ -1414,15 +1414,15 @@ p2p_parse_Ies(
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("invalid ds param len: %u\n", os.Length));
 		}
 	}
-	
+
 	return status;
 }
 
 RT_STATUS
 p2p_parse_Action(
-	IN  const OCTET_STRING		*posMpdu, 
+	IN  const OCTET_STRING		*posMpdu,
 	IN  u4Byte					dbgLevel,
-	OUT P2P_MESSAGE				*msg 
+	OUT P2P_MESSAGE				*msg
 	)
 {
 	RT_STATUS					status = RT_STATUS_SUCCESS;
@@ -1440,7 +1440,7 @@ p2p_parse_Action(
 	{
 		RT_TRACE_F(COMP_P2P, msg->dbgLevel, ("dialog token: %u\n", msg->dialogToken));
 	}
-	
+
 	return status;
 }
 
@@ -1464,12 +1464,12 @@ p2p_parse_UpdateDevDesc(
 		pDesc->DeviceCapability = msg->devCap;
 		pDesc->GroupCapability = msg->grpCap;
 	}
-	
+
 	cpMacAddr(pDesc->DeviceAddress, msg->devAddr);
 
 	if(msg->_wpsConfigMethods)
 		pDesc->WpsAttributes.ConfigMethod = msg->wpsConfigMethods;
-	
+
 	if(msg->_wpsDevPasswordId)
 		pDesc->WpsAttributes.DevicePasswdId = msg->wpsDevPasswordId;
 
@@ -1477,19 +1477,19 @@ p2p_parse_UpdateDevDesc(
 	{
 		P2P_WPS_ATTRIBUTES		*w = &pDesc->WpsAttributes;
 
-		p2p_parse_WpsDevType(msg->primDevType, 
-			&w->PrimaryDeviceType.CategoryId, 
-			w->PrimaryDeviceType.Oui, 
+		p2p_parse_WpsDevType(msg->primDevType,
+			&w->PrimaryDeviceType.CategoryId,
+			w->PrimaryDeviceType.Oui,
 			&w->PrimaryDeviceType.SubCategoryId);
-		
+
 		w->SecondaryDeviceTypeLength = msg->numSecDevType;
 		for(it = 0; it < msg->numSecDevType; it++)
 		{
 			P2P_WPS_ATTRIBUTES_DEVICE_TYPE *t = w->SecondaryDeviceTypeList + it;
 
-			p2p_parse_WpsDevType(msg->secDevTypeList + it * 6, 
-				&t->CategoryId, 
-				t->Oui, 
+			p2p_parse_WpsDevType(msg->secDevTypeList + it * 6,
+				&t->CategoryId,
+				t->Oui,
 				&t->SubCategoryId);
 		}
 		w->DeviceNameLength = msg->devNameLen;
@@ -1523,7 +1523,7 @@ p2p_parse_UpdateDevDesc(
 			u1Byte itChnl = 0;
 			u1Byte nChnls = 0;
 			u1Byte opClass = 0;
-			
+
 			if(end <= pos + 2) break;
 
 			opClass = pos[0];
@@ -1540,20 +1540,20 @@ p2p_parse_UpdateDevDesc(
 				{
 					// Prefast warning C6328: Size mismatch ignore
 #pragma warning (disable: 6328)
-					RT_TRACE_F(COMP_P2P, DBG_WARNING, 
-						("Unable to record all the channels in the channel entry list, max is %u, discarding channel: %u\n", 
+					RT_TRACE_F(COMP_P2P, DBG_WARNING,
+						("Unable to record all the channels in the channel entry list, max is %u, discarding channel: %u\n",
 						sizeof(pDesc->ChannelPlanChannel), pos[itChnl]));
 					continue;
 				}
 
-				if(DFS_5G_RADAR_CHANNEL(pos[itChnl])) 
+				if(DFS_5G_RADAR_CHANNEL(pos[itChnl]))
 				{
-					//RT_TRACE_F(COMP_P2P, DBG_WARNING, 
-						//("Discarding radar channel channel: %u\n", 
+					//RT_TRACE_F(COMP_P2P, DBG_WARNING,
+						//("Discarding radar channel channel: %u\n",
 						//sizeof(pDesc->ChannelPlanChannel), pos[itChnl]));
 					continue;
 				}
-				
+
 				pDesc->ChannelPlanChannel[pDesc->ChannelPlanLength] = pos[itChnl];
 				pDesc->ChannelPlanLength++;
 			}
@@ -1566,7 +1566,7 @@ p2p_parse_UpdateDevDesc(
 	{
 		const u1Byte *pos = msg->cliInfoDescList;
 		const u1Byte *end = msg->cliInfoDescList + msg->cliInfoDescListLen;
-		
+
 		pDesc->P2PClientDescriptorListLength = 0;
 		PlatformZeroMemory(pDesc->P2PClientDescriptorList, sizeof(pDesc->P2PClientDescriptorList));
 
@@ -1580,7 +1580,7 @@ p2p_parse_UpdateDevDesc(
 
 			len = pos[0];
 			pos += 1;
-			
+
 			infoend = pos + len;
 			if(end < infoend)
 			{
@@ -1606,9 +1606,9 @@ p2p_parse_UpdateDevDesc(
 			w->ConfigMethod = ReadN2H2BYTE(pos);
 			pos += 2;
 
-			pos += p2p_parse_WpsDevType(pos, 
-				&w->PrimaryDeviceType.CategoryId, 
-				w->PrimaryDeviceType.Oui, 
+			pos += p2p_parse_WpsDevType(pos,
+				&w->PrimaryDeviceType.CategoryId,
+				w->PrimaryDeviceType.Oui,
 				&w->PrimaryDeviceType.SubCategoryId);
 
 			w->SecondaryDeviceTypeLength = pos[0];
@@ -1624,9 +1624,9 @@ p2p_parse_UpdateDevDesc(
 			{
 				P2P_WPS_ATTRIBUTES_DEVICE_TYPE *t = w->SecondaryDeviceTypeList + it;
 
-				pos += p2p_parse_WpsDevType(pos, 
-					&t->CategoryId, 
-					t->Oui, 
+				pos += p2p_parse_WpsDevType(pos,
+					&t->CategoryId,
+					t->Oui,
 					&t->SubCategoryId);
 			}
 
@@ -1668,7 +1668,7 @@ p2p_parse_UpdateDevDesc(
 
 	if(msg->_dialogToken)
 		pDesc->DialogToken = msg->dialogToken;
-	
+
 	if(msg->_grpBssid)
 		cpMacAddr(pDesc->GroupBssid, msg->grpBssid);
 
@@ -1682,7 +1682,7 @@ p2p_parse_UpdateDevDesc(
 		pDesc->MinorReasonCode = msg->minorReasonCode;
 
 	if(msg->_extListenTiming)
-	{	
+	{
 		pDesc->ExtendedListenTimingDuration = msg->extListenInterval;
 		pDesc->ExtendedListenTimingPeriod = msg->extListenPeriod;
 	}
@@ -1691,12 +1691,12 @@ p2p_parse_UpdateDevDesc(
 	{
 		// Update only if the signal strength is changed over 5%.
 		if(0 == pDesc->SignalStrength ||
-			(sigStrength > pDesc->SignalStrength + 5) || 
+			(sigStrength > pDesc->SignalStrength + 5) ||
 			(pDesc->SignalStrength >= 5 &&  sigStrength < pDesc->SignalStrength - 5))
 		{
 			pDesc->SignalStrength = sigStrength;
 		}
-	}		
+	}
 
 	if(msg->_wpsManufacturer)
 	{
@@ -1708,9 +1708,9 @@ p2p_parse_UpdateDevDesc(
 	if(IsMgntBeacon(pHdr)) // from P2P_OnBeacon
 	{
 		// Get Operating Channel, parse DS Parameter for the channel
-		if(msg->_dsParam) 
+		if(msg->_dsParam)
 			pDesc->OperatingChannel = msg->dsParam;
-		
+
 		cpMacAddr(pDesc->IntendedP2PInterfaceAddress, msg->sa);
 	}
 
@@ -1721,7 +1721,7 @@ p2p_parse_UpdateDevDesc(
 
 		if(msg->_dsParam)
 		{// Get Listen/Operating Channel, parse DS Parameter for the channel
-			if(pDesc->Role == P2P_GO) 
+			if(pDesc->Role == P2P_GO)
 				pDesc->OperatingChannel = msg->dsParam;
 			else if(pDesc->Role == P2P_DEVICE)
 				pDesc->ListenChannel= msg->dsParam;
@@ -1729,7 +1729,7 @@ p2p_parse_UpdateDevDesc(
 	}
 
 	if(IsMgntAsocReq(pHdr)) // from P2P_OnAssocReqAccept
-	{	
+	{
 		cpMacAddr(pDesc->IntendedP2PInterfaceAddress, msg->sa);
 	}
 
@@ -1740,7 +1740,7 @@ RT_STATUS
 p2p_parse_ChannelEntryList(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_CHANNELS			*channels	
+	OUT P2P_CHANNELS			*channels
 	)
 {
 	RT_STATUS					status = RT_STATUS_SUCCESS;
@@ -1749,7 +1749,7 @@ p2p_parse_ChannelEntryList(
 
 	while(pos < end)
 	{
-		if(data + len - pos < 2) 
+		if(data + len - pos < 2)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("no valid channel entry list, remain len is: %u\n", (u4Byte)(data + len - pos)));
 			status = RT_STATUS_INVALID_LENGTH;
@@ -1758,7 +1758,7 @@ p2p_parse_ChannelEntryList(
 
 		if(data + len - pos < 2 + pos[1])
 		{
-			RT_TRACE_F(COMP_P2P, DBG_WARNING, 
+			RT_TRACE_F(COMP_P2P, DBG_WARNING,
 				("no valid channel entry list, #chanels is: %u, remain len is: %u\n", pos[1], (u4Byte)(data + len - pos)));
 			status = RT_STATUS_INVALID_LENGTH;
 			break;

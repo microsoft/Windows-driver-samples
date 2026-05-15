@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -35,7 +35,7 @@
 //          {
 //            ByID      - Function takes a runtime ID.
 //            ByKey     - Function takes a GUID.
-//            ByString  - Function takes a null terminated wide character string and returns the 
+//            ByString  - Function takes a null terminated wide character string and returns the
 //                           LayerKey.
 //            ID        - Function acts on the objects ID.
 //            IPv4      - Function acts on IP version 4 objects.
@@ -503,7 +503,7 @@ UINT32 HlprFwpmLayerGetFilterConditionArrayByKey(_In_ const GUID* pLayerKey,
 
 /**
  @helper_function="HlprFwpmLayerGetIDByKey"
- 
+
    Purpose:  Return the runtime ID of the layer provided the layer's key.                       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -783,8 +783,8 @@ UINT8 HlprFwpmLayerGetIDByKey(_In_ const GUID* pLayerKey)
 
 /**
  @helper_function="HlprFwpmLayerGetID"
- 
-   Purpose:  Return the runtime ID of the layer provided a string representation of the layer's 
+
+   Purpose:  Return the runtime ID of the layer provided a string representation of the layer's
              name.                                                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1064,8 +1064,8 @@ UINT8 HlprFwpmLayerGetIDByString(_In_ PCWSTR pLayerString)
 
 /**
  @helper_function="HlprFwpmLayerGetByID"
- 
-   Purpose:  Return a pointer to the GUID of the layer represented by the provider layer's 
+
+   Purpose:  Return a pointer to the GUID of the layer represented by the provider layer's
              runtime ID.                                                                        <br>
                                                                                                 <br>
    Notes:    Calling function must check for NULL pointer.                                      <br>
@@ -1261,7 +1261,7 @@ const GUID* HlprFwpmLayerGetByID(_In_ const UINT32 layerID)
 
 /**
  @helper_function="HlprFwpmLayerGetByString"
- 
+
    Purpose:  Return a pointer to the GUID of the layer represented by the provided string.      <br>
                                                                                                 <br>
    Notes:    Calling function must check for NULL pointer.                                      <br>
@@ -1540,7 +1540,7 @@ const GUID* HlprFwpmLayerGetByString(_In_ PCWSTR pLayerString)
 
 /**
  @helper function="HlprFwpmLayerIsUserMode"
- 
+
    Purpose: Determine if the layer is a user-mode layer.                                        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1552,7 +1552,7 @@ BOOLEAN HlprFwpmLayerIsUserMode(_In_ const GUID* pLayerKey)
    ASSERT(pLayerKey);
 
    BOOLEAN isUserMode = FALSE;
-   
+
    for(UINT32 layerIndex = 0;
        layerIndex < TOTAL_USER_MODE_LAYER_COUNT &&
        isUserMode == FALSE;
@@ -1567,7 +1567,7 @@ BOOLEAN HlprFwpmLayerIsUserMode(_In_ const GUID* pLayerKey)
 
 /**
  @helper function="HlprFwpmLayerIsKernelMode"
- 
+
    Purpose: Determine if the layer is a kernel-mode layer.                                      <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1583,7 +1583,7 @@ BOOLEAN HlprFwpmLayerIsKernelMode(_In_ const GUID* pLayerKey)
 
 /**
  @helper function="HlprFwpmLayerIsIPv4"
- 
+
    Purpose: Determine if the layer is an IPv4 layer.                                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1652,7 +1652,7 @@ BOOLEAN HlprFwpmLayerIsIPv4(_In_ const GUID* pLayerKey)
 
 /**
  @helper function="HlprFwpmLayerIsIPv6"
- 
+
    Purpose: Determine if the layer is an IPv6 layer.                                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

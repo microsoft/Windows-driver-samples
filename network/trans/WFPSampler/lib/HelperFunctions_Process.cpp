@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -56,7 +56,7 @@
 
 /**
  @helper_function="PrvHlprServiceQueryState"
- 
+
    Purpose: Return the state of the service.                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -66,7 +66,7 @@
 
 /**
  @helper_function="HlprServiceStop"
- 
+
    Purpose: Issue a stop control to the specified service.                                      <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

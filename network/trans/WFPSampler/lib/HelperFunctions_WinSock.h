@@ -6,7 +6,7 @@
 //      HelperFunctions_WinSock.h
 //
 //   Abstract:
-//      This module contains prototypes of functions which assist in operations pertaining to 
+//      This module contains prototypes of functions which assist in operations pertaining to
 //         Windows Sockets.
 //
 //   Author:

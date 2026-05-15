@@ -7,7 +7,7 @@ Module Name:
 
 Abstract:
     Contains AP Define and Structure
-    
+
 Revision History:
       When        What
     ----------    ----------------------------------------------
@@ -58,7 +58,7 @@ Notes:
 
 #define AP_DEFAULT_ENABLE_WPS                   FALSE
 
-/** 
+/**
  * ExtAP default registy info settings, with their ranges
  * a default setting is used if the registry is not present or has invalid value
  */
@@ -66,7 +66,7 @@ Notes:
 #define AP_DEFAULT_ALLOWED_ASSOCIATION_COUNT    128
 #define AP_MIN_ALLOWED_ASSOCIATION_COUNT        0
 #define AP_MAX_ALLOWED_ASSOCIATION_COUNT        255
-    
+
 #define AP_DEFAULT_ENABLE_5GHZ                  FALSE
 
 #define AP_DEFAULT_CHANNEL                      11
@@ -124,11 +124,11 @@ Notes:
 /** Time in which the station has no activity we assume we have lost connectivity to that station (in number of seconds) */
 #define AP_NO_ACTIVITY_TIME                     1800
 /** The interval of the station inactive timer, in milliseconds */
-#define AP_STA_INACTIVE_TIMER_INTERVAL          1000        
+#define AP_STA_INACTIVE_TIMER_INTERVAL          1000
 
 #define AP_MAX_AID                              2007
 #define AP_INVALID_AID                          0xFFFF
-#define AP_AID_TABLE_UNIT_SIZE                  8          
+#define AP_AID_TABLE_UNIT_SIZE                  8
 #define AP_AID_TABLE_UNIT_MASK                  0xFF
 #define AP_AID_TABLE_SIZE                       (AP_MAX_AID/AP_AID_TABLE_UNIT_SIZE + 1)
 #define AP_AID_HEADER                           0xC000
@@ -144,7 +144,7 @@ Notes:
 
 
 
-/** 
+/**
  * Get access to the MP_EXTSTA_PORT from the MP_PORT
  */
 #define MP_GET_AP_PORT(_Port)           ((PMP_EXTAP_PORT)(_Port->ChildPort))
@@ -166,7 +166,7 @@ Notes:
  * Get access to AP settings
  */
 
-/** Settings maintained by association manager */ 
+/** Settings maintained by association manager */
 #define AP_GET_SSID(_ApPort)                    (AP_GET_ASSOC_MGR(_ApPort)->Ssid)
 #define AP_GET_BSSID(_ApPort)                   (AP_GET_ASSOC_MGR(_ApPort)->Bssid)
 #define AP_GET_CAPABILITY_INFO(_ApPort)         (AP_GET_ASSOC_MGR(_ApPort)->Capability)
@@ -228,7 +228,7 @@ typedef enum _STA_PORT_STATE
     STA_PORT_STATE_CLOSED
 } STA_PORT_STATE, *PSTA_PORT_STATE;
 
-/** 
+/**
  * DOT11 Frame Class
  * See definitions in 802.11 standard.
  */
@@ -305,15 +305,15 @@ typedef struct _AP_CAPABIITY
 
     /** Maximum number of associations the NIC can support */
     ULONG AssociationTableSize;
-    
+
     // TODO: add other capabilities
 } AP_CAPABIITY, *PAP_CAPABIITY;
 
 /**
  * Settings read from the registry
  */
-typedef struct _AP_REG_INFO 
-{ 
+typedef struct _AP_REG_INFO
+{
     /** number of allowed associations */
     ULONG   AllowedAssociationCount;
 
@@ -365,19 +365,19 @@ typedef struct _AP_ASSOC_MGR
 {
     /** ExtAP port */
     PMP_EXTAP_PORT          ApPort;
-    
+
     /** state of Association Manager */
     AP_ASSOC_MGR_STATE      State;
-    
+
     /**
      * Hash table for the stations
      */
     MAC_HASH_TABLE          MacHashTable;
 
-    /** 
-     * Lock we need before we adding/removing entries from the 
+    /**
+     * Lock we need before we adding/removing entries from the
      * hash table. This will be acquired for read by
-     * routines that are not modifying the table and acquired 
+     * routines that are not modifying the table and acquired
      * for write by routines that will be removing entries or
      * adding entries to the table.
      */
@@ -385,8 +385,8 @@ typedef struct _AP_ASSOC_MGR
 
     /** AID table, a bit for each AID */
     UCHAR                   AidTable[AP_AID_TABLE_SIZE];
-    
-    /** 
+
+    /**
      * Association related configurations
      * A lock is NOT required when updating/querying these configurations
      */
@@ -399,15 +399,15 @@ typedef struct _AP_ASSOC_MGR
 
     /** Capability information */
     DOT11_CAPABILITY        Capability;
-    
+
     /** Currently enabled authentication algorithm */
-    DOT11_AUTH_ALGORITHM    AuthAlgorithm;  
+    DOT11_AUTH_ALGORITHM    AuthAlgorithm;
 
     /** Currently enabled unicast cipher algorithm */
-    DOT11_CIPHER_ALGORITHM  UnicastCipherAlgorithm;  
+    DOT11_CIPHER_ALGORITHM  UnicastCipherAlgorithm;
 
     /** Currently enabled multicast cipher algorithm */
-    DOT11_CIPHER_ALGORITHM  MulticastCipherAlgorithm;  
+    DOT11_CIPHER_ALGORITHM  MulticastCipherAlgorithm;
 
     /** Use default auth cipher algorithms **/
     BOOLEAN bUseDefaultAlgorithms;
@@ -431,9 +431,9 @@ typedef struct _AP_ASSOC_MGR
 
     /** Scan request ID */
     PVOID                   ScanRequestId;
-    
-    /** 
-     * Station inactive timer 
+
+    /**
+     * Station inactive timer
      * When the timer fires, the inactive time of each
      * station is incremented by 1.
      */
@@ -441,7 +441,7 @@ typedef struct _AP_ASSOC_MGR
 
     /**
      * This is actually the count of the associated
-     * stations because each station is going to 
+     * stations because each station is going to
      * increase the counter by 1 when it is associated
      * and decrement by 1 when it is disassociated.
      */
@@ -454,7 +454,7 @@ typedef struct _AP_ASSOC_MGR
 
     NDIS_STATUS             SetChannelCompletionStatus;
     NDIS_EVENT              SetChannelCompletionEvent;
-         
+
 } AP_ASSOC_MGR, *PAP_ASSOC_MGR;
 
 /**
@@ -462,18 +462,18 @@ typedef struct _AP_ASSOC_MGR
  */
 typedef struct _AP_STA_ENTRY
 {
-    /** 
+    /**
      * MAC hash entry.
      * This is used for hash table operations.
      */
     MAC_HASH_ENTRY          MacHashEntry;
 
-    /** 
+    /**
      * Pointer to the association manager
      * where the station is managed.
      */
     PAP_ASSOC_MGR           AssocMgr;
-    
+
     /** Capability information */
     DOT11_CAPABILITY        CapabilityInformation;
 
@@ -482,7 +482,7 @@ typedef struct _AP_STA_ENTRY
 
     /** Supported rates */
     DOT11_RATE_SET          SupportedRateSet;
-    
+
     /** Current association state of the station */
     DOT11_ASSOCIATION_STATE AssocState;
 
@@ -491,7 +491,7 @@ typedef struct _AP_STA_ENTRY
 
     /** Power mode */
     DOT11_POWER_MODE        PowerMode;
-    
+
     /** Auth algorithm */
     DOT11_AUTH_ALGORITHM    AuthAlgo;
 
@@ -503,14 +503,14 @@ typedef struct _AP_STA_ENTRY
 
     /** WPS enabled */
     BOOLEAN                 WpsEnabled;
-    
+
     /** Association timer */
     NDIS_HANDLE             AssocTimer;
 
     /** Waiting for association request */
     LONG                    WaitingForAssocReq;
 
-    /** 
+    /**
      * Association up time, i.e. timestamp at which association is completed with success.
      * Timestamp value is returned by NdisGetCurrentSystemTime
      */
@@ -519,9 +519,9 @@ typedef struct _AP_STA_ENTRY
     /** Statistics */
     DOT11_PEER_STATISTICS   Statistics;
 
-    /** 
-     * Station reference count. 
-     * Indicate the number of external functions 
+    /**
+     * Station reference count.
+     * Indicate the number of external functions
      * that are accessing the station entry.
      * The reference count is 1 when an entry is created.
      * It is deleted when the reference count reaches zero.
@@ -541,37 +541,37 @@ typedef struct _AP_STA_ENTRY
     BOOLEAN                 AcceptAssoc;
     USHORT                  Reason;
 
-    /** 
-     * Inactive time. 
+    /**
+     * Inactive time.
      * Indicates how long the station has been inactive, in seconds.
      */
     LONG                    InactiveTime;
-    
-    /** 
+
+    /**
      * Port state
      * This is used to decide whether a non-forced scan
      * shall be allowed or not.
      */
-    STA_PORT_STATE          PortState; 
+    STA_PORT_STATE          PortState;
 } AP_STA_ENTRY, *PAP_STA_ENTRY;
 
 /**
  * Holds current ExtAP configuration of the miniport that
- * are not managed by association manager. 
- * These configurations can be updated and/or queried via OIDs request from the OS. 
+ * are not managed by association manager.
+ * These configurations can be updated and/or queried via OIDs request from the OS.
  * A lock is NOT needed when updating/querying these configurations.
  * This data is stateless so we don't need a flag to indicate whether it is initialized or not.
  */
 
 
-typedef struct _AP_CONFIG 
+typedef struct _AP_CONFIG
 {
     /** ExtAP port */
     PMP_EXTAP_PORT          ApPort;
 
     /** The types of auto configuration for 802.11 parameters that are enabled */
     ULONG                   AutoConfigEnabled;
-    
+
     /** Beacon period, in TUs */
     ULONG                   BeaconPeriod;
 
@@ -592,18 +592,18 @@ typedef struct _AP_CONFIG
 
     /** Current operating frequency channel list for the DSSS/HRDSSS/ERP PHY */
     ULONG                   CurrentChannel;
-    
+
     /** Current operating frequency channel list for the OFDM PHY */
     ULONG                   CurrentFrequency;
-    
+
     /** Current PHY ID */
     ULONG                   CurrentPhyId;
-    
+
 #endif
-    
+
     /** Default key ID */
     ULONG                   CipherDefaultKeyId;
-    
+
     /** Desired PHY ID list */
     ULONG                   DesiredPhyList[AP_DESIRED_PHY_MAX_COUNT];
     ULONG                   DesiredPhyCount;
@@ -621,10 +621,10 @@ typedef struct _MP_EXTAP_PORT
 
     /** Registry settings */
     AP_REG_INFO     RegInfo;
-    
-    /** 
-     * AP reference count. 
-     * Indicate the number of external functions 
+
+    /**
+     * AP reference count.
+     * Indicate the number of external functions
      * that are accessing the AP port.
      * The AP port cannot be terminated
      * until it reaches zero.

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //
 // Copyright (c) 2013 Realtek Semiconductor, Inc. All rights reserved.
-// 
+//
 //---------------------------------------------------------------------------
 // Description:
 //		P2P Service interface to other part of the driver
@@ -101,7 +101,7 @@ P2PSvc_OnSDReq(
 	IN	 PVOID								pvP2PSvcInfo,
 	IN  pu1Byte								devAddr,
 	IN  u1Byte								dlgToken,
-	IN  u1Byte								SDReqRecvdSize, 
+	IN  u1Byte								SDReqRecvdSize,
 	IN  PVOID					 			pvSDReqRecvd,
 	OUT PBOOLEAN							pbToSendSDRsp
 	);
@@ -111,7 +111,7 @@ P2PSvc_OnSDRsp(
 	IN	 PVOID								pvP2PSvcInfo,
 	IN  pu1Byte								devAddr,
 	IN  u1Byte								transactionId,
-	IN  PVOID								pvSvcRspTlv, 
+	IN  PVOID								pvSvcRspTlv,
 	OUT PBOOLEAN							pbNeedFurtherProcess
 	);
 

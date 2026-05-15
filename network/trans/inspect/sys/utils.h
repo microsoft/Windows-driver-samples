@@ -127,39 +127,39 @@ GetDeliveryInterfaceIndexesForLayer(
    switch (layerId)
    {
    case FWPS_LAYER_ALE_AUTH_CONNECT_V4:
-      *interfaceIndexIndex = 
+      *interfaceIndexIndex =
          FWPS_FIELD_ALE_AUTH_CONNECT_V4_INTERFACE_INDEX;
-      *subInterfaceIndexIndex = 
+      *subInterfaceIndexIndex =
          FWPS_FIELD_ALE_AUTH_CONNECT_V4_SUB_INTERFACE_INDEX;
       break;
    case FWPS_LAYER_ALE_AUTH_CONNECT_V6:
-      *interfaceIndexIndex = 
+      *interfaceIndexIndex =
          FWPS_FIELD_ALE_AUTH_CONNECT_V6_INTERFACE_INDEX;
-      *subInterfaceIndexIndex = 
+      *subInterfaceIndexIndex =
          FWPS_FIELD_ALE_AUTH_CONNECT_V6_SUB_INTERFACE_INDEX;
       break;
    case FWPS_LAYER_ALE_AUTH_RECV_ACCEPT_V4:
-      *interfaceIndexIndex = 
+      *interfaceIndexIndex =
          FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V4_INTERFACE_INDEX;
-      *subInterfaceIndexIndex = 
+      *subInterfaceIndexIndex =
          FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V4_SUB_INTERFACE_INDEX;
       break;
    case FWPS_LAYER_ALE_AUTH_RECV_ACCEPT_V6:
-      *interfaceIndexIndex = 
+      *interfaceIndexIndex =
          FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V6_INTERFACE_INDEX;
-      *subInterfaceIndexIndex = 
+      *subInterfaceIndexIndex =
          FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V6_SUB_INTERFACE_INDEX;
       break;
    case FWPS_LAYER_INBOUND_TRANSPORT_V4:
-      *interfaceIndexIndex = 
+      *interfaceIndexIndex =
          FWPS_FIELD_INBOUND_TRANSPORT_V4_INTERFACE_INDEX;
-      *subInterfaceIndexIndex = 
+      *subInterfaceIndexIndex =
          FWPS_FIELD_INBOUND_TRANSPORT_V4_SUB_INTERFACE_INDEX;
       break;
    case FWPS_LAYER_INBOUND_TRANSPORT_V6:
-      *interfaceIndexIndex = 
+      *interfaceIndexIndex =
          FWPS_FIELD_INBOUND_TRANSPORT_V6_INTERFACE_INDEX;
-      *subInterfaceIndexIndex = 
+      *subInterfaceIndexIndex =
          FWPS_FIELD_INBOUND_TRANSPORT_V6_SUB_INTERFACE_INDEX;
       break;
    default:
@@ -242,7 +242,7 @@ GetNetwork5TupleIndexesForLayer(
       *remoteAddressIndex = UINT_MAX;
       *localPortIndex = UINT_MAX;
       *remotePortIndex = UINT_MAX;
-      *protocolIndex = UINT_MAX;      
+      *protocolIndex = UINT_MAX;
       NT_ASSERT(0);
    }
 }

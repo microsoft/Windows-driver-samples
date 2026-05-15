@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       KrnlHlprFlowContextCreate
@@ -57,10 +57,10 @@ inline NTSTATUS KrnlHlprFlowContextPurge(_Inout_ FLOW_CONTEXT* pFlowContext)
               " ---> KrnlHlprFlowContextPurge()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pFlowContext);
 
-   NTSTATUS status = STATUS_SUCCESS;   
+   NTSTATUS status = STATUS_SUCCESS;
 
    status = FwpsFlowRemoveContext(pFlowContext->flowID,
                                   pFlowContext->layerID,
@@ -108,13 +108,13 @@ _Success_(return == STATUS_SUCCESS && *ppFlowContext == 0)
 NTSTATUS KrnlHlprFlowContextDestroy(_Inout_ FLOW_CONTEXT** ppFlowContext)
 {
 #if DBG
-      
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFlowContextDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppFlowContext);
 
    NTSTATUS status = STATUS_SUCCESS;
@@ -161,7 +161,7 @@ NTSTATUS KrnlHlprFlowContextPopulate(_Inout_ FLOW_CONTEXT* pFlowContext,
               " ---> KrnlHlprFlowContextPopulate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pFlowContext);
 
    NTSTATUS status = STATUS_SUCCESS;
@@ -203,7 +203,7 @@ NTSTATUS KrnlHlprFlowContextPopulate(_Inout_ FLOW_CONTEXT* pFlowContext,
                   WFPSAMPLER_SYSLIB_TAG);
          HLPR_BAIL_ON_ALLOC_FAILURE(pFlowContext->pStreamContext,
                                     status);
-      
+
          KeInitializeSpinLock(&(pFlowContext->pStreamContext->serializationList.spinLock));
 
          status = WdfWaitLockCreate(WDF_NO_OBJECT_ATTRIBUTES,
@@ -214,7 +214,7 @@ NTSTATUS KrnlHlprFlowContextPopulate(_Inout_ FLOW_CONTEXT* pFlowContext,
                        DPFLTR_ERROR_LEVEL,
                        " !!!! KrnlHlprFlowContextCreate : WdfWaitLockCreate() [status: %#x]\n",
                        status);
-         
+
             HLPR_BAIL;
          }
 

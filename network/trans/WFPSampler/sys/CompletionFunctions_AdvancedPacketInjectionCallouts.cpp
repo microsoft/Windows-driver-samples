@@ -6,20 +6,20 @@
 //      CompletionFunctions_AdvancedPacketInjectionCallouts.cpp
 //
 //   Abstract:
-//      This module contains WFP Completion functions for injecting packets back into the data path 
+//      This module contains WFP Completion functions for injecting packets back into the data path
 //         using the allocate / block / inject method.
 //
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //       CompleteAdvancedPacketInjection
 //
 //       <Module>
 //          Complete                              - Function is an FWPS_INJECT_COMPLETE function.
 //       <Scenario>
-//          AdvancedPacketInjection               - Function demonstrates the allocate / block / 
+//          AdvancedPacketInjection               - Function demonstrates the allocate / block /
 //                                                     inject model.
 //
 //      <Object><Action>
@@ -51,7 +51,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "Framework_WFPSamplerCalloutDriver.h"                     /// . 
+#include "Framework_WFPSamplerCalloutDriver.h"                     /// .
 #include "CompletionFunctions_AdvancedPacketInjectionCallouts.tmh" /// $(OBJ_PATH)\$(O)\
 
 #if DBG
@@ -60,7 +60,7 @@ INJECTION_COUNTERS g_apiTotalCompletions = {0};
 
 /**
  @function="AdvancedPacketInjectionCountersDecrement"
- 
+
    Purpose:  Decrement the appropriate counters based on the injection handle.                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -155,7 +155,7 @@ VOID AdvancedPacketInjectionCountersDecrement(_In_ HANDLE injectionHandle,
 
 /**
  @private_function="AdvancedPacketInjectionCompletionDataDestroy"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -172,13 +172,13 @@ VOID AdvancedPacketInjectionCompletionDataDestroy(_Inout_ ADVANCED_PACKET_INJECT
                                                   _In_ BOOLEAN override)                                             /* FALSE */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> AdvancedPacketInjectionCompletionDataDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppCompletionData);
    NT_ASSERT(*ppCompletionData);
 
@@ -242,7 +242,7 @@ VOID AdvancedPacketInjectionCompletionDataDestroy(_Inout_ ADVANCED_PACKET_INJECT
 
 /**
  @completion_function="CompleteAdvancedPacketInjection"
- 
+
    Purpose: Cleanup injection objects and memory.                                               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

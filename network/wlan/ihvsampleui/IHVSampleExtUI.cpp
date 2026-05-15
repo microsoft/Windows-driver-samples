@@ -9,7 +9,7 @@
 extern HINSTANCE g_hInst;
 
 LPWSTR g_IHVAuthFriendlyName[] = {
-    L"IHVAuth V1", 
+    L"IHVAuth V1",
     L"IHVAuth V2",
     L"IHVAuth V3"
 };
@@ -21,7 +21,7 @@ LPWSTR g_IHVCipherFriendlyName[] = {
     L"IHVCipher 3"
 };
 
-IHV_AUTH_CIPHER_CAPABILITY g_IHVOneXExtCapability = 
+IHV_AUTH_CIPHER_CAPABILITY g_IHVOneXExtCapability =
 {
     3,
     {
@@ -58,7 +58,7 @@ T* GetThis(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         if (sizeof(PROPSHEETPAGE) == ((LPPROPSHEETPAGE)lParam)->dwSize)
         {
-            // This corresponds to MSDN 
+            // This corresponds to MSDN
             pThis = (T *)((LPPROPSHEETPAGE)lParam)->lParam;
         }
         else
@@ -86,7 +86,7 @@ T* GetThis(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 CDot11SampleExtUI::CDot11SampleExtUI(): m_crefCount(0)
 {
     InterlockedIncrement(&g_objRefCount);
-    
+
     m_pUnkSite = NULL;
     m_hFirstPagePsp = NULL;
     m_hLastPagePsp = NULL;
@@ -95,13 +95,13 @@ CDot11SampleExtUI::CDot11SampleExtUI(): m_crefCount(0)
 
 CDot11SampleExtUI::~CDot11SampleExtUI()
 {
-    InterlockedDecrement(&g_objRefCount);        
+    InterlockedDecrement(&g_objRefCount);
 
     if( m_pUIRequest)
     {
         delete m_pUIRequest;
     }
-    
+
     if( m_pUnkSite)
     {
         m_pUnkSite ->Release();
@@ -111,7 +111,7 @@ CDot11SampleExtUI::~CDot11SampleExtUI()
 
 // Used to get the IHV friendly name
 STDMETHODIMP
-CDot11SampleExtUI::GetDot11ExtUIFriendlyName( 
+CDot11SampleExtUI::GetDot11ExtUIFriendlyName(
     BSTR* bstrFriendlyName)
 {
     HRESULT hr = E_INVALIDARG;
@@ -163,7 +163,7 @@ CDot11SampleExtUI::GetDot11ExtUIProperties(
             hr = E_NOTIMPL;
             break;
     }
-    
+
 error:
     return hr;
 }
@@ -174,7 +174,7 @@ STDMETHODIMP
 CDot11SampleExtUI::GetDot11ExtUIBalloonText(
     BSTR pIHVUIRequest, // the UI request structure from IHV
     BSTR* pwszBalloonText // the balloon text to be displayed
-    ) 
+    )
 {
     HRESULT hr = E_INVALIDARG;
     PDOT11EXT_IHV_UI_REQUEST pIhvUiRequest = (PDOT11EXT_IHV_UI_REQUEST) pIHVUIRequest;
@@ -206,7 +206,7 @@ CDot11SampleExtUI::CreateConnectionProperties(
     IDot11SampleExtUIConProperty **pprgProps = NULL;
 
     uCount = PROP_COUNT_CONNECTION;
-    pprgProps = (IDot11SampleExtUIConProperty**) 
+    pprgProps = (IDot11SampleExtUIConProperty**)
                     CoTaskMemAlloc(sizeof(IDot11SampleExtUIConProperty*) * uCount);
 
     if (!pprgProps)
@@ -215,7 +215,7 @@ CDot11SampleExtUI::CreateConnectionProperties(
         goto error;
     }
 
-    // Since we just have one property of each, we'll 
+    // Since we just have one property of each, we'll
     // create one interface first and initialize it separately
     IDot11SampleExtUIConProperty *pTempIProp = NULL;
     hr = CoCreateInstance(
@@ -239,12 +239,12 @@ CDot11SampleExtUI::CreateConnectionProperties(
     if (SUCCEEDED(hr))
     {
         *pcExtensions = uCount;
-        *ppDot11ExtUIProperty = (IDot11ExtUIProperty*)pprgProps; 
+        *ppDot11ExtUIProperty = (IDot11ExtUIProperty*)pprgProps;
 
         // Set the current pointer to NULL so it doesn't get freed at the bottom
         pprgProps = NULL;
     }
-    
+
 error:
     if (FAILED(hr) && pprgProps)
     {
@@ -270,7 +270,7 @@ CDot11SampleExtUI::CreateSecurityProperties(
     IDot11SampleExtUISecProperty **pprgProps = NULL;
 
     uCount = PROP_COUNT_SECURITY;
-    pprgProps = (IDot11SampleExtUISecProperty**) 
+    pprgProps = (IDot11SampleExtUISecProperty**)
                     CoTaskMemAlloc(sizeof(IDot11SampleExtUISecProperty*) * uCount);
 
     if (!pprgProps)
@@ -279,7 +279,7 @@ CDot11SampleExtUI::CreateSecurityProperties(
         goto error;
     }
 
-    // Since we just have one property of each, we'll 
+    // Since we just have one property of each, we'll
     // create one interface first and initialize it separately
     IDot11SampleExtUISecProperty *pTempIProp = NULL;
 
@@ -311,21 +311,21 @@ CDot11SampleExtUI::CreateSecurityProperties(
             128,
             wstrSecurityTypes[i]
             );
-            
+
         strName = SysAllocString(wbuf);
         hr = pTempIProp->Initialize(strName, i);
         pprgProps[i] = pTempIProp;
     }
-    
+
     if (SUCCEEDED(hr))
     {
         *pcExtensions = uCount;
-        *ppDot11ExtUIProperty = (IDot11ExtUIProperty*)pprgProps; 
+        *ppDot11ExtUIProperty = (IDot11ExtUIProperty*)pprgProps;
 
         // Set the current pointer to NULL so it doesn't get freed at the bottom
         pprgProps = NULL;
     }
-    
+
 error:
     if (FAILED(hr) && pprgProps)
     {
@@ -351,7 +351,7 @@ CDot11SampleExtUI::CreateKeyProperties(
 
     uCount = g_IHVOneXExtCapability.dwAuthCount;
 
-    pprgProps = (IDot11SampleExtUIKeyProperty**) 
+    pprgProps = (IDot11SampleExtUIKeyProperty**)
                     CoTaskMemAlloc(sizeof(IDot11SampleExtUIKeyProperty*) * uCount);
 
     if (!pprgProps)
@@ -360,7 +360,7 @@ CDot11SampleExtUI::CreateKeyProperties(
         goto error;
     }
 
-    // Since we just have one property of each, we'll 
+    // Since we just have one property of each, we'll
     // create one interface first and initialize it separately
     IDot11SampleExtUIKeyProperty *pTempIProp = NULL;
 
@@ -397,16 +397,16 @@ CDot11SampleExtUI::CreateKeyProperties(
         hr = pTempIProp->Initialize((BYTE *) &(g_IHVOneXExtCapability.IhvAuthCiphers[i]));
         pprgProps[i] = pTempIProp;
     }
-    
+
     if (SUCCEEDED(hr))
     {
         *pcExtensions = uCount;
-        *ppDot11ExtUIProperty = (IDot11ExtUIProperty*)pprgProps; 
+        *ppDot11ExtUIProperty = (IDot11ExtUIProperty*)pprgProps;
 
         // Set the current pointer to NULL so it doesn't get freed at the bottom
         pprgProps = NULL;
     }
-    
+
 error:
     if (FAILED(hr) && pprgProps)
     {
@@ -418,7 +418,7 @@ error:
 }
 
 
-HRESULT 
+HRESULT
 CDot11SampleExtUI::FinalConstruct()
 {
     m_pUnkSite = NULL;
@@ -429,7 +429,7 @@ CDot11SampleExtUI::FinalConstruct()
     return S_OK;
 }
 
-VOID 
+VOID
 CDot11SampleExtUI::FinalRelease()
 {
     if( m_pUnkSite)
@@ -447,7 +447,7 @@ CDot11SampleExtUI::FinalRelease()
 }
 
 // IObjectWithSite
-STDMETHODIMP 
+STDMETHODIMP
 CDot11SampleExtUI::SetSite (
                              IUnknown* pUnkSite
                              )
@@ -463,9 +463,9 @@ CDot11SampleExtUI::SetSite (
     return S_OK;
 }
 
-STDMETHODIMP 
+STDMETHODIMP
 CDot11SampleExtUI::GetSite (
-                             REFIID riid, 
+                             REFIID riid,
                              void** ppvSite
                              )
 {
@@ -479,8 +479,8 @@ CDot11SampleExtUI::GetSite (
 
 //IWizardExtension
 STDMETHODIMP CDot11SampleExtUI::AddPages (
-    HPROPSHEETPAGE* aPages, 
-    UINT cPages, 
+    HPROPSHEETPAGE* aPages,
+    UINT cPages,
     UINT *pnPagesAdded
     )
 {
@@ -497,7 +497,7 @@ STDMETHODIMP CDot11SampleExtUI::AddPages (
 
         WCHAR ihvKeyName[IHV_KEY_LENGTH];
         GetClsidPropertyName (
-            & GUID_SAMPLE_IHVUI_CLSID, 
+            & GUID_SAMPLE_IHVUI_CLSID,
             (LPWSTR) c_szIhvUIRequest,
             ihvKeyName,
             IHV_KEY_LENGTH
@@ -576,7 +576,7 @@ STDMETHODIMP CDot11SampleExtUI::AddPages (
         {
             DestroyPropertySheetPage(hPsp);
         }
-        
+
         if(m_hLastPagePsp)
         {
             DestroyPropertySheetPage(m_hLastPagePsp);
@@ -584,7 +584,7 @@ STDMETHODIMP CDot11SampleExtUI::AddPages (
 
         m_hFirstPagePsp = hPsp = m_hLastPagePsp = NULL;
 
-        return E_FAIL;       
+        return E_FAIL;
     }
 }
 
@@ -596,7 +596,7 @@ STDMETHODIMP CDot11SampleExtUI::GetFirstPage (
     return S_OK;
 }
 
-STDMETHODIMP 
+STDMETHODIMP
 CDot11SampleExtUI::GetLastPage (HPROPSHEETPAGE *phpage)
 {
     * phpage = m_hLastPagePsp;
@@ -604,22 +604,22 @@ CDot11SampleExtUI::GetLastPage (HPROPSHEETPAGE *phpage)
 }
 
 
-BOOL CALLBACK 
+BOOL CALLBACK
 CDot11SampleExtUI::HelpDlgProc (
-    HWND hwndDlg,  
+    HWND hwndDlg,
     UINT uMsg,
     WPARAM wParam,
-    LPARAM lParam 
+    LPARAM lParam
     )
 {
-    CDot11SampleExtUI* pthis = NULL; 
+    CDot11SampleExtUI* pthis = NULL;
 
     switch (uMsg)
     {
 
     case WM_INITDIALOG:
         {
-            pthis = GetThis<CDot11SampleExtUI>(hwndDlg, uMsg, wParam, lParam); 
+            pthis = GetThis<CDot11SampleExtUI>(hwndDlg, uMsg, wParam, lParam);
             if(pthis && pthis->m_pUIRequest)
             {
                 //
@@ -629,7 +629,7 @@ CDot11SampleExtUI::HelpDlgProc (
                 if (iBufferSize > 0)
                 {
                     WCHAR *pwszBuffer = new WCHAR[iBufferSize];
-                    
+
                     if (NULL != pwszBuffer)
                     {
                         pwszBuffer[0] = 0;
@@ -645,7 +645,7 @@ CDot11SampleExtUI::HelpDlgProc (
         }
         return TRUE;
 
-    case WM_DESTROY: 
+    case WM_DESTROY:
         {
             // Don't release our properties here, wait
             // rather for Abort or Commit event notifications.
@@ -668,7 +668,7 @@ CDot11SampleExtUI::HelpDlgProc (
                     IWizardSite *pIWizardSite = NULL;
                     HRESULT hr = S_OK;
 
-                    pthis = GetThis<CDot11SampleExtUI>(hwndDlg, uMsg, wParam, lParam); 
+                    pthis = GetThis<CDot11SampleExtUI>(hwndDlg, uMsg, wParam, lParam);
                     if(pthis != NULL)
                     {
                         hr = pthis->m_pUnkSite->QueryInterface(IID_IWizardSite, (VOID **)&pIWizardSite);
@@ -694,26 +694,26 @@ CDot11SampleExtUI::HelpDlgProc (
 
 }
 
-BOOL CALLBACK 
+BOOL CALLBACK
 CDot11SampleExtUI::GetKeyDlgProc (
-    HWND hwndDlg,  
+    HWND hwndDlg,
     UINT uMsg,
     WPARAM wParam,
     LPARAM lParam
     )
 
 {
-    CDot11SampleExtUI* pthis = NULL; 
+    CDot11SampleExtUI* pthis = NULL;
 
     switch (uMsg)
     {
     case WM_INITDIALOG:
         {
-            (VOID)GetThis<CDot11SampleExtUI>(hwndDlg, uMsg, wParam, lParam); 
+            (VOID)GetThis<CDot11SampleExtUI>(hwndDlg, uMsg, wParam, lParam);
         }
         return TRUE;
 
-    case WM_DESTROY: 
+    case WM_DESTROY:
         {
             // Don't release our properties here, wait
             // rather for Abort or Commit event notifications.
@@ -750,11 +750,11 @@ CDot11SampleExtUI::GetKeyDlgProc (
 
                             WCHAR ihvKeyName[IHV_KEY_LENGTH] = {0};
                             pthis->GetClsidPropertyName(
-                                &GUID_SAMPLE_IHVUI_CLSID, 
+                                &GUID_SAMPLE_IHVUI_CLSID,
                                 (LPWSTR) c_szIhvUIResponse,
                                 ihvKeyName,
                                 IHV_KEY_LENGTH
-                                );              
+                                );
 
                             // Make sure we remove the previous property if any
                             hr = pIPropertyBag->Read(ihvKeyName, &v, NULL);
@@ -766,7 +766,7 @@ CDot11SampleExtUI::GetKeyDlgProc (
                             // Write the updated property if any
                             hr = pIPropertyBag->Write(ihvKeyName, &v);
                             pIPropertyBag->Release();
-                            
+
                             //
                             // hr is not used below
                             //
@@ -807,25 +807,25 @@ CDot11SampleExtUI::GetKeyDlgProc (
 
 }
 
-BOOL CALLBACK 
+BOOL CALLBACK
 CDot11SampleExtUI::LastPageDlgProc(
-    HWND hwndDlg,  
+    HWND hwndDlg,
     UINT uMsg,
     WPARAM wParam,
-    LPARAM lParam 
+    LPARAM lParam
     )
 {
-    CDot11SampleExtUI* pthis = NULL; 
+    CDot11SampleExtUI* pthis = NULL;
 
     switch (uMsg)
     {
     case WM_INITDIALOG:
         {
-            (VOID)GetThis<CDot11SampleExtUI>(hwndDlg, uMsg, wParam, lParam); 
+            (VOID)GetThis<CDot11SampleExtUI>(hwndDlg, uMsg, wParam, lParam);
         }
         return TRUE;
 
-    case WM_DESTROY: 
+    case WM_DESTROY:
         {
             (VOID)GetThis<CDot11SampleExtUI>(hwndDlg, uMsg, wParam, lParam);
         }
@@ -897,7 +897,7 @@ CDot11SampleExtUI::LastPageDlgProc(
 }
 
 HRESULT CDot11SampleExtUI::GetClsidPropertyName (
-                      _In_ const CLSID* pCLSID, 
+                      _In_ const CLSID* pCLSID,
                       _In_opt_ PCWSTR pwszPropertyName,
                       _Out_writes_(maxResultLen) PWSTR pwszResultStr,
                       _In_ UINT  maxResultLen)
@@ -908,10 +908,10 @@ HRESULT CDot11SampleExtUI::GetClsidPropertyName (
     wchar_t *pwszKeyName = NULL;
     HRESULT hRetCode = S_OK;
     size_t  iCharCount = 0;
-    
+
     // Sanity
     //=======
-    
+
     if( pCLSID == NULL ||
         pwszResultStr == NULL ||
         maxResultLen < MIN_BUFFER_SIZE
@@ -919,53 +919,53 @@ HRESULT CDot11SampleExtUI::GetClsidPropertyName (
     {
         return E_INVALIDARG;
     }
-    
+
     // Convert CLSID to string
     //========================
-    
+
     hRetCode = StringFromCLSID(*pCLSID, &pwszCLSID);
     if(FAILED(hRetCode))
     {
         goto Done;
     }
-    
+
     // Allocate buffer for entire CLSID\PropertyName string
     //=====================================================
-    
+
     iCharCount = wcslen(pwszCLSID) + 1;
     if(pwszPropertyName)
     {
         iCharCount += wcslen(pwszPropertyName);
     }
-    
+
     pwszKeyName = new(std::nothrow) wchar_t[iCharCount];
     if(pwszKeyName == NULL)
     {
         hRetCode = E_OUTOFMEMORY;
         goto Done;
     }
-    
+
     swprintf_s(pwszKeyName, iCharCount, L"%s%s", pwszCLSID, pwszPropertyName ? pwszPropertyName : L"");
-    
+
     // Copy as much as we can to the target buffer
     //============================================
-    
+
     wcsncpy_s(pwszResultStr, maxResultLen, pwszKeyName, _TRUNCATE);
-    
+
 Done:
 
     if(pwszKeyName != NULL)
     {
         delete [] pwszKeyName;
     }
-    
+
     if(pwszCLSID != NULL)
     {
         CoTaskMemFree(pwszCLSID);
     }
 
     return hRetCode;
-}    
+}
 
 
 

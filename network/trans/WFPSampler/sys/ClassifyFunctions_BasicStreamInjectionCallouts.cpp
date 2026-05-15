@@ -6,13 +6,13 @@
 //      ClassifyFunctions_BasicStreamInjectionCallouts.cpp
 //
 //   Abstract:
-//      This module contains WFP Classify functions for injecting data back into TCP's stream using 
+//      This module contains WFP Classify functions for injecting data back into TCP's stream using
 //         the clone / block / inject method.
 //
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //
 //       ClassifyBasicStreamInjection
@@ -20,7 +20,7 @@
 //       <Module>
 //          Classify             -       Function is an FWPS_CALLOUT_CLASSIFY_FN
 //       <Scenario>
-//          BasicStreamInjection -       Function demonstates use clone / block / inject model for 
+//          BasicStreamInjection -       Function demonstates use clone / block / inject model for
 //                                          Stream
 //
 //      <Action><Scenario><Modifier>
@@ -47,8 +47,8 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, enhance 
-//                                              traces, fix serialization, and add support for 
+//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, enhance
+//                                              traces, fix serialization, and add support for
 //                                              multiple injectors and flowContext
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,8 +58,8 @@
 
 /**
  @private_function="PerformBasicPacketInjectionAtOutboundTransport"
- 
-   Purpose:  Clones the stream data and injects the clone back to the stream using 
+
+   Purpose:  Clones the stream data and injects the clone back to the stream using
              FwpsStreamInjectAsync().                                                           <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>
@@ -109,13 +109,13 @@ NTSTATUS PerformBasicStreamInjection(_In_ CLASSIFY_DATA** ppClassifyData,
 
 #pragma warning(push)
 #pragma warning(disable: 6014) /// pCompletionData will be freed in completionFn using BasicStreamInjectionCompletionDataDestroy
-   
+
       HLPR_NEW(pCompletionData,
                BASIC_STREAM_INJECTION_COMPLETION_DATA,
                WFPSAMPLER_CALLOUT_DRIVER_TAG);
       HLPR_BAIL_ON_ALLOC_FAILURE(pCompletionData,
                                  status);
-   
+
 #pragma warning(pop)
 
    KeInitializeSpinLock(&(pCompletionData->spinLock));
@@ -238,8 +238,8 @@ NTSTATUS PerformBasicStreamInjection(_In_ CLASSIFY_DATA** ppClassifyData,
 
 /**
  @private_function="BasicStreamInjectionDeferredProcedureCall"
- 
-   Purpose:  Invokes the appropriate private injection routine to perform the injection at 
+
+   Purpose:  Invokes the appropriate private injection routine to perform the injection at
              DISPATCH_LEVEL.                                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -284,7 +284,7 @@ VOID BasicStreamInjectionDeferredProcedureCall(_In_ KDPC* pDPC,
       {
          pListItem = ExInterlockedRemoveHeadList(pListHead,
                                                  pSpinLock);
-      
+
          InterlockedDecrement64(pNumEntries);
       }
 
@@ -329,8 +329,8 @@ VOID BasicStreamInjectionDeferredProcedureCall(_In_ KDPC* pDPC,
 
 /**
  @private_function="BasicStreamInjectionWorkItemRoutine"
- 
-   Purpose:  Invokes the private stream injection routine to perform the injection at 
+
+   Purpose:  Invokes the private stream injection routine to perform the injection at
              PASSIVE_LEVEL.                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -455,8 +455,8 @@ VOID BasicStreamInjectionWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
 
 /**
  @private_function="TriggerBasicPacketInjectionInline"
- 
-   Purpose:  Makes a reference to all the classification data structures and invokes the 
+
+   Purpose:  Makes a reference to all the classification data structures and invokes the
              private stream injection routine to perform the injection.                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -543,8 +543,8 @@ NTSTATUS TriggerBasicStreamInjectionInline(_In_ const FWPS_INCOMING_VALUES* pCla
 
 /**
  @private_function="TriggerBasicStreamInjectionOutOfBand"
- 
-   Purpose:  Creates a local copy of the classification data structures and queues a WorkItem 
+
+   Purpose:  Creates a local copy of the classification data structures and queues a WorkItem
              to perform the injection at PASSIVE_LEVEL.                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -717,8 +717,8 @@ NTSTATUS TriggerBasicStreamInjectionOutOfBand(_In_ const FWPS_INCOMING_VALUES* p
 
 /**
  @classify_function="ClassifyBasicStreamInjection"
- 
-   Purpose:  Blocks the current data and blindly injects a clone of the data back to the stream 
+
+   Purpose:  Blocks the current data and blindly injects a clone of the data back to the stream
              without modification.                                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -757,8 +757,8 @@ VOID NTAPI ClassifyBasicStreamInjection(_In_ const FWPS_INCOMING_VALUES* pClassi
               pClassifyOut->rights,
               ((FWPS_STREAM_CALLOUT_IO_PACKET*)pStreamCalloutIOPacket)->streamData->dataLength);
 
-   /// Stream has no concept of Veto. Due to its "waterfall" nature where a block will 
-   /// remove the data and others will not be able to see it.  
+   /// Stream has no concept of Veto. Due to its "waterfall" nature where a block will
+   /// remove the data and others will not be able to see it.
    /// This means that if we got classified, regardless of the rights, we can do whatever we need to.
 
    NTSTATUS                        status           = STATUS_SUCCESS;
@@ -835,8 +835,8 @@ VOID NTAPI ClassifyBasicStreamInjection(_In_ const FWPS_INCOMING_VALUES* pClassi
 
 /**
  @classify_function="ClassifyBasicStreamInjection"
- 
-   Purpose:  Blocks the current data and blindly injects a clone of the data back to the stream 
+
+   Purpose:  Blocks the current data and blindly injects a clone of the data back to the stream
              without modification.                                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -874,8 +874,8 @@ VOID NTAPI ClassifyBasicStreamInjection(_In_ const FWPS_INCOMING_VALUES* pClassi
               pClassifyOut->rights,
               ((FWPS_STREAM_CALLOUT_IO_PACKET*)pStreamCalloutIOPacket)->streamData->dataLength);
 
-   /// Stream has no concept of Veto. Due to its "waterfall" nature where a block will 
-   /// remove the data and others will not be able to see it.  
+   /// Stream has no concept of Veto. Due to its "waterfall" nature where a block will
+   /// remove the data and others will not be able to see it.
    /// This means that if we got classified, regardless of the rights, we can do whatever we need to.
 
    NTSTATUS                        status           = STATUS_SUCCESS;
@@ -940,7 +940,7 @@ VOID NTAPI ClassifyBasicStreamInjection(_In_ const FWPS_INCOMING_VALUES* pClassi
               pClassifyOut->actionType,
               pClassifyOut->rights,
               (pClassifyOut->flags & FWPS_CLASSIFY_OUT_FLAG_ABSORB) ? "TRUE" : "FALSE");
-   
+
    return;
 }
 

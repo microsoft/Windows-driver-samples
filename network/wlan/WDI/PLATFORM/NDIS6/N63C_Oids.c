@@ -51,9 +51,9 @@ n63c_SendP2pActionFrameComplete(
 	OFF_CHNL_TX_STATUS_FLAG txStatusFlag;
 	NDIS_STATUS				status = NDIS_STATUS_SUCCESS;
 	FRAME_BUF				*buf = OffChnlTx_GetTxFrameBuf(ctx->req);
-	
+
 	FunctionIn(COMP_OID_SET);
-	
+
 	txStatusFlag = OffChnlTx_GetTxStatusFlag(ctx->req);
 
 	status = (TEST_FLAG(txStatusFlag.perTxAttemptFlag, OFF_CHNL_TX_PER_TX_ATTEMPT_FLAG_FRAME_SENT) ? NDIS_STATUS_SUCCESS : NDIS_STATUS_FAILURE);
@@ -61,12 +61,12 @@ n63c_SendP2pActionFrameComplete(
 	RT_ASSERT(buf, ("%s(): buf is NULL!!!n", __FUNCTION__));
 
 	RT_TRACE_F(COMP_OID_SET, DBG_LOUD, ("indicate frame sent with token: %u\n", ctx->token));
-		
+
 	// Change dialog token to make sure the token is the same as the previous query.
-	p2p_IndicateActionFrameSendCompleteWithToken(info, 
-		ctx->compEvent, 
-		(NDIS_STATUS_SUCCESS == status) ? RT_STATUS_SUCCESS : RT_STATUS_FAILURE, 
-		FrameBuf_MHead(buf), 
+	p2p_IndicateActionFrameSendCompleteWithToken(info,
+		ctx->compEvent,
+		(NDIS_STATUS_SUCCESS == status) ? RT_STATUS_SUCCESS : RT_STATUS_FAILURE,
+		FrameBuf_MHead(buf),
 		FrameBuf_Length(buf),
 		ctx->token);
 
@@ -88,7 +88,7 @@ n63c_Construct_FakeInvitationRsp(
 	OCTET_STRING			osWFDIE, osProbeRspPkt;
 
 	FunctionIn(COMP_OID_SET);
-	
+
 	// MAC Header
 	p2p_add_ActionFrameMacHdr(fbuf, info->DeviceAddress, dev->mac, info->DeviceAddress);
 
@@ -101,11 +101,11 @@ n63c_Construct_FakeInvitationRsp(
 	// WFD IE, from probe rsp
 	if(dev->rxFrames[P2P_FID_PROBE_RSP] && dev->rxFrames[P2P_FID_PROBE_RSP]->frameLen)
 	{
-		FillOctetString(osProbeRspPkt, 
-			dev->rxFrames[P2P_FID_PROBE_RSP]->frame, 
+		FillOctetString(osProbeRspPkt,
+			dev->rxFrames[P2P_FID_PROBE_RSP]->frame,
 			dev->rxFrames[P2P_FID_PROBE_RSP]->frameLen
 			);
-		
+
 		osWFDIE = PacketGetElement(osProbeRspPkt, EID_Vendor, OUI_SUB_WIFI_DISPLAY, OUI_SUB_DONT_CARE);
 
 		if(osWFDIE.Length > 0)
@@ -117,13 +117,13 @@ n63c_Construct_FakeInvitationRsp(
 	RT_TRACE_F(COMP_OID_SET, DBG_WARNING, ("a fake invitation rsp constructed\n"));
 	FrameBuf_Dump(fbuf, 0, DBG_LOUD, __FUNCTION__);
 
-	N6CWriteEventLogEntry(pAdapter, NDIS_STATUS_SUCCESS, 
-		FrameBuf_Length(fbuf), FrameBuf_MHead(fbuf), 
+	N6CWriteEventLogEntry(pAdapter, NDIS_STATUS_SUCCESS,
+		FrameBuf_Length(fbuf), FrameBuf_MHead(fbuf),
 		L"A fake invitation rsp constructed"
 		);
 
 	FunctionOut(COMP_OID_SET);
-	
+
 	return TRUE;
 }
 
@@ -138,13 +138,13 @@ n63c_Construct_FakePdRsp(
 {
 	P2P_INFO				*info = GET_P2P_INFO(pAdapter);
 	OCTET_STRING			osPdReq, osTmpIe;
-	
+
 	FunctionIn(COMP_OID_SET);
 
 	if(dev->txFrames[P2P_FID_PD_REQ] && dev->txFrames[P2P_FID_PD_REQ]->frameLen)
 	{
-		FillOctetString(osPdReq, 
-			dev->txFrames[P2P_FID_PD_REQ]->frame, 
+		FillOctetString(osPdReq,
+			dev->txFrames[P2P_FID_PD_REQ]->frame,
 			dev->txFrames[P2P_FID_PD_REQ]->frameLen
 			);
 	}
@@ -153,7 +153,7 @@ n63c_Construct_FakePdRsp(
 		RT_TRACE_F(COMP_OID_SET, DBG_WARNING, ("no corresp. pd req\n"));
 		FillOctetString(osPdReq, NULL, 0);
 	}
-	
+
 	// MAC Header
 	p2p_add_ActionFrameMacHdr(fbuf, info->DeviceAddress, dev->mac, dev->mac);
 
@@ -162,14 +162,14 @@ n63c_Construct_FakePdRsp(
 
 	// WPS IE, getting from the original PD request
 	if(osPdReq.Length)
-	{	
+	{
 		osTmpIe = PacketGetElement(osPdReq, EID_Vendor, OUI_SUB_SimpleConfig, OUI_SUB_DONT_CARE);
 		if(osTmpIe.Length)
 		{
 			PacketMakeElement(&fbuf->os, EID_Vendor, osTmpIe);
 		}
 	}
-	
+
 	// WFD IE
 	if(osPdReq.Length)
 	{
@@ -177,14 +177,14 @@ n63c_Construct_FakePdRsp(
 		if(osTmpIe.Length)
 		{
 			PacketMakeElement(&fbuf->os, EID_Vendor, osTmpIe);
-		}			
+		}
 	}
-	
+
 	RT_TRACE_F(COMP_OID_SET, DBG_WARNING, ("a fake pd rsp constructed\n"));
 	FrameBuf_Dump(fbuf, 0, DBG_LOUD, __FUNCTION__);
 
-	N6CWriteEventLogEntry(pAdapter, NDIS_STATUS_SUCCESS, 
-		FrameBuf_Length(fbuf), FrameBuf_MHead(fbuf), 
+	N6CWriteEventLogEntry(pAdapter, NDIS_STATUS_SUCCESS,
+		FrameBuf_Length(fbuf), FrameBuf_MHead(fbuf),
 		L"A fake pd rsp constructed"
 		);
 
@@ -202,15 +202,15 @@ n63c_IndicateRxP2pRspActionFrame(
 	)
 {
 	typedef VOID (*N63C_INDIC_RX_P2P_RSP_ACTION_FRAME_PFN)(P2P_INFO *, const N63C_SEND_ACTION_CTX *, u4Byte, u1Byte *);
-	
+
 	P2P_INFO					*info = GET_P2P_INFO(pAdapter);
-	N63C_INDIC_RX_P2P_RSP_ACTION_FRAME_PFN pfn = NULL;					
+	N63C_INDIC_RX_P2P_RSP_ACTION_FRAME_PFN pfn = NULL;
 	u4Byte						eid = P2P_EVENT_NONE;
 	P2P_FRAME_TYPE				ft = P2P_FID_MAX;
 
 	RT_GEN_TEMP_BUFFER			*pGenBuf = NULL;
 	FRAME_BUF					fbuf;
-	
+
 	P2P_DEV_LIST_ENTRY			*dev = NULL;
 	u4Byte						ieOffset = FRAME_OFFSET_P2P_PUB_ACT_ELEMENTS;
 
@@ -227,7 +227,7 @@ n63c_IndicateRxP2pRspActionFrame(
 		}
 
 		FrameBuf_Init(GEN_TEMP_BUFFER_SIZE, 0, (u1Byte *)pGenBuf->Buffer.Ptr, &fbuf);
-		
+
 		// get corresp. types
 		if(N63C_P2P_ACTION_FRAME_PROVISION_DISCOVERY_RESPONSE == ctx->rspType)
 		{
@@ -293,7 +293,7 @@ n63c_IndicateRxP2pRspActionFrame(
 			else
 			{
 				break;
-			}		
+			}
 		}
 
 		bIndicate = TRUE;
@@ -335,18 +335,18 @@ n63c_SendP2pActionFrameStateCb(
 	{
 		if(OFF_CHNL_TX_STATE_CHNL_HIT == state)
 		{
-			RT_TRACE_F(COMP_OID_SET, DBG_LOUD, ("on chnl\n"));		
+			RT_TRACE_F(COMP_OID_SET, DBG_LOUD, ("on chnl\n"));
 			bHandled = TRUE;
 			break;
 		}
 
 		if(OFF_CHNL_TX_STATE_COMPLETE == state)
 		{
-			RT_TRACE_F(COMP_OID_SET, DBG_LOUD, ("complete\n"));	
+			RT_TRACE_F(COMP_OID_SET, DBG_LOUD, ("complete\n"));
 			bHandled = TRUE;
 			break;
 		}
-		
+
 		if(OFF_CHNL_TX_STATE_FRAME_SENT == state)
 		{
 			RT_TRACE_F(COMP_OID_SET, DBG_LOUD, ("frame sent\n"));
@@ -369,15 +369,15 @@ n63c_SendP2pRspActionFrameStateCb(
 	N63C_SEND_ACTION_CTX		*ctx = (N63C_SEND_ACTION_CTX *)pCtx;
 	ADAPTER						*pAdapter = ctx->pAdapter;
 	P2P_INFO					*info = GET_P2P_INFO(pAdapter);
-	
+
 	n63c_SendP2pActionFrameStateCb(req, state, pCtx);
-	
+
 	if(OFF_CHNL_TX_STATE_COMPLETE == state)
 	{
 		n63c_SendP2pActionFrameComplete(pAdapter, ctx);
 
-		// restore Dialog Token in P2PInfo since we are sending 
-		// response action frame, self dialog token shall not be 
+		// restore Dialog Token in P2PInfo since we are sending
+		// response action frame, self dialog token shall not be
 		// modified
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("restore token from %u to %u\n", info->DialogToken, ctx->oldToken));
 		info->DialogToken = ctx->oldToken;
@@ -394,7 +394,7 @@ n63c_SendP2pRspActionFrameStateCb(
 	{
 		RT_TRACE_F(COMP_OID_SET, DBG_LOUD, ("retry with token: %u, reqType: %u\n", ctx->token, ctx->reqType));
 	}
-	
+
 	return;
 }
 
@@ -408,13 +408,13 @@ n63c_SendP2pReqActionFrameStateCb(
 {
 	N63C_SEND_ACTION_CTX		*ctx = (N63C_SEND_ACTION_CTX *)pCtx;
 	ADAPTER						*pAdapter = ctx->pAdapter;
-	
+
 	n63c_SendP2pActionFrameStateCb(req, state, pCtx);
-	
+
 	if(OFF_CHNL_TX_STATE_COMPLETE == state)
 	{
 		P2P_INFO				*info = GET_P2P_INFO(pAdapter);
-		
+
 		n63c_SendP2pActionFrameComplete(pAdapter, ctx);
 
 		RT_TRACE_F(COMP_OID_SET, DBG_LOUD, ("restore StateBeforeScan to initialized\n"));
@@ -454,22 +454,22 @@ n63c_SendP2pReqActionFrameStateCb(
 
 		if(pAdapter->bInHctTest)
 		{
-			// Not to skip probing under HCT test, because it wastes time 
+			// Not to skip probing under HCT test, because it wastes time
 			// sending action frame to peer on its Listen Channel when peer
 			// is not doing extended listen
 			bSkip = FALSE;
 		}
-		
+
 		if(bSkip)
 		{
 			N63C_SendAction_SkipProbeTemporarilly(req);
 		}
-		
+
 		RT_TRACE_F(COMP_OID_SET, DBG_LOUD, ("retry with token: %u, reqType: %u, skip probe: %u\n", newToken, ctx->reqType, bSkip));
 
 		bSkip = !bSkip;
 	}
-	
+
 	return;
 }
 
@@ -506,23 +506,23 @@ N63CValidateRoleOfWifiDirectPorts(
 		pTargetAdapter = GetNextExtAdapter(pTargetAdapter);
 	}
 
-	if(uNumberOfDevicePort > 2)	
+	if(uNumberOfDevicePort > 2)
 	{
-		RT_TRACE((COMP_OID_QUERY | COMP_OID_SET | COMP_P2P), DBG_SERIOUS, 
+		RT_TRACE((COMP_OID_QUERY | COMP_OID_SET | COMP_P2P), DBG_SERIOUS,
 				("Wifi-Direct Port Failure: %s: uNumberOfDevicePort > 2\n", __FUNCTION__)
 			);
 	}
 
-	if(uNumberOfGoPort > 2)	
+	if(uNumberOfGoPort > 2)
 	{
-		RT_TRACE((COMP_OID_QUERY | COMP_OID_SET | COMP_P2P), DBG_SERIOUS, 
+		RT_TRACE((COMP_OID_QUERY | COMP_OID_SET | COMP_P2P), DBG_SERIOUS,
 				("Wifi-Direct Port Failure: %s: uNumberOfGoPort > 2)\n", __FUNCTION__)
 			);
 	}
-	
-	if(uNumberOfClientPort > 1)	
+
+	if(uNumberOfClientPort > 1)
 	{
-		RT_TRACE((COMP_OID_QUERY | COMP_OID_SET | COMP_P2P), DBG_SERIOUS, 
+		RT_TRACE((COMP_OID_QUERY | COMP_OID_SET | COMP_P2P), DBG_SERIOUS,
 				("Wifi-Direct Port Failure: %s: uNumberOfClientPort > 1\n", __FUNCTION__)
 			);
 	}
@@ -559,7 +559,7 @@ N63CResetWifiDirectPorts(
 	u1Byte uOpChannel = 0;
 	u4Byte	BoostInitGainValue = 0;
 	u1Byte	uAutoChnl = P2P_DEFAULT_OPERATING_CHANNEL;
-	
+
 	PADAPTER pDevicePort = NULL;
 
 	FunctionIn(COMP_P2P);
@@ -597,19 +597,19 @@ N63CResetWifiDirectPorts(
 	}
 	else if(PortRole == P2P_DEVICE)
 	{
-#if (AUTO_CHNL_SEL_NHM ==1)		
+#if (AUTO_CHNL_SEL_NHM ==1)
 		if(IS_AUTO_CHNL_SUPPORT(pAdapter))
 		{
 			pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_AUTO_CHNL_SEL, (pu1Byte)(&uAutoChnl));
-			uOpChannel = P2PIsSocialChannel(uAutoChnl)? uAutoChnl : P2P_DEFAULT_OPERATING_CHANNEL;			
-			pDefaultAdapter->MgntInfo.AutoChnlSel.AutoChnlNumberSelected= uAutoChnl;		
+			uOpChannel = P2PIsSocialChannel(uAutoChnl)? uAutoChnl : P2P_DEFAULT_OPERATING_CHANNEL;
+			pDefaultAdapter->MgntInfo.AutoChnlSel.AutoChnlNumberSelected= uAutoChnl;
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("===> [ACS] N63CResetWifiDirectPorts(): uOpChannel(%d)\n", uOpChannel));
-		}		
-#endif		
-	}	
+		}
+#endif
+	}
 
 	if(P2PIsSocialChannel(uOpChannel))
-	{		
+	{
 		uListenChannel = uOpChannel;
 		if(GetFirstDevicePort(pAdapter))
 		{
@@ -618,9 +618,9 @@ N63CResetWifiDirectPorts(
 	}
 
 	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Set from Role=%d to Role=%d, listenChnl = %d, OpChnl = %d\n", pP2PInfo->Role, PortRole, uListenChannel, uOpChannel));
-		
+
 	if(PortRole == P2P_DEVICE)
-	{	
+	{
 		RT_TRACE((COMP_OID_QUERY | COMP_OID_SET), DBG_LOUD, ("(Win8 Reset to WFD Device Port)\n"));
 
 		// Win8: Let the device port use the locally-adminitered MAC address ----------------------------------------------
@@ -628,7 +628,7 @@ N63CResetWifiDirectPorts(
 		pAdapter->CurrentAddress[0] |= BIT1;
 		RT_PRINT_ADDR((COMP_OID_QUERY | COMP_OID_SET), DBG_LOUD, "Device Port Address: ", pAdapter->CurrentAddress);
 		// -------------------------------------------------------------------------------------------------------
-			
+
 		pNdis62Common->CurrentOpState = INIT_STATE;
 
 		if(ResetLevel == RESET_LEVEL_FULL)
@@ -636,12 +636,12 @@ N63CResetWifiDirectPorts(
 			MgntActSet_ApType(pAdapter, FALSE);
 			N62CResetAPVariables(pAdapter, FALSE);
 		}
-		
+
 		// Stop the Device Port mode: Last 3 parameters are don't care
 		MgntActSet_P2PMode(pAdapter, FALSE, FALSE, 0, 0, 0);
 		// Start the Device Port mode
 		MgntActSet_P2PMode(pAdapter, TRUE, FALSE, uListenChannel, uOpChannel, P2P_DEFAULT_GO_INTENT);
-		
+
 		// Win8: Let the device port do not conduct the extended listening.
 		//	+ When the OID_DOT11_WFD_LISTEN_STATE_DISCOVERABILITY is issued, start listening.
 		pP2PInfo->ExtListenTimingPeriod = 0;
@@ -666,8 +666,8 @@ N63CResetWifiDirectPorts(
 		if(PortRole == P2P_GO)
 		{
 			pP2PDevInfo = (PP2P_INFO)(pDevicePort->MgntInfo.pP2PInfo);
-			
-			if(pP2PDevInfo != NULL)				
+
+			if(pP2PDevInfo != NULL)
 			{
 				RT_TRACE((COMP_OID_QUERY | COMP_OID_SET|COMP_P2P), DBG_LOUD, ("(Win8 Reset to WFD Group Owner Port): Device port State(%d)\n", pP2PDevInfo->State));
 
@@ -682,7 +682,7 @@ N63CResetWifiDirectPorts(
 			}
 
 
-			// Reset the AP parameters 
+			// Reset the AP parameters
 			pNdis62Common->CurrentOpState = INIT_STATE;
 
 			if(ResetLevel == RESET_LEVEL_FULL)
@@ -695,12 +695,12 @@ N63CResetWifiDirectPorts(
 			}
 			// Restart the Role Port mode: Last 3 parameters are don't care
 			MgntActSet_P2PMode(pAdapter, FALSE, FALSE, 0, 0, 0);
-			MgntActSet_P2PMode(pAdapter, TRUE, FALSE, uListenChannel, uOpChannel, P2P_DEFAULT_GO_INTENT);	
+			MgntActSet_P2PMode(pAdapter, TRUE, FALSE, uListenChannel, uOpChannel, P2P_DEFAULT_GO_INTENT);
 
 			pP2PInfo->Role = P2P_GO;
 			pP2PInfo->State = P2P_STATE_OPERATING;
-	
-			// Clause 3.1.4.3: Group Formation bit in the P2P Group Cap shall be set to 1 until Provisioning succeeds. 
+
+			// Clause 3.1.4.3: Group Formation bit in the P2P Group Cap shall be set to 1 until Provisioning succeeds.
 			pP2PInfo->GroupCapability |= gcGroupFormation;
 		}
 		else if(PortRole == P2P_CLIENT)
@@ -719,7 +719,7 @@ N63CResetWifiDirectPorts(
 			// Restart the Role Port mode: Last 3 parameters are don't care
 			MgntActSet_P2PMode(pAdapter, FALSE, FALSE, 0, 0, 0);
 			MgntActSet_P2PMode(pAdapter, TRUE, FALSE, uListenChannel, uOpChannel, P2P_DEFAULT_GO_INTENT);
-				
+
 			pP2PInfo->Role = P2P_CLIENT;
 			pP2PInfo->State = P2P_STATE_OPERATING;
 		}
@@ -735,7 +735,7 @@ N63CResetWifiDirectPorts(
 				GET_P2P_INFO(pDevicePort)->ScanListSize
 				);
 		}
-		
+
 	}
 	else
 	{
@@ -744,7 +744,7 @@ N63CResetWifiDirectPorts(
 	}
 
 	FunctionOut(COMP_P2P);
-	
+
 	return NDIS_STATUS_SUCCESS;
 }
 
@@ -760,10 +760,10 @@ N63CComputeRequiredDeviceEntriesSize(
 {
 	u4Byte i = 0;
 	u4Byte requiredMemory = 0;
-	
+
 	// Skip the MAC header and the first three fields (non-IE) in the beacon and the probe response
-	u4Byte skippedBytes = sMacHdrLng + 12;	
-	
+	u4Byte skippedBytes = sMacHdrLng + 12;
+
 	for(i = 0; i < pP2PInfo->DeviceListForQuery.uNumberOfDevices; i++)
 	{
 		requiredMemory += sizeof(DOT11_WFD_DEVICE_ENTRY);	// Entry Size
@@ -794,8 +794,8 @@ N63CConstruct_DOT11_WFD_DEVICE_ENTRY(
 	OUT pu4Byte	bytesWritten
 )
 {
-#if 0    
-    typedef struct _DOT11_WFD_DEVICE_ENTRY 
+#if 0
+    typedef struct _DOT11_WFD_DEVICE_ENTRY
     {
         ULONG uPhyId;
         DOT11_BSS_ENTRY_PHY_SPECIFIC_INFO PhySpecificInfo;
@@ -832,7 +832,7 @@ N63CConstruct_DOT11_WFD_DEVICE_ENTRY(
 		header = p2pEntry->BeaconPacket.Buffer;
 	}
 
-	if(header == NULL) 
+	if(header == NULL)
 	{
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("%s() : Not a Good Header!\n", __FUNCTION__));
 		return;
@@ -846,7 +846,7 @@ N63CConstruct_DOT11_WFD_DEVICE_ENTRY(
 	wfdEntry->PhySpecificInfo.uChCenterFrequency = MgntGetChannelFrequency(p2pEntry->ChannelNumber);
 
 	GET_80211_HDR_ADDRESS3(header, wfdEntry->dot11BSSID);
-	
+
 	wfdEntry->dot11BSSType = dot11_BSS_type_infrastructure;
 
 	GET_80211_HDR_ADDRESS2(header, wfdEntry->TransmitterAddress);
@@ -868,7 +868,7 @@ N63CConstruct_DOT11_WFD_DEVICE_ENTRY(
 	// for OID_DOT11_WFD_ENUM_DEVICE_LIST request. Micfosoft would check this indicated probe response/beacon timestamp from ver9477.
 	// The unit in ullBeaconHostTimestamp and ullProbeResponseHostTimestamp must be 100-nanosecond, 2013.08.21.
 	//
-	
+
 	// Beacon Related
 
 	if(RUNTIME_OS_WIN_FROM_WINBLUE(pAdapter))
@@ -877,13 +877,13 @@ N63CConstruct_DOT11_WFD_DEVICE_ENTRY(
 		wfdEntry->ullBeaconHostTimestamp = p2pEntry->BeaconHostTimestamp;
 	wfdEntry->uBeaconIEsOffset = sizeof(DOT11_WFD_DEVICE_ENTRY);
 
-	// Only consider the valid packet 
+	// Only consider the valid packet
 	if(p2pEntry->BeaconPacket.Length >= skippedBytes)
 	{
 		wfdEntry->uBeaconIEsLength = p2pEntry->BeaconPacket.Length - skippedBytes;
 
 		PlatformMoveMemory(
-			(pu1Byte) wfdEntry + wfdEntry->uBeaconIEsOffset, 
+			(pu1Byte) wfdEntry + wfdEntry->uBeaconIEsOffset,
 			(pu1Byte) p2pEntry->BeaconPacket.Buffer + skippedBytes,
 			wfdEntry->uBeaconIEsLength
 		);
@@ -892,31 +892,31 @@ N63CConstruct_DOT11_WFD_DEVICE_ENTRY(
 		wfdEntry->uBeaconIEsOffset = 0;
 
 	// Probe Response Related
-	
+
 	if(RUNTIME_OS_WIN_FROM_WINBLUE(pAdapter))
 	wfdEntry->ullProbeResponseHostTimestamp = p2pEntry->ProbeResponseHostTimestamp*10;// Convert to 100-nanosecond units
 	else
-		wfdEntry->ullProbeResponseHostTimestamp = p2pEntry->ProbeResponseHostTimestamp;	
+		wfdEntry->ullProbeResponseHostTimestamp = p2pEntry->ProbeResponseHostTimestamp;
 	wfdEntry->uProbeResponseIEsOffset = sizeof(DOT11_WFD_DEVICE_ENTRY) + wfdEntry->uBeaconIEsLength;
-      		
-	// Only consider the valid packet 
+
+	// Only consider the valid packet
 	if(p2pEntry->ProbeResponsePacket.Length  >= skippedBytes)
 	{
 		wfdEntry->uProbeResponseIEsLength =p2pEntry->ProbeResponsePacket.Length - skippedBytes;
 
 		PlatformMoveMemory(
-			(pu1Byte) wfdEntry + wfdEntry->uProbeResponseIEsOffset, 
+			(pu1Byte) wfdEntry + wfdEntry->uProbeResponseIEsOffset,
 			(pu1Byte) p2pEntry->ProbeResponsePacket.Buffer + skippedBytes,
 			wfdEntry->uProbeResponseIEsLength
 		);
 
-	}	
+	}
 	else
 		wfdEntry->uProbeResponseIEsOffset = 0;
 
 	// Return the size of the total DOT11_WFD_DEVICE_ENTRY
 	*bytesWritten = sizeof(DOT11_WFD_DEVICE_ENTRY) + wfdEntry->uBeaconIEsLength + wfdEntry->uProbeResponseIEsLength;
-	
+
 }
 
 
@@ -926,22 +926,22 @@ DumpN63CConstruct_DOT11_WFD_DEVICE_ENTRY(
 	u4Byte length
 )
 {
-	
+
 	RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "WFD_DEVICE_ENTRY:===========================================\n",
 			wfdEntry, sizeof(DOT11_WFD_DEVICE_ENTRY)
 		);
 
 	RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, "wfdEntry->dot11BSSID:", wfdEntry->dot11BSSID);
-	RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, "wfdEntry->TransmitterAddress:", wfdEntry->TransmitterAddress);		
-	
+	RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, "wfdEntry->TransmitterAddress:", wfdEntry->TransmitterAddress);
+
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("(wfdEntry->uBeaconIEsOffset, wfdEntry->uBeaconIEsLength) = (0x%X, 0x%X)\n", wfdEntry->uBeaconIEsOffset, wfdEntry->uBeaconIEsLength));
 	RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "Beacon IE:-----------\n", ((pu1Byte)wfdEntry) + wfdEntry->uBeaconIEsOffset, wfdEntry->uBeaconIEsLength);
 
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("(wfdEntry->uProbeResponseIEsOffset, wfdEntry->uProbeResponseIEsLength) = (0x%X, 0x%X)\n", wfdEntry->uProbeResponseIEsOffset, wfdEntry->uProbeResponseIEsLength));
 	RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "ProbeResponse IE:-----------\n", ((pu1Byte)wfdEntry) + wfdEntry->uProbeResponseIEsOffset, wfdEntry->uProbeResponseIEsLength);
 }
-	
-	
+
+
 static VOID
 N63CIndicateDeviceDiscoveryComplete(
 	PP2P_INFO pP2PInfo
@@ -952,7 +952,7 @@ N63CIndicateDeviceDiscoveryComplete(
     #define DOT11_WFD_DISCOVER_COMPLETE_PARAMETERS_REVISION_1    1
     #define DOT11_WFD_DISCOVER_COMPLETE_MAX_LIST_SIZE   128
 
-    typedef struct _DOT11_WFD_DISCOVER_COMPLETE_PARAMETERS 
+    typedef struct _DOT11_WFD_DISCOVER_COMPLETE_PARAMETERS
     {
         NDIS_OBJECT_HEADER Header;
         NDIS_STATUS Status;
@@ -969,12 +969,12 @@ N63CIndicateDeviceDiscoveryComplete(
 	PDOT11_WFD_DISCOVER_COMPLETE_PARAMETERS	pParameters = NULL;
 	PDOT11_WFD_DEVICE_ENTRY  wfdEntry = NULL;
 	MEMORY_BUFFER mbObject = {NULL, 0};
-		
+
 	// Compute the requried memory length ------------------------------------------------------------------
 	mbObject.Length += sizeof(DOT11_WFD_DISCOVER_COMPLETE_PARAMETERS); 		// Parameter Structure Size
 	mbObject.Length += N63CComputeRequiredDeviceEntriesSize(pP2PInfo);
 	//-------------------------------------------------------------------------------------------------
-	
+
 	// This must be successfull -----------------------------------------------------------------------
 	rtStatus = PlatformAllocateMemory(pP2PInfo->pAdapter, &mbObject.Buffer, mbObject.Length);
 	if(rtStatus == RT_STATUS_FAILURE)
@@ -986,7 +986,7 @@ N63CIndicateDeviceDiscoveryComplete(
 
 	pParameters = (PDOT11_WFD_DISCOVER_COMPLETE_PARAMETERS) mbObject.Buffer;
 	PlatformZeroMemory(pParameters, sizeof(DOT11_WFD_DISCOVER_COMPLETE_PARAMETERS));
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 			pParameters->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
@@ -1007,7 +1007,7 @@ N63CIndicateDeviceDiscoveryComplete(
 	{
 		wfdEntry = (PDOT11_WFD_DEVICE_ENTRY)((pu1Byte) wfdEntry + bytesWritten);
 
-		N63CConstruct_DOT11_WFD_DEVICE_ENTRY(	
+		N63CConstruct_DOT11_WFD_DEVICE_ENTRY(
 				pP2PInfo,
 				&pP2PInfo->DeviceListForQuery.DeviceEntry[i],
 				wfdEntry,
@@ -1029,11 +1029,11 @@ N63CIndicateDeviceDiscoveryComplete(
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: N63CComputeRequiredMemoryForDeviceList value mismatch!\n", __FUNCTION__));
 	}
 	//-----------------------------------------------------------------------------------------------------
-	
+
 	N6IndicateStatus(
-			pP2PInfo->pAdapter, 
-			NDIS_STATUS_DOT11_WFD_DISCOVER_COMPLETE, 
-			mbObject.Buffer, 
+			pP2PInfo->pAdapter,
+			NDIS_STATUS_DOT11_WFD_DISCOVER_COMPLETE,
+			mbObject.Buffer,
 			mbObject.Length
 		);
 
@@ -1053,7 +1053,7 @@ N63CIndicateInvitationRequestSendComplete(
 {
 #if 0
     #define DOT11_INVITATION_REQUEST_SEND_COMPLETE_PARAMETERS_REVISION_1    1
-	
+
     typedef struct _DOT11_INVITATION_REQUEST_SEND_COMPLETE_PARAMETERS
     {
         NDIS_OBJECT_HEADER Header;
@@ -1071,20 +1071,20 @@ N63CIndicateInvitationRequestSendComplete(
 	MEMORY_BUFFER mbObject = {NULL, 0};
 	PP2P_EVENT_DATA pEventData = (PP2P_EVENT_DATA) pInformation->Buffer;
 	pu1Byte header = NULL;
-	
+
 	// Skip the mac header (24) and the fields from Category to Dialog Token (8)
 	u2Byte skippedBytes = FRAME_OFFSET_P2P_PUB_ACT_ELEMENTS;
-	
+
 	// Compute the requried memory length --------------------------------------------------------------------------
 	mbObject.Length += sizeof(DOT11_INVITATION_REQUEST_SEND_COMPLETE_PARAMETERS); 	// Parameter Structure Size
 
-	// + Only the valid packet 
+	// + Only the valid packet
 	if(pEventData->Packet.Length >= skippedBytes)
 	{
 		mbObject.Length += pEventData->Packet.Length - skippedBytes;
 	}
 	//----------------------------------------------------------------------------------------------------------
-	
+
 	// This must be successfull -----------------------------------------------------------------------
 	rtStatus = PlatformAllocateMemory(pP2PInfo->pAdapter, &mbObject.Buffer, mbObject.Length);
 	if(rtStatus == RT_STATUS_FAILURE)
@@ -1096,7 +1096,7 @@ N63CIndicateInvitationRequestSendComplete(
 
 	pParameters = (PDOT11_INVITATION_REQUEST_SEND_COMPLETE_PARAMETERS) mbObject.Buffer;
 	PlatformZeroMemory(pParameters, sizeof(DOT11_INVITATION_REQUEST_SEND_COMPLETE_PARAMETERS));
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 			pParameters->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
@@ -1105,7 +1105,7 @@ N63CIndicateInvitationRequestSendComplete(
 		);
 
 	if(pEventData->rtStatus == RT_STATUS_FAILURE)
-	{		
+	{
 		pParameters->Status = NDIS_STATUS_FAILURE;
 	}
 	else
@@ -1115,31 +1115,31 @@ N63CIndicateInvitationRequestSendComplete(
 		GET_80211_HDR_ADDRESS1(header, pParameters->PeerDeviceAddress);
 
 		GET_80211_HDR_ADDRESS1(header, pParameters->ReceiverAddress);
-		
+
 		pParameters->DialogToken = *(header + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN);
-		
+
 		pParameters->Status = NDIS_STATUS_SUCCESS;
 
 		pParameters->uIEsOffset = sizeof(DOT11_INVITATION_REQUEST_SEND_COMPLETE_PARAMETERS);
 
-		// Only the valid packet 
+		// Only the valid packet
 		if(pEventData->Packet.Length >= skippedBytes)
 		{
 			pParameters->uIEsLength = pEventData->Packet.Length - skippedBytes;
 		}
 
 		PlatformMoveMemory(
-				(pu1Byte) pParameters + pParameters->uIEsOffset, 
-				header + skippedBytes, 
+				(pu1Byte) pParameters + pParameters->uIEsOffset,
+				header + skippedBytes,
 				pParameters->uIEsLength
 			);
 	}
 
-	// Indicate the status to the OS -------------------------------------------------------------	
+	// Indicate the status to the OS -------------------------------------------------------------
 	N6IndicateStatus(
-			pP2PInfo->pAdapter, 
-			NDIS_STATUS_DOT11_WFD_INVITATION_REQUEST_SEND_COMPLETE, 
-			mbObject.Buffer, 
+			pP2PInfo->pAdapter,
+			NDIS_STATUS_DOT11_WFD_INVITATION_REQUEST_SEND_COMPLETE,
+			mbObject.Buffer,
 			mbObject.Length
 		);
 
@@ -1158,7 +1158,7 @@ N63CIndicateReceivedInvitationRequest(
 {
 #if 0
     #define DOT11_RECEIVED_INVITATION_REQUEST_PARAMETERS_REVISION_1    1
-    typedef struct _DOT11_RECEIVED_INVITATION_REQUEST_PARAMETERS 
+    typedef struct _DOT11_RECEIVED_INVITATION_REQUEST_PARAMETERS
     {
         NDIS_OBJECT_HEADER Header;
         DOT11_MAC_ADDRESS TransmitterDeviceAddress;
@@ -1175,20 +1175,20 @@ N63CIndicateReceivedInvitationRequest(
 	MEMORY_BUFFER mbObject = {NULL, 0};
 	PP2P_EVENT_DATA pEventData = (PP2P_EVENT_DATA) pInformation->Buffer;
 	pu1Byte header = NULL;
-	
+
 	// Skip the mac header (24) and the fields from Category to Dialog Token (8)
 	u2Byte skippedBytes = FRAME_OFFSET_P2P_PUB_ACT_ELEMENTS;
-	
+
 	// Compute the requried memory length --------------------------------------------------------------------------
 	mbObject.Length += sizeof(DOT11_RECEIVED_INVITATION_REQUEST_PARAMETERS);  		// Parameter Structure Size
 
-	// + Only the valid packet 
+	// + Only the valid packet
 	if(pEventData->Packet.Length >= skippedBytes)
 	{
 		mbObject.Length += pEventData->Packet.Length - skippedBytes;
 	}
 	//----------------------------------------------------------------------------------------------------------
-	
+
 	// This must be successfull -----------------------------------------------------------------------
 	rtStatus = PlatformAllocateMemory(pP2PInfo->pAdapter, &mbObject.Buffer, mbObject.Length);
 	if(rtStatus == RT_STATUS_FAILURE)
@@ -1200,7 +1200,7 @@ N63CIndicateReceivedInvitationRequest(
 
 	pParameters = (PDOT11_RECEIVED_INVITATION_REQUEST_PARAMETERS) mbObject.Buffer;
 	PlatformZeroMemory(pParameters, sizeof(DOT11_RECEIVED_INVITATION_REQUEST_PARAMETERS));
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 			pParameters->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
@@ -1209,34 +1209,34 @@ N63CIndicateReceivedInvitationRequest(
 		);
 
 	header = pEventData->Packet.Buffer;
-		
+
 	GET_80211_HDR_ADDRESS2(header, pParameters->TransmitterDeviceAddress);
-	
+
 	GET_80211_HDR_ADDRESS3(header, pParameters->BSSID);
 
 	pParameters->DialogToken = *(header + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN);
 
 	pParameters->RequestContext = NULL;
-	  
+
 	pParameters->uIEsOffset = sizeof(DOT11_RECEIVED_INVITATION_REQUEST_PARAMETERS);
 
-	// Only the valid packet 
+	// Only the valid packet
 	if(pEventData->Packet.Length >= skippedBytes)
 	{
 		pParameters->uIEsLength = pEventData->Packet.Length - skippedBytes;
-	}	
-		
+	}
+
 	PlatformMoveMemory(
-			(pu1Byte) pParameters + pParameters->uIEsOffset, 
-			header + skippedBytes, 
+			(pu1Byte) pParameters + pParameters->uIEsOffset,
+			header + skippedBytes,
 			pParameters->uIEsLength
 		);
-	
-	// Indicate the status to the OS -------------------------------------------------------------	
+
+	// Indicate the status to the OS -------------------------------------------------------------
 	N6IndicateStatus(
-			pP2PInfo->pAdapter, 
-			NDIS_STATUS_DOT11_WFD_RECEIVED_INVITATION_REQUEST, 
-			mbObject.Buffer, 
+			pP2PInfo->pAdapter,
+			NDIS_STATUS_DOT11_WFD_RECEIVED_INVITATION_REQUEST,
+			mbObject.Buffer,
 			mbObject.Length
 		);
 	//---------------------------------------------------------------------------------------
@@ -1270,20 +1270,20 @@ N63CIndicateInvitationResponseSendComplete(
 	MEMORY_BUFFER mbObject = {NULL, 0};
 	PP2P_EVENT_DATA pEventData = (PP2P_EVENT_DATA) pInformation->Buffer;
 	pu1Byte header = NULL;
-	
+
 	// Skip the mac header (24) and the fields from Category to Dialog Token (8)
 	u2Byte skippedBytes = FRAME_OFFSET_P2P_PUB_ACT_ELEMENTS;
-	
+
 	// Compute the requried memory length --------------------------------------------------------------------------
 	mbObject.Length += sizeof(DOT11_INVITATION_RESPONSE_SEND_COMPLETE_PARAMETERS);  		// Parameter Structure Size
 
-	// + Only the valid packet 
+	// + Only the valid packet
 	if(pEventData->Packet.Length >= skippedBytes)
 	{
 		mbObject.Length += pEventData->Packet.Length - skippedBytes;
 	}
 	//----------------------------------------------------------------------------------------------------------
-	
+
 	// This must be successfull -----------------------------------------------------------------------
 	rtStatus = PlatformAllocateMemory(pP2PInfo->pAdapter, &mbObject.Buffer, mbObject.Length);
 	if(rtStatus == RT_STATUS_FAILURE)
@@ -1295,7 +1295,7 @@ N63CIndicateInvitationResponseSendComplete(
 
 	pParameters = (PDOT11_INVITATION_RESPONSE_SEND_COMPLETE_PARAMETERS) mbObject.Buffer;
 	PlatformZeroMemory(pParameters, sizeof(DOT11_INVITATION_RESPONSE_SEND_COMPLETE_PARAMETERS));
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 			pParameters->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
@@ -1304,7 +1304,7 @@ N63CIndicateInvitationResponseSendComplete(
 		);
 
 	if(pEventData->rtStatus == RT_STATUS_FAILURE)
-	{		
+	{
 		pParameters->Status = NDIS_STATUS_FAILURE;
 	}
 	else
@@ -1315,30 +1315,30 @@ N63CIndicateInvitationResponseSendComplete(
 		GET_80211_HDR_ADDRESS1(header, pParameters->ReceiverDeviceAddress);
 
 		pParameters->DialogToken = pP2PInfo->ProvisionResponseDialogToken;
-	
+
 		pParameters->Status = NDIS_STATUS_SUCCESS;
 
 		pParameters->uIEsOffset = sizeof(DOT11_INVITATION_RESPONSE_SEND_COMPLETE_PARAMETERS);
 
-		// Only the valid packet 
+		// Only the valid packet
 		if(pEventData->Packet.Length >= skippedBytes)
 		{
 			pParameters->uIEsLength = pEventData->Packet.Length - skippedBytes;
 		}
-		
+
 		PlatformMoveMemory(
-				(pu1Byte) pParameters + pParameters->uIEsOffset, 
-				header + skippedBytes, 
+				(pu1Byte) pParameters + pParameters->uIEsOffset,
+				header + skippedBytes,
 				pParameters->uIEsLength
 			);
-	
+
 	}
 
-	// Indicate the status to the OS -------------------------------------------------------------	
+	// Indicate the status to the OS -------------------------------------------------------------
 	N6IndicateStatus(
-			pP2PInfo->pAdapter, 
-			NDIS_STATUS_DOT11_WFD_INVITATION_RESPONSE_SEND_COMPLETE, 
-			mbObject.Buffer, 
+			pP2PInfo->pAdapter,
+			NDIS_STATUS_DOT11_WFD_INVITATION_RESPONSE_SEND_COMPLETE,
+			mbObject.Buffer,
 			mbObject.Length
 		);
 	//---------------------------------------------------------------------------------------
@@ -1358,7 +1358,7 @@ N63CIndicateReceivedInvitationResponse(
 {
 #if 0
     #define DOT11_RECEIVED_INVITATION_RESPONSE_PARAMETERS_REVISION_1    1
-    typedef struct _DOT11_RECEIVED_INVITATION_RESPONSE_PARAMETERS 
+    typedef struct _DOT11_RECEIVED_INVITATION_RESPONSE_PARAMETERS
     {
         NDIS_OBJECT_HEADER Header;
         DOT11_MAC_ADDRESS TransmitterDeviceAddress;
@@ -1373,22 +1373,22 @@ N63CIndicateReceivedInvitationResponse(
 	PDOT11_RECEIVED_INVITATION_RESPONSE_PARAMETERS	 pParameters = NULL;
 	MEMORY_BUFFER mbObject = {NULL, 0};
 	pu1Byte header = NULL;
-	
+
 	// Skip the mac header (24) and the fields from Category to Dialog Token (8)
 	u2Byte skippedBytes = FRAME_OFFSET_P2P_PUB_ACT_ELEMENTS;
 
 	FunctionIn(COMP_OID_SET);
-	
+
 	// Compute the requried memory length --------------------------------------------------------------------------
 	mbObject.Length += sizeof(DOT11_RECEIVED_INVITATION_RESPONSE_PARAMETERS);  		// Parameter Structure Size
 
-	// + Only the valid packet 
+	// + Only the valid packet
 	if(frameLen >= skippedBytes)
 	{
 		mbObject.Length += frameLen - skippedBytes;
 	}
 	//----------------------------------------------------------------------------------------------------------
-	
+
 	// This must be successfull -----------------------------------------------------------------------
 	rtStatus = PlatformAllocateMemory(pP2PInfo->pAdapter, &mbObject.Buffer, mbObject.Length);
 	if(rtStatus == RT_STATUS_FAILURE)
@@ -1400,7 +1400,7 @@ N63CIndicateReceivedInvitationResponse(
 
 	pParameters = (PDOT11_RECEIVED_INVITATION_RESPONSE_PARAMETERS) mbObject.Buffer;
 	PlatformZeroMemory(pParameters, sizeof(DOT11_RECEIVED_INVITATION_RESPONSE_PARAMETERS));
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 			pParameters->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
@@ -1409,32 +1409,32 @@ N63CIndicateReceivedInvitationResponse(
 		);
 
 	header = frameBuf;
-		
+
 	GET_80211_HDR_ADDRESS2(header, pParameters->TransmitterDeviceAddress);
-	
+
 	GET_80211_HDR_ADDRESS3(header, pParameters->BSSID);
 
 	pParameters->DialogToken = ctx->token;
-	  
+
 	pParameters->uIEsOffset = sizeof(DOT11_RECEIVED_INVITATION_RESPONSE_PARAMETERS);
 
-	// Only the valid packet 
+	// Only the valid packet
 	if(frameLen >= skippedBytes)
 	{
 		pParameters->uIEsLength = frameLen - skippedBytes;
-	}	
-		
+	}
+
 	PlatformMoveMemory(
-			(pu1Byte) pParameters + pParameters->uIEsOffset, 
-			header + skippedBytes, 
+			(pu1Byte) pParameters + pParameters->uIEsOffset,
+			header + skippedBytes,
 			pParameters->uIEsLength
 		);
 
-	// Indicate the status to the OS -------------------------------------------------------------	
+	// Indicate the status to the OS -------------------------------------------------------------
 	N6IndicateStatus(
-			pP2PInfo->pAdapter, 
-			NDIS_STATUS_DOT11_WFD_RECEIVED_INVITATION_RESPONSE, 
-			mbObject.Buffer, 
+			pP2PInfo->pAdapter,
+			NDIS_STATUS_DOT11_WFD_RECEIVED_INVITATION_RESPONSE,
+			mbObject.Buffer,
 			mbObject.Length
 		);
 
@@ -1456,7 +1456,7 @@ N63CIndicateProvisionDiscoveryRequestSendComplete(
 #if 0
     #define DOT11_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE_PARAMETERS_REVISION_1    1
 
-    
+
     typedef struct _DOT11_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE_PARAMETERS
     {
         NDIS_OBJECT_HEADER Header;
@@ -1474,20 +1474,20 @@ N63CIndicateProvisionDiscoveryRequestSendComplete(
 	MEMORY_BUFFER mbObject = {NULL, 0};
 	PP2P_EVENT_DATA pEventData = (PP2P_EVENT_DATA) pInformation->Buffer;
 	pu1Byte header = NULL;
-	
+
 	// Skip the mac header (24) and the fields from Category to Dialog Token (8)
 	u2Byte skippedBytes = FRAME_OFFSET_P2P_PUB_ACT_ELEMENTS;
-	
+
 	// Compute the requried memory length --------------------------------------------------------------------------
 	mbObject.Length += DOT11_SIZEOF_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE_PARAMETERS_REVISION_1;  		// Parameter Structure Size
 
-	// + Only the valid packet 
+	// + Only the valid packet
 	if(pEventData->Packet.Length >= skippedBytes)
 	{
 		mbObject.Length += pEventData->Packet.Length - skippedBytes;
 	}
 	//----------------------------------------------------------------------------------------------------------
-	
+
 	// This must be successfull -----------------------------------------------------------------------
 	rtStatus = PlatformAllocateMemory(pP2PInfo->pAdapter, &mbObject.Buffer, mbObject.Length);
 	if(rtStatus == RT_STATUS_FAILURE)
@@ -1499,7 +1499,7 @@ N63CIndicateProvisionDiscoveryRequestSendComplete(
 
 	pParameters = (PDOT11_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE_PARAMETERS) mbObject.Buffer;
 	PlatformZeroMemory(pParameters, DOT11_SIZEOF_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE_PARAMETERS_REVISION_1);
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 			pParameters->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
@@ -1508,7 +1508,7 @@ N63CIndicateProvisionDiscoveryRequestSendComplete(
 		);
 
 	if(pEventData->rtStatus == RT_STATUS_FAILURE)
-	{		
+	{
 		pParameters->Status = NDIS_STATUS_FAILURE;
 	}
 	else
@@ -1518,31 +1518,31 @@ N63CIndicateProvisionDiscoveryRequestSendComplete(
 		GET_80211_HDR_ADDRESS1(header, pParameters->PeerDeviceAddress);
 
 		GET_80211_HDR_ADDRESS1(header, pParameters->ReceiverAddress);
-		
+
 		pParameters->DialogToken = *(header + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN);
-		
+
 		pParameters->Status = NDIS_STATUS_SUCCESS;
 
 		pParameters->uIEsOffset = sizeof(DOT11_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE_PARAMETERS);
 
-		// Only the valid packet 
+		// Only the valid packet
 		if(pEventData->Packet.Length >= skippedBytes)
 		{
 			pParameters->uIEsLength = pEventData->Packet.Length - skippedBytes;
 		}
 
 		PlatformMoveMemory(
-				(pu1Byte) pParameters + pParameters->uIEsOffset, 
-				header + skippedBytes, 
+				(pu1Byte) pParameters + pParameters->uIEsOffset,
+				header + skippedBytes,
 				pParameters->uIEsLength
 			);
 	}
 
-	// Indicate the status to the OS -------------------------------------------------------------	
+	// Indicate the status to the OS -------------------------------------------------------------
 	N6IndicateStatus(
-			pP2PInfo->pAdapter, 
-			NDIS_STATUS_DOT11_WFD_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE, 
-			mbObject.Buffer, 
+			pP2PInfo->pAdapter,
+			NDIS_STATUS_DOT11_WFD_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE,
+			mbObject.Buffer,
 			mbObject.Length
 		);
 
@@ -1562,8 +1562,8 @@ N63CIndicateReceivedProvisionDiscoveryRequest(
 {
 #if 0
     #define DOT11_RECEIVED_PROVISION_DISCOVERY_REQUEST_PARAMETERS_REVISION_1    1
-    
-    typedef struct _DOT11_RECEIVED_PROVISION_DISCOVERY_REQUEST_PARAMETERS 
+
+    typedef struct _DOT11_RECEIVED_PROVISION_DISCOVERY_REQUEST_PARAMETERS
     {
         NDIS_OBJECT_HEADER Header;
         DOT11_MAC_ADDRESS TransmitterDeviceAddress;
@@ -1580,20 +1580,20 @@ N63CIndicateReceivedProvisionDiscoveryRequest(
 	MEMORY_BUFFER mbObject = {NULL, 0};
 	PP2P_EVENT_DATA pEventData = (PP2P_EVENT_DATA) pInformation->Buffer;
 	pu1Byte header = NULL;
-	
+
 	// Skip the mac header (24) and the fields from Category to Dialog Token (8)
 	u2Byte skippedBytes = FRAME_OFFSET_P2P_PUB_ACT_ELEMENTS;
-	
+
 	// Compute the requried memory length --------------------------------------------------------------------------
 	mbObject.Length += sizeof(DOT11_RECEIVED_PROVISION_DISCOVERY_REQUEST_PARAMETERS);  		// Parameter Structure Size
 
-	// + Only the valid packet 
+	// + Only the valid packet
 	if(pEventData->Packet.Length >= skippedBytes)
 	{
 		mbObject.Length += pEventData->Packet.Length - skippedBytes;
 	}
 	//----------------------------------------------------------------------------------------------------------
-	
+
 	// This must be successfull -----------------------------------------------------------------------
 	rtStatus = PlatformAllocateMemory(pP2PInfo->pAdapter, &mbObject.Buffer, mbObject.Length);
 	if(rtStatus == RT_STATUS_FAILURE)
@@ -1605,7 +1605,7 @@ N63CIndicateReceivedProvisionDiscoveryRequest(
 
 	pParameters = (PDOT11_RECEIVED_PROVISION_DISCOVERY_REQUEST_PARAMETERS) mbObject.Buffer;
 	PlatformZeroMemory(pParameters, sizeof(DOT11_RECEIVED_PROVISION_DISCOVERY_REQUEST_PARAMETERS));
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 			pParameters->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
@@ -1614,34 +1614,34 @@ N63CIndicateReceivedProvisionDiscoveryRequest(
 		);
 
 	header = pEventData->Packet.Buffer;
-		
+
 	GET_80211_HDR_ADDRESS2(header, pParameters->TransmitterDeviceAddress);
-	
+
 	GET_80211_HDR_ADDRESS3(header, pParameters->BSSID);
 
 	pParameters->DialogToken = *(header + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN);
 
 	pParameters->RequestContext = NULL;
-	  
+
 	pParameters->uIEsOffset = sizeof(DOT11_RECEIVED_PROVISION_DISCOVERY_REQUEST_PARAMETERS);
 
-	// Only the valid packet 
+	// Only the valid packet
 	if(pEventData->Packet.Length >= skippedBytes)
 	{
 		pParameters->uIEsLength = pEventData->Packet.Length - skippedBytes;
-	}	
-		
+	}
+
 	PlatformMoveMemory(
-			(pu1Byte) pParameters + pParameters->uIEsOffset, 
-			header + skippedBytes, 
+			(pu1Byte) pParameters + pParameters->uIEsOffset,
+			header + skippedBytes,
 			pParameters->uIEsLength
 		);
-	
-	// Indicate the status to the OS -------------------------------------------------------------	
+
+	// Indicate the status to the OS -------------------------------------------------------------
 	N6IndicateStatus(
-			pP2PInfo->pAdapter, 
-			NDIS_STATUS_DOT11_WFD_RECEIVED_PROVISION_DISCOVERY_REQUEST, 
-			mbObject.Buffer, 
+			pP2PInfo->pAdapter,
+			NDIS_STATUS_DOT11_WFD_RECEIVED_PROVISION_DISCOVERY_REQUEST,
+			mbObject.Buffer,
 			mbObject.Length
 		);
 	//---------------------------------------------------------------------------------------
@@ -1667,7 +1667,7 @@ N63CIndicateProvisionDiscoveryResponseSendComplete(
         NDIS_STATUS Status;
         ULONG uIEsOffset;
         ULONG uIEsLength;
-    } DOT11_PROVISION_DISCOVERY_RESPONSE_SEND_COMPLETE_PARAMETERS, * PDOT11_PROVISION_DISCOVERY_RESPONSE_SEND_COMPLETE_PARAMETERS;    
+    } DOT11_PROVISION_DISCOVERY_RESPONSE_SEND_COMPLETE_PARAMETERS, * PDOT11_PROVISION_DISCOVERY_RESPONSE_SEND_COMPLETE_PARAMETERS;
 #endif
 
 	RT_STATUS rtStatus = RT_STATUS_FAILURE;
@@ -1675,20 +1675,20 @@ N63CIndicateProvisionDiscoveryResponseSendComplete(
 	MEMORY_BUFFER mbObject = {NULL, 0};
 	PP2P_EVENT_DATA pEventData = (PP2P_EVENT_DATA) pInformation->Buffer;
 	pu1Byte header = NULL;
-	
+
 	// Skip the mac header (24) and the fields from Category to Dialog Token (8)
 	u2Byte skippedBytes = FRAME_OFFSET_P2P_PUB_ACT_ELEMENTS;
-	
+
 	// Compute the requried memory length --------------------------------------------------------------------------
 	mbObject.Length += sizeof(DOT11_PROVISION_DISCOVERY_RESPONSE_SEND_COMPLETE_PARAMETERS);  		// Parameter Structure Size
 
-	// + Only the valid packet 
+	// + Only the valid packet
 	if(pEventData->Packet.Length >= skippedBytes)
 	{
 		mbObject.Length += pEventData->Packet.Length - skippedBytes;
 	}
 	//----------------------------------------------------------------------------------------------------------
-	
+
 	// This must be successfull -----------------------------------------------------------------------
 	rtStatus = PlatformAllocateMemory(pP2PInfo->pAdapter, &mbObject.Buffer, mbObject.Length);
 	if(rtStatus == RT_STATUS_FAILURE)
@@ -1700,7 +1700,7 @@ N63CIndicateProvisionDiscoveryResponseSendComplete(
 
 	pParameters = (PDOT11_PROVISION_DISCOVERY_RESPONSE_SEND_COMPLETE_PARAMETERS) mbObject.Buffer;
 	PlatformZeroMemory(pParameters, sizeof(DOT11_PROVISION_DISCOVERY_RESPONSE_SEND_COMPLETE_PARAMETERS));
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 			pParameters->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
@@ -1709,7 +1709,7 @@ N63CIndicateProvisionDiscoveryResponseSendComplete(
 		);
 
 	if(pEventData->rtStatus == RT_STATUS_FAILURE)
-	{		
+	{
 		pParameters->Status = NDIS_STATUS_FAILURE;
 	}
 	else
@@ -1720,30 +1720,30 @@ N63CIndicateProvisionDiscoveryResponseSendComplete(
 		GET_80211_HDR_ADDRESS1(header, pParameters->ReceiverDeviceAddress);
 
 		pParameters->DialogToken = pP2PInfo->ProvisionResponseDialogToken;
-	
+
 		pParameters->Status = NDIS_STATUS_SUCCESS;
 
 		pParameters->uIEsOffset = sizeof(DOT11_PROVISION_DISCOVERY_RESPONSE_SEND_COMPLETE_PARAMETERS);
 
-		// Only the valid packet 
+		// Only the valid packet
 		if(pEventData->Packet.Length >= skippedBytes)
 		{
 			pParameters->uIEsLength = pEventData->Packet.Length - skippedBytes;
 		}
-		
+
 		PlatformMoveMemory(
-				(pu1Byte) pParameters + pParameters->uIEsOffset, 
-				header + skippedBytes, 
+				(pu1Byte) pParameters + pParameters->uIEsOffset,
+				header + skippedBytes,
 				pParameters->uIEsLength
 			);
-	
+
 	}
 
-	// Indicate the status to the OS -------------------------------------------------------------	
+	// Indicate the status to the OS -------------------------------------------------------------
 	N6IndicateStatus(
-			pP2PInfo->pAdapter, 
-			NDIS_STATUS_DOT11_WFD_PROVISION_DISCOVERY_RESPONSE_SEND_COMPLETE, 
-			mbObject.Buffer, 
+			pP2PInfo->pAdapter,
+			NDIS_STATUS_DOT11_WFD_PROVISION_DISCOVERY_RESPONSE_SEND_COMPLETE,
+			mbObject.Buffer,
 			mbObject.Length
 		);
 	//---------------------------------------------------------------------------------------
@@ -1762,7 +1762,7 @@ N63CIndicateReceivedProvisionDiscoveryResponse(
 {
 #if 0
     #define DOT11_RECEIVED_PROVISION_DISCOVERY_RESPONSE_PARAMETERS_REVISION_1    1
-    typedef struct _DOT11_RECEIVED_PROVISION_DISCOVERY_RESPONSE_PARAMETERS 
+    typedef struct _DOT11_RECEIVED_PROVISION_DISCOVERY_RESPONSE_PARAMETERS
     {
         NDIS_OBJECT_HEADER Header;
         DOT11_MAC_ADDRESS TransmitterDeviceAddress;
@@ -1770,29 +1770,29 @@ N63CIndicateReceivedProvisionDiscoveryResponse(
         DOT11_DIALOG_TOKEN DialogToken;
         ULONG uIEsOffset;
         ULONG uIEsLength;
-    } DOT11_RECEIVED_PROVISION_DISCOVERY_RESPONSE_PARAMETERS, * PDOT11_RECEIVED_PROVISION_DISCOVERY_RESPONSE_PARAMETERS;    
+    } DOT11_RECEIVED_PROVISION_DISCOVERY_RESPONSE_PARAMETERS, * PDOT11_RECEIVED_PROVISION_DISCOVERY_RESPONSE_PARAMETERS;
 #endif
 
 	RT_STATUS rtStatus = RT_STATUS_FAILURE;
 	PDOT11_RECEIVED_PROVISION_DISCOVERY_RESPONSE_PARAMETERS	pParameters = NULL;
 	MEMORY_BUFFER mbObject = {NULL, 0};
 	pu1Byte header = NULL;
-	
+
 	// Skip the mac header (24) and the fields from Category to Dialog Token (8)
 	u2Byte skippedBytes = FRAME_OFFSET_P2P_PUB_ACT_ELEMENTS;
 
 	FunctionIn(COMP_OID_SET);
-	
+
 	// Compute the requried memory length --------------------------------------------------------------------------
 	mbObject.Length += sizeof(DOT11_RECEIVED_PROVISION_DISCOVERY_RESPONSE_PARAMETERS);  		// Parameter Structure Size
 
-	// + Only the valid packet 
+	// + Only the valid packet
 	if(frameLen >= skippedBytes)
 	{
 		mbObject.Length += frameLen - skippedBytes;
 	}
 	//----------------------------------------------------------------------------------------------------------
-	
+
 	// This must be successfull -----------------------------------------------------------------------
 	rtStatus = PlatformAllocateMemory(pP2PInfo->pAdapter, &mbObject.Buffer, mbObject.Length);
 	if(rtStatus == RT_STATUS_FAILURE)
@@ -1804,7 +1804,7 @@ N63CIndicateReceivedProvisionDiscoveryResponse(
 
 	pParameters = (PDOT11_RECEIVED_PROVISION_DISCOVERY_RESPONSE_PARAMETERS) mbObject.Buffer;
 	PlatformZeroMemory(pParameters, sizeof(DOT11_RECEIVED_PROVISION_DISCOVERY_RESPONSE_PARAMETERS));
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 			pParameters->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
@@ -1813,32 +1813,32 @@ N63CIndicateReceivedProvisionDiscoveryResponse(
 		);
 
 	header = frameBuf;
-		
+
 	GET_80211_HDR_ADDRESS2(header, pParameters->TransmitterDeviceAddress);
-	
+
 	GET_80211_HDR_ADDRESS3(header, pParameters->BSSID);
 
 	pParameters->DialogToken = ctx->token;
-	  
+
 	pParameters->uIEsOffset = sizeof(DOT11_RECEIVED_PROVISION_DISCOVERY_RESPONSE_PARAMETERS);
 
-	// Only the valid packet 
+	// Only the valid packet
 	if(frameLen >= skippedBytes)
 	{
 		pParameters->uIEsLength = frameLen - skippedBytes;
-	}	
-		
+	}
+
 	PlatformMoveMemory(
-			(pu1Byte) pParameters + pParameters->uIEsOffset, 
-			header + skippedBytes, 
+			(pu1Byte) pParameters + pParameters->uIEsOffset,
+			header + skippedBytes,
 			pParameters->uIEsLength
 		);
 
-	// Indicate the status to the OS -------------------------------------------------------------	
+	// Indicate the status to the OS -------------------------------------------------------------
 	N6IndicateStatus(
-			pP2PInfo->pAdapter, 
-			NDIS_STATUS_DOT11_WFD_RECEIVED_PROVISION_DISCOVERY_RESPONSE, 
-			mbObject.Buffer, 
+			pP2PInfo->pAdapter,
+			NDIS_STATUS_DOT11_WFD_RECEIVED_PROVISION_DISCOVERY_RESPONSE,
+			mbObject.Buffer,
 			mbObject.Length
 		);
 
@@ -1860,7 +1860,7 @@ N63CIndicateNegotiationRequestSendComplete(
 {
 #if 0
     #define DOT11_GO_NEGOTIATION_REQUEST_SEND_COMPLETE_PARAMETERS_REVISION_1    1
-    typedef struct _DOT11_GO_NEGOTIATION_REQUEST_SEND_COMPLETE_PARAMETERS 
+    typedef struct _DOT11_GO_NEGOTIATION_REQUEST_SEND_COMPLETE_PARAMETERS
     {
         NDIS_OBJECT_HEADER Header;
         DOT11_MAC_ADDRESS PeerDeviceAddress;
@@ -1876,20 +1876,20 @@ N63CIndicateNegotiationRequestSendComplete(
 	MEMORY_BUFFER mbObject = {NULL, 0};
 	PP2P_EVENT_DATA pEventData = (PP2P_EVENT_DATA) pInformation->Buffer;
 	pu1Byte header = NULL;
-	
+
 	// Skip the mac header (24) and the fields from Category to Dialog Token (8)
 	u2Byte skippedBytes = FRAME_OFFSET_P2P_PUB_ACT_ELEMENTS;
-	
+
 	// Compute the requried memory length --------------------------------------------------------------------------
 	mbObject.Length += sizeof(DOT11_GO_NEGOTIATION_REQUEST_SEND_COMPLETE_PARAMETERS);  		// Parameter Structure Size
 
-	// + Only the valid packet 
+	// + Only the valid packet
 	if(pEventData->Packet.Length >= skippedBytes)
 	{
 		mbObject.Length += pEventData->Packet.Length - skippedBytes;
 	}
 	//----------------------------------------------------------------------------------------------------------
-	
+
 	// This must be successful ------------------------------------------------------------------------
 	rtStatus = PlatformAllocateMemory(pP2PInfo->pAdapter, &mbObject.Buffer, mbObject.Length);
 	if(rtStatus == RT_STATUS_FAILURE)
@@ -1901,7 +1901,7 @@ N63CIndicateNegotiationRequestSendComplete(
 
 	pParameters = (PDOT11_GO_NEGOTIATION_REQUEST_SEND_COMPLETE_PARAMETERS) mbObject.Buffer;
 	PlatformZeroMemory(pParameters, sizeof(DOT11_GO_NEGOTIATION_REQUEST_SEND_COMPLETE_PARAMETERS));
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 			pParameters->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
@@ -1910,7 +1910,7 @@ N63CIndicateNegotiationRequestSendComplete(
 		);
 
 	if(pEventData->rtStatus == RT_STATUS_FAILURE)
-	{		
+	{
 		pParameters->Status = NDIS_STATUS_FAILURE;
 	}
 	else
@@ -1919,32 +1919,32 @@ N63CIndicateNegotiationRequestSendComplete(
 
 
 		GET_80211_HDR_ADDRESS1(header, pParameters->PeerDeviceAddress);
-		
+
 		pParameters->DialogToken = *(header + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN);
-	
+
 		pParameters->Status = NDIS_STATUS_SUCCESS;
 
 		pParameters->uIEsOffset = sizeof(DOT11_GO_NEGOTIATION_REQUEST_SEND_COMPLETE_PARAMETERS);
 
-		// Only the valid packet 
+		// Only the valid packet
 		if(pEventData->Packet.Length >= skippedBytes)
 		{
 			pParameters->uIEsLength = pEventData->Packet.Length - skippedBytes;
 		}
-		
+
 		PlatformMoveMemory(
-				(pu1Byte) pParameters + pParameters->uIEsOffset, 
-				header + skippedBytes, 
+				(pu1Byte) pParameters + pParameters->uIEsOffset,
+				header + skippedBytes,
 				pParameters->uIEsLength
 			);
-	
+
 	}
 
-	// Indicate the status to the OS -------------------------------------------------------------	
+	// Indicate the status to the OS -------------------------------------------------------------
 	N6IndicateStatus(
-			pP2PInfo->pAdapter, 
-			NDIS_STATUS_DOT11_WFD_GO_NEGOTIATION_REQUEST_SEND_COMPLETE, 
-			mbObject.Buffer, 
+			pP2PInfo->pAdapter,
+			NDIS_STATUS_DOT11_WFD_GO_NEGOTIATION_REQUEST_SEND_COMPLETE,
+			mbObject.Buffer,
 			mbObject.Length
 		);
 	//---------------------------------------------------------------------------------------
@@ -1961,7 +1961,7 @@ N63CIndicateReceivedGONegotiationRequest(
 {
 #if 0
     #define DOT11_RECEIVED_GO_NEGOTIATION_REQUEST_PARAMETERS_REVISION_1    1
-    typedef struct _DOT11_RECEIVED_GO_NEGOTIATION_REQUEST_PARAMETERS 
+    typedef struct _DOT11_RECEIVED_GO_NEGOTIATION_REQUEST_PARAMETERS
     {
         NDIS_OBJECT_HEADER Header;
         DOT11_MAC_ADDRESS PeerDeviceAddress;
@@ -1969,7 +1969,7 @@ N63CIndicateReceivedGONegotiationRequest(
         PVOID RequestContext;
         ULONG uIEsOffset;
         ULONG uIEsLength;
-    } DOT11_RECEIVED_GO_NEGOTIATION_REQUEST_PARAMETERS, * PDOT11_RECEIVED_GO_NEGOTIATION_REQUEST_PARAMETERS;    
+    } DOT11_RECEIVED_GO_NEGOTIATION_REQUEST_PARAMETERS, * PDOT11_RECEIVED_GO_NEGOTIATION_REQUEST_PARAMETERS;
 #endif
 
 	RT_STATUS rtStatus = RT_STATUS_FAILURE;
@@ -1977,20 +1977,20 @@ N63CIndicateReceivedGONegotiationRequest(
 	MEMORY_BUFFER mbObject = {NULL, 0};
 	PP2P_EVENT_DATA pEventData = (PP2P_EVENT_DATA) pInformation->Buffer;
 	pu1Byte header = NULL;
-	
+
 	// Skip the mac header (24) and the fields from Category to Dialog Token (8)
 	u2Byte skippedBytes = FRAME_OFFSET_P2P_PUB_ACT_ELEMENTS;
-	
+
 	// Compute the requried memory length --------------------------------------------------------------------------
 	mbObject.Length += sizeof(DOT11_RECEIVED_GO_NEGOTIATION_REQUEST_PARAMETERS);  		// Parameter Structure Size
 
-	// + Only the valid packet 
+	// + Only the valid packet
 	if(pEventData->Packet.Length >= skippedBytes)
 	{
 		mbObject.Length += pEventData->Packet.Length - skippedBytes;
 	}
 	//----------------------------------------------------------------------------------------------------------
-	
+
 	// This must be successfull -----------------------------------------------------------------------
 	rtStatus = PlatformAllocateMemory(pP2PInfo->pAdapter, &mbObject.Buffer, mbObject.Length);
 	if(rtStatus == RT_STATUS_FAILURE)
@@ -2002,7 +2002,7 @@ N63CIndicateReceivedGONegotiationRequest(
 
 	pParameters = (PDOT11_RECEIVED_GO_NEGOTIATION_REQUEST_PARAMETERS) mbObject.Buffer;
 	PlatformZeroMemory(pParameters, sizeof(DOT11_RECEIVED_GO_NEGOTIATION_REQUEST_PARAMETERS));
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 			pParameters->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
@@ -2011,30 +2011,30 @@ N63CIndicateReceivedGONegotiationRequest(
 		);
 
 	header = pEventData->Packet.Buffer;
-		
+
 	GET_80211_HDR_ADDRESS2(header, pParameters->PeerDeviceAddress);
 
 	pParameters->DialogToken = *(header + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN);
-	  
+
 	pParameters->uIEsOffset = sizeof(DOT11_RECEIVED_GO_NEGOTIATION_REQUEST_PARAMETERS);
 
-	// Only the valid packet 
+	// Only the valid packet
 	if(pEventData->Packet.Length >= skippedBytes)
 	{
 		pParameters->uIEsLength = pEventData->Packet.Length - skippedBytes;
-	}	
-		
+	}
+
 	PlatformMoveMemory(
-			(pu1Byte) pParameters + pParameters->uIEsOffset, 
-			header + skippedBytes, 
+			(pu1Byte) pParameters + pParameters->uIEsOffset,
+			header + skippedBytes,
 			pParameters->uIEsLength
 		);
 
-	// Indicate the status to the OS -------------------------------------------------------------	
+	// Indicate the status to the OS -------------------------------------------------------------
 	N6IndicateStatus(
-			pP2PInfo->pAdapter, 
-			NDIS_STATUS_DOT11_WFD_RECEIVED_GO_NEGOTIATION_REQUEST, 
-			mbObject.Buffer, 
+			pP2PInfo->pAdapter,
+			NDIS_STATUS_DOT11_WFD_RECEIVED_GO_NEGOTIATION_REQUEST,
+			mbObject.Buffer,
 			mbObject.Length
 		);
 	//---------------------------------------------------------------------------------------
@@ -2050,10 +2050,10 @@ N63CIndicateNegotiationResponseSendComplete(
 	PMEMORY_BUFFER pInformation
 )
 {
-#if 0 
+#if 0
     #define DOT11_GO_NEGOTIATION_RESPONSE_SEND_COMPLETE_PARAMETERS_REVISION_1    1
-    
-    typedef struct _DOT11_GO_NEGOTIATION_RESPONSE_SEND_COMPLETE_PARAMETERS 
+
+    typedef struct _DOT11_GO_NEGOTIATION_RESPONSE_SEND_COMPLETE_PARAMETERS
     {
         NDIS_OBJECT_HEADER Header;
         DOT11_MAC_ADDRESS PeerDeviceAddress;
@@ -2069,20 +2069,20 @@ N63CIndicateNegotiationResponseSendComplete(
 	MEMORY_BUFFER mbObject = {NULL, 0};
 	PP2P_EVENT_DATA pEventData = (PP2P_EVENT_DATA) pInformation->Buffer;
 	pu1Byte header = NULL;
-	
+
 	// Skip the mac header (24) and the fields from Category to Dialog Token (8)
 	u2Byte skippedBytes = FRAME_OFFSET_P2P_PUB_ACT_ELEMENTS;
-	
+
 	// Compute the requried memory length --------------------------------------------------------------------------
 	mbObject.Length += sizeof(DOT11_GO_NEGOTIATION_RESPONSE_SEND_COMPLETE_PARAMETERS);  		// Parameter Structure Size
 
-	// + Only the valid packet 
+	// + Only the valid packet
 	if(pEventData->Packet.Length >= skippedBytes)
 	{
 		mbObject.Length += pEventData->Packet.Length - skippedBytes;
 	}
 	//----------------------------------------------------------------------------------------------------------
-	
+
 	// This must be successful ------------------------------------------------------------------------
 	rtStatus = PlatformAllocateMemory(pP2PInfo->pAdapter, &mbObject.Buffer, mbObject.Length);
 	if(rtStatus == RT_STATUS_FAILURE)
@@ -2094,7 +2094,7 @@ N63CIndicateNegotiationResponseSendComplete(
 
 	pParameters = (PDOT11_GO_NEGOTIATION_RESPONSE_SEND_COMPLETE_PARAMETERS) mbObject.Buffer;
 	PlatformZeroMemory(pParameters, sizeof(DOT11_GO_NEGOTIATION_RESPONSE_SEND_COMPLETE_PARAMETERS));
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 			pParameters->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
@@ -2103,7 +2103,7 @@ N63CIndicateNegotiationResponseSendComplete(
 		);
 
 	if(pEventData->rtStatus == RT_STATUS_FAILURE)
-	{		
+	{
 		pParameters->Status = NDIS_STATUS_FAILURE;
 	}
 	else
@@ -2112,32 +2112,32 @@ N63CIndicateNegotiationResponseSendComplete(
 
 
 		GET_80211_HDR_ADDRESS1(header, pParameters->PeerDeviceAddress);
-		
+
 		pParameters->DialogToken = *(header + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN);
-	
+
 		pParameters->Status = NDIS_STATUS_SUCCESS;
 
 		pParameters->uIEsOffset = sizeof(DOT11_GO_NEGOTIATION_RESPONSE_SEND_COMPLETE_PARAMETERS);
 
-		// Only the valid packet 
+		// Only the valid packet
 		if(pEventData->Packet.Length >= skippedBytes)
 		{
 			pParameters->uIEsLength = pEventData->Packet.Length - skippedBytes;
 		}
-		
+
 		PlatformMoveMemory(
-				(pu1Byte) pParameters + pParameters->uIEsOffset, 
-				header + skippedBytes, 
+				(pu1Byte) pParameters + pParameters->uIEsOffset,
+				header + skippedBytes,
 				pParameters->uIEsLength
 			);
-	
+
 	}
 
-	// Indicate the status to the OS -------------------------------------------------------------	
+	// Indicate the status to the OS -------------------------------------------------------------
 	N6IndicateStatus(
-			pP2PInfo->pAdapter, 
-			NDIS_STATUS_DOT11_WFD_GO_NEGOTIATION_RESPONSE_SEND_COMPLETE, 
-			mbObject.Buffer, 
+			pP2PInfo->pAdapter,
+			NDIS_STATUS_DOT11_WFD_GO_NEGOTIATION_RESPONSE_SEND_COMPLETE,
+			mbObject.Buffer,
 			mbObject.Length
 		);
 	//---------------------------------------------------------------------------------------
@@ -2158,7 +2158,7 @@ N63CIndicateReceivedGONegotiationResponse(
 #if 0
     #define DOT11_RECEIVED_GO_NEGOTIATION_RESPONSE_PARAMETERS_REVISION_1    1
 
-    typedef struct _DOT11_RECEIVED_GO_NEGOTIATION_RESPONSE_PARAMETERS 
+    typedef struct _DOT11_RECEIVED_GO_NEGOTIATION_RESPONSE_PARAMETERS
     {
         NDIS_OBJECT_HEADER Header;
         DOT11_MAC_ADDRESS PeerDeviceAddress;
@@ -2173,22 +2173,22 @@ N63CIndicateReceivedGONegotiationResponse(
 	PDOT11_RECEIVED_GO_NEGOTIATION_RESPONSE_PARAMETERS	pParameters = NULL;
 	MEMORY_BUFFER mbObject = {NULL, 0};
 	pu1Byte header = NULL;
-	
+
 	// Skip the mac header (24) and the fields from Category to Dialog Token (8)
 	u2Byte skippedBytes = FRAME_OFFSET_P2P_PUB_ACT_ELEMENTS;
 
 	FunctionIn(COMP_OID_SET);
-	
+
 	// Compute the requried memory length --------------------------------------------------------------------------
 	mbObject.Length += sizeof(DOT11_RECEIVED_GO_NEGOTIATION_RESPONSE_PARAMETERS);  		// Parameter Structure Size
 
-	// + Only the valid packet 
+	// + Only the valid packet
 	if(frameLen >= skippedBytes)
 	{
 		mbObject.Length += frameLen - skippedBytes;
 	}
 	//----------------------------------------------------------------------------------------------------------
-	
+
 	// This must be successfull -----------------------------------------------------------------------
 	rtStatus = PlatformAllocateMemory(pP2PInfo->pAdapter, &mbObject.Buffer, mbObject.Length);
 	if(rtStatus == RT_STATUS_FAILURE)
@@ -2200,7 +2200,7 @@ N63CIndicateReceivedGONegotiationResponse(
 
 	pParameters = (PDOT11_RECEIVED_GO_NEGOTIATION_RESPONSE_PARAMETERS) mbObject.Buffer;
 	PlatformZeroMemory(pParameters, sizeof(DOT11_RECEIVED_GO_NEGOTIATION_RESPONSE_PARAMETERS));
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 			pParameters->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
@@ -2209,30 +2209,30 @@ N63CIndicateReceivedGONegotiationResponse(
 		);
 
 	header = frameBuf;
-		
+
 	GET_80211_HDR_ADDRESS2(header, pParameters->PeerDeviceAddress);
 
 	pParameters->DialogToken = ctx->token;
-	  
+
 	pParameters->uIEsOffset = sizeof(DOT11_RECEIVED_GO_NEGOTIATION_RESPONSE_PARAMETERS);
 
-	// Only the valid packet 
+	// Only the valid packet
 	if(frameLen >= skippedBytes)
 	{
 		pParameters->uIEsLength = frameLen - skippedBytes;
-	}	
-		
+	}
+
 	PlatformMoveMemory(
-			(pu1Byte) pParameters + pParameters->uIEsOffset, 
-			header + skippedBytes, 
+			(pu1Byte) pParameters + pParameters->uIEsOffset,
+			header + skippedBytes,
 			pParameters->uIEsLength
 		);
 
-	// Indicate the status to the OS -------------------------------------------------------------	
+	// Indicate the status to the OS -------------------------------------------------------------
 	N6IndicateStatus(
-			pP2PInfo->pAdapter, 
-			NDIS_STATUS_DOT11_WFD_RECEIVED_GO_NEGOTIATION_RESPONSE, 
-			mbObject.Buffer, 
+			pP2PInfo->pAdapter,
+			NDIS_STATUS_DOT11_WFD_RECEIVED_GO_NEGOTIATION_RESPONSE,
+			mbObject.Buffer,
 			mbObject.Length
 		);
 	//---------------------------------------------------------------------------------------
@@ -2252,8 +2252,8 @@ N63CIndicateNegotiationConfirmSendComplete(
 {
 #if 0
     #define DOT11_GO_NEGOTIATION_CONFIRMATION_SEND_COMPLETE_PARAMETERS_REVISION_1    1
-    
-    typedef struct _DOT11_GO_NEGOTIATION_CONFIRMATION_SEND_COMPLETE_PARAMETERS 
+
+    typedef struct _DOT11_GO_NEGOTIATION_CONFIRMATION_SEND_COMPLETE_PARAMETERS
     {
         NDIS_OBJECT_HEADER Header;
         DOT11_MAC_ADDRESS PeerDeviceAddress;
@@ -2269,20 +2269,20 @@ N63CIndicateNegotiationConfirmSendComplete(
 	MEMORY_BUFFER mbObject = {NULL, 0};
 	PP2P_EVENT_DATA pEventData = (PP2P_EVENT_DATA) pInformation->Buffer;
 	pu1Byte header = NULL;
-	
+
 	// Skip the mac header (24) and the fields from Category to Dialog Token (8)
 	u2Byte skippedBytes = FRAME_OFFSET_P2P_PUB_ACT_ELEMENTS;
-	
+
 	// Compute the requried memory length --------------------------------------------------------------------------
 	mbObject.Length += sizeof(DOT11_GO_NEGOTIATION_CONFIRMATION_SEND_COMPLETE_PARAMETERS);  		// Parameter Structure Size
 
-	// + Only the valid packet 
+	// + Only the valid packet
 	if(pEventData->Packet.Length >= skippedBytes)
 	{
 		mbObject.Length += pEventData->Packet.Length - skippedBytes;
 	}
 	//----------------------------------------------------------------------------------------------------------
-	
+
 	// This must be successful ------------------------------------------------------------------------
 	rtStatus = PlatformAllocateMemory(pP2PInfo->pAdapter, &mbObject.Buffer, mbObject.Length);
 	if(rtStatus == RT_STATUS_FAILURE)
@@ -2294,7 +2294,7 @@ N63CIndicateNegotiationConfirmSendComplete(
 
 	pParameters = (PDOT11_GO_NEGOTIATION_CONFIRMATION_SEND_COMPLETE_PARAMETERS) mbObject.Buffer;
 	PlatformZeroMemory(pParameters, sizeof(DOT11_GO_NEGOTIATION_CONFIRMATION_SEND_COMPLETE_PARAMETERS));
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 			pParameters->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
@@ -2303,7 +2303,7 @@ N63CIndicateNegotiationConfirmSendComplete(
 		);
 
 	if(pEventData->rtStatus == RT_STATUS_FAILURE)
-	{		
+	{
 		pParameters->Status = NDIS_STATUS_FAILURE;
 	}
 	else
@@ -2312,32 +2312,32 @@ N63CIndicateNegotiationConfirmSendComplete(
 
 
 		GET_80211_HDR_ADDRESS1(header, pParameters->PeerDeviceAddress);
-		
+
 		pParameters->DialogToken = *(header + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN);
-	
+
 		pParameters->Status = NDIS_STATUS_SUCCESS;
 
 		pParameters->uIEsOffset = sizeof(DOT11_GO_NEGOTIATION_CONFIRMATION_SEND_COMPLETE_PARAMETERS);
 
-		// Only the valid packet 
+		// Only the valid packet
 		if(pEventData->Packet.Length >= skippedBytes)
 		{
 			pParameters->uIEsLength = pEventData->Packet.Length - skippedBytes;
 		}
-		
+
 		PlatformMoveMemory(
-				(pu1Byte) pParameters + pParameters->uIEsOffset, 
-				header + skippedBytes, 
+				(pu1Byte) pParameters + pParameters->uIEsOffset,
+				header + skippedBytes,
 				pParameters->uIEsLength
 			);
-	
+
 	}
 
-	// Indicate the status to the OS -------------------------------------------------------------	
+	// Indicate the status to the OS -------------------------------------------------------------
 	N6IndicateStatus(
-			pP2PInfo->pAdapter, 
-			NDIS_STATUS_DOT11_WFD_GO_NEGOTIATION_CONFIRMATION_SEND_COMPLETE, 
-			mbObject.Buffer, 
+			pP2PInfo->pAdapter,
+			NDIS_STATUS_DOT11_WFD_GO_NEGOTIATION_CONFIRMATION_SEND_COMPLETE,
+			mbObject.Buffer,
 			mbObject.Length
 		);
 	//---------------------------------------------------------------------------------------
@@ -2356,8 +2356,8 @@ N63CIndicateReceivedGONegotiationConfirm(
 )
 {
 #if 0
-    #define DOT11_RECEIVED_GO_NEGOTIATION_CONFIRMATION_PARAMETERS_REVISION_1    1    
-    typedef struct _DOT11_RECEIVED_GO_NEGOTIATION_CONFIRMATION_PARAMETERS 
+    #define DOT11_RECEIVED_GO_NEGOTIATION_CONFIRMATION_PARAMETERS_REVISION_1    1
+    typedef struct _DOT11_RECEIVED_GO_NEGOTIATION_CONFIRMATION_PARAMETERS
     {
         NDIS_OBJECT_HEADER Header;
         DOT11_MAC_ADDRESS PeerDeviceAddress;
@@ -2371,22 +2371,22 @@ N63CIndicateReceivedGONegotiationConfirm(
 	PDOT11_RECEIVED_GO_NEGOTIATION_CONFIRMATION_PARAMETERS	pParameters = NULL;
 	MEMORY_BUFFER mbObject = {NULL, 0};
 	pu1Byte header = NULL;
-	
+
 	// Skip the mac header (24) and the fields from Category to Dialog Token (8)
 	u2Byte skippedBytes = FRAME_OFFSET_P2P_PUB_ACT_ELEMENTS;
 
 	FunctionIn(COMP_OID_SET);
-	
+
 	// Compute the requried memory length --------------------------------------------------------------------------
 	mbObject.Length += sizeof(DOT11_RECEIVED_GO_NEGOTIATION_CONFIRMATION_PARAMETERS);  		// Parameter Structure Size
 
-	// + Only the valid packet 
+	// + Only the valid packet
 	if(frameLen >= skippedBytes)
 	{
 		mbObject.Length += frameLen - skippedBytes;
 	}
 	//----------------------------------------------------------------------------------------------------------
-	
+
 	// This must be successful -----------------------------------------------------------------------
 	rtStatus = PlatformAllocateMemory(pP2PInfo->pAdapter, &mbObject.Buffer, mbObject.Length);
 	if(rtStatus == RT_STATUS_FAILURE)
@@ -2398,7 +2398,7 @@ N63CIndicateReceivedGONegotiationConfirm(
 
 	pParameters = (PDOT11_RECEIVED_GO_NEGOTIATION_CONFIRMATION_PARAMETERS) mbObject.Buffer;
 	PlatformZeroMemory(pParameters, sizeof(DOT11_RECEIVED_GO_NEGOTIATION_CONFIRMATION_PARAMETERS));
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 			pParameters->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
@@ -2407,30 +2407,30 @@ N63CIndicateReceivedGONegotiationConfirm(
 		);
 
 	header = frameBuf;
-		
+
 	GET_80211_HDR_ADDRESS2(header, pParameters->PeerDeviceAddress);
 
 	pParameters->DialogToken = ctx->token;
-	  
+
 	pParameters->uIEsOffset = sizeof(DOT11_RECEIVED_GO_NEGOTIATION_CONFIRMATION_PARAMETERS);
 
-	// Only the valid packet 
+	// Only the valid packet
 	if(frameLen >= skippedBytes)
 	{
 		pParameters->uIEsLength = frameLen - skippedBytes;
-	}	
-		
+	}
+
 	PlatformMoveMemory(
-			(pu1Byte) pParameters + pParameters->uIEsOffset, 
-			header + skippedBytes, 
+			(pu1Byte) pParameters + pParameters->uIEsOffset,
+			header + skippedBytes,
 			pParameters->uIEsLength
 		);
 
-	// Indicate the status to the OS -------------------------------------------------------------	
+	// Indicate the status to the OS -------------------------------------------------------------
 	N6IndicateStatus(
-			pP2PInfo->pAdapter, 
-			NDIS_STATUS_DOT11_WFD_RECEIVED_GO_NEGOTIATION_CONFIRMATION, 
-			mbObject.Buffer, 
+			pP2PInfo->pAdapter,
+			NDIS_STATUS_DOT11_WFD_RECEIVED_GO_NEGOTIATION_CONFIRMATION,
+			mbObject.Buffer,
 			mbObject.Length
 		);
 	//---------------------------------------------------------------------------------------
@@ -2450,7 +2450,7 @@ N63CIndicateGOOperatingChannel(
 	RT_STATUS rtStatus = RT_STATUS_FAILURE;
 	PDOT11_WFD_CHANNEL pParameters = NULL;
 	MEMORY_BUFFER mbObject = {NULL, 0};
-	
+
 	// Compute the requried memory length --------------------------------------------------------------------------
 	mbObject.Length += sizeof(DOT11_WFD_CHANNEL); 	// Parameter Structure Size
 
@@ -2465,16 +2465,16 @@ N63CIndicateGOOperatingChannel(
 
 	pParameters = (PDOT11_WFD_CHANNEL) mbObject.Buffer;
 	PlatformZeroMemory(pParameters, sizeof(DOT11_WFD_CHANNEL));
-	
+
 	PlatformMoveMemory((pu1Byte)pParameters->CountryRegionString, pP2PInfo->CountryString, 3);
 	pParameters->OperatingClass = pP2PInfo->RegulatoryClass;
 	pParameters->ChannelNumber = pP2PInfo->OperatingChannel;
 
-	// Indicate the status to the OS -------------------------------------------------------------	
+	// Indicate the status to the OS -------------------------------------------------------------
 	N6IndicateStatus(
-			pP2PInfo->pAdapter, 
-			NDIS_STATUS_DOT11_WFD_GROUP_OPERATING_CHANNEL, 
-			mbObject.Buffer, 
+			pP2PInfo->pAdapter,
+			NDIS_STATUS_DOT11_WFD_GROUP_OPERATING_CHANNEL,
+			mbObject.Buffer,
 			mbObject.Length
 		);
 	//---------------------------------------------------------------------------------------
@@ -2485,23 +2485,23 @@ N63CIndicateGOOperatingChannel(
 
 static NDIS_STATUS
 N63CValidateOIDCorrectnessGetReturnStatus(
-	OID_CORRECT_STATE	correctState, 
+	OID_CORRECT_STATE	correctState,
 	MP_PORT_TYPE		portType,
 	P2P_ROLE			portRole,
 	MP_PORT_OP_STATE	portState
 )
 {
-// 
+//
 // Return Value:
 //		NDIS_STATUS_INVALID_STATE: 		That port can process that OID in other state
 //		NDIS_STATUS_SUCCESS:			Correct port in the correct state
 //
 
-	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_STATE; 
+	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_STATE;
 
 	if(portType == EXT_P2P_DEVICE_PORT)
 	{
-		if(portState == INIT_STATE) 
+		if(portState == INIT_STATE)
 		{
 			if(correctState & STATE_DEVICE_INIT)
 			{
@@ -2572,16 +2572,16 @@ N63CValidateQueryOIDCorrectness(
 	PNDIS_OID_REQUEST NdisRequest
 )
 {
-	NDIS_STATUS 		ndisStatus = NDIS_STATUS_INVALID_STATE; 
+	NDIS_STATUS 		ndisStatus = NDIS_STATUS_INVALID_STATE;
 	NDIS_OID 			oid = NdisRequest->DATA.QUERY_INFORMATION.Oid;
 	PADAPTER 			pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER 			pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
 	PP2P_INFO			pP2PInfo = GET_P2P_INFO(pTargetAdapter);
-	
+
 	MP_PORT_TYPE		portType = pTargetAdapter->pNdis62Common->PortType;
-	P2P_ROLE			portRole	= pP2PInfo->Role;	
+	P2P_ROLE			portRole	= pP2PInfo->Role;
 	MP_PORT_OP_STATE	portState = pTargetAdapter->pNdis62Common->CurrentOpState;
-	
+
 	switch (oid)
 	{
 		case OID_DOT11_WFD_ENUM_DEVICE_LIST:
@@ -2590,12 +2590,12 @@ N63CValidateQueryOIDCorrectness(
 		case OID_DOT11_WFD_GET_DIALOG_TOKEN:
 			ndisStatus = N63CValidateOIDCorrectnessGetReturnStatus(
 					STATE_DEVICE_INIT,
-					portType, 
-					portRole, 
+					portType,
+					portRole,
 					portState
 				);
 			break;
-			
+
 		default:
 			ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 			break;
@@ -2610,16 +2610,16 @@ N63CValidateSetOIDCorrectness(
 	PNDIS_OID_REQUEST NdisRequest
 )
 {
-	NDIS_STATUS 		ndisStatus = NDIS_STATUS_INVALID_STATE; 
+	NDIS_STATUS 		ndisStatus = NDIS_STATUS_INVALID_STATE;
 	NDIS_OID 			oid = NdisRequest->DATA.QUERY_INFORMATION.Oid;
 	PADAPTER 			pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER 			pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
 	PP2P_INFO			pP2PInfo = GET_P2P_INFO(pTargetAdapter);
-	
+
 	MP_PORT_TYPE		portType = pTargetAdapter->pNdis62Common->PortType;
-	P2P_ROLE			portRole	= pP2PInfo->Role;	
+	P2P_ROLE			portRole	= pP2PInfo->Role;
 	MP_PORT_OP_STATE	portState = pTargetAdapter->pNdis62Common->CurrentOpState;
-	
+
 	switch (oid)
 	{
 		case OID_DOT11_WFD_DEVICE_CAPABILITY:
@@ -2627,26 +2627,26 @@ N63CValidateSetOIDCorrectness(
     		case OID_DOT11_WFD_ADDITIONAL_IE:
 			ndisStatus = N63CValidateOIDCorrectnessGetReturnStatus(
 					STATE_DEVICE_INIT | STATE_GO_INIT | STATE_GO_OP | STATE_CLIENT_INIT | STATE_CLIENT_OP,
-					portType, 
-					portRole, 
+					portType,
+					portRole,
 					portState
 				);
 			break;
-			
+
 		case OID_DOT11_WFD_GROUP_OWNER_CAPABILITY:
 			ndisStatus = N63CValidateOIDCorrectnessGetReturnStatus(
 					STATE_GO_INIT | STATE_GO_OP | STATE_DEVICE_INIT,
-					portType, 
-					portRole, 
+					portType,
+					portRole,
 					portState
 				);
 			break;
-			
+
     		case OID_DOT11_WFD_DEVICE_INFO:
 			ndisStatus = N63CValidateOIDCorrectnessGetReturnStatus(
 					STATE_DEVICE_INIT | STATE_GO_INIT | STATE_CLIENT_INIT,
-					portType, 
-					portRole, 
+					portType,
+					portRole,
 					portState
 				);
 			break;
@@ -2665,46 +2665,46 @@ N63CValidateSetOIDCorrectness(
 		case OID_DOT11_WFD_STOP_DISCOVERY:
 			ndisStatus = N63CValidateOIDCorrectnessGetReturnStatus(
 					STATE_DEVICE_INIT,
-					portType, 
-					portRole, 
+					portType,
+					portRole,
 					portState
 				);
 			break;
-			
+
 		case OID_DOT11_WFD_DESIRED_GROUP_ID:
 			ndisStatus = N63CValidateOIDCorrectnessGetReturnStatus(
 					STATE_GO_INIT | STATE_CLIENT_INIT,
-					portType, 
-					portRole, 
+					portType,
+					portRole,
 					portState
 				);
 			break;
-				
+
 		case OID_DOT11_WFD_START_GO_REQUEST:
 		case OID_DOT11_WFD_GROUP_START_PARAMETERS:
 			ndisStatus = N63CValidateOIDCorrectnessGetReturnStatus(
 					STATE_GO_INIT,
-					portType, 
-					portRole, 
+					portType,
+					portRole,
 					portState
 				);
 			break;
-			
+
     		case OID_DOT11_WFD_CONNECT_TO_GROUP_REQUEST:
 		case OID_DOT11_WFD_GROUP_JOIN_PARAMETERS:
 			ndisStatus = N63CValidateOIDCorrectnessGetReturnStatus(
 					STATE_CLIENT_INIT,
-					portType, 
-					portRole, 
+					portType,
+					portRole,
 					portState
 				);
 			break;
-			
+
 		case OID_DOT11_WFD_DISCONNECT_FROM_GROUP_REQUEST:
 			ndisStatus = N63CValidateOIDCorrectnessGetReturnStatus(
 					STATE_CLIENT_OP,
-					portType, 
-					portRole, 
+					portType,
+					portRole,
 					portState
 				);
 			break;
@@ -2737,18 +2737,18 @@ N63CValidateOIDCorrectness(
 	PNDIS_OID_REQUEST NdisRequest
 )
 {
-	NDIS_STATUS 		ndisStatus = NDIS_STATUS_INVALID_STATE; 
+	NDIS_STATUS 		ndisStatus = NDIS_STATUS_INVALID_STATE;
 	PADAPTER 			pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER 			pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
 	PP2P_INFO			pP2PInfo = GET_P2P_INFO(pTargetAdapter);
 
 	MP_PORT_TYPE		portType = pTargetAdapter->pNdis62Common->PortType;
-	P2P_ROLE			portRole	= pP2PInfo->Role;	
+	P2P_ROLE			portRole	= pP2PInfo->Role;
 	MP_PORT_OP_STATE	portState = pTargetAdapter->pNdis62Common->CurrentOpState;
 
-	RT_TRACE(COMP_OID_SET | COMP_OID_QUERY | COMP_P2P, DBG_LOUD, 
-		("MP_PORT_TYPE: %d, P2P_ROLE: %d, MP_PORT_OP_STATE: %d\n", portType, portRole, portState));	
-	
+	RT_TRACE(COMP_OID_SET | COMP_OID_QUERY | COMP_P2P, DBG_LOUD,
+		("MP_PORT_TYPE: %d, P2P_ROLE: %d, MP_PORT_OP_STATE: %d\n", portType, portRole, portState));
+
 	do
 	{
 		// Currently, only handle these OIDs in the Wi-Fi Driect ports (Device Port or Role Port) since these ports are the upmost port type
@@ -2757,7 +2757,7 @@ N63CValidateOIDCorrectness(
 			ndisStatus = NDIS_STATUS_INVALID_STATE;
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -2765,7 +2765,7 @@ N63CValidateOIDCorrectness(
 			case NdisRequestQueryStatistics:
 				ndisStatus = N63CValidateQueryOIDCorrectness(pAdapter, NdisRequest);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63CValidateSetOIDCorrectness(pAdapter, NdisRequest);
@@ -2775,7 +2775,7 @@ N63CValidateOIDCorrectness(
 			case NdisRequestMethod:
 				ndisStatus = N63CValidateMethodOIDCorrectness(pAdapter, NdisRequest);
 				break;
-	
+
 			default:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
@@ -2787,7 +2787,7 @@ N63CValidateOIDCorrectness(
 
 
 // Set operation for OID_DOT11_WFD_DEVICE_CAPABILITY
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_DEVICE_CAPABILITY(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -2801,11 +2801,11 @@ N63C_SET_OID_DOT11_WFD_DEVICE_CAPABILITY(
 	PP2P_INFO		pP2PInfo = GET_P2P_INFO(pTargetAdapter);
 
 	// OS-given structure
-	PDOT11_WFD_DEVICE_CAPABILITY_CONFIG deviceCapability = 
+	PDOT11_WFD_DEVICE_CAPABILITY_CONFIG deviceCapability =
 		(PDOT11_WFD_DEVICE_CAPABILITY_CONFIG) InformationBuffer;
 
 	#if 0	// Implementation Status
-	typedef struct _DOT11_WFD_DEVICE_CAPABILITY_CONFIG 
+	typedef struct _DOT11_WFD_DEVICE_CAPABILITY_CONFIG
 	{
     		NDIS_OBJECT_HEADER Header;						// SKIP
     		BOOLEAN bServiceDiscoveryEnabled;					// OK
@@ -2821,10 +2821,10 @@ N63C_SET_OID_DOT11_WFD_DEVICE_CAPABILITY(
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
-	
+
 	// Set the device capability
-	pP2PInfo->DeviceCapability = 
-		0x00 | 
+	pP2PInfo->DeviceCapability =
+		0x00 |
 		(deviceCapability->bServiceDiscoveryEnabled 			? dcServiceDiscovery : 0) 			|
 		(deviceCapability->bClientDiscoverabilityEnabled 		? dcP2PClientDiscoverability : 0) 		|
     		(deviceCapability->bConcurrentOperationSupported 		? dcConcurrentOperation : 0) 		|
@@ -2836,17 +2836,17 @@ N63C_SET_OID_DOT11_WFD_DEVICE_CAPABILITY(
 	// Currently, do not know how to implement this -------
 	// 	Represent the WPS versions that are currently enabled for the Wi-Fi Direct Device
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("deviceCapability->WPSVersionsEnabled: %d\n", deviceCapability->WPSVersionsEnabled));
-	
+
 	#if 0	// Possible Solution
 	Currently, this may be ignored since our driver does not necessarily process the WPS IE.
 	#endif
 	// ---------------------------------------------
-		
+
 	return ndisStatus;
 }
 
 // Set operation for OID_DOT11_WFD_GROUP_OWNER_CAPABILITY
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_GROUP_OWNER_CAPABILITY(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -2859,13 +2859,13 @@ N63C_SET_OID_DOT11_WFD_GROUP_OWNER_CAPABILITY(
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	PP2P_INFO		pP2PInfo = GET_P2P_INFO(pTargetAdapter);
 	P2P_ROLE		portRole	= pP2PInfo->Role;
-	
+
 	// OS-given structure
-	PDOT11_WFD_GROUP_OWNER_CAPABILITY_CONFIG groupCapability = 
+	PDOT11_WFD_GROUP_OWNER_CAPABILITY_CONFIG groupCapability =
 			(PDOT11_WFD_GROUP_OWNER_CAPABILITY_CONFIG) InformationBuffer;
 
 	#if 0	// Implementation Status
-    	typedef struct _DOT11_WFD_GROUP_OWNER_CAPABILITY_CONFIG 
+    	typedef struct _DOT11_WFD_GROUP_OWNER_CAPABILITY_CONFIG
    	{
     		NDIS_OBJECT_HEADER Header;				// SKIP
       		BOOLEAN bPersistentGroupEnabled;			// OK
@@ -2876,14 +2876,14 @@ N63C_SET_OID_DOT11_WFD_GROUP_OWNER_CAPABILITY(
     		ULONG uMaximumGroupLimit;					// TODO
     	} DOT11_WFD_GROUP_OWNER_CAPABILITY_CONFIG, *PDOT11_WFD_GROUP_OWNER_CAPABILITY_CONFIG;
 	#endif
-	
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
 
 	// Set the group capability
-	pP2PInfo->GroupCapability = 
-		0x00 | 
+	pP2PInfo->GroupCapability =
+		0x00 |
 		(portRole == P2P_GO 											? gcP2PGroupOwner : 0) 		|
 		(groupCapability->bPersistentGroupEnabled 						? gcPersistentP2PGroup : 0) 		|
     		(P2PClientInfoGetCount(pP2PInfo) >= P2P_MAX_P2P_CLIENT 		? gcP2PGroupLimit : 0) 			|
@@ -2893,7 +2893,7 @@ N63C_SET_OID_DOT11_WFD_GROUP_OWNER_CAPABILITY(
 		(groupCapability->bGroupFormationEnabled 						? gcGroupFormation : 0)		;
 
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: pP2PInfo->GroupCapability: 0x%0X\n", __FUNCTION__, pP2PInfo->GroupCapability));
-	
+
 	// Currently, do not know how to implement this -------
 	//	We use the P2P_MAX_P2P_CLIENT macro, while the OS uses the following statement
 	groupCapability->uMaximumGroupLimit;
@@ -2902,14 +2902,14 @@ N63C_SET_OID_DOT11_WFD_GROUP_OWNER_CAPABILITY(
 	Since our driver uses the macro P2P_MAX_P2P_CLIENT to set the maximum value, we may be able to omit this setting.
 	The default value will be set in the DOT11_WFD_ATTRIBUTES.uGORoleClientTableSize during the initialization.
 	#endif
-	
+
 	// ---------------------------------------------
-		
+
 	return ndisStatus;
 }
 
 // Set operation for OID_DOT11_WFD_DEVICE_INFO
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_DEVICE_INFO(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -2921,13 +2921,13 @@ N63C_SET_OID_DOT11_WFD_DEVICE_INFO(
 {
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	PP2P_INFO		pP2PInfo = GET_P2P_INFO(pTargetAdapter);
-	
+
 	// OS-given structure
-	PDOT11_WFD_DEVICE_INFO deviceInfo = 	
+	PDOT11_WFD_DEVICE_INFO deviceInfo =
 		(PDOT11_WFD_DEVICE_INFO) InformationBuffer;
 
 	#if 0	// Implementation Status
-	typedef struct _DOT11_WFD_DEVICE_INFO 
+	typedef struct _DOT11_WFD_DEVICE_INFO
     	{
       		NDIS_OBJECT_HEADER Header;					// SKIP
        	DOT11_MAC_ADDRESS DeviceAddress;			// OK
@@ -2936,56 +2936,56 @@ N63C_SET_OID_DOT11_WFD_DEVICE_INFO(
        	DOT11_WPS_DEVICE_NAME DeviceName;			// OK
 	} DOT11_WFD_DEVICE_INFO, *PDOT11_WFD_DEVICE_INFO;
 	#endif
-	
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
 
 	// Start to set the device information
-	
+
 	// Set the device address: Should we set the interface address based on the role of the port?
 	cpMacAddr(pP2PInfo->DeviceAddress, deviceInfo->DeviceAddress);
 	RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, "Set pP2PInfo->DeviceAddress: ", pP2PInfo->DeviceAddress);
-		
+
 	// Set the config method for WPS
 	pP2PInfo->WpsAttributes.ConfigMethod = deviceInfo->ConfigMethods;
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("pP2PInfo->WpsAttributes.ConfigMethod: 0x%X\n", pP2PInfo->WpsAttributes.ConfigMethod));
-	
-	// Set the primary device type for WPS	
+
+	// Set the primary device type for WPS
 	pP2PInfo->WpsAttributes.PrimaryDeviceType.CategoryId 		= deviceInfo->PrimaryDeviceType.CategoryID;
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("pP2PInfo->WpsAttributes.PrimaryDeviceType.CategoryId : %d\n", pP2PInfo->WpsAttributes.PrimaryDeviceType.CategoryId ));
-	
+
 	pP2PInfo->WpsAttributes.PrimaryDeviceType.SubCategoryId 	= deviceInfo->PrimaryDeviceType.SubCategoryID;
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("pP2PInfo->WpsAttributes.PrimaryDeviceType.SubCategoryId: %d\n", pP2PInfo->WpsAttributes.PrimaryDeviceType.SubCategoryId));
-	
+
 	PlatformMoveMemory(
-			pP2PInfo->WpsAttributes.PrimaryDeviceType.Oui, 
-			deviceInfo->PrimaryDeviceType.OUI, 
+			pP2PInfo->WpsAttributes.PrimaryDeviceType.Oui,
+			deviceInfo->PrimaryDeviceType.OUI,
 			4
-		);	
-	RT_TRACE(COMP_P2P, DBG_LOUD, ("pP2PInfo->WpsAttributes.PrimaryDeviceType.Oui: %02X-%02X-%02X-%02X\n", 
+		);
+	RT_TRACE(COMP_P2P, DBG_LOUD, ("pP2PInfo->WpsAttributes.PrimaryDeviceType.Oui: %02X-%02X-%02X-%02X\n",
 			pP2PInfo->WpsAttributes.PrimaryDeviceType.Oui[0],
 			pP2PInfo->WpsAttributes.PrimaryDeviceType.Oui[1],
 			pP2PInfo->WpsAttributes.PrimaryDeviceType.Oui[2],
 			pP2PInfo->WpsAttributes.PrimaryDeviceType.Oui[3])
 		);
-	
+
 	// Set the device name for WPS
 	pP2PInfo->WpsAttributes.DeviceNameLength = (u1Byte) deviceInfo->DeviceName.uDeviceNameLength;
 	PlatformMoveMemory(
-			pP2PInfo->WpsAttributes.DeviceName, 
-			deviceInfo->DeviceName.ucDeviceName, 
+			pP2PInfo->WpsAttributes.DeviceName,
+			deviceInfo->DeviceName.ucDeviceName,
 			deviceInfo->DeviceName.uDeviceNameLength
 		);
 	RT_PRINT_STR(COMP_P2P, DBG_LOUD, "DeviceName: ", pP2PInfo->WpsAttributes.DeviceName, pP2PInfo->WpsAttributes.DeviceNameLength);
 
 	P2P_CorrectDeviceCategory(pTargetAdapter);
-		
+
 	return ndisStatus;
 }
 
 // Set operation for OID_DOT11_WFD_SECONDARY_DEVICE_TYPE_LIST
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_SECONDARY_DEVICE_TYPE_LIST(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -3000,20 +3000,20 @@ N63C_SET_OID_DOT11_WFD_SECONDARY_DEVICE_TYPE_LIST(
 
 	// Loop iteration variables
 	ULONG			i = 0;
-	
+
 	// OS-given structure
-	PDOT11_WFD_SECONDARY_DEVICE_TYPE_LIST secondaryDeviceTypeList = 	
+	PDOT11_WFD_SECONDARY_DEVICE_TYPE_LIST secondaryDeviceTypeList =
 		(PDOT11_WFD_SECONDARY_DEVICE_TYPE_LIST) InformationBuffer;
 
 	#if 0	// Implementation Status
-    	typedef struct _DOT11_WFD_SECONDARY_DEVICE_TYPE_LIST {	
+    	typedef struct _DOT11_WFD_SECONDARY_DEVICE_TYPE_LIST {
         	NDIS_OBJECT_HEADER Header;						// SKIP
         	ULONG uNumOfEntries;								// OK
         	ULONG uTotalNumOfEntries;							// TODO
       		DOT11_WFD_DEVICE_TYPE SecondaryDeviceTypes[1];	// OK
     	} DOT11_WFD_SECONDARY_DEVICE_TYPE_LIST, * PDOT11_WFD_SECONDARY_DEVICE_TYPE_LIST;
 	#endif
-	
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
@@ -3021,7 +3021,7 @@ N63C_SET_OID_DOT11_WFD_SECONDARY_DEVICE_TYPE_LIST(
 	// Start to set the secondary device type list
 
 	// Set the number of secondary device type list entries
-	pP2PInfo->WpsAttributes.SecondaryDeviceTypeLength = 
+	pP2PInfo->WpsAttributes.SecondaryDeviceTypeLength =
 		(u1Byte) secondaryDeviceTypeList->uNumOfEntries;
 
 	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("secondaryDeviceType number = %d\n", secondaryDeviceTypeList->uNumOfEntries));
@@ -3029,15 +3029,15 @@ N63C_SET_OID_DOT11_WFD_SECONDARY_DEVICE_TYPE_LIST(
 	// Set each secondary device type from the OS-given structure
 	for(i = 0; i < secondaryDeviceTypeList->uNumOfEntries; i++)
 	{
-		pP2PInfo->WpsAttributes.SecondaryDeviceTypeList[i].CategoryId = 
+		pP2PInfo->WpsAttributes.SecondaryDeviceTypeList[i].CategoryId =
 			secondaryDeviceTypeList->SecondaryDeviceTypes[i].CategoryID;
-		
-		pP2PInfo->WpsAttributes.SecondaryDeviceTypeList[i].SubCategoryId = 
+
+		pP2PInfo->WpsAttributes.SecondaryDeviceTypeList[i].SubCategoryId =
 			secondaryDeviceTypeList->SecondaryDeviceTypes[i].SubCategoryID;
 
 		PlatformMoveMemory(
-				pP2PInfo->WpsAttributes.SecondaryDeviceTypeList[i].Oui, 
-				secondaryDeviceTypeList->SecondaryDeviceTypes[i].OUI, 
+				pP2PInfo->WpsAttributes.SecondaryDeviceTypeList[i].Oui,
+				secondaryDeviceTypeList->SecondaryDeviceTypes[i].OUI,
 				4
 			);
 
@@ -3046,7 +3046,7 @@ N63C_SET_OID_DOT11_WFD_SECONDARY_DEVICE_TYPE_LIST(
 	}
 
 	// Currently, do not know how to implement this -------
-	//	The maximum number of entries that the SecondaryDeviceTypes array can contain. 
+	//	The maximum number of entries that the SecondaryDeviceTypes array can contain.
 	//	The default value is 0.
 	secondaryDeviceTypeList->uTotalNumOfEntries;
 
@@ -3054,14 +3054,14 @@ N63C_SET_OID_DOT11_WFD_SECONDARY_DEVICE_TYPE_LIST(
 	This variable may be used to limit the maximum number of elements in SecondaryDeviceTypeList.
 	Currently, the struct _P2P_WPS_ATTRIBUTES accepts 8 emements for SecondaryDeviceTypeList.
 	#endif
-	
+
 	// ---------------------------------------------
-	
+
 	return ndisStatus;
 }
 
 // Set operation for OID_DOT11_WFD_ADDITIONAL_IE
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_ADDITIONAL_IE(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -3075,13 +3075,13 @@ N63C_SET_OID_DOT11_WFD_ADDITIONAL_IE(
 	RT_STATUS 		rtStatus = RT_STATUS_SUCCESS;
 	PP2P_INFO		pP2PInfo = GET_P2P_INFO(pTargetAdapter);
 	MEMORY_BUFFER	mbOidIe = {NULL, 0};
-		
+
 	// OS-given structure
-	PDOT11_WFD_ADDITIONAL_IE additionalIEs = 	
+	PDOT11_WFD_ADDITIONAL_IE additionalIEs =
 		(PDOT11_WFD_ADDITIONAL_IE) InformationBuffer;
 
 	#if 0	// Implementation Status
-	typedef struct _DOT11_WFD_ADDITIONAL_IE 
+	typedef struct _DOT11_WFD_ADDITIONAL_IE
     	{
        	NDIS_OBJECT_HEADER Header;		// SKIP
         	ULONG uBeaconIEsOffset;			// OK
@@ -3092,19 +3092,19 @@ N63C_SET_OID_DOT11_WFD_ADDITIONAL_IE(
         	ULONG uDefaultRequestIEsLength;	// OK
     	} DOT11_WFD_ADDITIONAL_IE, *PDOT11_WFD_ADDITIONAL_IE;
 	#endif
-	
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
-	
+
 	// Additional Beacon IEs ------------------------------------------------------
 	mbOidIe.Buffer = (PVOID) ((pu1Byte) additionalIEs + additionalIEs->uBeaconIEsOffset);
 	mbOidIe.Length = additionalIEs->uBeaconIEsLength;
 
 	P2P_AddIe_Set(
-			&pP2PInfo->AdditionalIEs, 
-			P2P_ADD_IE_BEACON, 
-			additionalIEs->uBeaconIEsLength, 
+			&pP2PInfo->AdditionalIEs,
+			P2P_ADD_IE_BEACON,
+			additionalIEs->uBeaconIEsLength,
 			(u1Byte *) additionalIEs + additionalIEs->uBeaconIEsOffset
 		);
 
@@ -3116,22 +3116,22 @@ N63C_SET_OID_DOT11_WFD_ADDITIONAL_IE(
 	mbOidIe.Length = additionalIEs->uProbeResponseIEsLength;
 
 	P2P_AddIe_Set(
-			&pP2PInfo->AdditionalIEs, 
+			&pP2PInfo->AdditionalIEs,
 			P2P_ADD_IE_PROBE_RESPONSE,
 			additionalIEs->uProbeResponseIEsLength,
 			(u1Byte *) additionalIEs + additionalIEs->uProbeResponseIEsOffset
 		);
 
 	RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "ProbeResponse Additional IE: ====\n", mbOidIe.Buffer, mbOidIe.Length);
-	
+
 	// -------------------------------------------------------------------------------
-	
+
 	// Additional Default Probe Request IEs --------------------------------------------------
 	mbOidIe.Buffer = (PVOID) ((pu1Byte) additionalIEs + additionalIEs->uDefaultRequestIEsOffset);
 	mbOidIe.Length = additionalIEs->uDefaultRequestIEsLength;
 
 	P2P_AddIe_Set(
-			&pP2PInfo->AdditionalIEs, 
+			&pP2PInfo->AdditionalIEs,
 			P2P_ADD_IE_DEFAULT_REQUEST,
 			additionalIEs->uDefaultRequestIEsLength,
 			(u1Byte *) additionalIEs + additionalIEs->uDefaultRequestIEsOffset
@@ -3141,12 +3141,12 @@ N63C_SET_OID_DOT11_WFD_ADDITIONAL_IE(
 	//----------------------------------------------------------------------------------
 
 	P2P_CorrectDeviceCategory(pTargetAdapter);
-	
+
 	return ndisStatus;
 }
 
 // Set operation for OID_DOT11_WFD_LISTEN_STATE_DISCOVERABILITY
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_LISTEN_STATE_DISCOVERABILITY(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -3160,7 +3160,7 @@ N63C_SET_OID_DOT11_WFD_LISTEN_STATE_DISCOVERABILITY(
 	PADAPTER 		pDefaultAdapter = GetDefaultAdapter(pTargetAdapter);
 	PP2P_INFO		pP2PInfo = GET_P2P_INFO(pTargetAdapter);
 	BOOLEAN			bFilterOutNonAssociatedBSSID = FALSE;
-			
+
 	// OS-given data
 	ULONG			deviceDiscoverability = *((PULONG) InformationBuffer);
 
@@ -3175,7 +3175,7 @@ N63C_SET_OID_DOT11_WFD_LISTEN_STATE_DISCOVERABILITY(
 	#endif
 
 	FunctionIn(COMP_P2P);
-	
+
 	// Set the the corresponding variable in the structure
 	pP2PInfo->uListenStateDiscoverability = deviceDiscoverability;
 	RT_TRACE(COMP_OID_SET|COMP_P2P, DBG_LOUD, ("pP2PInfo->uListenStateDiscoverability: %d\n", pP2PInfo->uListenStateDiscoverability));
@@ -3191,7 +3191,7 @@ N63C_SET_OID_DOT11_WFD_LISTEN_STATE_DISCOVERABILITY(
 
 		case DOT11_WFD_DEVICE_AUTO_AVAILABILITY:
 		case DOT11_WFD_DEVICE_HIGH_AVAILABILITY:
-		default: 
+		default:
 		{
 			pP2PInfo->ExtListenTimingPeriod = 3 * P2P_MGNT_PERIOD;	// In the unit of P2P_MGNT_PERIOD
 			pP2PInfo->ExtListenTimingDuration = 150;
@@ -3201,7 +3201,7 @@ N63C_SET_OID_DOT11_WFD_LISTEN_STATE_DISCOVERABILITY(
 			bFilterOutNonAssociatedBSSID = FALSE;
 			pDefaultAdapter->HalFunc.SetHwRegHandler(pDefaultAdapter, HW_VAR_CHECK_BSSID, (pu1Byte)(&bFilterOutNonAssociatedBSSID));
 			// -------------------------------------------------------------------------------------------------------------
-			
+
 			// Device Port is Open --------------------------------------------
 			//DM_DIG_WifiDirectBoostStart(GetDefaultAdapter(pTargetAdapter));
 			// -------------------------------------------------------------
@@ -3209,21 +3209,21 @@ N63C_SET_OID_DOT11_WFD_LISTEN_STATE_DISCOVERABILITY(
 			if(P2P_STATE_INITIALIZED == pP2PInfo->State)
 			{
 				PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
-				PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0); 
+				PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 				RT_TRACE_F(COMP_OID_SET, DBG_LOUD, ("start extended listen immediately\n"));
 			}
 		}
 		break;
 	}
-	
+
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("pP2PInfo->ExtListenTimingPeriod: %d\n", pP2PInfo->ExtListenTimingPeriod));
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("pP2PInfo->ExtListenTimingDuration: %d\n", pP2PInfo->ExtListenTimingDuration));
-		
+
 	return ndisStatus;
 }
 
 // Set operation for OID_DOT11_WFD_DEVICE_LISTEN_CHANNEL
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_DEVICE_LISTEN_CHANNEL(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -3235,7 +3235,7 @@ N63C_SET_OID_DOT11_WFD_DEVICE_LISTEN_CHANNEL(
 {
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	PP2P_INFO		pP2PInfo = GET_P2P_INFO(pTargetAdapter);
-	
+
 	// OS-given data
 	PDOT11_WFD_DEVICE_LISTEN_CHANNEL	pListenChannel = (PDOT11_WFD_DEVICE_LISTEN_CHANNEL) InformationBuffer;
 
@@ -3261,12 +3261,12 @@ N63C_SET_OID_DOT11_WFD_DEVICE_LISTEN_CHANNEL(
 	pP2PInfo->ListenChannel = pListenChannel->ChannelNumber;
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("pP2PInfo->ListenChannel: %d\n", pP2PInfo->ListenChannel));
 	// --------------------------------------------------------------------------------------
-	
+
 	return ndisStatus;
 }
 
 // Set operation for OID_DOT11_WFD_DISCOVER_REQUEST
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_DISCOVER_REQUEST(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -3285,25 +3285,25 @@ N63C_SET_OID_DOT11_WFD_DISCOVER_REQUEST(
 	BOOLEAN			bStartDiscovery = TRUE;
 	PP2P_DEVICE_DISCRIPTOR pP2PDeviceDesc = NULL;
 	PP2P_DEVICE_LIST_ENTRY pP2PDeviceListEntry = NULL;
-	PADAPTER		pDefaultAdapter = GetDefaultAdapter(pTargetAdapter);	
+	PADAPTER		pDefaultAdapter = GetDefaultAdapter(pTargetAdapter);
 	// Loop iteration variables
 	ULONG 			i = 0;
 	u8Byte			curTime = PlatformGetCurrentTime();
-	
+
 	// OS-given structure
-	PDOT11_WFD_DISCOVER_REQUEST discoverRequest = 	
+	PDOT11_WFD_DISCOVER_REQUEST discoverRequest =
 		(PDOT11_WFD_DISCOVER_REQUEST) InformationBuffer;
-	
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
 
 	FunctionIn(COMP_OID_SET);
-	
+
 	// Save the Oid Issue time for speeding up the Go Negotiation ----------------
 	pP2PInfo->LastDeviceDiscoveryOidIssueTime = PlatformGetCurrentTime();
 	// ------------------------------------------------------------------
-		
+
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: uDiscoverTimeout: %d\n", __FUNCTION__, discoverRequest->uDiscoverTimeout));
 
 	// Discover Type
@@ -3323,7 +3323,7 @@ N63C_SET_OID_DOT11_WFD_DISCOVER_REQUEST(
 			pP2PInfo->DiscoverSequence = P2P_DISCOVERY_FIND_PHASE;
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("discoverRequest->DiscoverType: dot11_wfd_discover_type_auto\n"));
 			break;
-	
+
 		case dot11_wfd_discover_type_scan_social_channels:
 			pP2PInfo->DiscoverSequence = P2P_DISCOVERY_FIND_PHASE;
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("discoverRequest->DiscoverType: dot11_wfd_discover_type_auto\n"));
@@ -3343,12 +3343,12 @@ N63C_SET_OID_DOT11_WFD_DISCOVER_REQUEST(
 			pP2PInfo->ScanType = SCAN_ACTIVE;
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("discoverRequest->ScanType: dot11_wfd_scan_type_auto\n"));
 			break;
-			
+
 		case dot11_wfd_scan_type_active:
 			pP2PInfo->ScanType = SCAN_ACTIVE;
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("discoverRequest->ScanType: dot11_wfd_scan_type_active\n"));
 			break;
-			
+
 		case dot11_wfd_scan_type_passive:
 		default:
 			pP2PInfo->ScanType = SCAN_PASSIVE;
@@ -3374,15 +3374,15 @@ N63C_SET_OID_DOT11_WFD_DISCOVER_REQUEST(
 		}
 	}
 
-	if(discoverRequest->uNumDeviceFilters == 1)	
+	if(discoverRequest->uNumDeviceFilters == 1)
 	{// specific peer search
 		P2P_DEV_LIST_ENTRY 		*dev = NULL;
 		u1Byte					chnl = 0;
-		
+
 		p2p_DevList_Lock(&pP2PInfo->devList);
 
 		pP2PInfo->uNumberOfDiscoverForSpecificChannels = 0;
-		
+
 		if(NULL != (dev = p2p_DevList_GetGo(&pP2PInfo->devList, pP2PInfo->ScanDeviceIDs.DeviceIDs[0])))
 		{// go
 			if(0 != (chnl = p2p_DevList_GetDevChnl(dev)))
@@ -3425,7 +3425,7 @@ N63C_SET_OID_DOT11_WFD_DISCOVER_REQUEST(
 		{
 			pP2PInfo->bDiscoverForSpecificChannels = TRUE;
 			pP2PInfo->uNumberOfDiscoverRounds = 10;
-			RT_PRINT_DATA(COMP_OID_SET, DBG_LOUD, "to scan following channels to find specific peer:\n", 
+			RT_PRINT_DATA(COMP_OID_SET, DBG_LOUD, "to scan following channels to find specific peer:\n",
 				pP2PInfo->DiscoverForSpecificChannels, pP2PInfo->uNumberOfDiscoverForSpecificChannels);
 
 			if(	pP2PInfo->DeviceListForQuery.uNumberOfDevices != 0 &&	// If empty device list, force to scan
@@ -3439,23 +3439,23 @@ N63C_SET_OID_DOT11_WFD_DISCOVER_REQUEST(
 		{
 			pP2PInfo->bDiscoverForSpecificChannels = FALSE;
 			pP2PInfo->uNumberOfDiscoverRounds = 0;
-			
+
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("device entry not found\n"));
-			
+
 			P2PDeviceListActionInterface(
-					pP2PInfo, 
+					pP2PInfo,
 					P2P_DEVICE_LIST_ACTION_DUMP,
-					&pP2PInfo->DeviceList, 
+					&pP2PInfo->DeviceList,
 					NULL, NULL
 				);
-			
+
 			P2PDumpScanList(pP2PInfo->ScanList, pP2PInfo->ScanListSize);
 		}
 
 		p2p_DevList_Unlock(&pP2PInfo->devList);
 	}
 	else
-	{		
+	{
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("devicelist empty\n"));
 
 		if(curTime < MultiportGetLastConnectionActionTime(pTargetAdapter) + P2P_BLOCK_NORMAL_SCAN_PERIOD)
@@ -3464,16 +3464,16 @@ N63C_SET_OID_DOT11_WFD_DISCOVER_REQUEST(
 			bStartDiscovery = FALSE;
 		}
 	}
-	
+
 	//----------------------------------------------------------------------------
 
-	
+
 	// Additional Probe Request IEs ---------------------------------------------------
 	mbOidIe.Buffer = (PVOID) ((pu1Byte) discoverRequest + discoverRequest->uIEsOffset);
 	mbOidIe.Length = discoverRequest->uIEsLength;
 
 	P2P_AddIe_Set(
-			&pP2PInfo->AdditionalIEs, 
+			&pP2PInfo->AdditionalIEs,
 			P2P_ADD_IE_PROBE_REQUEST,
 			discoverRequest->uIEsLength,
 			(u1Byte *) discoverRequest + discoverRequest->uIEsOffset
@@ -3482,12 +3482,12 @@ N63C_SET_OID_DOT11_WFD_DISCOVER_REQUEST(
 	RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "ProbeRequest Additional IE:\n", mbOidIe.Buffer, mbOidIe.Length);
 	//----------------------------------------------------------------------------
 
-	
+
 	// Set the legacy network scanning ------------------------------------------------
 	pP2PInfo->bForceScanLegacyNetworks = discoverRequest->bForceScanLegacyNetworks;
 	RT_TRACE(COMP_OID_SET | COMP_P2P, DBG_LOUD, ("%s: pP2PInfo->bForceScanLegacyNetworks: %d\n", __FUNCTION__, pP2PInfo->bForceScanLegacyNetworks));
 	//----------------------------------------------------------------------------
-	
+
 	if(bStartDiscovery)
 	{
 		// Win8: Guarantee the packet transmission in the right channel since the this OID will switch channel --------------------------------------------------------------------------------------------
@@ -3505,25 +3505,25 @@ N63C_SET_OID_DOT11_WFD_DISCOVER_REQUEST(
 
 		RT_TRACE(COMP_OID_SET | COMP_P2P, DBG_LOUD, ("Delay 50 ms to guranatee the action frame transmission in the right channel!\n"));
 		delay_ms(50);
-		
+
 		for(i = 0; MgntScanInProgress(&pP2PInfo->pAdapter->MgntInfo); i++)
 		{
 			RT_TRACE(COMP_OID_SET | COMP_P2P, DBG_LOUD, ("Delay 10 ms to guranatee the packet transmission in the right channel!\n"));
 			delay_ms(10);
 
 			if(i == 2) // Wait for 30 ms
-			{	
+			{
 				// Stop scan imediately to wait for new action
 				P2PScanListCeaseScan(pP2PInfo);
 				break;
 			}
 		}
-	
+
 		for(i = 0; pP2PInfo->State != P2P_STATE_INITIALIZED; i++)
 		{
 			RT_TRACE(COMP_OID_SET | COMP_P2P, DBG_LOUD, ("Delay 10 ms to update the P2P state machine!\n"));
 			delay_ms(10);
-			
+
 			if(i == 50) break;
 		}
 
@@ -3534,16 +3534,16 @@ N63C_SET_OID_DOT11_WFD_DISCOVER_REQUEST(
 			&pP2PInfo->DeviceList,
 			NULL, NULL
 		);
-		
+
 		// Clear the device list for query
 		P2PDeviceListActionInterface(
 			pP2PInfo,
 			P2P_DEVICE_LIST_ACTION_CLEAR,
 			&pP2PInfo->DeviceListForQuery,
 			NULL, NULL
-		);		
-		
-		// Simply do the device discovery since the device discovery may be used as the method to guarantee the common channel 
+		);
+
+		// Simply do the device discovery since the device discovery may be used as the method to guarantee the common channel
 		P2PResetCommonChannelArrivingProcess(pP2PInfo);
 
 		// Start the device discovery
@@ -3556,7 +3556,7 @@ N63C_SET_OID_DOT11_WFD_DISCOVER_REQUEST(
 		//RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Delay 3000 ms to get additional time to scan!\n"));
 		//delay_ms(3000);
 		// -------------------------------------------------------------------------------------------------------------
-		
+
 		// Set the indication to OS when the discovery completes
 		pP2PInfo->bDeviceDiscoveryIndicateToOS = TRUE;
 	}
@@ -3566,11 +3566,11 @@ N63C_SET_OID_DOT11_WFD_DISCOVER_REQUEST(
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Delay 50 ms to guranatee the packet transmission in the right channel and also update the P2P state machine!\n"));
 		delay_ms(50);
 		// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-		
+
 		// Let this OID routine run faster than the P2POidPostProcessWorkItemCallback ------
 		pP2PInfo->bPostoneP2POidPostProcessWorkItem = TRUE;
 		// ----------------------------------------------------------------------
-		
+
 		// Scheduling the sending of the provision discovery response --------------------------------------
 		pP2PInfo->OidOperation = OID_OPERATION_INDICATE_DISCOVERY_COMPLETE;
 #if 1
@@ -3580,13 +3580,13 @@ N63C_SET_OID_DOT11_WFD_DISCOVER_REQUEST(
 #endif
 		//----------------------------------------------------------------------------------------
 	}
-	
+
 	// OS needs this status code
 	ndisStatus = NDIS_STATUS_INDICATION_REQUIRED;
 
 	// Let the P2POidPostProcessWorkItem Run
 	pP2PInfo->bPostoneP2POidPostProcessWorkItem = FALSE;
-	
+
 	FunctionOut(COMP_OID_SET);
 
 	return ndisStatus;
@@ -3614,10 +3614,10 @@ N63C_QUERY_OID_DOT11_WFD_GET_DIALOG_TOKEN(
 
 	// Preidict the next token generated by the marco of IncreaseDialogToken(pP2PInfo->DialogToken) : Non-Zero ----------
 	nextToken = (pP2PInfo->DialogToken + 1 == 0) ? (pP2PInfo->DialogToken + 2) : (pP2PInfo->DialogToken + 1);
-	
+
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: nextToken: %d\n", __FUNCTION__, nextToken));
 	// --------------------------------------------------------------------------------------------------------
-	
+
 	*BytesWritten = 1;
 	*((pu1Byte) InformationBuffer) = nextToken;
 
@@ -3648,7 +3648,7 @@ N63C_QUERY_OID_DOT11_WFD_LISTEN_STATE_DISCOVERABILITY(
 	*BytesWritten = sizeof(pP2PInfo->uListenStateDiscoverability);
 	*((PULONG) InformationBuffer) = pP2PInfo->uListenStateDiscoverability;
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("pP2PInfo->uListenStateDiscoverability: %d\n", pP2PInfo->uListenStateDiscoverability));
-	
+
 	return NDIS_STATUS_SUCCESS;
 }
 
@@ -3664,17 +3664,17 @@ N63C_QUERY_OID_DOT11_WFD_DEVICE_LISTEN_CHANNEL(
 )
 {
 	PP2P_INFO	pP2PInfo = GET_P2P_INFO(pTargetAdapter);
-	PDOT11_WFD_DEVICE_LISTEN_CHANNEL 
+	PDOT11_WFD_DEVICE_LISTEN_CHANNEL
 		pListenChannel = (PDOT11_WFD_DEVICE_LISTEN_CHANNEL) InformationBuffer;
 
 	#if 0
-		#define DOT11_WFD_DEVICE_LISTEN_CHANNEL_REVISION_1 
-		#define DOT11_SIZEOF_WFD_DEVICE_LISTEN_CHANNEL_REVISION_1 
+		#define DOT11_WFD_DEVICE_LISTEN_CHANNEL_REVISION_1
+		#define DOT11_SIZEOF_WFD_DEVICE_LISTEN_CHANNEL_REVISION_1
 
-		typedef struct _DOT11_WFD_DEVICE_LISTEN_CHANNEL { 
-		 NDIS_OBJECT_HEADER Header; 
-		 UCHAR ChannelNumber; 
-		} DOT11_WFD_DEVICE_LISTEN_CHANNEL, *PDOT11_WFD_DEVICE_LISTEN_CHANNEL; 
+		typedef struct _DOT11_WFD_DEVICE_LISTEN_CHANNEL {
+		 NDIS_OBJECT_HEADER Header;
+		 UCHAR ChannelNumber;
+		} DOT11_WFD_DEVICE_LISTEN_CHANNEL, *PDOT11_WFD_DEVICE_LISTEN_CHANNEL;
 	#endif
 
 	// Clean output variables -----------------------------------
@@ -3688,11 +3688,11 @@ N63C_QUERY_OID_DOT11_WFD_DEVICE_LISTEN_CHANNEL(
 			DOT11_WFD_DEVICE_LISTEN_CHANNEL_REVISION_1,
 			sizeof(DOT11_WFD_DEVICE_LISTEN_CHANNEL)
 		);
-	
+
 	pListenChannel->ChannelNumber = pP2PInfo->ListenChannel;
 
 	*BytesWritten = sizeof(DOT11_WFD_DEVICE_LISTEN_CHANNEL);
-	
+
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("pP2PInfo->ListenChannel: %d\n",  pP2PInfo->ListenChannel));
 
 	return NDIS_STATUS_SUCCESS;
@@ -3723,13 +3723,13 @@ N63C_QUERY_OID_DOT11_WFD_ENUM_DEVICE_LIST(
 	MEMORY_BUFFER	mbObject = {NULL, 0};
 	PDOT11_WFD_DEVICE_ENTRY wfdEntry = NULL;
 	u4Byte			usedBytes = 0;
-		
+
 	// Skip the MAC header and the first three fields (non-IE) in the beacon and the probe response
 	u4Byte skippedBytes = sMacHdrLng + 12;
-	
+
 	// OS-given data
 	PDOT11_BYTE_ARRAY pByteArray = (PDOT11_BYTE_ARRAY) InformationBuffer;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -3741,20 +3741,20 @@ N63C_QUERY_OID_DOT11_WFD_ENUM_DEVICE_LIST(
 
 	// Update the device list for the OS query ----------------------
 	P2PDeviceListActionInterface(
-			pP2PInfo, 
+			pP2PInfo,
 			P2P_DEVICE_LIST_ACTION_COPY_TO_QUERY_LIST,
 			NULL, NULL, NULL
 		);
 	// -------------------------------------------------------
-	
-	
+
+
 	N6_ASSIGN_OBJECT_HEADER(
 			pByteArray->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
 			DOT11_DEVICE_ENTRY_BYTE_ARRAY_REVISION_1,
 			sizeof(DOT11_BYTE_ARRAY)
 		);
-		
+
 	// Compute the requried memory length ------------------------------------------------------------------
 	*BytesNeeded += FIELD_OFFSET(DOT11_BYTE_ARRAY, ucBuffer);
 	*BytesNeeded += N63CComputeRequiredDeviceEntriesSize(pP2PInfo);
@@ -3767,7 +3767,7 @@ N63C_QUERY_OID_DOT11_WFD_ENUM_DEVICE_LIST(
 		return NDIS_STATUS_BUFFER_OVERFLOW;
 	}
 	//-----------------------------------------
-	
+
 	// Fill the device entries -------------------------------------------------------------------------------
 	wfdEntry = (PDOT11_WFD_DEVICE_ENTRY)((pu1Byte) pByteArray + FIELD_OFFSET(DOT11_BYTE_ARRAY, ucBuffer));
 
@@ -3775,17 +3775,17 @@ N63C_QUERY_OID_DOT11_WFD_ENUM_DEVICE_LIST(
 	{
 		wfdEntry = (PDOT11_WFD_DEVICE_ENTRY)((pu1Byte) wfdEntry + usedBytes);
 
-		N63CConstruct_DOT11_WFD_DEVICE_ENTRY(	
+		N63CConstruct_DOT11_WFD_DEVICE_ENTRY(
 				pP2PInfo,
 				&pP2PInfo->DeviceListForQuery.DeviceEntry[i],
 				wfdEntry,
 				&usedBytes
 			);
-		
+
 		pByteArray->uNumOfBytes += usedBytes;
 	}
 	//--------------------------------------------------------------------------------------------------
-	
+
 	// Assertion --------------------------------------------------------------------------------------------
 	if(pByteArray->uNumOfBytes != N63CComputeRequiredDeviceEntriesSize(pP2PInfo))
 	{
@@ -3804,7 +3804,7 @@ N63C_QUERY_OID_DOT11_WFD_ENUM_DEVICE_LIST(
 
 
 // Set operation for OID_DOT11_WFD_FLUSH_DEVICE_LIST
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_FLUSH_DEVICE_LIST(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -3817,15 +3817,15 @@ N63C_SET_OID_DOT11_WFD_FLUSH_DEVICE_LIST(
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	PP2P_INFO		pP2PInfo = GET_P2P_INFO(pTargetAdapter);
 	PMGNT_INFO		pTargetMgntInfo = &pTargetAdapter->MgntInfo;
-	
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
 
 	// Clear the scan list
 	PlatformZeroMemory( pTargetMgntInfo->bssDesc, sizeof(RT_WLAN_BSS)*MAX_BSS_DESC );
-	pTargetMgntInfo->NumBssDesc = 0;	
-	
+	pTargetMgntInfo->NumBssDesc = 0;
+
 	// Clear the device list
 	P2PDeviceListActionInterface(
 			pP2PInfo,
@@ -3833,20 +3833,20 @@ N63C_SET_OID_DOT11_WFD_FLUSH_DEVICE_LIST(
 			&pP2PInfo->DeviceList,
 			NULL, NULL
 		);
-	
+
 	// Clear the device list for Query
 	P2PDeviceListActionInterface(
 			pP2PInfo,
 			P2P_DEVICE_LIST_ACTION_CLEAR,
 			&pP2PInfo->DeviceListForQuery,
 			NULL, NULL
-		);	
-	
+		);
+
 	return ndisStatus;
 }
 
 // Set operation for OID_DOT11_WFD_STOP_DISCOVERY
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_STOP_DISCOVERY(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -3858,7 +3858,7 @@ N63C_SET_OID_DOT11_WFD_STOP_DISCOVERY(
 {
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	PP2P_INFO		pP2PInfo = GET_P2P_INFO(pTargetAdapter);
-	
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
@@ -3868,12 +3868,12 @@ N63C_SET_OID_DOT11_WFD_STOP_DISCOVERY(
 		P2PScanListCeaseScan(pP2PInfo);
 		P2PDeviceDiscoveryComplete(pP2PInfo, TRUE);
 	}
-	
+
 	return ndisStatus;
 }
 
 // Set operation for OID_DOT11_WFD_SEND_INVITATION_REQUEST
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_SEND_INVITATION_REQUEST(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -3894,7 +3894,7 @@ N63C_SET_OID_DOT11_WFD_SEND_INVITATION_REQUEST(
 	do
 	{
 		DOT11_SEND_INVITATION_REQUEST_PARAMETERS *param = (DOT11_SEND_INVITATION_REQUEST_PARAMETERS *)InformationBuffer;
-		
+
 		if(NULL == (req = N63C_SendAction_InvitationReq(pTargetAdapter, param, n63c_SendP2pReqActionFrameStateCb)))
 		{
 			status = NDIS_STATUS_FAILURE;
@@ -3905,12 +3905,12 @@ N63C_SET_OID_DOT11_WFD_SEND_INVITATION_REQUEST(
 	}while(FALSE);
 
 	FunctionOut(COMP_OID_SET);
-	
+
 	return status;
 }
 
 // Set operation for OID_DOT11_WFD_SEND_INVITATION_RESPONSE
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_SEND_INVITATION_RESPONSE(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -3936,12 +3936,12 @@ N63C_SET_OID_DOT11_WFD_SEND_INVITATION_RESPONSE(
 	}while(FALSE);
 
 	FunctionOut(COMP_OID_SET);
-	
+
 	return status;
 }
 
 // Set operation for OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_REQUEST
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_REQUEST(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -3962,7 +3962,7 @@ N63C_SET_OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_REQUEST(
 	do
 	{
 		DOT11_SEND_PROVISION_DISCOVERY_REQUEST_PARAMETERS *param = (DOT11_SEND_PROVISION_DISCOVERY_REQUEST_PARAMETERS *)InformationBuffer;
-	
+
 		if(NULL == (req = N63C_SendAction_PdReq(pTargetAdapter, param, n63c_SendP2pReqActionFrameStateCb)))
 		{
 			status = NDIS_STATUS_FAILURE;
@@ -3971,15 +3971,15 @@ N63C_SET_OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_REQUEST(
 
 		status = NDIS_STATUS_INDICATION_REQUIRED;
 	}while(FALSE);
-	
+
 	FunctionOut(COMP_OID_SET);
-	
+
 	return status;
 }
 
 
 // Set operation for OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_RESPONSE
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_RESPONSE(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -4003,14 +4003,14 @@ N63C_SET_OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_RESPONSE(
 
 		status = NDIS_STATUS_INDICATION_REQUIRED;
 	}while(FALSE);
-	
+
 	FunctionOut(COMP_OID_SET);
-	
+
 	return status;
 }
 
 // Set operation for OID_DOT11_WFD_SEND_GO_NEGOTIATION_REQUEST
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_REQUEST(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -4022,12 +4022,12 @@ N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_REQUEST(
 {
 	NDIS_STATUS			status = NDIS_STATUS_SUCCESS;
 	VOID 				*req = NULL;
-	
+
 	PP2P_INFO	pP2PInfo = GET_P2P_INFO(pTargetAdapter);
 	PADAPTER 	pDefaultAdapter = GetDefaultAdapter(pTargetAdapter);
-	
+
 	// OS-given structure
-	PDOT11_SEND_GO_NEGOTIATION_REQUEST_PARAMETERS pParameters = 
+	PDOT11_SEND_GO_NEGOTIATION_REQUEST_PARAMETERS pParameters =
 		(PDOT11_SEND_GO_NEGOTIATION_REQUEST_PARAMETERS) InformationBuffer;
 
 	// Clear output variables -----
@@ -4042,7 +4042,7 @@ N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_REQUEST(
 	if(MgntLinkStatusQuery(GetDefaultAdapter(pP2PInfo->pAdapter)) == RT_MEDIA_CONNECT)
 	{
 		pP2PInfo->OperatingChannel = MultiChannelGetPortConnected20MhzChannel(GetDefaultAdapter(pP2PInfo->pAdapter));
-		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Change op ch to default port connected channel: %d\n", pP2PInfo->OperatingChannel));	
+		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Change op ch to default port connected channel: %d\n", pP2PInfo->OperatingChannel));
 	}
 	else
 	{
@@ -4054,7 +4054,7 @@ N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_REQUEST(
 // Shall not change OP channel after the GO has started or the channels for all P2P roles have been defined.
 #if 0 // (AUTO_CHNL_SEL_NHM ==1)
 			if(IS_AUTO_CHNL_SUPPORT(pDefaultAdapter))
-				pP2PInfo->OperatingChannel =  P2PIsSocialChannel(GET_AUTO_CHNL_SELECTED_NUM(pDefaultAdapter)) ? 
+				pP2PInfo->OperatingChannel =  P2PIsSocialChannel(GET_AUTO_CHNL_SELECTED_NUM(pDefaultAdapter)) ?
 					GET_AUTO_CHNL_SELECTED_NUM(pDefaultAdapter) : P2P_DEFAULT_OPERATING_CHANNEL;
 			else
 #endif
@@ -4063,7 +4063,7 @@ N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_REQUEST(
 					pP2PInfo->OperatingChannel = P2P_DEFAULT_OPERATING_CHANNEL;
 			}
 		}
-		RT_TRACE_F(COMP_P2P, DBG_LOUD, (" [ACS] Change op ch to P2P_DEFAULT_OPERATING_CHANNEL channel: %d\n", pP2PInfo->OperatingChannel));	
+		RT_TRACE_F(COMP_P2P, DBG_LOUD, (" [ACS] Change op ch to P2P_DEFAULT_OPERATING_CHANNEL channel: %d\n", pP2PInfo->OperatingChannel));
 	}
 	// -----------------------------------------------------------------------------------------------------------------------------------------------
 #endif
@@ -4071,7 +4071,7 @@ N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_REQUEST(
 	do
 	{
 		DOT11_SEND_GO_NEGOTIATION_REQUEST_PARAMETERS *param = (DOT11_SEND_GO_NEGOTIATION_REQUEST_PARAMETERS *)InformationBuffer;
-	
+
 		if(NULL == (req = N63C_SendAction_GoNegReq(pTargetAdapter, param, n63c_SendP2pReqActionFrameStateCb)))
 		{
 			status = NDIS_STATUS_FAILURE;
@@ -4080,14 +4080,14 @@ N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_REQUEST(
 
 		status = NDIS_STATUS_INDICATION_REQUIRED;
 	}while(FALSE);
-		
+
 	FunctionOut(COMP_OID_SET);
-	
+
 	return status;
 }
 
 // Set operation for OID_DOT11_WFD_SEND_GO_NEGOTIATION_RESPONSE
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_RESPONSE(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -4111,16 +4111,16 @@ N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_RESPONSE(
 
 		status = NDIS_STATUS_INDICATION_REQUIRED;
 	}while(FALSE);
-	
+
 	FunctionOut(COMP_OID_SET);
-	
+
 	return status;
 }
 
 
 
 // Set operation for OID_DOT11_WFD_SEND_GO_NEGOTIATION_CONFIRM
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_CONFIRM(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -4137,7 +4137,7 @@ N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_CONFIRM(
 
 	*BytesRead = 0;
 	*BytesNeeded = 0;
-	
+
 	do
     {
 		PlatformMoveMemory(InfoBuf, InformationBuffer, InformationBufferLength);
@@ -4153,7 +4153,7 @@ N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_CONFIRM(
 
 
 // Set operation for OID_DOT11_WFD_START_GO_REQUEST
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_START_GO_REQUEST(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -4169,8 +4169,8 @@ N63C_SET_OID_DOT11_WFD_START_GO_REQUEST(
 	PP2P_INFO		pP2PInfo = GET_P2P_INFO(pTargetAdapter);
 	PADAPTER 		pDevicePort = GetFirstDevicePort(pDefaultAdapter);
 	PP2P_INFO		pDeviceP2PInfo = GET_P2P_INFO(pDevicePort);
-	
-	
+
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
@@ -4200,8 +4200,8 @@ N63C_SET_OID_DOT11_WFD_START_GO_REQUEST(
 	//{
 		// Postpone the extended listening for a while
 	//	P2PExtendedListenResetCounter(pDeviceP2PInfo);
-			
-		// Stop potential device port extended listening 
+
+		// Stop potential device port extended listening
 	//	P2PScanListCeaseScan(pDeviceP2PInfo);
 
 		// Delay for a while for running ScanTimer callback by context switch
@@ -4220,7 +4220,7 @@ N63C_SET_OID_DOT11_WFD_START_GO_REQUEST(
 		P2PScanListCeaseScan(pDeviceP2PInfo);
 		P2PExtendedListenComplete(pDeviceP2PInfo);
 	}
-	else if(MgntScanInProgress(&pDefaultAdapter->MgntInfo)) 
+	else if(MgntScanInProgress(&pDefaultAdapter->MgntInfo))
 	{// Doing normal scan
 		//msDelayStart += 10; // if scan in progress, we have to wait until ScanComplete() finishes
 		P2PScanListCeaseScan(pDeviceP2PInfo);
@@ -4249,7 +4249,7 @@ N63C_SET_OID_DOT11_WFD_START_GO_REQUEST(
 
 	if(0 == pP2PInfo->OperatingChannel)
 		pP2PInfo->OperatingChannel = P2P_DEFAULT_OPERATING_CHANNEL;
-	
+
 	// Note:
 	// Do not change operating channel here becuase the OP channel has been negotiated from the previous
 	// handshake or set by OS.
@@ -4264,7 +4264,7 @@ N63C_SET_OID_DOT11_WFD_START_GO_REQUEST(
 		pP2PInfo->OperatingChannel = MultiChannelGetPortConnected20MhzChannel(pDefaultAdapter);
 
 		#endif
-		
+
 		RT_TRACE((COMP_OID_QUERY | COMP_OID_SET), DBG_LOUD, ("Use Default Port Channel: Channel %d\n", pP2PInfo->OperatingChannel));
 	}
 	else
@@ -4290,7 +4290,7 @@ N63C_SET_OID_DOT11_WFD_START_GO_REQUEST(
 	{
 		PADAPTER pDevicePort = GetFirstDevicePort(pDefaultAdapter);
 		PP2P_INFO pDeviceP2PInfo = GET_P2P_INFO(pDevicePort);
-		
+
 		pDeviceP2PInfo->OperatingChannel = pP2PInfo->OperatingChannel;
 	}
 
@@ -4300,43 +4300,43 @@ N63C_SET_OID_DOT11_WFD_START_GO_REQUEST(
 	RT_TRACE_F(COMP_MLME, DBG_LOUD, ("MgntActSet_802_11_CHANNEL_AND_BANDWIDTH\n"));
 
 	if(pDefaultAdapter->MgntInfo.mAssoc)
-	{		
+	{
 		HalChangeWirelessMode(pDefaultAdapter, pP2PInfo->OperatingChannel);
 		// Set the operating channel
 		MgntActSet_802_11_CHANNEL_AND_BANDWIDTH(
-			pTargetAdapter, 
-			pP2PInfo->OperatingChannel, 
-			pDefaultAdapter->MgntInfo.pChannelInfo->CurrentChannelBandWidth, 
-			pDefaultAdapter->MgntInfo.pChannelInfo->Ext20MHzChnlOffsetOf40MHz, 
-			pDefaultAdapter->MgntInfo.pChannelInfo->Ext40MHzChnlOffsetOf80MHz, 
+			pTargetAdapter,
+			pP2PInfo->OperatingChannel,
+			pDefaultAdapter->MgntInfo.pChannelInfo->CurrentChannelBandWidth,
+			pDefaultAdapter->MgntInfo.pChannelInfo->Ext20MHzChnlOffsetOf40MHz,
+			pDefaultAdapter->MgntInfo.pChannelInfo->Ext40MHzChnlOffsetOf80MHz,
 			0
 			);
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Default port is conencted, switch to channel (%d), Bandwidth (%d), 20/40M_Offset (%d), 40/80M_Offset (%d)\n",
-			pDefaultAdapter->MgntInfo.dot11CurrentChannelNumber, 
-			pDefaultAdapter->MgntInfo.pChannelInfo->CurrentChannelBandWidth, 
-			pDefaultAdapter->MgntInfo.pChannelInfo->Ext20MHzChnlOffsetOf40MHz, 
+			pDefaultAdapter->MgntInfo.dot11CurrentChannelNumber,
+			pDefaultAdapter->MgntInfo.pChannelInfo->CurrentChannelBandWidth,
+			pDefaultAdapter->MgntInfo.pChannelInfo->Ext20MHzChnlOffsetOf40MHz,
 			pDefaultAdapter->MgntInfo.pChannelInfo->Ext40MHzChnlOffsetOf80MHz));
 	}
 	else
 	{
-		// Set the operating channel		
+		// Set the operating channel
 		MgntActSet_802_11_CHANNEL_AND_BANDWIDTH(
-				pTargetAdapter, 
-				pP2PInfo->OperatingChannel, 
-				CHANNEL_WIDTH_20, 
-				EXTCHNL_OFFSET_NO_EXT, 
-				EXTCHNL_OFFSET_NO_EXT, 
+				pTargetAdapter,
+				pP2PInfo->OperatingChannel,
+				CHANNEL_WIDTH_20,
+				EXTCHNL_OFFSET_NO_EXT,
+				EXTCHNL_OFFSET_NO_EXT,
 				0
 			);
 	}
-	
+
 
 	// Resolve the Wrong GO active channel -----------------------------------------------------------------------
 	{
 		PADAPTER	pLoopAdapter = GetDefaultAdapter(pTargetAdapter);
 
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("Set All SettingBeforeScan.ChannelNumber = %d\n", pP2PInfo->OperatingChannel));
-		
+
 		while(pLoopAdapter !=NULL)
 		{
 			pLoopAdapter->MgntInfo.dot11CurrentChannelNumber = pP2PInfo->OperatingChannel;
@@ -4344,7 +4344,7 @@ N63C_SET_OID_DOT11_WFD_START_GO_REQUEST(
 			pLoopAdapter->MgntInfo.SettingBeforeScan.CenterFrequencyIndex1 = CHNL_GetCenterFrequency(pP2PInfo->OperatingChannel,pLoopAdapter->MgntInfo.SettingBeforeScan.ChannelBandwidth, pLoopAdapter->MgntInfo.SettingBeforeScan.Ext20MHzChnlOffsetOf40MHz);
 			pLoopAdapter = GetNextExtAdapter(pLoopAdapter);
 		}
-		
+
 		pLoopAdapter = GetDefaultAdapter(pTargetAdapter);
 		// Prefast warning 6011 Dereferencing NULL pointer 'pLoopAdapter'.
 		if (pLoopAdapter != NULL)
@@ -4354,7 +4354,7 @@ N63C_SET_OID_DOT11_WFD_START_GO_REQUEST(
 					pLoopAdapter->MgntInfo.SettingBeforeScan.ChannelNumber,
 					pLoopAdapter->MgntInfo.SettingBeforeScan.CenterFrequencyIndex1));
 		}
-		
+
 	}
 	// --------------------------------------------------------------------------------------------------------
 
@@ -4371,11 +4371,11 @@ N63C_SET_OID_DOT11_WFD_START_GO_REQUEST(
 		{
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("pAdapter->pNdis62Common->PortNumber: %d\n", pAdapter->pNdis62Common->PortNumber));
 			RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, "pAdapter->MgntInfo.Bssid: ", pAdapter->MgntInfo.Bssid);
-								
+
 			pAdapter = GetNextExtAdapter(pAdapter);
 		}
 	}
-	
+
 	if(ndisStatus == NDIS_STATUS_SUCCESS)
 	{
 		PlatformIndicateP2PEvent(pP2PInfo, P2P_EVENT_GO_OPERATING_CHANNEL, NULL);
@@ -4387,7 +4387,7 @@ N63C_SET_OID_DOT11_WFD_START_GO_REQUEST(
 }
 
 // Set operation for OID_DOT11_WFD_GROUP_START_PARAMETERS
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_GROUP_START_PARAMETERS(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -4399,13 +4399,13 @@ N63C_SET_OID_DOT11_WFD_GROUP_START_PARAMETERS(
 {
 #if 0
     #define DOT11_WFD_GROUP_START_PARAMETERS_REVISION_1     1
-    
-    typedef struct _DOT11_WFD_GROUP_START_PARAMETERS {	
+
+    typedef struct _DOT11_WFD_GROUP_START_PARAMETERS {
         NDIS_OBJECT_HEADER Header;
         DOT11_WFD_CHANNEL AdvertisedOperatingChannel;
     } DOT11_WFD_GROUP_START_PARAMETERS, * PDOT11_WFD_GROUP_START_PARAMETERS;
 
-    typedef struct _DOT11_WFD_CHANNEL 
+    typedef struct _DOT11_WFD_CHANNEL
     {
         DOT11_COUNTRY_OR_REGION_STRING CountryRegionString;
         UCHAR OperatingClass;
@@ -4416,29 +4416,29 @@ N63C_SET_OID_DOT11_WFD_GROUP_START_PARAMETERS(
 	PP2P_INFO		pP2PInfo = GET_P2P_INFO(pTargetAdapter);
 
 	// OS-given structure
-	PDOT11_WFD_GROUP_START_PARAMETERS pParameters = 
+	PDOT11_WFD_GROUP_START_PARAMETERS pParameters =
 		(PDOT11_WFD_GROUP_START_PARAMETERS) InformationBuffer;
-		
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
-	
+
 	FunctionIn(COMP_OID_SET | COMP_OID_QUERY);
-	
+
 
 	// Only consider the channel number
-	pP2PInfo->OperatingChannel = pParameters->AdvertisedOperatingChannel.ChannelNumber; 
+	pP2PInfo->OperatingChannel = pParameters->AdvertisedOperatingChannel.ChannelNumber;
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("pParameters->AdvertisedOperatingChannel.ChannelNumber: %d\n", pParameters->AdvertisedOperatingChannel.ChannelNumber));
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("pP2PInfo->OperatingChannel: %d\n", pP2PInfo->OperatingChannel));
 
 	FunctionOut(COMP_OID_SET | COMP_OID_QUERY);
-	
+
 	return NDIS_STATUS_SUCCESS;
 
 }
-	
+
 // Set operation for OID_DOT11_WFD_GROUP_JOIN_PARAMETERS
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_GROUP_JOIN_PARAMETERS(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -4449,8 +4449,8 @@ N63C_SET_OID_DOT11_WFD_GROUP_JOIN_PARAMETERS(
 )
 {
 #if 0
-    typedef 
-    struct _DOT11_WFD_GROUP_JOIN_PARAMETERS {	
+    typedef
+    struct _DOT11_WFD_GROUP_JOIN_PARAMETERS {
         NDIS_OBJECT_HEADER Header;
         DOT11_WFD_CHANNEL GOOperatingChannel;
         ULONG GOConfigTime;
@@ -4466,24 +4466,24 @@ N63C_SET_OID_DOT11_WFD_GROUP_JOIN_PARAMETERS(
 	PP2P_DEVICE_LIST_ENTRY pP2PDeviceListEntry = NULL;
 
 	// OS-given structure
-	PDOT11_WFD_GROUP_JOIN_PARAMETERS pParameters = 
+	PDOT11_WFD_GROUP_JOIN_PARAMETERS pParameters =
 		(PDOT11_WFD_GROUP_JOIN_PARAMETERS) InformationBuffer;
-		
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
-	
+
 	FunctionIn(COMP_OID_SET | COMP_OID_QUERY);
-	
+
 	// Only consider the channel number
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("pParameters->GOConfigTime: %d\n", pParameters->GOConfigTime));
 
-	pP2PInfo->OperatingChannel = pParameters->GOOperatingChannel.ChannelNumber; 
+	pP2PInfo->OperatingChannel = pParameters->GOOperatingChannel.ChannelNumber;
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("pP2PInfo->OperatingChannel: %d\n", pP2PInfo->OperatingChannel));
 
 	pP2PInfo->ClientJoinGroupContext.bInGroupFormation = pParameters->bInGroupFormation;
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("pP2PInfo->ClientJoinGroupContext.bInGroupFormation: %d\n", pP2PInfo->ClientJoinGroupContext.bInGroupFormation));
-	
+
 	pP2PInfo->ClientJoinGroupContext.WpsState = (pParameters->bWaitForWPSReady) ? P2P_CLIETN_JOIN_GROUP_WPS_STATE_SCANNING : P2P_CLIETN_JOIN_GROUP_WPS_STATE_NONE;
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("pP2PInfo->ClientJoinGroupContext.WpsState: %d\n", pP2PInfo->ClientJoinGroupContext.WpsState));
 
@@ -4492,10 +4492,10 @@ N63C_SET_OID_DOT11_WFD_GROUP_JOIN_PARAMETERS(
 	if(pP2PInfo->OperatingChannel == 0)
 	{
 		RT_PRINT_ADDR(COMP_OID_SET, DBG_LOUD, "pP2PInfo->DesiredTargetMacAddress: ", pP2PInfo->DesiredTargetMacAddress);
-	
-		// From Win8 Specific Device Information Pool	
+
+		// From Win8 Specific Device Information Pool
 		pP2PDeviceListEntry = P2PDeviceListFind(&pDeviceP2PInfo->DeviceList, pP2PInfo->DesiredTargetMacAddress);
-		
+
 		// From Common Device Information Pool: Use Interface Address
 		pP2PDeviceDesc = P2PScanListFind(pDeviceP2PInfo->ScanList, pDeviceP2PInfo->ScanListSize, NULL, pP2PInfo->DesiredTargetMacAddress, NULL);
 
@@ -4514,9 +4514,9 @@ N63C_SET_OID_DOT11_WFD_GROUP_JOIN_PARAMETERS(
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("No Peer Observed: pP2PInfo->OperatingChannel: %d\n", pP2PInfo->OperatingChannel));
 
 			P2PDeviceListActionInterface(
-						pDeviceP2PInfo, 
+						pDeviceP2PInfo,
 						P2P_DEVICE_LIST_ACTION_DUMP,
-						&pDeviceP2PInfo->DeviceList, 
+						&pDeviceP2PInfo->DeviceList,
 						NULL, NULL
 				);
 
@@ -4527,14 +4527,14 @@ N63C_SET_OID_DOT11_WFD_GROUP_JOIN_PARAMETERS(
 
 
 	FunctionOut(COMP_OID_SET | COMP_OID_QUERY);
-	
+
 	return NDIS_STATUS_SUCCESS;
 
 }
 
 
 // Set operation for OID_DOT11_WFD_DESIRED_GROUP_ID
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_DESIRED_GROUP_ID(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -4545,10 +4545,10 @@ N63C_SET_OID_DOT11_WFD_DESIRED_GROUP_ID(
 )
 {
 #if 0
-	typedef struct _DOT11_WFD_GROUP_ID 
+	typedef struct _DOT11_WFD_GROUP_ID
 	{
     		DOT11_MAC_ADDRESS DeviceAddress;
-    		DOT11_SSID SSID;	
+    		DOT11_SSID SSID;
 	} DOT11_WFD_GROUP_ID, * PDOT11_WFD_GROUP_ID;
 
 	typedef struct _DOT11_SSID
@@ -4572,11 +4572,11 @@ N63C_SET_OID_DOT11_WFD_DESIRED_GROUP_ID(
 
 	// OS-given structure
 	PDOT11_WFD_GROUP_ID pParameters = (PDOT11_WFD_GROUP_ID) InformationBuffer;
-		
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
-	
+
 	FunctionIn(COMP_OID_SET);
 
 	RT_PRINT_ADDR(COMP_OID_SET, DBG_LOUD, "Target GO MAC Address: ", pParameters->DeviceAddress);
@@ -4591,29 +4591,29 @@ N63C_SET_OID_DOT11_WFD_DESIRED_GROUP_ID(
 	{
 		return NDIS_STATUS_INVALID_LENGTH;
 	}
-	
+
 
 	N6_ASSIGN_OBJECT_HEADER(
 			SsidList.Header,
-			NDIS_OBJECT_TYPE_DEFAULT, 
-			DOT11_SSID_LIST_REVISION_1, 
+			NDIS_OBJECT_TYPE_DEFAULT,
+			DOT11_SSID_LIST_REVISION_1,
 			sizeof(DOT11_SSID_LIST)
 		);
-	
+
 	SsidList.uNumOfEntries = 1;
 	SsidList.SSIDs[0] = pParameters->SSID;
 
 	pNdisCommon->dot11DesiredSSIDList = SsidList;
-		
-	
+
+
 	FunctionOut(COMP_OID_SET);
-	
+
 	return ndisStatus;
 
 }
 
 // Set operation for OID_DOT11_WFD_CONNECT_TO_GROUP_REQUEST
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_CONNECT_TO_GROUP_REQUEST(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -4629,9 +4629,9 @@ N63C_SET_OID_DOT11_WFD_CONNECT_TO_GROUP_REQUEST(
 	PADAPTER 	pDevicePort = GetFirstDevicePort(pTargetAdapter);
 	PP2P_INFO	pDeviceP2PInfo = GET_P2P_INFO(pDevicePort);
 	PP2P_DEVICE_DISCRIPTOR pP2PDeviceDesc = NULL;
-	PP2P_DEVICE_LIST_ENTRY pP2PDeviceListEntry = NULL;	
+	PP2P_DEVICE_LIST_ENTRY pP2PDeviceListEntry = NULL;
 	u1Byte i = 0;
-		
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
@@ -4647,9 +4647,9 @@ N63C_SET_OID_DOT11_WFD_CONNECT_TO_GROUP_REQUEST(
 	{
 		RT_PRINT_ADDR(COMP_OID_SET, DBG_LOUD, "pP2PInfo->DesiredTargetMacAddress: ", pP2PInfo->DesiredTargetMacAddress);
 
-		// From Win8 Specific Device Information Pool	
+		// From Win8 Specific Device Information Pool
 		pP2PDeviceListEntry = P2PDeviceListFind(&pDeviceP2PInfo->DeviceList, pP2PInfo->DesiredTargetMacAddress);
-		
+
 		// From Common Device Information Pool: Use Interface Address
 		pP2PDeviceDesc = P2PScanListFind(pDeviceP2PInfo->ScanList, pDeviceP2PInfo->ScanListSize, NULL, pP2PInfo->DesiredTargetMacAddress, NULL);
 
@@ -4668,9 +4668,9 @@ N63C_SET_OID_DOT11_WFD_CONNECT_TO_GROUP_REQUEST(
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("No Peer Observed: pP2PInfo->OperatingChannel: %d\n", pP2PInfo->OperatingChannel));
 
 			P2PDeviceListActionInterface(
-						pDeviceP2PInfo, 
+						pDeviceP2PInfo,
 						P2P_DEVICE_LIST_ACTION_DUMP,
-						&pDeviceP2PInfo->DeviceList, 
+						&pDeviceP2PInfo->DeviceList,
 						NULL, NULL
 				);
 
@@ -4683,7 +4683,7 @@ N63C_SET_OID_DOT11_WFD_CONNECT_TO_GROUP_REQUEST(
 	if(IS_DUAL_BAND_SUPPORT(pTargetAdapter))
 	{
 		WIRELESS_MODE wirelessmode;
-		
+
 		if(IS_WIRELESS_MODE_5G(pTargetAdapter))
 		{
 			if(pP2PInfo->OperatingChannel < 14)
@@ -4703,21 +4703,21 @@ N63C_SET_OID_DOT11_WFD_CONNECT_TO_GROUP_REQUEST(
 			}
 		}
 	}
-#else	
+#else
 	RT_TRACE_F(COMP_MLME, DBG_LOUD, ("ChangeWirelessModeHandler\n"));
 	HalChangeWirelessMode(pTargetAdapter, pP2PInfo->OperatingChannel);
 
-//	SetupWirelessMode(pTargetAdapter, pP2PInfo->OperatingChannel); 
+//	SetupWirelessMode(pTargetAdapter, pP2PInfo->OperatingChannel);
 #endif
 	// Swith to the Right Target Channel specified in OID_DOT11_WFD_GROUP_JOIN_PARAMETERS --
 	MgntActSet_802_11_CHANNEL_AND_BANDWIDTH(
-			pTargetAdapter, 
-			pP2PInfo->OperatingChannel, 
-			CHANNEL_WIDTH_20, 
-			EXTCHNL_OFFSET_NO_EXT, 
-			EXTCHNL_OFFSET_NO_EXT, 
+			pTargetAdapter,
+			pP2PInfo->OperatingChannel,
+			CHANNEL_WIDTH_20,
+			EXTCHNL_OFFSET_NO_EXT,
+			EXTCHNL_OFFSET_NO_EXT,
 			0
-		);	
+		);
 	// -------------------------------------------------------------------------------
 
 	if(P2P_CLIETN_JOIN_GROUP_WPS_STATE_NONE == pP2PInfo->ClientJoinGroupContext.WpsState)
@@ -4738,7 +4738,7 @@ N63C_SET_OID_DOT11_WFD_CONNECT_TO_GROUP_REQUEST(
 		VOID *customScanInfo = GET_CUSTOM_SCAN_INFO(pTargetAdapter);
 		ADAPTER *pDevAdapter = NULL;
 		P2P_INFO *pDevP2PInfo = NULL;
-		
+
 		pP2PInfo->ClientJoinGroupContext.uWaitForWpsSlotCount = 50;	// Wait for Connection : 5 sec
 		PlatformSetTimer(pTargetAdapter, &pP2PInfo->ClientJoinGroupContext.P2PWaitForWpsReadyTimer, 120);
 
@@ -4747,22 +4747,22 @@ N63C_SET_OID_DOT11_WFD_CONNECT_TO_GROUP_REQUEST(
 			&& NULL != (customScanReq = CustomScan_AllocReq(customScanInfo, NULL, NULL))
 			)
 		{
-			CustomScan_AddScanChnl(customScanReq, pDevP2PInfo->ListenChannel, 
+			CustomScan_AddScanChnl(customScanReq, pDevP2PInfo->ListenChannel,
 				1, SCAN_PASSIVE, 100, P2P_LOWEST_RATE, NULL);
-			
+
 			CustomScan_IssueReq(customScanInfo, customScanReq, CUSTOM_SCAN_SRC_TYPE_P2P, "make cli dev discoverable by GO");
 		}
 	}
 
 	FunctionOut(COMP_OID_SET);
-	
+
 	return ndisStatus;
 
 }
 
-	
+
 // Set operation for OID_DOT11_WFD_DISCONNECT_FROM_GROUP_REQUEST
-static NDIS_STATUS	
+static NDIS_STATUS
 N63C_SET_OID_DOT11_WFD_DISCONNECT_FROM_GROUP_REQUEST(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -4775,10 +4775,10 @@ N63C_SET_OID_DOT11_WFD_DISCONNECT_FROM_GROUP_REQUEST(
 
 	PP2P_INFO		pP2PInfo = GET_P2P_INFO(pTargetAdapter);
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
-	
+
 	// OS-given structure
 	//PDOT11_WFD_GROUP_ID pParameters = (PDOT11_WFD_GROUP_ID) InformationBuffer;
-		
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
@@ -4798,9 +4798,9 @@ N63C_SET_OID_DOT11_WFD_DISCONNECT_FROM_GROUP_REQUEST(
 	// Reset the variable in OID_DOT11_WFD_GROUP_START_PARAMETERS ------------------
 	P2PResetClientJoinGroupContext(pP2PInfo);
 	// ---------------------------------------------------------------------------
-	
+
 	FunctionOut(COMP_OID_SET);
-	
+
 	return ndisStatus;
 
 }
@@ -4816,7 +4816,7 @@ N63C_QUERY_OID_PACKET_COALESCING_FILTER_MATCH_COUNT(
 )
 {
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
-		
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -4828,15 +4828,15 @@ N63C_QUERY_OID_PACKET_COALESCING_FILTER_MATCH_COUNT(
 }
 
 //======================================================================================
-// Public Functions 
+// Public Functions
 //======================================================================================
 
 VOID
 N63CIndicateP2PEvent(
-	PVOID pvP2PInfo, 
+	PVOID pvP2PInfo,
 	u4Byte EventID,
 	PMEMORY_BUFFER pInformation
-) 
+)
 {
 	PP2P_INFO	pP2PInfo = (PP2P_INFO) pvP2PInfo;
 	PADAPTER	pAdapter = pP2PInfo->pAdapter;
@@ -4873,12 +4873,12 @@ N63CIndicateP2PEvent(
 			RT_TRACE_F(COMP_INDIC | COMP_P2P, DBG_LOUD, ("P2P_EVENT_DEVICE_DISCOVERY_COMPLETE\n"));
 			N63CIndicateDeviceDiscoveryComplete(pP2PInfo);
 			break;
-			
+
 		case P2P_EVENT_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE:
 			RT_TRACE_F(COMP_INDIC | COMP_P2P, DBG_LOUD, ("P2P_EVENT_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE\n"));
 			N63CIndicateProvisionDiscoveryRequestSendComplete(pP2PInfo, pInformation);
 			break;
-			
+
 		case P2P_EVENT_RECEIVED_PROVISION_DISCOVERY_REQUEST:
 			{
 				RT_TRACE_F(COMP_INDIC | COMP_P2P, DBG_LOUD, ("P2P_EVENT_RECEIVED_PROVISION_DISCOVERY_REQUEST\n"));
@@ -4895,17 +4895,17 @@ N63CIndicateP2PEvent(
 				}
 			}
 			break;
-			
+
 		case P2P_EVENT_PROVISION_DISCOVERY_RESPONSE_SEND_COMPLETE:
 			RT_TRACE_F(COMP_INDIC | COMP_P2P, DBG_LOUD, ("P2P_EVENT_PROVISION_DISCOVERY_RESPONSE_SEND_COMPLETE\n"));
 			N63CIndicateProvisionDiscoveryResponseSendComplete(pP2PInfo, pInformation);
 			break;
-			
+
 		case P2P_EVENT_RECEIVED_PROVISION_DISCOVERY_RESPONSE:
 			RT_TRACE_F(COMP_INDIC | COMP_P2P, DBG_LOUD, ("P2P_EVENT_RECEIVED_PROVISION_DISCOVERY_RESPONSE\n"));
 			//N63CIndicateReceivedProvisionDiscoveryResponse(pP2PInfo, pInformation);
 			break;
-			
+
 		case P2P_EVENT_GO_NEGOTIATION_REQUEST_SEND_COMPLETE:
 			RT_TRACE_F(COMP_INDIC | COMP_P2P, DBG_LOUD, ("P2P_EVENT_GO_NEGOTIATION_REQUEST_SEND_COMPLETE\n"));
 			N63CIndicateNegotiationRequestSendComplete(pP2PInfo, pInformation);
@@ -4929,7 +4929,7 @@ N63CIndicateP2PEvent(
 				}
 			}
 			break;
-			
+
 		case P2P_EVENT_GO_NEGOTIATION_RESPONSE_SEND_COMPLETE:
 			{
 				RT_TRACE_F(COMP_INDIC | COMP_P2P, DBG_LOUD, ("P2P_EVENT_GO_NEGOTIATION_RESPONSE_SEND_COMPLETE\n"));
@@ -4937,7 +4937,7 @@ N63CIndicateP2PEvent(
 			}
 			break;
 
-		case P2P_EVENT_RECEIVED_GO_NEGOTIATION_RESPONSE:			
+		case P2P_EVENT_RECEIVED_GO_NEGOTIATION_RESPONSE:
 			RT_TRACE_F(COMP_INDIC | COMP_P2P, DBG_LOUD, ("P2P_EVENT_RECEIVED_GO_NEGOTIATION_RESPONSE\n"));
 			//N63CIndicateReceivedGONegotiationResponse(pP2PInfo, pInformation);
 			break;
@@ -4983,12 +4983,12 @@ N63CIndicateP2PEvent(
 			RT_TRACE_F(COMP_INDIC | COMP_P2P, DBG_LOUD, ("P2P_EVENT_RECEIVED_INVITATION_RESPONSE\n"));
 			//N63CIndicateReceivedInvitationResponse(pP2PInfo, pInformation);
 			break;
-			
+
 		case P2P_EVENT_GO_OPERATING_CHANNEL:
 			RT_TRACE_F(COMP_INDIC | COMP_P2P, DBG_LOUD, ("P2P_EVENT_GO_OPERATING_CHANNEL\n"));
 			N63CIndicateGOOperatingChannel(pP2PInfo, pInformation);
 			break;
-			
+
 		case P2P_EVENT_NONE:
 		default:
 			RT_TRACE_F(COMP_P2P, DBG_TRACE, ("EventID (0x%08X) Unrecognized!\n", EventID));
@@ -5017,7 +5017,7 @@ N63C_OID_DOT11_WFD_DEVICE_CAPABILITY(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5025,7 +5025,7 @@ N63C_OID_DOT11_WFD_DEVICE_CAPABILITY(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_DEVICE_CAPABILITY(
@@ -5073,7 +5073,7 @@ N63C_OID_DOT11_WFD_GROUP_OWNER_CAPABILITY(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5081,7 +5081,7 @@ N63C_OID_DOT11_WFD_GROUP_OWNER_CAPABILITY(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_GROUP_OWNER_CAPABILITY(
@@ -5129,7 +5129,7 @@ N63C_OID_DOT11_WFD_DEVICE_INFO(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5137,7 +5137,7 @@ N63C_OID_DOT11_WFD_DEVICE_INFO(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_DEVICE_INFO(
@@ -5185,7 +5185,7 @@ N63C_OID_DOT11_WFD_SECONDARY_DEVICE_TYPE_LIST(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5193,7 +5193,7 @@ N63C_OID_DOT11_WFD_SECONDARY_DEVICE_TYPE_LIST(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_SECONDARY_DEVICE_TYPE_LIST(
@@ -5249,7 +5249,7 @@ N63C_OID_DOT11_WFD_DISCOVER_REQUEST(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_DISCOVER_REQUEST(
@@ -5284,7 +5284,7 @@ N63C_OID_DOT11_WFD_GET_DIALOG_TOKEN(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -5297,7 +5297,7 @@ N63C_OID_DOT11_WFD_GET_DIALOG_TOKEN(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5309,10 +5309,10 @@ N63C_OID_DOT11_WFD_GET_DIALOG_TOKEN(
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
-						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded
 					);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
@@ -5340,7 +5340,7 @@ N63C_OID_DOT11_WFD_ENUM_DEVICE_LIST(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -5353,7 +5353,7 @@ N63C_OID_DOT11_WFD_ENUM_DEVICE_LIST(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5365,10 +5365,10 @@ N63C_OID_DOT11_WFD_ENUM_DEVICE_LIST(
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
-						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded
 					);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
@@ -5409,7 +5409,7 @@ N63C_OID_DOT11_WFD_LISTEN_STATE_DISCOVERABILITY(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5421,10 +5421,10 @@ N63C_OID_DOT11_WFD_LISTEN_STATE_DISCOVERABILITY(
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
-						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded
 					);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_LISTEN_STATE_DISCOVERABILITY(
@@ -5448,7 +5448,7 @@ N63C_OID_DOT11_WFD_LISTEN_STATE_DISCOVERABILITY(
 
 		}
 	}while(FALSE);
-		
+
 	return ndisStatus;
 }
 
@@ -5472,7 +5472,7 @@ N63C_OID_DOT11_WFD_DEVICE_LISTEN_CHANNEL(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5484,10 +5484,10 @@ N63C_OID_DOT11_WFD_DEVICE_LISTEN_CHANNEL(
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
-						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded
 					);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_DEVICE_LISTEN_CHANNEL(
@@ -5511,11 +5511,11 @@ N63C_OID_DOT11_WFD_DEVICE_LISTEN_CHANNEL(
 
 		}
 	}while(FALSE);
-		
+
 	return ndisStatus;
 }
 
-	
+
 NDIS_STATUS
 N63C_OID_DOT11_WFD_ADDITIONAL_IE(
 	PADAPTER pAdapter,
@@ -5536,7 +5536,7 @@ N63C_OID_DOT11_WFD_ADDITIONAL_IE(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5544,7 +5544,7 @@ N63C_OID_DOT11_WFD_ADDITIONAL_IE(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_ADDITIONAL_IE(
@@ -5568,7 +5568,7 @@ N63C_OID_DOT11_WFD_ADDITIONAL_IE(
 
 		}
 	}while(FALSE);
-		
+
 	return ndisStatus;
 }
 
@@ -5579,7 +5579,7 @@ N63C_OID_DOT11_WFD_FLUSH_DEVICE_LIST(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -5592,7 +5592,7 @@ N63C_OID_DOT11_WFD_FLUSH_DEVICE_LIST(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5600,7 +5600,7 @@ N63C_OID_DOT11_WFD_FLUSH_DEVICE_LIST(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_FLUSH_DEVICE_LIST(
@@ -5624,7 +5624,7 @@ N63C_OID_DOT11_WFD_FLUSH_DEVICE_LIST(
 
 		}
 	}while(FALSE);
-		
+
 	return ndisStatus;
 }
 
@@ -5635,7 +5635,7 @@ N63C_OID_DOT11_WFD_STOP_DISCOVERY(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -5648,7 +5648,7 @@ N63C_OID_DOT11_WFD_STOP_DISCOVERY(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5656,7 +5656,7 @@ N63C_OID_DOT11_WFD_STOP_DISCOVERY(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_STOP_DISCOVERY(
@@ -5680,7 +5680,7 @@ N63C_OID_DOT11_WFD_STOP_DISCOVERY(
 
 		}
 	}while(FALSE);
-		
+
 	return ndisStatus;
 }
 
@@ -5691,7 +5691,7 @@ N63C_OID_DOT11_WFD_SEND_GO_NEGOTIATION_REQUEST(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -5704,7 +5704,7 @@ N63C_OID_DOT11_WFD_SEND_GO_NEGOTIATION_REQUEST(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5712,7 +5712,7 @@ N63C_OID_DOT11_WFD_SEND_GO_NEGOTIATION_REQUEST(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_REQUEST(
@@ -5747,11 +5747,11 @@ N63C_OID_DOT11_WFD_SEND_GO_NEGOTIATION_RESPONSE(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
-	
+
 	do
 	{
 		// Validate if the OID is issued in the correct state and mode
@@ -5760,7 +5760,7 @@ N63C_OID_DOT11_WFD_SEND_GO_NEGOTIATION_RESPONSE(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5768,7 +5768,7 @@ N63C_OID_DOT11_WFD_SEND_GO_NEGOTIATION_RESPONSE(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_RESPONSE(
@@ -5792,7 +5792,7 @@ N63C_OID_DOT11_WFD_SEND_GO_NEGOTIATION_RESPONSE(
 
 		}
 	}while(FALSE);
-		
+
 	return ndisStatus;
 }
 
@@ -5803,7 +5803,7 @@ N63C_OID_DOT11_WFD_SEND_GO_NEGOTIATION_CONFIRMATION(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -5816,7 +5816,7 @@ N63C_OID_DOT11_WFD_SEND_GO_NEGOTIATION_CONFIRMATION(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5824,7 +5824,7 @@ N63C_OID_DOT11_WFD_SEND_GO_NEGOTIATION_CONFIRMATION(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus =N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_CONFIRM(
@@ -5848,7 +5848,7 @@ N63C_OID_DOT11_WFD_SEND_GO_NEGOTIATION_CONFIRMATION(
 
 		}
 	}while(FALSE);
-		
+
 	return ndisStatus;
 }
 
@@ -5859,7 +5859,7 @@ N63C_OID_DOT11_WFD_SEND_INVITATION_REQUEST(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -5872,7 +5872,7 @@ N63C_OID_DOT11_WFD_SEND_INVITATION_REQUEST(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5880,7 +5880,7 @@ N63C_OID_DOT11_WFD_SEND_INVITATION_REQUEST(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_SEND_INVITATION_REQUEST(
@@ -5915,7 +5915,7 @@ N63C_OID_DOT11_WFD_SEND_INVITATION_RESPONSE(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -5928,7 +5928,7 @@ N63C_OID_DOT11_WFD_SEND_INVITATION_RESPONSE(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5936,7 +5936,7 @@ N63C_OID_DOT11_WFD_SEND_INVITATION_RESPONSE(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_SEND_INVITATION_RESPONSE(
@@ -5960,7 +5960,7 @@ N63C_OID_DOT11_WFD_SEND_INVITATION_RESPONSE(
 
 		}
 	}while(FALSE);
-		
+
 	return ndisStatus;
 }
 
@@ -5971,7 +5971,7 @@ N63C_OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_REQUEST(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -5984,7 +5984,7 @@ N63C_OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_REQUEST(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -5992,7 +5992,7 @@ N63C_OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_REQUEST(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_REQUEST(
@@ -6027,7 +6027,7 @@ N63C_OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_RESPONSE(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -6040,7 +6040,7 @@ N63C_OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_RESPONSE(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -6048,7 +6048,7 @@ N63C_OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_RESPONSE(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_RESPONSE(
@@ -6072,7 +6072,7 @@ N63C_OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_RESPONSE(
 
 		}
 	}while(FALSE);
-		
+
 	return ndisStatus;
 }
 
@@ -6083,7 +6083,7 @@ N63C_OID_DOT11_WFD_DESIRED_GROUP_ID(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -6098,7 +6098,7 @@ N63C_OID_DOT11_WFD_DESIRED_GROUP_ID(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -6106,7 +6106,7 @@ N63C_OID_DOT11_WFD_DESIRED_GROUP_ID(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_DESIRED_GROUP_ID(
@@ -6134,7 +6134,7 @@ N63C_OID_DOT11_WFD_DESIRED_GROUP_ID(
 	RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("ndisStatus: %d\n", ndisStatus));
 
 	FunctionOut(COMP_OID_SET | COMP_OID_QUERY);
-	
+
 	return ndisStatus;
 }
 
@@ -6146,7 +6146,7 @@ N63C_OID_DOT11_WFD_START_GO_REQUEST(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -6161,7 +6161,7 @@ N63C_OID_DOT11_WFD_START_GO_REQUEST(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -6169,7 +6169,7 @@ N63C_OID_DOT11_WFD_START_GO_REQUEST(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_START_GO_REQUEST(
@@ -6195,9 +6195,9 @@ N63C_OID_DOT11_WFD_START_GO_REQUEST(
 	}while(FALSE);
 
 	RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("ndisStatus: %d\n", ndisStatus));
-	
+
 	FunctionOut(COMP_OID_SET | COMP_OID_QUERY);
-	
+
 	return ndisStatus;
 }
 
@@ -6208,7 +6208,7 @@ N63C_OID_DOT11_WFD_GROUP_START_PARAMETERS(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -6223,7 +6223,7 @@ N63C_OID_DOT11_WFD_GROUP_START_PARAMETERS(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -6231,7 +6231,7 @@ N63C_OID_DOT11_WFD_GROUP_START_PARAMETERS(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_GROUP_START_PARAMETERS(
@@ -6259,7 +6259,7 @@ N63C_OID_DOT11_WFD_GROUP_START_PARAMETERS(
 	RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("ndisStatus: %d\n", ndisStatus));
 
 	FunctionOut(COMP_OID_SET | COMP_OID_QUERY);
-	
+
 	return ndisStatus;
 }
 
@@ -6270,7 +6270,7 @@ N63C_OID_DOT11_WFD_CONNECT_TO_GROUP_REQUEST(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -6282,10 +6282,10 @@ N63C_OID_DOT11_WFD_CONNECT_TO_GROUP_REQUEST(
 		// Validate if the OID is issued in the correct state and mode
 		ndisStatus = N63CValidateOIDCorrectness(pAdapter, NdisRequest);
 		if(ndisStatus != NDIS_STATUS_SUCCESS) {
-			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));			
+			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -6293,7 +6293,7 @@ N63C_OID_DOT11_WFD_CONNECT_TO_GROUP_REQUEST(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_CONNECT_TO_GROUP_REQUEST(
@@ -6321,7 +6321,7 @@ N63C_OID_DOT11_WFD_CONNECT_TO_GROUP_REQUEST(
 	RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("ndisStatus: %d\n", ndisStatus));
 
 	FunctionOut(COMP_OID_SET | COMP_OID_QUERY);
-	
+
 	return ndisStatus;
 }
 
@@ -6332,7 +6332,7 @@ N63C_OID_DOT11_WFD_DISCONNECT_FROM_GROUP_REQUEST(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -6347,7 +6347,7 @@ N63C_OID_DOT11_WFD_DISCONNECT_FROM_GROUP_REQUEST(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -6355,7 +6355,7 @@ N63C_OID_DOT11_WFD_DISCONNECT_FROM_GROUP_REQUEST(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_DISCONNECT_FROM_GROUP_REQUEST(
@@ -6383,7 +6383,7 @@ N63C_OID_DOT11_WFD_DISCONNECT_FROM_GROUP_REQUEST(
 	RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("ndisStatus: %d\n", ndisStatus));
 
 	FunctionOut(COMP_OID_SET | COMP_OID_QUERY);
-	
+
 	return ndisStatus;
 }
 
@@ -6394,7 +6394,7 @@ N63C_OID_DOT11_WFD_GROUP_JOIN_PARAMETERS(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -6406,10 +6406,10 @@ N63C_OID_DOT11_WFD_GROUP_JOIN_PARAMETERS(
 		// Validate if the OID is issued in the correct state and mode
 		ndisStatus = N63CValidateOIDCorrectness(pAdapter, NdisRequest);
 		if(ndisStatus != NDIS_STATUS_SUCCESS) {
-			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));			
+			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -6417,7 +6417,7 @@ N63C_OID_DOT11_WFD_GROUP_JOIN_PARAMETERS(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_WFD_GROUP_JOIN_PARAMETERS(
@@ -6445,13 +6445,13 @@ N63C_OID_DOT11_WFD_GROUP_JOIN_PARAMETERS(
 	RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("ndisStatus: %d\n", ndisStatus));
 
 	FunctionOut(COMP_OID_SET | COMP_OID_QUERY);
-	
+
 	return ndisStatus;
 }
 
 //
 //  Note : This OID not define in NDIS_63 .
-//		 It may support in Vista or Win7 futher. 
+//		 It may support in Vista or Win7 futher.
 //		So it may remove to N6CSet_ , if N6 support !!
 //
 //
@@ -6474,7 +6474,7 @@ N63C_SET_OID_DOT11_OFFLOAD_NETWORK_LIST(
 	PDOT11_OFFLOAD_NETWORK			pONList;
 	u4Byte							ChannelIndex = 0;
 	NDIS_STATUS 						ndisStatus = NDIS_STATUS_SUCCESS;
-	
+
 	pONLInfo = (PDOT11_OFFLOAD_NETWORK_LIST_INFO) InformationBuffer;
 
 	RT_TRACE( (COMP_MLME|COMP_OID_SET), DBG_LOUD , (" ===>N63CSet_OID_DOT11_OFFLOAD_NETWORK_LIST\n") );
@@ -6511,7 +6511,7 @@ N63C_SET_OID_DOT11_OFFLOAD_NETWORK_LIST(
 		pNLOInfo->FastScanPeriod = 0;
 		pNLOInfo->SlowScanPeriod = 0;
 		pNdisCommon->ScanPeriod = 0;
-		
+
 		RT_TRACE( (COMP_MLME|COMP_OID_SET), DBG_LOUD , (" ===>pONLInfo->uNumOfEntries == 0 \n") );
 		return NDIS_STATUS_SUCCESS;
 	}
@@ -6545,11 +6545,11 @@ N63C_SET_OID_DOT11_OFFLOAD_NETWORK_LIST(
 
 
 	pONList = pONLInfo->offloadNetworkList;
-	
+
 	for( Index = 0 ; Index <  pONLInfo->uNumOfEntries ; Index++ )
 	{
-		// Copy SSID 
-		CopySsid( pNLOInfo->dDot11OffloadNetworkList[Index].ssidbuf , 
+		// Copy SSID
+		CopySsid( pNLOInfo->dDot11OffloadNetworkList[Index].ssidbuf ,
 				 pNLOInfo->dDot11OffloadNetworkList[Index].ssidlen,
 				 pONList[Index].Ssid.ucSSID ,
 				 pONList[Index].Ssid.uSSIDLength);
@@ -6571,15 +6571,15 @@ N63C_SET_OID_DOT11_OFFLOAD_NETWORK_LIST(
 				pNLOInfo->dDot11OffloadNetworkList[Index].bPrivacy 	= TRUE;
 				pNLOInfo->dDot11OffloadNetworkList[Index].chiper	 	= 0x0;
 				break;
-			case DOT11_CIPHER_ALGO_TKIP :  
-				if(	pONList[Index].AuthAlgo == DOT11_AUTH_ALGO_WPA || 
+			case DOT11_CIPHER_ALGO_TKIP :
+				if(	pONList[Index].AuthAlgo == DOT11_AUTH_ALGO_WPA ||
 				     	pONList[Index].AuthAlgo == DOT11_AUTH_ALGO_WPA_PSK )
 				{
 					pNLOInfo->dDot11OffloadNetworkList[Index].SecLvl    	= RT_SEC_LVL_WPA;
 					pNLOInfo->dDot11OffloadNetworkList[Index].bPrivacy 	= TRUE;
 					pNLOInfo->dDot11OffloadNetworkList[Index].chiper	 	= WPA_TKIP;
 				}
-				else if( pONList[Index].AuthAlgo == DOT11_AUTH_ALGO_RSNA || 
+				else if( pONList[Index].AuthAlgo == DOT11_AUTH_ALGO_RSNA ||
 				     	    pONList[Index].AuthAlgo == DOT11_AUTH_ALGO_RSNA_PSK )
 				{
 					pNLOInfo->dDot11OffloadNetworkList[Index].SecLvl    	= RT_SEC_LVL_WPA2;
@@ -6594,14 +6594,14 @@ N63C_SET_OID_DOT11_OFFLOAD_NETWORK_LIST(
 				}
 				break;
 			case DOT11_CIPHER_ALGO_CCMP :
-				if(	pONList[Index].AuthAlgo == DOT11_AUTH_ALGO_WPA || 
+				if(	pONList[Index].AuthAlgo == DOT11_AUTH_ALGO_WPA ||
 				     	pONList[Index].AuthAlgo == DOT11_AUTH_ALGO_WPA_PSK )
 				{
 					pNLOInfo->dDot11OffloadNetworkList[Index].SecLvl    	= RT_SEC_LVL_WPA;
 					pNLOInfo->dDot11OffloadNetworkList[Index].bPrivacy 	= TRUE;
 					pNLOInfo->dDot11OffloadNetworkList[Index].chiper	 	= WPA_AES;
 				}
-				else if( pONList[Index].AuthAlgo == DOT11_AUTH_ALGO_RSNA || 
+				else if( pONList[Index].AuthAlgo == DOT11_AUTH_ALGO_RSNA ||
 				     	    pONList[Index].AuthAlgo == DOT11_AUTH_ALGO_RSNA_PSK )
 				{
 					pNLOInfo->dDot11OffloadNetworkList[Index].SecLvl    	= RT_SEC_LVL_WPA2;
@@ -6628,18 +6628,18 @@ N63C_SET_OID_DOT11_OFFLOAD_NETWORK_LIST(
 		RT_TRACE(COMP_MLME , DBG_LOUD , (" bPrivacy : %d\n", pNLOInfo->dDot11OffloadNetworkList[Index].bPrivacy) );
 		RT_TRACE(COMP_MLME , DBG_LOUD , (" chiper : %d\n", pNLOInfo->dDot11OffloadNetworkList[Index].chiper) );
 
-		// Save channel info 
+		// Save channel info
 		// DOT11_MAX_CHANNEL_HINTS 4
 		for(  ChannelIndex = 0 ;  ChannelIndex < 4 ;  ChannelIndex++ )
 		{
 			pNLOInfo->dDot11OffloadNetworkList[Index].channelNumberHit[ChannelIndex] = pONList[Index].Dot11ChannelHints[ChannelIndex].uChannelNumber;
 		}
-		
-		// Show Entry information !! 
+
+		// Show Entry information !!
 		RT_TRACE( (COMP_MLME|COMP_OID_SET), DBG_LOUD , (" ===> Show NLO info Index (%x):\n",Index) );
 		RT_PRINT_STR((COMP_MLME|COMP_OID_SET), DBG_LOUD, (" SSID :\n"), pNLOInfo->dDot11OffloadNetworkList[Index].ssidbuf, pNLOInfo->dDot11OffloadNetworkList[Index].ssidlen);
 		RT_TRACE( (COMP_MLME|COMP_OID_SET) , DBG_LOUD , ( "chiper : %x  \n", pNLOInfo->dDot11OffloadNetworkList[Index].chiper) )
-		
+
 	}
 
 	return ndisStatus;
@@ -6652,7 +6652,7 @@ N63C_OID_DOT11_OFFLOAD_NETWORK_LIST(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -6664,10 +6664,10 @@ N63C_OID_DOT11_OFFLOAD_NETWORK_LIST(
 		// Validate if the OID is issued in the correct state and mode
 		//ndisStatus = N63CValidateOIDCorrectness(pAdapter, NdisRequest);
 		//if(ndisStatus != NDIS_STATUS_SUCCESS) {
-		//	RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));			
+		//	RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 		//	break;
 		//}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -6675,7 +6675,7 @@ N63C_OID_DOT11_OFFLOAD_NETWORK_LIST(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_OFFLOAD_NETWORK_LIST(
@@ -6703,7 +6703,7 @@ N63C_OID_DOT11_OFFLOAD_NETWORK_LIST(
 	RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("ndisStatus: %d\n", ndisStatus));
 
 	FunctionOut(COMP_OID_SET | COMP_OID_QUERY);
-	
+
 	return ndisStatus;
 }
 
@@ -6718,12 +6718,12 @@ N63C_SET_OID_DOT11_POWER_MGMT_MODE_AUTO_ENABLED(
 )
 {
 	/*
-	#define DOT11_POWER_MGMT_AUTO_MODE_ENABLED_REVISION_1 
-	#define DOT11_SIZEOF_POWER_MGMT_AUTO_MODE_ENABLED_REVISION_1 
-	typedef struct _ DOT11_POWER_MGMT_MODE_AUTO_INFO { 
-	 		NDIS_OBJECT_HEADER Header; 
-			BOOLEAN bEnabled; 
-	} DOT11_POWER_MGMT_AUTO_MODE_ENABLED_INFO, * PDOT11_POWER_MGMT_AUTO_MODE_ENABLED_INFO; 
+	#define DOT11_POWER_MGMT_AUTO_MODE_ENABLED_REVISION_1
+	#define DOT11_SIZEOF_POWER_MGMT_AUTO_MODE_ENABLED_REVISION_1
+	typedef struct _ DOT11_POWER_MGMT_MODE_AUTO_INFO {
+	 		NDIS_OBJECT_HEADER Header;
+			BOOLEAN bEnabled;
+	} DOT11_POWER_MGMT_AUTO_MODE_ENABLED_INFO, * PDOT11_POWER_MGMT_AUTO_MODE_ENABLED_INFO;
 */
 	PDOT11_POWER_MGMT_AUTO_MODE_ENABLED_INFO	pPMGAuModInf;
 	PADAPTER 									pDefaultAdapter = GetDefaultAdapter(pTargetAdapter);
@@ -6734,9 +6734,9 @@ N63C_SET_OID_DOT11_POWER_MGMT_MODE_AUTO_ENABLED(
 	{
 		*BytesNeeded = DOT11_SIZEOF_POWER_MGMT_AUTO_MODE_ENABLE_INFO_REVISION_1;
 		return NDIS_STATUS_INVALID_LENGTH;
-		
+
 	}
-	
+
 	pPMGAuModInf = (PDOT11_POWER_MGMT_AUTO_MODE_ENABLED_INFO)InformationBuffer;
 
 
@@ -6754,7 +6754,7 @@ N63C_OID_DOT11_POWER_MGMT_MODE_AUTO_ENABLED(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -6766,10 +6766,10 @@ N63C_OID_DOT11_POWER_MGMT_MODE_AUTO_ENABLED(
 		// Validate if the OID is issued in the correct state and mode
 		//ndisStatus = N63CValidateOIDCorrectness(pAdapter, NdisRequest);
 		//if(ndisStatus != NDIS_STATUS_SUCCESS) {
-		//	RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));			
+		//	RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 		//	break;
 		//}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -6777,7 +6777,7 @@ N63C_OID_DOT11_POWER_MGMT_MODE_AUTO_ENABLED(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N63C_SET_OID_DOT11_POWER_MGMT_MODE_AUTO_ENABLED(
@@ -6805,7 +6805,7 @@ N63C_OID_DOT11_POWER_MGMT_MODE_AUTO_ENABLED(
 	RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("ndisStatus: %d\n", ndisStatus));
 
 	FunctionOut(COMP_OID_SET | COMP_OID_QUERY);
-	
+
 	return ndisStatus;
 }
 
@@ -6825,7 +6825,7 @@ N63C_QUERY_OID_DOT11_POWER_MGMT_MODE_STATUS(
 	PMGNT_INFO	pMgntInfo = &pTargetAdapter->MgntInfo;
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 
-				
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -6833,18 +6833,18 @@ N63C_QUERY_OID_DOT11_POWER_MGMT_MODE_STATUS(
 
 
 
-	// This has errors. Please contact CCW. 
+	// This has errors. Please contact CCW.
 	return NDIS_STATUS_FAILURE;
 
 
-		
+
 	if( !pMgntInfo->bInAutoPowerSavemode )
 	{
 		pDot11PMStaInfo->PowerSaveMode 	= dot11_power_mode_active;
 		pDot11PMStaInfo->uPowerSaveLevel 	= DOT11_POWER_SAVING_NO_POWER_SAVING;
 		pDot11PMStaInfo->Reason			= dot11_power_mode_reason_no_change;
 	}
-	else 
+	else
 	{
 		if(pMgntInfo->dot11PowerSaveMode == eActive)
 		//if( pPSC->PowerSaveLevel == POWER_SAVING_NO_POWER_SAVING)
@@ -6873,7 +6873,7 @@ N63C_QUERY_OID_DOT11_POWER_MGMT_MODE_STATUS(
 		//	pDot11PMStaInfo->uPowerSaveLevel 	= DOT11_POWER_SAVING_MAXIMUM_LEVEL;
 		//	pDot11PMStaInfo->Reason			= dot11_power_mode_reason_compliant_AP;
 		//}
-		else 
+		else
 		{
 			pDot11PMStaInfo->PowerSaveMode 	= dot11_power_mode_powersave;
 			pDot11PMStaInfo->uPowerSaveLevel 	= DOT11_POWER_SAVING_FAST_PSP;
@@ -6882,7 +6882,7 @@ N63C_QUERY_OID_DOT11_POWER_MGMT_MODE_STATUS(
 	}
 
 	RT_TRACE( COMP_TEST, DBG_LOUD , ("===>_DOT11_POWER_MGMT_MODE_STATUS  \n") );
-	
+
 	return ndisStatus;
 }
 
@@ -6894,7 +6894,7 @@ N63C_OID_DOT11_POWER_MGMT_MODE_STATUS(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -6906,10 +6906,10 @@ N63C_OID_DOT11_POWER_MGMT_MODE_STATUS(
 		// Validate if the OID is issued in the correct state and mode
 		//ndisStatus = N63CValidateOIDCorrectness(pAdapter, NdisRequest);
 		//if(ndisStatus != NDIS_STATUS_SUCCESS) {
-		//	RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));			
+		//	RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 		//	break;
 		//}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -6921,10 +6921,10 @@ N63C_OID_DOT11_POWER_MGMT_MODE_STATUS(
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
-						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded
 					);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
@@ -6945,7 +6945,7 @@ N63C_OID_DOT11_POWER_MGMT_MODE_STATUS(
 	RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("ndisStatus: %d\n", ndisStatus));
 
 	FunctionOut(COMP_OID_SET | COMP_OID_QUERY);
-	
+
 	return ndisStatus;
 }
 
@@ -6956,7 +6956,7 @@ N63C_OID_PACKET_COALESCING_FILTER_MATCH_COUNT(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -6965,7 +6965,7 @@ N63C_OID_PACKET_COALESCING_FILTER_MATCH_COUNT(
 
 	do
 	{
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -6977,10 +6977,10 @@ N63C_OID_PACKET_COALESCING_FILTER_MATCH_COUNT(
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
-						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded
 					);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
@@ -7001,7 +7001,7 @@ N63C_OID_PACKET_COALESCING_FILTER_MATCH_COUNT(
 	RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("ndisStatus: %d\n", ndisStatus));
 
 	FunctionOut(COMP_OID_SET | COMP_OID_QUERY);
-	
+
 	return ndisStatus;
-	
+
 }

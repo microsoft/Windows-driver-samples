@@ -47,7 +47,7 @@ p2p_channel_IntersectRegClass(
 		{
 			if(a->channel[ita] != b->channel[itb])
 				continue;
-			
+
 			res->channel[res->channels++] = a->channel[ita];
 			if(P2P_MAX_REG_CLASS_CHANNELS == res->channels)
 				return;
@@ -62,7 +62,7 @@ p2p_channel_Dump(
 {
 	u1Byte						itRegCls = 0;
 	u1Byte						itChnl = 0;
-	
+
 	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("# reg class: %u\n", channels->regClasses));
 
 	for(itRegCls = 0; itRegCls < channels->regClasses; itRegCls++)
@@ -99,7 +99,7 @@ p2p_Channel_Add(
 	for(itRegClass = 0; itRegClass < channels->regClasses; itRegClass++)
 	{
 		P2P_REG_CLASS			*pRegCls = &channels->regClass[itRegClass];
-		
+
 		if(regClass != pRegCls->regClass)
 			continue;
 
@@ -143,9 +143,9 @@ p2p_Channel_Intersect(
 {
 	u1Byte						itRegClsA = 0;
 	u1Byte						itRegClsB = 0;
-	
+
 	p2p_Channel_Reset(res);
-	
+
 	if(!a->regClasses || !b->regClasses)
 		return;
 
@@ -188,7 +188,7 @@ p2p_Channel_ChannelListAttrToChannels(
 {
 	const u1Byte				*pos = chnlListAttr;
 	const u1Byte				*end = chnlListAttr + chnlListAttrLen;
-	
+
 	if(!chnlListAttr)
 		return FALSE;
 
@@ -209,7 +209,7 @@ p2p_Channel_ChannelListAttrToChannels(
 		// number of channels
 		channels = pos[1];
 		pos++;
-		
+
 		if(sizeof(regClass->channel) < channels)
 			channels = sizeof(regClass->channel);
 

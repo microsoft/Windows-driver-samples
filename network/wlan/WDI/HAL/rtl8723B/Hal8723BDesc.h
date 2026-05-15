@@ -105,7 +105,7 @@
 
 
 // Dword 2
-#define SET_TX_DESC_PAID_8723B(__pTxDesc, __Value) SET_BITS_TO_LE_4BYTE(__pTxDesc+8, 0,  9, __Value) 
+#define SET_TX_DESC_PAID_8723B(__pTxDesc, __Value) SET_BITS_TO_LE_4BYTE(__pTxDesc+8, 0,  9, __Value)
 #define SET_TX_DESC_CCA_RTS_8723B(__pTxDesc, __Value) SET_BITS_TO_LE_4BYTE(__pTxDesc+8, 10, 2, __Value)
 #define SET_TX_DESC_AGG_ENABLE_8723B(__pTxDesc, __Value) 		SET_BITS_TO_LE_4BYTE(__pTxDesc+8, 12, 1, __Value)
 #define SET_TX_DESC_RDG_ENABLE_8723B(__pTxDesc, __Value) 		SET_BITS_TO_LE_4BYTE(__pTxDesc+8, 13, 1, __Value)
@@ -224,7 +224,7 @@ typedef struct _RX_DRIVER_INFO_8723B{
 	s1Byte			rxsnr[2];	// DW 3 byte 3 DW 4 byte 0
 
 	//DWORD 4
-	u1Byte			PCTS_MSK_RPT[2];	
+	u1Byte			PCTS_MSK_RPT[2];
 	u1Byte			pdsnr[2];	// DW 4 byte 3 DW 5 Byte 0
 
 	//DWORD 5
@@ -250,13 +250,13 @@ TxDescriptorChecksum_8723B(
 );
 
 
-u1Byte 
+u1Byte
 BWMapping_8723B(
-	IN	PADAPTER	Adapter,	
+	IN	PADAPTER	Adapter,
 	IN	PRT_TCB	pTcb
 );
 
-u1Byte 
+u1Byte
 SCMapping_8723B(
 	IN	PADAPTER	Adapter,
 	IN	PRT_TCB	pTcb
@@ -279,7 +279,7 @@ TranslateRxSignalStuff8723B(
 
 u4Byte
 RxCommandPacketHandle8723B(
-	IN	PADAPTER		Adapter, 
+	IN	PADAPTER		Adapter,
 	IN	PRT_RFD 		pRfd
 	);
 

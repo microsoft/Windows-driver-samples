@@ -16,7 +16,7 @@ MgntActQuery_802_11_BSSID(
 );
 
 
-// Returns the SSID with which the NIC is associated. 
+// Returns the SSID with which the NIC is associated.
 // The driver returns 0 SSIDLength if the NIC is not associated with any SSID.
 BOOLEAN
 MgntActQuery_802_11_SSID(
@@ -123,18 +123,18 @@ MgntActQuery_802_11_WIRELESS_MODE(
 
 BOOLEAN
 MgntActQuery_802_11_RETRY_LIMIT(
-	PADAPTER Adapter, 
-	pu2Byte ShortRetryLimit, 
+	PADAPTER Adapter,
+	pu2Byte ShortRetryLimit,
 	pu2Byte LongRetryLimit
 );
 
 
- 
+
 BOOLEAN
 MgntActQuery_MultiDomainImp(
 	IN	PADAPTER		Adapter
 );
- 
+
 BOOLEAN
 MgntActQuery_CfPollable(
 	IN	PADAPTER		Adapter

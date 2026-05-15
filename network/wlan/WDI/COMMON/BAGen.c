@@ -11,7 +11,7 @@ ActivateBAEntry(
 	u2Byte			Time
 	)
 {
-	RT_TRACE(COMP_HT, DBG_LOUD, ("pBA->bValid = TRUE\r\n"));	
+	RT_TRACE(COMP_HT, DBG_LOUD, ("pBA->bValid = TRUE\r\n"));
 	pBA->bValid = TRUE;
 	if(Time != 0)
 		PlatformSetTimer(Adapter, &pBA->Timer, Time);
@@ -114,10 +114,10 @@ ConstructADDBAReq(
 	*pLength = 0;
 
 	ConstructMaFrameHdr(
-					Adapter, 
-					Addr, 
-					ACT_CAT_BA, 
-					ACT_ADDBAREQ, 
+					Adapter,
+					Addr,
+					ACT_CAT_BA,
+					ACT_ADDBAREQ,
 					&osADDBAFrame	);
 
 	// Dialog Token
@@ -155,10 +155,10 @@ ConstructADDBARsp(
 	*pLength = 0;
 
 	ConstructMaFrameHdr(
-					Adapter, 
-					Addr, 
-					ACT_CAT_BA, 
-					ACT_ADDBARSP, 
+					Adapter,
+					Addr,
+					ACT_CAT_BA,
+					ACT_ADDBARSP,
 					&osADDBAFrame	);
 
 	// Dialog Token
@@ -201,10 +201,10 @@ ConstructDELBA(
 	*pLength = 0;
 
 	ConstructMaFrameHdr(
-					Adapter, 
-					Addr, 
-					ACT_CAT_BA, 
-					ACT_DELBA, 
+					Adapter,
+					Addr,
+					ACT_CAT_BA,
+					ACT_DELBA,
 					&osDELBAFrame	);
 
 	// DELBA Parameter Set
@@ -215,7 +215,7 @@ ConstructDELBA(
 	FillOctetString(tmp, &ReasonCode, 2);
 	PacketAppendData(&osDELBAFrame, tmp);
 
-	*pLength = osDELBAFrame.Length;	
+	*pLength = osDELBAFrame.Length;
 }
 
 VOID
@@ -245,7 +245,7 @@ SendADDBAReq(
 				MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 		}
 	}
-	
+
 	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 }
 
@@ -267,17 +267,17 @@ SendADDBARsp(
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 	{
 		ConstructADDBARsp(
-					Adapter, 
+					Adapter,
 					Addr,
 					pBA,
-					StatusCode, 
-					pBuf->Buffer.VirtualAddress, 
+					StatusCode,
+					pBuf->Buffer.VirtualAddress,
 					&pTcb->PacketLength	);
 
 		if(pTcb->PacketLength != 0)
 			MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
-	
+
 	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 }
 
@@ -300,19 +300,19 @@ SendDELBA(
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 	{
 		ConstructDELBA(
-				Adapter, 
+				Adapter,
 				Addr,
 				pBA,
-				TxRxSelect, 
-				ReasonCode, 
-				pBuf->Buffer.VirtualAddress, 
+				TxRxSelect,
+				ReasonCode,
+				pBuf->Buffer.VirtualAddress,
 				&pTcb->PacketLength	);
 
 		if(pTcb->PacketLength != 0)
 			MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
-	
-	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);	
+
+	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 }
 
 
@@ -347,23 +347,23 @@ OnADDBAReq(
 		StatusCode = ADDBA_STATUS_REFUSED;
 		goto OnADDBAReq_Fail;
 	}
-	
+
 	// Add by hpfan: reject addba when 4-way is not finished
-	if(pMgntInfo->bWiFiConfg && 
+	if(pMgntInfo->bWiFiConfg &&
 		pMgntInfo->SecurityInfo.SecLvl > RT_SEC_LVL_NONE && !SecIsTxKeyInstalled(Adapter, pMgntInfo->Bssid))
 	{
 		StatusCode = ADDBA_STATUS_REFUSED;
 		goto OnADDBAReq_Fail;
 	}
-	
+
 	//
 	// Search for related traffic stream.
 	// If there is no matched TS, reject the ADDBA request.
 	//
 	if(	!GetTs(
-			Adapter, 
-			(PTS_COMMON_INFO*)(&pTS), 
-			Addr, 
+			Adapter,
+			(PTS_COMMON_INFO*)(&pTS),
+			Addr,
 			GET_BA_FRAME_PARAM_SET_TID(mmpdu->Octet),
 			RX_DIR,
 			TRUE)	)
@@ -396,11 +396,11 @@ OnADDBAReq(
 	//
 	// Admit the ADDBA Request
 	//
-	DeActivateBAEntry(Adapter, pBA);	
+	DeActivateBAEntry(Adapter, pBA);
 	PlatformMoveMemory(&(pBA->DialogToken) , GET_BA_FRAME_DIALOG_TOKEN(mmpdu->Octet), 1);
 	PlatformMoveMemory(&(pBA->BaParamSet) , GET_BA_FRAME_PARAM_SET(mmpdu->Octet), 2);
-	PlatformMoveMemory(&(pBA->BaTimeoutValue), GET_BA_FRAME_TIMEOUT_VALUE(mmpdu->Octet), 2); 
-	PlatformMoveMemory(&(pBA->BaStartSeqCtrl), GET_BAREQ_FRAME_START_SQECTRL(mmpdu->Octet), 2); 
+	PlatformMoveMemory(&(pBA->BaTimeoutValue), GET_BA_FRAME_TIMEOUT_VALUE(mmpdu->Octet), 2);
+	PlatformMoveMemory(&(pBA->BaStartSeqCtrl), GET_BAREQ_FRAME_START_SQECTRL(mmpdu->Octet), 2);
 
 	{
 		SET_BA_PARAM_SET_FIELD_BUF_SIZE( &(pBA->BaParamSet), 64); // At least, forced by SPEC
@@ -418,7 +418,7 @@ OnADDBAReq_Fail:
 		BA_RECORD	BA;
 		PlatformMoveMemory(&(BA.BaParamSet), GET_BA_FRAME_PARAM_SET(mmpdu->Octet), 2);
 		PlatformMoveMemory(&(BA.BaTimeoutValue), GET_BA_FRAME_TIMEOUT_VALUE(mmpdu->Octet), 2);
-		PlatformMoveMemory(&(BA.DialogToken), GET_BA_FRAME_DIALOG_TOKEN(mmpdu->Octet), 1);		
+		PlatformMoveMemory(&(BA.DialogToken), GET_BA_FRAME_DIALOG_TOKEN(mmpdu->Octet), 1);
 		SET_BA_PARAM_SET_FIELD_BA_POLICY(&(BA.BaParamSet), BA_POLICY_IMMEDIATE);
 		SendADDBARsp(Adapter, Addr, &BA, StatusCode);
 		RT_TRACE(COMP_QOS, DBG_LOUD, ("OnADDBAReq(): OnADDBAReq_Fail\n"));
@@ -460,15 +460,15 @@ OnADDBARsp(
 		ReasonCode = DELBA_REASON_UNKNOWN_BA;
 		goto OnADDBARsp_Reject;
 	}
-	
+
 	//
 	// Search for related TS.
 	// If there is no TS found, we wil reject ADDBA Rsp by sending DELBA frame.
 	//
 	if (!GetTs(
-			Adapter, 
-			(PTS_COMMON_INFO*)(&pTS), 
-			Addr, 
+			Adapter,
+			(PTS_COMMON_INFO*)(&pTS),
+			Addr,
 			GET_BA_FRAME_PARAM_SET_TID(mmpdu->Octet),
 			TX_DIR,
 			FALSE)	)
@@ -515,7 +515,7 @@ OnADDBARsp(
 		{
 			// Since this is a kind of ADDBA failed, we delay next ADDBA process.
 			pTS->bAddBaReqDelayed = TRUE;
-		
+
 			DeActivateBAEntry(Adapter, pAdmittedBA);
 			ReasonCode = DELBA_REASON_END_BA;
 			goto OnADDBARsp_Reject;
@@ -529,7 +529,7 @@ OnADDBARsp(
 		PlatformMoveMemory(&(pAdmittedBA->BaTimeoutValue), GET_BA_FRAME_TIMEOUT_VALUE(mmpdu->Octet), 2);
 		PlatformMoveMemory(&(pAdmittedBA->BaStartSeqCtrl), &(pPendingBA->BaStartSeqCtrl), 2);
 		PlatformMoveMemory(&(pAdmittedBA->BaParamSet) , GET_BA_FRAME_PARAM_SET(mmpdu->Octet), 2);
-		pAdmittedBA->BufferSize = GET_BA_FRAME_PARAM_SET_BUF_SIZE(mmpdu->Octet);		
+		pAdmittedBA->BufferSize = GET_BA_FRAME_PARAM_SET_BUF_SIZE(mmpdu->Octet);
 
 		if(0 == pAdmittedBA->BufferSize)
 		{
@@ -551,7 +551,7 @@ OnADDBARsp(
 	{
 		TDLS_OnAddBaRsp(Adapter, mmpdu);
 	}
-	
+
 	return RT_STATUS_SUCCESS;
 
 OnADDBARsp_Reject:
@@ -593,18 +593,18 @@ OnDELBA(
 		PRX_TS_RECORD 	pRxTs;
 
 		if( !GetTs(
-				Adapter, 
-				(PTS_COMMON_INFO*)&pRxTs, 
-				Addr, 
+				Adapter,
+				(PTS_COMMON_INFO*)&pRxTs,
+				Addr,
 				GET_DELBA_FRAME_PARAM_SET_TID(mmpdu->Octet),
 				RX_DIR,
 				FALSE)	)
 		{
 			return RT_STATUS_FAILURE;
 		}
-		
+
 		//BA Process Error when link with Netgear3500 v1
-		//Fix do S3/S4 long run error 
+		//Fix do S3/S4 long run error
 		//by sherry 20101124
 		if(pMgntInfo->IOTPeer == HT_IOT_PEER_MARVELL)
 		{
@@ -619,16 +619,16 @@ OnDELBA(
 		PTX_TS_RECORD	pTxTs;
 
 		if(!GetTs(
-			Adapter, 
-			(PTS_COMMON_INFO*)&pTxTs, 
-			Addr, 
+			Adapter,
+			(PTS_COMMON_INFO*)&pTxTs,
+			Addr,
 			GET_DELBA_FRAME_PARAM_SET_TID(mmpdu->Octet),
 			TX_DIR,
 			FALSE)	)
 		{
 			return RT_STATUS_FAILURE;
 		}
-		
+
 		pTxTs->bUsingBa = FALSE;
 		pTxTs->bAddBaReqInProgress = FALSE;
 		pTxTs->bAddBaReqDelayed = FALSE;
@@ -654,13 +654,13 @@ TsInitAddBA(
 	PMGNT_INFO			pMgntInfo = &(Adapter->MgntInfo);
 	PRT_HIGH_THROUGHPUT	pHTInfo = GET_HT_INFO(pMgntInfo);
 	RT_TRACE(COMP_QOS, DBG_LOUD, ("=====>TsInitAddBA()\n"));
-	
+
 	if(pBA->bValid==TRUE && bOverwritePending==FALSE)
 		return;
 
 	// Set parameters to "Pending" variable set
 	DeActivateBAEntry(Adapter, pBA);
-	
+
 	pBA->DialogToken++;						// DialogToken: Only keep the latest dialog token
 	SET_BA_PARAM_SET_FIELD_AMSDU_SUPPORT(&(pBA->BaParamSet), 0);	// Do not support A-MSDU with A-MPDU now!!
 	SET_BA_PARAM_SET_FIELD_BA_POLICY(&(pBA->BaParamSet), Policy);	// Policy: Delayed or Immediate
@@ -678,7 +678,7 @@ TsInitAddBA(
 	}
 
 	pBA->BaTimeoutValue = 0;					// Timeout value: Set 0 to disable Timer
-	SET_BA_START_SQECTRL_FIELD_SEQ_NUM(&(pBA->BaStartSeqCtrl), ((pTS->TxCurSeq) % 4096)); 	
+	SET_BA_START_SQECTRL_FIELD_SEQ_NUM(&(pBA->BaStartSeqCtrl), ((pTS->TxCurSeq) % 4096));
 
 	ActivateBAEntry(Adapter, pBA, BA_SETUP_TIMEOUT);
 
@@ -687,7 +687,7 @@ TsInitAddBA(
 	if(!ACTING_AS_AP(Adapter))
 	{
 		// Negoitate with current SeqNum, but active this BA after 3 packets Txed
-		SET_BA_START_SQECTRL_FIELD_SEQ_NUM(&(pBA->BaStartSeqCtrl), ((pTS->TxCurSeq + 3) % 4096)); 	
+		SET_BA_START_SQECTRL_FIELD_SEQ_NUM(&(pBA->BaStartSeqCtrl), ((pTS->TxCurSeq + 3) % 4096));
 	}
 }
 
@@ -699,17 +699,17 @@ TsInitDelBA(
 	)
 {
 	RT_TRACE(COMP_QOS, DBG_LOUD, ("=====>TsInitDelBA()\n"));
-	
+
 	if(TxRxSelect == TX_DIR)
 	{
 		PTX_TS_RECORD	pTxTs = (PTX_TS_RECORD)pTsCommonInfo;
 
 		if(TxTsDeleteBA(Adapter, pTxTs))
 			SendDELBA(
-				Adapter, 
-				pTsCommonInfo->Addr, 
-				(pTxTs->TxAdmittedBARecord.bValid)?(&pTxTs->TxAdmittedBARecord):(&pTxTs->TxPendingBARecord), 
-				TxRxSelect, 
+				Adapter,
+				pTsCommonInfo->Addr,
+				(pTxTs->TxAdmittedBARecord.bValid)?(&pTxTs->TxAdmittedBARecord):(&pTxTs->TxPendingBARecord),
+				TxRxSelect,
 				DELBA_REASON_END_BA	);
 	}
 	else if(TxRxSelect == RX_DIR)
@@ -717,10 +717,10 @@ TsInitDelBA(
 		PRX_TS_RECORD	pRxTs = (PRX_TS_RECORD)pTsCommonInfo;
 		if(RxTsDeleteBA(Adapter, pRxTs))
 			SendDELBA(
-				Adapter, 
-				pTsCommonInfo->Addr, 
-				&pRxTs->RxAdmittedBARecord, 
-				TxRxSelect, 
+				Adapter,
+				pTsCommonInfo->Addr,
+				&pRxTs->RxAdmittedBARecord,
+				TxRxSelect,
 				DELBA_REASON_END_BA	);
 	}
 }
@@ -749,10 +749,10 @@ TxBaInactTimeout(
 	RT_TRACE(COMP_QOS, DBG_LOUD, ("=====>TxBaInactTimeout()\n"));
 	TxTsDeleteBA(Adapter, pTxTs);
 	SendDELBA(
-		Adapter, 
-		pTxTs->TsCommonInfo.Addr, 
+		Adapter,
+		pTxTs->TsCommonInfo.Addr,
 		&pTxTs->TxAdmittedBARecord,
-		TX_DIR, 
+		TX_DIR,
 		DELBA_REASON_TIMEOUT	);
 }
 
@@ -763,17 +763,17 @@ RxBaInactTimeout(
 {
 	PADAPTER	Adapter = (PADAPTER)pTimer->Adapter;
 	PRX_TS_RECORD	pRxTs = (PRX_TS_RECORD)pTimer->Context;
-	
+
 	RT_TRACE(COMP_QOS, DBG_LOUD, ("=====>RxBaInactTimeout()\n"));
 	if(ACTING_AS_AP(Adapter))
 		return;
-		
+
 	RxTsDeleteBA(Adapter, pRxTs);
 	SendDELBA(
-		Adapter, 
-		pRxTs->TsCommonInfo.Addr, 
+		Adapter,
+		pRxTs->TsCommonInfo.Addr,
 		&pRxTs->RxAdmittedBARecord,
-		RX_DIR, 
+		RX_DIR,
 		DELBA_REASON_TIMEOUT	);
 }
 
@@ -784,7 +784,7 @@ RxBACheck(
 	POCTET_STRING	pFrame
 	)
 {
-	
+
 }
 
 //
@@ -842,7 +842,7 @@ OnBAReq(
 		{
 			// Basic BlockAckReq
 			BARType = BAR_TYPE_BASIC_BAR;
-		}		
+		}
 		else if(MultiTID == 0 && CompressedBitmap == 1 && GCR == 0)
 		{
 			// Compressed BlockAckReq
@@ -867,7 +867,7 @@ OnBAReq(
 		{
 			// Reserved
 			RT_TRACE(COMP_QOS, DBG_LOUD, ("OnBAReq(): BAR type is reserved.\n"));
-			
+
 		}
 	}
 	else
@@ -881,9 +881,9 @@ OnBAReq(
 	// Search for related traffic stream.
 	//
 	if(!GetTs(
-			Adapter, 
-			(PTS_COMMON_INFO*)(&pTS), 
-			Addr, 
+			Adapter,
+			(PTS_COMMON_INFO*)(&pTS),
+			Addr,
 			TIDInfo,
 			RX_DIR,
 			TRUE))
@@ -897,7 +897,7 @@ OnBAReq(
 		PRT_LIST_ENTRY	pList = &pTS->RxPendingPktList;
 
 		// Get BAR Info
-		pBARFrame += 2;		
+		pBARFrame += 2;
 		StartSeqNum = GET_BAR_PARAM_INFO_FIELD_STARTING_SEQ_NUM(pBARFrame);
 
 		// Check the last received sequence number
@@ -917,7 +917,7 @@ OnBAReq(
 			//
 			// Indicate packets queued in driver for RxReorder and prepare to receive packet from new
 			// new sequence start!!
-			//			
+			//
 			if(pTS->RxIndicateState==RXTS_INDICATE_BATCH)
 				IndicateRxReorderList(Adapter, pTS, FALSE);
 			else if(pTS->RxIndicateState==RXTS_INDICATE_REORDER)
@@ -929,7 +929,7 @@ OnBAReq(
 				RT_TRACE(COMP_QOS, DBG_LOUD, ("OnBAReq(): Update Rx indcate starting sequence (%#X)!!\n", StartSeqNum));
 			}
 		}
-		//RT_TRACE(COMP_QOS, DBG_LOUD, ("OnBAReq(): BARAckPolicy=%d, MultiTID=%d, CompressedBitmap=%#X, GCR=%d, TIDInfo=%d, StartSeqNum=%#X\n", 
+		//RT_TRACE(COMP_QOS, DBG_LOUD, ("OnBAReq(): BARAckPolicy=%d, MultiTID=%d, CompressedBitmap=%#X, GCR=%d, TIDInfo=%d, StartSeqNum=%#X\n",
 		//			BARAckPolicy, MultiTID, CompressedBitmap, GCR, TIDInfo, StartSeqNum));
 	}
 	else if(BARType == BAR_TYPE_MULTI_TID_BAR)

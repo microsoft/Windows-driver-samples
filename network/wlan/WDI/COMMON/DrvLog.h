@@ -32,7 +32,7 @@ typedef struct _DRV_LOG_DATA_T
 	unsigned int	Id; // Key to associated with DRV_LOG_ATTRIBUTE_T.
 	unsigned int	TimeStampLow;
 	unsigned int	TimeStampHigh;
-	unsigned int	BufferLenUsed; 
+	unsigned int	BufferLenUsed;
 	unsigned char	Buffer[1];
 }DRV_LOG_DATA_T, *PDRV_LOG_DATA_T;
 

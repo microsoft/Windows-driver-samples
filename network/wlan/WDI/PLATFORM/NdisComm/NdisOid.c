@@ -176,7 +176,7 @@ OIDS_RTKWriteReg(
 	if(InformationBufferLength < sizeof(ULONG)*3)
 	{
 		Status = NDIS_STATUS_INVALID_LENGTH;
-		*BytesNeeded = sizeof(ULONG)*3;				
+		*BytesNeeded = sizeof(ULONG)*3;
 		return Status;
 	}
 	// Get offset, data width, and value to write.
@@ -212,7 +212,8 @@ OIDS_RTKWriteReg(
 		break;
 	case 4:
 		if( IS_BB_REG_OFFSET_92S(ulRegOffset) )
-			PHY_SetBBReg(Adapter, ulRegOffset, bMaskDWord, ulRegValue);
+
+			PHY_SetBBReg(Adapter, ulRegOffset, bMaskDWord, ulRegValue);
 		else
 			PlatformEFIOWrite4Byte(Adapter, ulRegOffset, (u4Byte)(ulRegValue));
 		break;
@@ -242,7 +243,7 @@ OIDS_RTKWriteRegSIC(
 	if(InformationBufferLength < sizeof(ULONG)*3)
 	{
 		Status = NDIS_STATUS_INVALID_LENGTH;
-		*BytesNeeded = sizeof(ULONG)*3;				
+		*BytesNeeded = sizeof(ULONG)*3;
 		return Status;
 	}
 	// Get offset, data width, and value to write.
@@ -271,7 +272,8 @@ OIDS_RTKWriteRegSIC(
 		}
 		break;
 	case 4:
-		SIC_SetBBReg(Adapter, ulRegOffset, bMaskDWord, ulRegValue);
+
+		SIC_SetBBReg(Adapter, ulRegOffset, bMaskDWord, ulRegValue);
 		break;
 	default:
 		Status = NDIS_STATUS_INVALID_LENGTH;
@@ -288,7 +290,7 @@ OIDS_RTKDbgControl(
 	IN	PVOID		InformationBuffer,
 	IN	ULONG		InformationBufferLength,
 	OUT	PULONG		BytesRead,
-	OUT	PULONG		BytesNeeded	
+	OUT	PULONG		BytesNeeded
 	)
 {
 	NDIS_STATUS			Status=NDIS_STATUS_SUCCESS;
@@ -296,13 +298,13 @@ OIDS_RTKDbgControl(
 
 	pRTKDbg = (PRTK_DBG_CTRL_OIDS)InformationBuffer;
 
-	RT_DISP(FDBG_CTRL, DBG_CTRL_TRACE, ("[RTKDBG], Type=0x%x, Len=0x%x(%d)\n", 
+	RT_DISP(FDBG_CTRL, DBG_CTRL_TRACE, ("[RTKDBG], Type=0x%x, Len=0x%x(%d)\n",
 		pRTKDbg->ctrlType, pRTKDbg->ctrlDataLen, pRTKDbg->ctrlDataLen));
 
 	if(oids_RTKDbgInvalidLength(InformationBufferLength, pRTKDbg, BytesNeeded))
 	{
 		RT_DISP(FDBG_CTRL, DBG_CTRL_TRACE, ("[RTKDBG], Invalid Length, return!!\n"));
-		Status = NDIS_STATUS_INVALID_LENGTH;				
+		Status = NDIS_STATUS_INVALID_LENGTH;
 		return Status;
 	}
 	else

@@ -59,21 +59,21 @@ MgntActSet_EnterTurboMode(
 	IN	BOOLEAN		bEnterTurboMode
 	)
 {
-	
-	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);	
-	PRT_TURBO_CA	pTurboCa = &(pMgntInfo->TurboChannelAccess);	
-	BOOLEAN			bEnterTCA;	
+
+	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);
+	PRT_TURBO_CA	pTurboCa = &(pMgntInfo->TurboChannelAccess);
+	BOOLEAN			bEnterTCA;
 
 
-	pTurboCa->bEnabled = bEnterTCA = bEnterTurboMode; //Modefied by Roger, 2006.12.15.	
+	pTurboCa->bEnabled = bEnterTCA = bEnterTurboMode; //Modefied by Roger, 2006.12.15.
 
 	if( bEnterTurboMode )
 	{ // Enter turbo mode
-		Adapter->HalFunc.SetHwRegHandler( Adapter, HW_VAR_TURBO_MODE, (UCHAR*)&bEnterTCA );		
+		Adapter->HalFunc.SetHwRegHandler( Adapter, HW_VAR_TURBO_MODE, (UCHAR*)&bEnterTCA );
 	}
-	else	
+	else
 	{ // Resume
-		Adapter->HalFunc.SetHwRegHandler( Adapter, HW_VAR_TURBO_MODE, (UCHAR*)&bEnterTCA );			
+		Adapter->HalFunc.SetHwRegHandler( Adapter, HW_VAR_TURBO_MODE, (UCHAR*)&bEnterTCA );
 	}
 
 
@@ -148,14 +148,14 @@ MgntActSet_Locked_STA_Address(
 		for( idx=0; idx<ASSOCIATE_ENTRY_NUM; idx++ )
 		{
 			PRT_WLAN_STA	pSta = &(pMgntInfo->AsocEntry[idx]);
-			
+
 			if( pSta->bUsed && pSta->bAssociated && !pSta->bLocked )
 			{
 				AP_DisassociateStation( Adapter, pSta, inactivity );
 			}
 		}
 	}
-	
+
 	RT_TRACE( COMP_AP, DBG_LOUD, ("MgntActSet_Locked_STA_Address() <====\n") );
 	return TRUE;
 }
@@ -224,7 +224,7 @@ MgntActSet_Accepted_STA_Address(
 		for( idx=0; idx<ASSOCIATE_ENTRY_NUM; idx++ )
 		{
 			PRT_WLAN_STA	pSta = &(pMgntInfo->AsocEntry[idx]);
-			
+
 			if( pSta->bUsed && pSta->bAssociated && !pSta->bLocked )
 			{
 				AP_DisassociateStation( Adapter, pSta, inactivity );
@@ -236,14 +236,14 @@ MgntActSet_Accepted_STA_Address(
 		for( idx=0; idx<ASSOCIATE_ENTRY_NUM; idx++ )
 		{
 			PRT_WLAN_STA	pSta = &(pMgntInfo->AsocEntry[idx]);
-			
+
 			if( pSta->bUsed && pSta->bAssociated)
 			{
 				AP_DisassociateStation( Adapter, pSta, inactivity );
 			}
 		}
 	}
-	
+
 	RT_TRACE( COMP_AP, DBG_LOUD, ("MgntActSet_Accepted_STA_Address() <====\n") );
 	return TRUE;
 }
@@ -310,14 +310,14 @@ MgntActSet_Rejected_STA_Address(
 		for( idx=0; idx<ASSOCIATE_ENTRY_NUM; idx++ )
 		{
 			PRT_WLAN_STA	pSta = &(pMgntInfo->AsocEntry[idx]);
-			
+
 			if( pSta->bUsed && pSta->bAssociated && pSta->bLocked )
 			{
 				AP_DisassociateStation( Adapter, pSta, inactivity );
 			}
 		}
 	}
-	
+
 	RT_TRACE( COMP_AP, DBG_LOUD, ("MgntActSet_Rejected_STA_Address() <====\n") );
 	return TRUE;
 }
@@ -357,7 +357,7 @@ MgntActSet_802_11_BSSID(
 	{
 		CopyMem( pMgntInfo->Bssid, bssidbuf, 6 );
 	}
-	
+
 	// Prefast warning C6011: Dereferencing NULL pointer 'bssidbuf'.
 	if (bssidbuf != NULL)
 	{
@@ -380,7 +380,7 @@ MgntActSet_802_11_SSID(
 	BOOLEAN			JoinAfterSetSSID
 	)
 {
-	PMGNT_INFO			pMgntInfo = &Adapter->MgntInfo;	
+	PMGNT_INFO			pMgntInfo = &Adapter->MgntInfo;
 	PRT_WLAN_BSS		pRtBss;
 	BOOLEAN 			bTheSameSSID = FALSE;
 	RT_JOIN_ACTION		join_action;
@@ -389,7 +389,7 @@ MgntActSet_802_11_SSID(
 
 	RT_PRINT_STR(COMP_MLME, DBG_LOUD, "MgntActSet_802_11_SSID()====> SSID ", ssidbuf, ssidlen);
 	//
-	// For XP DTM 1.0C association_cmn T1017, we have to clear reject list when 
+	// For XP DTM 1.0C association_cmn T1017, we have to clear reject list when
 	// upper layer try to link with new profile. 070912, by rcnjko.
 	//
 	MgntClearRejectedAsocAP(Adapter);
@@ -402,7 +402,7 @@ MgntActSet_802_11_SSID(
 	if(ACTING_AS_AP(Adapter))
 	{
 		OCTET_STRING	SsidToCheck;
-		
+
 		FillOctetString( SsidToCheck, ssidbuf, ssidlen );
 
 		//
@@ -414,9 +414,9 @@ MgntActSet_802_11_SSID(
 			RT_TRACE( COMP_MLME, DBG_LOUD, ("MgntActSet_802_11_SSID(): mActingAsAp, Dummy SSID! Not to set it!\n") );
 			return FALSE;
 		}
-	
+
 		CopySsid(pMgntInfo->Ssid.Octet, pMgntInfo->Ssid.Length, ssidbuf, ssidlen);
-		
+
 		if(pMgntInfo->bAutoSelChnl)
 		{
 			{
@@ -444,7 +444,7 @@ MgntActSet_802_11_SSID(
 		}
 		else
 		{
-			AP_Reset(Adapter);	
+			AP_Reset(Adapter);
 		}
 		return TRUE;
 	}
@@ -476,7 +476,7 @@ MgntActSet_802_11_SSID(
 					RT_TRACE_F(COMP_MLME, DBG_LOUD, ("theSameSSID bIbssStarter TRUE bMediaConnect FALSE!\n"));
 					return TRUE;
 				}
-				
+
 				// If SSID is the same, update security status.
 				if( pMgntInfo->bMlmeStartReqRsn == MLMESTARTREQ_NONE )
 				{
@@ -503,7 +503,7 @@ MgntActSet_802_11_SSID(
 			{
 				// 2004/03/09 For NDTest -> Indicating connect while connect to the same AP.
 				MgntIndicateMediaStatus( Adapter, RT_MEDIA_CONNECT, FORCE_INDICATE );
-		
+
 				// If SSID is the same, update security status.
 				if( pMgntInfo->bMlmeStartReqRsn == MLMESTARTREQ_NONE )
 				{
@@ -521,7 +521,7 @@ MgntActSet_802_11_SSID(
 
 	// Set RegSSID, ssid2match.
 	CopySsid(pMgntInfo->Ssid.Octet, pMgntInfo->Ssid.Length, ssidbuf, ssidlen);
-	
+
 	//
 	// Do not scan but reset all mgnt variables when the OS wants to reset. By Bruce, 2009-04-10.
 	//
@@ -531,9 +531,9 @@ MgntActSet_802_11_SSID(
 		RT_TRACE(COMP_MLME, DBG_LOUD, ("MgntActSet_802_11_SSID(): Dummy SSID! Return!!!!\n"));
 		return FALSE;
 	}
-	
+
 	if( pMgntInfo->bScanInProgress || (pMgntInfo->bDualModeScanStep!=0) )
-	{	
+	{
 		pMgntInfo->bScanOnly = FALSE;
 
 		RT_TRACE(COMP_MLME, DBG_LOUD, ("MgntActSet_802_11_SSID():pMgntInfo->bScanInProgress=true Return!!!!\n"));
@@ -549,7 +549,7 @@ MgntActSet_802_11_SSID(
 	}
 
 	MgntResetJoinCounter(pMgntInfo);
-	
+
 	//2004/08/23, kcwu, set the Privacy bit on in Capability field
 	if(pMgntInfo->SecurityInfo.PairwiseEncAlgorithm != RT_ENC_ALG_NO_CIPHER)
 		pMgntInfo->mCap |= cPrivacy;
@@ -564,8 +564,8 @@ MgntActSet_802_11_SSID(
 
 	CurrTime = PlatformGetCurrentTime(); // In micro-second.
 	DiffTime = CurrTime - Adapter->LastScanCompleteTime; // In micro-second.
-	
-	if (DiffTime >= 10000000) //it's over 10 sec after last scan complete 
+
+	if (DiffTime >= 10000000) //it's over 10 sec after last scan complete
 	{
 		if((Adapter->bInHctTest || pMgntInfo->IsAMDIOIC) && pMgntInfo->RoamingType == RT_ROAMING_BY_SLEEP)
 		{
@@ -573,10 +573,10 @@ MgntActSet_802_11_SSID(
 			//
 			// This is a very dirty work around for Win7 NDISTest performance_ext.
 			// It requires that the period from system transit to D0 to the time we
-			// associate with the AP to be less than 1.1 sec. Since LastScanCompleteTime 
+			// associate with the AP to be less than 1.1 sec. Since LastScanCompleteTime
 			// is greater than 10 sec., we will have to do a scan before associate with the AP
 			// in the original design. The scan takes too much time (around 1.7 sec)
-			// to associate with the AP (threshold = 1.1 sec). We ignore checking of 
+			// to associate with the AP (threshold = 1.1 sec). We ignore checking of
 			// LastScanCompleteTime to avoid scan and time is saved.
 			// If the original AP disappears then join timeout occurs.
 			// 2008.08.28, haich.
@@ -585,7 +585,7 @@ MgntActSet_802_11_SSID(
 			join_action = SelectNetworkBySSID( Adapter, &pMgntInfo->Ssid, FALSE, pRtBss );
 		}
 		else
-		{		
+		{
 			bNeedChkJoinAction = FALSE;
 			Adapter->HalFunc.GetHwRegHandler(Adapter, HW_VAR_CHK_JOINACTION, (pu1Byte)(&bNeedChkJoinAction));
 			if(bNeedChkJoinAction)
@@ -609,7 +609,7 @@ MgntActSet_802_11_SSID(
 		JoinRequest( Adapter, join_action, pRtBss );
 	}
 	else
-	{	
+	{
 
 		u1Byte			ssid2scanbuf[33];
 		OCTET_STRING	ssid2scan;
@@ -619,7 +619,7 @@ MgntActSet_802_11_SSID(
 
 		FillOctetString(ssid2scan, ssid2scanbuf, 0);
 		CopySsid(ssid2scan.Octet, ssid2scan.Length, ssidbuf, ssidlen);
-		
+
 		FillOctetString(SuppRate, SuppRatebuf, 0);
 		CopyMemOS( &SuppRate, pMgntInfo->Regdot11OperationalRateSet, pMgntInfo->Regdot11OperationalRateSet.Length);
 
@@ -649,7 +649,7 @@ MgntActSet_802_11_SSID(
 	}
 	PlatformFreeMemory(pRtBss, sizeof(RT_WLAN_BSS));
 
-	pMgntInfo->bMlmeStartReqRsn = MLMESTARTREQ_NONE;	
+	pMgntInfo->bMlmeStartReqRsn = MLMESTARTREQ_NONE;
 	return TRUE;
 }
 
@@ -689,12 +689,12 @@ MgntActSet_802_11_RSSI_TRIGGER(
 
 // Sets mode to Infrastructure or IBSS, or automatic switch between the two.
 // This also resets the network association algorithm.
-// When this OID is called to set the mode, 
+// When this OID is called to set the mode,
 //     all keys set through OID_802_11_ADD_WEP and OID_802_11_ADD_KEY should be deleted.
 // <Bruce_Note>
-//	Refering to the DDK 3790, " If the device is associated and a set of this OID changes the driver's network mode, 
+//	Refering to the DDK 3790, " If the device is associated and a set of this OID changes the driver's network mode,
 //	the driver must disassociate and make a media disconnect indication."
-//	However, whenever the WZC changes the security setting of the same profile and set infrastructure mode as the previous, 
+//	However, whenever the WZC changes the security setting of the same profile and set infrastructure mode as the previous,
 //	the NIC never becomes disconnected. Actually we just reassociate and wait for the security handshake from
 //	WZC supplicant, but the supplicant cannot determine which the settings between the profile and driver shall be used,
 //	because we never indicate disconnected status.
@@ -708,8 +708,8 @@ MgntActSet_802_11_INFRASTRUCTURE_MODE(
 	RT_JOIN_NETWORKTYPE networktype
 )
 {
-	PMGNT_INFO	pMgntInfo=&Adapter->MgntInfo;	
-	
+	PMGNT_INFO	pMgntInfo=&Adapter->MgntInfo;
+
 
 	if( Adapter->bHWInitReady == FALSE )
 		return FALSE;
@@ -717,14 +717,14 @@ MgntActSet_802_11_INFRASTRUCTURE_MODE(
 	if(RT_DRIVER_STOP(Adapter))
 	{
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("Driver is going to stop \n"));
-		return FALSE;		
+		return FALSE;
 	}
 
 	if(MgntResetOrPnPInProgress(Adapter))
 	{
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress case 4\n"));
 		return FALSE;
-	}	
+	}
 
 	switch( networktype )
 	{
@@ -737,18 +737,18 @@ MgntActSet_802_11_INFRASTRUCTURE_MODE(
 
 			if(MgntRoamingInProgress(pMgntInfo))
 				MgntRoamComplete(Adapter, MlmeStatus_invalid);
-			
+
 			if (!IS_DUAL_BAND_SUPPORT(Adapter))
 				MgntResetLinkProcess(Adapter);
 			else
-			{	
+			{
 				//When we do scan for connect on dual band. The scan time is  so long(>2s) that it can't be completed before connect.
 				//We do connect in ScanComplete(). by Lawrence.
 				// 2013/08/21 MH Revise for XP, when reset link process is blocked, the 4 query scan list will not exist
 				// previous linked AP and the scan process will be delay for a while and this will cause XP 2sec reset event.
-				// The case: Link with one AP, then AP disappear. Then the scan and connect process will be delayed 
-				// due to the the reset process is not executed. Need to find why 
-	
+				// The case: Link with one AP, then AP disappear. Then the scan and connect process will be delayed
+				// due to the the reset process is not executed. Need to find why
+
 				if(pMgntInfo->bMediaConnect || MgntIsLinkInProgress(pMgntInfo))
 					MgntResetLinkProcess(Adapter);
 				else
@@ -762,14 +762,14 @@ MgntActSet_802_11_INFRASTRUCTURE_MODE(
 					pMgntInfo->bJoinInProgress = FALSE;
 				}
 			}
-			
+
 			if(IS_HARDWARE_TYPE_8821U(Adapter))
 			{
 				pMgntInfo->LEDAssocState = LED_ASSOC_SECURITY_NONE;
 			}
-			
+
 			break;
-			
+
 		default:
 			break;// auto mode
 	}
@@ -781,18 +781,18 @@ MgntActSet_802_11_INFRASTRUCTURE_MODE(
 	// which according as network type, i.e., infracture mode will disable PSP control as default.
 	// 2009.12.03.
 	//
-	if( pMgntInfo->bDefaultPSPXlinkMode &&  
+	if( pMgntInfo->bDefaultPSPXlinkMode &&
 		networktype == RT_JOIN_NETWORKTYPE_ADHOC )
 	{
-		// Update ReceiveConfig variable. 
+		// Update ReceiveConfig variable.
 		Adapter->HalFunc.AllowAllDestAddrHandler(Adapter, TRUE, TRUE);
 		pMgntInfo->bPSPXlinkMode = TRUE;
 		RT_TRACE(COMP_MLME, DBG_LOUD, ("MgntActSet_802_11_INFRASTRUCTURE_MODE(): Enable PSP Xlink!!\n"));
 	}
 	else
 	{// Disable PSP Xlink control even bDefaultPSPXlinkMode is TRUE.
-	
-		// Update ReceiveConfig variable. 
+
+		// Update ReceiveConfig variable.
 		if(!pMgntInfo->bNetMonitorMode)
 			Adapter->HalFunc.AllowAllDestAddrHandler(Adapter, FALSE, TRUE);
 		pMgntInfo->bPSPXlinkMode = FALSE;
@@ -915,7 +915,7 @@ MgntActSet_802_11_CONFIGURATION(
 {
 	PMGNT_INFO	pMgntInfo= &Adapter->MgntInfo;
 
-	// Change default value of beacon period. 
+	// Change default value of beacon period.
 	pMgntInfo->Regdot11BeaconPeriod = BeaconPeriod;
 
 	// Switch to channel specified.
@@ -964,14 +964,14 @@ MgntActSet_802_11_ADD_WEP(
 
 	// add for set CKIP key exp. and AES_set Key( for MIC )  , by CCW
 	if( KeyLength==5 && KeyIndex<4 )
-	{				
+	{
 		CopyMem( pSecInfo->pCkipPara->CKIPKeyBuf[KeyIndex]+0*KeyLength , KeyMaterial, KeyLength );
 		CopyMem( pSecInfo->pCkipPara->CKIPKeyBuf[KeyIndex]+1*KeyLength , KeyMaterial, KeyLength );
 		CopyMem( pSecInfo->pCkipPara->CKIPKeyBuf[KeyIndex]+2*KeyLength , KeyMaterial, KeyLength );
 		CopyMem( pSecInfo->pCkipPara->CKIPKeyBuf[KeyIndex]+3*KeyLength , KeyMaterial, 1 );
 	}
 	else if( KeyLength==13 && KeyIndex<4 )
-	{	
+	{
 		CopyMem( pSecInfo->pCkipPara->CKIPKeyBuf[KeyIndex]+0*KeyLength , KeyMaterial, KeyLength );
 		CopyMem( pSecInfo->pCkipPara->CKIPKeyBuf[KeyIndex]+1*KeyLength , KeyMaterial, CKIP_KEY_LEN-KeyLength );
 	}
@@ -983,7 +983,7 @@ MgntActSet_802_11_ADD_WEP(
 	pSecInfo->TxIV = DEFAULT_INIT_TX_IV;
 
 	AES_SetKey( blockKey.x, AESCCMP_BLK_SIZE*8, (pu4Byte)pSecInfo->AESKeyBuf[KeyIndex] );
-	
+
 	RT_TRACE(COMP_SEC, DBG_LOUD, ("MgntActSet_802_11_ADD_WEP() <====\n"));
 
 	return TRUE;
@@ -1038,9 +1038,9 @@ MgntActSet_802_11_DISASSOCIATE(
 	//
 	if(pMgntInfo->mPss != eAwake)
 	{
-		// 
+		//
 		// Using AwkaeTimer to prevent mismatch ps state.
-		// In the timer the state will be changed according to the RF is being awoke or not. By Bruce, 2007-10-31. 
+		// In the timer the state will be changed according to the RF is being awoke or not. By Bruce, 2007-10-31.
 		//
 		// PlatformScheduleWorkItem( &(pMgntInfo->AwakeWorkItem) );
 		PlatformSetTimer( Adapter, &(pMgntInfo->AwakeTimer), 0 );
@@ -1052,7 +1052,7 @@ MgntActSet_802_11_DISASSOCIATE(
 		RT_TRACE(COMP_MLME, DBG_LOUD, ("MgntActSet_802_11_DISASSOCIATE() ===> AP_DisassociateAllStation\n"));
 		AP_DisassociateAllStation(Adapter, unspec_reason);
 		return ndisStatus;
-	}	
+	}
 
 	pMgntInfo->RequestFromUplayer = FALSE;
 
@@ -1063,14 +1063,14 @@ MgntActSet_802_11_DISASSOCIATE(
 		{
 			RT_TRACE(COMP_MLME, DBG_LOUD, ("MgntActSet_802_11_DISASSOCIATE() ===> MgntDisconnectIBSS\n"));
 
-			//should clear key here,if not , AES/TKIP Can not ping after use WAPI zhiyuan 2009/12/25	
+			//should clear key here,if not , AES/TKIP Can not ping after use WAPI zhiyuan 2009/12/25
 			RT_TRACE(COMP_SEC,DBG_LOUD,("MgntActSet_802_11_Disassociate  sec mode = 0x%08X\n",pMgntInfo->SecurityInfo.PairwiseEncAlgorithm));
 			if(pMgntInfo->SecurityInfo.PairwiseEncAlgorithm==RT_ENC_ALG_SMS4 && WAPI_QuerySetVariable(Adapter, WAPI_QUERY, WAPI_VAR_WAPISUPPORT, 0))
-				SecClearAllKeys(Adapter); 
+				SecClearAllKeys(Adapter);
 
 			MgntDisconnectIBSS( Adapter );
 		}
-		
+
 		if( pMgntInfo->mAssoc )
 		{
 			// We should leave LPS mode first. 2011.03.23. by tynli.
@@ -1078,34 +1078,34 @@ MgntActSet_802_11_DISASSOCIATE(
 			{
 				LeisurePSLeave(Adapter, LPS_DISABLE_SET_DISASSOCIATE);
 			}
-			
+
 			RT_TRACE(COMP_MLME, DBG_LOUD, ("MgntActSet_802_11_DISASSOCIATE() ===> MgntDisconnectAP\n"));
 			MgntDisconnectAP(Adapter, asRsn);
-			
-			// We clear key here instead of MgntDisconnectAP() because that  
-			// MgntActSet_802_11_DISASSOCIATE() is an interface called by OS, 
-			// e.g. OID_802_11_DISASSOCIATE in Windows while as MgntDisconnectAP() is 
+
+			// We clear key here instead of MgntDisconnectAP() because that
+			// MgntActSet_802_11_DISASSOCIATE() is an interface called by OS,
+			// e.g. OID_802_11_DISASSOCIATE in Windows while as MgntDisconnectAP() is
 			// used to handle disassociation related things to AP, e.g. send Disassoc
 			// frame to AP.  2005.01.27, by rcnjko.
 			// The key shall be cleared after sending disassociate/deauth to AP because these disconnecting frames
 			// may be protected by the keys, we shall keep the key before sending the mgnt frames.
-			SecClearAllKeys(Adapter); 
+			SecClearAllKeys(Adapter);
 		}
 
 		// Inidicate Disconnect, 2005.02.23, by rcnjko.
-		MgntIndicateMediaStatus( Adapter, RT_MEDIA_DISCONNECT, GENERAL_INDICATE);	
+		MgntIndicateMediaStatus( Adapter, RT_MEDIA_DISCONNECT, GENERAL_INDICATE);
 	}
-	else 
-    {   
+	else
+    {
     	if(pMgntInfo->bScanInProgress == TRUE || pMgntInfo->bDualModeScanStep != 0)
-      	{   //2013.05.14, Revised by Ping-Yan, to avoid skip scans when Port1 exists for single band chip. 
+      	{   //2013.05.14, Revised by Ping-Yan, to avoid skip scans when Port1 exists for single band chip.
       		MgntResetScanProcess(Adapter);
       	}
 
 		ndisStatus = NDIS_STATUS_INVALID_STATE;
 
 	}
-	
+
 	//Set SSID as dummy to stop the current join process.
 	SET_SSID_DUMMY(pMgntInfo->Ssid.Octet, pMgntInfo->Ssid.Length);
 
@@ -1131,20 +1131,20 @@ MgntActSet_802_11_DEAUTHENTICATION(
 	{ // AP Mode.
 		// TODO: AP MODE.
 		return TRUE;
-	}	
+	}
 
 	if(RT_DRIVER_STOP(Adapter))
 	{
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("Driver is going to stop \n"));
-		return TRUE;		
+		return TRUE;
 	}
-	
+
 	if(MgntResetOrPnPInProgress(Adapter))
 	{
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress \n"));
 		return TRUE;
 	}
-	
+
 	// In adhoc mode, update beacon frame.
 	if( pMgntInfo->bMediaConnect || pMgntInfo->bIbssStarter)
 	{
@@ -1159,19 +1159,19 @@ MgntActSet_802_11_DEAUTHENTICATION(
 			{
 				LeisurePSLeave(Adapter, LPS_DISABLE_SET_DEAUTH);
 			}
-			
-			// We clear key here instead of MgntDisconnectAP() because that  
-			// MgntActSet_802_11_DISASSOCIATE() is an interface called by OS, 
-			// e.g. OID_802_11_DISASSOCIATE in Windows while as MgntDisconnectAP() is 
+
+			// We clear key here instead of MgntDisconnectAP() because that
+			// MgntActSet_802_11_DISASSOCIATE() is an interface called by OS,
+			// e.g. OID_802_11_DISASSOCIATE in Windows while as MgntDisconnectAP() is
 			// used to handle disassociation related things to AP, e.g. send Disassoc
 			// frame to AP.  2005.01.27, by rcnjko.
-			SecClearAllKeys(Adapter); 
+			SecClearAllKeys(Adapter);
 
 			MlmeDeauthenticateRequest( Adapter, pMgntInfo->Bssid, asRsn );
 		}
 
 		// Inidicate Disconnect, 2005.02.23, by rcnjko.
-		MgntIndicateMediaStatus( Adapter, RT_MEDIA_DISCONNECT, GENERAL_INDICATE);	
+		MgntIndicateMediaStatus( Adapter, RT_MEDIA_DISCONNECT, GENERAL_INDICATE);
 	}
 
 	//Set SSID as dummy to stop the current join process.
@@ -1191,7 +1191,7 @@ MgntActSet_802_11_AUTHENTICATION_MODE(
 )
 {
 	PMGNT_INFO	pMgntInfo = &Adapter->MgntInfo;
-	
+
 	if( pMgntInfo->SecurityInfo.AuthMode != authmode )
 	{
 		pMgntInfo->SecurityInfo.AuthMode = authmode;
@@ -1264,10 +1264,10 @@ MgntActSet_802_11_BSSID_LIST_SCAN(
 {
 	PMGNT_INFO	pMgntInfo = &Adapter->MgntInfo;
 	u8Byte		now_time, Diff_Time;
-	
+
 	RT_TRACE(COMP_SCAN, DBG_LOUD, ("====> MgntActSet_802_11_BSSID_LIST_SCAN()\n"));
 
-	
+
 	// Follow 8180 AP mode, 2005.05.30, by rcnjko.
 	// <RJ_TODO_AP> The client may still want to scan in AP mode.
 	if(ACTING_AS_AP(Adapter))
@@ -1276,16 +1276,16 @@ MgntActSet_802_11_BSSID_LIST_SCAN(
 		DrvIFIndicateScanComplete(Adapter, RT_STATUS_FAILURE);
 		return TRUE;
 	}
-	
+
 	now_time = PlatformGetCurrentTime();
 	Diff_Time = now_time - pMgntInfo->uConnectedTime;
 	if(Diff_Time/100000  <=100)
 	{
 		return TRUE;
 	}
-	
+
 	Adapter->HalFunc.LedControlHandler(Adapter, LED_CTL_SITE_SURVEY);
-	
+
 	if(	!MgntScanInProgress(pMgntInfo)	&&
 		!MgntIsLinkInProgress(pMgntInfo) 		)
 	{
@@ -1316,7 +1316,7 @@ MgntActSet_802_11_BSSID_LIST_SCAN(
 			DrvIFIndicateScanComplete(Adapter, RT_STATUS_SUCCESS);
 		}
 	}
-	
+
 	RT_TRACE(COMP_SCAN, DBG_TRACE, ("MgntActSet_802_11_BSSID_LIST_SCAN(): return TRUE. <====\n"));
 	return TRUE;
 }
@@ -1374,7 +1374,7 @@ MgntActSet_802_11_ADD_KEY(
 	u8Byte			KeyRSC 				// Instialized value used for received multicast packet. Only used when the input parameter "IsGroup" is set TRUE and "IsGroupTransmitKey" set FALSE and KeyIndex | ADD_KEY_IDX_RSC.
 )
 {
-	
+
 	PRT_SECURITY_T	pSecInfo = &Adapter->MgntInfo.SecurityInfo;
 	pu1Byte			pKeyRSC = (pu1Byte)&KeyRSC;
 
@@ -1428,9 +1428,9 @@ MgntActSet_802_11_ADD_KEY(
 		// Check the previous WOL event if the GTK triggered waking.
 		WolByGtkUpdate(Adapter);
 	}
-	
 
-	// 
+
+	//
 	// No need to check SecLvl in WEP mode, and it only depends on EncAlgorithm.
 	// Comment out for testing over DTM XP 1.0c, by Bruce, 2007-07-26.
 	//
@@ -1464,7 +1464,7 @@ MgntActSet_802_11_ADD_KEY(
 		// Note:
 		//	Maybe we shall check the flag IsGroupTransmitKey as FALSE for RX group key case.
 		// By Bruce, 2010-11-04.
-		pSecInfo->RXMutiIV = DEFAULT_INIT_RX_IV; 
+		pSecInfo->RXMutiIV = DEFAULT_INIT_RX_IV;
 	}
 
 	//
@@ -1476,7 +1476,7 @@ MgntActSet_802_11_ADD_KEY(
 		if(IsGroup)
 		{
 			// Record the RSC for multicast IV to avoid IV replay.
-			pSecInfo->RXMutiIV = 
+			pSecInfo->RXMutiIV =
 				//LowPart
 				( (u8Byte)(
 				(u4Byte)((u1Byte)*(pKeyRSC+0) <<  8) | (u4Byte)((u1Byte)*(pKeyRSC+1) <<  0)
@@ -1485,7 +1485,7 @@ MgntActSet_802_11_ADD_KEY(
 				//HighPart
 				|((u4Byte)((u1Byte)*(pKeyRSC+2) <<  8) | (u4Byte)((u1Byte)*(pKeyRSC+3) <<  0));
 		}
-	}		
+	}
 	/* Remove It , Group Key Updata should not init Unicase IV
 	else
 	{
@@ -1497,7 +1497,7 @@ MgntActSet_802_11_ADD_KEY(
 	*/
 
 	KeyIndex &= 0x00000003;
-	
+
 	//kcwu: Indicate this key idx is used for TX
 	if(IsGroup){//Group transmit key
 		if(IsGroupTransmitKey){
@@ -1507,7 +1507,7 @@ MgntActSet_802_11_ADD_KEY(
 		CopyMem(pSecInfo->KeyBuf[KeyIndex], KeyMaterial, KeyLength );
 		pSecInfo->KeyLen[KeyIndex]= (u1Byte)KeyLength;
 	}else{
-		
+
 		//kcwu: clear keybuffer
 		SecClearPairwiseKeyByMacAddr(Adapter, 0);
 		CopyMem( pSecInfo->PairwiseKey, KeyMaterial, KeyLength );
@@ -1516,19 +1516,19 @@ MgntActSet_802_11_ADD_KEY(
 		pSecInfo->KeyLen[PAIRWISE_KEYIDX]= (u1Byte)KeyLength;
 
 		//
-		// We had done 4-way 
+		// We had done 4-way
 		//
 		Adapter->MgntInfo.mDeauthCount = 0;
 		RT_TRACE( COMP_MLME, DBG_LOUD, ("MgntActSet_802_11_ADD_KEY: Set Retry count to be 0!\n") );
 	}
-	
-	
+
+
 	if(EncAlgorithm == RT_ENC_ALG_TKIP)
 	{
 		if((KeyIndex & ADD_KEY_IDX_AS)){//kcwu: Key is set by an Authenticator, exchange Tx/Rx MIC
 			u1Byte tmpbuf[TKIP_MIC_KEY_LEN];
 			PlatformMoveMemory(tmpbuf, KeyMaterial+TKIP_ENC_KEY_LEN, TKIP_MIC_KEY_LEN);
-			PlatformMoveMemory(KeyMaterial+TKIP_ENC_KEY_LEN, 
+			PlatformMoveMemory(KeyMaterial+TKIP_ENC_KEY_LEN,
 				KeyMaterial+TKIP_ENC_KEY_LEN+TKIP_MIC_KEY_LEN, TKIP_MIC_KEY_LEN);
 			PlatformMoveMemory(KeyMaterial+TKIP_ENC_KEY_LEN+TKIP_MIC_KEY_LEN, tmpbuf, TKIP_MIC_KEY_LEN);
 		}
@@ -1555,14 +1555,14 @@ MgntActSet_802_11_ADD_KEY(
 	Adapter->MgntInfo.bMlmeStartReqRsn = MLMESTARTREQ_KEY_CHANGE;
 
 	//No matter software en/de-cryption is turned on or not, always set key into hardware
-	Adapter->HalFunc.SetKeyHandler(Adapter, 
+	Adapter->HalFunc.SetKeyHandler(Adapter,
 		KeyIndex,
 		MacAddress,
 		IsGroup,
 		EncAlgorithm,
 		FALSE,
 		FALSE);
-	
+
 	RT_TRACE( COMP_SEC, DBG_LOUD, ("MgntActSet_802_11_ADD_KEY(): return TRUE. <====\n") );
 	return TRUE;
 }
@@ -1597,7 +1597,7 @@ MgntActSet_RSNA_REMOVE_DEAULT_KEY(
 	  	PlatformZeroMemory(pDefKey->DefKeyBuf+KeyIndex, AESCCMP_BLK_SIZE_TOTAL);
 
 	pDefKey->DefkeyValid[KeyIndex] = FALSE;
-	
+
 	for( index = 0 ; index < 4 ; index++ )
 	{
 		if(pDefKey->DefkeyValid[index] == TRUE)
@@ -1607,7 +1607,7 @@ MgntActSet_RSNA_REMOVE_DEAULT_KEY(
 	if( index == 4 )
 	{
 		PlatformZeroMemory(pDefKey ,sizeof(PER_STA_DEFAULT_KEY_ENTRY));
-		pDefKey->Valid = FALSE; 
+		pDefKey->Valid = FALSE;
 	}
 	RT_TRACE(COMP_RSNA, DBG_LOUD, ("====>Remove Default Key\n"));
 	return TRUE;
@@ -1616,8 +1616,8 @@ MgntActSet_RSNA_REMOVE_DEAULT_KEY(
 //vivi added for new cam search flow, 2009102
 /*
 	vivi only modify add default key function but not remove default key function,
-	cause actually MgntActSet_RSNA_REMOVE_DEAULT_KEY will not be called, 
-	and we reset all the key in N6CQuerySet_DOT11_RESET_REQUEST: SecClearAllKeys, 
+	cause actually MgntActSet_RSNA_REMOVE_DEAULT_KEY will not be called,
+	and we reset all the key in N6CQuerySet_DOT11_RESET_REQUEST: SecClearAllKeys,
 	in that function all sw&hw key will be reset including RSNA IBSS key
 */
 BOOLEAN
@@ -1640,7 +1640,7 @@ MgntActSet_RSNA_ADD_DEAULT_KEY(
 	//u1Byte	CAM_CONST_BROAD[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 	u1Byte	NullMacadress[6] = {0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00};
 	u1Byte	MacAddress_Original[6] = {0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00};
-	
+
 	RT_TRACE(COMP_RSNA, DBG_LOUD, ("====> Add Default Key\n"));
 	RT_PRINT_ADDR(COMP_RSNA, DBG_LOUD, " Station MAC : ", MacAddress);
 	RT_PRINT_DATA(COMP_RSNA, DBG_LOUD, " KeyMaterial : ", pKeyMaterial, KeyLen);
@@ -1669,14 +1669,14 @@ MgntActSet_RSNA_ADD_DEAULT_KEY(
 		//
 		PlatformMoveMemory(MacAddress,Adapter->CurrentAddress,6);
 	}
-	
+
 	for( index = 0 ; index < MAX_NUM_PER_STA_KEY ; index++, pDefKey++)
 	{
 		if( pDefKey->Valid && (PlatformCompareMemory(MacAddress,pDefKey->MACAdrss, 6)==0))
 			break; // find out the same entry.
 
 		if( !pDefKey->Valid && emptyindex == MAX_NUM_PER_STA_KEY )
-			emptyindex = index;  // find out one empty entry. 
+			emptyindex = index;  // find out one empty entry.
 	}
 
 	if( index == MAX_NUM_PER_STA_KEY ) //Don't find the same entry
@@ -1692,14 +1692,14 @@ MgntActSet_RSNA_ADD_DEAULT_KEY(
 	{
 		pDefKey = pSecInfo->PerStaDefKeyTable + index;
 	}
-	
-	//Set Key 
+
+	//Set Key
 	PlatformMoveMemory( blockKey.x , pKeyMaterial , KeyLen);
 	AES_SetKey(blockKey.x, AESCCMP_BLK_SIZE*8, (pu4Byte)pDefKey->DefKeyBuf[KeyIndex] );
-	
-	
+
+
 	pDefKey->DefkeyValid[KeyIndex] = TRUE;
-	pDefKey->Valid = TRUE;	
+	pDefKey->Valid = TRUE;
 	//all above reserved, vivi. actually for sw en/decryption
 
 	if (IS_EN_DE_CRYPTION_NEW_CAM_SUPPORT())
@@ -1723,12 +1723,12 @@ MgntActSet_RSNA_ADD_DEAULT_KEY(
 			Adapter->MgntInfo.SWCamTable[EntryId].bUsed = 1;
 			Adapter->MgntInfo.SWCamTable[EntryId].ulUseDK= KeyIndex;
 			PlatformMoveMemory(Adapter->MgntInfo.SWCamTable[EntryId].macAddress, MacAddress_Original, 6);
-			CopyMem( Adapter->MgntInfo.SWCamTable[EntryId].pucKey , pKeyMaterial , sizeof(Adapter->MgntInfo.SWCamTable[EntryId].pucKey) );	
+			CopyMem( Adapter->MgntInfo.SWCamTable[EntryId].pucKey , pKeyMaterial , sizeof(Adapter->MgntInfo.SWCamTable[EntryId].pucKey) );
 			Adapter->MgntInfo.SWCamTable[EntryId].ulEncAlg = EncAlgorithm;
-			Adapter->MgntInfo.SWCamTable[EntryId].ulKeyId = EntryId;	//cam entryid in cam			
-			Adapter->MgntInfo.SWCamTable[EntryId].portNumber = 0;	// to ID different port		
+			Adapter->MgntInfo.SWCamTable[EntryId].ulKeyId = EntryId;	//cam entryid in cam
+			Adapter->MgntInfo.SWCamTable[EntryId].portNumber = 0;	// to ID different port
 		}
-		else //otherwise, set EntryId according to macaddr 
+		else //otherwise, set EntryId according to macaddr
 		{
 			//find EntryId, and also set sw cam, this sw cam table is consistent with hw table...later virtual also use sw cam table
 			EntryId = Sta_FindFreeEntry(Adapter,
@@ -1753,10 +1753,10 @@ MgntActSet_RSNA_ADD_DEAULT_KEY(
 		RT_TRACE(COMP_RSNA, DBG_LOUD, (" KeyINdex: %02x\n",
 			Adapter->MgntInfo.SWCamTable[EntryId].ulUseDK));
 	}
-		
+
 	RT_TRACE(COMP_RSNA, DBG_LOUD, ("====>Add Default Key\n"));
 	return TRUE;
-	
+
 }
 
 
@@ -1829,7 +1829,7 @@ MgntActSet_RSNA_ADD_MAPPING_KEY(
 			break; // find out the same entry.
 
 		if( !pMAPKey->Valid && emptyindex == MAX_NUM_PER_STA_KEY )
-			emptyindex = index;  // find out one empty entry. 
+			emptyindex = index;  // find out one empty entry.
 	}
 
 	if( index == MAX_NUM_PER_STA_KEY ) //Don't find the same entry
@@ -1845,7 +1845,7 @@ MgntActSet_RSNA_ADD_MAPPING_KEY(
 		pMAPKey = pSecInfo->MAPKEYTable + index;
 	}
 
-	//Set Key 
+	//Set Key
 	PlatformMoveMemory( blockKey.x , pKeyMaterial , KeyLen);
 	AES_SetKey(blockKey.x, AESCCMP_BLK_SIZE*8, (pu4Byte)pMAPKey->MapKeyBuf );
 
@@ -1856,7 +1856,7 @@ MgntActSet_RSNA_ADD_MAPPING_KEY(
 		//all above reserved, vivi. actually for sw en/decryption
 
 		//1 vivi add new for hw encryption, 20091028
-		//get EntryId according to macaddr 
+		//get EntryId according to macaddr
 		//find EntryId, and also set sw cam, this sw cam table is consistent with hw table...later virtual also use sw cam table
 		EntryId = Sta_FindFreeEntry(Adapter,
 							MacAddress,
@@ -1919,8 +1919,8 @@ MgntActSet_802_11_WIRELESS_MODE(
 	if(	(WirelessMode!=WIRELESS_MODE_AUTO) &&
 		((WirelessMode & SupportedWirelessMode) == 0) )
 	{ // Don't switch to unsupported wireless mode, 2006.02.15, by rcnjko.
-		RT_TRACE(COMP_DBG, DBG_SERIOUS, 
-			("MgntActSet_802_11_WIRELESS_MODE(): WirelessMode(0x%X) is not supported (0x%X)!\n", 
+		RT_TRACE(COMP_DBG, DBG_SERIOUS,
+			("MgntActSet_802_11_WIRELESS_MODE(): WirelessMode(0x%X) is not supported (0x%X)!\n",
 			WirelessMode, SupportedWirelessMode));
 		return FALSE;
 	}
@@ -1928,7 +1928,7 @@ MgntActSet_802_11_WIRELESS_MODE(
 	if(RT_DRIVER_STOP(Adapter))
 	{
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("Driver is going to stop \n"));
-		return FALSE;		
+		return FALSE;
 	}
 
 	if(MgntResetOrPnPInProgress(Adapter))
@@ -1948,38 +1948,38 @@ MgntActSet_802_11_WIRELESS_MODE(
 
 	Adapter->RegWirelessMode = WirelessMode;
 
-	// In prevent of switching back to wrong band in scancallback(). 2004.12.10, by rcnjko. 
+	// In prevent of switching back to wrong band in scancallback(). 2004.12.10, by rcnjko.
 	pMgntInfo->SettingBeforeScan.WirelessMode = WirelessMode;
 
 	switch(WirelessMode)
 	{
 		case WIRELESS_MODE_A:
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set WIRELESS_MODE_A\n"));
-			break;		
+			break;
 		case WIRELESS_MODE_B:
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set WIRELESS_MODE_B\n"));
-			break;		
+			break;
 		case WIRELESS_MODE_G:
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set WIRELESS_MODE_G\n"));
-			break;		
+			break;
 		case WIRELESS_MODE_AUTO:
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set WIRELESS_MODE_AUTO\n"));
-			break;		
-		case WIRELESS_MODE_N_24G: 
+			break;
+		case WIRELESS_MODE_N_24G:
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set WIRELESS_MODE_N_24G\n"));
 			break;
-		case WIRELESS_MODE_AC_24G: 
+		case WIRELESS_MODE_AC_24G:
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set WIRELESS_MODE_AC_24G\n"));
-			break;	
-		case WIRELESS_MODE_N_5G: 
+			break;
+		case WIRELESS_MODE_N_5G:
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set WIRELESS_MODE_N_5G\n"));
-			break;	
-		case WIRELESS_MODE_AC_5G: 
+			break;
+		case WIRELESS_MODE_AC_5G:
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set WIRELESS_MODE_AC_5G\n"));
-			break;		
+			break;
 		default: //For MacOs Warning: "WIRELESS_MODE_UNKNOWN" not handled in switch.
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set WIRELESS_MODE_UNKNOWN\n"));
-			break;	
+			break;
 	}
 
 	Adapter->HalFunc.SetWirelessModeHandler(Adapter, (u1Byte)Adapter->RegWirelessMode);
@@ -1998,8 +1998,8 @@ MgntActSet_802_11_WIRELESS_MODE(
 
 BOOLEAN
 MgntActSet_802_11_RETRY_LIMIT(
-	PADAPTER Adapter, 
-	u2Byte ShortRetryLimit, 
+	PADAPTER Adapter,
+	u2Byte ShortRetryLimit,
 	u2Byte LongRetryLimit
 )
 {
@@ -2018,7 +2018,7 @@ MgntActSet_802_11_RETRY_LIMIT(
 
 static BOOLEAN
 MgntActSet_802_11_20MHZ_CHANNEL(
-	PADAPTER	Adapter, 
+	PADAPTER	Adapter,
 	u1Byte 		channel
 )
 {
@@ -2043,9 +2043,9 @@ MgntActSet_802_11_20MHZ_CHANNEL(
 	{
 		RT_CHNL_LIST_ENTRY	ChnlListEntryArray[MAX_CHANNEL_NUM] = {0};
 		u1Byte				ChannelLen = 0, i = 0, firstLegalIndex = 0xFF;
-		
+
 		ChannelLen = RtGetDualBandChannel(Adapter, ChnlListEntryArray);
-			
+
 		if(ChannelLen == 0)
 			return FALSE;
 
@@ -2080,11 +2080,11 @@ MgntActSet_802_11_20MHZ_CHANNEL(
 #pragma warning( disable: 6385 )
 			channel = ChnlListEntryArray[firstLegalIndex].ChannelNum;
 		}
-		
-#if 0		
+
+#if 0
 		if(channel <= 14)
 		{
-			if(IS_WIRELESS_MODE_5G(Adapter))	
+			if(IS_WIRELESS_MODE_5G(Adapter))
 				pMgntInfo->dot11CurrentWirelessMode = WIRELESS_MODE_N_24G;
 		}
 		else
@@ -2099,15 +2099,15 @@ MgntActSet_802_11_20MHZ_CHANNEL(
 			Adapter->HalFunc.SetWirelessModeHandler(Adapter,pMgntInfo->dot11CurrentWirelessMode);
 		}
 		// ------------------------------------------------------------------------------------
-	
+
 #else
 		RT_TRACE_F(COMP_MLME,DBG_LOUD, ("ChangeWirelessModeHandler\n"));
 		HalChangeWirelessMode(Adapter,channel);
 
-//		SetupWirelessMode(Adapter,channel);		
-#endif		
+//		SetupWirelessMode(Adapter,channel);
+#endif
 
-	
+
 	}
 	else
 	{
@@ -2117,7 +2117,7 @@ MgntActSet_802_11_20MHZ_CHANNEL(
 
 	{ // Update MAC Channel and Wireless Mode ---------------------------------------------------
 		PADAPTER pLoopAdapter = GetDefaultAdapter(Adapter);
-		
+
 		while(pLoopAdapter != NULL)
 		{
 			pLoopAdapter->MgntInfo.dot11CurrentChannelNumber = channel;
@@ -2139,7 +2139,7 @@ MgntActSet_802_11_20MHZ_CHANNEL(
 // Use this interface to swith channel and bandwidth in MAC layer --------------
 VOID
 MgntActSet_802_11_CHANNEL_AND_BANDWIDTH(
-	PADAPTER			pAdapter, 
+	PADAPTER			pAdapter,
 	u1Byte 				Primary20MhzChannel,
 	CHANNEL_WIDTH		BandWidthMode,
 	EXTCHNL_OFFSET		ExtChnlOffsetOf40MHz,
@@ -2150,13 +2150,13 @@ MgntActSet_802_11_CHANNEL_AND_BANDWIDTH(
 	int i;
 
 	FunctionIn(COMP_MLME);
-	
+
 	switch(BandWidthMode)
 	{
 		case CHANNEL_WIDTH_20:
 			RT_ASSERT(Primary20MhzChannel != 0, ("Wrong Primary20MhzChannel: %d\n", Primary20MhzChannel));
 			break;
-			
+
 		case CHANNEL_WIDTH_40:
 			RT_ASSERT(Primary20MhzChannel != 0, ("Wrong Primary20MhzChannel: %d\n", Primary20MhzChannel));
 			RT_ASSERT(ExtChnlOffsetOf40MHz == EXTCHNL_OFFSET_UPPER || ExtChnlOffsetOf40MHz == EXTCHNL_OFFSET_LOWER, ("Wrong ExtChnlOffsetOf40MHz: %d\n", ExtChnlOffsetOf40MHz));
@@ -2167,7 +2167,7 @@ MgntActSet_802_11_CHANNEL_AND_BANDWIDTH(
 			RT_ASSERT(ExtChnlOffsetOf40MHz == EXTCHNL_OFFSET_UPPER || ExtChnlOffsetOf40MHz == EXTCHNL_OFFSET_LOWER, ("Wrong ExtChnlOffsetOf40MHz: %d\n", ExtChnlOffsetOf40MHz));
 			RT_ASSERT(ExtChnlOffsetOf80MHz == EXTCHNL_OFFSET_UPPER || ExtChnlOffsetOf80MHz == EXTCHNL_OFFSET_LOWER, ("Wrong ExtChnlOffsetOf80MHz: %d\n", ExtChnlOffsetOf80MHz));
 			break;
-			
+
 		case CHANNEL_WIDTH_160:
 		case CHANNEL_WIDTH_80_80:
 			RT_ASSERT(0, ("Currently No Use for BandwidthMode: %d\n", BandWidthMode));
@@ -2183,7 +2183,7 @@ MgntActSet_802_11_CHANNEL_AND_BANDWIDTH(
 	if(GetDefaultAdapter(pAdapter)->bInHctTest)
 	{
 		if(GET_HAL_DATA(pAdapter)->CurrentChannel == Primary20MhzChannel )
-		{	
+		{
 			RT_TRACE(COMP_MLME,DBG_LOUD,("MgntActSet_802_11_CHANNEL_AND_BANDWIDTH: the channel is same return \n"));
 			return;
 		}
@@ -2196,11 +2196,11 @@ MgntActSet_802_11_CHANNEL_AND_BANDWIDTH(
 	CHNL_SetBwChnl(pAdapter, Primary20MhzChannel, BandWidthMode, ExtChnlOffsetOf40MHz);
 
 	//wait for channel switch successful by sherry 20130117
-	for(i = 0; i < 100; i++)  
-	{			
+	for(i = 0; i < 100; i++)
+	{
 		if(!RT_IsSwChnlAndBwInProgress(pAdapter) && !CHNL_SwChnlAndSetBwInProgress(pAdapter))
 				break;
-		
+
 		RT_TRACE_F(COMP_MULTICHANNEL, DBG_LOUD, ("MgntActSet_802_11_CHANNEL_AND_BANDWIDTH:Delay 100 us Waiting for Switch Channel Complete!\n"));
 		delay_us(100);
 	}
@@ -2212,7 +2212,7 @@ MgntActSet_802_11_CHANNEL_AND_BANDWIDTH(
 
 BOOLEAN
 MgntActSet_802_11_REG_20MHZ_CHANNEL_AND_SWITCH(
-	PADAPTER	Adapter, 
+	PADAPTER	Adapter,
 	u1Byte 		channel
 )
 {
@@ -2224,7 +2224,7 @@ MgntActSet_802_11_REG_20MHZ_CHANNEL_AND_SWITCH(
 	if(bSwitchOk)
 	{ // Update Reg MAC Channel --------------------------------------------------------------
 		pLoopAdapter = GetDefaultAdapter(Adapter);
-		
+
 		while(pLoopAdapter != NULL)
 		{
 			pLoopAdapter->MgntInfo.Regdot11ChannelNumber = channel;
@@ -2238,7 +2238,7 @@ MgntActSet_802_11_REG_20MHZ_CHANNEL_AND_SWITCH(
 // Annie, 2004-12-27
 BOOLEAN
 MgntActSet_802_11_CHANNELPLAN(
-	PADAPTER	Adapter, 
+	PADAPTER	Adapter,
 	u2Byte 		ChannelPlan
 	)
 {
@@ -2252,7 +2252,7 @@ MgntActSet_802_11_CHANNELPLAN(
 
 	if(ChannelPlan >= RT_CHANNEL_DOMAIN_MAX)
 	{
-		RT_TRACE(COMP_MLME, DBG_LOUD, ("MgntActSet_802_11_CHANNELPLAN(): not support this channel plan (%d > MAX: %d). (HW reject)\n", 
+		RT_TRACE(COMP_MLME, DBG_LOUD, ("MgntActSet_802_11_CHANNELPLAN(): not support this channel plan (%d > MAX: %d). (HW reject)\n",
 			ChannelPlan, RT_CHANNEL_DOMAIN_MAX));
 		return FALSE;
 	}
@@ -2273,7 +2273,7 @@ MgntActSet_802_11_PMKID(
 {
 	RT_TRACE( COMP_SEC, DBG_LOUD, ("MgntActSet_802_11_PMKID(): Length=%d\n", InformationBufferLength) );
 	RT_PRINT_DATA( COMP_SEC, DBG_TRACE, "OID Buffer", InformationBuffer, InformationBufferLength );
-	
+
 	SecSetPMKID( Adapter, (PN5_802_11_PMKID)InformationBuffer );
 	return TRUE;
 }
@@ -2361,7 +2361,7 @@ MgntActSet_802_3_MULTICAST_LIST(
 
 	for( i=0; i < Adapter->MCAddrCount; i++ )
 	{
-		RT_PRINT_ADDR(COMP_MLME | COMP_OID_SET, DBG_TRACE, "MgntActSet_802_3_MULTICAST_LIST: ", Adapter->MCList[i]); 
+		RT_PRINT_ADDR(COMP_MLME | COMP_OID_SET, DBG_TRACE, "MgntActSet_802_3_MULTICAST_LIST: ", Adapter->MCList[i]);
 		if( i < MAX_MCAST_LIST_NUM )
 		{
 			GetMulticastBit( Adapter->MCList[i], &Byte, &Bit );
@@ -2393,7 +2393,7 @@ MgntActSet_802_3_MULTICAST_LIST(
 
 
 
-// 
+//
 // Change current and default preamble mode.
 // 2005.01.06, by rcnjko.
 //
@@ -2410,7 +2410,7 @@ MgntActSet_802_11_PREAMBLE_MODE(
 }
 
 
-// 
+//
 // Change current and default preamble mode.
 // 2005.01.06, by rcnjko.
 //
@@ -2424,17 +2424,17 @@ MgntActSet_802_11_PowerSaveMode(
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	u1Byte	FwPwrMode;
 
-	// Currently, we do not change power save mode on IBSS mode. 
-	if(pMgntInfo->mIbss)	
+	// Currently, we do not change power save mode on IBSS mode.
+	if(pMgntInfo->mIbss)
 		return FALSE;
 
 	if(pMgntInfo->dot11PowerSaveMode == rtPsMode)
 		return TRUE;
-	
+
 	// Update power save mode configured.
 	pMgntInfo->dot11PowerSaveMode = rtPsMode;
 
-	// Determine ListenInterval. 
+	// Determine ListenInterval.
 	if(pMgntInfo->dot11PowerSaveMode == eMaxPs)
 	{
 		pMgntInfo->ListenInterval = pMgntInfo->dot11DtimPeriod;
@@ -2444,7 +2444,7 @@ MgntActSet_802_11_PowerSaveMode(
 		pMgntInfo->ListenInterval = 2;
 	}
 
-	if(pMgntInfo->mPss != eAwake && rtPsMode == eActive)		
+	if(pMgntInfo->mPss != eAwake && rtPsMode == eActive)
 		PlatformSetTimer(Adapter, &(pMgntInfo->AwakeTimer), 0);
 
 	if(!pPSC->bFwCtrlLPS)
@@ -2463,13 +2463,13 @@ MgntActSet_802_11_PowerSaveMode(
 	}
 
 	// <FW control LPS>
-	// 1. Enter PS mode 
+	// 1. Enter PS mode
 	//    Set RPWM to Fw to turn RF off and send H2C FwPwrMode cmd to set Fw into PS mode.
 	// 2. Leave PS mode
 	//    Send H2C FwPwrMode cmd to Fw to set Fw into Active mode and set RPWM to turn RF on.
 	// By tynli. 2009.01.19.
 	if((pPSC->bFwCtrlLPS))
-	{	
+	{
 		if(pMgntInfo->dot11PowerSaveMode == eActive)
 		{
 			FwPwrMode = FW_PS_ACTIVE_MODE;
@@ -2493,8 +2493,8 @@ MgntActSet_802_11_PowerSaveMode(
 }
 
 
-// 
-// Change to either AP or STA mode. 
+//
+// Change to either AP or STA mode.
 // 2005.05.27, by rcnjko.
 //
 BOOLEAN
@@ -2517,7 +2517,7 @@ MgntActSet_ApMode(
 		pMgntInfo->bSwitchingAsApInProgress = TRUE;
 		MgntActSet_ApType(Adapter, TRUE);
 
-		// <RJ_TODO> We use SW encryption/decryption in this stage, 
+		// <RJ_TODO> We use SW encryption/decryption in this stage,
 		// and we should use HW encryption/decryption later. 2005.07.01, by rcnjko.
 		SecSetSwEncryptionDecryption(Adapter, FALSE, FALSE);
 
@@ -2529,7 +2529,7 @@ MgntActSet_ApMode(
 			RT_TRACE(COMP_AP, DBG_LOUD, ("MgntActSet_ApMode(): Switch to STA. Do nothing since already in STA mode.\n"));
 			return TRUE;
 		}
-	
+
 		AP_DisassociateAllStation(Adapter, unspec_reason);
 		PlatformSleepUs(5000);
 		if(ACTING_AS_AP(Adapter))
@@ -2542,9 +2542,9 @@ MgntActSet_ApMode(
 //To let WZC show disconnect when change from AP to STA
 		if(MgntActQuery_ApType(Adapter) == RT_AP_TYPE_IBSS_EMULATED)  //YJ,ADD,110504
 		{
-			DrvIFIndicateDisassociation(Adapter, unspec_reason, pMgntInfo->Bssid); 
+			DrvIFIndicateDisassociation(Adapter, unspec_reason, pMgntInfo->Bssid);
 		}
-	
+
 		pMgntInfo->bSwitchingAsApInProgress = TRUE;
 
 		MgntActSet_ApType(Adapter, FALSE);
@@ -2552,8 +2552,8 @@ MgntActSet_ApMode(
 		//
 		// 2012/01/17 CCW Add for fake soft ap & vwifi soft ap coexist mode.
 		//
-		PlatformZeroMemory(pMgntInfo->Bssid, 6);		
-		
+		PlatformZeroMemory(pMgntInfo->Bssid, 6);
+
 		AP_Reset(Adapter);
 
 		// <RJ_TODO> I assume STA only using SW encryption/decryption.
@@ -2590,7 +2590,7 @@ MgntActSet_802_11_BeaconInterval(
 	{
 		pMgntInfo->Regdot11BeaconPeriod = u2BeaconPeriod;
 		pMgntInfo->dot11BeaconPeriod = pMgntInfo->Regdot11BeaconPeriod;
-		
+
 		Adapter->HalFunc.SetHwRegHandler( Adapter, HW_VAR_BEACON_INTERVAL, (pu1Byte)(&pMgntInfo->dot11BeaconPeriod) );
 	}
 }
@@ -2598,11 +2598,11 @@ MgntActSet_802_11_BeaconInterval(
 
 //
 // Send magic packet to each channel for WOL feature.
-// Currently, we use the replace the probe request with magic packet to 
+// Currently, we use the replace the probe request with magic packet to
 // achive the feature, see ScanCallback(), ScanComplete() and PreTransmitTcb() for details.
 // 2005.06.27, by rcnjko.
 //
-VOID 
+VOID
 MgntActSet_802_11_ScanWithMagicPacket(
 	PADAPTER		Adapter,
 	pu1Byte			pDstAddr
@@ -2616,7 +2616,7 @@ MgntActSet_802_11_ScanWithMagicPacket(
 	MgntActSet_802_11_BSSID_LIST_SCAN(Adapter);
 
 	if(!pMgntInfo->bScanInProgress)
-	{ 
+	{
 		// Prevent the scan request failed, 2005.06.29, by rcnjko.
 		pMgntInfo->bScanWithMagicPacket = FALSE;
 	}
@@ -2632,7 +2632,7 @@ MgntActSet_Passphrase(
 	PAUTH_GLOBAL_KEY_TAG	pGlInfo = &(pMgntInfo->globalKeyInfo);
 
 	RT_ASSERT( (posPassphrase->Length >= 8 && posPassphrase->Length <= 64), 		// Modify length from 1-61 to 8-63. Annie, 2005-11-21.
-		("MgntActSet_Passphrase(): passphrase len: %d !!!", posPassphrase->Length));    // Modify length 63 to 64 for PMK 64-Hex mode 
+		("MgntActSet_Passphrase(): passphrase len: %d !!!", posPassphrase->Length));    // Modify length 63 to 64 for PMK 64-Hex mode
 
 	if(ACTING_AS_AP(Adapter))
 	{ // AP mode.
@@ -2660,7 +2660,7 @@ MgntActSet_Passphrase(
 			// 3. Set PassphraseLen to 64 ... Point to 64-Hex mode !!
 			pGlInfo->PassphraseLen = 64;
 		}
-		
+
 }
 }
 
@@ -2708,7 +2708,7 @@ MgntReturnTxResource(
 }
 
 //
-//	Description: 
+//	Description:
 //		Chang RF Power State.
 //		Note that, only MgntActSet_RF_State() is allowed to set HW_VAR_RF_STATE.
 //
@@ -2724,7 +2724,7 @@ MgntActSet_RF_State(
 	)
 {
 	PMGNT_INFO			pMgntInfo = &(Adapter->MgntInfo);
-	BOOLEAN				bActionAllowed = FALSE; 
+	BOOLEAN				bActionAllowed = FALSE;
 	BOOLEAN				bConnectBySSID = FALSE;
 	RT_RF_POWER_STATE 	rtState;
 	u2Byte				RFWaitCounter = 0;
@@ -2739,7 +2739,7 @@ MgntActSet_RF_State(
 	}
 
 	//1//
-	//1//<1>Prevent the race condition of RF state change. 
+	//1//<1>Prevent the race condition of RF state change.
 	//1//
 	// Only one thread can change the RF state at one time, and others should wait to be executed. By Bruce, 2007-11-28.
 
@@ -2752,7 +2752,7 @@ MgntActSet_RF_State(
 			if(pMgntInfo->RFChangeInProgress)
 			{
 				RT_TRACE(COMP_RF, DBG_LOUD, ("MgntActSet_RF_State(): RF Change in progress! Wait to set..StateToSet(%d).\n", StateToSet));
-				// Set RF after the previous action is done. 
+				// Set RF after the previous action is done.
 				while(pMgntInfo->RFChangeInProgress)
 				{
 					PlatformReleaseSpinLock(Adapter, RT_RF_STATE_SPINLOCK);
@@ -2767,7 +2767,7 @@ MgntActSet_RF_State(
 						// TODO: Reset RF state?
 						return FALSE;
 					}
-					PlatformAcquireSpinLock(Adapter, RT_RF_STATE_SPINLOCK);				
+					PlatformAcquireSpinLock(Adapter, RT_RF_STATE_SPINLOCK);
 				}
 				PlatformReleaseSpinLock(Adapter, RT_RF_STATE_SPINLOCK);
 			}
@@ -2791,18 +2791,18 @@ MgntActSet_RF_State(
 		}
 		return FALSE;
 	}
-	
+
 	Mgnt_SetLedForRfState(Adapter, StateToSet, ChangeSource);
-	
-	Adapter->HalFunc.GetHwRegHandler(Adapter, HW_VAR_RF_STATE, (pu1Byte)(&rtState));	
+
+	Adapter->HalFunc.GetHwRegHandler(Adapter, HW_VAR_RF_STATE, (pu1Byte)(&rtState));
 
 
-	switch(StateToSet) 
+	switch(StateToSet)
 	{
 		case eRfOn:
 			//
 			// Turn On RF no matter the IPS setting because we need to update the RF state to Ndis under Vista, or
-			// the Windows does not allow the driver to perform site survey any more. By Bruce, 2007-10-02. 
+			// the Windows does not allow the driver to perform site survey any more. By Bruce, 2007-10-02.
 			//
 
 			pMgntInfo->RfOffReason &= (~ChangeSource);
@@ -2811,7 +2811,7 @@ MgntActSet_RF_State(
 			if(! pMgntInfo->RfOffReason)
 			{
 				pMgntInfo->RfOffReason = 0;
-				
+
 				if(rtState != eRfOn)
 				{
 					bActionAllowed = TRUE;
@@ -2846,7 +2846,7 @@ MgntActSet_RF_State(
 				{
 					RT_TRACE(COMP_MLME, DBG_LOUD, ("MgntActSet_RF_State - is not AP mode.\n"));
 					//Porting from 8xb, by Maddest 20090921
-					if ( (ChangeSource> RF_CHANGE_BY_PS) && 
+					if ( (ChangeSource> RF_CHANGE_BY_PS) &&
 						!(pMgntInfo->RfOffReason & (RF_CHANGE_BY_SW|RF_CHANGE_BY_HW)) )
 					{
 						if((pMgntInfo->bMediaConnect || pMgntInfo->bIbssStarter)
@@ -2855,15 +2855,15 @@ MgntActSet_RF_State(
 						{
 
 							MgntDisconnect(tempAdapter, disas_lv_ss);
-							//for Win 7 it must indicate Roaming_Start and set Roaming state 
-							//By doing this, OS does not set RESET_REQUEST within 10 seconds which may 
+							//for Win 7 it must indicate Roaming_Start and set Roaming state
+							//By doing this, OS does not set RESET_REQUEST within 10 seconds which may
 							//interrupt auto-connect mechanism activated by driver
 							//by sherry, 20091225
 							//MgntLinkStatusSetRoamingState(tempAdapter, 0, RT_ROAMING_BY_DEAUTH, ROAMINGSTATE_SCANNING);
 							//DrvIFIndicateRoamingStart(tempAdapter);
 						}
-			
-						// Clear content of bssDesc[] and bssDesc4Query[] to avoid reporting old bss to UI. 
+
+						// Clear content of bssDesc[] and bssDesc4Query[] to avoid reporting old bss to UI.
 						// 2007.05.28, by shien chang.
 						//PlatformZeroMemory( pMgntInfo->bssDesc, sizeof(RT_WLAN_BSS)*MAX_BSS_DESC );
 						pMgntInfo->NumBssDesc = 0;
@@ -2871,7 +2871,7 @@ MgntActSet_RF_State(
 					RT_TRACE(COMP_SCAN, DBG_LOUD, ("[REDX]: MgntActSet_RF_State(), clear NumBssDesc4Query\n"));
 
 					}
-			
+
 					pMgntInfo->RfOffReason |= ChangeSource;
 				}
 				else
@@ -2881,7 +2881,7 @@ MgntActSet_RF_State(
 					AP_DisassociateAllStation(tempAdapter, unspec_reason);
 					MgntIndicateMediaStatus( tempAdapter, RT_MEDIA_DISCONNECT, FORCE_INDICATE );
 				}
-				
+
 				tempAdapter = GetNextExtAdapter(tempAdapter);
 			}
 			bActionAllowed = TRUE;
@@ -2903,7 +2903,7 @@ MgntActSet_RF_State(
 	// <Roger_TODO> We should update RfOffReason for each port to keep consistency on multi-port architecture.
 	// 2013.09.04.
 	//
-	tempAdapter = GetDefaultAdapter(Adapter);		
+	tempAdapter = GetDefaultAdapter(Adapter);
 	while(tempAdapter !=NULL){
 		tempAdapter->MgntInfo.RfOffReason = pMgntInfo->RfOffReason;
 		tempAdapter = GetNextExtAdapter(tempAdapter);
@@ -2914,25 +2914,25 @@ MgntActSet_RF_State(
 		RT_TRACE(COMP_POWER, DBG_LOUD, ("MgntActSet_RF_State(): Action is allowed.... StateToSet(%d), RfOffReason(%#X)\n", StateToSet, pMgntInfo->RfOffReason));
 
 		// We should leave device power state D2 prior to the following pipe configurations, added by Roger, 2010.03.30.
-		if((StateToSet == eRfOn) && (rtState ==eRfOff))			
+		if((StateToSet == eRfOn) && (rtState ==eRfOff))
 		{
 			Adapter->HalFunc.HalEnableTxHandler(Adapter);
 			Adapter->HalFunc.HalEnableRxHandler(Adapter);
-			Adapter->HalFunc.HalLeaveSSHandler(Adapter);	
-		}		
-				
+			Adapter->HalFunc.HalLeaveSSHandler(Adapter);
+		}
+
                 // Config HW to the specified mode.
 		Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_RF_STATE, (pu1Byte)(&StateToSet));
-			
+
 		//
 		// Background :
-		// When RF is turned to OFF by HW/SW, sometimes due to too much low rate retry packets in tx FIFO or 
-		// a lot of RTS packets(no CTS rsp), it will spend a lot of time to tx all packets in Tx FIFO. 
-		// Currently, after RF is turned off, there are possibility that HW FIFO not tx all the packets and then it's power is 
+		// When RF is turned to OFF by HW/SW, sometimes due to too much low rate retry packets in tx FIFO or
+		// a lot of RTS packets(no CTS rsp), it will spend a lot of time to tx all packets in Tx FIFO.
+		// Currently, after RF is turned off, there are possibility that HW FIFO not tx all the packets and then it's power is
 		// turned to OFF, these packets are just gone.
 		// We must handle this here to return all the tx packets to upper layer windows to avoid BSOD 0x9f or some strange condition.
 		// Solution: The following, when RF is turned off by HW/SW, we will return all the packets back to OS.
-		// 
+		//
 		if(StateToSet == eRfOff && rtState == eRfOn &&	bHwOrSwRfChange)
 		{
 			// If RF is from Hw/Sw ON => OFF
@@ -2940,26 +2940,26 @@ MgntActSet_RF_State(
 		}
 
 		// Turn on RF.
-		if(StateToSet == eRfOn) 
-		{				
+		if(StateToSet == eRfOn)
+		{
 			if(rtState ==eRfOff)
 			{
-				Adapter->HalFunc.HalEnableTxHandler(Adapter);	
+				Adapter->HalFunc.HalEnableTxHandler(Adapter);
 				Adapter->HalFunc.HalEnableRxHandler(Adapter);
-				
+
 				DrvIFIndicateCurrentPhyStatus(Adapter);
 			}
 		}
 		// Turn off RF.
 		else if(StateToSet == eRfOff)
-		{		
+		{
 			Adapter->HalFunc.HalDisableRxHandler(Adapter);
-			Adapter->HalFunc.HalDisableTxHandler(Adapter);		
-			
+			Adapter->HalFunc.HalDisableTxHandler(Adapter);
+
 			//
-			// <Roger_Notes> If RF OFF control is set by this routine, which means the power state 
+			// <Roger_Notes> If RF OFF control is set by this routine, which means the power state
 			// our device currently in D0. So we shedule Idle IRP request immediately. 2009.07.03.
-			// 
+			//
 			RT_TRACE(COMP_RF, DBG_LOUD, ("MgntActSet_RF_State(): Turn off RF!!\n"));
 			Adapter->HalFunc.HalEnterSSHandler(Adapter);
 
@@ -2969,9 +2969,9 @@ MgntActSet_RF_State(
 
 			RT_TRACE(COMP_SCAN, DBG_LOUD, ("Terminate scan because of radio off\n"));
 
-			if(pMgntInfo->RfOffReason > RF_CHANGE_BY_PS) 
+			if(pMgntInfo->RfOffReason > RF_CHANGE_BY_PS)
 				DrvIFIndicateCurrentPhyStatus(Adapter);
-		}		
+		}
 
 		Adapter->pPortCommonInfo->WdiData.bRFOffSwitchProgress = FALSE;
 	}
@@ -2987,13 +2987,13 @@ MgntActSet_RF_State(
 		pMgntInfo->RFChangeInProgress = FALSE;
 		PlatformReleaseSpinLock(Adapter, RT_RF_STATE_SPINLOCK);
 	}
-	
+
 	RT_TRACE(COMP_POWER, DBG_LOUD, ("MgntActSet_RF_State() <====\n"));
 	return bActionAllowed;
 }
 
 //
-//	Description: 
+//	Description:
 //		Update current transmit power level.
 //    TxPowerLevel Setting
 //		0 => Default 1 => 100% 2 => 75% 3 => 50% 4 => 25%
@@ -3007,13 +3007,13 @@ MgntActSet_TX_POWER_LEVEL(
 {
 	s4Byte	minPowerDBM  = 0;
 	s4Byte	maxPowerDBM = 0;
-	s4Byte	PowerAmount =0;	
-	
+	s4Byte	PowerAmount =0;
+
 	if(TxPowerLevel == 0)
 	{
 		return;
 	}
-		
+
 	Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_MIN_TX_POWER_DBM, (pu1Byte)&minPowerDBM);
 	Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_MAX_TX_POWER_DBM, (pu1Byte)&maxPowerDBM);
 
@@ -3021,12 +3021,12 @@ MgntActSet_TX_POWER_LEVEL(
 	PowerAmount = ((maxPowerDBM - minPowerDBM)/6)*(TxPowerLevel+1);
 
 	MgntActSet_TX_POWER_DBM(Adapter,(maxPowerDBM-PowerAmount));
-	RT_TRACE(COMP_RM, DBG_LOUD, ("MgntActSet_TX_POWER_LEVEL(): Set TX Power(TX Power Level: %d) to Dbm(%d)\n",TxPowerLevel,(maxPowerDBM-PowerAmount)));	
-	
+	RT_TRACE(COMP_RM, DBG_LOUD, ("MgntActSet_TX_POWER_LEVEL(): Set TX Power(TX Power Level: %d) to Dbm(%d)\n",TxPowerLevel,(maxPowerDBM-PowerAmount)));
+
 }
 
 //
-//	Description: 
+//	Description:
 //		Update current transmit power level in dBm.
 //	By Bruce, 2008-02-04.
 //
@@ -3037,7 +3037,7 @@ MgntActSet_TX_POWER_DBM(
 	)
 {
 	PMGNT_INFO pMgntInfo = &(Adapter->MgntInfo);
-	
+
 	PlatformAcquireSpinLock(Adapter, RT_RM_SPINLOCK);
 	if( !pMgntInfo->bUpdateTxPowerInProgress )
 	{
@@ -3062,8 +3062,8 @@ MgntActSet_TX_POWER_DBM(
 }
 
 //
-//	Description: 
-//		callback function of UpdateTxPowerWorkItem. 
+//	Description:
+//		callback function of UpdateTxPowerWorkItem.
 //	By Bruce, 2008-02-04.
 //
 VOID
@@ -3101,7 +3101,7 @@ MgntActSet_AdditionalBeaconIE(
 
 	do
 	{
-		// 
+		//
 		// allocate memory for the new IE data and copy the IEs
 		//
 		if (AdditionalIEBufLen > 0)
@@ -3112,10 +3112,10 @@ MgntActSet_AdditionalBeaconIE(
 			if (Status != RT_STATUS_SUCCESS)
 			{
 				break;
-			}		
+			}
 
-			PlatformMoveMemory(newBeaconIeData, 
-								pAdditionalIEBuf, 
+			PlatformMoveMemory(newBeaconIeData,
+								pAdditionalIEBuf,
 								AdditionalIEBufLen);
 			newBeaconIeSize = AdditionalIEBufLen;
 		}
@@ -3124,7 +3124,7 @@ MgntActSet_AdditionalBeaconIE(
 		}
 
 
-		// 
+		//
 		// free the old IEs
 		//
 		if (pMgntInfo->AdditionalBeaconIESize > 0)
@@ -3134,8 +3134,8 @@ MgntActSet_AdditionalBeaconIE(
 			pMgntInfo->AdditionalBeaconIESize = 0;
 		}
 
-		// 
-		// cache new IEs. 
+		//
+		// cache new IEs.
 		// Note that if AdditionalIEBufLen == 0, pMgntInfo->AdditionalBeaconIEData is cleared.
 		//
 		pMgntInfo->AdditionalBeaconIEData = newBeaconIeData;
@@ -3159,10 +3159,10 @@ MgntActSet_AdditionalProbeReqIE(
 	RT_STATUS Status = RT_STATUS_SUCCESS;
 	PVOID newIeData = NULL;
 	u4Byte newIeSize = 0;
-	
+
 	do
 	{
-		// 
+		//
 		// allocate memory for the new IE data and copy the IEs
 		//
 		if (AdditionalIEBufLen > 0)
@@ -3173,10 +3173,10 @@ MgntActSet_AdditionalProbeReqIE(
 			if (Status != RT_STATUS_SUCCESS)
 			{
 				break;
-			}		
+			}
 
-			PlatformMoveMemory(newIeData, 
-								pAdditionalIEBuf, 
+			PlatformMoveMemory(newIeData,
+								pAdditionalIEBuf,
 								AdditionalIEBufLen);
 			newIeSize = AdditionalIEBufLen;
 		}
@@ -3185,7 +3185,7 @@ MgntActSet_AdditionalProbeReqIE(
 		}
 
 
-		// 
+		//
 		// free the old IEs
 		//
 		if (pMgntInfo->AdditionalProbeReqIESize > 0)
@@ -3195,8 +3195,8 @@ MgntActSet_AdditionalProbeReqIE(
 			pMgntInfo->AdditionalProbeReqIESize = 0;
 		}
 
-		// 
-		// cache new IEs. 
+		//
+		// cache new IEs.
 		// Note that if AdditionalIEBufLen == 0, pMgntInfo->AdditionalBeaconIEData is cleared.
 		//
 		pMgntInfo->AdditionalProbeReqIEData = newIeData;
@@ -3227,21 +3227,21 @@ MgntActSet_AdditionalProbeRspIE(
 
 	do
 	{
-		// 
+		//
 		// allocate memory for the new IE data and copy the IEs
 		//
 		if (AdditionalIEBufLen > 0)
-		{	
+		{
 			Status = PlatformAllocateMemory(pAdapter,
 						&newProbeRspIeData,
 						AdditionalIEBufLen);
 			if (Status != RT_STATUS_SUCCESS)
 			{
 				break;
-			}		
+			}
 
-			PlatformMoveMemory(newProbeRspIeData, 
-								pAdditionalIEBuf, 
+			PlatformMoveMemory(newProbeRspIeData,
+								pAdditionalIEBuf,
 								AdditionalIEBufLen);
 			newProbeRspIeSize = AdditionalIEBufLen;
 		}
@@ -3250,7 +3250,7 @@ MgntActSet_AdditionalProbeRspIE(
 		}
 
 
-		// 
+		//
 		// free the old IEs
 		//
 		if (pMgntInfo->AdditionalResponseIESize > 0)
@@ -3260,7 +3260,7 @@ MgntActSet_AdditionalProbeRspIE(
 			pMgntInfo->AdditionalResponseIESize = 0;
 		}
 
-		// 
+		//
 		// cache new IEs
 		//
 		pMgntInfo->AdditionalResponseIEData = newProbeRspIeData;
@@ -3282,24 +3282,24 @@ MgntActSet_AdditionalAssocReqIE(
 	RT_STATUS Status = RT_STATUS_SUCCESS;
 	PVOID newIeData = NULL;
 	u4Byte newIeSize = 0;
-	
+
 	do
 	{
-		// 
+		//
 		// allocate memory for the new IE data and copy the IEs
 		//
 		if (AdditionalIEBufLen > 0)
-		{	
+		{
 			Status = PlatformAllocateMemory(pAdapter,
 						&newIeData,
 						AdditionalIEBufLen);
 			if (Status != RT_STATUS_SUCCESS)
 			{
 				break;
-			}		
+			}
 
-			PlatformMoveMemory(newIeData, 
-								pAdditionalIEBuf, 
+			PlatformMoveMemory(newIeData,
+								pAdditionalIEBuf,
 								AdditionalIEBufLen);
 			newIeSize = AdditionalIEBufLen;
 		}
@@ -3308,7 +3308,7 @@ MgntActSet_AdditionalAssocReqIE(
 		}
 
 
-		// 
+		//
 		// free the old IEs
 		//
 		if (pMgntInfo->AdditionalAssocReqIESize > 0)
@@ -3318,8 +3318,8 @@ MgntActSet_AdditionalAssocReqIE(
 			pMgntInfo->AdditionalAssocReqIESize = 0;
 		}
 
-		// 
-		// cache new IEs. 
+		//
+		// cache new IEs.
 		// Note that if AdditionalIEBufLen == 0, pMgntInfo->AdditionalBeaconIEData is cleared.
 		//
 		pMgntInfo->AdditionalAssocReqIEData = newIeData;
@@ -3336,7 +3336,7 @@ MgntTranslateNdisVersionToRtNdisVersion(
 	)
 {
 	RT_NDIS_VERSION ret = RT_NDIS_VERSION_NONE_NDIS;
-	
+
 	if(NdisVersion == 0)
 	{
 		ret = RT_NDIS_VERSION_NONE_NDIS;
@@ -3366,24 +3366,24 @@ MgntTranslateNdisVersionToRtNdisVersion(
 		ret = RT_NDIS_VERSION_6_30;
 	}
 	else if(NdisVersion <= NDIS_VERSION_BASE_6_40)
-	{		
+	{
 		ret = RT_NDIS_VERSION_6_40;
 	}
 	else if(NdisVersion <= NDIS_VERSION_BASE_6_50)
-	{		
+	{
 		ret = RT_NDIS_VERSION_6_50;
 	}
 	else
 	{// should not get here
 
 		RT_ASSERT(0, ("Wrong NdisVersion: 0x%X\n", NdisVersion));
-		
+
 		ret = RT_NDIS_VERSION_NONE_NDIS;
 	}
 
-	RT_TRACE(COMP_INIT, DBG_LOUD, 
+	RT_TRACE(COMP_INIT, DBG_LOUD,
 		("MgntTranslateNdisVersionToRtNdisVersion(): %X => %X\n", NdisVersion, ret));
-	
+
 	return ret;
 }
 
@@ -3443,7 +3443,7 @@ MgntActSet_802_11_WMM_MODE(
 
 	// Restore SSID.
 	CopySsid(pMgntInfo->Ssid.Octet, pMgntInfo->Ssid.Length, tmpSsid.Octet, tmpSsid.Length);
-	
+
 	if (bWMMEnable)
 	{
 		pMgntInfo->pStaQos->QosCapability |= QOS_WMM;
@@ -3463,10 +3463,10 @@ MgntActSet_802_11_WMM_MODE(
 
 		if(PlatformAllocateMemory(Adapter, (PVOID*)&pRtBss, sizeof(RT_WLAN_BSS)) != RT_STATUS_SUCCESS)
 			return;
-		
+
 		join_action = SelectNetworkBySSID(Adapter, &pMgntInfo->Ssid, FALSE, pRtBss);
 		JoinRequest(Adapter, join_action, pRtBss);
-		
+
 		PlatformFreeMemory(pRtBss, sizeof(RT_WLAN_BSS));
 	}
 }
@@ -3494,7 +3494,7 @@ MgntActSet_802_11_WMM_UAPSD(
 	BOOLEAN			bReconnect = FALSE;
 
 	RT_TRACE(COMP_QOS, DBG_LOUD, ("MgntActSet_802_11_WMM_UAPSD(): UPSD is %X\n", WMM_UAPSD));
-	
+
 	// Backup SSID.
 	tmpSsid.Octet = tmpSsidBuf;
 	tmpSsid.Length = sizeof(tmpSsidBuf);
@@ -3508,7 +3508,7 @@ MgntActSet_802_11_WMM_UAPSD(
 
 	// Restore SSID.
 	CopySsid(pMgntInfo->Ssid.Octet, pMgntInfo->Ssid.Length, tmpSsid.Octet, tmpSsid.Length);
-	
+
 	pMgntInfo->pStaQos->b4ac_Uapsd = WMM_UAPSD & 0x0F;
 	if(pMgntInfo->pStaQos->b4ac_Uapsd & 0x0F)
 	{
@@ -3518,7 +3518,7 @@ MgntActSet_802_11_WMM_UAPSD(
 	{
 		pMgntInfo->pStaQos->QosCapability &= ~QOS_WMM_UAPSD;
 	}
-	
+
 	// Use MSB 4 BIT for MaxSPLength
 	pMgntInfo->pStaQos->MaxSPLength = WMM_UAPSD>>4;
 
@@ -3528,7 +3528,7 @@ MgntActSet_802_11_WMM_UAPSD(
 
 		if(PlatformAllocateMemory(Adapter, (PVOID*)&pRtBss, sizeof(RT_WLAN_BSS))  != RT_STATUS_SUCCESS)
 			return;
-		
+
 		join_action = SelectNetworkBySSID(Adapter, &pMgntInfo->Ssid, FALSE, pRtBss);
 		JoinRequest(Adapter, join_action, pRtBss);
 
@@ -3550,13 +3550,13 @@ MgntActSet_802_11_CustomizedAsocIE(
 	//
 	// Minimum IE length should be larger than zero,
 	// Maximum IE length should be less/equal than 0xFF + IE ID + length (0xFF + 2)
-	//	
-	
+	//
+
 	pMgntInfo->bCustomizedAsocIE = FALSE;
 
 	if(AsocIeLength > 0 && AsocIeLength <= (MAX_IE_LEN+2))
 	{
-		
+
 		pMgntInfo->bCustomizedAsocIE = TRUE;
 		pMgntInfo->CustomizedAsocIELength = AsocIeLength;
 		PlatformZeroMemory(pMgntInfo->CustomizedAsocIEBuf, sizeof(pMgntInfo->CustomizedAsocIEBuf));
@@ -3565,7 +3565,7 @@ MgntActSet_802_11_CustomizedAsocIE(
 		RT_PRINT_DATA(COMP_MLME, DBG_TRACE, ("MgntActSet_802_11_CustomizedAsocIE():"), pMgntInfo->CustomizedAsocIEBuf, pMgntInfo->CustomizedAsocIELength);
 
 		return TRUE;
-	}	
+	}
 #endif
 	return FALSE;
 }
@@ -3587,7 +3587,7 @@ MgntActSet_802_11_Sigma_Capability(
 
 	if(InformationBufferLength < neededLen)
 		goto end;
-		
+
 
 	switch(capability)
 	{
@@ -3596,7 +3596,7 @@ MgntActSet_802_11_Sigma_Capability(
 			neededLen += 1;
 			if(InformationBufferLength < neededLen)
 				goto end;
-			
+
 			pHTInfo->b40Intolerant = (BOOLEAN)(*((pu1Byte)InformationBuffer+1));
 			RT_TRACE(COMP_HT, DBG_LOUD, ("Set 40 intolerant = %d\n", pHTInfo->b40Intolerant));
 		}
@@ -3607,7 +3607,7 @@ MgntActSet_802_11_Sigma_Capability(
 			neededLen += 1;
 			if(InformationBufferLength < neededLen)
 				goto end;
-			
+
 			pHTInfo->bAMPDUManual = (BOOLEAN)(*((pu1Byte)InformationBuffer+1));
 			RT_TRACE(COMP_HT, DBG_LOUD, ("Set AMPDU (manual) = %d\n", pHTInfo->bAMPDUManual));
 		}
@@ -3619,7 +3619,7 @@ MgntActSet_802_11_Sigma_Capability(
 			if(InformationBufferLength < neededLen)
 				goto end;
 			RT_TRACE(COMP_HT, DBG_LOUD, ("Set HT_CAP_OP_STBC\n"));
-			if(RT_STATUS_SUCCESS != 
+			if(RT_STATUS_SUCCESS !=
 				(rtStatus = MgntActSet_802_11_STBC_MODE(Adapter, ((pu1Byte)InformationBuffer+1), InformationBufferLength - 1)))
 			{
 				RT_TRACE_F(COMP_HT, DBG_WARNING, ("[WARNING] MgntActSet_802_11_STBC_MODE failed = %d\n", rtStatus));
@@ -3635,7 +3635,7 @@ MgntActSet_802_11_Sigma_Capability(
 			neededLen += 1;
 			if(InformationBufferLength < neededLen)
 				goto end;
-			
+
 			if((CHANNEL_WIDTH)(*((pu1Byte)InformationBuffer+1)) == CHANNEL_WIDTH_20)
 				pChnlInfo->RegBWSetting = CHANNEL_WIDTH_20;
 			else if((CHANNEL_WIDTH)(*((pu1Byte)InformationBuffer+1)) == CHANNEL_WIDTH_40)
@@ -3651,11 +3651,11 @@ MgntActSet_802_11_Sigma_Capability(
 		{
 			PTX_TS_RECORD	pTxTs = NULL;
 			u1Byte			tid = (*((pu1Byte)InformationBuffer+1));
-			
+
 			neededLen += 1;
 			if(InformationBufferLength < neededLen)
 				goto end;
-			
+
 			if(GetTs(Adapter, (PTS_COMMON_INFO*)(&pTxTs), pMgntInfo->Bssid, tid, TX_DIR, TRUE))
 			{
 				TsStartAddBaProcess(Adapter, pTxTs);
@@ -3671,7 +3671,7 @@ MgntActSet_802_11_Sigma_Capability(
 			neededLen += 1;
 			if(InformationBufferLength < neededLen)
 				goto end;
-			
+
 			pMgntInfo->pStaQos->AcNoAck = (*(PAC_NOACK)((pu1Byte)InformationBuffer+1));
 			RT_TRACE(COMP_HT, DBG_LOUD, ("Set NoAckPolicy = %x\n", pMgntInfo->pStaQos->AcNoAck));
 		}
@@ -3693,7 +3693,7 @@ MgntActSet_802_11_Sigma_Capability(
 			neededLen += 1;
 			if(InformationBufferLength < neededLen)
 				goto end;
-			
+
 			pVHTInfo->nRxSPStream = (*((pu1Byte)InformationBuffer+1));
 			RT_TRACE(COMP_HT, DBG_LOUD, ("Set VHT RxSPStream = %d\n", pVHTInfo->nRxSPStream));
 		}
@@ -3704,7 +3704,7 @@ MgntActSet_802_11_Sigma_Capability(
 			neededLen += 1;
 			if(InformationBufferLength < neededLen)
 				goto end;
-			
+
 			pHTInfo->nTxSPStream = (*((pu1Byte)InformationBuffer+1));
 			RT_TRACE(COMP_HT, DBG_LOUD, ("Set TxSPStream = %d\n", pHTInfo->nTxSPStream));
 		}
@@ -3715,7 +3715,7 @@ MgntActSet_802_11_Sigma_Capability(
 			neededLen += 1;
 			if(InformationBufferLength < neededLen)
 				goto end;
-			
+
 			pHTInfo->nRxSPStream = (*((pu1Byte)InformationBuffer+1));
 			RT_TRACE(COMP_HT, DBG_LOUD, ("Set RxSPStream = %d\n", pHTInfo->nRxSPStream));
 		}
@@ -3730,12 +3730,12 @@ MgntActSet_802_11_Sigma_Capability(
 			pVHTInfo->BWToSwitch = (CHANNEL_WIDTH)(*((pu1Byte)InformationBuffer+1));
 
 			DbgPrint("set value = %d\n", pVHTInfo->BWToSwitch);
-			
+
 			pVHTInfo->RxSSToSwitch = (*((pu1Byte)InformationBuffer+2));
 			VHTSendOperatingModeNotification(Adapter, pMgntInfo->Bssid);
-			CHNL_SetBwChnl(	Adapter, 
+			CHNL_SetBwChnl(	Adapter,
 								pMgntInfo->dot11CurrentChannelNumber,
-								pVHTInfo->BWToSwitch, 
+								pVHTInfo->BWToSwitch,
 								pMgntInfo->pChannelInfo->Ext20MHzChnlOffsetOf40MHz);
 			RT_TRACE(COMP_HT, DBG_LOUD, ("Set Bw to %d\n", pVHTInfo->BWToSwitch));
 			RT_TRACE(COMP_HT, DBG_LOUD, ("Set RxSS to %d\n", pVHTInfo->RxSSToSwitch));
@@ -3747,7 +3747,7 @@ MgntActSet_802_11_Sigma_Capability(
 			neededLen += 2;
 			if(InformationBufferLength < neededLen)
 				goto end;
-			
+
 			pVHTInfo->RxSSToSwitch = (*((pu1Byte)InformationBuffer+1));
 			if(pVHTInfo->RxSSToSwitch == 0)
 			{
@@ -3772,7 +3772,7 @@ MgntActSet_802_11_Sigma_Capability(
 				if(InformationBufferLength < neededLen)
 					goto end;
 				RT_TRACE(COMP_HT, DBG_LOUD, ("Set HT_CAP_OP_BEAMFORMING_CAP\n"));
-				if(RT_STATUS_SUCCESS != 
+				if(RT_STATUS_SUCCESS !=
 					(rtStatus = MgntActSet_802_11_Beamforming_MODE(Adapter, ((pu1Byte)InformationBuffer+1), InformationBufferLength - 1)))
 				{
 					RT_TRACE_F(COMP_HT, DBG_WARNING, ("[WARNING] MgntActSet_802_11_Beamforming_MODE failed = %d\n", rtStatus));
@@ -3821,7 +3821,7 @@ MgntActSet_802_11_Sigma_Capability(
 		break;
 
 		case HT_CAP_OP_NSS_MCS_CAP:
-		{			
+		{
 			neededLen += 2;
 			if(InformationBufferLength < neededLen)
 				goto end;
@@ -3849,7 +3849,7 @@ MgntActSet_802_11_Sigma_Capability(
 		case HT_CAP_OP_SGI20:
 		{
 			u1Byte	shortGI = 0;
-			
+
 			neededLen += 1;
 			if(InformationBufferLength < neededLen)
 				goto end;
@@ -3897,10 +3897,10 @@ MgntActSet_802_11_Sigma_Capability(
 		break;
 
 		case HT_CAP_OP_CTS_ENABLE:
-		{			
+		{
 			PRT_CHANNEL_INFO	pChnlInfo = pMgntInfo->pChannelInfo;
 			u1Byte				BWFallBackLvl = 0;
-			
+
 			pVHTInfo->DynamicCTSBW = (CHANNEL_WIDTH)((u1Byte)(*((pu1Byte)InformationBuffer+1)));
 
 			if(pChnlInfo->RegBWSetting == CHANNEL_WIDTH_80) // If current BW is 80MHz
@@ -3923,7 +3923,7 @@ MgntActSet_802_11_Sigma_Capability(
 			{
 				RT_TRACE(COMP_HT, DBG_LOUD, ("Set HT_CAP_OP_CTS_ENABLE: Not support RegBWSetting=%d,\n", pVHTInfo->DynamicCTSBW));
 			}
-			
+
 			Adapter->HalFunc.HalSetCTSDynamicBWSelectHandler(Adapter, BWFallBackLvl);
 			RT_TRACE(COMP_HT, DBG_LOUD, ("Set dynamic CTS BW = %d, RegBWSetting=%d, BWFallBackLvl(%d)\n", pVHTInfo->DynamicCTSBW, pChnlInfo->RegBWSetting, BWFallBackLvl));
 		}
@@ -3940,7 +3940,7 @@ MgntActSet_802_11_Sigma_Capability(
 		}
 		break;
 		#endif
-		
+
 		default:
 			break;
 	}
@@ -3967,11 +3967,11 @@ end:
 //		The length in byte of InformationBuffer.
 // Remark:
 //	Information Buffer contains one byte as the following setting.
-// 	BIT0 - BEAMFORMING_VHT_BEAMFORMER_ENABLE, 
+// 	BIT0 - BEAMFORMING_VHT_BEAMFORMER_ENABLE,
 //	BIT1 - BEAMFORMING_VHT_BEAMFORMEE_ENABLE
 //	BIT2 - BEAMFORMING_VHT_BEAMFORMER_TEST		(Transmiting Beamforming no matter the target supports it or not)
 //	BIT3 - BEAMFORMING_VHT_MU_BEAMFORMER_ENABLE
-// 	BIT4 - BEAMFORMING_HT_BEAMFORMER_ENABLE, 
+// 	BIT4 - BEAMFORMING_HT_BEAMFORMER_ENABLE,
 //	BIT5 - BEAMFORMING_HT_BEAMFORMEE_ENABLE
 //	BIT6 - BEAMFORMING_HT_BEAMFORMER_TEST		(Transmiting Beamforming no matter the target supports it or not)
 //	BIT7 - BEAMFORMING_VHT_MU_BEAMFORMEE_ENABLE
@@ -4000,7 +4000,7 @@ MgntActSet_802_11_Beamforming_MODE(
 	userBeamformSet = *(InformationBuffer);
 
 	RT_TRACE_F(COMP_HT, DBG_LOUD, ("Beamforming config = 0x%02X\n", userBeamformSet));
-	
+
 	// Set for all adapters
 	do
 	{
@@ -4097,7 +4097,7 @@ MgntActSet_802_11_Beamforming_MODE(
 //		The length in byte of InformationBuffer.
 // Remark:
 //	Information Buffer contains one byte as the following setting.
-// 	BIT0 - LDPC_VHT_ENABLE_RX, 
+// 	BIT0 - LDPC_VHT_ENABLE_RX,
 //	BIT1 - LDPC_VHT_ENABLE_TX
 //	BIT2 - LDPC_VHT_TEST_TX_ENABLE(Don't care protocol, just sending VHT LDPC)
 //
@@ -4135,8 +4135,8 @@ MgntActSet_802_11_LDPC_MODE(
 
 	userLdpcSet = *(InformationBuffer);
 
-	if(!bHwSupportLdpcTx && 
-		((userLdpcSet & LDPC_VHT_ENABLE_TX) || 
+	if(!bHwSupportLdpcTx &&
+		((userLdpcSet & LDPC_VHT_ENABLE_TX) ||
 		  (userLdpcSet & LDPC_VHT_TEST_TX_ENABLE) ||
 		  (userLdpcSet & LDPC_HT_ENABLE_TX) ||
 		  (userLdpcSet & LDPC_HT_TEST_TX_ENABLE)))
@@ -4151,11 +4151,11 @@ MgntActSet_802_11_LDPC_MODE(
 		RT_TRACE_F(COMP_HT, DBG_WARNING, ("[WARNING] HW doesn't support set LDPC Rx\n"));
 		return RT_STATUS_FAILURE;
 	}
-	
+
 	SetRegLdpc(pAdapter, *(InformationBuffer) );
 
 	RT_TRACE_F(COMP_HT, DBG_LOUD, ("LDPC config = 0x%02X\n", userLdpcSet));
-	
+
 	// Set for all adapters
 	do
 	{
@@ -4206,7 +4206,7 @@ MgntActSet_802_11_LDPC_MODE(
 //		The length in byte of InformationBuffer.
 // Remark:
 //	Information Buffer contains one byte as the following setting.
-// 	BIT0 - STBC_VHT_ENABLE_RX, 
+// 	BIT0 - STBC_VHT_ENABLE_RX,
 //	BIT1 - STBC_VHT_ENABLE_TX
 //	BIT2 - STBC_VHT_TEST_TX_ENABLE(Don't care protocol, just sending VHT STBC), test mode.
 //
@@ -4235,7 +4235,7 @@ MgntActSet_802_11_STBC_MODE(
 	}
 
 	pAdapter->HalFunc.GetHalDefVarHandler(pAdapter, HAL_DEF_TX_STBC, (pu1Byte)&bHwSupportStbc);
-	
+
 	if(!bHwSupportStbc)
 	{
 		RT_TRACE_F(COMP_HT, DBG_WARNING, ("[WARNING] HW doesn't not support STBC, skip setting...\n"));
@@ -4245,7 +4245,7 @@ MgntActSet_802_11_STBC_MODE(
 	SetRegStbc(pAdapter, *(InformationBuffer));
 
 	RT_TRACE_F(COMP_HT, DBG_LOUD, ("STBC config = 0x%02X\n", userStbcSet));
-	
+
 	// Set for all adapters
 	do
 	{
@@ -4294,7 +4294,7 @@ MgntActSet_S5_WAKEUP_INFO(
 {
 	PMGNT_INFO			pMgntInfo 	= &(pAdapter->MgntInfo);
 	PRT_S5WakeUPInfo	pS5WakeInfo = NULL;
-	
+
 	pS5WakeInfo	= (PRT_S5WakeUPInfo)InformationBuffer;
 
 	pMgntInfo->mPasspharseLen = pS5WakeInfo->PSKLen;
@@ -4308,7 +4308,7 @@ MgntActSet_S5_WAKEUP_INFO(
 
 
 
-#if (P2P_SUPPORT == 1)	
+#if (P2P_SUPPORT == 1)
 VOID
 MgntActSet_P2PMode(
 	IN	PADAPTER		Adapter,
@@ -4321,8 +4321,8 @@ MgntActSet_P2PMode(
 {
 	PP2P_INFO	pP2PInfo = (PP2P_INFO)(Adapter->MgntInfo.pP2PInfo);
 	BOOLEAN		bCurrentP2PEnabled = P2P_ENABLED(pP2PInfo);
-	
-	RT_TRACE_F(COMP_P2P, DBG_LOUD, 
+
+	RT_TRACE_F(COMP_P2P, DBG_LOUD,
 		("bP2PMode(%u), bGO(%u), LsnCh(%u), OpCh(%u), GOIntent(%u)\n",
 		bP2PMode, bGO, ListenChannel, IntendedOpChannel, GOIntent));
 
@@ -4334,12 +4334,12 @@ MgntActSet_P2PMode(
 	if(bCurrentP2PEnabled)
 	{
 		BOOLEAN bScanInProgress;
-	
+
 		//
 		// Stop any existing scan
 		//
 		bScanInProgress = MgntScanInProgress(&pP2PInfo->pAdapter->MgntInfo);
-		
+
 		if(P2P_DOING_DEVICE_DISCOVERY(pP2PInfo))
 		{// Doing P2P Device Discovery
 			//DbgPrint("P2P_DOING_DEVICE_DISCOVERY\n");
@@ -4352,7 +4352,7 @@ MgntActSet_P2PMode(
 			P2PScanListCeaseScan(pP2PInfo);
 			P2PExtendedListenComplete(pP2PInfo);
 		}
-		else if(bScanInProgress) 
+		else if(bScanInProgress)
 		{// Doing normal scan
 			//DbgPrint("bScanInProgress\n");
 			P2PScanListCeaseScan(pP2PInfo);
@@ -4360,13 +4360,13 @@ MgntActSet_P2PMode(
 		}
 	}
 
-	if(bP2PMode) 
+	if(bP2PMode)
 	{
 		if(!P2P_ENABLED(pP2PInfo))
 		{
 			P2PInitialize(pP2PInfo, Adapter, ListenChannel, IntendedOpChannel, GOIntent);
 		}
-		
+
 		if(bGO)
 		{
 			P2PGOStartAutomously(pP2PInfo);
@@ -4375,7 +4375,7 @@ MgntActSet_P2PMode(
 		{
 		}
 	}
-	else 
+	else
 	{
 //Disconnect when set P2P disable
 //by sherry 20130117
@@ -4395,9 +4395,9 @@ MgntActSet_P2PProvisionIE(
 	IN	u2Byte		 	InformationLen
 	)
 {
-	RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "MgntActSet_P2PProvisionIE:\n", 
+	RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "MgntActSet_P2PProvisionIE:\n",
 		Information, InformationLen);
-	
+
 	P2P_SetWpsIe(Adapter, InformationLen, Information);
 }
 
@@ -4407,7 +4407,7 @@ MgntActSet_P2PFlushScanList(
 	)
 {
 	PP2P_INFO pP2PInfo = GET_P2P_INFO(Adapter);
-	
+
 	if(P2P_ENABLED(pP2PInfo))
 	{
 		P2PScanListClear(pP2PInfo);
@@ -4423,7 +4423,7 @@ MgntActSet_P2PProvisioningResult(
 	)
 {
 	PP2P_INFO pP2PInfo = GET_P2P_INFO(Adapter);
-	
+
 	if(P2P_ENABLED(pP2PInfo))
 	{
 		pP2PInfo->ConnectionContext.ProvisioningResult = ProvisioningResult;
@@ -4456,7 +4456,7 @@ MgntActSet_P2PChannelList(
 	PP2P_INFO pP2PInfo = GET_P2P_INFO(Adapter);
 	u4Byte nRegClasses = 0;
 	u1Byte i = 0;
-	
+
 	if(!P2P_ENABLED(pP2PInfo))
 	{
 		//return;
@@ -4465,8 +4465,8 @@ MgntActSet_P2PChannelList(
 	RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "ChannelList to set: ", pChannelList, ChannelListLen);
 
 	nRegClasses = sizeof(P2PRegClass) / sizeof(P2PRegClass[0]) - 1;
-	
-	RT_ASSERT(nRegClasses <= P2P_MAX_REG_CLASSES, 
+
+	RT_ASSERT(nRegClasses <= P2P_MAX_REG_CLASSES,
 			("MgntActSet_P2PChannelList(): not enough space for all regulatory class: %u > %u",
 			nRegClasses, P2P_MAX_REG_CLASSES));
 
@@ -4482,8 +4482,8 @@ MgntActSet_P2PChannelList(
 		if(CHANNEL_WIDTH_40 == pRecClass->chWidth &&
 			!(GET_HT_INFO(&Adapter->MgntInfo))->bEnableHT)
 		{
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
-				("MgntActSet_P2PChannelList(): skip reg class: %u because HT not enabled\n", 
+			RT_TRACE(COMP_P2P, DBG_LOUD,
+				("MgntActSet_P2PChannelList(): skip reg class: %u because HT not enabled\n",
 				pRecClass->RegClass));
 			continue;
 		}
@@ -4492,9 +4492,9 @@ MgntActSet_P2PChannelList(
 		pChEntry->regClass= pRecClass->RegClass;
 		pChEntry->channels= 0;
 		pP2PInfo->ChannelEntryList.regClasses++;
-		
-		for (Channel = pRecClass->MinChannel; 
-				Channel <= pRecClass->MaxChannel; 
+
+		for (Channel = pRecClass->MinChannel;
+				Channel <= pRecClass->MaxChannel;
 				Channel += pRecClass->ChannelGap) // foreach channels in the regulatory class
 		{
 			u1Byte j = 0;
@@ -4510,8 +4510,8 @@ MgntActSet_P2PChannelList(
 			pChEntry->channel[pChEntry->channels] = Channel;
 			pChEntry->channels++;
 
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
-				("MgntActSet_P2PChannelList: add channel: %4s: %4u, %4s: %4u\n", 
+			RT_TRACE(COMP_P2P, DBG_LOUD,
+				("MgntActSet_P2PChannelList: add channel: %4s: %4u, %4s: %4u\n",
 				"reg", pChEntry->regClass,
 				"ch", Channel));
 		}
@@ -4526,10 +4526,10 @@ MgntActSet_P2PListenChannel(
 {
 	PP2P_INFO	pP2PInfo = GET_P2P_INFO(Adapter);
 	PADAPTER	pDefAdapter = GetDefaultAdapter(Adapter);
-	PADAPTER	pLoopAdapter = pDefAdapter;	
+	PADAPTER	pLoopAdapter = pDefAdapter;
 	PHAL_DATA_TYPE		pHalData = GET_HAL_DATA(pDefAdapter);
 	BOOLEAN		bSetChannel = TRUE;
-	
+
 	if(!P2P_ENABLED(pP2PInfo))
 	{
 		return;
@@ -4562,32 +4562,32 @@ MgntActSet_P2PListenChannel(
 
 	if(bSetChannel)
 	{
-		if(IS_NEED_EXT_IQK(pDefAdapter)) 
+		if(IS_NEED_EXT_IQK(pDefAdapter))
 		{
-			pHalData->bNeedIQK = TRUE;			
+			pHalData->bNeedIQK = TRUE;
 			pHalData->DM_OutSrc.RFCalibrateInfo.bNeedIQK = TRUE;
 		}
 
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
-				("MgntActSet_P2PListenChannel(): from %u to %u \n", 
+			RT_TRACE(COMP_P2P, DBG_LOUD,
+				("MgntActSet_P2PListenChannel(): from %u to %u \n",
 				pP2PInfo->ListenChannel, ListenChannel));
 
 		pP2PInfo->pAdapter->MgntInfo.dot11CurrentChannelNumber = ListenChannel;
-		pP2PInfo->ListenChannel = ListenChannel;		
-		
+		pP2PInfo->ListenChannel = ListenChannel;
+
 		if(!pDefAdapter->MgntInfo.RegRfOff)
 		{
 			Adapter->HalFunc.SetWirelessModeHandler(Adapter, (u1Byte)WIRELESS_MODE_G);
 
-				CHNL_SetBwChnl(	Adapter, 
+				CHNL_SetBwChnl(	Adapter,
 								Adapter->MgntInfo.dot11CurrentChannelNumber,
-						 		CHANNEL_WIDTH_20, 
+						 		CHANNEL_WIDTH_20,
 						 		EXTCHNL_OFFSET_NO_EXT
 						 		);
 		}
 	}
 }
-#endif	// #if (P2P_SUPPORT == 1)	
+#endif	// #if (P2P_SUPPORT == 1)
 
 #if (WPS_SUPPORT == 1)
 RT_STATUS
@@ -4606,7 +4606,7 @@ MgntActSet_WPS_Information(
 
 	if(pSimpleConfig == NULL)
 		goto End;
-	
+
 	if(pSimpleConfig->WpsIeVersion < SUPPORT_WPS_INFO_VERSION)
 	{
 		RT_TRACE(COMP_WPS, DBG_LOUD, ("MgntActSet_WPS_Information(): Not support this version!\n"));
@@ -4622,7 +4622,7 @@ MgntActSet_WPS_Information(
 
 	wpsinfoOpcode = *((pu1Byte)InformationBuffer);
 	paraLength = *((pu2Byte)((pu1Byte)InformationBuffer+1));
-	
+
 	NeedLength += paraLength;
 	if(InformationBufferLength < NeedLength)
 	{
@@ -4630,7 +4630,7 @@ MgntActSet_WPS_Information(
 		rtStatus = RT_STATUS_RESOURCE;
 		goto End;
 	}
-	
+
 	switch(wpsinfoOpcode)
 	{
 	case WPS_INFO_BEACON_IE:

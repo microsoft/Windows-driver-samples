@@ -10,7 +10,7 @@
 #define __INC_WIDI_TYPE_H
 
 #define WFD_OUI_TYPE				0x0A
-#define WFD_MAX_SCAN_LIST_NUM		128	
+#define WFD_MAX_SCAN_LIST_NUM		128
 
 #define	WFD_SUB_ID_LEN		1	// 1 Byte
 #define WFD_SUB_LEN_LEN	2	// 2 Byte
@@ -127,7 +127,7 @@ typedef enum _WFD_SUB_ID{
 	WFD_SUB_ID_DEVICE_INFORMATION			=0,
 	WFD_SUB_ID_ASSOC_BSSID					=1,
 	WFD_SUB_ID_AUDIO_FORMATS				=2,
-	WFD_SUB_ID_VIDEO_FORMATS				=3,	
+	WFD_SUB_ID_VIDEO_FORMATS				=3,
 	WFD_SUB_ID_3D_VIDEO_FORMATS				=4,
 	WFD_SUB_ID_CONTENT_PROTECTION			=5,
 	WFD_SUB_ID_COUPLED_SINK_INFORMATION		=6,
@@ -233,7 +233,7 @@ typedef struct _WFD_CLIENT_ENTRY_INFO
 {
 	BOOLEAN					bWfdClient;		// If TRUE, it is a WFD client.
 	PVOID					pEntry;			// The entry of RT_WLAN_STA.
-	WFD_DEVICE_INFO_DESC	deviceDesc;		// WFD_DEVICE_INFO_DESC	
+	WFD_DEVICE_INFO_DESC	deviceDesc;		// WFD_DEVICE_INFO_DESC
 }WFD_CLIENT_ENTRY_INFO, *PWFD_CLIENT_ENTRY_INFO;
 
 #define	WFD_DEFAULT_CONTROL_PORT	8554
@@ -247,7 +247,7 @@ typedef struct _WFD_INFO
 	RT_SPIN_LOCK			wfdSpinLock;
 	u2Byte					deviceInfo;	// WFD Device Information field
 	u2Byte					controlPort;	// Session Management Control Port
-	u2Byte					maxTP;	// WFD DEvice Maximum Throughput	
+	u2Byte					maxTP;	// WFD DEvice Maximum Throughput
 	u1Byte					coupledSinkStatus;	// Coupled Sink Status
 	u1Byte					coupledSinkAddr[6];	// Mac Address of Coupled Sink
 	u2Byte					extCapability;	// Extended Capabilities
@@ -273,7 +273,7 @@ typedef struct _WFD_INFO
 #define	WFD_REQ_ID							u4Byte
 #define	WFD_REQ_ID_MIN_SUPPORT_VERSION		(WFD_REQ_ID)0x00000001
 #define	WFD_REQ_ID_MAX_SUPPORT_VERSION		(WFD_REQ_ID)0x00000002
-#define	WFD_REQ_ID_CURRENT_VERSION			(WFD_REQ_ID)0x00000003					
+#define	WFD_REQ_ID_CURRENT_VERSION			(WFD_REQ_ID)0x00000003
 
 #define	WFD_REQ_ID_WFD_MODE					(WFD_REQ_ID)0x00000010
 #define	WFD_REQ_ID_DEVICE_TYPE				(WFD_REQ_ID)0x00000011

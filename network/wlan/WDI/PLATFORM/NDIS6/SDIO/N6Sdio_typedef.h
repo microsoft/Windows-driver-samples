@@ -37,7 +37,7 @@ Abstract:
 
 
 //--------------------------------------
-// Macros specific to miniport adapter structure 
+// Macros specific to miniport adapter structure
 //--------------------------------------
 #define MP_SET_PACKET_RFD(_p, _rfd)	*((PRT_RFD *)&(_p)->MiniportReserved[1]) = _rfd
 #define MP_GET_PACKET_RFD(_p)		*((PRT_RFD *)&(_p)->MiniportReserved[1])
@@ -54,7 +54,7 @@ Abstract:
 #define MAX_NUM_PIPES 15
 
 
-#if USE_WDF_USB 
+#if USE_WDF_USB
 
 //
 // Obtain desired GUID for SSNDIS miniport binding, added by Roger, 2010.03.23.
@@ -114,7 +114,7 @@ typedef struct _KMDFIDLER_INTERFACE_STANDARD {
 	PF_RESUME_IDLE            ResumeIdle; // WDF resume idle exported handler.
 	PF_GET_IDLER_ENABLE_CNT		IdlerRefCnt; //Current idler enable counter.
 	PF_GET_IDLER_PWR_STATE		IdlerPwrState; // Current drvier stack power stack.
-	PF_GET_IDLER_WAKEUP_CNT	IdlerWakeupCnt;	
+	PF_GET_IDLER_WAKEUP_CNT	IdlerWakeupCnt;
 } KMDFIDLER_INTERFACE_STANDARD, *PKMDFIDLER_INTERFACE_STANDARD;
 
 #endif
@@ -128,7 +128,7 @@ typedef struct _RT_AWB
 {
 	RT_LIST_ENTRY	List;
 	u4Byte			Offset;
-	u2Byte			ByteCnt; 
+	u2Byte			ByteCnt;
 	u1Byte			DataBuf[MAX_AWB_DATA_SIZE];
 #if RTL8723_SDIO_IO_THREAD_ENABLE
 	u1Byte			DeviceID;
@@ -141,7 +141,7 @@ typedef struct _RT_AWB
 // 2006.09.28, by shien chang.
 //
 typedef struct _PLATFORM_EXT {
-	NDIS_EVENT		Event;			// Event used to handle driver unload. 
+	NDIS_EVENT		Event;			// Event used to handle driver unload.
 	NDIS_SPIN_LOCK	Lock;			// Lock to protect object of this class.
 } PLATFORM_EXT, *PPLATFORM_EXT;
 
@@ -215,7 +215,7 @@ typedef enum	_SDRP_ERROR_HANDLING_TYPE{
 //
 typedef enum	_RF_SDIO_TRANSFER_TYPE{
 	SDIO_TRANSFER_TX = 0,
-	SDIO_TRANSFER_RX = 1,	
+	SDIO_TRANSFER_RX = 1,
 }RF_SDIO_TRANSFER_TYPE, *PRF_SDIO_TRANSFER_TYPE;
 
 //
@@ -269,22 +269,22 @@ typedef struct _RT_SDIO_DEVICE {
 
 	//3 SDIO related Bus info and properitie.
 	u1Byte	SdioFuncNum; // Function number on SD card
-	u2Byte	SdioBusDriverVer; 
-	u1Byte	SdioRevNum; // CCCRx Format Version Number and SDIOx Specification Revision Number. 
+	u2Byte	SdioBusDriverVer;
+	u1Byte	SdioRevNum; // CCCRx Format Version Number and SDIOx Specification Revision Number.
 	u1Byte	SdioFormatVer; // SD Format Version Number.
-	u2Byte	SdioFuncType;	
+	u2Byte	SdioFuncType;
 	u1Byte	SdioBusWidth;
-	u4Byte	SdioBusClk; 
+	u4Byte	SdioBusClk;
 	u2Byte	SdioHostBlockSize; // Maximum block length that is supported by the controller
 	u2Byte	SdioFuncBlockSize;
 	u4Byte			SdioRxSeqNum;
 	u4Byte	SdioCommonCISPtr;
 	u1Byte	SdioRegDbgCtrl;
-	
+
 	BOOLEAN		SdioTxBlockMode;
 	BOOLEAN		SdioRxBlockMode;
 	BOOLEAN		IoRegDirectAccess;
-	
+
 	// SDIO Card Metaformat for CIS
 	SDIO_MANFID_TPL	Sdiomanfid; // Manufacture Identification String Tuple
 	u2Byte			SDIO_ManufacturerCode; //Manufacture Code
@@ -292,7 +292,7 @@ typedef struct _RT_SDIO_DEVICE {
 
 	PVOID			pAdapter;
 	//enum _PLATFORM_NDIS_VERSION		NdisVersion;
-	
+
 	NDIS_SPIN_LOCK			SpinLock;
 	NDIS_SPIN_LOCK			TxSpinLock;
 	NDIS_SPIN_LOCK			RxSpinLock;
@@ -312,11 +312,11 @@ typedef struct _RT_SDIO_DEVICE {
 
 
 	// Ndis 6.2 Releated Lock
-	NDIS_SPIN_LOCK			PortLock;	// For New Port, 080418, by Maddest	
+	NDIS_SPIN_LOCK			PortLock;	// For New Port, 080418, by Maddest
 
 	NDIS_SPIN_LOCK			InitialSpinLock;// For Initialize 2007.11.5 by cosa
-	NDIS_SPIN_LOCK			RFStateSpinLock; // For set RF on/off 
-	
+	NDIS_SPIN_LOCK			RFStateSpinLock; // For set RF on/off
+
 	NDIS_SPIN_LOCK			WapiOptionSpinLock;// For wapi 2009.05.21 by sherry
 	NDIS_SPIN_LOCK			WapiRxSpinLock;// For wapi 2009.05.21 by sherry
 	NDIS_SPIN_LOCK			BufferSpinLock;	// For NetBufferLists
@@ -326,18 +326,18 @@ typedef struct _RT_SDIO_DEVICE {
 	NDIS_SPIN_LOCK			ndisDbgWorkItemSpinLock;    // 20120525 by cosa
 	NDIS_SPIN_LOCK			IQKSpinLock;				// For IQK. 20130807, Added by VincentL.
 	NDIS_SPIN_LOCK			DynTxPwrTblSpinLock;
-	NDIS_SPIN_LOCK			PendedOidSpinLock;// Synchronization method for OID pending, added by Roger, 2013.07.11.   	
+	NDIS_SPIN_LOCK			PendedOidSpinLock;// Synchronization method for OID pending, added by Roger, 2013.07.11.
 	NDIS_SPIN_LOCK			ChnlListSpinLock;
-	NDIS_SPIN_LOCK			IndicSpinLock;	// Protect indic context.	
+	NDIS_SPIN_LOCK			IndicSpinLock;	// Protect indic context.
 	NDIS_SPIN_LOCK			RfdSpinLock;
-	
-#if (AUTO_CHNL_SEL_NHM == 1)	
+
+#if (AUTO_CHNL_SEL_NHM == 1)
 	NDIS_SPIN_LOCK			AcsSpinLock;	// Auto Channel Select
 #endif
 
 #if DRV_LOG_REGISTRY
 	NDIS_SPIN_LOCK			DrvStateSpinLock;
-#endif	
+#endif
 
 	NDIS_SPIN_LOCK			CustomScanSpinLock;
 
@@ -355,7 +355,7 @@ typedef struct _RT_SDIO_DEVICE {
 
 	// SDIO Tx Queue related information.
 	PRT_SDIO_TX_QUEUE	RtTxQueue;		// A ring of Tx queues.
-	int					RtNumTxQueue;	// Number of Tx queue in the ring	
+	int					RtNumTxQueue;	// Number of Tx queue in the ring
 
 	// SDIO Rx Queue related information.
 	int					RtNumRxQueue;	// Number of Rx queues in the ring
@@ -367,7 +367,7 @@ typedef struct _RT_SDIO_DEVICE {
 	u2Byte					NdisStatusIndicateCount;
 
 	//----------------------------------------------------------------------------
-	// IO Method Related. 2005.01.06, by rcnjko. 
+	// IO Method Related. 2005.01.06, by rcnjko.
 	NDIS_SPIN_LOCK			IrpSpinLock;	// To make sure at most one IRP sent to USB host driver.
 	NDIS_SPIN_LOCK			AwbSpinLock;
 	NDIS_SPIN_LOCK			HwTimerSpinLock;
@@ -376,27 +376,27 @@ typedef struct _RT_SDIO_DEVICE {
 	// Tx related Semaphore
 	PlatformSemaphore		TxSemaphore;
 
-#if RTL8723_SDIO_IO_THREAD_ENABLE 
+#if RTL8723_SDIO_IO_THREAD_ENABLE
 	// IO related Semaphore
 	PlatformSemaphore		IOSemaphore;
 #endif
-	
+
 	int						nIrpPendingCnt;	// #IRP pending in USB host, it MUST be protected by IrpSpinLock.
 	RT_LIST_ENTRY			AwbIdleQueue;	// Queue for non-used AWBs.
 	RT_LIST_ENTRY			AwbWaitQueue;	// Queue for AWB waiting to be sent down.
 	u4Byte					NumAwb;			// #Awb allocated
 	PVOID					AwbBuffer;		// Pointer to the block of memory for AWBs.
-	u4Byte					AwbBufferSize;	// Size of AwbBuffer. 
+	u4Byte					AwbBufferSize;	// Size of AwbBuffer.
 	u4Byte					NumIdleAwb; // Num of idle Awb
 	u4Byte					NumWaitAwb; // Num of waiting Awb
 
-	// SyncIo Method 2.  
+	// SyncIo Method 2.
 //	BOOLEAN					bSyncIoWaiting; // Indicate if one or more Sync IO are waitting.
-	int						SyncIoWaitingCount;	
+	int						SyncIoWaitingCount;
 	KEVENT					SyncIoEvent;	// Event used to notify the waiting Sync IO.
 	int						nIoStuckCnt;	// # of IO stuck.
 	int						SyncIoInProgressCount;
-	
+
 	NDIS_EVENT	AllCtrlTransCompleteEvent;
 
 	PIRP		pAsynIoWriteIrp;
@@ -409,7 +409,7 @@ typedef struct _RT_SDIO_DEVICE {
 	u2Byte		AsynIoWriteByteCnt;
 	u1Byte		AsynIoWriteDataBuf[MAX_AWB_DATA_SIZE];
 	//----------------------------------------------------------------------------
-#if 0	
+#if 0
 	// e.g. IO monitor. 2005.04.21, by rcnjko.
 	RT_8187DBG_CONTEXT	DbgCtx;
 #endif
@@ -420,13 +420,13 @@ typedef struct _RT_SDIO_DEVICE {
 	WDFDEVICE			hWdfDevice;
 #endif
 
-	
+
 #if POWER_MAN
 	// @@@ 20061205 david power management
-	RT_WORK_ITEM				PnpWorkItem; 
+	RT_WORK_ITEM				PnpWorkItem;
 	NDIS_DEVICE_POWER_STATE		CurrentPowerState;
 #endif //power_man
-	
+
 	BOOLEAN				bSupportRemoteWakeUp;
 
 	// 2011/09/07 MH Add for differen channel plan tx power offset.
@@ -443,11 +443,11 @@ typedef struct _RT_SDIO_DEVICE {
 	// 2011/11/25 MH Add for Sercom requirement temporarily.
 	u1Byte			RegInPipeCnt;
 
-		
+
 	// For Usb selective suspend feature, 2009.07.03.
 	BOOLEAN				RegUsbSS;
 	//
-	// <Roger_Notes> Fix Bug Check code 0x1d(i.e., NIC might be unplugged 
+	// <Roger_Notes> Fix Bug Check code 0x1d(i.e., NIC might be unplugged
 	// before system resume or under initialization). 2009.09.24.
 	//
 	NDIS_EVENT			SetPnpChkForHangEvent;
@@ -475,14 +475,14 @@ typedef struct _RT_SDIO_DEVICE {
 	NDIS_EVENT				AllSdioRxTransCompleteEvent;
 
 	// SDIO Host Compatibility Conrtol
-	BOOLEAN					bRegSdioSpeedSDR25;			// Set SDIO bus speed to 0: 25MHz, 1: 50MHz 
+	BOOLEAN					bRegSdioSpeedSDR25;			// Set SDIO bus speed to 0: 25MHz, 1: 50MHz
 	BOOLEAN					bRegSdioDrivingEnable;		// Enable/Disable Custom Driving Setting
 	u1Byte					RegSdioDriving;
 	BOOLEAN					bRegSurpriseRemovedEnable;	// Enable/Disable SurprisedRemove while facing I/O error
 
 	// HostBus Working Time Measurement.
 	u1Byte					BusTimeRecordIndex;
-	RT_SDIO_TIME_R			SdBusSubmitTime[7];	
+	RT_SDIO_TIME_R			SdBusSubmitTime[7];
 	LARGE_INTEGER			PnPSdBusWorkTime;
 
 #if (RK_PLATFORM_SUPPORT == 1)
@@ -494,7 +494,7 @@ typedef struct _RT_SDIO_DEVICE {
 
 #define GET_RT_SDIO_DEVICE(__pAdapter) (&((__pAdapter)->NdisSdioDev))
 
-// 
+//
 // Keep the number of SDIO CMDs we have already schedled to the SDBus. Added by Roger, 2011.04.01.
 // 2011.04.01.
 //
@@ -504,13 +504,13 @@ typedef struct _RT_SDIO_DEVICE {
 
 //
 // Record the number of SDIO Rx transfer that is going to submit to SDbus. Added by tynli. 2014.11.19.
-// Default is set to 1 for the purpose of event wait in disable transfer function. 
+// Default is set to 1 for the purpose of event wait in disable transfer function.
 //
 #define RT_SDIO_INC_RX_TRANS_REF(__pDevice) ((__pDevice)->SdioRxTransInProgressCnt++)
 #define RT_SDIO_DEC_RX_TRANS_REF(__pDevice) (((__pDevice)->SdioRxTransInProgressCnt>0)?((__pDevice)->SdioRxTransInProgressCnt--):((__pDevice)->SdioRxTransInProgressCnt=0))
 #define RT_SDIO_GET_RX_TRANS_REF(__pDevice) ((__pDevice)->SdioRxTransInProgressCnt)
 
-// 
+//
 // Retrieve specific SDIO Queue IRP pending count. Added by Roger, 2011.02.09.
 //
 #define GET_IRP_PENDING_CNT_WITH_TX_QUEUE_IDX(__pAdapter, __IdxQueue)	\
@@ -532,7 +532,7 @@ typedef struct _RT_SDIO_DEVICE {
 	else\
 		GET_RT_SDIO_DEVICE(__pAdapter)->SdioRxSeqNum++;\
 }
-	
+
 //
 // Reset SDIO Rx sequence number
 //

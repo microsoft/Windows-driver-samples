@@ -4,7 +4,7 @@
 #include "N62C_SetOID.tmh"
 #endif
 
-NDIS_STATUS	
+NDIS_STATUS
 N62C_SET_OID_DOT11_INCOMING_ASSOCIATION_DECISION(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -16,7 +16,7 @@ N62C_SET_OID_DOT11_INCOMING_ASSOCIATION_DECISION(
 {
 	NDIS_STATUS	 	ndisStatus = NDIS_STATUS_SUCCESS;
 	PRT_WLAN_STA 	pEntry = NULL;
-	
+
 	// OS-given structure
 	PDOT11_INCOMING_ASSOC_DECISION_V2 pIncomAssocDecision  = (PDOT11_INCOMING_ASSOC_DECISION_V2) InformationBuffer;
 
@@ -32,21 +32,21 @@ N62C_SET_OID_DOT11_INCOMING_ASSOCIATION_DECISION(
 			// Prefast warning C6328: Size mismatch ignore
 #pragma warning (disable: 6328)
 			RT_TRACE( COMP_OID_SET, DBG_LOUD,
-					("Set OID_DOT11_INCOMING_ASSOCIATION_DECISION: (DOT11_INCOMING_ASSOC_DECISION_V2) Invalid Length %d right length v2 %d right length %d\n", 
+					("Set OID_DOT11_INCOMING_ASSOCIATION_DECISION: (DOT11_INCOMING_ASSOC_DECISION_V2) Invalid Length %d right length v2 %d right length %d\n",
 					InformationBufferLength, sizeof(DOT11_INCOMING_ASSOC_DECISION_V2), sizeof(DOT11_INCOMING_ASSOC_DECISION)));
 
 			ndisStatus = NDIS_STATUS_INVALID_LENGTH;
 			if(!GetDefaultAdapter(pTargetAdapter)->bInHctTest)
 				return ndisStatus;
 		}
-	}	
+	}
 
 	if (GetAPState(pTargetAdapter) != AP_STATE_STARTED)
 	{
 		ndisStatus = NDIS_STATUS_INVALID_STATE;
 		return ndisStatus;
 	}
-			
+
 	pEntry = AsocEntry_GetEntry(&pTargetAdapter->MgntInfo, pIncomAssocDecision->PeerMacAddr);
 
 	if(pEntry)
@@ -56,9 +56,9 @@ N62C_SET_OID_DOT11_INCOMING_ASSOCIATION_DECISION(
 		pEntry->OsReasonCode = (u2Byte)pIncomAssocDecision->usReasonCode;
 	}
 
-	RT_PRINT_DATA(COMP_MLME|COMP_AP, DBG_LOUD, 
-			"AsocRsp IE from OS:\n", 
-			((pu1Byte)pIncomAssocDecision)+pIncomAssocDecision->uAssocResponseIEsOffset, 
+	RT_PRINT_DATA(COMP_MLME|COMP_AP, DBG_LOUD,
+			"AsocRsp IE from OS:\n",
+			((pu1Byte)pIncomAssocDecision)+pIncomAssocDecision->uAssocResponseIEsOffset,
 			pIncomAssocDecision->uAssocResponseIEsLength
 		);
 
@@ -79,15 +79,15 @@ N62C_SET_OID_DOT11_INCOMING_ASSOCIATION_DECISION(
 		GET_P2P_INFO(pTargetAdapter)->Status = pIncomAssocDecision->WFDStatus;
 	RT_TRACE_F(COMP_OID_SET, DBG_LOUD, ("Wifi-Direct: pIncomAssocDecision->WFDStatus: %d\n", pIncomAssocDecision->WFDStatus));
 }
-				
+
 	*BytesRead = InformationBufferLength;
 
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== N62C_SET_OID_DOT11_INCOMING_ASSOCIATION_DECISION accept %d\n", pIncomAssocDecision->bAccept) );
-				
+
 	return ndisStatus;
 }
 
-NDIS_STATUS	
+NDIS_STATUS
 N62C_SET_OID_DOT11_WPS_ENABLED(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -98,7 +98,7 @@ N62C_SET_OID_DOT11_WPS_ENABLED(
 )
 {
 	NDIS_STATUS	 	ndisStatus = NDIS_STATUS_SUCCESS;
-	
+
 	// OS-given structure
 
 	// Output variables (Currently no use)
@@ -116,14 +116,14 @@ N62C_SET_OID_DOT11_WPS_ENABLED(
 	}
 
 	pTargetAdapter->pNdis62Common->bWPSEnable = *((PBOOLEAN)InformationBuffer);
-			
+
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<===Set AP mode OID_DOT11_WPS_ENABLED: %d\n", pTargetAdapter->pNdis62Common->bWPSEnable));
 
 	return ndisStatus;
 }
 
 
-NDIS_STATUS	
+NDIS_STATUS
 N62C_SET_OID_DOT11_ADDITIONAL_IE(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -134,12 +134,12 @@ N62C_SET_OID_DOT11_ADDITIONAL_IE(
 )
 {
 	NDIS_STATUS	 	ndisStatus = NDIS_STATUS_SUCCESS;
-	PVOID newBeaconIeData = NULL; 
+	PVOID newBeaconIeData = NULL;
 	PVOID newResponseIeData = NULL;
-	
+
 	// OS-given structure
 	PDOT11_ADDITIONAL_IE AdditionalIe = (PDOT11_ADDITIONAL_IE)InformationBuffer;
-	
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
@@ -158,25 +158,25 @@ N62C_SET_OID_DOT11_ADDITIONAL_IE(
 		ndisStatus = NDIS_STATUS_INVALID_DATA;
 		return ndisStatus;
 	}
-				
-	// 
+
+	//
 	// allocate memory for the new IE data and copy the IEs
 	//
-	MgntActSet_AdditionalBeaconIE(pTargetAdapter, 
-		(pu1Byte)((pu1Byte)AdditionalIe + AdditionalIe->uBeaconIEsOffset), 
+	MgntActSet_AdditionalBeaconIE(pTargetAdapter,
+		(pu1Byte)((pu1Byte)AdditionalIe + AdditionalIe->uBeaconIEsOffset),
 		AdditionalIe->uBeaconIEsLength);
-			
-	MgntActSet_AdditionalProbeRspIE(pTargetAdapter, 
-		(pu1Byte)((pu1Byte)AdditionalIe + AdditionalIe->uResponseIEsOffset), 
+
+	MgntActSet_AdditionalProbeRspIE(pTargetAdapter,
+		(pu1Byte)((pu1Byte)AdditionalIe + AdditionalIe->uResponseIEsOffset),
 		AdditionalIe->uResponseIEsLength);
-			
-	RT_TRACE(COMP_OID_SET, DBG_LOUD, 
+
+	RT_TRACE(COMP_OID_SET, DBG_LOUD,
 		("<=== Set AP mode OID_DOT11_ADDITIONAL_IE: BeaconIELen = %u, ProbeRspIELen = %u.\n", AdditionalIe->uBeaconIEsLength, AdditionalIe->uResponseIEsLength));
 
 	return ndisStatus;
 }
 
-NDIS_STATUS	
+NDIS_STATUS
 N62C_SET_OID_DOT11_START_AP_REQUEST(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -189,7 +189,7 @@ N62C_SET_OID_DOT11_START_AP_REQUEST(
 	NDIS_STATUS	 	ndisStatus = NDIS_STATUS_SUCCESS;
 	RT_RF_POWER_STATE eRfPowerState;
 	PADAPTER	pDefaultAdapter = GetDefaultAdapter(pTargetAdapter);
-	
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
@@ -213,7 +213,7 @@ N62C_SET_OID_DOT11_START_AP_REQUEST(
 		ndisStatus = NDIS_STATUS_DOT11_POWER_STATE_INVALID;
 		return ndisStatus;
 	}
-				
+
 	ndisStatus=N62CStartApMode(pTargetAdapter);
 
 	pTargetAdapter->pNdis62Common->CurrentOpState = OP_STATE;
@@ -223,7 +223,7 @@ N62C_SET_OID_DOT11_START_AP_REQUEST(
 	return ndisStatus;
 }
 
-NDIS_STATUS	
+NDIS_STATUS
 N62C_SET_OID_DOT11_DISASSOCIATE_PEER_REQUEST(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -237,7 +237,7 @@ N62C_SET_OID_DOT11_DISASSOCIATE_PEER_REQUEST(
 	PDOT11_DISASSOCIATE_PEER_REQUEST pDisassociationRequest = NULL;
 	PRT_WLAN_STA	pEntry = NULL;
 	PMGNT_INFO	pMgntInfo = &pTargetAdapter->MgntInfo;
-	
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
@@ -245,7 +245,7 @@ N62C_SET_OID_DOT11_DISASSOCIATE_PEER_REQUEST(
 	FunctionIn(COMP_OID_SET);
 
 	pDisassociationRequest = (PDOT11_DISASSOCIATE_PEER_REQUEST)InformationBuffer;
-						
+
 	if (!MP_VERIFY_NDIS_OBJECT_HEADER_DEFAULT(
                    pDisassociationRequest->Header,
                    NDIS_OBJECT_TYPE_DEFAULT,
@@ -278,8 +278,8 @@ N62C_SET_OID_DOT11_DISASSOCIATE_PEER_REQUEST(
 	if(MacAddr_isBcst(pDisassociationRequest->PeerMacAddr))
 	{
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Disassociate all peers.\n"));
-				
-		AP_DisassociateAllStation(pTargetAdapter, unspec_reason);	
+
+		AP_DisassociateAllStation(pTargetAdapter, unspec_reason);
 		AsocEntry_ResetAll(pTargetAdapter);
 	}
 	else
@@ -296,21 +296,21 @@ N62C_SET_OID_DOT11_DISASSOCIATE_PEER_REQUEST(
 			// If an STA is disassociated because of this OID, it shall not be reported when
 			// OID_DOT11_ENUM_PEER_INFO is requested.
 			// In the sample code, deauth is sent and the STA entry is removed.
-			// We remove the STA entry so that it won't be reported when OID_DOT11_ENUM_PEER_INFO 
+			// We remove the STA entry so that it won't be reported when OID_DOT11_ENUM_PEER_INFO
 			// is requested.
 			//
 			RT_TRACE_F(COMP_AP, DBG_TRACE, ("AsocEntry_RemoveStation\n"));
-			
+
 			AsocEntry_RemoveStation(pTargetAdapter, pDisassociationRequest->PeerMacAddr);
 		}
 	}
 
-	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set AP mode OID_DOT11_DISASSOCIATE_PEER_REQUEST:\n"));	
+	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set AP mode OID_DOT11_DISASSOCIATE_PEER_REQUEST:\n"));
 
 	return ndisStatus;
 }
 
-NDIS_STATUS	
+NDIS_STATUS
 N62C_SET_OID_DOT11_ASSOCIATION_PARAMS(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -322,13 +322,13 @@ N62C_SET_OID_DOT11_ASSOCIATION_PARAMS(
 {
 	NDIS_STATUS	 	ndisStatus = NDIS_STATUS_SUCCESS;
 	PDOT11_ASSOCIATION_PARAMS pAssocParams = (PDOT11_ASSOCIATION_PARAMS)InformationBuffer;
-			
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
 
 	FunctionIn(COMP_OID_SET);
-	
+
         if (!MP_VERIFY_NDIS_OBJECT_HEADER_DEFAULT(
                     pAssocParams->Header,
                     NDIS_OBJECT_TYPE_DEFAULT,
@@ -340,24 +340,24 @@ N62C_SET_OID_DOT11_ASSOCIATION_PARAMS(
 		ndisStatus = NDIS_STATUS_INVALID_DATA;
 		return ndisStatus;
 	}
-				
-	// 
+
+	//
 	// allocate memory for the new IE data and copy the IEs
 	//
-	MgntActSet_AdditionalAssocReqIE(pTargetAdapter, 
-			(pu1Byte)((pu1Byte)pAssocParams + pAssocParams->uAssocRequestIEsOffset), 
+	MgntActSet_AdditionalAssocReqIE(pTargetAdapter,
+			(pu1Byte)((pu1Byte)pAssocParams + pAssocParams->uAssocRequestIEsOffset),
 			pAssocParams->uAssocRequestIEsLength
 		);
 
-	//RT_PRINT_DATA(COMP_OID_SET, DBG_LOUD, "AssocReqIE", 
+	//RT_PRINT_DATA(COMP_OID_SET, DBG_LOUD, "AssocReqIE",
 	//	(pu1Byte)((pu1Byte)pAssocParams + pAssocParams->uAssocRequestIEsOffset), pAssocParams->uAssocRequestIEsLength);
-			
+
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set OID_DOT11_ASSOCIATION_PARAMS.\n"));
-		
+
 	return ndisStatus;
 }
 
-NDIS_STATUS	
+NDIS_STATUS
 N62C_SET_OID_PM_ADD_WOL_PATTERN(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -376,7 +376,7 @@ N62C_SET_OID_PM_ADD_WOL_PATTERN(
 	PMGNT_INFO				pMgntInfo = &(pTargetAdapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	PRT_PM_WOL_PATTERN_INFO	pPmWoLPatternInfo = &(pPSC->PmWoLPatternInfo[0]);
-			
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
@@ -392,17 +392,17 @@ N62C_SET_OID_PM_ADD_WOL_PATTERN(
 	{
 		if(WOLPatternStructure.WoLPattern.WoLBitMapPattern.MaskSize <= MAX_WOL_BIT_MASK_SIZE)
 		{
-			PlatformMoveMemory(WoLBitMapPatternMask, (pu1Byte)InformationBuffer+WOLPatternStructure.WoLPattern.WoLBitMapPattern.MaskOffset, WOLPatternStructure.WoLPattern.WoLBitMapPattern.MaskSize);						
-			RT_PRINT_DATA( COMP_OID_SET | COMP_POWER, DBG_LOUD, ("SET OID_PM_ADD_WOL_PATTERN: WoLBitMapPatternMask...\n"), 
+			PlatformMoveMemory(WoLBitMapPatternMask, (pu1Byte)InformationBuffer+WOLPatternStructure.WoLPattern.WoLBitMapPattern.MaskOffset, WOLPatternStructure.WoLPattern.WoLBitMapPattern.MaskSize);
+			RT_PRINT_DATA( COMP_OID_SET | COMP_POWER, DBG_LOUD, ("SET OID_PM_ADD_WOL_PATTERN: WoLBitMapPatternMask...\n"),
 			WoLBitMapPatternMask, sizeof(WoLBitMapPatternMask));
-		}	
+		}
 		if(WOLPatternStructure.WoLPattern.WoLBitMapPattern.PatternSize <= MAX_WOL_PATTERN_SIZE)
 		{
 			PlatformMoveMemory(WoLBitMapPatternContent, (pu1Byte)InformationBuffer+WOLPatternStructure.WoLPattern.WoLBitMapPattern.PatternOffset, WOLPatternStructure.WoLPattern.WoLBitMapPattern.PatternSize);
-			RT_PRINT_DATA( COMP_OID_SET | COMP_POWER, DBG_LOUD, ("SET OID_PM_ADD_WOL_PATTERN: WoLBitMapPatternContent...\n"), 
+			RT_PRINT_DATA( COMP_OID_SET | COMP_POWER, DBG_LOUD, ("SET OID_PM_ADD_WOL_PATTERN: WoLBitMapPatternContent...\n"),
 			WoLBitMapPatternContent, sizeof(WoLBitMapPatternContent));
 		}
-					
+
 		//Find the index of the first empty entry.
 		for(Index=0; Index<MAX_SUPPORT_WOL_PATTERN_NUM(pTargetAdapter); Index++)
 		{
@@ -415,12 +415,12 @@ N62C_SET_OID_PM_ADD_WOL_PATTERN(
 			if(pPmWoLPatternInfo[Index].PatternId == 0)
 				break;
 		}
-					
+
 		if(Index >= MAX_SUPPORT_WOL_PATTERN_NUM(pTargetAdapter))
 		{
 			ndisStatus = NDIS_STATUS_RESOURCES;
 			RT_TRACE(COMP_POWER, DBG_LOUD,
-				("SET OID_PNP_ADD_WOL_PATTERN: Return status(%#X). The number of wake up pattern is more than %d or the pattern Id is exist.\n", 
+				("SET OID_PNP_ADD_WOL_PATTERN: Return status(%#X). The number of wake up pattern is more than %d or the pattern Id is exist.\n",
 				ndisStatus, MAX_SUPPORT_WOL_PATTERN_NUM(pTargetAdapter)));
 			return ndisStatus;
 		}
@@ -440,9 +440,9 @@ N62C_SET_OID_PM_ADD_WOL_PATTERN(
 				//Skip IPv4/IPv6 TCP SYN pattern because it will hit HW bug for the CRC.
 				// We offload this pattern to FW.
 				pPmWoLPatternInfo[Index].PatternType = eUnicastPattern;
-				RT_TRACE(COMP_OID_SET, DBG_LOUD, 
+				RT_TRACE(COMP_OID_SET, DBG_LOUD,
 						("OID_PM_ADD_WOL_PATTERN: IPv4/IPv6 TCP SYN pattern.\n"));
-				
+
 			}
 			else if(PlatformCompareMemory(WoLBitMapPatternContent, MULTICAST_ADDR, sizeof(MULTICAST_ADDR)) == 0)
 			{	//Multicast
@@ -457,12 +457,12 @@ N62C_SET_OID_PM_ADD_WOL_PATTERN(
 				pPmWoLPatternInfo[Index].PatternType = eDontCareDA;
 			}
 			//DbgPrint("PatternType = %d\n", pPmWoLPatternInfo[Index].PatternType);
-				
+
 			{
-				GetWOLWakeUpPattern(pTargetAdapter, 
-						(pu1Byte)&WoLBitMapPatternMask, 
-						WOLPatternStructure.WoLPattern.WoLBitMapPattern.MaskSize, 
-						(pu1Byte)&WoLBitMapPatternContent, 
+				GetWOLWakeUpPattern(pTargetAdapter,
+						(pu1Byte)&WoLBitMapPatternMask,
+						WOLPatternStructure.WoLPattern.WoLBitMapPattern.MaskSize,
+						(pu1Byte)&WoLBitMapPatternContent,
 						WOLPatternStructure.WoLPattern.WoLBitMapPattern.PatternSize,
 						(u1Byte)Index,
 						FALSE
@@ -475,7 +475,7 @@ N62C_SET_OID_PM_ADD_WOL_PATTERN(
 	else if(WOLPatternStructure.WoLPacketType == NdisPMWoLPacketEapolRequestIdMessage)
 	{
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("SET OID_PM_ADD_WOL_PATTERN: Support EapolRequestIdMessage.\n"));
-		
+
 		if(!pPSC->EapolRequestIdMessagePatternId)
 		{
 			pPSC->EapolRequestIdMessagePatternId = WOLPatternStructure.PatternId;
@@ -490,19 +490,19 @@ N62C_SET_OID_PM_ADD_WOL_PATTERN(
 		{
 			pPSC->MagicPacketPatternId = WOLPatternStructure.PatternId;
 			pPSC->WoLPktNoPtnNum++;
-			
+
 			// OS adds magic packet pattern to present that the user picks up the check box "Allow
 			// this device to wake the computer", so we could according to the pattern to support
 			// some patch functions, ex. Enable PME_En before S5.
 			// 2013.06.28. by tynli.
 			//pPSC->bSupportWakeUp = TRUE;
 		}
-		
+
 	}
 	else if(WOLPatternStructure.WoLPacketType == NdisPMWoLPacketIPv4TcpSyn)
 	{
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("SET OID_PM_ADD_WOL_PATTERN: Support IPv4 TCP SYN.\n"));
-		
+
 		if(!pPSC->IPv4TcpSynPatternId)
 		{
 			pPSC->IPv4TcpSynPatternId = WOLPatternStructure.PatternId;
@@ -512,7 +512,7 @@ N62C_SET_OID_PM_ADD_WOL_PATTERN(
 	else if(WOLPatternStructure.WoLPacketType == NdisPMWoLPacketIPv6TcpSyn)
 	{
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("SET OID_PM_ADD_WOL_PATTERN: Support IPv6 TCP SYN.\n"));
-		
+
 		if(!pPSC->IPv6TcpSynPatternId)
 		{
 			pPSC->IPv6TcpSynPatternId = WOLPatternStructure.PatternId;
@@ -523,15 +523,15 @@ N62C_SET_OID_PM_ADD_WOL_PATTERN(
 	{
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("SET OID_PM_ADD_WOL_PATTERN: Unspecified type(%#X).\n", WOLPatternStructure.WoLPacketType));
 	}
-				
-	RT_PRINT_DATA(COMP_OID_SET, DBG_LOUD, ("SET OID_PM_ADD_WOL_PATTERN: \n"), 
+
+	RT_PRINT_DATA(COMP_OID_SET, DBG_LOUD, ("SET OID_PM_ADD_WOL_PATTERN: \n"),
 			InformationBuffer, InformationBufferLength
 		);
 
 	return ndisStatus;
 }
 
-NDIS_STATUS	
+NDIS_STATUS
 N62C_SET_OID_PM_REMOVE_WOL_PATTERN(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -547,47 +547,47 @@ N62C_SET_OID_PM_REMOVE_WOL_PATTERN(
 	PMGNT_INFO				pMgntInfo = &(pTargetAdapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	PRT_PM_WOL_PATTERN_INFO	pPmWoLPatternInfo = &(pPSC->PmWoLPatternInfo[0]);
-		
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
 
 	FunctionIn(COMP_OID_SET);
-	
+
 	if(RemovePatternId == pPSC->EapolRequestIdMessagePatternId)
 	{
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("SET_OID_PM_REMOVE_WOL_PATTERN: Remove EapolRequestIdMessage.\n"));
-		
+
 		pPSC->EapolRequestIdMessagePatternId = 0;
 		pPSC->WoLPktNoPtnNum--;
 	}
 	else if(RemovePatternId == pPSC->MagicPacketPatternId)
 	{
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("SET_OID_PM_REMOVE_WOL_PATTERN: Remove MagicPacket.\n"));
-		
+
 		pPSC->MagicPacketPatternId = 0;
 		pPSC->WoLPktNoPtnNum--;
-		
+
 		// Clear PME enable support because OS removes it.
 		//pPSC->bSupportWakeUp = FALSE;
-		
+
 		//RT_TRACE_F(COMP_POWER, DBG_LOUD, ("Do not allow PME_En by the upper layer!\n"));
 	}
 	else if(RemovePatternId == pPSC->IPv4TcpSynPatternId)
 	{
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("SET_OID_PM_REMOVE_WOL_PATTERN: Remove IPv4TcpSyn.\n"));
-		
+
 		pPSC->IPv4TcpSynPatternId = 0;
 		pPSC->WoLPktNoPtnNum--;
 	}
 	else if(RemovePatternId == pPSC->IPv6TcpSynPatternId)
 	{
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("SET_OID_PM_REMOVE_WOL_PATTERN: Remove IPv6TcpSyn.\n"));
-		
+
 		pPSC->IPv6TcpSynPatternId = 0;
 		pPSC->WoLPktNoPtnNum--;
 	}
-	
+
 	for(Index=0; Index<MAX_SUPPORT_WOL_PATTERN_NUM(pTargetAdapter); Index++)
 	{
 		if(pPmWoLPatternInfo[Index].PatternId == RemovePatternId)
@@ -606,13 +606,13 @@ N62C_SET_OID_PM_REMOVE_WOL_PATTERN(
 		pPmWoLPatternInfo[Index].IsPatternMatch = 0;
 		pPmWoLPatternInfo[Index].IsSupportedByFW = 0;
 		pPSC->WoLPatternNum--;
-					
-		pTargetAdapter->HalFunc.SetHwRegHandler(pTargetAdapter, HW_VAR_WF_MASK, (pu1Byte)(&Index)); 
-		pTargetAdapter->HalFunc.SetHwRegHandler(pTargetAdapter, HW_VAR_WF_CRC, (pu1Byte)(&Index)); 
+
+		pTargetAdapter->HalFunc.SetHwRegHandler(pTargetAdapter, HW_VAR_WF_MASK, (pu1Byte)(&Index));
+		pTargetAdapter->HalFunc.SetHwRegHandler(pTargetAdapter, HW_VAR_WF_CRC, (pu1Byte)(&Index));
 		pPmWoLPatternInfo[Index].HwWFMIndex = 0xff; // reset the value after clear HW/CAM entry.
 	}
 
-	//RT_PRINT_DATA( (COMP_OID_QUERY|COMP_AP), DBG_LOUD, ("SET OID_PM_REMOVE_WOL_PATTERN: "), 
+	//RT_PRINT_DATA( (COMP_OID_QUERY|COMP_AP), DBG_LOUD, ("SET OID_PM_REMOVE_WOL_PATTERN: "),
 	//InformationBuffer, InformationBufferLength );
 
 	if(pPSC->WoLPktNoPtnNum + pPSC->WoLPatternNum)
@@ -626,7 +626,7 @@ N62C_SET_OID_PM_REMOVE_WOL_PATTERN(
 	return ndisStatus;
 }
 
-NDIS_STATUS	
+NDIS_STATUS
 N62C_SET_OID_PM_PARAMETERS(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -641,17 +641,17 @@ N62C_SET_OID_PM_PARAMETERS(
 	PMGNT_INFO					pMgntInfo = &(pTargetAdapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	BOOLEAN						bSupportARPOffload=FALSE, bSupportGTKOffload=FALSE;
-			
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
 
 	FunctionIn(COMP_OID_SET);
-				
-	RT_PRINT_DATA(COMP_OID_SET, DBG_LOUD, ("SET OID_PM_PARAMETERS: "), 
+
+	RT_PRINT_DATA(COMP_OID_SET, DBG_LOUD, ("SET OID_PM_PARAMETERS: "),
 			InformationBuffer, InformationBufferLength );
-				
-				
+
+
 	if(pPMParameters->EnabledProtocolOffloads & NDIS_PM_PROTOCOL_OFFLOAD_ARP_ENABLED)
 	{
 		bSupportARPOffload = TRUE;
@@ -661,8 +661,8 @@ N62C_SET_OID_PM_PARAMETERS(
 	}
 	else
 	{
-		// We should not disable ARPOffloadEable flag besides HCT test, because we need to support 
-		// ARP offload in RealWoW. Our service will set ARP info to driver instead of NDIS OID, so 
+		// We should not disable ARPOffloadEable flag besides HCT test, because we need to support
+		// ARP offload in RealWoW. Our service will set ARP info to driver instead of NDIS OID, so
 		// we do not accord to NIDS OID to decide whether we support ARP offload. 2013.10.08. by tynli.
 		if(pTargetAdapter->bInHctTest)
 			pPSC->ARPOffloadEnable = FALSE;
@@ -677,8 +677,8 @@ N62C_SET_OID_PM_PARAMETERS(
 	}
 	else
 	{
-		// We should not disable ARPOffloadEable flag besides HCT test, because we need to support 
-		// ARP offload in RealWoW. Our service will set ARP info to driver instead of NDIS OID, so 
+		// We should not disable ARPOffloadEable flag besides HCT test, because we need to support
+		// ARP offload in RealWoW. Our service will set ARP info to driver instead of NDIS OID, so
 		// we do not accord to NIDS OID to decide whether we support ARP offload. 2013.10.08. by tynli.
 		if(pTargetAdapter->bInHctTest)
 			pPSC->NSOffloadEnable = FALSE;
@@ -693,9 +693,9 @@ N62C_SET_OID_PM_PARAMETERS(
 	}
 	else
 	{
-		// We should not disable GTKOffloadEable flag besides HCT test, because we need to support 
+		// We should not disable GTKOffloadEable flag besides HCT test, because we need to support
 		// GTK offload in RealWoW and S5 wake up. We do not accord to NIDS OID to decide whether
-		// we support GTK offload. 2013.10.08. by tynli.		
+		// we support GTK offload. 2013.10.08. by tynli.
 		if(pTargetAdapter->bInHctTest)
 			pPSC->GTKOffloadEnable = FALSE;
 	}
@@ -717,18 +717,18 @@ N62C_SET_OID_PM_PARAMETERS(
 	else
 	{
 		pPSC->bOSSupportProtocolOffload = TRUE;
-	}			
+	}
 
 	pPSC->bSetPMParameters = TRUE;
-				
+
 	*BytesRead  = InformationBufferLength;
-	//RT_PRINT_DATA( (COMP_OID_QUERY|COMP_AP), DBG_LOUD, ("SET OID_PM_PARAMETERS: pPMParameters "), 
+	//RT_PRINT_DATA( (COMP_OID_QUERY|COMP_AP), DBG_LOUD, ("SET OID_PM_PARAMETERS: pPMParameters "),
 	//pPMParameters->EnabledProtocolOffloads , sizeof(NDIS_PM_PARAMETERS) );
 
 	return ndisStatus;
 }
 
-NDIS_STATUS	
+NDIS_STATUS
 N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -750,11 +750,11 @@ N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD(
 	*BytesNeeded = 0;
 
 	FunctionIn(COMP_OID_SET);
-	
+
 	PlatformZeroMemory(&PmPO, sizeof(RT_PM_PROTOCOL_OFFLOAD));
 
 	//DbgPrint("pPMProtocolOffload->ProtocolOffloadType = 0x%x\n", pPMProtocolOffload->ProtocolOffloadType);
-	//DbgPrint("pPMProtocolOffload->ProtocolOffloadId = 0x%x\n", pPMProtocolOffload->ProtocolOffloadId);	
+	//DbgPrint("pPMProtocolOffload->ProtocolOffloadId = 0x%x\n", pPMProtocolOffload->ProtocolOffloadId);
 
 	// Grab the information from Informationbuffer.
 	do{
@@ -763,36 +763,36 @@ N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD(
 		if(pPMProtocolOffload->ProtocolOffloadType == NdisPMProtocolOffload80211RSNRekey)
 		{
 			pMgntInfo->PowerSaveControl.PMProtocolOffloadIDs[eGTKOffloadIdx] = pPMProtocolOffload->ProtocolOffloadId;
-			
+
 			//Copy kck, kek
-			PlatformMoveMemory(&PmPO, (pu1Byte)InformationBuffer+mPOoffset, 36); 
-			PmPO.ProtocolOffloadParameters.Dot11RSNRekeyParameters.KeyReplayCounter = 
+			PlatformMoveMemory(&PmPO, (pu1Byte)InformationBuffer+mPOoffset, 36);
+			PmPO.ProtocolOffloadParameters.Dot11RSNRekeyParameters.KeyReplayCounter =
 			pPMProtocolOffload->ProtocolOffloadParameters.Dot11RSNRekeyParameters.KeyReplayCounter;
-			PlatformMoveMemory(&(pMgntInfo->PMDot11RSNRekeyPara), (pu1Byte)&PmPO, sizeof(RT_PM_DOT11_RSN_REKEY_PARAMETERS)); 
+			PlatformMoveMemory(&(pMgntInfo->PMDot11RSNRekeyPara), (pu1Byte)&PmPO, sizeof(RT_PM_DOT11_RSN_REKEY_PARAMETERS));
 		}
 		else if(pPMProtocolOffload->ProtocolOffloadType == NdisPMProtocolOffloadIdIPv4ARP)
 		{
 			pMgntInfo->PowerSaveControl.PMProtocolOffloadIDs[eARPOffloadIdx] = pPMProtocolOffload->ProtocolOffloadId;
-			
-			PlatformMoveMemory(&PmPO, (pu1Byte)InformationBuffer+mPOoffset, sizeof(PmPO.ProtocolOffloadParameters.IPv4ARPParameters)); 
-				
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM RemoteIPv4Address:\n"), 
+
+			PlatformMoveMemory(&PmPO, (pu1Byte)InformationBuffer+mPOoffset, sizeof(PmPO.ProtocolOffloadParameters.IPv4ARPParameters));
+
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM RemoteIPv4Address:\n"),
 			pPMProtocolOffload->ProtocolOffloadParameters.IPv4ARPParameters.RemoteIPv4Address, 4);
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("RemoteIPv4Address:\n"), 
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("RemoteIPv4Address:\n"),
 			PmPO.ProtocolOffloadParameters.IPv4ARPParameters.RemoteIPv4Address, 4);
 
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM HostIPv4Address:\n"), 
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM HostIPv4Address:\n"),
 			pPMProtocolOffload->ProtocolOffloadParameters.IPv4ARPParameters.HostIPv4Address, 4);
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("HostIPv4Address:\n"), 
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("HostIPv4Address:\n"),
 			PmPO.ProtocolOffloadParameters.IPv4ARPParameters.HostIPv4Address, 4);
 
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM MacAddress:\n"), 
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM MacAddress:\n"),
 			pPMProtocolOffload->ProtocolOffloadParameters.IPv4ARPParameters.MacAddress, 6);
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("MacAddress:\n"), 
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("MacAddress:\n"),
 			PmPO.ProtocolOffloadParameters.IPv4ARPParameters.MacAddress, 6);
 
-			PlatformMoveMemory(&(pMgntInfo->PMIPV4ARPPara), &PmPO, sizeof(RT_PM_IPV4_ARP_PARAMETERS)); 
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("==> HostIPv4Address:\n"), 
+			PlatformMoveMemory(&(pMgntInfo->PMIPV4ARPPara), &PmPO, sizeof(RT_PM_IPV4_ARP_PARAMETERS));
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("==> HostIPv4Address:\n"),
 			pMgntInfo->PMIPV4ARPPara.HostIPv4Address, 4);
 		}
 		else if(pPMProtocolOffload->ProtocolOffloadType == NdisPMProtocolOffloadIdIPv6NS)
@@ -819,29 +819,29 @@ N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD(
 					IPv6NSIndex = 1;
 					RT_TRACE( COMP_OID_SET, DBG_LOUD, ("==> eNSOffloadIdx2: \n"));
 				}
-						
+
 				pMgntInfo->PMIPV6NSPara[IPv6NSIndex].Flags = pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.Flags;
 
-				PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].RemoteIPv6Address, 
+				PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].RemoteIPv6Address,
 									pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.RemoteIPv6Address, 16);
-				PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].SolicitedNodeIPv6Address, 
+				PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].SolicitedNodeIPv6Address,
 									pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.SolicitedNodeIPv6Address, 16);
-				PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].MacAddress, 
+				PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].MacAddress,
 									pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.MacAddress, 6);
-				PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].TargetIPv6Addresses[0], 
+				PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].TargetIPv6Addresses[0],
 									pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.TargetIPv6Addresses[0], 16);
-				PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].TargetIPv6Addresses[1], 
+				PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].TargetIPv6Addresses[1],
 									pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.TargetIPv6Addresses[1], 16);
-				RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM RemoteIPv6Address: \n"), 
+				RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM RemoteIPv6Address: \n"),
 								pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.RemoteIPv6Address ,16);
-				RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM SolicitedNodeIPv6Address: \n"), 
+				RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM SolicitedNodeIPv6Address: \n"),
 								pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.SolicitedNodeIPv6Address ,16);
-				RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM MacAddress: \n"), 
+				RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM MacAddress: \n"),
 								pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.MacAddress ,6);
-				RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM TargetIPv6Addresses[0]: \n"), 
+				RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM TargetIPv6Addresses[0]: \n"),
 								pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.TargetIPv6Addresses[0] ,16);
-				
-				RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM TargetIPv6Addresses[1]: \n"), 
+
+				RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM TargetIPv6Addresses[1]: \n"),
 								pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.TargetIPv6Addresses[1] ,16);
 			}
 		}
@@ -852,18 +852,18 @@ N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD(
 			bNextPMEntryExit = TRUE;
 			// Point to Next Entry !!
 			pPMProtocolOffload = (PNDIS_PM_PROTOCOL_OFFLOAD)((pu1Byte)InformationBuffer + pPMProtocolOffload->NextProtocolOffloadOffset);
-			
+
 		}
-		
+
 	}while(bNextPMEntryExit);
-				
-	RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD: \n"), 
+
+	RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD: \n"),
 				InformationBuffer, InformationBufferLength );
 
 	return ndisStatus;
 }
 
-NDIS_STATUS	
+NDIS_STATUS
 N62C_SET_OID_PM_REMOVE_PROTOCOL_OFFLOAD(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -877,7 +877,7 @@ N62C_SET_OID_PM_REMOVE_PROTOCOL_OFFLOAD(
 	PMGNT_INFO 		pMgntInfo = &pTargetAdapter->MgntInfo;
 	u4Byte			ProtocolOffloadId  = 0, MatchId=0;
 	BOOLEAN			bMatch=FALSE;
-	
+
 	// Output variables (Currently no use)
 	*BytesRead = 0;
 	*BytesNeeded = 0;
@@ -898,14 +898,14 @@ N62C_SET_OID_PM_REMOVE_PROTOCOL_OFFLOAD(
 			{
 				if(MatchId == eGTKOffloadIdx)
 				{
-					PlatformZeroMemory(&(pMgntInfo->PMDot11RSNRekeyPara), sizeof(RT_PM_DOT11_RSN_REKEY_PARAMETERS)); 
+					PlatformZeroMemory(&(pMgntInfo->PMDot11RSNRekeyPara), sizeof(RT_PM_DOT11_RSN_REKEY_PARAMETERS));
 				}
 				else if(MatchId == eARPOffloadIdx)
 				{
-					PlatformZeroMemory(&(pMgntInfo->PMIPV4ARPPara), sizeof(RT_PM_IPV4_ARP_PARAMETERS)); 
+					PlatformZeroMemory(&(pMgntInfo->PMIPV4ARPPara), sizeof(RT_PM_IPV4_ARP_PARAMETERS));
 				}
 				else if(MatchId == eNSOffloadIdx1 )
-				{	
+				{
 					// Disable eNSOffloadIdx1 , set ID = 0 !!
 					pMgntInfo->PowerSaveControl.PMProtocolOffloadIDs[eNSOffloadIdx1] = 0;
 					RT_TRACE( COMP_OID_SET, DBG_LOUD, ("==>REMOVE eNSOffloadIdx1: \n"));
@@ -925,7 +925,7 @@ N62C_SET_OID_PM_REMOVE_PROTOCOL_OFFLOAD(
 }
 
 
-NDIS_STATUS	
+NDIS_STATUS
 N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD_LIST(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -946,12 +946,12 @@ N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD_LIST(
 	*BytesNeeded = 0;
 
 	FunctionIn(COMP_OID_SET);
-	
+
 	PlatformZeroMemory(&PmPO, sizeof(RT_PM_PROTOCOL_OFFLOAD));
 
 	//DbgPrint("pPMProtocolOffload->ProtocolOffloadType = 0x%x\n", pPMProtocolOffload->ProtocolOffloadType);
-	//DbgPrint("pPMProtocolOffload->ProtocolOffloadId = 0x%x\n", pPMProtocolOffload->ProtocolOffloadId);	
-	RT_PRINT_DATA(COMP_OID_SET, DBG_LOUD, ("SET N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD: "), 
+	//DbgPrint("pPMProtocolOffload->ProtocolOffloadId = 0x%x\n", pPMProtocolOffload->ProtocolOffloadId);
+	RT_PRINT_DATA(COMP_OID_SET, DBG_LOUD, ("SET N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD: "),
 			InformationBuffer, InformationBufferLength );
 
 	// Grab the information from Informationbuffer.
@@ -961,36 +961,36 @@ N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD_LIST(
 		if(pPMProtocolOffload->ProtocolOffloadType == NdisPMProtocolOffload80211RSNRekey)
 		{
 			pMgntInfo->PowerSaveControl.PMProtocolOffloadIDs[eGTKOffloadIdx] = pPMProtocolOffload->ProtocolOffloadId;
-			
+
 			//Copy kck, kek
-			PlatformMoveMemory(&PmPO, (pu1Byte)pPMProtocolOffload+NDIS_SIZEOF_NDIS_PM_PROTOCOL_OFFLOAD_REVISION_1, 36); 
-			PmPO.ProtocolOffloadParameters.Dot11RSNRekeyParameters.KeyReplayCounter = 
+			PlatformMoveMemory(&PmPO, (pu1Byte)pPMProtocolOffload+NDIS_SIZEOF_NDIS_PM_PROTOCOL_OFFLOAD_REVISION_1, 36);
+			PmPO.ProtocolOffloadParameters.Dot11RSNRekeyParameters.KeyReplayCounter =
 			pPMProtocolOffload->ProtocolOffloadParameters.Dot11RSNRekeyParameters.KeyReplayCounter;
-			PlatformMoveMemory(&(pMgntInfo->PMDot11RSNRekeyPara), (pu1Byte)&PmPO, sizeof(RT_PM_DOT11_RSN_REKEY_PARAMETERS)); 
+			PlatformMoveMemory(&(pMgntInfo->PMDot11RSNRekeyPara), (pu1Byte)&PmPO, sizeof(RT_PM_DOT11_RSN_REKEY_PARAMETERS));
 		}
 		else if(pPMProtocolOffload->ProtocolOffloadType == NdisPMProtocolOffloadIdIPv4ARP)
 		{
 			pMgntInfo->PowerSaveControl.PMProtocolOffloadIDs[eARPOffloadIdx] = pPMProtocolOffload->ProtocolOffloadId;
-			
-			PlatformMoveMemory(&PmPO, (pu1Byte)pPMProtocolOffload+NDIS_SIZEOF_NDIS_PM_PROTOCOL_OFFLOAD_REVISION_1, sizeof(PmPO.ProtocolOffloadParameters.IPv4ARPParameters)); 
-				
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM RemoteIPv4Address: "), 
+
+			PlatformMoveMemory(&PmPO, (pu1Byte)pPMProtocolOffload+NDIS_SIZEOF_NDIS_PM_PROTOCOL_OFFLOAD_REVISION_1, sizeof(PmPO.ProtocolOffloadParameters.IPv4ARPParameters));
+
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM RemoteIPv4Address: "),
 			pPMProtocolOffload->ProtocolOffloadParameters.IPv4ARPParameters.RemoteIPv4Address, 4);
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("RemoteIPv4Address: "), 
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("RemoteIPv4Address: "),
 			PmPO.ProtocolOffloadParameters.IPv4ARPParameters.RemoteIPv4Address, 4);
 
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM HostIPv4Address: "), 
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM HostIPv4Address: "),
 			pPMProtocolOffload->ProtocolOffloadParameters.IPv4ARPParameters.HostIPv4Address, 4);
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("HostIPv4Address: "), 
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("HostIPv4Address: "),
 			PmPO.ProtocolOffloadParameters.IPv4ARPParameters.HostIPv4Address, 4);
 
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM MacAddress: "), 
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM MacAddress: "),
 			pPMProtocolOffload->ProtocolOffloadParameters.IPv4ARPParameters.MacAddress, 6);
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("MacAddress: "), 
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("MacAddress: "),
 			PmPO.ProtocolOffloadParameters.IPv4ARPParameters.MacAddress, 6);
 
-			PlatformMoveMemory(&(pMgntInfo->PMIPV4ARPPara), &PmPO, sizeof(RT_PM_IPV4_ARP_PARAMETERS)); 
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("==> HostIPv4Address: "), 
+			PlatformMoveMemory(&(pMgntInfo->PMIPV4ARPPara), &PmPO, sizeof(RT_PM_IPV4_ARP_PARAMETERS));
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("==> HostIPv4Address: "),
 			pMgntInfo->PMIPV4ARPPara.HostIPv4Address, 4);
 		}
 		else if(pPMProtocolOffload->ProtocolOffloadType == NdisPMProtocolOffloadIdIPv6NS)
@@ -1009,63 +1009,63 @@ N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD_LIST(
 
 			pMgntInfo->PMIPV6NSPara[IPv6NSIndex].Flags = pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.Flags;
 
-			PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].RemoteIPv6Address, 
+			PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].RemoteIPv6Address,
 								pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.RemoteIPv6Address, 16);
-			PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].SolicitedNodeIPv6Address, 
+			PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].SolicitedNodeIPv6Address,
 								pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.SolicitedNodeIPv6Address, 16);
-			PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].MacAddress, 
+			PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].MacAddress,
 								pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.MacAddress, 6);
-			PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].TargetIPv6Addresses[0], 
+			PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].TargetIPv6Addresses[0],
 								pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.TargetIPv6Addresses[0], 16);
-			PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].TargetIPv6Addresses[1], 
+			PlatformMoveMemory(pMgntInfo->PMIPV6NSPara[IPv6NSIndex].TargetIPv6Addresses[1],
 								pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.TargetIPv6Addresses[1], 16);
 
-			
+
 			//PlatformMoveMemory(&PmPO, (pu1Byte)pPMProtocolOffload+NDIS_SIZEOF_NDIS_PM_PROTOCOL_OFFLOAD_REVISION_1, sizeof(PmPO.ProtocolOffloadParameters.IPv6NSParameters));
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM RemoteIPv6Address: "), 
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM RemoteIPv6Address: "),
 							pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.RemoteIPv6Address ,16);
-			//RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("RemoteIPv6Address: "), 
+			//RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("RemoteIPv6Address: "),
 			//				PmPO.ProtocolOffloadParameters.IPv6NSParameters.RemoteIPv6Address ,16);
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM SolicitedNodeIPv6Address: "), 
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM SolicitedNodeIPv6Address: "),
 							pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.SolicitedNodeIPv6Address ,16);
-			//RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SolicitedNodeIPv6Address: "), 
+			//RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SolicitedNodeIPv6Address: "),
 			//				PmPO.ProtocolOffloadParameters.IPv6NSParameters.SolicitedNodeIPv6Address ,16);
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM MacAddress: "), 
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM MacAddress: "),
 							pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.MacAddress ,6);
-			//RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("MacAddress: "), 
+			//RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("MacAddress: "),
 			//				PmPO.ProtocolOffloadParameters.IPv6NSParameters.MacAddress ,6);
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM TargetIPv6Addresses[0]: "), 
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM TargetIPv6Addresses[0]: "),
 							pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.TargetIPv6Addresses[0] ,16);
-			//RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("TargetIPv6Addresses[0]: "), 
+			//RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("TargetIPv6Addresses[0]: "),
 			//				PmPO.ProtocolOffloadParameters.IPv6NSParameters.TargetIPv6Addresses[0] ,16);
-			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM TargetIPv6Addresses[1]: "), 
+			RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET PM TargetIPv6Addresses[1]: "),
 							pPMProtocolOffload->ProtocolOffloadParameters.IPv6NSParameters.TargetIPv6Addresses[1] ,16);
-			//RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("TargetIPv6Addresses[1]: "), 
+			//RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("TargetIPv6Addresses[1]: "),
 			//				PmPO.ProtocolOffloadParameters.IPv6NSParameters.TargetIPv6Addresses[1] ,16);
-			
+
 			//PlatformMoveMemory(&(pMgntInfo->PMIPV6NSPara[IPv6NSIndex]),  &PmPO, sizeof(RT_PM_IPV6_NS_PARAMETERS) );
-			
+
 		}
 
 		// Check Next entry !!
-		
+
 		if(pPMProtocolOffload->NextProtocolOffloadOffset  != 0)
 		{
 			bNextPMEntryExit = TRUE;
 			// Point to Next Entry !!
 			pPMProtocolOffload = (PNDIS_PM_PROTOCOL_OFFLOAD)((pu1Byte)InformationBuffer + pPMProtocolOffload->NextProtocolOffloadOffset);
-			
+
 		}
-		
+
 	}while(bNextPMEntryExit);
-				
-	RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD: "), 
+
+	RT_PRINT_DATA( COMP_OID_SET, DBG_LOUD, ("SET N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD: "),
 				InformationBuffer, InformationBufferLength );
 
 	return ndisStatus;
 }
 
-NDIS_STATUS	
+NDIS_STATUS
 N62C_SET_OID_RECEIVE_FILTER_CLEAR_FILTER(
 	IN	PADAPTER		pTargetAdapter,
 	IN	NDIS_OID		Oid,
@@ -1093,9 +1093,9 @@ N62C_SET_OID_RECEIVE_FILTER_CLEAR_FILTER(
 		ndisStatus = NDIS_STATUS_INVALID_LENGTH;
 		return ndisStatus;
 	}
-	
+
 	Removeid = pFilterClear->FilterId;
-	
+
 	for(CurrIndex = 0 ; CurrIndex < 10 ; CurrIndex++)
 	{
 		pCurrRTCoPa = &(pMgntInfo->mRtD0ColesFilterInfo.dFilterArry[CurrIndex]);
@@ -1106,7 +1106,7 @@ N62C_SET_OID_RECEIVE_FILTER_CLEAR_FILTER(
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("====>Remove Currindex (%d)\n",CurrIndex));
 			break;
 		}
-		
+
 	}
 
 	if( CurrIndex == 10   )
@@ -1118,7 +1118,7 @@ N62C_SET_OID_RECEIVE_FILTER_CLEAR_FILTER(
 	return ndisStatus;
 }
 
-NDIS_STATUS	
+NDIS_STATUS
 N62C_QUERYSET_OID_RECEIVE_FILTER_SET_FILTER(
 	IN	PADAPTER		pTargetAdapter,
 	IN    NDIS_OID		Oid,
@@ -1128,7 +1128,7 @@ N62C_QUERYSET_OID_RECEIVE_FILTER_SET_FILTER(
 	IN    ULONG			MethodId,
 	OUT   PULONG			BytesWritten,
 	OUT   PULONG			BytesRead,
-	OUT   PULONG			BytesNeeded	
+	OUT   PULONG			BytesNeeded
 )
 {
 	NDIS_STATUS	 							ndisStatus = NDIS_STATUS_SUCCESS;
@@ -1159,7 +1159,7 @@ N62C_QUERYSET_OID_RECEIVE_FILTER_SET_FILTER(
 		ndisStatus = NDIS_STATUS_INVALID_LENGTH;
 		return ndisStatus;
 	}
-	
+
 #if (NDIS_SUPPORT_NDIS630)
 	// Check filter type !!
 	if(pRxFilterPara->FilterType != NdisReceiveFilterTypePacketCoalescing)
@@ -1176,7 +1176,7 @@ N62C_QUERYSET_OID_RECEIVE_FILTER_SET_FILTER(
 		ndisStatus = NDIS_STATUS_INVALID_PARAMETER;
 		return ndisStatus;
 	}
-	
+
 
 	// Get Free Entry of FILTER_PARAMETER
 	for(Currindex =  0 ; Currindex < 10 ; Currindex++)
@@ -1208,18 +1208,18 @@ N62C_QUERYSET_OID_RECEIVE_FILTER_SET_FILTER(
 
 	RT_PRINT_DATA(COMP_POWER, DBG_LOUD, "===> N62C_QUERYSET_OID_RECEIVE_FILTER_SET_FILTER :\n ", InformationBuffer, InputBufferLength);
 
-	// Save Filed 
+	// Save Filed
 	Currindex = 0;
 	while( Currindex < pCurrRTCoPa->NumOfElem )
 	{
 		// Get entry !!
 		pRxFilterFieldPara = (PNDIS_RECEIVE_FILTER_FIELD_PARAMETERS)(pFieldParametersArray + (FieldElementSize*Currindex));
 		pCurrRTCoField = &(pCurrRTCoPa->dFieldArry[Currindex]);
-		
+
 		// Save data
 		PlatformMoveMemory(pCurrRTCoField, pRxFilterFieldPara, FieldElementSize);
 /*
-		// For Dbg show message !! 
+		// For Dbg show message !!
 		RT_TRACE(COMP_POWER, DBG_LOUD, ("====>Filed Currindex (%d)\n",Currindex));
 		if( pRxFilterFieldPara->FrameHeader == NdisFrameHeaderArp)
 		{
@@ -1238,7 +1238,7 @@ N62C_QUERYSET_OID_RECEIVE_FILTER_SET_FILTER(
 */
 		Currindex++;
 	}
-	
+
 	pMgntInfo->mRtD0ColesFilterInfo.bEnable = TRUE;
 
 	return ndisStatus;

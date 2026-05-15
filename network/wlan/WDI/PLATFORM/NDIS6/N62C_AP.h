@@ -6,18 +6,18 @@ Module Name:
     N62C_AP.h
 
 Abstract:
-    Win 7 AP mode releated 
-    
+    Win 7 AP mode releated
+
 Revision History:
       When        What
     ----------    ----------------------------------------------
     04-22-2008    Created
-    
+
 Notes:
 
 --*/
 #pragma once
-    
+
 #ifndef _N62_AP__H
 #define _N62_AP__H
 
@@ -66,15 +66,15 @@ N62CApIndicateStatus(
 	IN	PVOID			StatusBuffer,
 	IN	UINT			StatusBufferSize
 	);
-VOID 
+VOID
 N62CApIndicateStopAp(
 	IN	PADAPTER		Adapter
 	);
-VOID 
+VOID
 N62CApIndicateCanSustainAp(
 	IN	PADAPTER		Adapter
 	);
-VOID 
+VOID
 N62CAPIndicateFrequencyAdopted(
 	IN	PADAPTER		Adapter
     );
@@ -103,7 +103,7 @@ N62CAPIndicateDisassociation(
 BOOLEAN
 N62CAPInComingAssocDecsion(
 	IN	PADAPTER		Adapter,
-	IN	OCTET_STRING	asocpdu	
+	IN	OCTET_STRING	asocpdu
 	);
 
 NDIS_STATUS

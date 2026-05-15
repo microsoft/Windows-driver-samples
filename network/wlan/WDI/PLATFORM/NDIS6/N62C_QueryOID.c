@@ -8,20 +8,20 @@ N62CQueryInterruptModerationSettings(
 	IN ULONG			InformationBufferLength
     )
 {
-	
+
 	NDIS_STATUS                 ndisStatus = NDIS_STATUS_SUCCESS;
 	PNDIS_INTERRUPT_MODERATION_PARAMETERS      intModParams;
-	
-	UNREFERENCED_PARAMETER(Adapter);
-	
-	NdisZeroMemory(InformationBuffer, InformationBufferLength);	
 
-	intModParams = (PNDIS_INTERRUPT_MODERATION_PARAMETERS)InformationBuffer;      
+	UNREFERENCED_PARAMETER(Adapter);
+
+	NdisZeroMemory(InformationBuffer, InformationBufferLength);
+
+	intModParams = (PNDIS_INTERRUPT_MODERATION_PARAMETERS)InformationBuffer;
 
 	intModParams->Header.Type=NDIS_OBJECT_TYPE_DEFAULT;
 	intModParams->Header.Revision=NDIS_INTERRUPT_MODERATION_PARAMETERS_REVISION_1;
 	intModParams->Header.Size=sizeof(NDIS_INTERRUPT_MODERATION_PARAMETERS);
-	
+
 	intModParams->Flags = 0;
 	intModParams->InterruptModeration = NdisInterruptModerationNotSupported;
 
@@ -39,7 +39,7 @@ N62CQueryLinkParameters(
 	NDIS_STATUS                 		ndisStatus = NDIS_STATUS_SUCCESS;
 	PNDIS_LINK_PARAMETERS		linkParams;
 
-	
+
 	NdisZeroMemory(InformationBuffer, InformationBufferLength);
 
 	linkParams = (PNDIS_LINK_PARAMETERS)InformationBuffer;
@@ -64,7 +64,7 @@ N62CQueryAdditionalIE(
 	OUT PDOT11_ADDITIONAL_IE	AdditionalIe,
 	IN	u4Byte					InformationBufferLength,
 	OUT	pu4Byte					BytesWritten,
-	OUT	pu4Byte					BytesNeeded	
+	OUT	pu4Byte					BytesNeeded
 	)
 {
 	u4Byte AdditionalBeaconIESize = 0;
@@ -74,7 +74,7 @@ N62CQueryAdditionalIE(
 	ULONG beaconIeOffset = sizeof(DOT11_ADDITIONAL_IE);
 	ULONG responseIeOffset = 0;
 	NDIS_STATUS Status = NDIS_STATUS_SUCCESS;
-	
+
 	do
 	{
 		//
@@ -83,28 +83,28 @@ N62CQueryAdditionalIE(
 		MgntActQuery_AdditionalBeaconIE(Adapter, NULL, &AdditionalBeaconIESize);
 		MgntActQuery_AdditionalProbeRspIE(Adapter, NULL, &AdditionalResponseIESize);
 
-		RT_TRACE(COMP_OID_SET, DBG_LOUD, 
+		RT_TRACE(COMP_OID_SET, DBG_LOUD,
 			("N62CQueryAdditionalIE: BeaconIELen = %u, ProbeRspIELen = %u.\n", AdditionalBeaconIESize, AdditionalResponseIESize));
 
-		
-		// 
+
+		//
 		// add required size for beacon IEs
 		//
 		if (RtlULongAdd(beaconIeOffset, AdditionalBeaconIESize, &responseIeOffset) != NDIS_STATUS_SUCCESS)
 		{
-			// 
+			//
 			// This shall not happen because we validated the IEs before
 			//
 			Status = NDIS_STATUS_INVALID_DATA;
 			break;
 		}
 
-		// 
+		//
 		// add required size for response IEs
 		//
 		if (RtlULongAdd(responseIeOffset, AdditionalResponseIESize, &requiredSize) != NDIS_STATUS_SUCCESS)
 		{
-			// 
+			//
 			// This shall not happen because we validated the IEs before
 			//
 			Status = NDIS_STATUS_INVALID_DATA;
@@ -113,7 +113,7 @@ N62CQueryAdditionalIE(
 
 		if (InformationBufferLength < requiredSize)
 		{
-			// 
+			//
 			// the buffer is not big enough
 			//
 			*BytesNeeded = (requiredSize);
@@ -121,20 +121,20 @@ N62CQueryAdditionalIE(
 			break;
 		}
 
-		// 
+		//
 		// the buffer is big enough, copy the IEs
 		//
-		MgntActQuery_AdditionalBeaconIE(Adapter, 
-			(pu1Byte)AdditionalIe + beaconIeOffset, 
+		MgntActQuery_AdditionalBeaconIE(Adapter,
+			(pu1Byte)AdditionalIe + beaconIeOffset,
 			(pu4Byte)&AdditionalBeaconIESize);
 		AdditionalIe->uBeaconIEsLength = AdditionalBeaconIESize;
 		AdditionalIe->uBeaconIEsOffset = beaconIeOffset;
-		
-		MgntActQuery_AdditionalProbeRspIE(Adapter, 
+
+		MgntActQuery_AdditionalProbeRspIE(Adapter,
 			(pu1Byte)AdditionalIe + responseIeOffset,
 			(pu4Byte)&AdditionalResponseIESize);
 		AdditionalIe->uResponseIEsLength = AdditionalResponseIESize;
-		AdditionalIe->uResponseIEsOffset = responseIeOffset;		
+		AdditionalIe->uResponseIEsOffset = responseIeOffset;
 
 		*BytesWritten = requiredSize;
 
@@ -144,11 +144,11 @@ N62CQueryAdditionalIE(
 		    NDIS_OBJECT_TYPE_DEFAULT,
 		    DOT11_ADDITIONAL_IE_REVISION_1,
 		    sizeof(DOT11_ADDITIONAL_IE)
-		    );		
+		    );
 	}while(FALSE);
 
 	return Status;
-	
+
 }
 
 NDIS_STATUS
@@ -162,7 +162,7 @@ N62CApEnumPeerInfo(
 {
 	PRT_NDIS62_COMMON	pNdis62Common = Adapter->pNdis62Common;
 	PMGNT_INFO	pMgntInfo = &Adapter->MgntInfo;
-	NDIS_STATUS Status = NDIS_STATUS_SUCCESS;	
+	NDIS_STATUS Status = NDIS_STATUS_SUCCESS;
 	ULONG ulBufRequired;
 	u4Byte i;
 	PRT_WLAN_STA pCurrAsocEntry;
@@ -188,13 +188,13 @@ N62CApEnumPeerInfo(
 		//
 		// Verify given buffer length.
 		//
-		if(InformationBufferLength < ulBufRequired) 
+		if(InformationBufferLength < ulBufRequired)
 		{
 			*BytesNeeded = ulBufRequired;
 			*BytesWritten = 0;
 			// Prefast warning ignore for false positive
 #pragma warning( disable:6273 )
-			RT_TRACE(COMP_OID_QUERY, DBG_LOUD, 
+			RT_TRACE(COMP_OID_QUERY, DBG_LOUD,
 				("<=== Query OID_DOT11_ENUM_PEER_INFO: BytesNeeded: %u !!!\n", BytesNeeded));
 			return NDIS_STATUS_INVALID_LENGTH;
 		}
@@ -214,9 +214,9 @@ N62CApEnumPeerInfo(
 		//
 		PeerListInfo->uNumOfEntries = 0;
 		PeerListInfo->uTotalNumOfEntries = staEntryCount;
-		
+
 		for(i = 0; i < ASSOCIATE_ENTRY_NUM; i++)
-		{	
+		{
 			//
 			// Report each STA that has been successfully authenticated to NDIS.
 			//
@@ -227,22 +227,22 @@ N62CApEnumPeerInfo(
 				PeerListInfo->uNumOfEntries++;
 				PlatformZeroMemory(pPeerInfo, sizeof(DOT11_PEER_INFO));
 
-				RT_PRINT_ADDR(COMP_MLME, DBG_LOUD, 
+				RT_PRINT_ADDR(COMP_MLME, DBG_LOUD,
 					"Report STA:", pCurrAsocEntry->MacAddr);
-				RT_TRACE(COMP_MLME, DBG_LOUD, 
+				RT_TRACE(COMP_MLME, DBG_LOUD,
 					("bAssociated = %u.\n", pCurrAsocEntry->bAssociated));
 
 				//
 				// Fields for ALL authenticated STAs.
 				//
-				
+
 				//mac addr
-				PlatformMoveMemory(pPeerInfo->MacAddress, 
-					pCurrAsocEntry->MacAddr, 
+				PlatformMoveMemory(pPeerInfo->MacAddress,
+					pCurrAsocEntry->MacAddr,
 					6);
-				
+
 				// association state
-				pPeerInfo->AssociationState = (pCurrAsocEntry->bAssociated) ? 
+				pPeerInfo->AssociationState = (pCurrAsocEntry->bAssociated) ?
 					dot11_assoc_state_auth_assoc :
 					dot11_assoc_state_auth_unassoc;
 
@@ -260,20 +260,20 @@ N62CApEnumPeerInfo(
 				if(pCurrAsocEntry->bAssociated)
 				{
 					// capability
-					pPeerInfo->usCapabilityInformation = 
+					pPeerInfo->usCapabilityInformation =
 						(USHORT)pCurrAsocEntry->Capability;
 
 					// auth/cipher, report that of the SoftAP instead of the STA.
 					{
 						RT_AUTH_MODE authmode;
 						PRT_SECURITY_T	pSecInfo = &(Adapter->MgntInfo.SecurityInfo);
-						
+
 						MgntActQuery_802_11_AUTHENTICATION_MODE( Adapter, &authmode );
 						pPeerInfo->AuthAlgo = N6CAuthModeToDot11(&authmode);
 
-						pPeerInfo->MulticastCipherAlgo = 
+						pPeerInfo->MulticastCipherAlgo =
 							N6CEncAlgorithmToDot11(&(pSecInfo->GroupEncAlgorithm));
-						pPeerInfo->UnicastCipherAlgo = 
+						pPeerInfo->UnicastCipherAlgo =
 							N6CEncAlgorithmToDot11(&(pSecInfo->PairwiseEncAlgorithm));
 					}
 
@@ -282,7 +282,7 @@ N62CApEnumPeerInfo(
 
 					// listen interval
 					pPeerInfo->usListenInterval = pCurrAsocEntry->usListenInterval;
-					
+
 					// supported rates
 					PlatformMoveMemory(
 						pPeerInfo->ucSupportedRates,
@@ -294,9 +294,9 @@ N62CApEnumPeerInfo(
 					pPeerInfo->usAssociationID = pCurrAsocEntry->AID;
 
 					// association up time
-					pPeerInfo->liAssociationUpTime.QuadPart = 
+					pPeerInfo->liAssociationUpTime.QuadPart =
 						pCurrAsocEntry->AssociationUpTime;
-					//PlatformMoveMemory(&pPeerInfo->liAssociationUpTime, 
+					//PlatformMoveMemory(&pPeerInfo->liAssociationUpTime,
 					//	&pCurrAsocEntry->AssociationUpTime,
 					//	sizeof(LARGE_INTEGER));
 
@@ -305,9 +305,9 @@ N62CApEnumPeerInfo(
 				}
 			}
 		}
-			
+
 		PeerListInfo->uTotalNumOfEntries = staEntryCount;
-		*BytesWritten = ulBufRequired; 
+		*BytesWritten = ulBufRequired;
 
 	} while (FALSE);
 
@@ -357,7 +357,7 @@ N62C_QUERY_OID_DOT11_WPS_ENABLED(
 {
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	BOOLEAN			bEnabled = FALSE;
-		
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -372,10 +372,10 @@ N62C_QUERY_OID_DOT11_WPS_ENABLED(
 		return NDIS_STATUS_BUFFER_TOO_SHORT;
 	}
 
-	bEnabled = pTargetAdapter->pNdis62Common->bWPSEnable;	
+	bEnabled = pTargetAdapter->pNdis62Common->bWPSEnable;
 	PlatformMoveMemory(InformationBuffer, &bEnabled, sizeof(BOOLEAN));
 	*BytesWritten = sizeof(BOOLEAN);
-	
+
 	RT_TRACE(COMP_OID_QUERY | COMP_AP, DBG_LOUD, ("<===Query AP mode OID_DOT11_WPS_ENABLED: %d\n", bEnabled));
 
 	return ndisStatus;
@@ -392,14 +392,14 @@ N62C_QUERY_OID_DOT11_ADDITIONAL_IE(
 )
 {
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
-		
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
 	//-------------------------------------------------------
 
 	RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("Query AP mode OID_DOT11_ADDITIONAL_IE:\n"));
-	
+
 	ndisStatus = N62CQueryAdditionalIE(
 			pTargetAdapter,
 			(PDOT11_ADDITIONAL_IE)InformationBuffer,
@@ -407,7 +407,7 @@ N62C_QUERY_OID_DOT11_ADDITIONAL_IE(
 			BytesWritten,
 			BytesNeeded
 		);
-		
+
 	return ndisStatus;
 }
 
@@ -422,7 +422,7 @@ N62C_QUERY_OID_DOT11_ENUM_PEER_INFO(
 )
 {
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
-		
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -433,13 +433,13 @@ N62C_QUERY_OID_DOT11_ENUM_PEER_INFO(
 	// let the strong type API check buffer size
 	// because the size of association info list is not known in advance
 	ndisStatus = N62CApEnumPeerInfo(
-			pTargetAdapter, 
+			pTargetAdapter,
 			(PDOT11_PEER_INFO_LIST)InformationBuffer,
 			InformationBufferLength,
 			BytesWritten,
 			BytesNeeded
-		);			
-		
+		);
+
 	return ndisStatus;
 }
 
@@ -457,7 +457,7 @@ N62C_QUERY_OID_DOT11_AVAILABLE_CHANNEL_LIST(
 	ULONG			ulInfo = 0;
 	PVOID			pInfo = (PVOID) &ulInfo;
 	ULONG			ulInfoLen = sizeof(ulInfo);
-		
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -467,7 +467,7 @@ N62C_QUERY_OID_DOT11_AVAILABLE_CHANNEL_LIST(
 
 	*BytesWritten = ulInfoLen;
 	PlatformMoveMemory(InformationBuffer, pInfo, ulInfoLen);
-		
+
 	return ndisStatus;
 }
 
@@ -485,7 +485,7 @@ N62C_QUERY_OID_DOT11_AVAILABLE_FREQUENCY_LIST(
 	ULONG			ulInfo = 0;
 	PVOID			pInfo = (PVOID) &ulInfo;
 	ULONG			ulInfoLen = sizeof(ulInfo);
-		
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -495,7 +495,7 @@ N62C_QUERY_OID_DOT11_AVAILABLE_FREQUENCY_LIST(
 
 	*BytesWritten = ulInfoLen;
 	PlatformMoveMemory(InformationBuffer, pInfo, ulInfoLen);
-		
+
 	return ndisStatus;
 }
 
@@ -516,21 +516,21 @@ N62C_QUERY_OID_PM_PARAMETERS(
 	ULONG			ulInfo = 0;
 	PVOID			pInfo = (PVOID) &ulInfo;
 	ULONG			ulInfoLen = sizeof(ulInfo);
-		
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
 	//-------------------------------------------------------
 
 	FunctionIn(COMP_OID_QUERY);
-				
+
 	if(InformationBufferLength < sizeof(NDIS_PM_PARAMETERS))
 	{
 		*BytesNeeded = sizeof(NDIS_PM_PARAMETERS);
 		*BytesWritten = 0;
 		return NDIS_STATUS_BUFFER_TOO_SHORT;
-	}			
-				
+	}
+
 	FillPmCapabilities(pTargetAdapter, &PmCapabilities);
 
 #if NDIS_SUPPORT_NDIS630
@@ -542,11 +542,11 @@ N62C_QUERY_OID_PM_PARAMETERS(
 	PMParameters.Header.Revision = NDIS_PM_CAPABILITIES_REVISION_1;
 	PMParameters.Header.Size = NDIS_SIZEOF_NDIS_PM_CAPABILITIES_REVISION_1;
 #endif
-			
+
 	PMParameters.EnabledWoLPacketPatterns = PmCapabilities.SupportedWoLPacketPatterns;
 	PMParameters.EnabledProtocolOffloads = PmCapabilities.SupportedProtocolOffloads;
 
-		PMParameters.WakeUpFlags = 
+		PMParameters.WakeUpFlags =
 					/*NDIS_PM_WAKE_ON_LINK_CHANGE_ENABLED |
 					NDIS_PM_WAKE_ON_MEDIA_DISCONNECT_ENABLED |*/
 					0;
@@ -554,10 +554,10 @@ N62C_QUERY_OID_PM_PARAMETERS(
 #if NDIS_SUPPORT_NDIS630
 	PMParameters.MediaSpecificWakeUpEvents = PmCapabilities.MediaSpecificWakeUpEvents;
 #endif
-				
+
 	pInfo = (PVOID)&PMParameters;
 	ulInfoLen = sizeof(PMParameters);
-				
+
 	if(ulInfoLen <= InformationBufferLength)
 	{
 		// Copy result into InformationBuffer
@@ -573,10 +573,10 @@ N62C_QUERY_OID_PM_PARAMETERS(
 		*BytesNeeded = ulInfoLen;
 		ndisStatus = NDIS_STATUS_BUFFER_TOO_SHORT;
 	}
-				
-	RT_PRINT_DATA( (COMP_OID_QUERY|COMP_POWER), DBG_LOUD, ("QUERY OID_PM_PARAMETERS: "), 
+
+	RT_PRINT_DATA( (COMP_OID_QUERY|COMP_POWER), DBG_LOUD, ("QUERY OID_PM_PARAMETERS: "),
 		InformationBuffer, InformationBufferLength );
-				
+
 	return ndisStatus;
 }
 
@@ -591,7 +591,7 @@ N62C_QUERY_OID_GEN_INTERRUPT_MODERATION(
 )
 {
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
-		
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -607,13 +607,13 @@ N62C_QUERY_OID_GEN_INTERRUPT_MODERATION(
 	}
 
 	ndisStatus = N62CQueryInterruptModerationSettings(
-			pTargetAdapter, 
-			InformationBuffer, 
+			pTargetAdapter,
+			InformationBuffer,
 			InformationBufferLength
-		);			
+		);
 
 	*BytesWritten = sizeof(NDIS_INTERRUPT_MODERATION_PARAMETERS);
-				
+
 	return ndisStatus;
 }
 
@@ -628,7 +628,7 @@ N62C_QUERY_OID_PACKET_COALESCING_FILTER_MATCH_COUNT(
 )
 {
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
-		
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -653,23 +653,23 @@ N62C_QUERY_OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES(
 	NDIS_STATUS							ndisStatus = NDIS_STATUS_SUCCESS;
 	PNDIS_RECEIVE_FILTER_CAPABILITIES	pRxFilterCapabilities = (PNDIS_RECEIVE_FILTER_CAPABILITIES)InformationBuffer;
 
-	
-		
+
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
 	//-------------------------------------------------------
 
 	FunctionIn(COMP_OID_QUERY);
-				
+
 	if(InformationBufferLength < sizeof(NDIS_RECEIVE_FILTER_CAPABILITIES))
 	{
 		*BytesNeeded = sizeof(NDIS_RECEIVE_FILTER_CAPABILITIES);
 		*BytesWritten = 0;
 		return NDIS_STATUS_BUFFER_TOO_SHORT;
-	}			
-				
-	
+	}
+
+
 
 #if (NDIS_SUPPORT_NDIS630)
 	N6_ASSIGN_OBJECT_HEADER(
@@ -685,7 +685,7 @@ N62C_QUERY_OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES(
 			NDIS_SIZEOF_RECEIVE_FILTER_CAPABILITIES_REVISION_1);
 #endif
 
-			
+
 	pRxFilterCapabilities->Flags = 0;
 
 	pRxFilterCapabilities->SupportedHeaders = NDIS_RECEIVE_FILTER_MAC_HEADER_SUPPORTED;
@@ -694,7 +694,7 @@ N62C_QUERY_OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES(
 	pRxFilterCapabilities->EnabledFilterTypes = NDIS_RECEIVE_FILTER_PACKET_COALESCING_FILTERS_ENABLED;
 
 	pRxFilterCapabilities->SupportedQueueProperties = NDIS_RECEIVE_FILTER_PACKET_COALESCING_SUPPORTED_ON_DEFAULT_QUEUE;
-	
+
 	pRxFilterCapabilities->SupportedFilterTests = NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_EQUAL_SUPPORTED |
 											NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_MASK_EQUAL_SUPPORTED|
 											NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_NOT_EQUAL_SUPPORTED; //0;
@@ -703,33 +703,33 @@ N62C_QUERY_OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES(
 											NDIS_RECEIVE_FILTER_IPV4_HEADER_SUPPORTED|
 											NDIS_RECEIVE_FILTER_IPV6_HEADER_SUPPORTED|
 											NDIS_RECEIVE_FILTER_UDP_HEADER_SUPPORTED);
-	
+
 	pRxFilterCapabilities->SupportedMacHeaderFields = NDIS_RECEIVE_FILTER_MAC_HEADER_DEST_ADDR_SUPPORTED|
 											NDIS_RECEIVE_FILTER_MAC_HEADER_PROTOCOL_SUPPORTED|
 											NDIS_RECEIVE_FILTER_MAC_HEADER_PACKET_TYPE_SUPPORTED;
-	
+
 	pRxFilterCapabilities->SupportedARPHeaderFields = NDIS_RECEIVE_FILTER_ARP_HEADER_OPERATION_SUPPORTED|
 												NDIS_RECEIVE_FILTER_ARP_HEADER_SPA_SUPPORTED|
 												NDIS_RECEIVE_FILTER_ARP_HEADER_TPA_SUPPORTED ;
-	
+
 	pRxFilterCapabilities->SupportedIPv4HeaderFields = NDIS_RECEIVE_FILTER_IPV4_HEADER_PROTOCOL_SUPPORTED;
-	
+
 	pRxFilterCapabilities->SupportedIPv6HeaderFields = NDIS_RECEIVE_FILTER_IPV6_HEADER_PROTOCOL_SUPPORTED;
-	
+
 	pRxFilterCapabilities->SupportedUdpHeaderFields = NDIS_RECEIVE_FILTER_UDP_HEADER_DEST_PORT_SUPPORTED;
-	
-	pRxFilterCapabilities->MaxFieldTestsPerPacketCoalescingFilter = 5; // should be >= 5 
-	
+
+	pRxFilterCapabilities->MaxFieldTestsPerPacketCoalescingFilter = 5; // should be >= 5
+
 	pRxFilterCapabilities->MaxPacketCoalescingFilters = 10; // should be >= 10
 	//pRxFilterCapabilities->NidsReserved = 0;
 #else
 	pRxFilterCapabilities->EnabledFilterTypes = 0;
 
 	pRxFilterCapabilities->SupportedQueueProperties = 0;
-	
+
 	pRxFilterCapabilities->SupportedFilterTests = NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_EQUAL_SUPPORTED |
 											NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_MASK_EQUAL_SUPPORTED;
-	
+
 	pRxFilterCapabilities->SupportedMacHeaderFields = NDIS_RECEIVE_FILTER_MAC_HEADER_DEST_ADDR_SUPPORTED|
 											NDIS_RECEIVE_FILTER_MAC_HEADER_PROTOCOL_SUPPORTED;
 #endif
@@ -742,9 +742,9 @@ N62C_QUERY_OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES(
 	pRxFilterCapabilities->MinLookaheadSplitSize = 0;
 	pRxFilterCapabilities->MaxLookaheadSplitSize = 0;
 
-	RT_PRINT_DATA( (COMP_OID_QUERY|COMP_POWER), DBG_LOUD, ("QUERY N62C_QUERY_OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES: "), 
+	RT_PRINT_DATA( (COMP_OID_QUERY|COMP_POWER), DBG_LOUD, ("QUERY N62C_QUERY_OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES: "),
 		InformationBuffer, InformationBufferLength );
-				
+
 	return ndisStatus;
 }
 
@@ -761,23 +761,23 @@ N62C_QUERY_OID_RECEIVE_FILTER_CURRENT_CAPABILITIES(
 	NDIS_STATUS							ndisStatus = NDIS_STATUS_SUCCESS;
 	PNDIS_RECEIVE_FILTER_CAPABILITIES	pRxFilterCapabilities = (PNDIS_RECEIVE_FILTER_CAPABILITIES)InformationBuffer;
 
-	
-		
+
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
 	//-------------------------------------------------------
 
 	FunctionIn(COMP_OID_QUERY);
-				
+
 	if(InformationBufferLength < sizeof(NDIS_RECEIVE_FILTER_CAPABILITIES))
 	{
 		*BytesNeeded = sizeof(NDIS_RECEIVE_FILTER_CAPABILITIES);
 		*BytesWritten = 0;
 		return NDIS_STATUS_BUFFER_TOO_SHORT;
-	}			
-				
-	
+	}
+
+
 
 #if (NDIS_SUPPORT_NDIS630)
 	N6_ASSIGN_OBJECT_HEADER(
@@ -793,7 +793,7 @@ N62C_QUERY_OID_RECEIVE_FILTER_CURRENT_CAPABILITIES(
 			NDIS_SIZEOF_RECEIVE_FILTER_CAPABILITIES_REVISION_1);
 #endif
 
-			
+
 	pRxFilterCapabilities->Flags = 0;
 
 	pRxFilterCapabilities->SupportedHeaders = NDIS_RECEIVE_FILTER_MAC_HEADER_SUPPORTED;
@@ -802,7 +802,7 @@ N62C_QUERY_OID_RECEIVE_FILTER_CURRENT_CAPABILITIES(
 	pRxFilterCapabilities->EnabledFilterTypes = NDIS_RECEIVE_FILTER_PACKET_COALESCING_FILTERS_ENABLED;
 
 	pRxFilterCapabilities->SupportedQueueProperties = NDIS_RECEIVE_FILTER_PACKET_COALESCING_SUPPORTED_ON_DEFAULT_QUEUE;
-	
+
 	pRxFilterCapabilities->SupportedFilterTests = NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_EQUAL_SUPPORTED |
 											NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_MASK_EQUAL_SUPPORTED|
 											NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_NOT_EQUAL_SUPPORTED; //0;
@@ -811,33 +811,33 @@ N62C_QUERY_OID_RECEIVE_FILTER_CURRENT_CAPABILITIES(
 											NDIS_RECEIVE_FILTER_IPV4_HEADER_SUPPORTED|
 											NDIS_RECEIVE_FILTER_IPV6_HEADER_SUPPORTED|
 											NDIS_RECEIVE_FILTER_UDP_HEADER_SUPPORTED);
-	
+
 	pRxFilterCapabilities->SupportedMacHeaderFields = NDIS_RECEIVE_FILTER_MAC_HEADER_DEST_ADDR_SUPPORTED|
 											NDIS_RECEIVE_FILTER_MAC_HEADER_PROTOCOL_SUPPORTED|
 											NDIS_RECEIVE_FILTER_MAC_HEADER_PACKET_TYPE_SUPPORTED;
-	
+
 	pRxFilterCapabilities->SupportedARPHeaderFields = NDIS_RECEIVE_FILTER_ARP_HEADER_OPERATION_SUPPORTED|
 												NDIS_RECEIVE_FILTER_ARP_HEADER_SPA_SUPPORTED|
 												NDIS_RECEIVE_FILTER_ARP_HEADER_TPA_SUPPORTED ;
-	
+
 	pRxFilterCapabilities->SupportedIPv4HeaderFields = NDIS_RECEIVE_FILTER_IPV4_HEADER_PROTOCOL_SUPPORTED;
-	
+
 	pRxFilterCapabilities->SupportedIPv6HeaderFields = NDIS_RECEIVE_FILTER_IPV6_HEADER_PROTOCOL_SUPPORTED;
-	
+
 	pRxFilterCapabilities->SupportedUdpHeaderFields = NDIS_RECEIVE_FILTER_UDP_HEADER_DEST_PORT_SUPPORTED;
-	
-	pRxFilterCapabilities->MaxFieldTestsPerPacketCoalescingFilter = 5; // should be >= 5 
-	
+
+	pRxFilterCapabilities->MaxFieldTestsPerPacketCoalescingFilter = 5; // should be >= 5
+
 	pRxFilterCapabilities->MaxPacketCoalescingFilters = 10; // should be >= 10
 	//pRxFilterCapabilities->NidsReserved = 0;
 #else
 	pRxFilterCapabilities->EnabledFilterTypes = 0;
 
 	pRxFilterCapabilities->SupportedQueueProperties = 0;
-	
+
 	pRxFilterCapabilities->SupportedFilterTests = NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_EQUAL_SUPPORTED |
 											NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_MASK_EQUAL_SUPPORTED;
-	
+
 	pRxFilterCapabilities->SupportedMacHeaderFields = NDIS_RECEIVE_FILTER_MAC_HEADER_DEST_ADDR_SUPPORTED|
 											NDIS_RECEIVE_FILTER_MAC_HEADER_PROTOCOL_SUPPORTED;
 #endif
@@ -850,9 +850,9 @@ N62C_QUERY_OID_RECEIVE_FILTER_CURRENT_CAPABILITIES(
 	pRxFilterCapabilities->MinLookaheadSplitSize = 0;
 	pRxFilterCapabilities->MaxLookaheadSplitSize = 0;
 
-	RT_PRINT_DATA( (COMP_OID_QUERY|COMP_POWER), DBG_LOUD, ("QUERY N62C_QUERY_OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES: "), 
+	RT_PRINT_DATA( (COMP_OID_QUERY|COMP_POWER), DBG_LOUD, ("QUERY N62C_QUERY_OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES: "),
 		InformationBuffer, InformationBufferLength );
-				
+
 	return ndisStatus;
 }
 //

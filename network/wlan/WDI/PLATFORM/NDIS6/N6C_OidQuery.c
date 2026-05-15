@@ -21,54 +21,54 @@ N6CAuthModeToDot11(
 			dot11AuthAlg = DOT11_AUTH_ALGO_80211_OPEN;
 			RT_TRACE(COMP_SEC, DBG_LOUD, ("N6CAuthModeToDot11(): DOT11_AUTH_ALGO_80211_OPEN\n"));
 			break;
-			
+
 		case RT_802_11AuthModeShared:
 			dot11AuthAlg = DOT11_AUTH_ALGO_80211_SHARED_KEY;
 			RT_TRACE(COMP_SEC, DBG_LOUD, ("N6CAuthModeToDot11(): DOT11_AUTH_ALGO_80211_SHARED_KEY\n"));
 			break;
-			
+
 		case RT_802_11AuthModeAutoSwitch:
 			// No such case in DOT11_AUTH_ALGO_XXX!!
 			dot11AuthAlg = DOT11_AUTH_ALGO_80211_OPEN;
 			RT_TRACE(COMP_SEC, DBG_WARNING, ("N6CAuthModeToDot11(): RT_802_11AuthModeAutoSwitch => DOT11_AUTH_ALGO_80211_OPEN (WARNING!!!)\n"));
 			break;
-			
+
 		case RT_802_11AuthModeWPA:
 			dot11AuthAlg = DOT11_AUTH_ALGO_WPA;
 			RT_TRACE(COMP_SEC, DBG_LOUD, ("N6CAuthModeToDot11(): DOT11_AUTH_ALGO_WPA\n"));
 			break;
-			
+
 		case RT_802_11AuthModeWPAPSK:
 			dot11AuthAlg = DOT11_AUTH_ALGO_WPA_PSK;
 			RT_TRACE(COMP_SEC, DBG_LOUD, ("N6CAuthModeToDot11(): DOT11_AUTH_ALGO_WPA_PSK\n"));
 			break;
-			
+
 		case RT_802_11AuthModeWPANone:
 			// No such case in DOT11_AUTH_ALGO_XXX!!
 			dot11AuthAlg = DOT11_AUTH_ALGO_80211_OPEN;
 			RT_TRACE(COMP_SEC, DBG_WARNING, ("N6CAuthModeToDot11(): RT_802_11AuthModeWPANone => DOT11_AUTH_ALGO_80211_OPEN (WARNING!!!)\n"));
 			break;
-			
+
 		case RT_802_11AuthModeWPA2:
 			dot11AuthAlg = DOT11_AUTH_ALGO_RSNA;
 			RT_TRACE(COMP_SEC, DBG_LOUD, ("N6CAuthModeToDot11(): DOT11_AUTH_ALGO_RSNA\n"));
 			break;
-			
+
 		case RT_802_11AuthModeWPA2PSK:
 			dot11AuthAlg = DOT11_AUTH_ALGO_RSNA_PSK;
 			RT_TRACE(COMP_SEC, DBG_LOUD, ("N6CAuthModeToDot11(): DOT11_AUTH_ALGO_RSNA_PSK\n"));
 			break;
-			
+
 		case RT_802_11AuthModeMax:
 			dot11AuthAlg = DOT11_AUTH_ALGO_80211_OPEN;
 			RT_TRACE(COMP_SEC, DBG_WARNING, ("N6CAuthModeToDot11(): RT_802_11AuthModeMax => DOT11_AUTH_ALGO_80211_OPEN (WARNING!!!)\n"));
 			break;
-			
+
 		case RT_802_11AuthModeCCKM:
 			dot11AuthAlg = DOT11_AUTH_ALGO_CCKM;
 			RT_TRACE(COMP_SEC, DBG_WARNING, ("N6CAuthModeToDot11(): RT_802_11AuthModeMax => DOT11_AUTH_ALGO_80211_OPEN (WARNING!!!)\n"));
 			break;
-						
+
 		default:
 			dot11AuthAlg = DOT11_AUTH_ALGO_80211_OPEN;
 			RT_TRACE(COMP_SEC, DBG_WARNING, ("N6CAuthModeToDot11(): unknow authmode: 0x%X => DOT11_AUTH_ALGO_80211_OPEN (WARNING!!!)\n", AuthMode));
@@ -102,12 +102,12 @@ N6CAuthAlgToDot11(
 			dot11AuthAlg = DOT11_AUTH_ALGO_80211_OPEN;
 			RT_TRACE(COMP_SEC, DBG_LOUD, ("N6CAuthAlgToDot11(): DOT11_AUTH_ALGO_80211_OPEN\n"));
 			break;
-			
+
 		case SHARED_KEY:
 			dot11AuthAlg = DOT11_AUTH_ALGO_80211_SHARED_KEY;
 			RT_TRACE(COMP_SEC, DBG_LOUD, ("N6CAuthAlgToDot11(): DOT11_AUTH_ALGO_80211_SHARED_KEY\n"));
 			break;
-			
+
 		default:
 			dot11AuthAlg = DOT11_AUTH_ALGO_80211_OPEN;
 			RT_TRACE(COMP_SEC, DBG_WARNING, ("N6CAuthAlgToDot11(): unknow authmode: 0x%X => DOT11_AUTH_ALGO_80211_OPEN (WARNING!!!)\n", AuthMode));
@@ -131,7 +131,7 @@ N6CEncAlgorithmToDot11(
 {
 	RT_ENC_ALG					EncAlgorithm = *((PRT_ENC_ALG)pEncAlgorithm);
 	DOT11_CIPHER_ALGORITHM		dot11CipherAlg;
-	
+
 	switch( EncAlgorithm )
 	{
 		case RT_ENC_ALG_NO_CIPHER:
@@ -162,7 +162,7 @@ N6CEncAlgorithmToDot11(
 		case RT_ENC_ALG_WEP:
 			dot11CipherAlg = DOT11_CIPHER_ALGO_WEP;
 			RT_TRACE( COMP_SEC|COMP_MLME, DBG_LOUD, ("N6CEncAlgorithmToDot11(): DOT11_CIPHER_ALGO_WEP\n") );
-			break;	
+			break;
 
 		default:
 			dot11CipherAlg = DOT11_CIPHER_ALGO_NONE;
@@ -203,11 +203,11 @@ N6CQuery_DOT11_ENABLED_AUTHENTICATION_ALGORITHM(
 		}
 		return NDIS_STATUS_BUFFER_OVERFLOW;
 	}
-	
+
 	PlatformZeroMemory( pAuthAlgoList, *BytesNeeded );
 
 	N6_ASSIGN_OBJECT_HEADER(
-			pAuthAlgoList->Header, 
+			pAuthAlgoList->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
 			DOT11_AUTH_ALGORITHM_LIST_REVISION_1,
 			sizeof(DOT11_AUTH_ALGORITHM_LIST));
@@ -219,7 +219,7 @@ N6CQuery_DOT11_ENABLED_AUTHENTICATION_ALGORITHM(
 	pAuthAlgoList->AlgorithmIds[0] = N6CAuthModeToDot11( &authmode );
 	*BytesWritten = *BytesNeeded;
 	*BytesNeeded = 0;
-	
+
 	RT_TRACE( COMP_OID_QUERY|COMP_SEC, DBG_TRACE, ("<== N6CQuery_DOT11_ENABLED_AUTHENTICATION_ALGORITHM():0x%X\n", pAuthAlgoList->AlgorithmIds[0]) );
 	return	NDIS_STATUS_SUCCESS;
 }
@@ -241,7 +241,7 @@ N6CQuery_DOT11_ENABLED_UNICAST_CIPHER_ALGORITHM(
 {
 	PRT_SECURITY_T		pSecInfo = &(Adapter->MgntInfo.SecurityInfo);
 	PDOT11_CIPHER_ALGORITHM_LIST	pCipherAlgoList = (PDOT11_CIPHER_ALGORITHM_LIST)InformationBuffer;
-	
+
 	RT_TRACE( COMP_OID_QUERY|COMP_SEC, DBG_TRACE, ("==> N6CQuery_DOT11_ENABLED_UNICAST_CIPHER_ALGORITHM()\n") );
 
 	*BytesNeeded = sizeof(DOT11_CIPHER_ALGORITHM_LIST);
@@ -249,11 +249,11 @@ N6CQuery_DOT11_ENABLED_UNICAST_CIPHER_ALGORITHM(
 	{
 		return NDIS_STATUS_INVALID_LENGTH;
 	}
-	
+
 	PlatformZeroMemory( pCipherAlgoList, *BytesNeeded );
 
 	N6_ASSIGN_OBJECT_HEADER(
-			pCipherAlgoList->Header, 
+			pCipherAlgoList->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
 			DOT11_CIPHER_ALGORITHM_LIST_REVISION_1,
 			sizeof(DOT11_CIPHER_ALGORITHM_LIST));
@@ -262,7 +262,7 @@ N6CQuery_DOT11_ENABLED_UNICAST_CIPHER_ALGORITHM(
 	pCipherAlgoList->uTotalNumOfEntries = 1;
 	pCipherAlgoList->AlgorithmIds[0] = N6CEncAlgorithmToDot11(&(pSecInfo->PairwiseEncAlgorithm));
 	*BytesWritten = *BytesNeeded;
-	
+
 	RT_TRACE( COMP_OID_QUERY|COMP_SEC, DBG_TRACE, ("<== N6CQuery_DOT11_ENABLED_UNICAST_CIPHER_ALGORITHM():0x%X\n", pCipherAlgoList->AlgorithmIds[0]) );
 	return	NDIS_STATUS_SUCCESS;
 }
@@ -284,7 +284,7 @@ N6CQuery_DOT11_ENABLED_MULTICAST_CIPHER_ALGORITHM(
 {
 	PRT_SECURITY_T		pSecInfo = &(Adapter->MgntInfo.SecurityInfo);
 	PDOT11_CIPHER_ALGORITHM_LIST	pCipherAlgoList = (PDOT11_CIPHER_ALGORITHM_LIST)InformationBuffer;
-	
+
 	RT_TRACE( COMP_OID_QUERY|COMP_SEC, DBG_TRACE, ("==> N6CQuery_DOT11_ENABLED_MULTICAST_CIPHER_ALGORITHM()\n") );
 
 	*BytesNeeded = sizeof(DOT11_CIPHER_ALGORITHM_LIST);
@@ -292,11 +292,11 @@ N6CQuery_DOT11_ENABLED_MULTICAST_CIPHER_ALGORITHM(
 	{
 		return NDIS_STATUS_INVALID_LENGTH;
 	}
-	
+
 	PlatformZeroMemory( pCipherAlgoList, *BytesNeeded );
 
 	N6_ASSIGN_OBJECT_HEADER(
-			pCipherAlgoList->Header, 
+			pCipherAlgoList->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
 			DOT11_CIPHER_ALGORITHM_LIST_REVISION_1,
 			sizeof(DOT11_CIPHER_ALGORITHM_LIST));
@@ -305,7 +305,7 @@ N6CQuery_DOT11_ENABLED_MULTICAST_CIPHER_ALGORITHM(
 	pCipherAlgoList->uTotalNumOfEntries = 1;
 	pCipherAlgoList->AlgorithmIds[0] = N6CEncAlgorithmToDot11(&(pSecInfo->GroupEncAlgorithm));
 	*BytesWritten = *BytesNeeded;
-	
+
 	RT_TRACE( COMP_OID_QUERY|COMP_SEC, DBG_TRACE, ("<== N6CQuery_DOT11_ENABLED_MULTICAST_CIPHER_ALGORITHM():0x%X\n", pCipherAlgoList->AlgorithmIds[0]) );
 	return	NDIS_STATUS_SUCCESS;
 }
@@ -325,7 +325,7 @@ N6CQuery_DOT11_SUPPORTED_UNICAST_ALGORITHM_PAIR(
 	OUT	PULONG							BytesNeeded
 	)
 {
-	static DOT11_AUTH_CIPHER_PAIR UcastAuthCipherList[] = 
+	static DOT11_AUTH_CIPHER_PAIR UcastAuthCipherList[] =
 	{
 		{DOT11_AUTH_ALGO_80211_OPEN,			DOT11_CIPHER_ALGO_NONE},	// 0
 		{DOT11_AUTH_ALGO_RSNA_PSK,			DOT11_CIPHER_ALGO_CCMP},	//14
@@ -342,21 +342,21 @@ N6CQuery_DOT11_SUPPORTED_UNICAST_ALGORITHM_PAIR(
 		{DOT11_AUTH_ALGO_WPA,					DOT11_CIPHER_ALGO_CCMP},	//11
 		{DOT11_AUTH_ALGO_WPA_PSK,				DOT11_CIPHER_ALGO_CCMP},	//12
 		{DOT11_AUTH_ALGO_RSNA,					DOT11_CIPHER_ALGO_CCMP},	//13
-		
+
 		{DOT11_AUTH_ALGO_CCKM,				DOT11_CIPHER_ALGO_TKIP	},    //15
 		{DOT11_AUTH_ALGO_CCKM,				DOT11_CIPHER_ALGO_CCMP},   //16
 
 		{DOT11_AUTH_ALGO_CCKM,				DOT11_CIPHER_ALGO_MFPCCMP	},    //17
 		{DOT11_AUTH_ALGO_CCKM,				DOT11_CIPHER_ALGO_MFPTKIP},   //18
-		
+
 		{DOT11_AUTH_ALGO_RSNA,					DOT11_CIPHER_ALGO_MFPCCMP},   //19
 		{DOT11_AUTH_ALGO_RSNA,					DOT11_CIPHER_ALGO_MFPTKIP},   //20
-		
+
 		{DOT11_AUTH_ALGO_WAPI_PSK,			DOT11_CIPHER_ALGO_WAPI_SMS4},   //for WAPI IHV Support add by ylb  20111114
 		{DOT11_AUTH_ALGO_WAPI_CERTIFICATE,	DOT11_CIPHER_ALGO_WAPI_SMS4},   //for WAPI IHV Support add by ylb  20111114
 	};
 
-	static DOT11_AUTH_CIPHER_PAIR UcastAuthCipherListWiFiCfg[] = 
+	static DOT11_AUTH_CIPHER_PAIR UcastAuthCipherListWiFiCfg[] =
 	{
 		{DOT11_AUTH_ALGO_80211_OPEN,			DOT11_CIPHER_ALGO_NONE},	// 0
 		{DOT11_AUTH_ALGO_RSNA_PSK,			DOT11_CIPHER_ALGO_CCMP},	//14
@@ -373,21 +373,21 @@ N6CQuery_DOT11_SUPPORTED_UNICAST_ALGORITHM_PAIR(
 		//{DOT11_AUTH_ALGO_WPA,					DOT11_CIPHER_ALGO_CCMP},	//11
 		//{DOT11_AUTH_ALGO_WPA_PSK,				DOT11_CIPHER_ALGO_CCMP},	//12
 		{DOT11_AUTH_ALGO_RSNA,					DOT11_CIPHER_ALGO_CCMP},	//13
-		
+
 		{DOT11_AUTH_ALGO_CCKM,				DOT11_CIPHER_ALGO_TKIP	},    //15
 		{DOT11_AUTH_ALGO_CCKM,				DOT11_CIPHER_ALGO_CCMP},   //16
 
 		{DOT11_AUTH_ALGO_CCKM,				DOT11_CIPHER_ALGO_MFPCCMP	},    //17
 		{DOT11_AUTH_ALGO_CCKM,				DOT11_CIPHER_ALGO_MFPTKIP},   //18
-		
+
 		{DOT11_AUTH_ALGO_RSNA,					DOT11_CIPHER_ALGO_MFPCCMP},   //19
 		{DOT11_AUTH_ALGO_RSNA,					DOT11_CIPHER_ALGO_MFPTKIP},   //20
-		
+
 		{DOT11_AUTH_ALGO_WAPI_PSK,			DOT11_CIPHER_ALGO_WAPI_SMS4},   //for WAPI IHV Support add by ylb  20111114
 		{DOT11_AUTH_ALGO_WAPI_CERTIFICATE,	DOT11_CIPHER_ALGO_WAPI_SMS4},   //for WAPI IHV Support add by ylb  20111114
 	};
 
-	static DOT11_AUTH_CIPHER_PAIR  UcastAuthCipherListIBSS[] = 
+	static DOT11_AUTH_CIPHER_PAIR  UcastAuthCipherListIBSS[] =
 	{
 		{DOT11_AUTH_ALGO_80211_OPEN,			DOT11_CIPHER_ALGO_NONE},	// 0
 		{DOT11_AUTH_ALGO_80211_OPEN,			DOT11_CIPHER_ALGO_WEP40},	// 1
@@ -395,16 +395,16 @@ N6CQuery_DOT11_SUPPORTED_UNICAST_ALGORITHM_PAIR(
 		{DOT11_AUTH_ALGO_80211_OPEN,			DOT11_CIPHER_ALGO_WEP},	// 3
 		{DOT11_AUTH_ALGO_RSNA_PSK,			       DOT11_CIPHER_ALGO_CCMP},	//4//4
 	};
-	
+
 	u4Byte	ulNumOfPairSupported = 0;
 	u4Byte	TotalLength = 0;
 	PDOT11_AUTH_CIPHER_PAIR_LIST pAuthCipherList = (PDOT11_AUTH_CIPHER_PAIR_LIST)InformationBuffer;
 	u4Byte	i;
 	u4Byte	FillLength = 0;
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
-	
+
 	RT_TRACE( COMP_OID_QUERY|COMP_SEC, DBG_TRACE, ("==> N6CQuery_DOT11_SUPPORTED_UNICAST_ALGORITHM_PAIR()\n") );
-	
+
 	if( Adapter->MgntInfo.Regdot11networktype != RT_JOIN_NETWORKTYPE_ADHOC )
 	{
 		if(Adapter->MgntInfo.bWiFiConfg)
@@ -425,12 +425,12 @@ N6CQuery_DOT11_SUPPORTED_UNICAST_ALGORITHM_PAIR(
 		}
 		PlatformZeroMemory( pAuthCipherList, sizeof(DOT11_AUTH_CIPHER_PAIR_LIST) );
 		N6_ASSIGN_OBJECT_HEADER(
-				pAuthCipherList->Header, 
+				pAuthCipherList->Header,
 				NDIS_OBJECT_TYPE_DEFAULT,
 				DOT11_AUTH_CIPHER_PAIR_LIST_REVISION_1,
 				sizeof(DOT11_AUTH_CIPHER_PAIR_LIST));
 		FillLength += FIELD_OFFSET(DOT11_AUTH_CIPHER_PAIR_LIST, AuthCipherPairs);
-		
+
 		pAuthCipherList->uNumOfEntries = 0;
 		pAuthCipherList->uTotalNumOfEntries = ulNumOfPairSupported;
 		for (i=0; i<ulNumOfPairSupported; i++)
@@ -446,14 +446,14 @@ N6CQuery_DOT11_SUPPORTED_UNICAST_ALGORITHM_PAIR(
 			FillLength += sizeof(DOT11_AUTH_CIPHER_PAIR);
 		}
 
-		CopyMem(pAuthCipherList->AuthCipherPairs, 
+		CopyMem(pAuthCipherList->AuthCipherPairs,
 				((Adapter->MgntInfo.bWiFiConfg) ? UcastAuthCipherListWiFiCfg : UcastAuthCipherList),
 				sizeof(DOT11_AUTH_CIPHER_PAIR)*pAuthCipherList->uNumOfEntries);
 
 		*BytesWritten = FillLength;
 		*BytesNeeded = TotalLength;
 	}
-	else { 
+	else {
 		ulNumOfPairSupported = sizeof(UcastAuthCipherListIBSS)/sizeof(DOT11_AUTH_CIPHER_PAIR);
 		TotalLength = sizeof(UcastAuthCipherListIBSS) + FIELD_OFFSET(DOT11_AUTH_CIPHER_PAIR_LIST, AuthCipherPairs);
 		if ( InformationBufferLength < sizeof(DOT11_AUTH_CIPHER_PAIR_LIST) )
@@ -464,14 +464,14 @@ N6CQuery_DOT11_SUPPORTED_UNICAST_ALGORITHM_PAIR(
 		}
 		PlatformZeroMemory( pAuthCipherList, sizeof(DOT11_AUTH_CIPHER_PAIR_LIST) );
 		N6_ASSIGN_OBJECT_HEADER(
-				pAuthCipherList->Header, 
+				pAuthCipherList->Header,
 				NDIS_OBJECT_TYPE_DEFAULT,
 				DOT11_AUTH_CIPHER_PAIR_LIST_REVISION_1,
 				sizeof(DOT11_AUTH_CIPHER_PAIR_LIST));
 		FillLength += FIELD_OFFSET(DOT11_AUTH_CIPHER_PAIR_LIST, AuthCipherPairs);
 		pAuthCipherList->uNumOfEntries = 0;
 		pAuthCipherList->uTotalNumOfEntries = ulNumOfPairSupported;
-		
+
 		for (i=0; i<ulNumOfPairSupported; i++)
 		{
 			if (FillLength + sizeof(DOT11_AUTH_CIPHER_PAIR) > InformationBufferLength)
@@ -485,13 +485,13 @@ N6CQuery_DOT11_SUPPORTED_UNICAST_ALGORITHM_PAIR(
 			FillLength += sizeof(DOT11_AUTH_CIPHER_PAIR);
 		}
 
-		CopyMem(pAuthCipherList->AuthCipherPairs, 
+		CopyMem(pAuthCipherList->AuthCipherPairs,
 				UcastAuthCipherListIBSS,
 				sizeof(DOT11_AUTH_CIPHER_PAIR)*pAuthCipherList->uNumOfEntries);
 
 		*BytesWritten = FillLength;
 		*BytesNeeded = TotalLength;
-		
+
 	}
 	RT_TRACE( COMP_OID_QUERY|COMP_SEC, DBG_TRACE, ("<== N6CQuery_DOT11_SUPPORTED_UNICAST_ALGORITHM_PAIR()\n") );
 	return ndisStatus;
@@ -514,7 +514,7 @@ N6CQuery_DOT11_SUPPORTED_MULTICAST_ALGORITHM_PAIR(
 	OUT	PULONG							BytesNeeded
 	)
 {
-	static DOT11_AUTH_CIPHER_PAIR McastAuthCipherList[] = 
+	static DOT11_AUTH_CIPHER_PAIR McastAuthCipherList[] =
 	{
 		{DOT11_AUTH_ALGO_80211_OPEN,			DOT11_CIPHER_ALGO_NONE},	// 0
 		{DOT11_AUTH_ALGO_RSNA_PSK,			DOT11_CIPHER_ALGO_CCMP},	//14
@@ -531,17 +531,17 @@ N6CQuery_DOT11_SUPPORTED_MULTICAST_ALGORITHM_PAIR(
 		{DOT11_AUTH_ALGO_WPA,					DOT11_CIPHER_ALGO_CCMP},	//11
 		{DOT11_AUTH_ALGO_WPA_PSK,				DOT11_CIPHER_ALGO_CCMP},	//12
 		{DOT11_AUTH_ALGO_RSNA,					DOT11_CIPHER_ALGO_CCMP},	//13
-		
+
 		{DOT11_AUTH_ALGO_CCKM,				DOT11_CIPHER_ALGO_WEP40},  //15
 		{DOT11_AUTH_ALGO_CCKM,				DOT11_CIPHER_ALGO_WEP104}, //16
 		{DOT11_AUTH_ALGO_CCKM,				DOT11_CIPHER_ALGO_TKIP},     //17
 		{DOT11_AUTH_ALGO_CCKM,				DOT11_CIPHER_ALGO_CCMP},   //18
-		
+
 		{DOT11_AUTH_ALGO_WAPI_PSK,			DOT11_CIPHER_ALGO_WAPI_SMS4},   //for WAPI IHV Support add by ylb  20111114
 		{DOT11_AUTH_ALGO_WAPI_CERTIFICATE,	DOT11_CIPHER_ALGO_WAPI_SMS4},   //for WAPI IHV Support add by ylb  20111114
 	};
-	
-	static DOT11_AUTH_CIPHER_PAIR McastAuthCipherListWiFiCfg[] = 
+
+	static DOT11_AUTH_CIPHER_PAIR McastAuthCipherListWiFiCfg[] =
 	{
 		{DOT11_AUTH_ALGO_80211_OPEN,			DOT11_CIPHER_ALGO_NONE},	// 0
 		{DOT11_AUTH_ALGO_RSNA_PSK,			DOT11_CIPHER_ALGO_CCMP},	//14
@@ -558,17 +558,17 @@ N6CQuery_DOT11_SUPPORTED_MULTICAST_ALGORITHM_PAIR(
 		//{DOT11_AUTH_ALGO_WPA,					DOT11_CIPHER_ALGO_CCMP},	//11
 		//{DOT11_AUTH_ALGO_WPA_PSK,				DOT11_CIPHER_ALGO_CCMP},	//12
 		{DOT11_AUTH_ALGO_RSNA,					DOT11_CIPHER_ALGO_CCMP},	//13
-		
+
 		{DOT11_AUTH_ALGO_CCKM,				DOT11_CIPHER_ALGO_WEP40},  //15
 		{DOT11_AUTH_ALGO_CCKM,				DOT11_CIPHER_ALGO_WEP104}, //16
 		{DOT11_AUTH_ALGO_CCKM,				DOT11_CIPHER_ALGO_TKIP},     //17
 		{DOT11_AUTH_ALGO_CCKM,				DOT11_CIPHER_ALGO_CCMP},   //18
-		
+
 		{DOT11_AUTH_ALGO_WAPI_PSK,			DOT11_CIPHER_ALGO_WAPI_SMS4},   //for WAPI IHV Support add by ylb  20111114
 		{DOT11_AUTH_ALGO_WAPI_CERTIFICATE,	DOT11_CIPHER_ALGO_WAPI_SMS4},   //for WAPI IHV Support add by ylb  20111114
 	};
 
-	static DOT11_AUTH_CIPHER_PAIR  McastAuthCipherListIBSS[] = 
+	static DOT11_AUTH_CIPHER_PAIR  McastAuthCipherListIBSS[] =
 	{
 		{DOT11_AUTH_ALGO_80211_OPEN,			DOT11_CIPHER_ALGO_NONE},	// 0
 		{DOT11_AUTH_ALGO_80211_OPEN,			DOT11_CIPHER_ALGO_WEP40},	// 1
@@ -576,14 +576,14 @@ N6CQuery_DOT11_SUPPORTED_MULTICAST_ALGORITHM_PAIR(
 		{DOT11_AUTH_ALGO_80211_OPEN,			DOT11_CIPHER_ALGO_WEP},	// 3
 		{DOT11_AUTH_ALGO_RSNA_PSK,			      DOT11_CIPHER_ALGO_CCMP},	// 4
 	};
-	
+
 	u4Byte	ulNumOfPairSupported = sizeof(McastAuthCipherList)/sizeof(DOT11_AUTH_CIPHER_PAIR);
 	u4Byte	TotalLength = sizeof(McastAuthCipherList) + FIELD_OFFSET(DOT11_AUTH_CIPHER_PAIR_LIST, AuthCipherPairs);
 	PDOT11_AUTH_CIPHER_PAIR_LIST pAuthCipherList = (PDOT11_AUTH_CIPHER_PAIR_LIST)InformationBuffer;
 	u4Byte	i;
 	u4Byte	FillLength = 0;
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
-	
+
 	RT_TRACE( COMP_OID_QUERY|COMP_SEC, DBG_TRACE, ("==> N6CQuery_DOT11_SUPPORTED_MULTICAST_ALGORITHM_PAIR()\n") );
 	if( Adapter->MgntInfo.Regdot11networktype != RT_JOIN_NETWORKTYPE_ADHOC)
 	{
@@ -607,12 +607,12 @@ N6CQuery_DOT11_SUPPORTED_MULTICAST_ALGORITHM_PAIR(
 		PlatformZeroMemory( pAuthCipherList, sizeof(DOT11_AUTH_CIPHER_PAIR_LIST) );
 
 		N6_ASSIGN_OBJECT_HEADER(
-				pAuthCipherList->Header, 
+				pAuthCipherList->Header,
 				NDIS_OBJECT_TYPE_DEFAULT,
 				DOT11_AUTH_CIPHER_PAIR_LIST_REVISION_1,
 				sizeof(DOT11_AUTH_CIPHER_PAIR_LIST));
 		FillLength += FIELD_OFFSET(DOT11_AUTH_CIPHER_PAIR_LIST, AuthCipherPairs);
-	
+
 		pAuthCipherList->uNumOfEntries = 0;
 		pAuthCipherList->uTotalNumOfEntries = ulNumOfPairSupported;
 		for (i=0; i<ulNumOfPairSupported; i++)
@@ -623,7 +623,7 @@ N6CQuery_DOT11_SUPPORTED_MULTICAST_ALGORITHM_PAIR(
 				RT_TRACE( COMP_OID_QUERY|COMP_SEC, DBG_WARNING, (" <- [Error]N6CQuery_DOT11_SUPPORTED_MULTICAST_ALGORITHM_PAIR(), NDIS_STATUS_BUFFER_OVERFLOW\n") );
 				break;
 			}
-		
+
 			pAuthCipherList->uNumOfEntries ++;
 			FillLength += sizeof(DOT11_AUTH_CIPHER_PAIR);
 		}
@@ -647,12 +647,12 @@ N6CQuery_DOT11_SUPPORTED_MULTICAST_ALGORITHM_PAIR(
 		PlatformZeroMemory( pAuthCipherList, sizeof(DOT11_AUTH_CIPHER_PAIR_LIST) );
 
 		N6_ASSIGN_OBJECT_HEADER(
-				pAuthCipherList->Header, 
+				pAuthCipherList->Header,
 				NDIS_OBJECT_TYPE_DEFAULT,
 				DOT11_AUTH_CIPHER_PAIR_LIST_REVISION_1,
 				sizeof(DOT11_AUTH_CIPHER_PAIR_LIST));
 		FillLength += FIELD_OFFSET(DOT11_AUTH_CIPHER_PAIR_LIST, AuthCipherPairs);
-	
+
 		pAuthCipherList->uNumOfEntries = 0;
 		pAuthCipherList->uTotalNumOfEntries = ulNumOfPairSupported;
 		for (i=0; i<ulNumOfPairSupported; i++)
@@ -663,7 +663,7 @@ N6CQuery_DOT11_SUPPORTED_MULTICAST_ALGORITHM_PAIR(
 				RT_TRACE( COMP_OID_QUERY|COMP_SEC, DBG_WARNING, (" <- [Error]N6CQuery_DOT11_SUPPORTED_MULTICAST_ALGORITHM_PAIR(), NDIS_STATUS_BUFFER_OVERFLOW\n") );
 				break;
 			}
-		
+
 			pAuthCipherList->uNumOfEntries ++;
 			FillLength += sizeof(DOT11_AUTH_CIPHER_PAIR);
 		}
@@ -700,7 +700,7 @@ N6CQuery_DOT11_PMKID_LIST(
 	PlatformZeroMemory( pPMKIDList, TotalLength );
 
 	N6_ASSIGN_OBJECT_HEADER(
-			pPMKIDList->Header, 
+			pPMKIDList->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
 			DOT11_PMKID_LIST_REVISION_1,
 			sizeof(DOT11_PMKID_LIST));
@@ -711,7 +711,7 @@ N6CQuery_DOT11_PMKID_LIST(
 	//
 	// Integer overflow check
 	//
-	if ((ULONG)FIELD_OFFSET(DOT11_PMKID_LIST, PMKIDs) > 
+	if ((ULONG)FIELD_OFFSET(DOT11_PMKID_LIST, PMKIDs) >
 	        (ULONG)FIELD_OFFSET(DOT11_PMKID_LIST, PMKIDs) + pSecInfo->PMKIDCount * sizeof(DOT11_PMKID_ENTRY))
 	{
 		RT_TRACE( COMP_OID_QUERY|COMP_SEC, DBG_WARNING, (" <- [Error]N6CQuery_DOT11_PMKID_LIST(), NDIS_STATUS_FAILURE\n") );
@@ -729,7 +729,7 @@ N6CQuery_DOT11_PMKID_LIST(
 
 	//
 	// Copy the PMKID list.
-	//	
+	//
 	pPMKIDList->uNumOfEntries = pSecInfo->PMKIDCount;
 	for( idx=0; idx<pSecInfo->PMKIDCount; idx++ )
 	{
@@ -742,7 +742,7 @@ N6CQuery_DOT11_PMKID_LIST(
 		// 3. uFlags: This member is reserved and must be set to zero.
 		pPMKIDList->PMKIDs[idx].uFlags = 0;
 	}
-	
+
 	RT_TRACE( COMP_OID_QUERY|COMP_SEC, DBG_TRACE, ("<== N6CQuery_DOT11_PMKID_LIST()\n") );
 	return	NDIS_STATUS_SUCCESS;
 }
@@ -775,7 +775,7 @@ N6CQuery_DOT11_EXTSTA_CAPABILITY(
 	PlatformZeroMemory( pDot11ExtStaCap, *BytesNeeded );
 
 	N6_ASSIGN_OBJECT_HEADER(
-			pDot11ExtStaCap->Header, 
+			pDot11ExtStaCap->Header,
 			NDIS_OBJECT_TYPE_DEFAULT,
 			DOT11_EXTSTA_CAPABILITY_REVISION_1,
 			sizeof(DOT11_EXTSTA_CAPABILITY));
@@ -792,7 +792,7 @@ N6CQuery_DOT11_EXTSTA_CAPABILITY(
 	pDot11ExtStaCap->uMaxNumPerSTADefaultKeyTables = NATIVE_802_11_MAX_PER_STA_DEFAULT_KEY;
 
 	*BytesWritten = *BytesNeeded;
-	
+
 	RT_TRACE( COMP_OID_QUERY, DBG_TRACE, ("<== N6CQuery_DOT11_EXTSTA_CAPABILITY()\n") );
 	return NDIS_STATUS_SUCCESS;
 }
@@ -816,15 +816,15 @@ N6CQuery_DOT11_POWER_MGMT_REQUEST(
 	{
 		case POWER_SAVING_NO_POWER_SAVING:
 			*pPowerSaveLevel = DOT11_POWER_SAVING_NO_POWER_SAVING;
-			RT_TRACE( COMP_POWER, DBG_LOUD, ("N6CQuery_DOT11_POWER_MGMT_REQUEST(): DOT11_POWER_SAVING_NO_POWER_SAVING\n") );	
+			RT_TRACE( COMP_POWER, DBG_LOUD, ("N6CQuery_DOT11_POWER_MGMT_REQUEST(): DOT11_POWER_SAVING_NO_POWER_SAVING\n") );
 			break;
 		case POWER_SAVING_FAST_PSP:
 			*pPowerSaveLevel =  DOT11_POWER_SAVING_FAST_PSP;
-			RT_TRACE( COMP_POWER, DBG_LOUD, ("N6CQuery_DOT11_POWER_MGMT_REQUEST(): DOT11_POWER_SAVING_FAST_PSP\n") );	
+			RT_TRACE( COMP_POWER, DBG_LOUD, ("N6CQuery_DOT11_POWER_MGMT_REQUEST(): DOT11_POWER_SAVING_FAST_PSP\n") );
 			break;
 		case POWER_SAVING_MAX_PSP:
 			*pPowerSaveLevel = DOT11_POWER_SAVING_MAX_PSP;
-			RT_TRACE( COMP_POWER, DBG_LOUD, ("N6CQuery_DOT11_POWER_MGMT_REQUEST():DOT11_POWER_SAVING_MAX_PSP\n") );	
+			RT_TRACE( COMP_POWER, DBG_LOUD, ("N6CQuery_DOT11_POWER_MGMT_REQUEST():DOT11_POWER_SAVING_MAX_PSP\n") );
 			break;
 		case POWER_SAVING_MAXIMUM_LEVEL:
 			*pPowerSaveLevel =  DOT11_POWER_SAVING_MAXIMUM_LEVEL;
@@ -832,7 +832,7 @@ N6CQuery_DOT11_POWER_MGMT_REQUEST(
 			break;
 		default:
 			*pPowerSaveLevel = DOT11_POWER_SAVING_NO_POWER_SAVING;
-			RT_TRACE( COMP_POWER, DBG_LOUD, ("N6CQuery_DOT11_POWER_MGMT_REQUEST(): unkown\n")); 
+			RT_TRACE( COMP_POWER, DBG_LOUD, ("N6CQuery_DOT11_POWER_MGMT_REQUEST(): unkown\n"));
 			break;
 	}
 	RT_TRACE( COMP_OID_QUERY, DBG_LOUD, ("N6CQuery_DOT11_POWER_MGMT_REQUEST(): %d\n", pPSC->PowerSaveLevel) );
@@ -851,7 +851,7 @@ N6CQuery_DOT11_EXCLUDED_MAC_ADDRESS_LIST(
 	PDOT11_MAC_ADDRESS_LIST	pMacAddrList = (PDOT11_MAC_ADDRESS_LIST)InformationBuffer;
 	PMGNT_INFO	pMgntInfo = &(Adapter->MgntInfo);
 	u4Byte		AddrWritten;
-	
+
 	*BytesNeeded = FIELD_OFFSET(DOT11_MAC_ADDRESS_LIST, MacAddrs) +
 		pMgntInfo->ExcludedMacAddrListLength*6;
 
@@ -866,12 +866,12 @@ N6CQuery_DOT11_EXCLUDED_MAC_ADDRESS_LIST(
 			NDIS_OBJECT_TYPE_DEFAULT,
 			DOT11_MAC_ADDRESS_LIST_REVISION_1,
 			sizeof(DOT11_MAC_ADDRESS_LIST));
-	
+
 	AddrWritten = MgntActQuery_ExcludedMacAddressList(
-				Adapter, 
+				Adapter,
 				(pu1Byte)(pMacAddrList->MacAddrs),
 				*BytesNeeded - FIELD_OFFSET(DOT11_MAC_ADDRESS_LIST, MacAddrs));
-	
+
 	pMacAddrList->uNumOfEntries = AddrWritten;
 	pMacAddrList->uTotalNumOfEntries = AddrWritten;
 
@@ -893,7 +893,7 @@ N6CQuery_DOT11_DESIRED_BSSID_LIST(
 	PRT_NDIS6_COMMON	pNdisCommon = Adapter->pNdisCommon;
 	PDOT11_BSSID_LIST	pBssidList = (PDOT11_BSSID_LIST)InformationBuffer;
 
-	//RT_TRACE(COMP_OID_QUERY, DBG_LOUD, 
+	//RT_TRACE(COMP_OID_QUERY, DBG_LOUD,
 	//	("N6CQuery_DOT11_DESIRED_BSSID_LIST(): BytesNeeded: %u, InfoBufLen: %u\n", *BytesNeeded, InformationBufferLength));
 
 	//
@@ -905,7 +905,7 @@ N6CQuery_DOT11_DESIRED_BSSID_LIST(
 		*BytesWritten = 0;
 		return NDIS_STATUS_BUFFER_OVERFLOW;
 	}
-	
+
 	pBssidList->uTotalNumOfEntries = pNdisCommon->NumDot11DesiredBSSIDList;
 	if(InformationBufferLength < sizeof(DOT11_BSSID_LIST))
 	{// Refer to DDK, by haich, 2008.08.19.
@@ -915,7 +915,7 @@ N6CQuery_DOT11_DESIRED_BSSID_LIST(
 		return NDIS_STATUS_BUFFER_OVERFLOW;
 	}
 
-	*BytesNeeded = FIELD_OFFSET(DOT11_BSSID_LIST, BSSIDs) + 
+	*BytesNeeded = FIELD_OFFSET(DOT11_BSSID_LIST, BSSIDs) +
 		pNdisCommon->NumDot11DesiredBSSIDList * sizeof(DOT11_MAC_ADDRESS);
 
 	if ( InformationBufferLength < *BytesNeeded )
@@ -939,7 +939,7 @@ N6CQuery_DOT11_DESIRED_BSSID_LIST(
 		pNdisCommon->NumDot11DesiredBSSIDList*sizeof(DOT11_MAC_ADDRESS));
 
 	*BytesWritten = *BytesNeeded;
-	
+
 	return NDIS_STATUS_SUCCESS;
 }
 
@@ -964,7 +964,7 @@ N6CQuery_DOT11_OPERATION_MODE_CAPABILITY(
 		*BytesNeeded = length;
 		return NDIS_STATUS_INVALID_LENGTH;
 	}
-	
+
 	PlatformMoveMemory(
 		InformationBuffer,
 		&(pNdisCommon->dot11OperationModeCapability),
@@ -980,7 +980,7 @@ N6CQuery_DOT11_CURRENT_OPERATION_MODE(
 	OUT	PVOID							InformationBuffer,
 	IN	ULONG							InformationBufferLength,
 	OUT	PULONG							BytesWritten,
-	OUT	PULONG							BytesNeeded	
+	OUT	PULONG							BytesNeeded
 	)
 {
 	PRT_NDIS6_COMMON	pNdisCommon = Adapter->pNdisCommon;
@@ -1013,7 +1013,7 @@ N6CQuery_DOT11_DESIRED_SSID_LIST(
 	PDOT11_SSID_LIST	pSsidList = (PDOT11_SSID_LIST)InformationBuffer;
 	PRT_NDIS6_COMMON	pNdisCommon = Adapter->pNdisCommon;
 	NDIS_STATUS			ndisStatus = NDIS_STATUS_SUCCESS;
-	
+
 	if ( InformationBufferLength < sizeof(DOT11_SSID_LIST) )
 	{
 		*BytesWritten = 0;
@@ -1026,7 +1026,7 @@ N6CQuery_DOT11_DESIRED_SSID_LIST(
 	{
 		*BytesWritten = 0;
 	}
-	
+
 	PlatformMoveMemory(
 		pSsidList,
 		&(pNdisCommon->dot11DesiredSSIDList),
@@ -1046,10 +1046,10 @@ N6CQuery_DOT11_PRIVACY_EXEMPTION_LIST(
 {
 	NDIS_STATUS Status = NDIS_STATUS_SUCCESS;
 	PRT_NDIS6_COMMON pNdisCommon = Adapter->pNdisCommon;
-	PDOT11_PRIVACY_EXEMPTION_LIST	pExemptionList = 
+	PDOT11_PRIVACY_EXEMPTION_LIST	pExemptionList =
 		(PDOT11_PRIVACY_EXEMPTION_LIST)InformationBuffer;
 
-	RT_TRACE(COMP_OID_QUERY, DBG_LOUD, 
+	RT_TRACE(COMP_OID_QUERY, DBG_LOUD,
 		("Query  OID_DOT11_PRIVACY_EXEMPTION_LIST.\n"));
 
 	do
@@ -1064,7 +1064,7 @@ N6CQuery_DOT11_PRIVACY_EXEMPTION_LIST(
 		*BytesNeeded = sizeof(DOT11_PRIVACY_EXEMPTION_LIST);
 		if ( InformationBufferLength < *BytesNeeded )
 		{
-			pExemptionList->uTotalNumOfEntries = 
+			pExemptionList->uTotalNumOfEntries =
 				pNdisCommon->PrivacyExemptionEntrieNum;
 			Status = NDIS_STATUS_BUFFER_OVERFLOW;
 			break;
@@ -1079,15 +1079,15 @@ N6CQuery_DOT11_PRIVACY_EXEMPTION_LIST(
 		pExemptionList->uNumOfEntries = pNdisCommon->PrivacyExemptionEntrieNum;
 		pExemptionList->uTotalNumOfEntries = pNdisCommon->PrivacyExemptionEntrieNum;
 
-		PlatformMoveMemory(pExemptionList->PrivacyExemptionEntries, 
-			pNdisCommon->PrivacyExemptionEntries, 
+		PlatformMoveMemory(pExemptionList->PrivacyExemptionEntries,
+			pNdisCommon->PrivacyExemptionEntries,
 			pNdisCommon->PrivacyExemptionEntrieNum* sizeof(DOT11_PRIVACY_EXEMPTION));
 
 	*BytesWritten = *BytesNeeded;
 	}while(FALSE);
 
 	return Status;
-	
+
 }
 
 NDIS_STATUS
@@ -1153,7 +1153,7 @@ N6CQuery_DOT11_STATISTICS(
 	}
 
 	PlatformZeroMemory(pStatistics, InformationBufferLength);
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 		pStatistics->Header,
 		NDIS_OBJECT_TYPE_DEFAULT,
@@ -1184,22 +1184,22 @@ N6CQuery_DOT11_STATISTICS(
 	{
 
 		RT_TRACE(COMP_RECV, DBG_LOUD, ("N6CQuery_DOT11_STATISTICS:() QueryAfterFirstReset %d\n", Adapter->RxStats.QueryAfterFirstReset));
-		if(Adapter->RxStats.QueryAfterFirstReset != 2)	
+		if(Adapter->RxStats.QueryAfterFirstReset != 2)
 		{
-			Adapter->RxStats.NumRxReceivedFrameCount = 
-				pStatistics->MacMcastCounters.ullReceivedFrameCount = 
-				Adapter->RxStats.NumRxMulticast + Adapter->RxStats.NumRxBroadcast;	
+			Adapter->RxStats.NumRxReceivedFrameCount =
+				pStatistics->MacMcastCounters.ullReceivedFrameCount =
+				Adapter->RxStats.NumRxMulticast + Adapter->RxStats.NumRxBroadcast;
 		}
 		else
 		{
 			Adapter->RxStats.NumRxReceivedFrameCount += 50;
-			pStatistics->MacMcastCounters.ullReceivedFrameCount	= 
-				Adapter->RxStats.NumRxReceivedFrameCount;			
+			pStatistics->MacMcastCounters.ullReceivedFrameCount	=
+				Adapter->RxStats.NumRxReceivedFrameCount;
 		}
 		Adapter->RxStats.QueryAfterFirstReset++;
-		
+
 	}
-	
+
 	// Unicast
 	pStatistics->MacUcastCounters.ullTransmittedFrameCount = Adapter->TxStats.NumTxUnicast;
 	pStatistics->MacUcastCounters.ullReceivedFrameCount = Adapter->RxStats.NumRxUnicast;
@@ -1211,63 +1211,63 @@ N6CQuery_DOT11_STATISTICS(
 	pStatistics->MacUcastCounters.ullTKIPICVErrorCount = Adapter->RxStats.NumRxTKIPICVErrorUnicast;
 	pStatistics->MacUcastCounters.ullCCMPReplays = Adapter->RxStats.NumRxCCMPReplayUnicast;
 	pStatistics->MacUcastCounters.ullCCMPDecryptErrors = Adapter->RxStats.NumRxCCMPDecryptErrorsUnicast;
-	pStatistics->MacUcastCounters.ullWEPUndecryptableCount = Adapter->RxStats.NumRxWEPUndecryptableUnicast; 
+	pStatistics->MacUcastCounters.ullWEPUndecryptableCount = Adapter->RxStats.NumRxWEPUndecryptableUnicast;
 	pStatistics->MacUcastCounters.ullWEPICVErrorCount = Adapter->RxStats.NumRxWEPICVErrorUnicast;
-	pStatistics->MacUcastCounters.ullDecryptSuccessCount = Adapter->RxStats.NumRxDecryptSuccessUnicast;  
-	pStatistics->MacUcastCounters.ullDecryptFailureCount = Adapter->RxStats.NumRxDecryptFailureUnicast; 
+	pStatistics->MacUcastCounters.ullDecryptSuccessCount = Adapter->RxStats.NumRxDecryptSuccessUnicast;
+	pStatistics->MacUcastCounters.ullDecryptFailureCount = Adapter->RxStats.NumRxDecryptFailureUnicast;
 
 	// Multicast
-	pStatistics->MacMcastCounters.ullTransmittedFrameCount = 
+	pStatistics->MacMcastCounters.ullTransmittedFrameCount =
 		Adapter->TxStats.NumTxMulticast + Adapter->TxStats.NumTxBroadcast;
 	//if(!Adapter->bInHctTest)	// 2011/06/14 MH For passing WLK1.6 EXTSTA_Test statistic 2011/06/01 filter.
 	{
-		pStatistics->MacMcastCounters.ullReceivedFrameCount = 
+		pStatistics->MacMcastCounters.ullReceivedFrameCount =
 			Adapter->RxStats.NumRxMulticast + Adapter->RxStats.NumRxBroadcast;
 	}
-	pStatistics->MacMcastCounters.ullTransmittedFailureFrameCount = 
+	pStatistics->MacMcastCounters.ullTransmittedFailureFrameCount =
 		Adapter->TxStats.NumTxErrMulticast + Adapter->TxStats.NumTxErrBroadcast;
 	pStatistics->MacMcastCounters.ullReceivedFailureFrameCount = Adapter->RxStats.NumRxErrTotalMulticast;
 	pStatistics->MacMcastCounters.ullWEPExcludedCount =
 		Adapter->RxStats.NumRxExcludeUnencryptedMulticast + Adapter->RxStats.NumRxExcludeUnencryptedBroadcast;
-	pStatistics->MacMcastCounters.ullTKIPLocalMICFailures = 
+	pStatistics->MacMcastCounters.ullTKIPLocalMICFailures =
 		Adapter->RxStats.NumRxTKIPLocalMICFailuresMulticast + Adapter->RxStats.NumRxTKIPLocalMICFailuresBroadcast;
 	pStatistics->MacMcastCounters.ullTKIPReplays = Adapter->RxStats.NumRxTKIPReplayMulticast;
-	pStatistics->MacMcastCounters.ullTKIPICVErrorCount = 
-	        Adapter->RxStats.NumRxTKIPICVErrorMulticast + Adapter->RxStats.NumRxTKIPICVErrorBroadcast; 
+	pStatistics->MacMcastCounters.ullTKIPICVErrorCount =
+	        Adapter->RxStats.NumRxTKIPICVErrorMulticast + Adapter->RxStats.NumRxTKIPICVErrorBroadcast;
 	pStatistics->MacMcastCounters.ullCCMPReplays = Adapter->RxStats.NumRxCCMPReplayMulticast;
 	pStatistics->MacMcastCounters.ullCCMPDecryptErrors =
 		Adapter->RxStats.NumRxCCMPDecryptErrorsMulticast + Adapter->RxStats.NumRxCCMPDecryptErrorsBroadcast;
-	pStatistics->MacMcastCounters.ullWEPUndecryptableCount = 
+	pStatistics->MacMcastCounters.ullWEPUndecryptableCount =
 	        Adapter->RxStats.NumRxWEPUndecryptableMulticast + Adapter->RxStats.NumRxWEPUndecryptableBroadcast; // TODO
 	pStatistics->MacMcastCounters.ullWEPICVErrorCount =
 		Adapter->RxStats.NumRxWEPICVErrorMulticast + Adapter->RxStats.NumRxWEPICVErrorBroadcast;
-	pStatistics->MacMcastCounters.ullDecryptSuccessCount = 
+	pStatistics->MacMcastCounters.ullDecryptSuccessCount =
 		Adapter->RxStats.NumRxDecryptSuccessMulticast + Adapter->RxStats.NumRxDecryptSuccessBroadcast;
-	pStatistics->MacMcastCounters.ullDecryptFailureCount = 
-		Adapter->RxStats.NumRxDecryptFailureMulticast + Adapter->RxStats.NumRxDecryptFailureBroadcast; 
+	pStatistics->MacMcastCounters.ullDecryptFailureCount =
+		Adapter->RxStats.NumRxDecryptFailureMulticast + Adapter->RxStats.NumRxDecryptFailureBroadcast;
 
 	// PHY
 	pStatistics->PhyCounters[operatingPhyId].ullTransmittedFrameCount = Adapter->TxStats.NumTxOkTotal;
-	pStatistics->PhyCounters[operatingPhyId].ullMulticastTransmittedFrameCount = 
+	pStatistics->PhyCounters[operatingPhyId].ullMulticastTransmittedFrameCount =
 		Adapter->TxStats.NumTxMulticast + Adapter->TxStats.NumTxBroadcast;
-	pStatistics->PhyCounters[operatingPhyId].ullFailedCount = Adapter->TxStats.NumTxErrTotal; 
-	pStatistics->PhyCounters[operatingPhyId].ullRetryCount = Adapter->TxStats.NumTxRetryCount; 
+	pStatistics->PhyCounters[operatingPhyId].ullFailedCount = Adapter->TxStats.NumTxErrTotal;
+	pStatistics->PhyCounters[operatingPhyId].ullRetryCount = Adapter->TxStats.NumTxRetryCount;
 	pStatistics->PhyCounters[operatingPhyId].ullMultipleRetryCount = 0; // TODO
 	pStatistics->PhyCounters[operatingPhyId].ullMaxTXLifetimeExceededCount = 0; // TODO
-	pStatistics->PhyCounters[operatingPhyId].ullTransmittedFragmentCount = Adapter->TxStats.NumTxOkTotal; 
+	pStatistics->PhyCounters[operatingPhyId].ullTransmittedFragmentCount = Adapter->TxStats.NumTxOkTotal;
 	pStatistics->PhyCounters[operatingPhyId].ullRTSSuccessCount = 0; // TODO
 	pStatistics->PhyCounters[operatingPhyId].ullRTSFailureCount = 0; // TODO
 	pStatistics->PhyCounters[operatingPhyId].ullACKFailureCount = 0; // TODO
 	pStatistics->PhyCounters[operatingPhyId].ullReceivedFrameCount = Adapter->RxStats.NumRxFramgment;
-	pStatistics->PhyCounters[operatingPhyId].ullMulticastReceivedFrameCount = Adapter->RxStats.NumRxFramgment; 
+	pStatistics->PhyCounters[operatingPhyId].ullMulticastReceivedFrameCount = Adapter->RxStats.NumRxFramgment;
 	pStatistics->PhyCounters[operatingPhyId].ullPromiscuousReceivedFrameCount = 0; // TODO
 	pStatistics->PhyCounters[operatingPhyId].ullMaxRXLifetimeExceededCount = 0; // TODO
 	pStatistics->PhyCounters[operatingPhyId].ullFrameDuplicateCount = 0; // TODO
-	pStatistics->PhyCounters[operatingPhyId].ullReceivedFragmentCount = Adapter->RxStats.NumRxFramgment; 
+	pStatistics->PhyCounters[operatingPhyId].ullReceivedFragmentCount = Adapter->RxStats.NumRxFramgment;
 	pStatistics->PhyCounters[operatingPhyId].ullPromiscuousReceivedFragmentCount = 0; // TODO
-	pStatistics->PhyCounters[operatingPhyId].ullFCSErrorCount = 
+	pStatistics->PhyCounters[operatingPhyId].ullFCSErrorCount =
 		Adapter->RxStats.NumRxErrTotalUnicast + Adapter->RxStats.NumRxErrTotalMulticast;
-	
+
 #if 1
 	if(Adapter->bInHctTest)
 	{
@@ -1275,9 +1275,9 @@ N6CQuery_DOT11_STATISTICS(
 		for(index = 0; index < bound; index++)
 		{
 			//Unicast
-			if((pStatistics->MacUcastCounters.ullTKIPICVErrorCount > LowerBoundMin[index]&& 
+			if((pStatistics->MacUcastCounters.ullTKIPICVErrorCount > LowerBoundMin[index]&&
 				pStatistics->MacUcastCounters.ullTKIPICVErrorCount < LowerBound[index]) ||
-				(pStatistics->MacUcastCounters.ullTKIPICVErrorCount > UpperBound[index] && 
+				(pStatistics->MacUcastCounters.ullTKIPICVErrorCount > UpperBound[index] &&
 				pStatistics->MacUcastCounters.ullTKIPICVErrorCount < UpperBoundMax[index]))
 				pStatistics->MacUcastCounters.ullTKIPICVErrorCount = UpperBound[index];
 			if((pStatistics->MacUcastCounters.ullCCMPDecryptErrors > LowerBoundMin[index] &&
@@ -1285,24 +1285,24 @@ N6CQuery_DOT11_STATISTICS(
 				(pStatistics->MacUcastCounters.ullCCMPDecryptErrors > UpperBound[index] &&
 				pStatistics->MacUcastCounters.ullCCMPDecryptErrors < UpperBoundMax[index]))
 				pStatistics->MacUcastCounters.ullCCMPDecryptErrors = UpperBound[index];
-			if((pStatistics->MacUcastCounters.ullWEPICVErrorCount > LowerBoundMin[index] && 
+			if((pStatistics->MacUcastCounters.ullWEPICVErrorCount > LowerBoundMin[index] &&
 				pStatistics->MacUcastCounters.ullWEPICVErrorCount < LowerBound[index]) ||
 				(pStatistics->MacUcastCounters.ullWEPICVErrorCount > UpperBound[index] &&
 				pStatistics->MacUcastCounters.ullWEPICVErrorCount < UpperBoundMax[index]))
 				pStatistics->MacUcastCounters.ullWEPICVErrorCount = UpperBound[index];
-			if((pStatistics->MacUcastCounters.ullWEPUndecryptableCount > LowerBoundMin[index] && 
+			if((pStatistics->MacUcastCounters.ullWEPUndecryptableCount > LowerBoundMin[index] &&
 				pStatistics->MacUcastCounters.ullWEPUndecryptableCount < LowerBound[index]) ||
 				(pStatistics->MacUcastCounters.ullWEPUndecryptableCount > UpperBound[index] &&
 				pStatistics->MacUcastCounters.ullWEPUndecryptableCount < UpperBoundMax[index]))
 				pStatistics->MacUcastCounters.ullWEPUndecryptableCount = UpperBound[index];
-			if((pStatistics->MacUcastCounters.ullDecryptFailureCount > LowerBoundMin[index] && 
+			if((pStatistics->MacUcastCounters.ullDecryptFailureCount > LowerBoundMin[index] &&
 				pStatistics->MacUcastCounters.ullDecryptFailureCount < LowerBound[index]) ||
 				(pStatistics->MacUcastCounters.ullDecryptFailureCount > UpperBound[index] &&
 				pStatistics->MacUcastCounters.ullDecryptFailureCount < UpperBoundMax[index]))
 				pStatistics->MacUcastCounters.ullDecryptFailureCount = UpperBound[index];
 
 			//Muticast
-			if((pStatistics->MacMcastCounters.ullTKIPICVErrorCount > LowerBoundMin[index] && 
+			if((pStatistics->MacMcastCounters.ullTKIPICVErrorCount > LowerBoundMin[index] &&
 				pStatistics->MacMcastCounters.ullTKIPICVErrorCount < LowerBound[index]) ||
 				(pStatistics->MacMcastCounters.ullTKIPICVErrorCount > UpperBound[index] &&
 				pStatistics->MacMcastCounters.ullTKIPICVErrorCount < UpperBoundMax[index]))
@@ -1312,17 +1312,17 @@ N6CQuery_DOT11_STATISTICS(
 				(pStatistics->MacMcastCounters.ullCCMPDecryptErrors > UpperBound[index] &&
 				pStatistics->MacMcastCounters.ullCCMPDecryptErrors < UpperBoundMax[index]))
 				pStatistics->MacMcastCounters.ullCCMPDecryptErrors = UpperBound[index];
-			if((pStatistics->MacMcastCounters.ullWEPICVErrorCount > LowerBoundMin[index]&& 
+			if((pStatistics->MacMcastCounters.ullWEPICVErrorCount > LowerBoundMin[index]&&
 				pStatistics->MacMcastCounters.ullWEPICVErrorCount < LowerBound[index]) ||
 				(pStatistics->MacMcastCounters.ullWEPICVErrorCount > UpperBound[index] &&
 				pStatistics->MacMcastCounters.ullWEPICVErrorCount < UpperBoundMax[index]))
 				pStatistics->MacMcastCounters.ullWEPICVErrorCount = UpperBound[index];
-			if((pStatistics->MacMcastCounters.ullWEPUndecryptableCount > LowerBoundMin[index] && 
+			if((pStatistics->MacMcastCounters.ullWEPUndecryptableCount > LowerBoundMin[index] &&
 				pStatistics->MacMcastCounters.ullWEPUndecryptableCount < LowerBound[index]) ||
 				(pStatistics->MacMcastCounters.ullWEPUndecryptableCount > UpperBound[index] &&
 				pStatistics->MacMcastCounters.ullWEPUndecryptableCount < UpperBoundMax[index]))
 				pStatistics->MacMcastCounters.ullWEPUndecryptableCount = UpperBound[index];
-			if((pStatistics->MacMcastCounters.ullDecryptFailureCount > LowerBoundMin[index] && 
+			if((pStatistics->MacMcastCounters.ullDecryptFailureCount > LowerBoundMin[index] &&
 				pStatistics->MacMcastCounters.ullDecryptFailureCount < LowerBound[index]) ||
 				(pStatistics->MacMcastCounters.ullDecryptFailureCount > UpperBound[index] &&
 				pStatistics->MacMcastCounters.ullDecryptFailureCount < UpperBoundMax[index]))
@@ -1379,7 +1379,7 @@ N6CQuery_DOT11_ATIM_WINDOW(
 
 	*pAtimWindow = pMgntInfo->dot11AtimWindow;
 	RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("N6CQuery_DOT11_ATIM_WINDOW(): %d\n", *pAtimWindow));
-	return NDIS_STATUS_SUCCESS; 
+	return NDIS_STATUS_SUCCESS;
 }
 
 static DOT11_PHY_TYPE
@@ -1489,18 +1489,18 @@ N6CQuery_DOT11_DESIRED_PHY_LIST(
 		sizeof(DOT11_PHY_ID_LIST));
 
 	pPhyIdList->uTotalNumOfEntries = pNdisCommon->staDesiredPhyCount;
-	pPhyIdList->uNumOfEntries = 0; 
+	pPhyIdList->uNumOfEntries = 0;
 
 	//
 	// If the buffer is not big enough, simply return error.
 	//
 
-	if (InformationBufferLength < 
+	if (InformationBufferLength <
 		FIELD_OFFSET(DOT11_PHY_ID_LIST, dot11PhyId) + pNdisCommon->staDesiredPhyCount * sizeof(ULONG))
 	{
 		return NDIS_STATUS_BUFFER_OVERFLOW;
 	}
-		
+
 	//
 	// Copy the desired PHY list.
 	//
@@ -1509,9 +1509,9 @@ N6CQuery_DOT11_DESIRED_PHY_LIST(
 		pNdisCommon->staDesiredPhyList,
 		pNdisCommon->staDesiredPhyCount * sizeof(ULONG));
 
-        *BytesWritten = pPhyIdList->uNumOfEntries * sizeof(ULONG) + 
+        *BytesWritten = pPhyIdList->uNumOfEntries * sizeof(ULONG) +
                         FIELD_OFFSET(DOT11_PHY_ID_LIST, dot11PhyId);
-            
+
         *BytesNeeded = pPhyIdList->uTotalNumOfEntries * sizeof(ULONG) +
                        FIELD_OFFSET(DOT11_PHY_ID_LIST, dot11PhyId);
 
@@ -1552,7 +1552,7 @@ N6CQuery_DOT11_ACTIVE_PHY_LIST(
 	pPhyIdList->uTotalNumOfEntries = 1;
 	// ActivePhyId modifies in NDIS_STATUS_DOT11_ASSOCIATION_COMPLETION.
 	pPhyIdList->dot11PhyId[0] = pNdisCommon->ActivePhyId;
-	
+
 	*BytesWritten = *BytesNeeded;
 	return NDIS_STATUS_SUCCESS;
 }
@@ -1566,12 +1566,12 @@ N6CQuery_DOT11_OPTIONAL_CAPABILITY(
 	PRT_NDIS6_COMMON	pNdisCommon = pAdapter->pNdisCommon;
 
 	PlatformMoveMemory(
-		pResult, 
-		&(pNdisCommon->RegOptionalCapability), 
+		pResult,
+		&(pNdisCommon->RegOptionalCapability),
 		sizeof(DOT11_OPTIONAL_CAPABILITY));
 
 	RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("N6CQuery_DOT11_OPTIONAL_CAPABILITY()\n"));
-	return NDIS_STATUS_SUCCESS; 
+	return NDIS_STATUS_SUCCESS;
 }
 
 NDIS_STATUS
@@ -1583,12 +1583,12 @@ N6CQuery_DOT11_CURRENT_OPTIONAL_CAPABILITY(
 	PRT_NDIS6_COMMON	pNdisCommon = pAdapter->pNdisCommon;
 
 	PlatformMoveMemory(
-		pResult, 
-		&(pNdisCommon->dot11CurrOptionalCapability), 
+		pResult,
+		&(pNdisCommon->dot11CurrOptionalCapability),
 		sizeof(DOT11_OPTIONAL_CAPABILITY));
 
 	RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("N6CQuery_DOT11_CURRENT_OPTIONAL_CAPABILITY()\n"));
-	return NDIS_STATUS_SUCCESS; 
+	return NDIS_STATUS_SUCCESS;
 }
 
 NDIS_STATUS
@@ -1600,7 +1600,7 @@ N6CQuery_DOT11_CF_POLLABLE(
 
 	*pResult = MgntActQuery_CfPollable(pAdapter);
 	RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("N6CQuery_DOT11_CF_POLLABLE()\n"));
-	return NDIS_STATUS_SUCCESS; 
+	return NDIS_STATUS_SUCCESS;
 }
 
 NDIS_STATUS
@@ -1629,14 +1629,14 @@ N6CQuery_DOT11_OPERATIONAL_RATE_SET(
 	{
 		return NDIS_STATUS_BUFFER_OVERFLOW;
 	}
-	
+
 	PlatformZeroMemory(pDot11RateSet, sizeof(DOT11_RATE_SET));
-	
+
 	pRtRateSet = &(pMgntInfo->SupportedRates);
 
 	if(pRtRateSet->Length <= DOT11_RATE_SET_MAX_LENGTH)
 		pDot11RateSet->uRateSetLength = pRtRateSet->Length;
-	else 
+	else
 		pDot11RateSet->uRateSetLength = DOT11_RATE_SET_MAX_LENGTH;
 
 	for (index=0,  opRateIdx=0; index< pDot11RateSet->uRateSetLength; index++)
@@ -1647,14 +1647,14 @@ N6CQuery_DOT11_OPERATIONAL_RATE_SET(
 			     (( pRtRateSet->Octet[index] & 0x7F) == 11) || (( pRtRateSet->Octet[index]  & 0x7F) == 22) )
 			{
 				pDot11RateSet->ucRateSet[opRateIdx] = pRtRateSet->Octet[index] & 0x7F;
-				opRateIdx++;			
-			}	
+				opRateIdx++;
+			}
 		}
 		else // dot11_phy_type_erp  G mdoe or dot11_phy_type_ofdm  A mdoe
 		{
 			pDot11RateSet->ucRateSet[index] = pRtRateSet->Octet[index] & 0x7F;
 			opRateIdx++;
-		}	
+		}
 	}
 	pDot11RateSet->uRateSetLength=opRateIdx;
 
@@ -1673,7 +1673,7 @@ N6CQuery_DOT11_BEACON_PERIOD(
 
 	*pResult = pMgntInfo->dot11BeaconPeriod;
 	RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("N6CQuery_DOT11_BEACON_PERIOD(): %d TU\n", *pResult));
-	return NDIS_STATUS_SUCCESS; 
+	return NDIS_STATUS_SUCCESS;
 }
 
 NDIS_STATUS
@@ -1685,7 +1685,7 @@ N6CQuery_DOT11_SHORT_RETRY_LIMIT(
 	*pResult = MgntActQuery_ShortRetryLimit(pAdapter);
 
 	RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("N6CQuery_DOT11_SHORT_RETRY_LIMIT(): %d times\n", *pResult));
-	return NDIS_STATUS_SUCCESS; 
+	return NDIS_STATUS_SUCCESS;
 }
 
 NDIS_STATUS
@@ -1697,7 +1697,7 @@ N6CQuery_DOT11_LONG_RETRY_LIMIT(
 	*pResult = MgntActQuery_LongRetryLimit(pAdapter);
 
 	RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("N6CQuery_DOT11_LONG_RETRY_LIMIT(): %d times\n", *pResult));
-	return NDIS_STATUS_SUCCESS; 
+	return NDIS_STATUS_SUCCESS;
 }
 
 NDIS_STATUS
@@ -1708,7 +1708,7 @@ N6CQuery_DOT11_MAX_TRANSMIT_MSDU_LIFETIME(
 {
 	*pResult = MgntActQuery_MaxTxMsduLifeTime(pAdapter);
 	RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("N6CQuery_DOT11_MAX_TRANSMIT_MSDU_LIFETIME(): %d TUs\n", *pResult));
-	return NDIS_STATUS_SUCCESS; 
+	return NDIS_STATUS_SUCCESS;
 }
 
 NDIS_STATUS
@@ -1719,7 +1719,7 @@ N6CQuery_DOT11_MAX_RECEIVE_LIFETIME(
 {
 	*pResult = MgntActQuery_MaxRxMpduLifeTime(pAdapter);
 	RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("N6CQuery_DOT11_MAX_RECEIVE_LIFETIME(): %d TUs\n", *pResult));
-	return NDIS_STATUS_SUCCESS; 
+	return NDIS_STATUS_SUCCESS;
 }
 
 
@@ -1741,7 +1741,7 @@ N6CQuery_DOT11_SUPPORTED_PHY_TYPES(
 	//
 	// <RJ_NW_TODO> Reivse PHY related in N6usbInitializeNative80211MIBs().
 	//
-	
+
 	do
 	{
 		*BytesWritten = 0;
@@ -1757,32 +1757,32 @@ N6CQuery_DOT11_SUPPORTED_PHY_TYPES(
 		InformationBufferLength -= FIELD_OFFSET(DOT11_SUPPORTED_PHY_TYPES, dot11PHYType);
 		uNumMaxEntries = InformationBufferLength / sizeof(DOT11_PHY_TYPE);
 
-		if(uNumMaxEntries < pNdisCommon->pDot11SupportedPhyTypes->uTotalNumOfEntries) 
+		if(uNumMaxEntries < pNdisCommon->pDot11SupportedPhyTypes->uTotalNumOfEntries)
 		{ // Buffer is not enough
-			pDot11SupportedPhyTypes->uTotalNumOfEntries = pNdisCommon->pDot11SupportedPhyTypes->uTotalNumOfEntries;    
+			pDot11SupportedPhyTypes->uTotalNumOfEntries = pNdisCommon->pDot11SupportedPhyTypes->uTotalNumOfEntries;
 			pDot11SupportedPhyTypes->uNumOfEntries = uNumMaxEntries;
 			ndisStatus = NDIS_STATUS_BUFFER_OVERFLOW;
 		}
-		else 
+		else
 		{
-			pDot11SupportedPhyTypes->uTotalNumOfEntries = pNdisCommon->pDot11SupportedPhyTypes->uTotalNumOfEntries;    
+			pDot11SupportedPhyTypes->uTotalNumOfEntries = pNdisCommon->pDot11SupportedPhyTypes->uTotalNumOfEntries;
 			pDot11SupportedPhyTypes->uNumOfEntries = pDot11SupportedPhyTypes->uTotalNumOfEntries;
 		}
 		for (Index = 0; Index < pDot11SupportedPhyTypes->uNumOfEntries; Index++)
 		{
 			pDot11SupportedPhyTypes->dot11PHYType[Index] = pNdisCommon->pDot11SupportedPhyTypes->dot11PHYType[Index];
 		}
-	
+
 		*BytesWritten = FIELD_OFFSET(DOT11_SUPPORTED_PHY_TYPES, dot11PHYType) +
 						pDot11SupportedPhyTypes->uNumOfEntries * sizeof(DOT11_PHY_TYPE);
-			
+
 		*BytesNeeded = FIELD_OFFSET(DOT11_SUPPORTED_PHY_TYPES, dot11PHYType) +
 						pDot11SupportedPhyTypes->uTotalNumOfEntries * sizeof(DOT11_PHY_TYPE);
 	} while(FALSE);
-	
-	
+
+
 	RT_TRACE(COMP_OID_QUERY, DBG_LOUD, ("N6CQuery_DOT11_SUPPORTED_PHY_TYPES()\n"));
-	return ndisStatus; 
+	return ndisStatus;
 }
 
 NDIS_STATUS
@@ -1797,7 +1797,7 @@ N6CQuery_DOT11_ENUM_ASSOCIATION_INFO(
 	PDOT11_ASSOCIATION_INFO_LIST	pAssoList = (PDOT11_ASSOCIATION_INFO_LIST)InformationBuffer;
 	PMGNT_INFO	pMgntInfo = &(Adapter->MgntInfo);
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
-	
+
 	*BytesNeeded = FIELD_OFFSET(DOT11_ASSOCIATION_INFO_LIST, dot11AssocInfo);
 	if ( InformationBufferLength < *BytesNeeded )
 	{
@@ -1812,7 +1812,7 @@ N6CQuery_DOT11_ENUM_ASSOCIATION_INFO(
 
 	pAssoList->uNumOfEntries = 0;
 	pAssoList->uTotalNumOfEntries = 0;
-	
+
 	if ( (pMgntInfo->OpMode == RT_OP_MODE_INFRASTRUCTURE) && (pMgntInfo->mAssoc == TRUE) )
 	{
 		*BytesNeeded = FIELD_OFFSET(DOT11_ASSOCIATION_INFO_LIST, dot11AssocInfo) +
@@ -1838,10 +1838,10 @@ N6CQuery_DOT11_ENUM_ASSOCIATION_INFO(
 				pMgntInfo->Regdot11OperationalRateSet.Octet,
 				pMgntInfo->Regdot11OperationalRateSet.Length);
 			pAssoList->dot11AssocInfo[0].usAssociationID = pMgntInfo->mAId;
-			pAssoList->dot11AssocInfo[0].dot11AssociationState = 
+			pAssoList->dot11AssocInfo[0].dot11AssociationState =
 				(pMgntInfo->mAssoc == TRUE ? dot11_assoc_state_auth_assoc : dot11_assoc_state_auth_unassoc) ;
 			pAssoList->dot11AssocInfo[0].dot11PowerMode = dot11_power_mode_active;
-			pAssoList->dot11AssocInfo[0].liAssociationUpTime.QuadPart = 
+			pAssoList->dot11AssocInfo[0].liAssociationUpTime.QuadPart =
 				(pMgntInfo->AsocTimestamp == 0 ? 0 : PlatformGetCurrentTime() - pMgntInfo->AsocTimestamp);
 			pAssoList->dot11AssocInfo[0].ullNumOfTxPacketSuccesses = Adapter->TxStats.NumTxOkTotal;
 			pAssoList->dot11AssocInfo[0].ullNumOfTxPacketFailures = Adapter->TxStats.NumTxErrTotal;
@@ -1861,14 +1861,14 @@ N6CQuery_DOT11_ENUM_ASSOCIATION_INFO(
 		for (i=0; (pEntry=AsocEntry_EnumStation(Adapter, i)) != NULL; i++)
 		{
 			pAssoList->uTotalNumOfEntries ++;
-			
+
 			*BytesNeeded += sizeof(DOT11_ASSOCIATION_INFO_EX);
 			if (InformationBufferLength >= *BytesNeeded)
 			{
 				pAssoList->uNumOfEntries ++;
 
 				PlatformZeroMemory(pAssoInfo, sizeof(DOT11_ASSOCIATION_INFO_EX));
-				
+
 				PlatformMoveMemory(
 					pAssoInfo->PeerMacAddress,
 					pEntry->MacAddr,
@@ -1916,7 +1916,7 @@ N6CQuery_DOT11_ENUM_ASSOCIATION_INFO(
 
 	*BytesWritten = FIELD_OFFSET(DOT11_ASSOCIATION_INFO_LIST, dot11AssocInfo) +
 		(pAssoList->uNumOfEntries * sizeof(DOT11_ASSOCIATION_INFO_EX));
-	
+
 	return ndisStatus;
 }
 
@@ -1930,7 +1930,7 @@ N6CQuery_DOT11_MULTICAST_LIST(
 	)
 {
 	NDIS_STATUS 	ndisStatus = NDIS_STATUS_SUCCESS;
-	
+
 	*BytesNeeded = Adapter->MCAddrCount * ETHERNET_ADDRESS_LENGTH;
 	if(InformationBufferLength < *BytesNeeded)
 	{
@@ -1944,7 +1944,7 @@ N6CQuery_DOT11_MULTICAST_LIST(
 
 BOOLEAN
 N6CQuery_DOT11_NIC_POWER_STATE(
-	IN	PADAPTER	pAdapter	
+	IN	PADAPTER	pAdapter
 	)
 {
 	RT_RF_POWER_STATE eRfPowerState;
@@ -1969,7 +1969,7 @@ N6CQuery_DOT11_NIC_POWER_STATE(
 		bRetVal = TRUE;
 	}
 
-	RT_TRACE(COMP_OID_QUERY, DBG_LOUD, 
+	RT_TRACE(COMP_OID_QUERY, DBG_LOUD,
 		("N6CQuery_DOT11_NIC_POWER_STATE: eRfPowerState: 0x%X,  RFOn 0x%X\n", eRfPowerState, bRetVal));
 
 	return bRetVal;
@@ -1977,7 +1977,7 @@ N6CQuery_DOT11_NIC_POWER_STATE(
 
 //
 // Description:
-//	Return the table of data rates supported by a PHY on the 802.11 station for transmit and 
+//	Return the table of data rates supported by a PHY on the 802.11 station for transmit and
 //	receive operations.
 // Arguments:
 //	[in] Adapter -
@@ -2006,13 +2006,13 @@ N6CQuery_DOT11_DataRateMappingTable(
 	)
 {
 	NDIS_STATUS						ndisStatus = NDIS_STATUS_SUCCESS;
-    PDOT11_DATA_RATE_MAPPING_TABLE	pDataRateMappingTable = NULL;	
-    
+    PDOT11_DATA_RATE_MAPPING_TABLE	pDataRateMappingTable = NULL;
+
 	do
 	{
 		*BytesWritten = 0;
 		*BytesNeeded = 0;
-				
+
 		if(InformationBufferLength < sizeof(DOT11_DATA_RATE_MAPPING_TABLE))
 		{
 			*BytesNeeded = sizeof(DOT11_DATA_RATE_MAPPING_TABLE);
@@ -2023,21 +2023,21 @@ N6CQuery_DOT11_DataRateMappingTable(
 
 		pDataRateMappingTable = (PDOT11_DATA_RATE_MAPPING_TABLE)InformationBuffer;
 
-		N6_ASSIGN_OBJECT_HEADER(pDataRateMappingTable->Header, 
+		N6_ASSIGN_OBJECT_HEADER(pDataRateMappingTable->Header,
 									NDIS_OBJECT_TYPE_DEFAULT,
 									DOT11_DATA_RATE_MAPPING_TABLE_REVISION_1,
 									sizeof(DOT11_DATA_RATE_MAPPING_TABLE));
 
-		pDataRateMappingTable->uDataRateMappingLength = sizeof(N6_Std_abg_DataRateMappingTable) / 
+		pDataRateMappingTable->uDataRateMappingLength = sizeof(N6_Std_abg_DataRateMappingTable) /
                                                         sizeof(DOT11_DATA_RATE_MAPPING_ENTRY);
 
-		// Ensure enough space 
+		// Ensure enough space
         *BytesNeeded = FIELD_OFFSET(DOT11_DATA_RATE_MAPPING_TABLE, DataRateMappingEntries) +
                       sizeof(N6_Std_abg_DataRateMappingTable);
 
 		if (InformationBufferLength < *BytesNeeded)
         {
-            ndisStatus = NDIS_STATUS_BUFFER_OVERFLOW;            
+            ndisStatus = NDIS_STATUS_BUFFER_OVERFLOW;
             break;
         }
 
@@ -2048,9 +2048,9 @@ N6CQuery_DOT11_DataRateMappingTable(
                        N6_Std_abg_DataRateMappingTable,
                        sizeof(N6_Std_abg_DataRateMappingTable));
 
-        *BytesWritten = pDataRateMappingTable->uDataRateMappingLength * sizeof(DOT11_DATA_RATE_MAPPING_ENTRY) + 
+        *BytesWritten = pDataRateMappingTable->uDataRateMappingLength * sizeof(DOT11_DATA_RATE_MAPPING_ENTRY) +
             FIELD_OFFSET(DOT11_DATA_RATE_MAPPING_TABLE, DataRateMappingEntries);
-            
+
         *BytesNeeded = pDataRateMappingTable->uDataRateMappingLength * sizeof(DOT11_DATA_RATE_MAPPING_ENTRY) +
             FIELD_OFFSET(DOT11_DATA_RATE_MAPPING_TABLE, DataRateMappingEntries);
     } while(FALSE);
@@ -2127,8 +2127,8 @@ N6CQuery_DOT11_Supported_DataRates(
 					pDot11SupportedDataRatesValue->ucSupportedRxDataRatesValue[rateCnt] = N6_Std_abg_DataRateMappingTable[index].ucDataRateIndex;
 					rateCnt ++;
 				}
-				break;	
-				
+				break;
+
 			case dot11_phy_type_ofdm: // A mode
 				if(!IS_CCK_RATE(N6_Std_abg_DataRateMappingTable[index].ucDataRateIndex))
 				{
@@ -2136,10 +2136,10 @@ N6CQuery_DOT11_Supported_DataRates(
 					pDot11SupportedDataRatesValue->ucSupportedRxDataRatesValue[rateCnt] = N6_Std_abg_DataRateMappingTable[index].ucDataRateIndex;
 					rateCnt ++;
 				}
-				break;					
+				break;
 
 			}
-		}        
+		}
 
         *BytesWritten = sizeof(DOT11_SUPPORTED_DATA_RATES_VALUE_V2);
     } while(FALSE);
@@ -2169,9 +2169,9 @@ N6CQuery_DOT11_Tx_Antenna(
 		default:
 			rfNum = 1;
 			break;
-	}	
-	
-	*BytesNeeded = FIELD_OFFSET(DOT11_SUPPORTED_ANTENNA_LIST, dot11SupportedAntenna) 
+	}
+
+	*BytesNeeded = FIELD_OFFSET(DOT11_SUPPORTED_ANTENNA_LIST, dot11SupportedAntenna)
 					+ (rfNum * sizeof(DOT11_SUPPORTED_ANTENNA));
 
 	if ( InformationBufferLength < *BytesNeeded )
@@ -2182,7 +2182,7 @@ N6CQuery_DOT11_Tx_Antenna(
 		return NDIS_STATUS_BUFFER_OVERFLOW;
 	}
 
-	PlatformZeroMemory(Tx_list, InformationBufferLength);	
+	PlatformZeroMemory(Tx_list, InformationBufferLength);
 
 	Tx_list->uNumOfEntries = rfNum;
 	Tx_list->uTotalNumOfEntries = rfNum;
@@ -2210,7 +2210,7 @@ N6C_QUERY_OID_DOT11_DESIRED_PHY_LIST(
 )
 {
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
-		
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -2243,7 +2243,7 @@ N6C_QUERY_OID_DOT11_AUTO_CONFIG_ENABLED(
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	ULONG			ulInfo = 0;
 	ULONG			ulInfoLen = 0;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -2264,7 +2264,7 @@ N6C_QUERY_OID_DOT11_AUTO_CONFIG_ENABLED(
 	*BytesWritten = ulInfoLen;
 
 	PlatformMoveMemory(InformationBuffer, &ulInfo, ulInfoLen);
-		
+
 	return ndisStatus;
 }
 
@@ -2280,7 +2280,7 @@ N6C_QUERY_OID_DOT11_BEACON_PERIOD(
 {
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	PMGNT_INFO		pMgntInfo = &pTargetAdapter->MgntInfo;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -2294,21 +2294,21 @@ N6C_QUERY_OID_DOT11_BEACON_PERIOD(
 		ndisStatus = NDIS_STATUS_INVALID_STATE;
 		return ndisStatus;
 	}
-			
+
 	*BytesNeeded = sizeof(ULONG);
 	if( InformationBufferLength < *BytesNeeded )
 	{
 		*BytesWritten = 0;
 		ndisStatus = NDIS_STATUS_INVALID_LENGTH;
 		return ndisStatus;
-	} 
+	}
 
 	ndisStatus = N6CQuery_DOT11_BEACON_PERIOD(pTargetAdapter, InformationBuffer);
 	if (ndisStatus == NDIS_STATUS_SUCCESS)
 	{
 		*BytesWritten = *BytesNeeded;
 	}
-	
+
 	return ndisStatus;
 }
 
@@ -2326,7 +2326,7 @@ N6C_QUERY_OID_DOT11_DESIRED_SSID_LIST(
 {
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	PMGNT_INFO		pMgntInfo = &pTargetAdapter->MgntInfo;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -2341,7 +2341,7 @@ N6C_QUERY_OID_DOT11_DESIRED_SSID_LIST(
 			BytesWritten,
 			BytesNeeded
 		);
-		
+
 	return ndisStatus;
 }
 
@@ -2358,7 +2358,7 @@ N6C_QUERY_OID_GEN_CURRENT_PACKET_FILTER(
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	PMGNT_INFO		pMgntInfo = &pTargetAdapter->MgntInfo;
 	ULONG			ulInfo = 0;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -2375,8 +2375,8 @@ N6C_QUERY_OID_GEN_CURRENT_PACKET_FILTER(
 
 	ulInfo=pTargetAdapter->pNdisCommon->NdisPacketFilter;
 	PlatformMoveMemory(InformationBuffer, &ulInfo, sizeof(ULONG));
-	*BytesWritten = sizeof(ULONG);	
-		
+	*BytesWritten = sizeof(ULONG);
+
 	return ndisStatus;
 }
 
@@ -2394,7 +2394,7 @@ N6C_QUERY_OID_DOT11_CURRENT_CHANNEL(
 	PMGNT_INFO		pMgntInfo = &pTargetAdapter->MgntInfo;
 	ULONG			ulInfo = 0;
 	ULONG			ulInfoLen = 0;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -2410,7 +2410,7 @@ N6C_QUERY_OID_DOT11_CURRENT_CHANNEL(
 
 	if(pMgntInfo->mAssoc || pMgntInfo->mIbss)
 	{
-		
+
 	#if (MULTICHANNEL_SUPPORT == 1)
 		if(MultiChannelSwitchNeeded(pTargetAdapter))
 		{
@@ -2418,7 +2418,7 @@ N6C_QUERY_OID_DOT11_CURRENT_CHANNEL(
 			RT_TRACE(COMP_MULTICHANNEL, DBG_LOUD, ("MultiChannelGetPortConnected20MhzChannel: %d\n", ulInfo));
 		}
 		else
-	#endif				
+	#endif
 		{
 			ulInfo = pMgntInfo->dot11CurrentChannelNumber;
 		}
@@ -2449,7 +2449,7 @@ N6C_QUERY_OID_DOT11_CURRENT_CHANNEL(
 	ulInfoLen = sizeof(ULONG);
 
 	PlatformMoveMemory(InformationBuffer, &ulInfo, ulInfoLen);
-	*BytesWritten = sizeof(ULONG);	
+	*BytesWritten = sizeof(ULONG);
 
 	return ndisStatus;
 }
@@ -2468,7 +2468,7 @@ N6C_QUERY_OID_GEN_LINK_PARAMETERS(
 	PMGNT_INFO		pMgntInfo = &pTargetAdapter->MgntInfo;
 	ULONG			ulInfo = 0;
 	ULONG			ulInfoLen = 0;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -2481,15 +2481,15 @@ N6C_QUERY_OID_GEN_LINK_PARAMETERS(
 		*BytesNeeded = sizeof(NDIS_LINK_PARAMETERS);
 		*BytesWritten = 0;
 		return NDIS_STATUS_BUFFER_TOO_SHORT;
-	}			
+	}
 
 	ndisStatus = N62CQueryLinkParameters(
-			pTargetAdapter, 
-			InformationBuffer, 
+			pTargetAdapter,
+			InformationBuffer,
 			InformationBufferLength
 		);
 
-	*BytesNeeded = sizeof(NDIS_LINK_PARAMETERS);			
+	*BytesNeeded = sizeof(NDIS_LINK_PARAMETERS);
 
 	return ndisStatus;
 }
@@ -2507,7 +2507,7 @@ N6C_QUERY_OID_DOT11_SAFE_MODE_ENABLED(
 	PMGNT_INFO      pMgntInfo = &pTargetAdapter->MgntInfo;
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	ULONG			ulInfo = 0;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -2528,8 +2528,8 @@ N6C_QUERY_OID_DOT11_SAFE_MODE_ENABLED(
 	ulInfo = FALSE;
 #endif
 	PlatformMoveMemory(InformationBuffer, &ulInfo, sizeof(BOOLEAN));
-	*BytesWritten = sizeof(BOOLEAN);			
-			
+	*BytesWritten = sizeof(BOOLEAN);
+
 	return ndisStatus;
 }
 
@@ -2546,13 +2546,13 @@ N6C_QUERY_OID_DOT11_CURRENT_PHY_ID(
 {
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	ULONG			ulInfo = 0;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
 	//-------------------------------------------------------
 
-	FunctionIn(COMP_OID_QUERY);		
+	FunctionIn(COMP_OID_QUERY);
 
 	if(InformationBufferLength < sizeof(ULONG))
 	{
@@ -2563,7 +2563,7 @@ N6C_QUERY_OID_DOT11_CURRENT_PHY_ID(
 
 	ulInfo = pTargetAdapter->pNdisCommon->dot11SelectedPhyId;
 	PlatformMoveMemory(InformationBuffer, &ulInfo, sizeof(ULONG));
-	*BytesWritten = sizeof(ULONG);	
+	*BytesWritten = sizeof(ULONG);
 
 	RT_TRACE(COMP_OID_QUERY|COMP_RF, DBG_LOUD, ("Query OID_DOT11_CURRENT_PHY_ID: phyid%d\n", ulInfo));
 
@@ -2584,13 +2584,13 @@ N6C_QUERY_OID_GEN_SUPPORTED_LIST(
 
 	PVOID			pInfo = NULL;
 	ULONG			ulInfoLen = 0;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
 	//-------------------------------------------------------
 
-	FunctionIn(COMP_OID_QUERY);		
+	FunctionIn(COMP_OID_QUERY);
 
 	pInfo = (PVOID) N6GetSupportedOids();
 	ulInfoLen = N6GetSupportedOidsLength();
@@ -2604,7 +2604,7 @@ N6C_QUERY_OID_GEN_SUPPORTED_LIST(
 
 	PlatformMoveMemory(InformationBuffer, pInfo, ulInfoLen);
 	*BytesWritten = ulInfoLen;
-	
+
 	return ndisStatus;
 }
 
@@ -2623,28 +2623,28 @@ N6C_QUERY_OID_GEN_VENDOR_DRIVER_VERSION(
 	PVOID			pInfo = NULL;
 	ULONG			ulInfoLen = 0;
 	ULONG			ulInfo = 0;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
 	//-------------------------------------------------------
 
-	FunctionIn(COMP_OID_QUERY);		
+	FunctionIn(COMP_OID_QUERY);
 
 	ulInfo = NIC_VENDOR_DRIVER_VERSION;
 	pInfo = (PVOID) &ulInfo;
 	ulInfoLen = sizeof(ULONG);
-		
+
 	if(InformationBufferLength < ulInfoLen)
 	{
 		*BytesNeeded = ulInfoLen;
 		*BytesWritten = 0;
 		return NDIS_STATUS_BUFFER_TOO_SHORT;
 	}
-	
+
 	PlatformMoveMemory(InformationBuffer, pInfo, ulInfoLen);
 	*BytesWritten = ulInfoLen;
-	
+
 	return ndisStatus;
 }
 
@@ -2662,7 +2662,7 @@ N6C_QUERY_OID_PNP_CAPABILITIES(
 	NDIS_PNP_CAPABILITIES    PnpCapabilities;
 	PVOID			pInfo = NULL;
 	ULONG			ulInfoLen = 0;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
@@ -2681,17 +2681,17 @@ N6C_QUERY_OID_PNP_CAPABILITIES(
 
 	pInfo = (PVOID)&PnpCapabilities;
 	ulInfoLen = sizeof(PnpCapabilities);
-		
+
 	if(InformationBufferLength < ulInfoLen)
 	{
 		*BytesNeeded = ulInfoLen;
 		*BytesWritten = 0;
 		return NDIS_STATUS_BUFFER_TOO_SHORT;
 	}
-	
+
 	PlatformMoveMemory(InformationBuffer, pInfo, ulInfoLen);
 	*BytesWritten = ulInfoLen;
-	
+
 	return ndisStatus;
 }
 
@@ -2709,29 +2709,29 @@ N6C_QUERY_OID_PNP_QUERY_POWER(
 	PVOID			pInfo = NULL;
 	ULONG			ulInfoLen = 0;
 	ULONG			ulInfo = 0;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
 	//-------------------------------------------------------
 
-	FunctionIn(COMP_OID_QUERY);		
+	FunctionIn(COMP_OID_QUERY);
 
-	// Report the lowest device power state to sleep.		
+	// Report the lowest device power state to sleep.
 	ulInfo = (ULONG)(NdisDeviceStateD3);
 	pInfo = (PVOID)&ulInfo;
 	ulInfoLen = sizeof(ULONG);
-		
+
 	if(InformationBufferLength < ulInfoLen)
 	{
 		*BytesNeeded = ulInfoLen;
 		*BytesWritten = 0;
 		return NDIS_STATUS_BUFFER_TOO_SHORT;
 	}
-	
+
 	PlatformMoveMemory(InformationBuffer, pInfo, ulInfoLen);
 	*BytesWritten = ulInfoLen;
-	
+
 	return ndisStatus;
 }
 
@@ -2748,17 +2748,17 @@ N6C_QUERY_OID_PNP_ENABLE_WAKE_UP(
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	PMGNT_INFO			pMgntInfo = &pTargetAdapter->MgntInfo;
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
-		
+
 	PVOID			pInfo = NULL;
 	ULONG			ulInfoLen = 0;
 	ULONG			ulInfo = 0;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
 	//-------------------------------------------------------
 
-	FunctionIn(COMP_OID_QUERY);		
+	FunctionIn(COMP_OID_QUERY);
 
 	if(pPSC->WoWLANMode == eWakeOnMagicPacketOnly) // Added by tynli. 2009.09.02.
 		ulInfo = (ULONG)(NDIS_PNP_WAKE_UP_MAGIC_PACKET);
@@ -2766,7 +2766,7 @@ N6C_QUERY_OID_PNP_ENABLE_WAKE_UP(
 		ulInfo = (ULONG)(NDIS_PNP_WAKE_UP_PATTERN_MATCH);
 	else if(pPSC->WoWLANMode == eWakeOnBothTypePacket)
 		ulInfo = (ULONG)(NDIS_PNP_WAKE_UP_MAGIC_PACKET|NDIS_PNP_WAKE_UP_PATTERN_MATCH);
-					
+
 	pInfo = (PVOID)&ulInfo;
 	ulInfoLen = sizeof(ULONG);
 
@@ -2777,12 +2777,12 @@ N6C_QUERY_OID_PNP_ENABLE_WAKE_UP(
 		*BytesWritten = 0;
 		return NDIS_STATUS_BUFFER_TOO_SHORT;
 	}
-	
+
 	PlatformMoveMemory(InformationBuffer, pInfo, ulInfoLen);
 	*BytesWritten = ulInfoLen;
 
 	RT_TRACE((COMP_OID_QUERY|COMP_POWER), DBG_LOUD, ("Query Information, OID_PNP_ENABLE_WAKE_UP: %d\n", ulInfo));
-	
+
 	return ndisStatus;
 }
 
@@ -2796,25 +2796,25 @@ N6C_QUERY_OID_DOT11_CURRENT_TX_ANTENNA(
 	OUT	PULONG			BytesNeeded
 )
 {
-	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;		
+	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	PVOID			pInfo = NULL;
 	ULONG			ulInfoLen = 0;
 	ULONG			ulInfo = 0;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
 	//-------------------------------------------------------
 
-	FunctionIn(COMP_OID_QUERY);		
+	FunctionIn(COMP_OID_QUERY);
 
 
 	// ======================
-	// This OID is not implemented. 
+	// This OID is not implemented.
 	// ======================
 
 
-	
+
 	ulInfo = 0;
 	pInfo = (PVOID)&ulInfo;
 	ulInfoLen = sizeof(ULONG);
@@ -2826,7 +2826,7 @@ N6C_QUERY_OID_DOT11_CURRENT_TX_ANTENNA(
 		*BytesWritten = 0;
 		return NDIS_STATUS_BUFFER_TOO_SHORT;
 	}
-	
+
 	PlatformMoveMemory(InformationBuffer, pInfo, ulInfoLen);
 	*BytesWritten = ulInfoLen;
 
@@ -2844,20 +2844,20 @@ N6C_QUERY_OID_DOT11_CURRENT_RX_ANTENNA(
 	OUT	PULONG			BytesNeeded
 )
 {
-	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;		
+	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	PVOID			pInfo = NULL;
 	ULONG			ulInfoLen = 0;
 	ULONG			ulInfo = 0;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
 	//-------------------------------------------------------
 
-	FunctionIn(COMP_OID_QUERY);		
+	FunctionIn(COMP_OID_QUERY);
 
 	// ======================
-	// This OID is not implemented. 
+	// This OID is not implemented.
 	// ======================
 
 	ulInfo = 0;
@@ -2871,7 +2871,7 @@ N6C_QUERY_OID_DOT11_CURRENT_RX_ANTENNA(
 		*BytesWritten = 0;
 		return NDIS_STATUS_BUFFER_TOO_SHORT;
 	}
-	
+
 	PlatformMoveMemory(InformationBuffer, pInfo, ulInfoLen);
 	*BytesWritten = ulInfoLen;
 
@@ -2888,27 +2888,27 @@ N6C_QUERY_OID_DOT11_SUPPORTED_RX_ANTENNA(
 	OUT	PULONG			BytesNeeded
 )
 {
-	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;		
+	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	PVOID			pInfo = NULL;
 	ULONG			ulInfoLen = 0;
 	ULONG			ulInfo = 0;
-	
+
 	// Clean output variables -----------------------------------
 	*BytesWritten = 0;
 	*BytesNeeded = 0;
 	//-------------------------------------------------------
 
-	FunctionIn(COMP_OID_QUERY);		
+	FunctionIn(COMP_OID_QUERY);
 
 
 
 
 	// ======================
-	// This OID is not implemented. 
+	// This OID is not implemented.
 	// ======================
 
 
-	
+
 	ulInfo = 0;
 	pInfo = (PVOID)&ulInfo;
 	ulInfoLen = sizeof(ULONG);
@@ -2920,7 +2920,7 @@ N6C_QUERY_OID_DOT11_SUPPORTED_RX_ANTENNA(
 		*BytesWritten = 0;
 		return NDIS_STATUS_BUFFER_TOO_SHORT;
 	}
-	
+
 	PlatformMoveMemory(InformationBuffer, pInfo, ulInfoLen);
 	*BytesWritten = ulInfoLen;
 

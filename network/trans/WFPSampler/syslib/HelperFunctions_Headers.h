@@ -6,7 +6,7 @@
 //      HelperFunctions_Headers.h
 //
 //   Abstract:
-//      This module contains definitions and prototypes of kernel helper functions that assist with  
+//      This module contains definitions and prototypes of kernel helper functions that assist with
 //         MAC, IP, and Transport header operations.
 //
 //   Author:
@@ -17,7 +17,7 @@
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
 //      December  13,   2013  -     1.1   -  Enhance annotations and add
-//                                              KrnlHlprIPHeaderGetDestinationAddressField, 
+//                                              KrnlHlprIPHeaderGetDestinationAddressField,
 //                                              KrnlHlprIPHeaderGetSourceAddressField,
 //                                              KrnlHlprIPHeaderGetVersionField,
 //                                              KrnlHlprTransportHeaderGetSourcePortField,

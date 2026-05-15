@@ -91,7 +91,7 @@ TDLS_PrepareTxFeedback(
 	PADAPTER		Adapter,
 	PRT_TCB			pTcb
 	);
-	
+
 VOID
 TDLS_UpdatePeer(
 	PADAPTER		Adapter,
@@ -262,7 +262,7 @@ TDLS_GetTxMacId(
 	);
 
 VOID
-TDLS_GetHtAMPDU(	
+TDLS_GetHtAMPDU(
 	IN	PADAPTER		Adapter,
 	IN	pu1Byte			Addr,
 	IN	PRT_TCB			pTcb
@@ -359,12 +359,12 @@ __inline RT_STATUS TDLS_OnTunneledProbeReq(PADAPTER pAdapter, PRT_RFD pRfd, POCT
 __inline RT_STATUS TDLS_OnTunneledProbeRsp(PADAPTER pAdapter, PRT_RFD pRfd, POCTET_STRING pPduOS, u4Byte contentOffset) {return RT_STATUS_SUCCESS;}
 
 #define	GET_TDLS_ENABLED(__pMgntInfo)			FALSE
-#define	SET_TDLS_ENABLED(__pMgntInfo, _value)		
+#define	SET_TDLS_ENABLED(__pMgntInfo, _value)
 #define	GET_TDLS_WIFITEST(__pMgntInfo)			FALSE
 #define	IS_TDL_EXIST(_pMgntInfo)					FALSE
 #define	GET_TDLS_WIFITESTBED_RADIO_OFF(__pMgntInfo)			FALSE
 
 #endif	// end of else of #if (TDLS_SUPPORT == 1)
 
-	
+
 #endif

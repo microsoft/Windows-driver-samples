@@ -3,7 +3,7 @@
 
 
 #define N6_LLC_SIZE			8
-#define MAX_STALL_TIME		50		//us. If the delay time is larger than 50us, it's better to call NdisMSleep 
+#define MAX_STALL_TIME		50		//us. If the delay time is larger than 50us, it's better to call NdisMSleep
 
 
 #define NDIS_ADAPTER_TYPE RT_SDIO_DEVICE
@@ -220,7 +220,7 @@ typedef struct _RT8187DBGWIPARAM
 	ULONG		bDbgActCompleted;
 	ULONG		eDbgActType;
 	ULONG		IoOffset;
-	ULONG		IoValue;	
+	ULONG		IoValue;
 	ULONG		outLen;
 	UCHAR		outBuf[200];
 }RT8187DBGWIPARAM, *PRT8187DBGWIPARAM;
@@ -250,12 +250,12 @@ VHT_UpdateDefaultSetting(
 	IN	PADAPTER		pAdapter
 );
 
-VOID 
+VOID
 PSC_UpdateDefaultSetting(
 	IN	PADAPTER		pAdapter
 );
 
-VOID 
+VOID
 HAL_UpdateDefaultSetting(
 	IN	PADAPTER		pAdapter
 );

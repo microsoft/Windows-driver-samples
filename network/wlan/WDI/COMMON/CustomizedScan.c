@@ -30,7 +30,7 @@ static const char *req_sig = "CUSTOM_SCAN_REQ";
 				? (__req)->timeBound - CUSTOM_SCAN_TERM_SCAN_BUF_MS\
 				: (__req)->timeBound\
 				)
-				
+
 #define CUSTOM_SCAN_TIME_DUE(__req) (0 < (__req)->timeBound && CUSTOM_SCAN_ALLOW_TIME(__req) <= CUSTOM_SCAN_ELAPSE_TIME(__req))
 
 #define CHNL_ENTRY_EXT_FLAG_CHNL_SHUT					BIT0
@@ -38,7 +38,7 @@ static const char *req_sig = "CUSTOM_SCAN_REQ";
 typedef struct _CHNL_ENTRY_EXT
 {
 	RT_LIST_ENTRY				list;
-	
+
 	// super
 	RT_CHNL_LIST_ENTRY			super;
 
@@ -64,9 +64,9 @@ typedef struct _CUSTOM_SCAN_REQ
 	CUSTOM_SCAN_STATE			state;
 	u8Byte						stateTime;
 
-	// force passive scan 
+	// force passive scan
 	BOOLEAN						bForcePassive;
-	
+
 	// probe req
 	FRAME_BUF					probeReqBuf;
 	u1Byte						probeReqRsvd[CUSTOMIZED_SCAN_MAX_FRAME_LEN];
@@ -146,7 +146,7 @@ typedef struct _CUSTOM_SCAN_INFO
 	u1Byte						scanChnlListLen;
 
 	BOOLEAN						bWorkerExited;
-	
+
 }CUSTOM_SCAN_INFO;
 
 //-----------------------------------------------------------------------------
@@ -213,19 +213,19 @@ customscan_InitReq(
 	)
 {
 	PlatformZeroMemory(req, sizeof(*req));
-	
+
 	RTInitializeListHead(&req->list);
 	req->sig = req_sig;
 	req->flag = 0;
 	req->type = CUSTOM_SCAN_SRC_TYPE_UNSPECIFIED;
 	req->state = CUSTOM_SCAN_STATE_IDLE;
 	FrameBuf_Init(sizeof(req->probeReqRsvd), 0, req->probeReqRsvd, &req->probeReqBuf);
-	
+
 	RTInitializeListHead(&req->chnlListQ);
 	req->chnlListCnt = 0;
 
-	Pool_Init(&req->chnlEntryPool, "chnl entry pool", sizeof(req->chnlEntryPoolRsvd), 
-		req->chnlEntryPoolRsvd, sizeof(req->chnlEntryPoolRsvd[0]), 
+	Pool_Init(&req->chnlEntryPool, "chnl entry pool", sizeof(req->chnlEntryPoolRsvd),
+		req->chnlEntryPoolRsvd, sizeof(req->chnlEntryPoolRsvd[0]),
 		BIT45, DBG_LOUD);
 
 	req->cbCtx = NULL;
@@ -238,7 +238,7 @@ customscan_InitReq(
 	req->curChnl = NULL;
 
 	req->repeatCount = 1;
-	
+
 	return;
 }
 
@@ -317,7 +317,7 @@ customscan_GetScanChnlInDrvChnlList(
 	)
 {
 	u4Byte						itChnl = 0;
-	
+
 	for(itChnl = 0; itChnl < chnlListLen; itChnl++)
 	{
 		if(pChnlList[itChnl]->ChannelNum == chnl)
@@ -333,7 +333,7 @@ customscan_ScanStateTxt(
 	IN  CUSTOM_SCAN_STATE		state
 	)
 {
-	switch (state) 
+	switch (state)
 	{
 	case CUSTOM_SCAN_STATE_IDLE:
 		return "idle";
@@ -366,7 +366,7 @@ customscan_SrcTypeTxt(
 	IN  CUSTOM_SCAN_SRC_TYPE		type
 	)
 {
-	switch (type) 
+	switch (type)
 	{
 	case CUSTOM_SCAN_SRC_TYPE_SYS:
 		return "sys";
@@ -389,9 +389,9 @@ customscan_DumpChnlExt(
 	IN  u4Byte					dbgLevel
 	)
 {
-	RT_TRACE(COMP_SCAN, DBG_LOUD, ("chnl: %u, active: %u, duration: %u, flag: 0x%08X\n", 
-		chnlExt->super.ChannelNum, 
-		SCAN_ACTIVE == chnlExt->super.ScanType, 
+	RT_TRACE(COMP_SCAN, DBG_LOUD, ("chnl: %u, active: %u, duration: %u, flag: 0x%08X\n",
+		chnlExt->super.ChannelNum,
+		SCAN_ACTIVE == chnlExt->super.ScanType,
 		chnlExt->super.ScanPeriod,
 		chnlExt->flag
 		));
@@ -438,7 +438,7 @@ customscan_DumpReqQ(
 	RT_LIST_ENTRY				*pEntry = NULL;
 
 	RT_TRACE(COMP_SCAN, DBG_LOUD, ("reqQ: %u\n", info->reqCnt));
-	
+
 	RtEntryListForEach(&info->reqQ, pEntry)
 	{
 		RT_TRACE(COMP_SCAN, DBG_LOUD, ("req:\n"));
@@ -483,11 +483,11 @@ customscan_TerminateCurrentChnl(
 	if(!CUSTOM_SCAN_PROCESSING_REQ(info))
 		return RT_STATUS_INVALID_STATE;
 
-	RT_TRACE(COMP_SCAN, DBG_LOUD, 
-		("req: %s, state: %s\n", 
+	RT_TRACE(COMP_SCAN, DBG_LOUD,
+		("req: %s, state: %s\n",
 		info->pCurReq->typeInfo,
 		customscan_ScanStateTxt(info->pCurReq->state)));
-	
+
 	if(CUSTOM_SCAN_STATE_DWELL == info->pCurReq->state)
 	{
 		RT_TRACE(COMP_SCAN, DBG_LOUD, ("terminating cur req on chnl\n"));
@@ -529,7 +529,7 @@ customscan_FreeDanglingReq(
 
 		bFreed = TRUE;
 	}while(FALSE);
-	
+
 	return bFreed;
 }
 
@@ -546,14 +546,14 @@ customscan_TerminateCurrentReq(
 	if(!CUSTOM_SCAN_PROCESSING_REQ(info))
 		return RT_STATUS_INVALID_STATE;
 
-	RT_TRACE(COMP_SCAN, DBG_LOUD, 
-		("req: %s, state: %s, ScanStep: %u\n", 
+	RT_TRACE(COMP_SCAN, DBG_LOUD,
+		("req: %s, state: %s, ScanStep: %u\n",
 			info->pCurReq->typeInfo,
 			customscan_ScanStateTxt(info->pCurReq->state),
 			pAdapter->MgntInfo.ScanStep
 		)
 	);
-	
+
 	if(CUSTOM_SCAN_STATE_SW_CHNL == info->pCurReq->state
 		|| CUSTOM_SCAN_STATE_DWELL == info->pCurReq->state
 		|| CUSTOM_SCAN_STATE_STARTED == info->pCurReq->state
@@ -566,10 +566,10 @@ customscan_TerminateCurrentReq(
 		{
 			ADAPTER 			*pda = GetDefaultAdapter(pAdapter);
 			ADAPTER 			*pla = pda;
-			u1Byte				curChnl = RT_GetChannelNumber(pla);				
+			u1Byte				curChnl = RT_GetChannelNumber(pla);
 			EXTCHNL_OFFSET		hwBW40MOffset = EXTCHNL_OFFSET_NO_EXT;
 			EXTCHNL_OFFSET		hwBW80MOffset = EXTCHNL_OFFSET_NO_EXT;
-	
+
 			pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_BW40MHZ_EXTCHNL, (pu1Byte)(&hwBW40MOffset));
 			pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_BW80MHZ_EXTCHNL, (pu1Byte)(&hwBW80MOffset));
 
@@ -592,14 +592,14 @@ customscan_TerminateCurrentReq(
 				{
 					pda->MgntInfo.SettingBeforeScan.ChannelBandwidth = CHANNEL_WIDTH_20;
 				}
-				
+
 				pla->MgntInfo.SettingBeforeScan.CenterFrequencyIndex1 = CHNL_GetCenterFrequency(
 							pda->MgntInfo.SettingBeforeScan.ChannelNumber,
 							pda->MgntInfo.SettingBeforeScan.ChannelBandwidth,
-							pda->MgntInfo.SettingBeforeScan.Ext20MHzChnlOffsetOf40MHz);			
+							pda->MgntInfo.SettingBeforeScan.Ext20MHzChnlOffsetOf40MHz);
 				pla = GetNextExtAdapter(pla);
 			}
-		
+
 			RT_TRACE(COMP_SCAN, DBG_LOUD, ("to stop on chnl: %u\n", curChnl));
 		}
 
@@ -623,13 +623,13 @@ customscan_TerminateCurrentReq(
 		&& TEST_FLAG(info->pCurReq->flag, CUSTOM_SCAN_REQ_FLAG_RESET)
 		)
 	{
-		// Previously in terminating state because of scan reset 
-		// and now the req is to be terminated again (aborted by OS) 
+		// Previously in terminating state because of scan reset
+		// and now the req is to be terminated again (aborted by OS)
 		// before ScanComplete is invoked.
 		RT_TRACE(COMP_SCAN, DBG_LOUD, ("%s(): req %s is in terminating state and reset flag set, free it\n", __FUNCTION__, info->pCurReq->typeInfo));
 		customscan_FreeDanglingReq(info);
 	}
-	
+
 	else
 	{
 		RT_ASSERT(TRUE, ("invalid req state: %s\n", customscan_ScanStateTxt(info->pCurReq->state)));
@@ -646,20 +646,20 @@ customscan_RequeueCurReq(
 	)
 {
 	size_t						it = 0;
-	
+
 	FunctionIn(COMP_SCAN);
-	
+
 	customscan_SetReqState(info, info->pCurReq, CUSTOM_SCAN_STATE_DEFERRED);
 	SET_FLAG(info->pCurReq->flag, CUSTOM_SCAN_REQ_FLAG_REQUEUED);
-	for(it = 0; 
-		it < sizeof(info->pCurReq->chnlEntryPoolRsvd) / sizeof(info->pCurReq->chnlEntryPoolRsvd[0]); 
+	for(it = 0;
+		it < sizeof(info->pCurReq->chnlEntryPoolRsvd) / sizeof(info->pCurReq->chnlEntryPoolRsvd[0]);
 		it++
 		)
 	{
 		info->pCurReq->chnlEntryPoolRsvd[it].flag = 0;
 	}
 	info->pCurReq->curChnl = NULL;
-	
+
 	RTInsertHeadListWithCnt(&info->reqQ, &info->pCurReq->list, &info->reqCnt);
 	info->pCurReq = NULL;
 
@@ -698,17 +698,17 @@ customscan_InvokeMgntLinkReq(
 	)
 {
 	BOOLEAN						bScanStarted = FALSE;
-	
+
 	//
 	// Formerly, system scan comes from N6CSet_DOT11_SCAN_REQUEST and may
 	// be called directly down to ScanCallback if timeout specified is 0,
 	// and if scan is rejected by MgntLinkRequest (or the function it calls)
 	// N6CSet_DOT11_SCAN_REQUEST does not try to handle this.
-	// So for N6CSet_DOT11_SCAN_REQUEST, it is safe to simply call 
-	// MgntLinkRequest here and don't care about indicate scan complete at 
+	// So for N6CSet_DOT11_SCAN_REQUEST, it is safe to simply call
+	// MgntLinkRequest here and don't care about indicate scan complete at
 	// all.
-	// 
-	
+	//
+
 	MgntLinkRequest(
 			info->pAdapter,
 			TRUE,		//bScanOnly
@@ -728,25 +728,25 @@ customscan_InvokeMgntLinkReq(
 	//
 	// Note: the following code handles the cases scan is not actually started
 	// 	and we need to free the custom scan req.
-	// 
+	//
 	// pCurReq may be NULL:
 	// 	After MgntLinkRequest, pCurReq may have been freed by the scan time check
-	// 	mechanism (pMgntInfo->bCheckScanTime). In this case, the req is safely 
+	// 	mechanism (pMgntInfo->bCheckScanTime). In this case, the req is safely
 	// 	freed (or requeued if repeat count is not 0) in CustomScan_ScanCompleteCb.
 	//
 	// MgntLinkRequest rescheduled:
-	// 	If MgntLinkRequest is rescheduled via MgntLinkRequestReschedule, it 
+	// 	If MgntLinkRequest is rescheduled via MgntLinkRequestReschedule, it
 	// 	will be called again when RF is turned on in InactivePsTimerCallback.
-	// 	In this case, we leave the custom scan req as the cur req and it will 
+	// 	In this case, we leave the custom scan req as the cur req and it will
 	// 	be activated again when RF is on.
 	//
 	// If scan request is rejected by MgntLinkRequest non rescheduled cases or
 	// ScanByTimer, we need to free the request here.
-	// 
+	//
 	// If scan request is rejected by ScanCallback (and note that the scan timer
 	// is not set again when returned), such as MgntResetOrPnPInProgress, we are
 	// not able to detect that here, and the state of the custom scan req is left
-	// as starting and will be recycled by the worker if the state time exceeds 
+	// as starting and will be recycled by the worker if the state time exceeds
 	// CUSTOM_SCAN_MAX_TIME_WAIT_SCAN_STARTED_MS.
 	//
 
@@ -803,8 +803,8 @@ customscan_WorkerCb(
 
 	if(customscan_LinkInProgress(info))
 	{
-		RT_TRACE(COMP_SCAN, DBG_LOUD, 
-			("skip and wait %u ms for link in progress\n", 
+		RT_TRACE(COMP_SCAN, DBG_LOUD,
+			("skip and wait %u ms for link in progress\n",
 			CUSTOM_SCAN_WAIT_LINK_DONE_MS));
 		PlatformSleepUs(CUSTOM_SCAN_WAIT_LINK_DONE_MS * 1000);
 		PlatformSetEventToTrigerThread(info->pAdapter, &info->worker);
@@ -843,7 +843,7 @@ customscan_WorkerCb(
 				customscan_Unlock(info);
 				FunctionOut(COMP_SCAN);
 				return;
-			}	
+			}
 		}
 	}
 
@@ -856,8 +856,8 @@ customscan_WorkerCb(
 		}
 		else
 		{
-			RT_ASSERT(NULL == info->pCurReq, 
-				("%s(): there's ongoing custom req %s when scan in progress is false, state: %s\n", 
+			RT_ASSERT(NULL == info->pCurReq,
+				("%s(): there's ongoing custom req %s when scan in progress is false, state: %s\n",
 				__FUNCTION__, info->pCurReq->typeInfo, customscan_ScanStateTxt(info->pCurReq->state)));
 		}
 
@@ -865,7 +865,7 @@ customscan_WorkerCb(
 		FunctionOut(COMP_SCAN);
 		return;
 	}
-	
+
 	// Check if any request queued
 	if(!info->reqCnt)
 	{
@@ -876,7 +876,7 @@ customscan_WorkerCb(
 
 	// Make curReq ready so it is available in the callbacks
 	info->pCurReq = (CUSTOM_SCAN_REQ *)RTRemoveHeadListWithCnt(&info->reqQ, &info->reqCnt);
-	RT_ASSERT(CUSTOM_SCAN_STATE_WAITING == info->pCurReq->state || CUSTOM_SCAN_STATE_DEFERRED == info->pCurReq->state, 
+	RT_ASSERT(CUSTOM_SCAN_STATE_WAITING == info->pCurReq->state || CUSTOM_SCAN_STATE_DEFERRED == info->pCurReq->state,
 		("%s(): invalid req state: %s\n", __FUNCTION__, customscan_ScanStateTxt(info->pCurReq->state)));
 	customscan_SetReqState(info, info->pCurReq, CUSTOM_SCAN_STATE_STARTING);
 
@@ -894,7 +894,7 @@ customscan_WorkerCb(
 	}
 
 	bForcePassive = info->pCurReq->bForcePassive;
-	
+
 	customscan_Unlock(info);
 
 	if(bDelayMs)
@@ -903,7 +903,7 @@ customscan_WorkerCb(
 	customscan_InvokeMgntLinkReq(info, bForcePassive);
 
 	FunctionOut(COMP_SCAN);
-	
+
 	return;
 }
 
@@ -920,7 +920,7 @@ customscan_PreWorkerExitCb(
 	RT_ASSERT(info_sig == info->sig, ("%s(): invalid info\n", __FUNCTION__));
 
 	info->bWorkerExited = TRUE;
-	
+
 	return;
 }
 
@@ -942,7 +942,7 @@ CustomScan_ResetReqNoScanCb(
 
 	RT_ASSERT(pInfo, ("%s(): pInfo is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(info_sig == info->sig, ("%s(): invalid info\n", __FUNCTION__));
-	
+
 	if(MgntScanInProgress(&pAdapter->MgntInfo))
 	{
 		return;
@@ -952,17 +952,17 @@ CustomScan_ResetReqNoScanCb(
 
 	// since we are doing reset, flush all queued reqs
 	customscan_FlushReqQ(info);
-	
-	if(CUSTOM_SCAN_PROCESSING_REQ(info) 
+
+	if(CUSTOM_SCAN_PROCESSING_REQ(info)
 		&& CUSTOM_SCAN_STATE_STARTING == info->pCurReq->state
 		&& TEST_FLAG(info->pCurReq->flag, CUSTOM_SCAN_REQ_FLAG_RESCHEDULED)
 		)
 	{
 		// A rescheduled scan req still waiting for RF on, we free it here, otherwise:
-		// 	* If there's a subsequent connect request, the return point would be changed to 
+		// 	* If there's a subsequent connect request, the return point would be changed to
 		//	  IPS_CALLBACK_JOIN_REQUEST and when subsequent scan is issued, CustomScan_IssueSysScan
 		// 	  would think that the driver is doing custom scan and return media busy. In addition,
-		//    JoinRequest may issue scan and that scan would be associated with the rescheduled 
+		//    JoinRequest may issue scan and that scan would be associated with the rescheduled
 		//    custom scan request and that is wrong.
 		// *  If there's no connect request, the scan would continue when RF is on and that's not
 		//    desiarble since we shall stop scan when receive a reset request.
@@ -972,9 +972,9 @@ CustomScan_ResetReqNoScanCb(
 		customscan_Lock(info);
 		customscan_FreeCurReq(info);
 	}
-	
+
 	customscan_Unlock(info);
-	
+
 	return;
 }
 
@@ -999,7 +999,7 @@ CustomScan_ScanResetCb(
 		RT_TRACE(COMP_SCAN, DBG_WARNING, ("cur req:\n"));
 		customscan_DumpReq(info->pCurReq);
 	}
-	
+
 	do
 	{
 		// since we are doing reset, flush all queued reqs
@@ -1009,7 +1009,7 @@ CustomScan_ScanResetCb(
 		if(CUSTOM_SCAN_PROCESSING_REQ(info))
 		{
 			SET_FLAG(info->pCurReq->flag, CUSTOM_SCAN_REQ_FLAG_RESET);
-			
+
 			if(CUSTOM_SCAN_STATE_STARTING == info->pCurReq->state
 				|| CUSTOM_SCAN_STATE_STARTED == info->pCurReq->state
 				|| CUSTOM_SCAN_STATE_SW_CHNL == info->pCurReq->state
@@ -1019,11 +1019,11 @@ CustomScan_ScanResetCb(
 				RT_TRACE(COMP_SCAN, DBG_LOUD, ("req %s got reset\n", info->pCurReq->typeInfo));
 				customscan_SetReqState(info, info->pCurReq, CUSTOM_SCAN_STATE_TERMINATING);
 			}
-		}		
+		}
 	}while(FALSE);
-	
+
 	customscan_Unlock(info);
-	
+
 	return;
 }
 
@@ -1055,9 +1055,9 @@ CustomScan_ScanByTimerCb(
 			RT_TRACE(COMP_SCAN, DBG_LOUD, ("req issued: %s\n", info->pCurReq->typeInfo));
 		}
 	}while(FALSE);
-	
+
 	customscan_Unlock(info);
-	
+
 	return;
 }
 
@@ -1077,7 +1077,7 @@ CustomScan_ConstructScanListCb(
 
 	// Not to acquire lock because
 	// 	1. it is not necessary since constructing scan list is already an exclusive action
-	// 	2. it may cause deadlock  
+	// 	2. it may cause deadlock
 	//customscan_Lock(info);
 
 	do
@@ -1133,7 +1133,7 @@ CustomScan_ConstructScanListCb(
 		}
 
 		bSysScan = (CUSTOM_SCAN_SRC_TYPE_SYS == info->pCurReq->type);
-		
+
 	}while(FALSE);
 
 	//customscan_Unlock(info);
@@ -1149,12 +1149,12 @@ CustomScan_PreSwChnlCb(
 {
 	u2Byte						extDwellTime = 0;
 	CUSTOM_SCAN_INFO			*info = (CUSTOM_SCAN_INFO *)pInfo;
-	
+
 	RT_ASSERT(pInfo, ("%s(): pInfo is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(info_sig == info->sig, ("%s(): invalid info\n", __FUNCTION__));
 
 	customscan_Lock(info);
-	
+
 	do
 	{
 		if(!CUSTOM_SCAN_PROCESSING_REQ(info))
@@ -1171,14 +1171,14 @@ CustomScan_PreSwChnlCb(
 		}
 		customscan_SetReqState(info, info->pCurReq, CUSTOM_SCAN_STATE_SW_CHNL);
 
-		RT_TRACE(COMP_SCAN, DBG_LOUD, 
-		("%s: to sw from: %u to %u\n", 
+		RT_TRACE(COMP_SCAN, DBG_LOUD,
+		("%s: to sw from: %u to %u\n",
 		info->pCurReq->typeInfo,
-			info->pCurReq->curChnl ? info->pCurReq->curChnl->super.ChannelNum : 0, 
+			info->pCurReq->curChnl ? info->pCurReq->curChnl->super.ChannelNum : 0,
 			chnl->ChannelNum));
 
 		info->pCurReq->curChnl = (CHNL_ENTRY_EXT *)CONTAINING_RECORD(chnl, CHNL_ENTRY_EXT, super);
-		
+
 	}while(FALSE);
 	customscan_Unlock(info);
 
@@ -1196,7 +1196,7 @@ CustomScan_OnChnlCb(
 	RT_ASSERT(pInfo, ("%s(): pInfo is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(info_sig == info->sig, ("%s(): invalid info\n", __FUNCTION__));
 
-	customscan_Lock(info);	
+	customscan_Lock(info);
 
 	do
 	{
@@ -1214,13 +1214,13 @@ CustomScan_OnChnlCb(
 		{
 			RT_TRACE(COMP_SCAN, DBG_LOUD, ("flag: %u\n", info->pCurReq->curChnl->flag));
 		}
-		
+
 		if(CUSTOM_SCAN_TIME_DUE(info->pCurReq))
 		{
 			customscan_TerminateCurrentReq(info, FALSE);
 		}
 	}while(FALSE);
-	
+
 	customscan_Unlock(info);
 
 	return;
@@ -1238,7 +1238,7 @@ CustomScan_PreSetDwellTimerCb(
 	RT_ASSERT(pInfo, ("%s(): pInfo is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(info_sig == info->sig, ("%s(): invalid info\n", __FUNCTION__));
 
-	customscan_Lock(info);	
+	customscan_Lock(info);
 
 	do
 	{
@@ -1255,7 +1255,7 @@ CustomScan_PreSetDwellTimerCb(
 		}
 
 	}while(FALSE);
-	
+
 	customscan_Unlock(info);
 
 	return bSetDwellTimer;
@@ -1290,8 +1290,8 @@ CustomScan_SendProbeCb(
 			break;
 		}
 
-		RT_ASSERT((VOID *)info->pCurReq->chnlEntryPool.start <= (VOID *)chnl 
-			&& (VOID *)chnl < (VOID *)info->pCurReq->chnlEntryPool.end, 
+		RT_ASSERT((VOID *)info->pCurReq->chnlEntryPool.start <= (VOID *)chnl
+			&& (VOID *)chnl < (VOID *)info->pCurReq->chnlEntryPool.end,
 			("%s(): chnl is not the customized one\n", __FUNCTION__));
 
 		chnlExt = (CHNL_ENTRY_EXT *)CONTAINING_RECORD(chnl, CHNL_ENTRY_EXT, super);
@@ -1322,17 +1322,17 @@ CustomScan_SendProbeCb(
 
 		if(MgntGetBuffer(pAdapter, &pTcb, &pBuf))
 		{
-			PlatformMoveMemory(pBuf->Buffer.VirtualAddress, 
-				FrameBuf_MHead(chnlExt->probeReq), 
+			PlatformMoveMemory(pBuf->Buffer.VirtualAddress,
+				FrameBuf_MHead(chnlExt->probeReq),
 				FrameBuf_Length(chnlExt->probeReq));
 			pTcb->PacketLength = FrameBuf_Length(chnlExt->probeReq);
-				
+
 			MgntSendPacket(pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, chnlExt->dataRate);
 		}
 
-		PlatformReleaseSpinLock(info->pAdapter, RT_TX_SPINLOCK);	
+		PlatformReleaseSpinLock(info->pAdapter, RT_TX_SPINLOCK);
 	}
-	
+
 	return bContinue;
 }
 
@@ -1358,11 +1358,11 @@ CustomScan_DualBandScanCb(
 		}
 
 		RT_TRACE(COMP_SCAN, DBG_LOUD, ("state: %s\n", customscan_ScanStateTxt(info->pCurReq->state)));
-		
+
 		if(CUSTOM_SCAN_STATE_TERMINATING == info->pCurReq->state)
 		{
-			RT_CHNL_LIST_ENTRY 		*pChnlEntry = NULL;		
-			
+			RT_CHNL_LIST_ENTRY 		*pChnlEntry = NULL;
+
 			while(RtActChannelList(info->pAdapter, RT_CHNL_LIST_ACTION_POP_SCAN_CHANNEL, NULL, &pChnlEntry)){}
 			terminated = TRUE;
 		}
@@ -1372,7 +1372,7 @@ CustomScan_DualBandScanCb(
 			customscan_TerminateCurrentReq(info, FALSE);
 		}
 	}while(FALSE);
-	
+
 	customscan_Unlock(info);
 
 	return terminated;
@@ -1419,10 +1419,10 @@ CustomScan_ScanCompleteCb(
 		{
 			info->pCurReq->repeatCount--;
 
-			RT_TRACE(COMP_SCAN, DBG_LOUD, 
-				("repeatCount: %u, state: %s\n", 
+			RT_TRACE(COMP_SCAN, DBG_LOUD,
+				("repeatCount: %u, state: %s\n",
 				info->pCurReq->repeatCount, customscan_ScanStateTxt(info->pCurReq->state)));
-			
+
 			if(info->pCurReq->repeatCount
 				&& CUSTOM_SCAN_STATE_TERMINATING != info->pCurReq->state
 				)
@@ -1438,14 +1438,14 @@ CustomScan_ScanCompleteCb(
 		}
 		else
 		{
-			RT_TRACE(COMP_SCAN, DBG_WARNING, 
+			RT_TRACE(COMP_SCAN, DBG_WARNING,
 				("current req's repeat count reaches 0 already and it is not freed and scan complete is invoked again\n"));
 			SET_FLAG(info->pCurReq->flag, CUSTOM_SCAN_REQ_FLAG_POTENTIAL_REPEATE_COUNT_UNDERFLOW);
 		}
 	}
 
 	customscan_Unlock(info);
-	
+
 	return;
 }
 
@@ -1462,7 +1462,7 @@ CustomScan_ScanCompleteReturnCb(
 	RT_ASSERT(info_sig == info->sig, ("%s(): invalid info\n", __FUNCTION__));
 
 	FunctionIn(COMP_SCAN);
-	
+
 	customscan_Lock(info);
 	if(CUSTOM_SCAN_PROCESSING_REQ(info))
 	{
@@ -1495,13 +1495,13 @@ CustomScan_ScanCompleteReturnCb(
 	// Trigger thread when ScanComplete has done everything it needs to do
 	if(info->reqCnt)
 	{
-		PlatformSetEventToTrigerThread(info->pAdapter, &info->worker);	
+		PlatformSetEventToTrigerThread(info->pAdapter, &info->worker);
 	}
 
 	customscan_Unlock(info);
-	
+
 	FunctionOut(COMP_SCAN);
-	
+
 	return;
 }
 
@@ -1516,7 +1516,7 @@ CustomScan_RescheduleCb(
 	RT_ASSERT(info_sig == info->sig, ("%s(): invalid info\n", __FUNCTION__));
 
 	customscan_Lock(info);
-	
+
 	do
 	{
 		if(!CUSTOM_SCAN_PROCESSING_REQ(info))
@@ -1531,7 +1531,7 @@ CustomScan_RescheduleCb(
 		SET_FLAG(info->pCurReq->flag, CUSTOM_SCAN_REQ_FLAG_RESCHEDULED);
 	}while(FALSE);
 	customscan_Unlock(info);
-	
+
 	return;
 }
 
@@ -1546,7 +1546,7 @@ CustomScan_WatchDogCb(
 	{// not initialized yet
 		return;
 	}
-	
+
 	if(info->bWorkerExited)
 	{
 		info->bWorkerExited = FALSE;
@@ -1580,7 +1580,7 @@ CustomScan_OnProbeRspCb(
 	}
 
 	customscan_Unlock(info);
-	
+
 	return;
 }
 
@@ -1601,7 +1601,7 @@ CustomScan_AllocInfo(
 
 	pMgntInfo = &pAdapter->MgntInfo;
 	pMgntInfo->pCustomScanInfo = NULL;
-	
+
 	if(RT_STATUS_SUCCESS != PlatformAllocateMemory(pAdapter, (PVOID *)&info, sizeof(*info)))
 	{
 		return NULL;
@@ -1655,20 +1655,20 @@ CustomScan_Init(
 	)
 {
 	CUSTOM_SCAN_INFO			*info = (CUSTOM_SCAN_INFO *)pInfo;
-	
+
 	RT_ASSERT(pInfo, ("%s(): pInfo is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(pScanAdapter, ("%s(): pScanAdapter is NULL!!!\n", __FUNCTION__));
 
 	FunctionIn(COMP_SCAN);
 
 	PlatformZeroMemory(info, sizeof(*info));
- 
+
 	info->sig = info_sig;
 	info->pAdapter = pScanAdapter;
 	RTInitializeListHead(&info->reqQ);
 	info->reqCnt = 0;
-	Pool_Init(&info->reqPool, "req pool", sizeof(info->reqPoolRsvd), 
-		info->reqPoolRsvd, sizeof(info->reqPoolRsvd[0]), 
+	Pool_Init(&info->reqPool, "req pool", sizeof(info->reqPoolRsvd),
+		info->reqPoolRsvd, sizeof(info->reqPoolRsvd[0]),
 		dbgComp, dbgLevel);
 	info->pCurReq = NULL;
 	info->dbgComp = dbgComp;
@@ -1692,14 +1692,14 @@ CustomScan_Start(
 {
 	CUSTOM_SCAN_INFO			*info = (CUSTOM_SCAN_INFO *)pInfo;
 	ADAPTER						*pScanAdapter = info->pAdapter;
-	
+
 	RT_ASSERT(pInfo, ("%s(): pInfo is NULL!!!\n", __FUNCTION__));
 
 	FunctionIn(COMP_SCAN);
 
 	PlatformInitializeThreadEx(pScanAdapter, &info->worker, customscan_WorkerCb, customscan_PreWorkerExitCb, "custom scan worker thread", TRUE, 1000, pInfo);
 	PlatformSetEventTrigerThread(pScanAdapter, &info->worker, PASSIVE_LEVEL, pInfo);
-	
+
 	FunctionOut(COMP_SCAN);
 
 	return;
@@ -1711,7 +1711,7 @@ CustomScan_Stop(
 	)
 {
 	CUSTOM_SCAN_INFO			*info = (CUSTOM_SCAN_INFO *)pInfo;
-	
+
 	RT_ASSERT(pInfo, ("%s(): pInfo is NULL!!!\n", __FUNCTION__));
 
 	FunctionIn(COMP_SCAN);
@@ -1738,7 +1738,7 @@ CustomScan_Deinit(
 	)
 {
 	CUSTOM_SCAN_INFO			*info = (CUSTOM_SCAN_INFO *)pInfo;
-	
+
 	RT_ASSERT(pInfo, ("%s(): pInfo is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(info_sig == info->sig, ("%s(): invalid info\n", __FUNCTION__));
 
@@ -1785,7 +1785,7 @@ CustomScan_GetProbeReqBuf(
 	)
 {
 	CUSTOM_SCAN_REQ				*req = (CUSTOM_SCAN_REQ *)scanReq;
-	
+
 	RT_ASSERT(scanReq, ("%s(): scanReq is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(req_sig == req->sig, ("%s(): invalid scanReq\n", __FUNCTION__));
 	RT_ASSERT(CUSTOM_SCAN_STATE_IDLE == req->state, ("%s(): invalid req state: %s\n", __FUNCTION__, customscan_ScanStateTxt(req->state)));
@@ -1808,7 +1808,7 @@ CustomScan_SetupCbCtx(
 
 	req->cb = cb;
 	req->cbCtx = ctx;
-	
+
 	return;
 }
 
@@ -1820,7 +1820,7 @@ CustomScan_TermReq(
 {
 	RT_STATUS					status = RT_STATUS_SUCCESS;
 	CUSTOM_SCAN_INFO			*info = (CUSTOM_SCAN_INFO *)pInfo;
-	
+
 	RT_ASSERT(pInfo, ("%s(): pInfo is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(info_sig == info->sig, ("%s(): invalid info\n", __FUNCTION__));
 
@@ -1837,18 +1837,18 @@ CustomScan_TermReq(
 	do
 	{
 		customscan_FlushReqQ(info);
-		
+
 		if(!CUSTOM_SCAN_PROCESSING_REQ(info))
 			break;
 
 		info->pAdapter->MgntInfo.bCompleteScan = TRUE;
 		RT_TRACE(COMP_SCAN, DBG_LOUD, ("CustomScan_TermReq(): info bCompleteScan %d\n", info->pAdapter->MgntInfo.bCompleteScan));
-				
+
 		if(RT_STATUS_SUCCESS != (status = customscan_TerminateCurrentReq(info, bStopOnCurChnl)))
 			break;
-		
+
 	}while(FALSE);
-	
+
 	customscan_Unlock(info);
 
 	return status;
@@ -1869,7 +1869,7 @@ CustomScan_AddScanChnl(
 	CUSTOM_SCAN_REQ				*req = (CUSTOM_SCAN_REQ *)scanReq;
 	RT_CHNL_LIST_ENTRY			chnlEntry;
 	u4Byte						itChnl = 0;
-	
+
 	RT_ASSERT(scanReq, ("%s(): scanReq is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(req_sig == req->sig, ("%s(): invalid scanReq\n", __FUNCTION__));
 	RT_ASSERT(CUSTOM_SCAN_STATE_IDLE == req->state, ("%s(): invalid req state: %s\n", __FUNCTION__, customscan_ScanStateTxt(req->state)));
@@ -1889,7 +1889,7 @@ CustomScan_AddScanChnl(
 	for(itChnl = 0; itChnl < count; itChnl++)
 	{
 		CHNL_ENTRY_EXT			*pExt = (CHNL_ENTRY_EXT *)Pool_Acquire(&req->chnlEntryPool);
-		
+
 		if(!pExt)
 		{
 			RT_TRACE(COMP_SCAN, DBG_WARNING, ("Failed to acquire chnl ext from pool\n"));
@@ -1935,7 +1935,7 @@ CustomScan_AddChnlPlanChnls(
 				dataRate,
 				probeReqBuf
 				);
-		}	
+		}
 	}
 	else
 	{// new definition, see DefaultChannelPlan
@@ -1965,7 +1965,7 @@ CustomScan_AddChnlPlanChnls(
 				dataRate,
 				probeReqBuf
 				);
-		}	
+		}
 
 	}
 
@@ -2106,7 +2106,7 @@ CustomScan_NumAddedChnl(
 	)
 {
 	CUSTOM_SCAN_REQ				*req = (CUSTOM_SCAN_REQ *)scanReq;
-	
+
 	RT_ASSERT(scanReq, ("%s(): scanReq is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(req_sig == req->sig, ("%s(): invalid scanReq\n", __FUNCTION__));
 
@@ -2123,14 +2123,14 @@ CustomScan_IssueReq(
 {
 	CUSTOM_SCAN_INFO			*info = (CUSTOM_SCAN_INFO *)pInfo;
 	CUSTOM_SCAN_REQ				*req = (CUSTOM_SCAN_REQ *)scanReq;
-	
+
 	RT_ASSERT(pInfo, ("%s(): pInfo is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(info_sig == info->sig, ("%s(): invalid info\n", __FUNCTION__));
 	RT_ASSERT(scanReq, ("%s(): scanReq is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(req_sig == req->sig, ("%s(): invalid scanReq\n", __FUNCTION__));
 	RT_ASSERT(CUSTOM_SCAN_STATE_IDLE == req->state, ("%s(): invalid req state: %s\n", __FUNCTION__, customscan_ScanStateTxt(req->state)));
 	RT_ASSERT(typeInfo, ("%s(): typeInfo is NULL!!!\n", __FUNCTION__));
-	
+
 	FunctionIn(COMP_SCAN);
 
 	req->type = type;
@@ -2144,7 +2144,7 @@ CustomScan_IssueReq(
 		customscan_Unlock(info);
 		return RT_STATUS_SUCCESS;
 	}
-	
+
 	customscan_Lock(info);
 	if(CUSTOM_SCAN_SRC_TYPE_SYS == type)
 	{// give system scan the highest priority
@@ -2157,7 +2157,7 @@ CustomScan_IssueReq(
 	customscan_SetReqState(info, req, CUSTOM_SCAN_STATE_WAITING);
 
 	customscan_DumpReq(req);
-	
+
 	customscan_Unlock(info);
 
 	if(RT_DRIVER_STOP(info->pAdapter))
@@ -2168,7 +2168,7 @@ CustomScan_IssueReq(
 
 
 	PlatformSetEventToTrigerThread(info->pAdapter, &info->worker);
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -2182,8 +2182,8 @@ CustomScan_IssueSysScan(
 	CUSTOM_SCAN_INFO			*info = (CUSTOM_SCAN_INFO *)pInfo;
 	CUSTOM_SCAN_REQ				*req = NULL;
 	RT_CHANNEL_PLAN				*plan = NULL;
-	
-	
+
+
 	RT_ASSERT(pInfo, ("%s(): pInfo is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(info_sig == info->sig, ("%s(): invalid info\n", __FUNCTION__));
 
@@ -2196,7 +2196,7 @@ CustomScan_IssueSysScan(
 			status = RT_STATUS_MEDIA_BUSY;
 			break;
 		}
-		
+
 		if(NULL == (req = (CUSTOM_SCAN_REQ *)CustomScan_AllocReq(pInfo, NULL, NULL)))
 		{
 			status = RT_STATUS_RESOURCE;
@@ -2237,12 +2237,12 @@ CustomScan_IssueSysScan(
 		req->type = CUSTOM_SCAN_SRC_TYPE_SYS;
 		req->typeInfo = "sys";
 		req->issueTime = PlatformGetCurrentTime() / 1000;
-		
+
 		// set state
 		customscan_Lock(info);
 		customscan_SetReqState(info, info->pCurReq, CUSTOM_SCAN_STATE_STARTING);
 		customscan_Unlock(info);
-		
+
 		// issue scan
 		if(!customscan_InvokeMgntLinkReq(info, !bActiveScan))
 		{
@@ -2257,7 +2257,7 @@ CustomScan_IssueSysScan(
 		customscan_Lock(info);
 		if(req == info->pCurReq)
 			info->pCurReq = NULL;
-		
+
 		customscan_FreeReq(info, req);
 
 		customscan_Unlock(info);
@@ -2276,7 +2276,7 @@ CustomScan_ExtendDwellTime(
 {
 	RT_STATUS					status = RT_STATUS_SUCCESS;
 	CUSTOM_SCAN_INFO			*info = (CUSTOM_SCAN_INFO *)pInfo;
-	
+
 	RT_ASSERT(pInfo, ("%s(): pInfo is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(info_sig == info->sig, ("%s(): invalid info\n", __FUNCTION__));
 
@@ -2290,20 +2290,20 @@ CustomScan_ExtendDwellTime(
 			status = RT_STATUS_INVALID_STATE;
 			break;
 		}
-		
+
 		if(CUSTOM_SCAN_STATE_DWELL != info->pCurReq->state)
 		{
-			RT_TRACE(COMP_SCAN, DBG_WARNING, 
+			RT_TRACE(COMP_SCAN, DBG_WARNING,
 				("Failed to extend dwell time: state is: %s\n", customscan_ScanStateTxt(info->pCurReq->state)));
 			status = RT_STATUS_INVALID_STATE;
 			break;
 		}
-		
+
 		info->pCurReq->extDwellTime = dwellTime;
 	}while(FALSE);
 
 	customscan_Unlock(info);
-	
+
 	return status;
 
 }
@@ -2319,7 +2319,7 @@ CustomScan_ShutDwellTime(
 	CUSTOM_SCAN_REQ				*reqIn = (CUSTOM_SCAN_REQ *)req;
 
 	FunctionIn(COMP_SCAN);
-	
+
 	RT_ASSERT(pInfo, ("%s(): pInfo is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(info_sig == info->sig, ("%s(): invalid info\n", __FUNCTION__));
 
@@ -2338,21 +2338,21 @@ CustomScan_ShutDwellTime(
 			status = RT_STATUS_INVALID_STATE;
 			break;
 		}
-		
+
 		if(CUSTOM_SCAN_STATE_DWELL != reqIn->state)
 		{
-			RT_TRACE(COMP_SCAN, DBG_WARNING, 
+			RT_TRACE(COMP_SCAN, DBG_WARNING,
 				("Failed to shut dwell time: state is: %s\n", customscan_ScanStateTxt(reqIn->state)));
 			status = RT_STATUS_INVALID_STATE;
 			break;
 		}
-		
-		RT_TRACE(COMP_SCAN, DBG_WARNING, 
+
+		RT_TRACE(COMP_SCAN, DBG_WARNING,
 				("shutting off scan req %s dwell time\n", reqIn->typeInfo));
-		
+
 		if(RT_STATUS_SUCCESS != (status = customscan_TerminateCurrentChnl(info)))
 		{
-			RT_TRACE(COMP_SCAN, DBG_WARNING, 
+			RT_TRACE(COMP_SCAN, DBG_WARNING,
 				("customscan_TerminateCurrentChnl failed: 0x%08X\n", status));
 			break;
 		}
@@ -2364,7 +2364,7 @@ CustomScan_ShutDwellTime(
 	}while(FALSE);
 
 	FunctionOut(COMP_SCAN);
-	
+
 	return status;
 
 }
@@ -2415,7 +2415,7 @@ CustomScan_AcquireCurCtx(
 }
 
 VOID
-CustomScan_ReleaseCurCtx(	
+CustomScan_ReleaseCurCtx(
 	IN  VOID					*pInfo
 	)
 {
@@ -2423,7 +2423,7 @@ CustomScan_ReleaseCurCtx(
 
 	RT_ASSERT(pInfo, ("%s(): pInfo is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(info_sig == info->sig, ("%s(): invalid info\n", __FUNCTION__));
-	
+
 	customscan_Unlock(info);
 }
 

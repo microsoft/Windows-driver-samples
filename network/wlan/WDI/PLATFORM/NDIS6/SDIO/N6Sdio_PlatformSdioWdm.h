@@ -6,14 +6,14 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	N6Sdio_PlatformSdioWdm.h
-	
+
 Abstract:
 	Prototype of WdmSdio_XXX() implemented via WDM SDIO.
-	These function shall be only use under Platform\.	
+	These function shall be only use under Platform\.
 
-Added by Roger, 2012.01.01.   
+Added by Roger, 2012.01.01.
 
-	
+
 --*/
 
 VOID
@@ -40,19 +40,19 @@ BOOLEAN
 N6SdioTxQueuePending(
 	IN  PADAPTER 	Adapter
 	);
-	
+
 BOOLEAN
 N6SdioReleaseTxQueuePending(
 	IN  PADAPTER 	Adapter
 	);
-	
-#if RTL8723_SDIO_IO_THREAD_ENABLE 
+
+#if RTL8723_SDIO_IO_THREAD_ENABLE
 VOID
 N6SdioIOThreadCallback(
 	IN	PVOID	pContext
 	);
 #endif
-	
+
 VOID
 N6SdioTxThreadCallback(
 	IN	PVOID	pContext

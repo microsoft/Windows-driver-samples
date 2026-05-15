@@ -8,7 +8,7 @@
 // 		#define OS_VERSION		<OS_VERSION_VALUE>                                     //
 //=====================================================================================//
 #include "GeneralDef.h"	       // Define the RT_PLATFORM and the OS_VERSION values
-#include "platform-os-version.h"	
+#include "platform-os-version.h"
 
 #define	WPP_SOFTWARE_TRACE					1
 #define	SOFTWARE_TRACE_LOGGING			1
@@ -23,7 +23,7 @@
 
 
 // Statistic
-#define STATISTIC_SUPPORT       					1  	// counter caculate.    
+#define STATISTIC_SUPPORT       					1  	// counter caculate.
 
 // Auto Channel Select by NHM statistic
 #define AUTO_CHNL_SEL_NHM					1
@@ -53,9 +53,9 @@
 #define MUTIPLE_BULK_OUT
 
 #define TX_AGGREGATION						1	// For Tx Aggregation
-#define RX_AGGREGATION						1	// For Rx Aggregation 
+#define RX_AGGREGATION						1	// For Rx Aggregation
 
-#define RTL8723_SDIO_IO_THREAD_ENABLE	            1 
+#define RTL8723_SDIO_IO_THREAD_ENABLE	            1
 
 
 #define MULTIPORT_SUPPORT									1

@@ -7,24 +7,24 @@
 
 #if (VHT_SUPPORT == 1)
 
-// 				20/40/80,	ShortGI,	MCS Rate 
-const u2Byte VHT_MCS_DATA_RATE[3][2][30] = 
+// 				20/40/80,	ShortGI,	MCS Rate
+const u2Byte VHT_MCS_DATA_RATE[3][2][30] =
 	{	{	{13, 26, 39, 52, 78, 104, 117, 130, 156, 156,
 			 26, 52, 78, 104, 156, 208, 234, 260, 312, 312,
 			 39, 78, 117, 156, 234, 312, 351, 390, 468, 520},			// Long GI, 20MHz
 			{14, 29, 43, 58, 87, 116, 130, 144, 173, 173,
 			29, 58, 87, 116, 173, 231, 260, 289, 347, 347,
 			43,	87, 130, 173, 260, 347,390,	433,	520, 578}	},		// Short GI, 20MHz
-		{	{27, 54, 81, 108, 162, 216, 243, 270, 324, 360, 
+		{	{27, 54, 81, 108, 162, 216, 243, 270, 324, 360,
 			54, 108, 162, 216, 324, 432, 486, 540, 648, 720,
 			81, 162, 243, 324, 486, 648, 729, 810, 972, 1080}, 		// Long GI, 40MHz
-			{30, 60, 90, 120, 180, 240, 270, 300,360, 400, 
+			{30, 60, 90, 120, 180, 240, 270, 300,360, 400,
 			60, 120, 180, 240, 360, 480, 540, 600, 720, 800,
 			90, 180, 270, 360, 540, 720, 810, 900, 1080, 1200}},		// Short GI, 40MHz
 		{	{59, 117,  176, 234, 351, 468, 527, 585, 702, 780,
 			117, 234, 351, 468, 702, 936, 1053, 1170, 1404, 1560,
 			176, 351, 527, 702, 1053, 1404, 1580, 1755, 2106, 2340}, 	// Long GI, 80MHz
-			{65, 130, 195, 260, 390, 520, 585, 650, 780, 867, 
+			{65, 130, 195, 260, 390, 520, 585, 650, 780, 867,
 			130, 260, 390, 520, 780, 1040, 1170, 1300, 1560,1734,
 			195, 390, 585, 780, 1170, 1560, 1755, 1950, 2340, 2600}	}	// Short GI, 80MHz
 	};
@@ -35,14 +35,14 @@ VHTDebugVHTCapability(
 	PADAPTER		Adapter,
 	POCTET_STRING	pocCap,
 	pu1Byte			TitleString
-	
+
 )
 {
 	pu1Byte 		pCapELE =  (pu1Byte)&pocCap->Octet[0];
 	pu1Byte		pMCS;
-	
+
 	pMCS= GET_VHT_CAPABILITY_ELE_RX_MCS(pCapELE);
-	
+
 	RT_TRACE(COMP_HT, DebugLevel, ("<Log VHT Capability>. Called by %s\n", TitleString ));
 
 	RT_TRACE(COMP_HT, DebugLevel, ("\tSupported Channel Width = %d\n", (GET_VHT_CAPABILITY_ELE_CHL_WIDTH(pCapELE) )));
@@ -52,8 +52,8 @@ VHTDebugVHTCapability(
 	RT_TRACE(COMP_HT, DebugLevel, ("\tMPDU Density = %d\n", GET_HT_CAPABILITY_ELE_MPDU_DENSITY(pCapELE)));
 	RT_TRACE(COMP_HT, DebugLevel, ("\tRx MCS Rate Set = [%x][%x][%x][%x]\n", pMCS[0], pMCS[1], pMCS[2], pMCS[3]));
 	RT_TRACE(COMP_HT, DebugLevel, ("\tRx LDPC = %d\n", GET_VHT_CAPABILITY_ELE_RX_LDPC(pCapELE)));
-	RT_TRACE(COMP_HT, DebugLevel, ("\n"));		
-		
+	RT_TRACE(COMP_HT, DebugLevel, ("\n"));
+
 }
 
 
@@ -69,7 +69,7 @@ VHTMcsToDataRate(
 	PRT_VERY_HIGH_THROUGHPUT	pVHTInfo = pMgntInfo->pVHTInfo;
 
 	VHTMcsRate -=MGN_VHT1SS_MCS0;
-	
+
 	switch(pMgntInfo->dot11CurrentChannelBandWidth){
 		case CHANNEL_WIDTH_20:
 			isShortGI = pHTInfo->bCurShortGI20MHz?1:0;
@@ -96,11 +96,11 @@ VHTFilterMCSRate(
 	u1Byte		i = 0, j = 0;
 	u1Byte		RegRate, dot11Rate, OpRate;
 	PMGNT_INFO	pMgntInfo = &Adapter->MgntInfo;
-	
-	for(i = 0; i < 2; i++)		
+
+	for(i = 0; i < 2; i++)
 	{
 		pOperateMCS[i] = 0;
-		
+
 		for(j = 0; j < 8; j+=2)
 		{
 			RegRate = (pMgntInfo->Regdot11VHTOperationalRateSet[i] >> j) & 3;
@@ -109,26 +109,26 @@ VHTFilterMCSRate(
 				OpRate = 3;
 			else if(RegRate > dot11Rate)
 				OpRate = dot11Rate;
-			else	
+			else
 				OpRate = RegRate;
 
 			pOperateMCS[i] |= (OpRate << j);
 		}
 	}
-	
+
 	return TRUE;
 }
 
 
-u1Byte	
+u1Byte
 RateToSpatialStream(
 	pu1Byte			pVHTRate
 )
 {
 	u1Byte	i,j , tmpRate;
 	u1Byte	NumSS = 0;
-		
-	for(i = 0; i < 2; i++)		
+
+	for(i = 0; i < 2; i++)
 	{
 		for(j = 0; j < 8; j+=2)
 		{
@@ -145,7 +145,7 @@ RateToSpatialStream(
 				break;
 			}
 		}
-			
+
 	}
 	RT_TRACE(COMP_HT, DBG_LOUD, ("RateToSpatialStream(): Number of Spatial Stream supported = %d\n", NumSS));
 
@@ -163,11 +163,11 @@ SpatialStreamToRate(
 	u1Byte		i = 0, j = 0;
 	u1Byte		RegRate, dot11Rate, OpRate;
 	PMGNT_INFO	pMgntInfo = &Adapter->MgntInfo;
-	
-	for(i = 0; i < 2; i++)		
+
+	for(i = 0; i < 2; i++)
 	{
 		pVHTRate[i] = 0;
-		
+
 		for(j = 0; j < 8; j+=2)
 		{
 			RegRate = (pMgntInfo->Regdot11VHTOperationalRateSet[i] >> j) & 3;
@@ -178,7 +178,7 @@ SpatialStreamToRate(
 				OpRate = 3;
 			else if(RegRate > dot11Rate)
 				OpRate = dot11Rate;
-			else	
+			else
 				OpRate = RegRate;
 
 			pVHTRate[i] |= (OpRate << j);
@@ -187,7 +187,7 @@ SpatialStreamToRate(
 }
 
 
-u1Byte 
+u1Byte
 VHTIOTActIsAMsduEnable(
 	PADAPTER		Adapter
 )
@@ -222,10 +222,10 @@ VHTConstructOpModeNotification(
 	*pLength = 0;
 
 	ConstructMaFrameHdr(
-					Adapter, 
-					Addr, 
-					ACT_CAT_VHT, 
-					ACT_VHT_OPMODE_NOTIFICATION, 
+					Adapter,
+					Addr,
+					ACT_CAT_VHT,
+					ACT_VHT_OPMODE_NOTIFICATION,
 					&osNotifFrame);
 
 	// Operating Mode
@@ -252,7 +252,7 @@ VHTConstructCapabilityElement(
 	POCTET_STRING	posVHTCap,
 	BOOLEAN			bAssoc
 )
-{	
+{
 	PMGNT_INFO      			pMgntInfo = &Adapter->MgntInfo;
 	PRT_VERY_HIGH_THROUGHPUT	pVHTInfo = GET_VHT_INFO(pMgntInfo);
 	pu1Byte					pCapELE = NULL, pCapVHTMCS;
@@ -261,14 +261,14 @@ VHTConstructCapabilityElement(
 	u1Byte					VHtSTBC = 0;
 
 	PlatformZeroMemory(posVHTCap->Octet, posVHTCap->Length);
-	
+
 	pCapELE = (pu1Byte)posVHTCap->Octet;
 	posVHTCap->Length = 12;
 
 	// B0 B1 Maximum MPDU Length
 	// in Current AC AP, we can only declare 4K MPDU support, the performance will be better.
 	// Need to add IOT pattern later.
-	//SET_VHT_CAPABILITY_ELE_MAX_MPDU_LENGTH(pCapELE, 2); 
+	//SET_VHT_CAPABILITY_ELE_MAX_MPDU_LENGTH(pCapELE, 2);
 
 
 	// B2 B3 Supported Channel Width Set
@@ -277,9 +277,9 @@ VHTConstructCapabilityElement(
 	// B4 Rx LDPC
 	if(TEST_FLAG(pVHTInfo->VhtLdpcCap, LDPC_VHT_ENABLE_RX))
 	{
-		SET_VHT_CAPABILITY_ELE_RX_LDPC(pCapELE, 1); 
+		SET_VHT_CAPABILITY_ELE_RX_LDPC(pCapELE, 1);
 	}
-	
+
 	// B5 ShortGI for 80MHz
 	SET_VHT_CAPABILITY_ELE_SHORT_GI80M(pCapELE, pVHTInfo->bRegShortGI80MHz ? 1 : 0); // We can receive Short GI of 80M
 	// B6 ShortGI for 160MHz
@@ -311,7 +311,7 @@ VHTConstructCapabilityElement(
 		SET_VHT_CAPABILITY_ELE_SU_BFEE(pCapELE, TRUE);
 		SET_VHT_CAPABILITY_ELE_BFER_ANT_SUPP(pCapELE, HAL_QueryBeamformeeCap(Adapter));
 	}
-	
+
 
 	// B19 MU Beamformer Capable
 	if (TEST_FLAG(pVHTInfo->VhtBeamformCap, BEAMFORMING_VHT_MU_MIMO_AP_ENABLE)){
@@ -347,13 +347,13 @@ VHTConstructCapabilityElement(
 	PlatformMoveMemory(pCapVHTMCS, pMgntInfo->Regdot11VHTOperationalRateSet, 2);
 
 	HighestRate = VHT_MCS_DATA_RATE[pMgntInfo->dot11CurrentChannelBandWidth][FALSE][((pMgntInfo->RegVHTHighestOperaRate - MGN_VHT1SS_MCS0)&0x3f)];
-	HighestRate = (HighestRate+1) >> 1;	
+	HighestRate = (HighestRate+1) >> 1;
 
 	SET_VHT_CAPABILITY_ELE_MCS_RX_HIGHEST_RATE(pCapELE, HighestRate);     //indicate we support highest rx rate is 600Mbps.
 	if(pVHTInfo->bAssignTxLGIRate)
 		HighestRate = pVHTInfo->highestTxLGIRate;
 	SET_VHT_CAPABILITY_ELE_MCS_TX_HIGHEST_RATE(pCapELE, HighestRate); //indicate we support highest tx rate is 600Mbps.
-		
+
 	RT_PRINT_DATA(COMP_HT, DBG_TRACE, "Construct VHTCap in Beacon/Assoc/ReAssoc", posVHTCap->Octet, posVHTCap->Length);
 	VHTDebugVHTCapability(DBG_TRACE, Adapter, posVHTCap, (pu1Byte)"VHTConstructCapability()");
 }
@@ -367,7 +367,7 @@ VHTConstructOperationElement(
 {
 	PMGNT_INFO      			pMgntInfo = &Adapter->MgntInfo;
 	pu1Byte					pOpELE = NULL;
-	CHANNEL_WIDTH			ChnlWidth;	
+	CHANNEL_WIDTH			ChnlWidth;
 
 	pOpELE = (pu1Byte)posVHTOperation->Octet;
 	posVHTOperation->Length = 5;
@@ -378,7 +378,7 @@ VHTConstructOperationElement(
 		ChnlWidth = (CHANNEL_WIDTH)0;
 	else if(pMgntInfo->dot11CurrentChannelBandWidth == CHANNEL_WIDTH_80)
 		ChnlWidth = (CHANNEL_WIDTH)1;
-	
+
 	SET_VHT_OPERATION_ELE_CHL_WIDTH(pOpELE, ChnlWidth);
 	//center frequency
 	SET_VHT_OPERATION_ELE_CHL_CENTER_FREQ1(pOpELE,pMgntInfo->pChannelInfo->CurrentChannelCenterFrequency);
@@ -412,7 +412,7 @@ VHTSendOperatingModeNotification(
 				MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 		}
 	}
-	
+
 	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 }
 
@@ -475,16 +475,16 @@ VHTOnAssocRsp(
 	OCTET_STRING				osTmp;
 
 	RT_TRACE(COMP_MLME, DBG_LOUD,("==============>VHTOnAssocRsp \n "));
-	
+
 	if( pVHTInfo->bCurrentVHTSupport == FALSE )
 	{
 		RT_TRACE( COMP_MLME, DBG_LOUD, ("<=== VHTOnAssocRsp(): VHT_DISABLE\n") );
 		return;
 	}
-	
+
 	PlatformZeroMemory(pVHTInfo->PeerVHTCapBuf, sizeof(pVHTInfo->PeerVHTCapBuf));
 	PlatformZeroMemory(pVHTInfo->PeerVHTInfoBuf, sizeof(pVHTInfo->PeerVHTInfoBuf));
-		
+
 	// Get VHT CAP and copy into buffer
 	osTmp= PacketGetElement( asocpdu, EID_VHTCapability, OUI_SUB_DONT_CARE, OUI_SUBTYPE_DONT_CARE);
 
@@ -497,13 +497,13 @@ VHTOnAssocRsp(
 			osTmp.Length = MAX_VHT_CAP_LEN;
 		}
 	}
-		
+
 	osTmp.Length = osTmp.Length > sizeof(pVHTInfo->PeerVHTCapBuf)?\
 		sizeof(pVHTInfo->PeerVHTCapBuf):osTmp.Length;	//prevent from overflow
-		
+
 	if(osTmp.Length > 0)
 		CopyMem(pVHTInfo->PeerVHTCapBuf, osTmp.Octet, osTmp.Length);
-	
+
 	// Get VHT Operation and copy into buffer
 	osTmp= PacketGetElement( asocpdu, EID_VHTOperation, OUI_SUB_DONT_CARE, OUI_SUBTYPE_DONT_CARE);
 
@@ -519,16 +519,16 @@ VHTOnAssocRsp(
 
 	osTmp.Length = osTmp.Length>sizeof(pVHTInfo->PeerVHTInfoBuf)?\
 		sizeof(pVHTInfo->PeerVHTInfoBuf):osTmp.Length;	//prevent from overflow
-		
+
 	if(osTmp.Length > 0)
 		CopyMem(pVHTInfo->PeerVHTInfoBuf, osTmp.Octet, osTmp.Length);
-	
+
 	pPeerVHTCap = (pu1Byte)(pVHTInfo->PeerVHTCapBuf);
 
 	pPeerVHTInfo = (pu1Byte)(pVHTInfo->PeerVHTInfoBuf);
 
-	RT_DISP(FMLME, LINK_STS, 
-	("VHTOnAssocRsp(): call VHTSetBandWidthOnAsocRsp VHT_CAP=%04x VHT_INFO=%04x\n", 
+	RT_DISP(FMLME, LINK_STS,
+	("VHTOnAssocRsp(): call VHTSetBandWidthOnAsocRsp VHT_CAP=%04x VHT_INFO=%04x\n",
 	EF2Byte(*((UNALIGNED pu2Byte)pPeerVHTCap)), EF2Byte(*((UNALIGNED pu2Byte)pPeerVHTInfo))) );
 
 	// B4 Rx LDPC
@@ -537,7 +537,7 @@ VHTOnAssocRsp(
 		SET_FLAG(pVHTInfo->VhtCurLdpc, GET_VHT_CAPABILITY_ELE_RX_LDPC(pPeerVHTCap) ? (LDPC_VHT_ENABLE_TX | LDPC_VHT_CAP_TX) : 0);
 		RT_TRACE_F(COMP_HT, DBG_LOUD, ("Target BSS support VHT LDPC, enable Tx LDPC!\n"));
 	}
-	
+
 	// B5 Short GI for 80 MHz
 	pVHTInfo->bCurShortGI80MHz = (GET_VHT_CAPABILITY_ELE_SHORT_GI80M(pPeerVHTCap) & pVHTInfo->bRegShortGI80MHz) ? TRUE : FALSE;
 	RT_TRACE_F(COMP_HT, DBG_LOUD, ("Current ShortGI80MHz = %d\n", pVHTInfo->bCurShortGI80MHz));
@@ -590,13 +590,13 @@ VHTOnAssocRsp(
 	pVHTInfo->AMPDU_Len = GET_VHT_CAPABILITY_ELE_MAX_RXAMPDU_FACTOR(pPeerVHTCap);
 	if(pVHTInfo->AMPDU_Len > pHTInfo->CurrentAMPDUFactor)
 		Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_AMPDU_FACTOR, &pVHTInfo->AMPDU_Len);
-	
+
 	pCapMCS = GET_VHT_CAPABILITY_ELE_RX_MCS(pPeerVHTCap);
 	VHTFilterMCSRate(Adapter, pCapMCS, pMgntInfo->dot11VHTOperationalRateSet);
 	pMgntInfo->VHTHighestOperaRate = VHTGetHighestMCSRate(
-													Adapter, 
+													Adapter,
 													pMgntInfo->dot11VHTOperationalRateSet);
-	
+
 	pVHTInfo->PeerChnlBW = (CHANNEL_WIDTH)GET_VHT_OPERATION_ELE_CHL_WIDTH(pVHTInfo->PeerVHTInfoBuf);
 	Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_AMPDU_MAX_TIME, &pMgntInfo->VHTHighestOperaRate);
 }
@@ -616,7 +616,7 @@ VHTInitializeVHTInfo(
 {
 	PRT_VERY_HIGH_THROUGHPUT 	pVHTInfo = Adapter->MgntInfo.pVHTInfo;
 
-	// These parameters will be reset when receiving deauthentication packet 
+	// These parameters will be reset when receiving deauthentication packet
 	pVHTInfo->bCurrentVHTSupport = FALSE;
 
 	// LDPC support
@@ -628,10 +628,10 @@ VHTInitializeVHTInfo(
 	// Short GI support
 	pVHTInfo->bCurShortGI80MHz = FALSE;
 
-	// Sounding support 
+	// Sounding support
 	CLEAR_FLAGS(pVHTInfo->VhtCurBeamform);
 
-	// Initialize all of the parameters related to 11n	
+	// Initialize all of the parameters related to 11n
 	PlatformZeroMemory((PVOID)(&(pVHTInfo->SelfVHTCap)), sizeof(pVHTInfo->SelfVHTCap));
 	PlatformZeroMemory((PVOID)(&(pVHTInfo->SelfVHTInfo)), sizeof(pVHTInfo->SelfVHTInfo));
 	PlatformZeroMemory((PVOID)(&(pVHTInfo->PeerVHTCapBuf)), sizeof(pVHTInfo->PeerVHTCapBuf));
@@ -654,7 +654,7 @@ VHTParsingVHTCapElement(
 
 	VHTCapIE.Length = VHTCapIE.Length > sizeof(pBssDesc->BssVHT.bdVHTCapBuf)?\
 		sizeof(pBssDesc->BssVHT.bdVHTCapBuf):VHTCapIE.Length;	//prevent from overflow
-		
+
 	CopyMem(pBssDesc->BssVHT.bdVHTCapBuf, VHTCapIE.Octet, VHTCapIE.Length);
 	pBssDesc->BssVHT.bdVHTCapLen = VHTCapIE.Length;
 
@@ -675,7 +675,7 @@ VHTParsingVHTOperationElement(
 
 	VHTOperIE.Length = VHTOperIE.Length > sizeof(pBssDesc->BssVHT.bdVHTOperBuf)?\
 		sizeof(pBssDesc->BssVHT.bdVHTOperBuf):VHTOperIE.Length;	//prevent from overflow
-		
+
 	CopyMem(pBssDesc->BssVHT.bdVHTOperBuf, VHTOperIE.Octet, VHTOperIE.Length);
 	pBssDesc->BssVHT.bdVHTOperLen = VHTOperIE.Length;
 }
@@ -696,7 +696,7 @@ VHTParsingVHTOpModeNotification(
 
 	VHTNotifIE.Length = VHTNotifIE.Length > sizeof(pBssDesc->BssVHT.bdVHTOpModeNotifBuf)?\
 		sizeof(pBssDesc->BssVHT.bdVHTOpModeNotifBuf):VHTNotifIE.Length;	//prevent from overflow
-		
+
 	CopyMem(pBssDesc->BssVHT.bdVHTOpModeNotifBuf, VHTNotifIE.Octet, VHTNotifIE.Length);
 	pBssDesc->BssVHT.bdVHTOpModeNotifLen = VHTNotifIE.Length;
 }
@@ -722,7 +722,7 @@ VHTUseDefaultSettingFromReg(
 	PlatformMoveMemory(pMgntInfo->dot11VHTOperationalRateSet, pMgntInfo->Regdot11VHTOperationalRateSet, 2);
 
 	pMgntInfo->VHTHighestOperaRate = pMgntInfo->RegVHTHighestOperaRate;
-	
+
 	pMgntInfo->dot11CurrentChannelBandWidth = CHNL_GetRegBWSupport(Adapter);
 }
 
@@ -737,8 +737,8 @@ VHTUseDefaultSettingFromDefault(
 	PADAPTER					DefAdapter = GetDefaultAdapter(Adapter);
 	PMGNT_INFO					pDefMgntInfo = &DefAdapter->MgntInfo;
 	PRT_VERY_HIGH_THROUGHPUT 	pDefVHTInfo = pDefMgntInfo->pVHTInfo;
-	
-	//=====   The ones that not follow   ======	
+
+	//=====   The ones that not follow   ======
 	pVHTInfo->bCurShortGI80MHz = TRUE;
 	pVHTInfo->VhtCurLdpc = pVHTInfo->VhtLdpcCap;
 	pVHTInfo->VhtCurStbc = pVHTInfo->VhtStbcCap;
@@ -747,14 +747,14 @@ VHTUseDefaultSettingFromDefault(
 	PlatformMoveMemory(pMgntInfo->dot11VHTOperationalRateSet, pMgntInfo->Regdot11VHTOperationalRateSet, 2);
 
 	pMgntInfo->VHTHighestOperaRate = pMgntInfo->RegVHTHighestOperaRate;
-	//==============================	
+	//==============================
 
 	pVHTInfo->AMPDU_Len = pDefVHTInfo->AMPDU_Len;
 	Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_AMPDU_FACTOR, &pVHTInfo->AMPDU_Len);
 
 	pMgntInfo->dot11CurrentChannelBandWidth = pDefMgntInfo->dot11CurrentChannelBandWidth;
 }
-			
+
 
 VOID
 VHTUseDefaultSetting(
@@ -764,7 +764,7 @@ VHTUseDefaultSetting(
 	PMGNT_INFO			pMgntInfo = &Adapter->MgntInfo;
 	PRT_VERY_HIGH_THROUGHPUT	pVHTInfo = GET_VHT_INFO(pMgntInfo);
 	u1Byte				TwoPortStatus =(u1Byte) TWO_PORT_STATUS__DEFAULT_ONLY;
-			
+
 	if(pVHTInfo->bEnableVHT)
 	{
 		pVHTInfo->bCurrentVHTSupport = TRUE;
@@ -775,12 +775,12 @@ VHTUseDefaultSetting(
 		//[win7 Two Port BW40Mhz issue] Extention Port Use Reg's Default Value. 2009.05.20, by bohn
 		if(	TwoPortStatus==TWO_PORT_STATUS__DEFAULT_ONLY 		||
 			TwoPortStatus==TWO_PORT_STATUS__EXTENSION_ONLY	||
-			TwoPortStatus==TWO_PORT_STATUS__WITHOUT_ANY_ASSOCIATE)		
+			TwoPortStatus==TWO_PORT_STATUS__WITHOUT_ANY_ASSOCIATE)
 		{
-			VHTUseDefaultSettingFromReg(Adapter);		
+			VHTUseDefaultSettingFromReg(Adapter);
 		}
 		else if(TwoPortStatus==TWO_PORT_STATUS__EXTENSION_FOLLOW_DEFAULT)
-		{	
+		{
 			//[win7 Two Port BW40Mhz issue] Extention Port obey the rule of Default Port. 2009.05.20, by bohn
 			VHTUseDefaultSettingFromDefault(Adapter);
 		}
@@ -806,7 +806,7 @@ VHTUseDefaultSetting(
 *	/param 	Adapter			Pionter to Adapter entity
 *			pMCSRateSet		Pointer to MCS rate bitmap
 *			pMCSFilter		Pointer to MCS rate filter
-*	
+*
 *	/return	Highest MCS rate included in pMCSRateSet and filtered by pMCSFilter.
 *
 */
@@ -819,7 +819,7 @@ VHTGetHighestMCSRate(
 	u1Byte		i, j;
 	u1Byte		bitMap;
 	u1Byte		VHTMcsRate = 0;
-	
+
 	for(i = 0; i < 2; i++)
 	{
 		if(pVHTMCSRateSet[i] != 0xff)
@@ -827,7 +827,7 @@ VHTGetHighestMCSRate(
 			for(j = 0; j < 8; j += 2)
 			{
 				bitMap = (pVHTMCSRateSet[i] >> j) & 3;
-				
+
 				if(bitMap != 3)
 					VHTMcsRate = MGN_VHT1SS_MCS7 + 10*j/2 + i*40 + bitMap;  //VHT rate indications begin from 0x90
 			}
@@ -872,7 +872,7 @@ VHTCheckVHTCap(
 
 	CLEAR_FLAGS(pEntry->VHTInfo.VhtCurBeamform);
 	// B11 SU Beamformer Capable, we are Beamformee
-	if(	TEST_FLAG(pVHTInfo->VhtBeamformCap, BEAMFORMING_VHT_BEAMFORMEE_ENABLE) && 
+	if(	TEST_FLAG(pVHTInfo->VhtBeamformCap, BEAMFORMING_VHT_BEAMFORMEE_ENABLE) &&
 		GET_VHT_CAPABILITY_ELE_SU_BFER(pVHTCap))
 	{
 		SET_FLAG(pEntry->VHTInfo.VhtCurBeamform, BEAMFORMING_VHT_BEAMFORMER_ENABLE);
@@ -881,7 +881,7 @@ VHTCheckVHTCap(
 	}
 
 	// B12 SU Beamformee Capable, we are Beamformer
-	if(	TEST_FLAG(pVHTInfo->VhtBeamformCap, BEAMFORMING_VHT_BEAMFORMER_ENABLE) && 
+	if(	TEST_FLAG(pVHTInfo->VhtBeamformCap, BEAMFORMING_VHT_BEAMFORMER_ENABLE) &&
 		GET_VHT_CAPABILITY_ELE_SU_BFEE(pVHTCap))
 	{
 		SET_FLAG(pEntry->VHTInfo.VhtCurBeamform, BEAMFORMING_VHT_BEAMFORMEE_ENABLE);
@@ -890,7 +890,7 @@ VHTCheckVHTCap(
 	}
 
 	// B19 MU Beamformer Capable, we are Beamformee
-	if(	TEST_FLAG(pVHTInfo->VhtBeamformCap, BEAMFORMING_VHT_MU_MIMO_STA_ENABLE) && 
+	if(	TEST_FLAG(pVHTInfo->VhtBeamformCap, BEAMFORMING_VHT_MU_MIMO_STA_ENABLE) &&
 		GET_VHT_CAPABILITY_ELE_MU_BFER(pVHTCap))
 	{
 		SET_FLAG(pEntry->VHTInfo.VhtCurBeamform, BEAMFORMING_VHT_MU_MIMO_AP_ENABLE);
@@ -899,14 +899,14 @@ VHTCheckVHTCap(
 	}
 
 	// B20 MU Beamformee Capable, we are Beamformer
-	if(	TEST_FLAG(pVHTInfo->VhtBeamformCap, BEAMFORMING_VHT_MU_MIMO_AP_ENABLE) && 
+	if(	TEST_FLAG(pVHTInfo->VhtBeamformCap, BEAMFORMING_VHT_MU_MIMO_AP_ENABLE) &&
 		GET_VHT_CAPABILITY_ELE_MU_BFEE(pVHTCap))
 	{
 		SET_FLAG(pEntry->VHTInfo.VhtCurBeamform, BEAMFORMING_VHT_MU_MIMO_STA_ENABLE);
 		// Shit to BEAMFORMING_VHT_BEAMFORMEE_SOUND_DIM
 		SET_FLAG(pVHTInfo->VhtCurBeamform, GET_VHT_CAPABILITY_ELE_SU_BFER_SOUND_DIM_NUM(pVHTCap)<<12);
 	}
-	
+
 	RT_DISP(FBEAM, FBEAM_FUN, ("Client VHT Beaforming Cap = 0x%02X\n", pEntry->VHTInfo.VhtCurBeamform));
 
 	VHTFilterMCSRate(Adapter, GET_VHT_CAPABILITY_ELE_RX_MCS(pVHTCap), pEntry->VHTInfo.VHTRateSet);
@@ -918,7 +918,7 @@ Function: Recovery to Initialize  value
 Auther: sherry
 Date: 20111117
 ************************************************************/
-VOID 
+VOID
 VHTInitializeBssDesc(
 	IN	PBSS_VHT		pBssVHT
 	)
@@ -974,16 +974,16 @@ VHTGetValueFromBeaconOrProbeRsp(
 
 	if(Adapter->bInHctTest)
 		return;
-	
+
 	// Get VHT Capability IE
 	VHTCapIE = PacketGetElement(mmpdu, EID_VHTCapability, OUI_SUB_DONT_CARE, OUI_SUBTYPE_DONT_CARE);
-	
+
 	if(VHTCapIE.Length != 0)
 		VHTParsingVHTCapElement(Adapter, VHTCapIE, bssDesc);
 	else if(Adapter->MgntInfo.bRegIOTBcm256QAM)
 	{
 		VHTCapIE = PacketGetElement(mmpdu, EID_Vendor, OUI_SUB_11AC_EPIG_VHT_CAP, OUI_SUBTYPE_DONT_CARE);
-		
+
 		if(VHTCapIE.Length != 0)
 		{
 			VHTCapIE.Octet += 7;
@@ -991,12 +991,12 @@ VHTGetValueFromBeaconOrProbeRsp(
 			VHTParsingVHTCapElement(Adapter, VHTCapIE, bssDesc);
 		}
 	}
-	
+
 	RT_DISP(FBEACON, BCN_SHOW, 	("EID_VHTCapability VHTCapIE.Length=%d\r\n", VHTCapIE.Length));
 
 	// Get VHT Opration IE
 	VHTOperIE = PacketGetElement(mmpdu, EID_VHTOperation, OUI_SUB_DONT_CARE, OUI_SUBTYPE_DONT_CARE);
-	
+
 	if(VHTOperIE.Length != 0)
 		VHTParsingVHTOperationElement(Adapter, VHTOperIE, bssDesc);
 	else if(Adapter->MgntInfo.bRegIOTBcm256QAM)
@@ -1007,7 +1007,7 @@ VHTGetValueFromBeaconOrProbeRsp(
 			VHTOperIE.Octet = EpigIE.Octet+21;
 			VHTOperIE.Length = 5;
 		}
-		
+
 		if(VHTOperIE.Length != 0)
 			VHTParsingVHTOperationElement(Adapter, VHTOperIE, bssDesc);
 	}
@@ -1015,7 +1015,7 @@ VHTGetValueFromBeaconOrProbeRsp(
 	if(VHTCapIE.Length != 0)
 	{
 		bssDesc->BssVHT.bdSupportVHT = TRUE;
-	}	
+	}
 
 	// Operating Mode Notification
 	VHTNotifIE = PacketGetElement(mmpdu, EID_OpModeNotification, OUI_SUB_DONT_CARE, OUI_SUBTYPE_DONT_CARE);
@@ -1063,12 +1063,12 @@ VHTResetSelfAndSavePeerSetting(
 
 		if(pBssDesc->BssVHT.bdVHTOperLen> 0 && pBssDesc->BssVHT.bdVHTOperLen <= sizeof(pVHTInfo->PeerVHTInfoBuf))
 			CopyMem(pVHTInfo->PeerVHTInfoBuf,pBssDesc->BssVHT.bdVHTOperBuf, pBssDesc->BssVHT.bdVHTOperLen);
-		
+
 		if(pBssDesc->BssVHT.bdVHTOperLen != 0)
 			pVHTInfo->PeerChnlBW = (CHANNEL_WIDTH)GET_VHT_OPERATION_ELE_CHL_WIDTH(pBssDesc->BssVHT.bdVHTOperBuf);
 		else
 			pVHTInfo->PeerChnlBW = (CHANNEL_WIDTH)CHANNEL_WIDTH_20;
-				
+
 		pMgntInfo->IOTAction |= VHTIOTActIsAMsduEnable(Adapter);
 	}
 	else
@@ -1092,7 +1092,7 @@ VHTUpdateSelfAndPeerSetting(
 	{
 		if(pBssDesc->BssVHT.bdVHTOperLen != 0)
 			pVHTInfo->PeerChnlBW = (CHANNEL_WIDTH)GET_VHT_OPERATION_ELE_CHL_WIDTH(pBssDesc->BssVHT.bdVHTOperBuf);
-		
+
 		if(pBssDesc->BssVHT.bdVHTOpModeNotifLen > 0)
 		{
 			CHANNEL_WIDTH		chnlBW = CHANNEL_WIDTH_20;
@@ -1105,7 +1105,7 @@ VHTUpdateSelfAndPeerSetting(
 
 			if(chnlBW != pMgntInfo->currentRABw)
 			{
-				RT_TRACE(COMP_HT, DBG_LOUD, ("VHTUpdateSelfAndPeerSetting(): operating mode notification change bandwidth\n"));				
+				RT_TRACE(COMP_HT, DBG_LOUD, ("VHTUpdateSelfAndPeerSetting(): operating mode notification change bandwidth\n"));
 				bUpdateRA = TRUE;
 			}
 
@@ -1126,7 +1126,7 @@ VHTUpdateSelfAndPeerSetting(
 
 
 //
-// Description: 
+// Description:
 //	Update VHT Rate mask Regdot11OperationalRateSet.
 //
 // Arguments:
@@ -1194,7 +1194,7 @@ VHTConstructOperationElement(
 {}
 
 
-u1Byte 
+u1Byte
 VHTIOTActIsAMsduEnable(
 	PADAPTER		Adapter
 )

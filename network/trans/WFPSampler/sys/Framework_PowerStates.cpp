@@ -30,7 +30,7 @@ KGUARDED_MUTEX guardedMutex = {0};
              references on NBLs, and instead causes the filters to return BLOCK.  This should also allow adequate <br>
              time to drain currently queued NBLs.                                                                 <br>
                                                                                                                   <br>
-   Notes:                                                                                                         <br>    
+   Notes:                                                                                                         <br>
                                                                                                                   <br>
    MSDN_Ref: https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/content/wdm/nc-wdm-io_workitem_routine <br>
 */
@@ -84,7 +84,7 @@ VOID ActOnPowerStateEnter(_In_ PDEVICE_OBJECT pDeviceObject,
    Purpose:  Passive function to handle exiting a power managed state.  When coming out of a power managed state, <br>
              register the callouts so normal processing of NBLs will commence.                                    <br>
                                                                                                                   <br>
-   Notes:                                                                                                         <br>    
+   Notes:                                                                                                         <br>
                                                                                                                   <br>
    MSDN_Ref: https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/content/wdm/nc-wdm-io_workitem_routine <br>
 */
@@ -134,7 +134,7 @@ VOID ActOnPowerStateExit(_In_ PDEVICE_OBJECT pDeviceObject,
 
 /**
  @framework_function="PowerStateCallback"
- 
+
    Purpose:  Callback which handles various power state transitions for the callout driver.     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -148,13 +148,13 @@ VOID PowerStateCallback(_In_ VOID* pCallbackContext,
                         _In_ VOID* pEventSpecifics)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PowerStateCallback()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(pCallbackContext);
 
    if(pPowerStateEvent == (VOID*)PO_CB_SYSTEM_STATE_LOCK)
@@ -177,19 +177,19 @@ VOID PowerStateCallback(_In_ VOID* pCallbackContext,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PowerStateCallback()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @framework_function="UnregisterPowerStateChangeCallback"
- 
+
    Purpose:  Unregister a callback that handled notifications of power state changes.           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -203,13 +203,13 @@ _IRQL_requires_same_
 VOID UnregisterPowerStateChangeCallback(_Inout_ DEVICE_EXTENSION* pDeviceExtension)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> UnregisterPowerStateChangeCallback()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pDeviceExtension);
 
    if(pDeviceExtension->pRegistration)
@@ -227,19 +227,19 @@ VOID UnregisterPowerStateChangeCallback(_Inout_ DEVICE_EXTENSION* pDeviceExtensi
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- UnregisterPowerStateChangeCallback()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @framework_function="RegisterPowerStateChangeCallback"
- 
+
    Purpose:  Create and register a callback to handle notifications of power state changes.     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -254,13 +254,13 @@ _Success_(return == STATUS_SUCCESS)
 NTSTATUS RegisterPowerStateChangeCallback(_Inout_ DEVICE_EXTENSION* pDeviceExtension)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> RegisterPowerStateChangeCallback()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pDeviceExtension);
 
    NTSTATUS          status           = STATUS_SUCCESS;
@@ -299,13 +299,13 @@ NTSTATUS RegisterPowerStateChangeCallback(_Inout_ DEVICE_EXTENSION* pDeviceExten
    HLPR_BAIL_LABEL:
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- RegisterPowerStateChangeCallback() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }

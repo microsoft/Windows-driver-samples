@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
 //	File name:		N63C_SendAction.c
-//	Description:	
+//	Description:
 //
 //	Author:			haich
 //
@@ -118,12 +118,12 @@ n63c_SendAction_PrepareReq(
 	OffChnlTx_SetProbeEnabled(req, TRUE);
 	OffChnlTx_SetTxChnl(req, chnl);
 	OffChnlTx_SetTxAttemptCount(req, N63C_SEND_ACTION_RETRY_COUNT);
-	OffChnlTx_SetRetryIntermittentTime(req, 
-		pAdapter->bInHctTest 
-			? N63C_SEND_ACTION_RETRY_INTERMITTENT_TIME_HCT_MS 
+	OffChnlTx_SetRetryIntermittentTime(req,
+		pAdapter->bInHctTest
+			? N63C_SEND_ACTION_RETRY_INTERMITTENT_TIME_HCT_MS
 			: N63C_SEND_ACTION_RETRY_INTERMITTENT_TIME_MS
 		);
-	
+
 	return req;
 }
 
@@ -254,8 +254,8 @@ n63c_SendAction_PdReq_PrepareData(
 		// ssid
 		info->uProvisionRequestGroupIDSSIDLength = (u1Byte)param->GroupID.SSID.uSSIDLength;
 		PlatformMoveMemory(
-			info->ProvisionRequestGroupIDSSID, 
-			param->GroupID.SSID.ucSSID, 
+			info->ProvisionRequestGroupIDSSID,
+			param->GroupID.SSID.ucSSID,
 			param->GroupID.SSID.uSSIDLength
 			);
 	}
@@ -267,7 +267,7 @@ n63c_SendAction_PdReq_PrepareData(
 	if(param->uIEsLength)
 	{
 		P2P_AddIe_Set(
-			&info->AdditionalIEs, 
+			&info->AdditionalIEs,
 			P2P_ADD_IE_PROVISION_DISCOVERY_REQUEST,
 			param->uIEsLength,
 			(u1Byte *)param + param->uIEsOffset
@@ -315,7 +315,7 @@ n63c_SendAction_PdRsp_PrepareData(
 	if(param->uIEsLength)
 	{
 		P2P_AddIe_Set(
-			&info->AdditionalIEs, 
+			&info->AdditionalIEs,
 			P2P_ADD_IE_PROVISION_DISCOVERY_RESPONSE,
 			param->uIEsLength,
 			(u1Byte *)param + param->uIEsOffset
@@ -340,12 +340,12 @@ n63c_SendAction_InvitationReq_PrepareData(
 {
 	NDIS_STATUS					status = NDIS_STATUS_SUCCESS;
 	P2P_INFO					*info = GET_P2P_INFO(pAdapter);
-	
+
 	//
 	// ref: N63C_SET_OID_DOT11_WFD_SEND_INVITATION_REQUEST
 	// ref: Wdi_Xlat_AllocSendInvitationReqOid
 	//
-	
+
 	info->InvitationContext.InvitorRole = (param->bLocalGO) ? P2P_GO : P2P_DEVICE;
 	info->InvitationContext.bPersistentInvitation = (1 == param->InvitationFlags.InvitationType);
 	info->InvitationContext.DialogToken = param->DialogToken;
@@ -355,7 +355,7 @@ n63c_SendAction_InvitationReq_PrepareData(
 	info->InvitationContext.Status = 0;
 	info->InvitationContext.bInvitor = TRUE;
 	PlatformMoveMemory(
-		info->InvitationContext.SsidBuf, 
+		info->InvitationContext.SsidBuf,
 		param->GroupID.SSID.ucSSID,
 		param->GroupID.SSID.uSSIDLength
 		);
@@ -363,7 +363,7 @@ n63c_SendAction_InvitationReq_PrepareData(
 	cpMacAddr(info->InvitationContext.GroupBssid, param->GroupBSSID);
 	cpMacAddr(info->InvitationContext.GODeviceAddress, param->GroupID.DeviceAddress);
 	info->InvitationContext.OpChannel = info->OperatingChannel;
-	
+
 	// config timeout
 	info->GOConfigurationTimeout = (u1Byte)param->MinimumConfigTimeout.GOTimeout;
 	info->ClientConfigurationTimeout = (u1Byte)param->MinimumConfigTimeout.ClientTimeout;
@@ -384,8 +384,8 @@ n63c_SendAction_InvitationReq_PrepareData(
 	if(param->bUseSpecifiedOperatingChannel)
 	{
 		info->bInvitationRequestUseSpecifiedOperatingChannel = TRUE;
-		info->uInvitationRequestOperatingChannelNumber = (u1Byte)param->OperatingChannel.ChannelNumber;	
-		
+		info->uInvitationRequestOperatingChannelNumber = (u1Byte)param->OperatingChannel.ChannelNumber;
+
 		//RT_TRACE(COMP_OID_SET, DBG_LOUD, ("use specific chnl: %u\n", info->uInvitationRequestOperatingChannelNumber));
 	}
 	else
@@ -404,13 +404,13 @@ n63c_SendAction_InvitationReq_PrepareData(
 	if(param->uIEsOffset)
 	{
 		P2P_AddIe_Set(
-			&info->AdditionalIEs, 
+			&info->AdditionalIEs,
 			P2P_ADD_IE_INVITATION_REQUEST,
 			param->uIEsLength,
 			(u1Byte *)param + param->uIEsOffset
 			);
 	}
-	
+
 	// clear scan dev id so the req won't be terminated in P2P_OnProbeRsp
 	P2PClearScanDeviceID(&info->ScanDeviceIDs);
 
@@ -459,7 +459,7 @@ n63c_SendAction_InvitationRsp_PrepareData(
 	if(param->bUseSpecifiedOperatingChannel)
 	{
 		info->bInvitationResponseUseSpecifiedOperatingChannel = TRUE;
-		info->uInvitationResponseOperatingChannelNumber = (u1Byte)param->OperatingChannel.ChannelNumber;	
+		info->uInvitationResponseOperatingChannelNumber = (u1Byte)param->OperatingChannel.ChannelNumber;
 	}
 	else
 	{
@@ -471,7 +471,7 @@ n63c_SendAction_InvitationRsp_PrepareData(
 	if(param->uIEsLength)
 	{
 		P2P_AddIe_Set(
-			&info->AdditionalIEs, 
+			&info->AdditionalIEs,
 			P2P_ADD_IE_INVITATION_RESPONSE,
 			param->uIEsLength,
 			(u1Byte *)param + param->uIEsOffset
@@ -491,23 +491,23 @@ n63c_SendAction_GoNegReq_PrepareData(
 	NDIS_STATUS					status = NDIS_STATUS_SUCCESS;
 	P2P_INFO					*info = GET_P2P_INFO(pAdapter);
 	OCTET_STRING				osWpsAttr, osDpid;
-	
+
 	//
 	// ref: N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_REQUEST
 	// ref: wdi_SendAction_GoNegReq_PrepareData
 	//
-	
+
 	// config timeout
 	info->GOConfigurationTimeout = param->MinimumConfigTimeout.GOTimeout;
 	info->ClientConfigurationTimeout = param->MinimumConfigTimeout.ClientTimeout;
-	
+
 	// capability
 	info->NegotiationRequestGroupCapability = param->GroupCapability;
 	info->NegotiationRequestGroupCapability = param->GroupCapability & ((u1Byte)(~gcP2PGroupOwner));		// Workaround since the pParameters->GroupCapability is wrong
 
 	// go intent
-	info->GOIntent = 
-		((param->GroupOwnerIntent.Intent << 1) 
+	info->GOIntent =
+		((param->GroupOwnerIntent.Intent << 1)
 		| param->GroupOwnerIntent.TieBreaker);
 
 	// intf addr
@@ -517,7 +517,7 @@ n63c_SendAction_GoNegReq_PrepareData(
 	if(param->uIEsLength)
 	{
 		P2P_AddIe_Set(
-			&info->AdditionalIEs, 
+			&info->AdditionalIEs,
 			P2P_ADD_IE_GO_NEGOTIATION_REQUEST,
 			param->uIEsLength,
 			(u1Byte *)param + param->uIEsOffset
@@ -527,10 +527,10 @@ n63c_SendAction_GoNegReq_PrepareData(
 	// Update the internal WPS Device Password ID attribute ----------------------------------------------------------
 	osWpsAttr.Octet = (u1Byte *)param + param->uIEsOffset + 6;	// Skip (0xDD, 0x??, 0x00, 0x50, 0xF2, 0x04) 6-Byte Header
 	osWpsAttr.Length = (u2Byte)param->uIEsLength - 6;	// Skip (0xDD, 0x??, 0x00, 0x50, 0xF2, 0x04) 6-Byte Header
-	
+
 	osDpid = P2PWpsIEGetAttribute(osWpsAttr, TRUE, P2P_WPS_ATTR_TAG_DEVICE_PASSWORD_ID);
 
-	if(osDpid.Length == 2) 
+	if(osDpid.Length == 2)
 	{
 		info->WpsDevPasswdId = (WPS_DEVICE_PASSWD_ID) N2H2BYTE(*((pu2Byte)(osDpid.Octet)));
 	}
@@ -577,8 +577,8 @@ n63c_SendAction_GoNegRsp_PrepareData(
 	info->NegotiationResponseStatus = param->Status;
 
 	// go intent
-	info->GOIntent = 
-		((param->GroupOwnerIntent.Intent << 1) 
+	info->GOIntent =
+		((param->GroupOwnerIntent.Intent << 1)
 		| param->GroupOwnerIntent.TieBreaker);
 
 	// intf addr
@@ -598,7 +598,7 @@ n63c_SendAction_GoNegRsp_PrepareData(
 		// ssid
 		info->uNegotiationResponseGroupIDSSIDLength = (u1Byte)param->GroupID.SSID.uSSIDLength;
 		PlatformMoveMemory(
-			info->NegotiationResponseGroupIDSSID, 
+			info->NegotiationResponseGroupIDSSID,
 			param->GroupID.SSID.ucSSID,
 			param->GroupID.SSID.uSSIDLength
 		);
@@ -607,19 +607,19 @@ n63c_SendAction_GoNegRsp_PrepareData(
 	{
 		info->bNegotiationResponseUseGroupID = FALSE;
 	}
-	
+
 	// add ie
 	if(param->uIEsLength)
 	{
 		P2P_AddIe_Set(
-			&info->AdditionalIEs, 
+			&info->AdditionalIEs,
 			P2P_ADD_IE_GO_NEGOTIATION_RESPONSE,
 			param->uIEsLength,
 			(u1Byte *)param + param->uIEsOffset
 			);
 	}
 
-	// Update the state machine immediately 
+	// Update the state machine immediately
 	if(P2P_SC_SUCCESS == param->Status)
 	{
 		info->State = P2P_STATE_GO_NEGO_RSP_SEND;
@@ -631,7 +631,7 @@ n63c_SendAction_GoNegRsp_PrepareData(
 
 	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("update P2P state to 0x%x\n", info->State));
 	PlatformCancelTimer(info->pAdapter, &info->P2PMgntTimer);
-	PlatformSetTimer(info->pAdapter, &info->P2PMgntTimer, 0); 
+	PlatformSetTimer(info->pAdapter, &info->P2PMgntTimer, 0);
 
 	return status;
 }
@@ -646,7 +646,7 @@ n63c_SendAction_GoNegConfirm_PrepareData(
 	NDIS_STATUS					status = NDIS_STATUS_SUCCESS;
 	P2P_INFO					*info = GET_P2P_INFO(pAdapter);
 	OCTET_STRING				osWpsAttr, osDpid;
-	
+
 	//
 	// ref: N63C_SET_OID_DOT11_WFD_SEND_GO_NEGOTIATION_CONFIRM
 	//
@@ -664,8 +664,8 @@ n63c_SendAction_GoNegConfirm_PrepareData(
 		cpMacAddr(info->NegotiationConfirmGroupIDDeviceAddress, param->GroupID.DeviceAddress);
 		info->uNegotiationConfirmGroupIDSSIDLength = (u1Byte)param->GroupID.SSID.uSSIDLength;
 		PlatformMoveMemory(
-				info->NegotiationConfirmGroupIDSSID, 
-				param->GroupID.SSID.ucSSID, 
+				info->NegotiationConfirmGroupIDSSID,
+				param->GroupID.SSID.ucSSID,
 				info->uNegotiationConfirmGroupIDSSIDLength
 			);
 	}
@@ -678,7 +678,7 @@ n63c_SendAction_GoNegConfirm_PrepareData(
 	if(param->uIEsLength)
 	{
 		P2P_AddIe_Set(
-			&info->AdditionalIEs, 
+			&info->AdditionalIEs,
 			P2P_ADD_IE_GO_NEGOTIATION_CONFIRM,
 			param->uIEsLength,
 			(u1Byte *)param + param->uIEsOffset
@@ -719,7 +719,7 @@ N63C_SendAction_UpdateTxFrameDialogToken(
 	P2P_DEV_TYPE				devType = P2P_DEV_TYPE_LEGACY;
 
 	RT_ASSERT(frame, ("%s(): buf is NULL!!!\n", __FUNCTION__));
-	RT_ASSERT(FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN + 1 <= FrameBuf_Length(frame), 
+	RT_ASSERT(FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN + 1 <= FrameBuf_Length(frame),
 		("%s(): invalid frame length: %u\n", __FUNCTION__, FrameBuf_Length(frame)));
 
 	// determine dev type
@@ -745,7 +745,7 @@ N63C_SendAction_UpdateTxFrameDialogToken(
 
 	// update to the p2p dev list
 	devAddr = Frame_Addr1(frame->os);
-	
+
 	if(P2P_DEV_TYPE_GO == devType && NULL != (pDev = p2p_DevList_GetGo(&info->devList, devAddr)))
 	{
 		mac = pDev->mac;
@@ -756,16 +756,16 @@ N63C_SendAction_UpdateTxFrameDialogToken(
 		{
 			RT_TRACE(COMP_OID_SET, DBG_WARNING, ("bProvisionRequestUseGroupID is set but can't find the GO in dev list\n"));
 		}
-		
+
 		mac = devAddr;
 	}
-	
-	p2p_DevList_TxUpdate(&info->devList, 
-			n63c_SendAction_XlatFrameType(frameType), 
-			mac, 
-			devType, 
-			frame, 
-			token, 
+
+	p2p_DevList_TxUpdate(&info->devList,
+			n63c_SendAction_XlatFrameType(frameType),
+			mac,
+			devType,
+			frame,
+			token,
 			OffChnlTx_GetTxChnl(req));
 
 	info->DialogToken = token;
@@ -779,9 +779,9 @@ N63C_SendAction_SkipProbeTemporarilly(
 	)
 {
 	RT_STATUS					status = RT_STATUS_SUCCESS;
-	
+
 	RT_ASSERT(req, ("%s(): req is NULL!!!\n", __FUNCTION__));
-	
+
 	status = OffChnlTx_SkipProbeTemporarilly(req);
 
 	return status;
@@ -846,37 +846,37 @@ N63C_SendAction_PdReq(
 	// setup cb
 	ctx = (N63C_SEND_ACTION_CTX *)OffChnlTx_GetCliRsvdBuf(req);
 	OffChnlTx_SetupCbCtx(req, stateCb, ctx);
-	n63c_SendAction_InitCtx(ctx, 
-		N63C_P2P_ACTION_FRAME_PROVISION_DISCOVERY_REQUEST, 
-		N63C_P2P_ACTION_FRAME_PROVISION_DISCOVERY_RESPONSE, 
-		pAdapter, 
-		pDev->mac, 
+	n63c_SendAction_InitCtx(ctx,
+		N63C_P2P_ACTION_FRAME_PROVISION_DISCOVERY_REQUEST,
+		N63C_P2P_ACTION_FRAME_PROVISION_DISCOVERY_RESPONSE,
+		pAdapter,
+		pDev->mac,
 		(P2P_DEV_TYPE_GO == devType) ? TRUE : FALSE,
-		param->DialogToken, 
+		param->DialogToken,
 		oldToken,
-		param->uSendTimeout, 
-		req, 
+		param->uSendTimeout,
+		req,
 		P2P_EVENT_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE
 		);
 
 	// flush action frames in dev list so we don't drop frames because of dialog token mismatch
 	p2p_DevList_FlushActionFrames(&info->devList, pDev->mac, pDev->type);
-	
+
 	// construct pd req
 	frame = OffChnlTx_GetTxFrameBuf(req);
 	p2p_Construct_PDReq(info, frame, param->PeerDeviceAddress, param->DialogToken, 0);
 
 	// update to the p2p dev list
-	p2p_DevList_TxUpdate(&info->devList, P2P_FID_PD_REQ, 
-			pDev->mac, 
-			pDev->type, 
-			frame, 
+	p2p_DevList_TxUpdate(&info->devList, P2P_FID_PD_REQ,
+			pDev->mac,
+			pDev->type,
+			frame,
 			ReadEF1Byte(FrameBuf_Head(frame) + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN),
 			txChnl);
 
 	// issue req
 	n63c_SendAction_IssueReq(pAdapter, req, "n63c-send-p2p-action-frame-pd-req");
-	
+
 	return req;
 }
 
@@ -911,9 +911,9 @@ N63C_SendAction_PdRsp(
 	}
 
 	// prepare off chnl tx req
-	if(NULL == (req = n63c_SendAction_PrepareReq(pAdapter, 
-						txMac, 
-						txChnl, 
+	if(NULL == (req = n63c_SendAction_PrepareReq(pAdapter,
+						txMac,
+						txChnl,
 						param->uSendTimeout)))
 	{
 		return NULL;
@@ -926,34 +926,34 @@ N63C_SendAction_PdRsp(
 	// setup cb
 	ctx = (N63C_SEND_ACTION_CTX *)OffChnlTx_GetCliRsvdBuf(req);
 	OffChnlTx_SetupCbCtx(req, stateCb, ctx);
-	n63c_SendAction_InitCtx(ctx, 
-		N63C_P2P_ACTION_FRAME_PROVISION_DISCOVERY_RESPONSE, 
-		N63C_P2P_ACTION_FRAME_MAX_VALUE, 
-		pAdapter, 
-		param->ReceiverDeviceAddress, 
+	n63c_SendAction_InitCtx(ctx,
+		N63C_P2P_ACTION_FRAME_PROVISION_DISCOVERY_RESPONSE,
+		N63C_P2P_ACTION_FRAME_MAX_VALUE,
+		pAdapter,
+		param->ReceiverDeviceAddress,
 		FALSE,
-		param->DialogToken, 
+		param->DialogToken,
 		oldToken,
-		param->uSendTimeout, 
-		req, 
+		param->uSendTimeout,
+		req,
 		P2P_EVENT_PROVISION_DISCOVERY_RESPONSE_SEND_COMPLETE
 		);
-	
+
 	// construct confirm
 	frame = OffChnlTx_GetTxFrameBuf(req);
 	p2p_Construct_PDRsp(info, param->DialogToken, NULL, 0, frame, txMac);
-	
+
 	// update to the p2p dev list
-	p2p_DevList_TxUpdate(&info->devList, P2P_FID_PD_RSP, 
-			txMac, 
-			P2P_DEV_TYPE_DEV, 
-			frame, 
-			ReadEF1Byte(FrameBuf_Head(frame) + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN), 
+	p2p_DevList_TxUpdate(&info->devList, P2P_FID_PD_RSP,
+			txMac,
+			P2P_DEV_TYPE_DEV,
+			frame,
+			ReadEF1Byte(FrameBuf_Head(frame) + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN),
 			txChnl);
 
 	// issue req
 	n63c_SendAction_IssueReq(pAdapter, req, "n63c-send-p2p-action-pd-rsp");
-	
+
 	return req;
 }
 
@@ -994,19 +994,19 @@ N63C_SendAction_InvitationReq(
 	// setup cb
 	ctx = (N63C_SEND_ACTION_CTX *)OffChnlTx_GetCliRsvdBuf(req);
 	OffChnlTx_SetupCbCtx(req, stateCb, ctx);
-	n63c_SendAction_InitCtx(ctx, 
-		N63C_P2P_ACTION_FRAME_INVITATION_REQUEST, 
-		N63C_P2P_ACTION_FRAME_INVITATION_RESPONSE, 
-		pAdapter, 
-		param->PeerDeviceAddress, 
+	n63c_SendAction_InitCtx(ctx,
+		N63C_P2P_ACTION_FRAME_INVITATION_REQUEST,
+		N63C_P2P_ACTION_FRAME_INVITATION_RESPONSE,
+		pAdapter,
+		param->PeerDeviceAddress,
 		FALSE,
-		param->DialogToken, 
+		param->DialogToken,
 		oldToken,
-		param->uSendTimeout, 
-		req, 
+		param->uSendTimeout,
+		req,
 		P2P_EVENT_INVITATION_REQUEST_SEND_COMPLETE
 		);
-	
+
 	// construct pd req
 	frame = OffChnlTx_GetTxFrameBuf(req);
 	p2p_Construct_InvitationReq(info, frame, param->PeerDeviceAddress, param->DialogToken);
@@ -1015,16 +1015,16 @@ N63C_SendAction_InvitationReq(
 	p2p_DevList_FlushActionFrames(&info->devList, param->PeerDeviceAddress, P2P_DEV_TYPE_DEV);
 
 	// update to the p2p dev list
-	p2p_DevList_TxUpdate(&info->devList, P2P_FID_INV_REQ, 
-			param->PeerDeviceAddress, 
-			P2P_DEV_TYPE_DEV, 
-			frame, 
-			ReadEF1Byte(FrameBuf_Head(frame) + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN), 
+	p2p_DevList_TxUpdate(&info->devList, P2P_FID_INV_REQ,
+			param->PeerDeviceAddress,
+			P2P_DEV_TYPE_DEV,
+			frame,
+			ReadEF1Byte(FrameBuf_Head(frame) + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN),
 			txChnl);
 
 	// issue req
 	n63c_SendAction_IssueReq(pAdapter, req, "n63c-send-p2p-action-frame-invitation-req");
-	
+
 	return req;
 }
 
@@ -1059,9 +1059,9 @@ N63C_SendAction_InvitationRsp(
 	}
 
 	// prepare off chnl tx req
-	if(NULL == (req = n63c_SendAction_PrepareReq(pAdapter, 
-						txMac, 
-						txChnl, 
+	if(NULL == (req = n63c_SendAction_PrepareReq(pAdapter,
+						txMac,
+						txChnl,
 						param->uSendTimeout)))
 	{
 		return NULL;
@@ -1074,34 +1074,34 @@ N63C_SendAction_InvitationRsp(
 	// setup cb
 	ctx = (N63C_SEND_ACTION_CTX *)OffChnlTx_GetCliRsvdBuf(req);
 	OffChnlTx_SetupCbCtx(req, stateCb, ctx);
-	n63c_SendAction_InitCtx(ctx, 
-		N63C_P2P_ACTION_FRAME_INVITATION_RESPONSE, 
-		N63C_P2P_ACTION_FRAME_MAX_VALUE, 
-		pAdapter, 
-		param->ReceiverDeviceAddress, 
+	n63c_SendAction_InitCtx(ctx,
+		N63C_P2P_ACTION_FRAME_INVITATION_RESPONSE,
+		N63C_P2P_ACTION_FRAME_MAX_VALUE,
+		pAdapter,
+		param->ReceiverDeviceAddress,
 		FALSE,
-		param->DialogToken, 
+		param->DialogToken,
 		oldToken,
-		param->uSendTimeout, 
-		req, 
+		param->uSendTimeout,
+		req,
 		P2P_EVENT_INVITATION_RESPONSE_SEND_COMPLETE
 		);
-	
+
 	// construct confirm
 	frame = OffChnlTx_GetTxFrameBuf(req);
 	p2p_Construct_InvitationRsp(info, param->DialogToken, frame, txMac);
 
 	// update to the p2p dev list
-	p2p_DevList_TxUpdate(&info->devList, P2P_FID_INV_RSP, 
-			txMac, 
+	p2p_DevList_TxUpdate(&info->devList, P2P_FID_INV_RSP,
+			txMac,
 			P2P_DEV_TYPE_DEV,
-			frame, 
-			ReadEF1Byte(FrameBuf_Head(frame) + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN), 
+			frame,
+			ReadEF1Byte(FrameBuf_Head(frame) + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN),
 			txChnl);
 
 	// issue req
 	n63c_SendAction_IssueReq(pAdapter, req, "n63c-send-p2p-action-frame-invitation-rsp");
-	
+
 	return req;
 }
 
@@ -1142,34 +1142,34 @@ N63C_SendAction_GoNegReq(
 	// setup cb
 	ctx = (N63C_SEND_ACTION_CTX *)OffChnlTx_GetCliRsvdBuf(req);
 	OffChnlTx_SetupCbCtx(req, stateCb, ctx);
-	n63c_SendAction_InitCtx(ctx, 
-		N63C_P2P_ACTION_FRAME_GO_NEGOTIATION_REQUEST, 
-		N63C_P2P_ACTION_FRAME_GO_NEGOTIATION_RESPONSE, 
-		pAdapter, 
-		param->PeerDeviceAddress, 
+	n63c_SendAction_InitCtx(ctx,
+		N63C_P2P_ACTION_FRAME_GO_NEGOTIATION_REQUEST,
+		N63C_P2P_ACTION_FRAME_GO_NEGOTIATION_RESPONSE,
+		pAdapter,
+		param->PeerDeviceAddress,
 		FALSE,
-		param->DialogToken, 
+		param->DialogToken,
 		oldToken,
-		param->uSendTimeout, 
-		req, 
+		param->uSendTimeout,
+		req,
 		P2P_EVENT_GO_NEGOTIATION_REQUEST_SEND_COMPLETE
 		);
-	
+
 	// construct pd req
 	frame = OffChnlTx_GetTxFrameBuf(req);
 	p2p_Construct_GoNegReq(info, frame, param->PeerDeviceAddress, param->DialogToken);
 
 	// update to the p2p dev list
-	p2p_DevList_TxUpdate(&info->devList, P2P_FID_GO_NEG_REQ, 
-			param->PeerDeviceAddress, 
-			P2P_DEV_TYPE_DEV, 
-			frame, 
+	p2p_DevList_TxUpdate(&info->devList, P2P_FID_GO_NEG_REQ,
+			param->PeerDeviceAddress,
+			P2P_DEV_TYPE_DEV,
+			frame,
 			ReadEF1Byte(FrameBuf_Head(frame) + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN),
 			txChnl);
 
 	// issue req
 	n63c_SendAction_IssueReq(pAdapter, req, "n63c-send-p2p-action-frame-go-neg-req");
-	
+
 	return req;
 }
 
@@ -1204,9 +1204,9 @@ N63C_SendAction_GoNegRsp(
 	}
 
 	// prepare off chnl tx req
-	if(NULL == (req = n63c_SendAction_PrepareReq(pAdapter, 
-						txMac, 
-						txChnl, 
+	if(NULL == (req = n63c_SendAction_PrepareReq(pAdapter,
+						txMac,
+						txChnl,
 						param->uSendTimeout)))
 	{
 		return NULL;
@@ -1217,34 +1217,34 @@ N63C_SendAction_GoNegRsp(
 	// setup cb
 	ctx = (N63C_SEND_ACTION_CTX *)OffChnlTx_GetCliRsvdBuf(req);
 	OffChnlTx_SetupCbCtx(req, stateCb, ctx);
-	n63c_SendAction_InitCtx(ctx, 
-		N63C_P2P_ACTION_FRAME_GO_NEGOTIATION_RESPONSE, 
-		N63C_P2P_ACTION_FRAME_GO_NEGOTIATION_CONFIRM, 
-		pAdapter, 
-		param->PeerDeviceAddress, 
+	n63c_SendAction_InitCtx(ctx,
+		N63C_P2P_ACTION_FRAME_GO_NEGOTIATION_RESPONSE,
+		N63C_P2P_ACTION_FRAME_GO_NEGOTIATION_CONFIRM,
+		pAdapter,
+		param->PeerDeviceAddress,
 		FALSE,
-		param->DialogToken, 
+		param->DialogToken,
 		oldToken,
-		param->uSendTimeout, 
-		req, 
+		param->uSendTimeout,
+		req,
 		P2P_EVENT_GO_NEGOTIATION_RESPONSE_SEND_COMPLETE
 		);
-	
+
 	// construct confirm
 	frame = OffChnlTx_GetTxFrameBuf(req);
 	p2p_Construct_GoNegRsp(info, param->DialogToken, frame, txMac);
-	
+
 	// update to the p2p dev list
-	p2p_DevList_TxUpdate(&info->devList, P2P_FID_GO_NEG_RSP, 
-			txMac, 
-			P2P_DEV_TYPE_DEV, 
-			frame, 
-			ReadEF1Byte(FrameBuf_Head(frame) + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN), 
+	p2p_DevList_TxUpdate(&info->devList, P2P_FID_GO_NEG_RSP,
+			txMac,
+			P2P_DEV_TYPE_DEV,
+			frame,
+			ReadEF1Byte(FrameBuf_Head(frame) + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN),
 			txChnl);
 
 	// issue req
 	n63c_SendAction_IssueReq(pAdapter, req, "n63c-send-p2p-action-frame-go-rsp");
-	
+
 	return req;
 }
 
@@ -1287,9 +1287,9 @@ N63C_SendAction_GoNegConfirm(
 	}
 
 	// prepare off chnl tx req
-	if(NULL == (req = n63c_SendAction_PrepareReq(pAdapter, 
-						txMac, 
-						txChnl, 
+	if(NULL == (req = n63c_SendAction_PrepareReq(pAdapter,
+						txMac,
+						txChnl,
 						param->uSendTimeout)))
 	{
 		return NULL;
@@ -1302,34 +1302,34 @@ N63C_SendAction_GoNegConfirm(
 	// setup cb
 	ctx = (N63C_SEND_ACTION_CTX *)OffChnlTx_GetCliRsvdBuf(req);
 	OffChnlTx_SetupCbCtx(req, stateCb, ctx);
-	n63c_SendAction_InitCtx(ctx, 
-		N63C_P2P_ACTION_FRAME_GO_NEGOTIATION_CONFIRM, 
-		N63C_P2P_ACTION_FRAME_MAX_VALUE, 
-		pAdapter, 
-		param->PeerDeviceAddress, 
+	n63c_SendAction_InitCtx(ctx,
+		N63C_P2P_ACTION_FRAME_GO_NEGOTIATION_CONFIRM,
+		N63C_P2P_ACTION_FRAME_MAX_VALUE,
+		pAdapter,
+		param->PeerDeviceAddress,
 		FALSE,
-		param->DialogToken, 
+		param->DialogToken,
 		oldToken,
-		param->uSendTimeout, 
-		req, 
+		param->uSendTimeout,
+		req,
 		P2P_EVENT_GO_NEGOTIATION_CONFIRM_SEND_COMPLETE
 		);
-	
+
 	// construct confirm
 	frame = OffChnlTx_GetTxFrameBuf(req);
 	p2p_Construct_GoNegConf(info, txToken, frame, txMac);
-	
+
 	// update to the p2p dev list
-	p2p_DevList_TxUpdate(&info->devList, P2P_FID_GO_NEG_CONF, 
-			txMac, 
-			P2P_DEV_TYPE_DEV, 
-			frame, 
-			ReadEF1Byte(FrameBuf_Head(frame) + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN), 
+	p2p_DevList_TxUpdate(&info->devList, P2P_FID_GO_NEG_CONF,
+			txMac,
+			P2P_DEV_TYPE_DEV,
+			frame,
+			ReadEF1Byte(FrameBuf_Head(frame) + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN),
 			txChnl);
 
 	// issue req
 	n63c_SendAction_IssueReq(pAdapter, req, "n63c-send-p2p-action-frame-go-confirm");
-	
+
 	return req;
 }
 

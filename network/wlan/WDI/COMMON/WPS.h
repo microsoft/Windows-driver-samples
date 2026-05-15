@@ -5,17 +5,17 @@
  *
  *
  * Note:		Declare some variable which will be used by any debug command.
- *			
  *
- * Export:		
  *
- * Abbrev:			
+ * Export:
  *
- * History:		
- *	Data		Who		Remark 
+ * Abbrev:
+ *
+ * History:
+ *	Data		Who		Remark
  *	06/15/2011  MHC   	Create initial version in different filed.
  *						Move WPS relative define to the header file.
- * 
+ *
  *****************************************************************************/
  /* Check to see if the file has been included already.  */
 #ifndef	__WPS_H__
@@ -46,7 +46,7 @@ typedef enum _WPS_INFO_OPCODE{
 	WPS_INFO_QUERY_INFO			 = 7,
 }WPS_INFO_OPCODE;
 
-/*------------------------------Define structure----------------------------*/ 
+/*------------------------------Define structure----------------------------*/
 
 
 //
@@ -72,7 +72,7 @@ typedef struct _SIMPLE_CONFIG_T{
 	u1Byte		ieProbeReqBuf[MAX_SIMPLE_CONFIG_IE_LEN_V2];
 	u2Byte		ieProbeRspLen;
 	u1Byte		ieProbeRspBuf[MAX_SIMPLE_CONFIG_IE_LEN_V2];
-	
+
 	u1Byte		AssembleIEBuf[MAX_SIMPLE_CONFIG_IE_ASSEMBLE_LEN]; // Buffer to assemble fragment IE.
 	u2Byte		AssembleIELen;
 	u1Byte		RecieveBuf[MAX_SIMPLE_Return_PacketLength];//Save The packet we Recieve
@@ -81,7 +81,7 @@ typedef struct _SIMPLE_CONFIG_T{
 	BOOLEAN       bFragmentIE;
 }SIMPLE_CONFIG_T, *PSIMPLE_CONFIG_T;
 
-/*------------------------------Define structure----------------------------*/ 
+/*------------------------------Define structure----------------------------*/
 
 
 /*------------------------Export global variable----------------------------*/

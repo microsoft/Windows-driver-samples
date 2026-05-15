@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //
 //       NotifyBasicNotification
@@ -28,17 +28,17 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense and 
+//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense and
 //                                              improve traces
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "Framework_WFPSamplerCalloutDriver.h" /// . 
+#include "Framework_WFPSamplerCalloutDriver.h" /// .
 #include "NotifyFunctions_BasicCallouts.tmh"   /// $(OBJ_PATH)\$(O)\
 
 /**
  @private_function="PrvBasicNotificationWorkItemRoutine"
- 
+
    Purpose:  Traces the appropriate notification event.                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -52,13 +52,13 @@ VOID PrvBasicNotificationWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
                                          _Inout_opt_ PVOID pContext)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PrvBasicNotificationWorkItemRoutine()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(pDeviceObject);
 
    NT_ASSERT(pContext);
@@ -143,19 +143,19 @@ VOID PrvBasicNotificationWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PrvBasicNotificationWorkItemRoutine()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @notify_function="NotifyBasicNotification"
- 
+
    Purpose:  Traces the notification event.                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

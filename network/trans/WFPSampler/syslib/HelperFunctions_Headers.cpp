@@ -6,13 +6,13 @@
 //      HelperFunctions_Headers.cpp
 //
 //   Abstract:
-//      This module contains kernel helper functions that assist with IP and Transport header 
+//      This module contains kernel helper functions that assist with IP and Transport header
 //         operations.
 //
 //   Naming Convention:
 //
 //      <Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       KrnlHlprIPHeaderCalculateV4Checksum
@@ -74,11 +74,11 @@
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
 //      December  13,   2013  -     1.1   -  Enhance annotations, add
-//                                              KrnlHlprIPHeaderGetDestinationAddressField, 
+//                                              KrnlHlprIPHeaderGetDestinationAddressField,
 //                                              KrnlHlprIPHeaderGetSourceAddressField,
 //                                              KrnlHlprIPHeaderGetVersionField,
 //                                              KrnlHlprTransportHeaderGetSourcePortField,
-//                                              KrnlHlprTransportHeaderGetDestinationPortField, add 
+//                                              KrnlHlprTransportHeaderGetDestinationPortField, add
 //                                              support for controlData, and fix various bugs.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@
 
 /**
  @private_kernel_helper_function="PrvKrnlHlprCopyBufferToMDL"
- 
+
    Purpose:  Copy a flat buffer into an MDL chain.                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -102,7 +102,7 @@ NTSTATUS PrvKrnlHlprCopyBufferToMDL(_In_reads_(bytesToCopy) const BYTE* pBuffer,
                                     _Out_ SIZE_T* pBytesCopied)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PrvKrnlHlprCopyBufferToMDL()\n");
@@ -159,7 +159,7 @@ NTSTATUS PrvKrnlHlprCopyBufferToMDL(_In_reads_(bytesToCopy) const BYTE* pBuffer,
        pMDL = pMDL->Next)
    {
       BYTE* pSystemAddress = 0;
-  
+
       mdlByteCount = MmGetMdlByteCount(pMDL);
       if(mdlByteCount)
       {
@@ -168,7 +168,7 @@ NTSTATUS PrvKrnlHlprCopyBufferToMDL(_In_reads_(bytesToCopy) const BYTE* pBuffer,
          mdlByteCount -= mdlOffset;
 
          copySize = min(remainingBytesToCopy,
-                        mdlByteCount);  
+                        mdlByteCount);
 
          pSystemAddress = (BYTE*)MmGetSystemAddressForMdlSafe(pMDL,
                                                               LowPagePriority | noExecute);
@@ -185,22 +185,22 @@ NTSTATUS PrvKrnlHlprCopyBufferToMDL(_In_reads_(bytesToCopy) const BYTE* pBuffer,
             mdlOffset = 0;
          }
          else
-         {  
+         {
             status = STATUS_INSUFFICIENT_RESOURCES;
 
             HLPR_BAIL;
          }
       }
-   }  
+   }
 
    HLPR_BAIL_LABEL:
-  
+
    *pBytesCopied = bytesToCopy - remainingBytesToCopy;
 
    ASSERT(*pBytesCopied <= bytesToCopy);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PrvKrnlHlprCopyBufferToMDL() [status: %#x]\n",
@@ -216,7 +216,7 @@ NTSTATUS PrvKrnlHlprCopyBufferToMDL(_In_reads_(bytesToCopy) const BYTE* pBuffer,
 
 /**
  @kernel_helper_function="KrnlHlprMACHeaderDestroy"
- 
+
    Purpose:  Frees the allocated memory indicated in KrnlMACHeaderGet().                        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -229,20 +229,20 @@ _Success_(*ppMACHeader == 0)
 inline VOID KrnlHlprMACHeaderDestroy(_Inout_ VOID** ppMACHeader)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprMACHeaderDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppMACHeader);
 
    HLPR_DELETE_ARRAY(*ppMACHeader,
                      WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprMACHeaderDestroy()\n");
@@ -254,14 +254,14 @@ inline VOID KrnlHlprMACHeaderDestroy(_Inout_ VOID** ppMACHeader)
 
 /**
  @kernel_helper_function="KrnlHlprMACHeaderGet"
- 
+
    Purpose:  Retrieve a pointer to the MAC Header from the NET_BUFFER_LIST.                     <br>
                                                                                                 <br>
    Notes:    Assumes the NBL is at the start of the MAC Header.                                 <br>
                                                                                                 <br>
              Function is overloaded.                                                            <br>
                                                                                                 <br>
-             If needToFreeMemory is TRUE, caller should call KrnlHlprMACHeaderDestroy() when 
+             If needToFreeMemory is TRUE, caller should call KrnlHlprMACHeaderDestroy() when
                 finished  with the header.                                                      <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -278,13 +278,13 @@ NTSTATUS KrnlHlprMACHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
                               _In_ UINT32 macHeaderSize)            /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprMACHeaderGet()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pNetBufferList);
    NT_ASSERT(ppMACHeader);
    NT_ASSERT(pNeedToFreeMemory);
@@ -348,7 +348,7 @@ NTSTATUS KrnlHlprMACHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprMACHeaderGet() [status: %#x]\n",
@@ -361,10 +361,10 @@ NTSTATUS KrnlHlprMACHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
 
 /**
  @kernel_helper_function="KrnlHlprMACHeaderModifySourceAddress"
- 
+
    Purpose:  Set the Source Address field in the MAC Header to the provided value.              <br>
                                                                                                 <br>
-   Notes:    The NetBufferList parameter is expected to be offset to the start of the MAC 
+   Notes:    The NetBufferList parameter is expected to be offset to the start of the MAC
              Header.                                                                            <br>
                                                                                                 <br>
              Assumes the Header is and Ethernet Header.                                         <br>
@@ -380,7 +380,7 @@ NTSTATUS KrnlHlprMACHeaderModifySourceAddress(_In_ const FWP_VALUE* pValue,
                                               _Inout_ NET_BUFFER_LIST* pNetBufferList)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprMACHeaderModifySourceAddress()\n");
@@ -433,7 +433,7 @@ NTSTATUS KrnlHlprMACHeaderModifySourceAddress(_In_ const FWP_VALUE* pValue,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprMACHeaderModifySourceAddress() [status: %#x]\n",
@@ -446,10 +446,10 @@ NTSTATUS KrnlHlprMACHeaderModifySourceAddress(_In_ const FWP_VALUE* pValue,
 
 /**
  @kernel_helper_function="KrnlHlprMACHeaderModifyDestinationAddress"
- 
+
    Purpose:  Set the Destination Address field in the MAC Header to the provided value.         <br>
                                                                                                 <br>
-   Notes:    The NetBufferList parameter is expected to be offset to the start of the MAC 
+   Notes:    The NetBufferList parameter is expected to be offset to the start of the MAC
              Header.                                                                            <br>
                                                                                                 <br>
              Assumes the Header is and Ethernet Header.                                         <br>
@@ -465,7 +465,7 @@ NTSTATUS KrnlHlprMACHeaderModifyDestinationAddress(_In_ const FWP_VALUE* pValue,
                                                    _Inout_ NET_BUFFER_LIST* pNetBufferList)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprMACHeaderModifyDestinationAddress()\n");
@@ -518,7 +518,7 @@ NTSTATUS KrnlHlprMACHeaderModifyDestinationAddress(_In_ const FWP_VALUE* pValue,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprMACHeaderModifyDestinationAddress() [status: %#x]\n",
@@ -536,7 +536,7 @@ NTSTATUS KrnlHlprMACHeaderModifyDestinationAddress(_In_ const FWP_VALUE* pValue,
 
 /**
  @kernel_helper_function="KrnlHlprIPHeaderDestroy"
- 
+
    Purpose:  Frees the allocated memory indicated in KrnlIPHeaderGet().                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -549,37 +549,37 @@ _Success_(*ppIPHeader == 0)
 inline VOID KrnlHlprIPHeaderDestroy(_Inout_ VOID** ppIPHeader)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprIPHeaderDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppIPHeader);
 
    HLPR_DELETE_ARRAY(*ppIPHeader,
                      WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprIPHeaderDestroy()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprIPHeaderGet"
- 
+
    Purpose:  Retrieve a pointer to the IP Header from the NET_BUFFER_LIST.                      <br>
                                                                                                 <br>
    Notes:    Function is overloaded                            .                                <br>
                                                                                                 <br>
-             If needToFreeMemory is TRUE, caller should call KrnlHlprIPHeaderDestroy() when 
+             If needToFreeMemory is TRUE, caller should call KrnlHlprIPHeaderDestroy() when
                 finished  with the header.                                                      <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -668,7 +668,7 @@ NTSTATUS KrnlHlprIPHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
          direction = FWP_DIRECTION_OUTBOUND;
 
          /// At the IP Header
-   
+
          break;
       }
       case FWPS_LAYER_IPFORWARD_V4:
@@ -677,7 +677,7 @@ NTSTATUS KrnlHlprIPHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
       case FWPS_LAYER_IPFORWARD_V6_DISCARD:
       {
          /// At the IP Header
-   
+
          break;
       }
       case FWPS_LAYER_INBOUND_TRANSPORT_V4:
@@ -703,7 +703,7 @@ NTSTATUS KrnlHlprIPHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
          direction = FWP_DIRECTION_OUTBOUND;
 
          ipHeaderAvailable = FALSE;
-   
+
          break;
       }
       case FWPS_LAYER_STREAM_V4:
@@ -732,7 +732,7 @@ NTSTATUS KrnlHlprIPHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
             else
                bytesRetreated = ipHeaderSize + transportHeaderSize;
          }
-   
+
          break;
       }
       case FWPS_LAYER_INBOUND_ICMP_ERROR_V4:
@@ -826,7 +826,7 @@ NTSTATUS KrnlHlprIPHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
             else
                bytesRetreated = ipHeaderSize + transportHeaderSize;
          }
-   
+
          break;
       }
 
@@ -879,9 +879,9 @@ NTSTATUS KrnlHlprIPHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
 
          break;
       }
-   
+
 #if(NTDDI_VERSION >= NTDDI_WIN8)
-   
+
       case FWPS_LAYER_INBOUND_MAC_FRAME_ETHERNET:
       {
          UINT16 etherType = pClassifyValues->incomingValue[FWPS_FIELD_INBOUND_MAC_FRAME_ETHERNET_ETHER_TYPE].value.uint16;
@@ -1031,12 +1031,12 @@ NTSTATUS KrnlHlprIPHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
       if(!pContiguousData)
       {
          status = STATUS_UNSUCCESSFUL;
-      
+
          DbgPrintEx(DPFLTR_IHVNETWORK_ID,
                     DPFLTR_ERROR_LEVEL,
                     " !!!! KrnlHlprIPHeaderGet : NdisGetDataBuffer() [status: %#x]\n",
                     status);
-      
+
          HLPR_BAIL;
       }
 
@@ -1076,14 +1076,14 @@ NTSTATUS KrnlHlprIPHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
 
 /**
  @kernel_helper_function="KrnlHlprIPHeaderGet"
- 
+
    Purpose:  Retrieve a pointer to the IP Header from the NET_BUFFER_LIST.                      <br>
                                                                                                 <br>
    Notes:    Assumes the NBL is at the start of the IP Header.                                  <br>
                                                                                                 <br>
              Function is overloaded.                                                            <br>
                                                                                                 <br>
-             If needToFreeMemory is TRUE, caller should call KrnlHlprIPHeaderDestroy() when 
+             If needToFreeMemory is TRUE, caller should call KrnlHlprIPHeaderDestroy() when
                 finished  with the header.                                                      <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -1100,13 +1100,13 @@ NTSTATUS KrnlHlprIPHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
                              _In_ UINT32 ipHeaderSize)                               /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprIPHeaderGet()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pNetBufferList);
    NT_ASSERT(ppIPHeader);
    NT_ASSERT(pNeedToFreeMemory);
@@ -1170,20 +1170,20 @@ NTSTATUS KrnlHlprIPHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprIPHeaderGet() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprIPHeaderGetDestinationAddressField"
- 
+
    Purpose:  Retrieve the source address from the IP header.                                    <br>
                                                                                                 <br>
    Notes:    Assumes the NBL is at the start of the IP Header.                                  <br>
@@ -1226,7 +1226,7 @@ BYTE* KrnlHlprIPHeaderGetDestinationAddressField(_In_ NET_BUFFER_LIST* pNetBuffe
    else
    {
       IP_HEADER_V4* pIPv4Header = (IP_HEADER_V4*)pIPHeader;
-   
+
       pDestinationAddress = pIPv4Header->pDestinationAddress;
 
    }
@@ -1270,7 +1270,7 @@ BYTE* KrnlHlprIPHeaderGetDestinationAddressField(_In_ NET_BUFFER_LIST* pNetBuffe
 
 /**
  @kernel_helper_function="KrnlHlprIPHeaderGetSourceAddressField"
- 
+
    Purpose:  Retrieve the source address from the IP header.                                    <br>
                                                                                                 <br>
    Notes:    Assumes the NBL is at the start of the IP Header.                                  <br>
@@ -1285,7 +1285,7 @@ BYTE* KrnlHlprIPHeaderGetSourceAddressField(_In_ NET_BUFFER_LIST* pNetBufferList
                                             _In_ ADDRESS_FAMILY addressFamily)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprIPHeaderGetSourceAddressField()\n");
@@ -1313,7 +1313,7 @@ BYTE* KrnlHlprIPHeaderGetSourceAddressField(_In_ NET_BUFFER_LIST* pNetBufferList
    else
    {
       IP_HEADER_V4* pIPv4Header = (IP_HEADER_V4*)pIPHeader;
-   
+
       pSourceAddress = pIPv4Header->pSourceAddress;
 
    }
@@ -1357,7 +1357,7 @@ BYTE* KrnlHlprIPHeaderGetSourceAddressField(_In_ NET_BUFFER_LIST* pNetBufferList
 
 /**
  @kernel_helper_function="KrnlHlprIPHeaderGetProtocolField"
- 
+
    Purpose:  Retrieve the protocol from the IP header.                                          <br>
                                                                                                 <br>
    Notes:    Assumes the NBL is at the start of the IP Header.                                  <br>
@@ -1399,7 +1399,7 @@ IPPROTO KrnlHlprIPHeaderGetProtocolField(_In_ NET_BUFFER_LIST* pNetBufferList,
    else
    {
       IP_HEADER_V4* pIPv4Header = (IP_HEADER_V4*)pIPHeader;
-   
+
       protocol = (IPPROTO)pIPv4Header->protocol;
    }
 
@@ -1442,7 +1442,7 @@ IPPROTO KrnlHlprIPHeaderGetProtocolField(_In_ NET_BUFFER_LIST* pNetBufferList,
 
 /**
  @kernel_helper_function="KrnlHlprIPHeaderGetVersionField"
- 
+
    Purpose:  Retrieve the version from the IP header.                                           <br>
                                                                                                 <br>
    Notes:    Assumes the NBL is at the start of the IP Header.                                  <br>
@@ -1515,7 +1515,7 @@ UINT8 KrnlHlprIPHeaderGetVersionField(_In_ NET_BUFFER_LIST* pNetBufferList)
 
 /**
  @kernel_helper_function="KrnlHlprIPHeaderCalculateV4Checksum"
- 
+
    Purpose:  Calculate the Checksum for the IPv4 Header.                                        <br>
                                                                                                 <br>
    Notes:    Assumes the NBL is at the start of the IPv4 Header.                                <br>
@@ -1529,13 +1529,13 @@ VOID KrnlHlprIPHeaderCalculateV4Checksum(_Inout_ NET_BUFFER_LIST* pNetBufferList
                                          _In_ UINT32 ipHeaderSize)                 /* IPV4_HEADER_MIN_SIZE */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprIPHeaderCalculateV4Checksum()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pNetBufferList);
 
    NTSTATUS      status      = STATUS_SUCCESS;
@@ -1593,19 +1593,19 @@ VOID KrnlHlprIPHeaderCalculateV4Checksum(_Inout_ NET_BUFFER_LIST* pNetBufferList
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprIPHeaderCalculateV4Checksum()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprIPHeaderModifySourceAddress"
- 
+
    Purpose:  Set the Source Address field in the IP Header to the provided value.               <br>
                                                                                                 <br>
    Notes:    The NetBufferList parameter is expected to be offset to the start of the IP Header.<br>
@@ -1627,13 +1627,13 @@ NTSTATUS KrnlHlprIPHeaderModifySourceAddress(_In_ const FWP_VALUE* pValue,
                                              _In_ BOOLEAN convertByteOrder)           /* FALSE */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprIPHeaderModifySourceAddress()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pValue);
    NT_ASSERT(pNetBufferList);
 
@@ -1702,20 +1702,20 @@ NTSTATUS KrnlHlprIPHeaderModifySourceAddress(_In_ const FWP_VALUE* pValue,
       KrnlHlprIPHeaderCalculateV4Checksum(pNetBufferList);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprIPHeaderModifySourceAddress() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprIPHeaderModifyDestinationAddress"
- 
+
    Purpose:  Set the Destination Address field in the IP Header to the provided value.          <br>
                                                                                                 <br>
    Notes:    The NetBufferList parameter is expected to be offset to the start of the IP Header.<br>
@@ -1737,13 +1737,13 @@ NTSTATUS KrnlHlprIPHeaderModifyDestinationAddress(_In_ const FWP_VALUE* pValue,
                                                   _In_ BOOLEAN convertByteOrder)           /* FALSE */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprIPHeaderModifyDestinationAddress()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pValue);
    NT_ASSERT(pNetBufferList);
 
@@ -1812,29 +1812,29 @@ NTSTATUS KrnlHlprIPHeaderModifyDestinationAddress(_In_ const FWP_VALUE* pValue,
       KrnlHlprIPHeaderCalculateV4Checksum(pNetBufferList);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprIPHeaderModifyDestinationAddress() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprIPHeaderModifyLoopbackToLocal"
- 
-   Purpose:  Modifies the source address and destination address from software loopback to an 
+
+   Purpose:  Modifies the source address and destination address from software loopback to an
              actual local IP address (i.e. 127.0.0.1 to 157.59.10.233).                         <br>
                                                                                                 <br>
    Notes:    The NetBufferList parameter is expected to be offset to the start of the IP Header.<br>
                                                                                                 <br>
-             The source address is modified to pass TCP/IP's source IP address validation, and 
+             The source address is modified to pass TCP/IP's source IP address validation, and
              the destination address is modified to pass TCP/IP's zone crossing restrictions.   <br>
                                                                                                 <br>
-             For some protocols, the need to capture and modify a response packet's addresses 
+             For some protocols, the need to capture and modify a response packet's addresses
              back to the loopback addresses will exist (i.e. ICMP Echo Requests)                <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -1852,13 +1852,13 @@ NTSTATUS KrnlHlprIPHeaderModifyLoopbackToLocal(_In_ const FWPS_INCOMING_METADATA
                                                _In_ UINT32 controlDataSize)                                    /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprIPHeaderModifyLoopbackToLocal()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pMetadata);
    NT_ASSERT(pLoopbackAddress);
    NT_ASSERT(pNetBufferList);
@@ -1975,14 +1975,14 @@ NTSTATUS KrnlHlprIPHeaderModifyLoopbackToLocal(_In_ const FWPS_INCOMING_METADATA
       KrnlHlprIPHeaderDestroy(&pIPHeader);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprIPHeaderModifyLoopbackToLocal() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
@@ -1993,7 +1993,7 @@ NTSTATUS KrnlHlprIPHeaderModifyLoopbackToLocal(_In_ const FWPS_INCOMING_METADATA
 
 /**
  @kernel_helper_function="KrnlHlprTransportHeaderDestroy"
- 
+
    Purpose:  Frees the allocated memory indicated in KrnlTransportHeaderGet().                  <br>
                                                                                                 <br>
    Notes:    For use with generic and specific transport header functions.                      <br>
@@ -2006,37 +2006,37 @@ _Success_(*ppTransportHeader == 0)
 inline VOID KrnlHlprTransportHeaderDestroy(_Inout_ VOID** ppTransportHeader)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprTransportHeaderDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppTransportHeader);
 
    HLPR_DELETE_ARRAY(*ppTransportHeader,
                      WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprTransportHeaderDestroy()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprTransportHeaderGet"
- 
+
    Purpose:  Retrieve a pointer to the Transport Header from the NET_BUFFER_LIST.               <br>
                                                                                                 <br>
    Notes:    Function is overloaded.                            .                               <br>
                                                                                                 <br>
-             If needToFreeMemory is TRUE, caller should call KrnlHlprTransportHeaderDestroy() 
+             If needToFreeMemory is TRUE, caller should call KrnlHlprTransportHeaderDestroy()
                 when finished with the header.                                                  <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -2113,7 +2113,7 @@ NTSTATUS KrnlHlprTransportHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
       case FWPS_LAYER_OUTBOUND_IPPACKET_V6_DISCARD:
       {
          bytesAdvanced = ipHeaderSize;
-   
+
          break;
       }
       case FWPS_LAYER_IPFORWARD_V4:
@@ -2122,7 +2122,7 @@ NTSTATUS KrnlHlprTransportHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
       case FWPS_LAYER_IPFORWARD_V6_DISCARD:
       {
          bytesAdvanced = ipHeaderSize;
-   
+
          break;
       }
       case FWPS_LAYER_INBOUND_TRANSPORT_V4:
@@ -2150,7 +2150,7 @@ NTSTATUS KrnlHlprTransportHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
          protocol = (IPPROTO)(pClassifyValues->incomingValue[FWPS_FIELD_OUTBOUND_TRANSPORT_V4_IP_PROTOCOL].value.uint8);
 
          /// At the Transport Header
-   
+
          break;
       }
       case FWPS_LAYER_STREAM_V4:
@@ -2185,7 +2185,7 @@ NTSTATUS KrnlHlprTransportHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
             else
                bytesRetreated = transportHeaderSize;
          }
-   
+
          break;
       }
       case FWPS_LAYER_INBOUND_ICMP_ERROR_V4:
@@ -2269,7 +2269,7 @@ NTSTATUS KrnlHlprTransportHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
          {
             /// At the Transport Header
          }
-   
+
          break;
       }
       case FWPS_LAYER_ALE_FLOW_ESTABLISHED_V4:
@@ -2295,7 +2295,7 @@ NTSTATUS KrnlHlprTransportHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
             else
                bytesRetreated =  transportHeaderSize;
          }
-   
+
          break;
       }
 
@@ -2352,9 +2352,9 @@ NTSTATUS KrnlHlprTransportHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
 
          break;
       }
-   
+
 #if(NTDDI_VERSION >= NTDDI_WIN8)
-   
+
       case FWPS_LAYER_INBOUND_MAC_FRAME_ETHERNET:
       case FWPS_LAYER_OUTBOUND_MAC_FRAME_ETHERNET:
       case FWPS_LAYER_INBOUND_MAC_FRAME_NATIVE:
@@ -2461,12 +2461,12 @@ NTSTATUS KrnlHlprTransportHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
       if(!pContiguousData)
       {
          status = STATUS_UNSUCCESSFUL;
-      
+
          DbgPrintEx(DPFLTR_IHVNETWORK_ID,
                     DPFLTR_ERROR_LEVEL,
                     " !!!! KrnlHlprTransportHeaderGet : NdisGetDataBuffer() [status: %#x]\n",
                     status);
-      
+
          HLPR_BAIL;
       }
 
@@ -2509,14 +2509,14 @@ NTSTATUS KrnlHlprTransportHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
 
 /**
  @kernel_helper_function="KrnlHlprTransportHeaderGet"
- 
+
    Purpose:  Retrieve a pointer to the Transport Header from the NET_BUFFER_LIST.               <br>
                                                                                                 <br>
    Notes:    Assumes the NBL is at the start of the Transport Header.                           <br>
                                                                                                 <br>
              Function is overloaded.                                                            <br>
                                                                                                 <br>
-             If needToFreeMemory is TRUE, caller should call KrnlHlprTransportHeaderDestroy() 
+             If needToFreeMemory is TRUE, caller should call KrnlHlprTransportHeaderDestroy()
                 when finished  with the header.                                                 <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -2533,13 +2533,13 @@ NTSTATUS KrnlHlprTransportHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
                                     _In_ UINT32 transportHeaderSize)                                      /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprTransportHeaderGet()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pNetBufferList);
    NT_ASSERT(ppTransportHeader);
    NT_ASSERT(pNeedToFreeMemory);
@@ -2604,20 +2604,20 @@ NTSTATUS KrnlHlprTransportHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprTransportHeaderGet() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprTransportHeaderGetSourcePortField"
- 
+
    Purpose:  Retrieve the source port from the Transport header.                                <br>
                                                                                                 <br>
    Notes:    Assumes the NBL is at the start of the Transport Header.                           <br>
@@ -2725,7 +2725,7 @@ UINT16 KrnlHlprTransportHeaderGetSourcePortField(_In_ NET_BUFFER_LIST* pNetBuffe
 
 /**
  @kernel_helper_function="KrnlHlprTransportHeaderGetDestinationPortField"
- 
+
    Purpose:  Retrieve the destination port from the Transport header.                           <br>
                                                                                                 <br>
    Notes:    Assumes the NBL is at the start of the Transport Header.                           <br>
@@ -2838,7 +2838,7 @@ UINT16 KrnlHlprTransportHeaderGetDestinationPortField(_In_ NET_BUFFER_LIST* pNet
 
 /**
  @kernel_helper_function="KrnlHlprICMPv4HeaderGet"
- 
+
    Purpose:  Retrieve a pointer to the ICMPv4 Header from the NET_BUFFER_LIST.                  <br>
                                                                                                 <br>
    Notes:    Assumes the NBL is at the start of the ICMPv4 Header.                              <br>
@@ -2857,7 +2857,7 @@ NTSTATUS KrnlHlprICMPv4HeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
                                  _In_ UINT32 icmpHeaderSize)                                   /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprICMPv4HeaderGet()\n");
@@ -2929,7 +2929,7 @@ NTSTATUS KrnlHlprICMPv4HeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprICMPv4HeaderGet() [status: %#x]\n",
               status);
-   
+
 #endif /// DBG
 
    return status;
@@ -2937,10 +2937,10 @@ NTSTATUS KrnlHlprICMPv4HeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
 
 /**
  @kernel_helper_function="KrnlHlprICMPv4HeaderModifyType"
- 
+
    Purpose:  Set the ICMP Type field in the ICMPv4 Header to the provided value.                <br>
                                                                                                 <br>
-   Notes:    The NetBufferList parameter is expected to be offset to the start of the ICMPv4 
+   Notes:    The NetBufferList parameter is expected to be offset to the start of the ICMPv4
              Header.                                                                            <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -2955,13 +2955,13 @@ NTSTATUS KrnlHlprICMPv4HeaderModifyType(_In_ const FWP_VALUE* pValue,
                                         _In_ UINT32 icmpHeaderSize)              /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprICMPv4HeaderModifyType()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pValue);
    NT_ASSERT(pNetBufferList);
 
@@ -3004,23 +3004,23 @@ NTSTATUS KrnlHlprICMPv4HeaderModifyType(_In_ const FWP_VALUE* pValue,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprICMPv4HeaderModifyType() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprICMPv4HeaderModifyCode"
- 
+
    Purpose:  Set the ICMP Code field in the ICMPv4 Header to the provided value.                <br>
                                                                                                 <br>
-   Notes:    The NetBufferList parameter is expected to be offset to the start of the ICMPv4 
+   Notes:    The NetBufferList parameter is expected to be offset to the start of the ICMPv4
              Header.                                                                            <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -3035,13 +3035,13 @@ NTSTATUS KrnlHlprICMPv4HeaderModifyCode(_In_ const FWP_VALUE* pValue,
                                         _In_ UINT32 icmpHeaderSize)              /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprICMPv4HeaderModifyCode()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pValue);
    NT_ASSERT(pNetBufferList);
 
@@ -3091,7 +3091,7 @@ NTSTATUS KrnlHlprICMPv4HeaderModifyCode(_In_ const FWP_VALUE* pValue,
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
@@ -3102,7 +3102,7 @@ NTSTATUS KrnlHlprICMPv4HeaderModifyCode(_In_ const FWP_VALUE* pValue,
 
 /**
  @kernel_helper_function="KrnlHlprICMPv6HeaderGet"
- 
+
    Purpose:  Retrieve a pointer to the ICMPv6 Header from the NET_BUFFER_LIST.                  <br>
                                                                                                 <br>
    Notes:    Assumes the NBL is at the start of the ICMPv6 Header.                              <br>
@@ -3121,11 +3121,11 @@ NTSTATUS KrnlHlprICMPv6HeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
                                  _In_ UINT32 icmpHeaderSize)                                   /* 0 */
 {
 #if DBG
-      
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprICMPv6HeaderGet()\n");
-   
+
 #endif /// DBG
 
    NTSTATUS     status          = STATUS_SUCCESS;
@@ -3193,7 +3193,7 @@ NTSTATUS KrnlHlprICMPv6HeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprICMPv4HeaderGet() [status: %#x]\n",
               status);
-      
+
 #endif /// DBG
 
    return status;
@@ -3201,10 +3201,10 @@ NTSTATUS KrnlHlprICMPv6HeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
 
 /**
  @kernel_helper_function="KrnlHlprICMPv6HeaderModifyType"
- 
+
    Purpose:  Set the ICMP Type field in the ICMPv6 Header to the provided value.                <br>
                                                                                                 <br>
-   Notes:    The NetBufferList parameter is expected to be offset to the start of the ICMPv6 
+   Notes:    The NetBufferList parameter is expected to be offset to the start of the ICMPv6
              Header.                                                                            <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -3219,13 +3219,13 @@ NTSTATUS KrnlHlprICMPv6HeaderModifyType(_In_ const FWP_VALUE* pValue,
                                         _In_ UINT32 icmpHeaderSize)              /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprICMPv6HeaderModifyType()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pValue);
    NT_ASSERT(pNetBufferList);
 
@@ -3268,23 +3268,23 @@ NTSTATUS KrnlHlprICMPv6HeaderModifyType(_In_ const FWP_VALUE* pValue,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprICMPv6HeaderModifyType() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprICMPv6HeaderModifyCode"
- 
+
    Purpose:  Set the ICMP Code field in the ICMPv6 Header to the provided value.                <br>
                                                                                                 <br>
-   Notes:    The NetBufferList parameter is expected to be offset to the start of the ICMPv6 
+   Notes:    The NetBufferList parameter is expected to be offset to the start of the ICMPv6
              Header.                                                                            <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -3299,13 +3299,13 @@ NTSTATUS KrnlHlprICMPv6HeaderModifyCode(_In_ const FWP_VALUE* pValue,
                                         _In_ UINT32 icmpHeaderSize)              /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprICMPv6HeaderModifyCode()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pValue);
    NT_ASSERT(pNetBufferList);
 
@@ -3348,14 +3348,14 @@ NTSTATUS KrnlHlprICMPv6HeaderModifyCode(_In_ const FWP_VALUE* pValue,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprICMPv6HeaderModifyCode() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
@@ -3366,7 +3366,7 @@ NTSTATUS KrnlHlprICMPv6HeaderModifyCode(_In_ const FWP_VALUE* pValue,
 
 /**
  @kernel_helper_function="KrnlHlprTCPHeaderGet"
- 
+
    Purpose:  Retrieve a pointer to the TCP Header from the NET_BUFFER_LIST.                     <br>
                                                                                                 <br>
    Notes:    Assumes the NBL is at the start of the TCP Header.                                 <br>
@@ -3389,7 +3389,7 @@ NTSTATUS KrnlHlprTCPHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprTCPHeaderGet()\n");
-      
+
 #endif /// DBG
 
    NTSTATUS     status          = STATUS_SUCCESS;
@@ -3452,12 +3452,12 @@ NTSTATUS KrnlHlprTCPHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprTCPHeaderGet() [status: %#x]\n",
               status);
-         
+
 #endif /// DBG
 
    return status;
@@ -3465,10 +3465,10 @@ NTSTATUS KrnlHlprTCPHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
 
 /**
  @kernel_helper_function="KrnlHlprTCPHeaderModifySourcePort"
- 
+
    Purpose:  Set the Source Address field in the TCP Header to the provided value.              <br>
                                                                                                 <br>
-   Notes:    The NetBufferList parameter is expected to be offset to the start of the TCP 
+   Notes:    The NetBufferList parameter is expected to be offset to the start of the TCP
              Header.                                                                            <br>
                                                                                                 <br>
              Values should be in Network Byte Order.                                            <br>
@@ -3492,7 +3492,7 @@ NTSTATUS KrnlHlprTCPHeaderModifySourcePort(_In_ const FWP_VALUE* pValue,
               " ---> KrnlHlprTCPHeaderModifySourcePort()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pValue);
    NT_ASSERT(pNetBufferList);
 
@@ -3536,23 +3536,23 @@ NTSTATUS KrnlHlprTCPHeaderModifySourcePort(_In_ const FWP_VALUE* pValue,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprTCPHeaderModifySourcePort() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprTCPHeaderModifyDestinationPort"
- 
+
    Purpose:  Set the Destination Address field in the TCP Header to the provided value.         <br>
                                                                                                 <br>
-   Notes:    The NetBufferList parameter is expected to be offset to the start of the TCP 
+   Notes:    The NetBufferList parameter is expected to be offset to the start of the TCP
              Header.                                                                            <br>
                                                                                                 <br>
              Values should be in Network Byte Order.                                            <br>
@@ -3570,13 +3570,13 @@ NTSTATUS KrnlHlprTCPHeaderModifyDestinationPort(_In_ const FWP_VALUE* pValue,
                                                 _In_ BOOLEAN convertByteOrder)           /* FALSE */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprTCPHeaderModifyDestinationPort()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pValue);
    NT_ASSERT(pNetBufferList);
 
@@ -3620,14 +3620,14 @@ NTSTATUS KrnlHlprTCPHeaderModifyDestinationPort(_In_ const FWP_VALUE* pValue,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprTCPHeaderModifyDestinationPort() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
@@ -3638,7 +3638,7 @@ NTSTATUS KrnlHlprTCPHeaderModifyDestinationPort(_In_ const FWP_VALUE* pValue,
 
 /**
  @kernel_helper_function="KrnlHlprUDPHeaderGet"
- 
+
    Purpose:  Retrieve a pointer to the UDP Header from the NET_BUFFER_LIST.                     <br>
                                                                                                 <br>
    Notes:    Assumes the NBL is at the start of the UDP Header.                                 <br>
@@ -3657,11 +3657,11 @@ NTSTATUS KrnlHlprUDPHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
                               _In_ UINT32 udpHeaderSize)                                /* 0 */
 {
 #if DBG
-            
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprUDPHeaderGet()\n");
-         
+
 #endif /// DBG
 
    NTSTATUS     status          = STATUS_SUCCESS;
@@ -3737,10 +3737,10 @@ NTSTATUS KrnlHlprUDPHeaderGet(_In_ NET_BUFFER_LIST* pNetBufferList,
 
 /**
  @kernel_helper_function="KrnlHlprUDPHeaderModifySourcePort"
- 
+
    Purpose:  Set the Source Address field in the UDP Header to the provided value.              <br>
                                                                                                 <br>
-   Notes:    The NetBufferList parameter is expected to be offset to the start of the UDP 
+   Notes:    The NetBufferList parameter is expected to be offset to the start of the UDP
              Header.                                                                            <br>
                                                                                                 <br>
              Values should be in Network Byte Order.                                            <br>
@@ -3758,13 +3758,13 @@ NTSTATUS KrnlHlprUDPHeaderModifySourcePort(_In_ const FWP_VALUE* pValue,
                                            _In_ BOOLEAN convertByteOrder)           /* FALSE */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprUDPHeaderModifySourcePort()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pValue);
    NT_ASSERT(pNetBufferList);
 
@@ -3808,23 +3808,23 @@ NTSTATUS KrnlHlprUDPHeaderModifySourcePort(_In_ const FWP_VALUE* pValue,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprUDPHeaderModifySourcePort() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprUDPHeaderModifyDestinationPort"
- 
+
    Purpose:  Set the Destination Address field in the UDP Header to the provided value.         <br>
                                                                                                 <br>
-   Notes:    The NetBufferList parameter is expected to be offset to the start of the UDP 
+   Notes:    The NetBufferList parameter is expected to be offset to the start of the UDP
              Header.                                                                            <br>
                                                                                                 <br>
              Values should be in Network Byte Order.                                            <br>
@@ -3842,13 +3842,13 @@ NTSTATUS KrnlHlprUDPHeaderModifyDestinationPort(_In_ const FWP_VALUE* pValue,
                                                 _In_ BOOLEAN convertByteOrder)           /* FALSE */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprUDPHeaderModifyDestinationPort()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pValue);
    NT_ASSERT(pNetBufferList);
 
@@ -3892,14 +3892,14 @@ NTSTATUS KrnlHlprUDPHeaderModifyDestinationPort(_In_ const FWP_VALUE* pValue,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprUDPHeaderModifyDestinationPort() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 

@@ -3,7 +3,7 @@
 //		//: Comment at the beginning
 //		OS: * Ebd6 Ebd7 WinXP Vista Win7 Win8 WinBlue
 //		+: Add for OS
-//		-: Remove for OS 
+//		-: Remove for OS
 //
 
 +(*) [..\HalEEPROM.c]
@@ -156,12 +156,12 @@
 +(*) [HalHWImg8723B_RF.c]
 +(*) [HalHWImg8723B_BB.c]
 +(*) [HalHWImg8723B_FW.c]
-+(*) [phydm_RegConfig8723B.c] 
++(*) [phydm_RegConfig8723B.c]
 //+(*) [HalHWImg8703B_FW.c]
 //+(*) [HalHWImg8703B_BB.c]
 //+(*) [HalHWImg8703B_MAC.c]
 //+(*) [HalHWImg8703B_RF.c]
-//+(*) [phydm_RegConfig8703B.c] 
+//+(*) [phydm_RegConfig8703B.c]
 //
 //+(*) [HalHWImg8188F_FW.c]
 //+(*) [HalHWImg8188F_MAC.c]

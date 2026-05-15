@@ -1,7 +1,7 @@
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
- *                                        
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
@@ -17,7 +17,7 @@
  *
  *
  ******************************************************************************/
- 
+
 #ifndef	__PHYDMPATHDIV_H__
 #define    __PHYDMPATHDIV_H__
 /*#define PATHDIV_VERSION "2.0" //2014.11.04*/
@@ -27,7 +27,7 @@
 #define USE_PATH_A_AS_DEFAULT_ANT   //for 8814 dynamic TX path selection
 
 #define	NUM_RESET_DTP_PERIOD 5
-#define	ANT_DECT_RSSI_TH 3 
+#define	ANT_DECT_RSSI_TH 3
 
 #define PATH_A 1
 #define PATH_B 2
@@ -74,8 +74,8 @@ typedef enum path_div_type
 }PHYDM_PATH_DIV_TYPE;
 
 VOID
-phydm_process_rssi_for_path_div(	
-	IN OUT		PVOID			pDM_VOID,	
+phydm_process_rssi_for_path_div(
+	IN OUT		PVOID			pDM_VOID,
 	IN			PVOID			p_phy_info_void,
 	IN			PVOID			p_pkt_info_void
 	);
@@ -90,7 +90,7 @@ typedef struct _ODM_PATH_DIVERSITY_
 	u2Byte	PathB_Cnt[ODM_ASSOCIATE_ENTRY_NUM];
 	u1Byte	path_div_type;
   #if RTL8814A_SUPPORT
-	
+
 	u4Byte	path_a_sum_all;
 	u4Byte	path_b_sum_all;
 	u4Byte	path_c_sum_all;
@@ -100,7 +100,7 @@ typedef struct _ODM_PATH_DIVERSITY_
 	u4Byte	path_b_cnt_all;
 	u4Byte	path_c_cnt_all;
 	u4Byte	path_d_cnt_all;
-	
+
 	u1Byte	dtp_period;
 	BOOLEAN	bBecomeLinked;
 	BOOLEAN	is_u3_mode;
@@ -115,7 +115,7 @@ typedef struct _ODM_PATH_DIVERSITY_
 	BOOLEAN	fix_path_bfer;
 	u1Byte	search_space_2[NUM_CHOOSE2_FROM4];
 	u1Byte	search_space_3[NUM_CHOOSE3_FROM4];
-	
+
 	u1Byte	pre_tx_path;
 	u1Byte	use_path_a_as_default_ant;
 	BOOLEAN is_pathA_exist;
@@ -161,7 +161,7 @@ odm_pathdiv_debug(
 
 
 
-#if(DM_ODM_SUPPORT_TYPE & (ODM_WIN)) 
+#if(DM_ODM_SUPPORT_TYPE & (ODM_WIN))
 
 //#define   PATHDIV_ENABLE 	 1
 #define dm_PathDiv_RSSI_Check	ODM_PathDivChkPerPktRssi
@@ -192,18 +192,18 @@ typedef struct _PathDiv_Parameter_define_
 	u4Byte swt_2g_RegCA0;
 }PATHDIV_PARA,*pPATHDIV_PARA;
 
-VOID	
+VOID
 odm_PathDiversityInit_92C(
 	IN	PADAPTER	Adapter
 	);
 
-VOID	
+VOID
 odm_2TPathDiversityInit_92C(
 	IN	PADAPTER	Adapter
 	);
 
-VOID	
-odm_1TPathDiversityInit_92C(	
+VOID
+odm_1TPathDiversityInit_92C(
 	IN	PADAPTER	Adapter
 	);
 
@@ -212,35 +212,35 @@ odm_IsConnected_92C(
 	IN	PADAPTER	Adapter
 	);
 
-BOOLEAN 
+BOOLEAN
 ODM_PathDiversityBeforeLink92C(
 	//IN	PADAPTER	Adapter
 	IN		PDM_ODM_T		pDM_Odm
 	);
 
-VOID	
+VOID
 odm_PathDiversityAfterLink_92C(
 	IN	PADAPTER	Adapter
 	);
 
 VOID
-odm_SetRespPath_92C(	
-	IN	PADAPTER	Adapter, 	
+odm_SetRespPath_92C(
+	IN	PADAPTER	Adapter,
 	IN	u1Byte	DefaultRespPath
 	);
 
-VOID	
+VOID
 odm_OFDMTXPathDiversity_92C(
 	IN	PADAPTER	Adapter
 	);
 
-VOID	
-odm_CCKTXPathDiversity_92C(	
+VOID
+odm_CCKTXPathDiversity_92C(
 	IN	PADAPTER	Adapter
 	);
 
-VOID	
-odm_ResetPathDiversity_92C(	
+VOID
+odm_ResetPathDiversity_92C(
 	IN	PADAPTER	Adapter
 	);
 
@@ -265,7 +265,7 @@ odm_PathDivChkAntSwitchWorkitemCallback(
 	);
 
 
-VOID 
+VOID
 odm_PathDivChkAntSwitch(
 	PDM_ODM_T    pDM_Odm
 	);
@@ -280,13 +280,13 @@ ODM_CCKPathDiversityChkPerPktRssi(
 	pu1Byte			pDesc
 	);
 
-VOID 
+VOID
 ODM_PathDivChkPerPktRssi(
 	PADAPTER		Adapter,
 	BOOLEAN			bIsDefPort,
 	BOOLEAN			bMatchBSSID,
 	PRT_WLAN_STA	pEntry,
-	PRT_RFD			pRfd	
+	PRT_RFD			pRfd
 	);
 
 VOID
@@ -316,9 +316,9 @@ odm_SwAntDivConstructScanChnl(
 	IN	PADAPTER	Adapter,
 	IN	u1Byte		ScanChnl
 	);
-	
- #endif       //#if(DM_ODM_SUPPORT_TYPE & (ODM_WIN)) 
- 
- 
+
+ #endif       //#if(DM_ODM_SUPPORT_TYPE & (ODM_WIN))
+
+
  #endif		 //#ifndef  __ODMPATHDIV_H__
 

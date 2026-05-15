@@ -35,7 +35,7 @@ NdisprotWrite(
 
 Routine Description:
 
-    Dispatch routine to handle IRP_MJ_WRITE. 
+    Dispatch routine to handle IRP_MJ_WRITE.
 
 Arguments:
 
@@ -73,7 +73,7 @@ Return Value:
             NtStatus = STATUS_INVALID_HANDLE;
             break;
         }
-               
+
         NPROT_STRUCT_ASSERT(pOpenContext, oc);
 
         if (pIrp->MdlAddress == NULL)
@@ -86,7 +86,7 @@ Return Value:
         //
         // Try to get a virtual address for the MDL.
         //
-        
+
         pEthHeader = NULL;
         NdisQueryMdl(pIrp->MdlAddress, &pEthHeader, &DataLength, NormalPagePriority | MdlMappingNoExecute);
 
@@ -127,14 +127,14 @@ Return Value:
             NtStatus = STATUS_INVALID_PARAMETER;
             break;
         }
-       
+
         if (!NPROT_MEM_CMP(pEthHeader->SrcAddr, pOpenContext->CurrentAddress, NPROT_MAC_ADDR_LEN))
         {
             DEBUGP(DL_WARN, ("Write: Failing with invalid Source address"));
             NtStatus = STATUS_INVALID_PARAMETER;
             break;
         }
-        
+
 
         NPROT_ACQUIRE_LOCK(&pOpenContext->Lock, FALSE);
 
@@ -147,13 +147,13 @@ Return Value:
 
             NtStatus = STATUS_INVALID_HANDLE;
             break;
-        } 
+        }
 
         if (pOpenContext->State != NdisprotRunning  ||
             pOpenContext->PowerState != NetDeviceStateD0)
         {
             NPROT_RELEASE_LOCK(&pOpenContext->Lock, FALSE);
-            
+
             DEBUGP(DL_INFO, ("Device is not ready.\n"));
             NtStatus = STATUS_UNSUCCESSFUL;
             break;
@@ -169,11 +169,11 @@ Return Value:
                                 pMdl,
                                 0,          // Data offset
                                 DataLength);
-        
+
         if (pNetBufferList == NULL)
         {
             NPROT_RELEASE_LOCK(&pOpenContext->Lock, FALSE);
-            
+
             DEBUGP(DL_FATAL, ("Write: open %p, failed to alloc send net buffer list\n",
                     pOpenContext));
             NtStatus = STATUS_INSUFFICIENT_RESOURCES;
@@ -192,11 +192,11 @@ Return Value:
         NPROT_SEND_NBL_RSVD(pNetBufferList)->RefCount = 1;
 
         //
-        //  We set up a cancel ID on each send NetBufferList (which maps to a Write IRP), 
+        //  We set up a cancel ID on each send NetBufferList (which maps to a Write IRP),
         //  and save the NetBufferList pointer in the IRP. If the IRP gets cancelled, we use
         //  NdisCancelSendNetBufferLists() to cancel the NetBufferList.
         //
-       
+
         CancelId = NPROT_GET_NEXT_CANCEL_ID();
         NDIS_SET_NET_BUFFER_LIST_CANCEL_ID(pNetBufferList, CancelId);
         pIrp->Tail.Overlay.DriverContext[0] = (PVOID)pOpenContext;
@@ -225,7 +225,7 @@ Return Value:
             pData = MmGetSystemAddressForMdlSafe(pMdl, NormalPagePriority | MdlMappingNoExecute);
             NPROT_ASSERT(pEthHeader == pData);
 
-            DEBUGP(DL_VERY_LOUD, 
+            DEBUGP(DL_VERY_LOUD,
                 ("Write: MDL %p, MdlFlags %x, SystemAddr %p, %d bytes\n",
                     pIrp->MdlAddress, pIrp->MdlAddress->MdlFlags, pData, DataLength));
 
@@ -235,10 +235,10 @@ Return Value:
 
         pNetBufferList->SourceHandle = pOpenContext->BindingHandle;
         ASSERT (NDIS_MDL_LINKAGE(pMdl) == NULL);
-        
+
         SendFlags |= NDIS_SEND_FLAGS_CHECK_FOR_LOOPBACK;
 
-        NdisSendNetBufferLists(        
+        NdisSendNetBufferLists(
                         pOpenContext->BindingHandle,
                         pNetBufferList,
                         NDIS_DEFAULT_PORT_NUMBER,
@@ -285,7 +285,7 @@ Return Value:
     BOOLEAN                      FoundIrp = FALSE;
 
     UNREFERENCED_PARAMETER(pDeviceObject);
-        
+
     pOpenContext = (PNDISPROT_OPEN_CONTEXT) pIrp->Tail.Overlay.DriverContext[0];
     if (pOpenContext == NULL)
     {
@@ -295,10 +295,10 @@ Return Value:
         IoReleaseCancelSpinLock(pIrp->CancelIrql);
         return;
     }
-   
+
     NPROT_REF_OPEN(pOpenContext);
     IoReleaseCancelSpinLock(pIrp->CancelIrql);
-    
+
     NPROT_STRUCT_ASSERT(pOpenContext, oc);
 
     //
@@ -320,7 +320,7 @@ Return Value:
 
     NPROT_RELEASE_LOCK(&pOpenContext->Lock, FALSE);
 
-    if (FoundIrp)    
+    if (FoundIrp)
     {
         PVOID              CancelId;
 
@@ -344,11 +344,11 @@ Return Value:
         //
         DEBUGP(DL_INFO, ("CancelWrite: cancelling nbl %p on Open %p\n",
             pIrp->Tail.Overlay.DriverContext[1], pOpenContext));
-        
+
         NdisCancelSendNetBufferLists(
                 pOpenContext->BindingHandle,
                 CancelId);
-        
+
     }
     //
     //  else the send completion routine has already picked up this IRP.
@@ -399,7 +399,7 @@ Return Value:
             CurrNetBufferList = NextNetBufferList)
     {
         NextNetBufferList = NET_BUFFER_LIST_NEXT_NBL(CurrNetBufferList);
-        
+
         pIrp = NPROT_IRP_FROM_SEND_NBL(CurrNetBufferList);
 
         IoAcquireCancelSpinLock(&pIrp->CancelIrql);
@@ -413,10 +413,10 @@ Return Value:
         NPROT_REMOVE_ENTRY_LIST(&pIrp->Tail.Overlay.ListEntry);
 
         NPROT_RELEASE_LOCK(&pOpenContext->Lock, DispatchLevel);
-        
+
         CompletionStatus = NET_BUFFER_LIST_STATUS(CurrNetBufferList);
-        
-        
+
+
         //
         //  We are done with the NDIS_PACKET:
         //
@@ -457,7 +457,7 @@ Return Value:
 
         NPROT_DEREF_OPEN(pOpenContext); // send complete - dequeued send IRP
     }
-    
+
 }
 
 

@@ -44,9 +44,9 @@ p2p_build_AttrIe(
 			fragLen = P2P_BUILD_MAX_ATTR_LEN_PER_IE;
 
 		if(NULL == (pLen = p2p_add_IEHdr(pBuf))) break;
-	
+
 		FrameBuf_Add_Data(pBuf, pos, fragLen);
-	
+
 		p2p_write_IeLength(pBuf, pLen);
 	}
 
@@ -63,11 +63,11 @@ p2p_add_IEHdr(
 	)
 {
 	u1Byte						*pLen = NULL;
-	
+
 	FrameBuf_Add_u1(pBuf, (u1Byte)EID_Vendor);
 
 	pLen = FrameBuf_Add(pBuf, 1);
-		
+
 	FrameBuf_Add_be_u4(pBuf, P2P_IE_VENDOR_TYPE);
 
 	return pLen;
@@ -102,7 +102,7 @@ p2p_update_IeHdrLen(
 
 		FrameBuf_Free(pDupAttrBuf);
 	}
-	
+
 	return;
 }
 
@@ -118,9 +118,9 @@ p2p_add_ActionFrameMacHdr(
 	)
 {
 	pu1Byte						buf = NULL;
-	
+
 	if(NULL == (buf = FrameBuf_Add(pBuf, 24))) return;
-	
+
 	SET_80211_HDR_FRAME_CONTROL(buf, 0);
 	SET_80211_HDR_TYPE_AND_SUBTYPE(buf, Type_Action);
 	SET_80211_HDR_DURATION(buf, 0);
@@ -142,13 +142,13 @@ p2p_add_MgntFrameMacHdr(
 	)
 {
 	pu1Byte						buf = NULL;
-	
+
 	if(NULL == (buf = FrameBuf_Add(pBuf, 24))) return;
-	
+
 	SET_80211_HDR_FRAME_CONTROL(buf, 0);
 	SET_80211_HDR_TYPE_AND_SUBTYPE(buf, typeSubtype);
 	SET_80211_HDR_DURATION(buf, 0);
-	
+
 	SET_80211_HDR_FRAGMENT_SEQUENCE(buf, 0);
 	SET_80211_HDR_ADDRESS1(buf, dest);
 	SET_80211_HDR_ADDRESS2(buf, src);

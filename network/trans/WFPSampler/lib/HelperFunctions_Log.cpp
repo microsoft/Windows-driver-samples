@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -54,7 +54,7 @@
 
 /**
  @helper_function="HlprLogError"
- 
+
    Purpose:  Log an error message to the console.                                               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -123,7 +123,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @helper_function="HlprLogInfo"
- 
+
    Purpose:  Log an information message to the console.                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

@@ -75,7 +75,7 @@ P2P_AddIe_Set(
 	if(*ppDestBuf) FrameBuf_Free(*ppDestBuf);
 
 	*ppDestBuf = pClonedSrcBuf;
-	
+
 	return TRUE;
 }
 

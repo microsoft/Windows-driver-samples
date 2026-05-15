@@ -57,7 +57,7 @@
 //	Version - The version of content. Different versions cause different content or format of data.
 //	Length - The total length in byte of Value.
 // Format:
-//	|   Type    |    	Id	|Version    |    Length    |     Value    
+//	|   Type    |    	Id	|Version    |    Length    |     Value
 //	| ULONG   |    ULONG	|ULONG    |    ULONG    |    Veriable....
 // Remark:
 //	It's a general header for data commnuication between layers and applications under variable versions.
@@ -91,14 +91,14 @@ typedef struct _RT_OBJECT_HEADER
 #define	RT_OB_HDR_TYPE_INDIC		4
 #define	RT_OB_HDR_TYPE_DATA			5
 
-BOOLEAN 
+BOOLEAN
 eqNByte(
 	pu1Byte	str1,
 	pu1Byte	str2,
 	u4Byte	num
 	);
 
-BOOLEAN 
+BOOLEAN
 IsHexDigit(
 	IN		s1Byte		chTmp
 	);
@@ -108,14 +108,14 @@ MapCharToHexDigit(
 	IN		s1Byte		chTmp
 );
 
-BOOLEAN 
+BOOLEAN
 GetHexValueFromString(
 	IN		ps1Byte			szStr,
 	IN OUT	pu4Byte			pu4bVal,
 	IN OUT	pu4Byte			pu4bMove
 	);
 
-BOOLEAN 
+BOOLEAN
 GetFractionValueFromString(
 	IN		ps1Byte			szStr,
 	IN OUT	pu1Byte			pInteger,
@@ -129,13 +129,13 @@ IsCommentString(
 	IN		ps1Byte			szStr
 	);
 
-BOOLEAN 
+BOOLEAN
 ParseQualifiedString(
-    IN      ps1Byte 		In, 
-    IN OUT  pu4Byte 		Start, 
+    IN      ps1Byte 		In,
+    IN OUT  pu4Byte 		Start,
     OUT     ps1Byte 		Out,
-    OUT     const u4Byte 	MaxOutLen,    
-    IN      s1Byte  		LeftQualifier, 
+    OUT     const u4Byte 	MaxOutLen,
+    IN      s1Byte  		LeftQualifier,
     IN      s1Byte  		RightQualifier
     );
 
@@ -161,6 +161,6 @@ u4Byte
 GenTag(
 	IN	char	*pFunName
 	);
-	
+
 
 #endif // #ifndef __INC_GENERALFUNC_H

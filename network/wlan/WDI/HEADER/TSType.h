@@ -10,7 +10,7 @@
 
 // This define the Tx/Rx directions
 typedef enum _TR_SELECT {
-	TX_DIR = 0, 
+	TX_DIR = 0,
 	RX_DIR = 1,
 } TR_SELECT, *PTR_SELECT;
 
@@ -46,7 +46,7 @@ typedef struct _RX_TS_RECORD {
 	u2Byte				RxLastSeqNum;
 	u1Byte				RxLastFragNum;
 	u4Byte				RxBatchCount;
-	u4Byte				RxTotalSubframeCount;  //for AMSDU subframe	
+	u4Byte				RxTotalSubframeCount;  //for AMSDU subframe
 //	QOS_DL_RECORD		DLRecord;
 } RX_TS_RECORD, *PRX_TS_RECORD;
 

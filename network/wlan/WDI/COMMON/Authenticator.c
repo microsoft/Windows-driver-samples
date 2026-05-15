@@ -14,8 +14,8 @@
 
 // Description:
 // Output:
-// Modify: 
-void 
+// Modify:
+void
 Authenticator_OnDeauthenticationRequest(
 	IN	PADAPTER				Adapter,
 	IN	PAUTH_PKEY_MGNT_TAG	pKeyMgnt
@@ -29,8 +29,8 @@ Authenticator_OnDeauthenticationRequest(
 
 // Description:
 // Output:
-// Modify: 
-void 
+// Modify:
+void
 Authenticator_OnAuthenticationRequest(
 	IN	PADAPTER				Adapter,
 	IN	PAUTH_PKEY_MGNT_TAG	pKeyMgnt
@@ -44,8 +44,8 @@ Authenticator_OnAuthenticationRequest(
 
 // Description:
 // Output:
-// Modify: 
-void 
+// Modify:
+void
 Authenticator_OnReAuthenticationRequest(
 	IN	PADAPTER				Adapter,
 	IN	PAUTH_PKEY_MGNT_TAG	pKeyMgnt
@@ -64,7 +64,7 @@ Authenticator_OnReAuthenticationRequest(
 // Modify: Annie, 2005-07-02
 //		Discard using condition pKeyMgnt->bPTKInstalled.
 //		Instead, I add a macro KeyMgntStateIsWaitingEAPOLKey to check the state.
-void 
+void
 Authenticator_OnEAPOLKeyRecvd(
 	IN	PADAPTER				Adapter,
 	IN	PAUTH_PKEY_MGNT_TAG	pKeyMgnt,
@@ -94,15 +94,15 @@ Authenticator_OnEAPOLKeyRecvd(
 	//PRINT_DATA( ("EapolKeyMsgRecvd: "), pGlInfo->EapolKeyMsgRecvd.Octet, pGlInfo->EapolKeyMsgRecvd.Length);
 	RSNIE.Octet = NULL;
 	RSNIE.Length = 0;
-	
+
 	// Get the message number.
 	if( Message_KeyType(pGlInfo->EapolKeyMsgRecvd) == type_Pairwise )
 	{
 		if( (Message_Error(pGlInfo->EapolKeyMsgRecvd) == 1) &&
 			(Message_Request(pGlInfo->EapolKeyMsgRecvd) == 1))
-		{			
-			//Enter integrity failure state...			
-			Authenticator_StateINTEGRITYFAILURE(Adapter, pEntry);	
+		{
+			//Enter integrity failure state...
+			Authenticator_StateINTEGRITYFAILURE(Adapter, pEntry);
 		}
 
 		if( (eapol_key_recvd->key_info[0]==0x01 && eapol_key_recvd->key_info[1]==0x09) ||
@@ -114,7 +114,7 @@ Authenticator_OnEAPOLKeyRecvd(
 			RSNIE = EAPOLkeyGetRSNIE( pGlInfo->EapolKeyMsgRecvd, EID_Vendor );
 			else if( pMgntInfo->SecurityInfo.SecLvl == RT_SEC_LVL_WPA2)
 				RSNIE = EAPOLkeyGetRSNIE( pGlInfo->EapolKeyMsgRecvd, EID_WPA2 );
-				
+
 			if( RSNIE.Length != 0 )
 				msg_type = type_4way2nd;		// with RSNIE: msg 2 (159 or 161)
 			else
@@ -133,7 +133,7 @@ Authenticator_OnEAPOLKeyRecvd(
 		//	msg_type = type_2way2nd;			// group key msg2 (155)
 		//else
 		//	RT_TRACE( COMP_AUTHENTICATOR, DBG_LOUD, ("unknow group EAPOL-key: info=0x%X-0x%X\n", eapol_key_recvd->key_info[0], eapol_key_recvd->key_info[1]) );
-		
+
 		msg_type = type_2way2nd;
 	}
 
@@ -152,7 +152,7 @@ Authenticator_OnEAPOLKeyRecvd(
 			SNonce = Message_KeyNonce( pGlInfo->EapolKeyMsgRecvd );
 			CopyMem( pKeyMgnt->SNonce, SNonce.Octet, KEY_NONCE_LEN );
 
-			
+
 			CalcPTK( pAP_addr, pSTA_addr, pKeyMgnt->ANonce, pKeyMgnt->SNonce,
 					 pGlInfo->PMK, PMK_LEN, pKeyMgnt->PTK_update, PTK_LEN );
 
@@ -161,7 +161,7 @@ Authenticator_OnEAPOLKeyRecvd(
 				SendDeauthentication( Adapter, pSTA_addr , mic_failure );
 				PlatformStallExecution(100);
 				RT_TRACE_F(COMP_AP, DBG_TRACE, ("AsocEntry_RemoveStation\n"));
-				
+
 				AsocEntry_RemoveStation( Adapter , pSTA_addr);
 				RT_TRACE( COMP_AUTHENTICATOR, DBG_LOUD, ("MIC erroe\n"));
 				return;
@@ -181,7 +181,7 @@ Authenticator_OnEAPOLKeyRecvd(
 				SendDeauthentication( Adapter, pSTA_addr , mic_failure );
 				PlatformStallExecution(100);
 				RT_TRACE_F(COMP_AP, DBG_TRACE, ("AsocEntry_RemoveStation case 2\n"));
-				
+
 				AsocEntry_RemoveStation( Adapter , pSTA_addr);
 				RT_TRACE( COMP_AUTHENTICATOR, DBG_LOUD, ("MIC erroe\n"));
 				return;
@@ -191,7 +191,7 @@ Authenticator_OnEAPOLKeyRecvd(
 			pEntry->perSTAKeyInfo.RxIV &= UINT64_C(0x0000ffffffffffff);
 			//RT_TRACE( COMP_AUTHENTICATOR, DBG_LOUD, ("pEntry->perSTAKeyInfo.RxIV = 0x%16"i64fmt"x", pEntry->perSTAKeyInfo.RxIV));
 
-			Authenticator_StatePTKINITDONE(Adapter, pEntry);		
+			Authenticator_StatePTKINITDONE(Adapter, pEntry);
 		}
 		else if(  pKeyMgnt->GrState == ASMGS_REKEYNEGOTIATING && msg_type==type_2way2nd )
 		{
@@ -236,7 +236,7 @@ Authenticator_OnEAPOLKeyRecvd(
 //		Reference: PacketGetElement(), which is only used for management frame.
 //		In fact, this two function should be merged and reused. <AnnieTodo>
 //
-OCTET_STRING 
+OCTET_STRING
 EAPOLkeyGetRSNIE(
 	IN	OCTET_STRING	eapolkeypkt,
 	IN	ELEMENT_ID		ID
@@ -271,7 +271,7 @@ EAPOLkeyGetRSNIE(
 
 
 
-void 
+void
 KeyMgntTimeout(
 	PRT_TIMER		pTimer
 )
@@ -317,7 +317,7 @@ KeyMgntTimeout(
 			{
 				if( pKeyMgnt->TimeoutCtr >= MAX_TIMEOUT_CNT )
 				{
-					pKeyMgnt->TimeoutCtr = 0;	
+					pKeyMgnt->TimeoutCtr = 0;
 					Authenticator_OnTimeoutCountExceeded(Adapter, pKeyMgnt);
 				}
 				else
@@ -326,7 +326,7 @@ KeyMgntTimeout(
 					{
 						//RT_TRACE(COMP_AUTHENTICATOR, DBG_LOUD, ("KeyMgntTimeout(): Retry! [TimeSlot:%"i64fmt"d, TimeoutCtr:%d]\n",
 							//		pMgntInfo->globalKeyInfo.CurrentTimeSlot, (int)pKeyMgnt->TimeoutCtr ));
-						
+
 						pKeyMgnt->TimeoutCtr ++;
 
 						if( pKeyMgnt->PrState == ASMPS_PTKSTART  )		// waiting for 2nd msg in 4-way handshake
@@ -340,7 +340,7 @@ KeyMgntTimeout(
 						else if( pKeyMgnt->GrState == ASMGS_REKEYNEGOTIATING )	// waiting for 2nd msg in 2-way handshake
 						{
 							Authenticator_StateREKEYNEGOTIATING(Adapter, &pMgntInfo->AsocEntry[i]);
-						}	
+						}
 					}
 					else
 					{
@@ -350,7 +350,7 @@ KeyMgntTimeout(
 				}
 
 			}
-			
+
 		}
 
 		//RT_TRACE( COMP_AUTHENTICATOR, DBG_LOUD, ("KeyMgntTimeout: AsocNum=%d, CurrentTimeSlot=%"i64fmt"d\n", AsocNum, pMgntInfo->globalKeyInfo.CurrentTimeSlot ) );
@@ -358,7 +358,7 @@ KeyMgntTimeout(
 		// Continue setting the timer only when RT_802_11AuthModeWPAPSK.
 		pMgntInfo->globalKeyInfo.CurrentTimeSlot ++;
 		PlatformSetTimer( Adapter, &pMgntInfo->globalKeyInfo.KeyMgntTimer, KEY_MGNT_INTERVAL );
-		
+
 	}
 }
 
@@ -368,7 +368,7 @@ KeyMgntTimeout(
 // Description:
 // Output: void
 // Modify: Annie, 2005-07-12
-void 
+void
 Authenticator_OnTimeoutCountExceeded(
 	IN	PADAPTER				Adapter,
 	IN	PAUTH_PKEY_MGNT_TAG	pKeyMgnt
@@ -376,7 +376,7 @@ Authenticator_OnTimeoutCountExceeded(
 {
 	RT_TRACE( COMP_AUTHENTICATOR, DBG_LOUD, ("Authenticator_OnTimeoutCountExceeded!\n") );
 	pKeyMgnt->EvntID = ASMEID_TimeOutExceeded;
-	
+
 	//pKeyMgnt->TimeoutCtr = 0;	// it should be cleared in KeyMgntTimeout().
 
 	if( pKeyMgnt->PrState == ASMPS_PTKSTART || pKeyMgnt->PrState == ASMPS_PTKINITNEGOTIATING )
@@ -392,7 +392,7 @@ Authenticator_OnTimeoutCountExceeded(
 	{
 		RT_TRACE(COMP_AUTHENTICATOR, DBG_LOUD, ("Authenticator_OnTimeoutCountExceeded(): Unexpected State!!\n"));
 		RT_TRACE(COMP_AUTHENTICATOR, DBG_LOUD, ("--- PairwiseKeyState:%d, GroupKeyState:%d ---\n", pKeyMgnt->PrState, pKeyMgnt->GrState));
-	}	
+	}
 }
 
 
@@ -402,7 +402,7 @@ Authenticator_OnTimeoutCountExceeded(
 // Description: Disconnect the station
 // Output: void
 // Modify: Annie, 2005-07-12.
-void 
+void
 Authenticator_StateDISCONNECT(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA,
@@ -418,7 +418,7 @@ Authenticator_StateDISCONNECT(
 		RT_TRACE( COMP_AUTHENTICATOR, DBG_LOUD, ("[Warning] current: STA mode, return."));
 		return;
 	}
-	
+
 	pSTA->perSTAKeyInfo.PrState = ASMPS_DISCONNECTE;
 
 	if( AsocEntry_IsStationAssociated( &Adapter->MgntInfo, pSTA->MacAddr ) )
@@ -434,8 +434,8 @@ Authenticator_StateDISCONNECT(
 
 // Description:
 // Output:
-// Modify: 
-void 
+// Modify:
+void
 Authenticator_StateDISCONNECTED(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
@@ -466,7 +466,7 @@ Authenticator_StateDISCONNECTED(
 //		Discard using condition pKeyMgnt->bPTKInstalled.
 //		Instead, I add a macro KeyMgntStateIsWaitingEAPOLKey to check the state.
 
-void 
+void
 Authenticator_StateINITIALIZE(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
@@ -481,7 +481,7 @@ Authenticator_StateINITIALIZE(
 	RT_TRACE( COMP_AUTHENTICATOR, DBG_LOUD, ("===> Authenticator_StateINITIALIZE()\n") );
 
 	if( !ACTING_AS_AP(Adapter)
-		&& !GET_TDLS_ENABLED(&(Adapter->MgntInfo)) 
+		&& !GET_TDLS_ENABLED(&(Adapter->MgntInfo))
 		)
 	{
 		RT_TRACE( COMP_AUTHENTICATOR, DBG_LOUD, ("[Warning] current: STA mode, return."));
@@ -498,14 +498,14 @@ Authenticator_StateINITIALIZE(
 	{
 		// 3. 802.1x::PortMode = Disable;
 		pKeyMgnt->portMode = pmt_Disable;	// [TODO] other auth mode
-		
+
 		// 4. 802.1x::PortSecure = 0;
 		pKeyMgnt->portSecure= psec_Unauthorized;	// [TODO] other auth mode
 	}
 
-	
+
 	// 1. MSK = 0 ...?
-	
+
 	// 2. GNoStations = 0
 	//	...it's for group key update. I don't do it currently. Annie, 2005-07-01.
 
@@ -519,7 +519,7 @@ Authenticator_StateINITIALIZE(
 
 	PlatformMoveMemory( pKeyMgnt->ANonce , NonceBuf , KEY_NONCE_LEN );
 
-	
+
 	// 5. RemovePTK
 	PlatformZeroMemory( pKeyMgnt->PTK, PTK_LEN );
 
@@ -529,7 +529,7 @@ Authenticator_StateINITIALIZE(
 
 	//AP-WPA AES ,CCW
 	PlatformZeroMemory( pKeyMgnt->AESKeyBuf , AESCCMP_BLK_SIZE_TOTAL );
-	
+
 	//pKeyMgnt->bPTKInstalled = FALSE;
 	pKeyMgnt->PInitAKeys = FALSE;
 	pKeyMgnt->GInitAKeys = FALSE;
@@ -543,10 +543,10 @@ Authenticator_StateINITIALIZE(
 
 	//Remove  key from SW/HW CAM table, Add by CCW
 	AP_RemoveKey( Adapter , pSTA );
-	
+
 	// 7. Reset ReplayCounter
 	pKeyMgnt->KeyReplayCounter = 0;
-	
+
 	// 8. Reset SNonce
 	PlatformZeroMemory( pKeyMgnt->SNonce, KEY_NONCE_LEN );
 
@@ -555,7 +555,7 @@ Authenticator_StateINITIALIZE(
 
 	pKeyMgnt->RxIV   = DEFAULT_INIT_RX_IV;
 	pKeyMgnt->TxIV   = DEFAULT_INIT_TX_IV;
-	pKeyMgnt->KeyRSC = pKeyMgnt->TxIV; 
+	pKeyMgnt->KeyRSC = pKeyMgnt->TxIV;
 
 	// Added by Annie for debug, 2005-07-25.
 	pKeyMgnt->MicErrorCnt = 0;
@@ -573,8 +573,8 @@ Authenticator_StateINITIALIZE(
 
 // Description:
 // Output:
-// Modify: 
-void 
+// Modify:
+void
 Authenticator_StateAUTHENTICATION(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
@@ -602,15 +602,15 @@ Authenticator_StateAUTHENTICATION(
 
 	// 4. 802.1x::PortMode = Enabled
 	pSTA->perSTAKeyInfo.portMode = pmt_Enable;
-	
+
 	// UCT
 	Authenticator_StateAUTHENTICATION2( Adapter, pSTA );
 }
 
 // Description:
 // Output:
-// Modify: 
-void 
+// Modify:
+void
 Authenticator_StateAUTHENTICATION2(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
@@ -639,8 +639,8 @@ Authenticator_StateAUTHENTICATION2(
 
 // Description:
 // Output:
-// Modify: 
-void 
+// Modify:
+void
 Authenticator_StatePTKSTART(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
@@ -667,35 +667,35 @@ Authenticator_StatePTKSTART(
 	// [AnnieTODO]
 	// 1. Construct 1st message in 4-way handshake.
 	// 	EAPOL(0, 0, 1, 0, 0, p, ANonce, 0, 0)
-	// 2. Send 1st msg 
+	// 2. Send 1st msg
 
 	pKeyMgnt->KeyReplayCounter ++;
 
 	RT_TRACE( COMP_AUTHENTICATOR, DBG_LOUD, ("Send 4-way message 1\n"));
 	//RT_TRACE(COMP_AUTHENTICATOR, DBG_LOUD , (" KeyReplayCounter = %08"i64fmt"x \n",pKeyMgnt->KeyReplayCounter  ));
 
-	
+
 	for( indexi = 0 ; indexi < 8 ; indexi++)
 		temp[indexi] =  (u1Byte)((pKeyMgnt->KeyReplayCounter >>( (7-indexi) *8)) &0xff );
 
 	PlatformMoveMemory( &KeyReplayCounter , temp , 8 );
-	
+
 	SendEapolKeyPacket(
-		Adapter, 
-		pSTA->MacAddr,	//StaAddr, 
+		Adapter,
+		pSTA->MacAddr,	//StaAddr,
 		NULL, // Pointer to KCK (EAPOL-Key Confirmation Key).
-		NULL, // 
+		NULL, //
 		type_Pairwise, // EAPOL-Key Information field: Key Type bit: type_Group or type_Pairwise.
 		FALSE, // EAPOL-Key Information field: Install Flag.
 		TRUE, // EAPOL-Key Information field: Key Ack bit.
-		FALSE, // EAPOL-Key Information field: Key MIC bit. If true, we will calculate EAPOL MIC and fill it into Key MIC field. 
+		FALSE, // EAPOL-Key Information field: Key MIC bit. If true, we will calculate EAPOL MIC and fill it into Key MIC field.
 		FALSE, // EAPOL-Key Information field: Secure bit.
 		FALSE, // EAPOL-Key Information field: Error bit. True for MIC failure report.
 		FALSE, // EAPOL-Key Information field: Requst bit.
 		KeyReplayCounter, // EAPOL-KEY Replay Counter field.  //pSTA->perSTAKeyInfo.KeyReplayCounter
 		pKeyMgnt->ANonce, // EAPOL-Key Key Nonce field (32-byte).
 		0, // EAPOL-Key Key RSC field (8-byte).
-		NULL, // Key Data field: Pointer to RSN IE, NULL if 
+		NULL, // Key Data field: Pointer to RSN IE, NULL if
 		NULL // Key Data field: Pointer to GTK, NULL if Key Data Length = 0.
 	);
 
@@ -710,8 +710,8 @@ Authenticator_StatePTKSTART(
 
 // Description:
 // Output:
-// Modify: 
-void 
+// Modify:
+void
 Authenticator_StatePTKINITNEGOTIATING(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
@@ -739,7 +739,7 @@ Authenticator_StatePTKINITNEGOTIATING(
 	// [AnnieTODO]
 	// 1. Construct 3rd message in 4-way handshake.
 	// 	EAPOL(0, 1, 1, Pair,0, P, ANonce, MIC(PTK_update), 0)
-	// 2. Send 3rd msg 
+	// 2. Send 3rd msg
 
 	pKeyMgnt->KeyReplayCounter ++;
 
@@ -750,46 +750,46 @@ Authenticator_StatePTKINITNEGOTIATING(
 		temp[indexi] =  (u1Byte)((pKeyMgnt->KeyReplayCounter >>( (7-indexi) *8)) &0xff );
 
 	PlatformMoveMemory( &KeyReplayCounter , temp , 8 );
-	
+
 	if( pMgntInfo->SecurityInfo.SecLvl == RT_SEC_LVL_WPA )
 	{
 	SendEapolKeyPacket(
-		Adapter, 
-		pSTA->MacAddr, 
+		Adapter,
+		pSTA->MacAddr,
 		pSTA->perSTAKeyInfo.PTK_update, // Pointer to KCK (EAPOL-Key Confirmation Key).
 		pSTA->perSTAKeyInfo.PTK_update + 16,
 		type_Pairwise, // EAPOL-Key Information field: Key Type bit: type_Group or type_Pairwise.
 		TRUE, // EAPOL-Key Information field: Install Flag.
 		TRUE, // EAPOL-Key Information field: Key Ack bit.
-		TRUE, // EAPOL-Key Information field: Key MIC bit. If true, we will calculate EAPOL MIC and fill it into Key MIC field. 
+		TRUE, // EAPOL-Key Information field: Key MIC bit. If true, we will calculate EAPOL MIC and fill it into Key MIC field.
 		FALSE, // EAPOL-Key Information field: Secure bit.
 		FALSE, // EAPOL-Key Information field: Error bit. True for MIC failure report.
 		FALSE, // EAPOL-Key Information field: Requst bit.
 		KeyReplayCounter, //pSTA->perSTAKeyInfo.KeyReplayCounter, // EAPOL-KEY Replay Counter field.
 				pKeyMgnt->ANonce, // EAPOL-Key Key Nonce field (32-byte).
 		pSTA->perSTAKeyInfo.KeyRSC, // perSTA EAPOL-Key Key RSC field (8-byte).
-		&(pMgntInfo->SecurityInfo.RSNIE), // Key Data field: Pointer to RSN IE, NULL if 
+		&(pMgntInfo->SecurityInfo.RSNIE), // Key Data field: Pointer to RSN IE, NULL if
 		NULL // Key Data field: Pointer to GTK, NULL if Key Data Length = 0.
 	);
 	}
 	else if( pMgntInfo->SecurityInfo.SecLvl == RT_SEC_LVL_WPA2 )
 	{
 		SendEapolKeyPacket(
-			Adapter, 
-			pSTA->MacAddr, 
+			Adapter,
+			pSTA->MacAddr,
 			pSTA->perSTAKeyInfo.PTK_update, // Pointer to KCK (EAPOL-Key Confirmation Key).
 			pSTA->perSTAKeyInfo.PTK_update + 16,
 			type_Pairwise, // EAPOL-Key Information field: Key Type bit: type_Group or type_Pairwise.
 			TRUE, // EAPOL-Key Information field: Install Flag.
 			TRUE, // EAPOL-Key Information field: Key Ack bit.
-			TRUE, // EAPOL-Key Information field: Key MIC bit. If true, we will calculate EAPOL MIC and fill it into Key MIC field. 
+			TRUE, // EAPOL-Key Information field: Key MIC bit. If true, we will calculate EAPOL MIC and fill it into Key MIC field.
 			TRUE, // EAPOL-Key Information field: Secure bit.
 			FALSE, // EAPOL-Key Information field: Error bit. True for MIC failure report.
 			FALSE, // EAPOL-Key Information field: Requst bit.
 			KeyReplayCounter,//pSTA->perSTAKeyInfo.KeyReplayCounter, // EAPOL-KEY Replay Counter field.
 			pKeyMgnt->ANonce, // EAPOL-Key Key Nonce field (32-byte).
 			pSTA->perSTAKeyInfo.KeyRSC, // perSTA EAPOL-Key Key RSC field (8-byte).
-			&(pMgntInfo->SecurityInfo.RSNIE), // Key Data field: Pointer to RSN IE, NULL if 
+			&(pMgntInfo->SecurityInfo.RSNIE), // Key Data field: Pointer to RSN IE, NULL if
 			pGlInfo->GTK  // Key Data field: Pointer to GTK, NULL if Key Data Length = 0.
 		);
 	}
@@ -805,8 +805,8 @@ Authenticator_StatePTKINITNEGOTIATING(
 
 // Description:
 // Output:
-// Modify: 
-void 
+// Modify:
+void
 Authenticator_StatePTKINITDONE(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
@@ -827,8 +827,8 @@ Authenticator_StatePTKINITDONE(
 	}
 
 	pSTA->perSTAKeyInfo.PrState = ASMPS_PTKINITDONE;
-	
-	// TODO: Check SetKey completed, these lines were moved from Authenticator_OnEAPOLKeyRecvd() by Jay 
+
+	// TODO: Check SetKey completed, these lines were moved from Authenticator_OnEAPOLKeyRecvd() by Jay
 	if (pSTA->perSTAKeyInfo.Pair)
 	{
 		u4Byte  ucIndex = 0;
@@ -836,51 +836,51 @@ Authenticator_StatePTKINITDONE(
 		if( Adapter->MgntInfo.SecurityInfo.PairwiseEncAlgorithm != RT_ENC_ALG_AESCCMP )
 		{
 			pSTA->perSTAKeyInfo.TempEncKey = pKeyMgnt->PTK+TKIP_ENC_KEY_POS;
-			pSTA->perSTAKeyInfo.TxMICKey = pKeyMgnt->PTK+(TKIP_MIC_KEY_POS);	
+			pSTA->perSTAKeyInfo.TxMICKey = pKeyMgnt->PTK+(TKIP_MIC_KEY_POS);
 			pSTA->perSTAKeyInfo.RxMICKey = pKeyMgnt->PTK+(TKIP_MIC_KEY_POS+TKIP_MIC_KEY_LEN);
 
-			//Add for AP mode HW enc,by CCW		
+			//Add for AP mode HW enc,by CCW
 			ucIndex = AP_FindFreeEntry(Adapter , pSTA->MacAddr );
 			if(ucIndex == Adapter->TotalCamEntry)
 			{
 				RT_TRACE( COMP_AUTHENTICATOR, DBG_LOUD, ("[Warning] Authenticator_StatePTKINITDONE: Cam Entry is FULL!!!\n"));
 				return;
 			}
-		
+
 			//set key
-			AP_Setkey(  Adapter , 
+			AP_Setkey(  Adapter ,
 					      pSTA->perSTAKeyInfo.pWLanSTA->MacAddr,
-					      ucIndex,  // Entey  index 
+					      ucIndex,  // Entey  index
 					      CAM_TKIP,
-					      0,  // Parise key 
-					      pSTA->perSTAKeyInfo.TempEncKey);	
+					      0,  // Parise key
+					      pSTA->perSTAKeyInfo.TempEncKey);
 
 			pSTA->keyindex  = ucIndex;
 		}else{  // AES mode AP-WPA AES,CCW
-		
+
 			AESCCMP_BLOCK		blockKey;
 			//RT_TRACE( COMP_WPAAES, DBG_LOUD, ("====> Set Station Key."));
-			//Add for AP mode HW enc,by CCW		
+			//Add for AP mode HW enc,by CCW
 			ucIndex = AP_FindFreeEntry(Adapter , pSTA->MacAddr);
 			if(ucIndex == Adapter->TotalCamEntry)
 			{
 				RT_TRACE( COMP_AUTHENTICATOR, DBG_LOUD, ("[Warning] Authenticator_StatePTKINITDONE: Cam Entry is FULL!!!\n"));
 				return;
 			}
-			
-			//Set Key 
+
+			//Set Key
 			PlatformMoveMemory( blockKey.x , pKeyMgnt->PTK+TKIP_ENC_KEY_POS , 16);
 			AES_SetKey(blockKey.x, AESCCMP_BLK_SIZE*8, (pu4Byte)pSTA->perSTAKeyInfo.AESKeyBuf);
 			//set hw key
-			AP_Setkey(  Adapter , 
+			AP_Setkey(  Adapter ,
 					      pSTA->perSTAKeyInfo.pWLanSTA->MacAddr,
-					      ucIndex,  // Entey  index 
+					      ucIndex,  // Entey  index
 					      CAM_AES,
-					      0,  // Parise key 
-					     pSTA->perSTAKeyInfo.PTK+TKIP_ENC_KEY_POS);	
+					      0,  // Parise key
+					     pSTA->perSTAKeyInfo.PTK+TKIP_ENC_KEY_POS);
 			pSTA->keyindex  = ucIndex;
 		}
-		
+
 	}
 	//pSTA->perSTAKeyInfo.bPTKInstalled = TRUE;
 	pSTA->perSTAKeyInfo.GInitAKeys = TRUE;
@@ -899,8 +899,8 @@ Authenticator_StatePTKINITDONE(
 
 // Description:
 // Output:
-// Modify: 
-void 
+// Modify:
+void
 Authenticator_StateUPDATEKEYS(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
@@ -923,14 +923,14 @@ Authenticator_StateUPDATEKEYS(
 
 // Description:
 // Output:
-// Modify: 
-void 
+// Modify:
+void
 Authenticator_StateINTEGRITYFAILURE(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
 	)
 {
-#if 1 //Added by Jay 0713 for process integrity failure 
+#if 1 //Added by Jay 0713 for process integrity failure
 	u8Byte			DiffTimeSlot;
 	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);
 #endif
@@ -947,20 +947,20 @@ Authenticator_StateINTEGRITYFAILURE(
 
 	pSTA->perSTAKeyInfo.MicErrorCnt ++;	// Added by Annie for debug, 2005-07-25.
 
-#if 1 //Added by Jay 0713 for process integrity failure 
+#if 1 //Added by Jay 0713 for process integrity failure
 	//RT_TRACE( COMP_AUTHENTICATOR, DBG_LOUD, ("IntegrityFail(): AP mode, TimeSlot_lastIntegrityFailed=%"i64fmt"d\n", pSTA->perSTAKeyInfo.TimeSlot_lastIntegrityFailed ));
 	//RT_TRACE( COMP_AUTHENTICATOR, DBG_LOUD, ("IntegrityFail(): AP mode, CurrentTimeSlot             =%"i64fmt"d\n", pMgntInfo->globalKeyInfo.CurrentTimeSlot ));
 
-	DiffTimeSlot = pMgntInfo->globalKeyInfo.CurrentTimeSlot - 
+	DiffTimeSlot = pMgntInfo->globalKeyInfo.CurrentTimeSlot -
 					pSTA->perSTAKeyInfo.TimeSlot_lastIntegrityFailed;
-		
-	pSTA->perSTAKeyInfo.TimeSlot_lastIntegrityFailed = 
+
+	pSTA->perSTAKeyInfo.TimeSlot_lastIntegrityFailed =
 		pMgntInfo->globalKeyInfo.CurrentTimeSlot;
 
 	if(DiffTimeSlot > 60)
 	{
 #if SUPPORT_WPA_VERSION_D3
-		//update the PTK with this STA and GTK with all STAs	
+		//update the PTK with this STA and GTK with all STAs
 		Authenticator_StateKEYUPDATE(Adapter, pSTA);
 #endif
 	}
@@ -982,8 +982,8 @@ Authenticator_StateINTEGRITYFAILURE(
 
 // Description:
 // Output:
-// Modify: 
-void 
+// Modify:
+void
 Authenticator_StateKEYUPDATE(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
@@ -1011,8 +1011,8 @@ Authenticator_StateKEYUPDATE(
 
 // Description:
 // Output:
-// Modify: 
-void 
+// Modify:
+void
 Authenticator_StateREKEYNEGOTIATING(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
@@ -1049,23 +1049,23 @@ Authenticator_StateREKEYNEGOTIATING(
 		temp[indexi] =  (u1Byte)((pKeyMgnt->KeyReplayCounter >>( (7-indexi) *8)) &0xff );
 
 	PlatformMoveMemory( &KeyReplayCounter , temp , 8 );
-	
+
 	SendEapolKeyPacket(
-		Adapter, 
-		pSTA->MacAddr, 
+		Adapter,
+		pSTA->MacAddr,
 		pSTA->perSTAKeyInfo.PTK, // Pointer to KCK (EAPOL-Key Confirmation Key).
 		pSTA->perSTAKeyInfo.PTK + 16,	// [AnnieWorkaround]
 		type_Group, // EAPOL-Key Information field: Key Type bit: type_Group or type_Pairwise.
 		FALSE, // EAPOL-Key Information field: Install Flag.
 		TRUE, // EAPOL-Key Information field: Key Ack bit.
-		TRUE, // EAPOL-Key Information field: Key MIC bit. If true, we will calculate EAPOL MIC and fill it into Key MIC field. 
+		TRUE, // EAPOL-Key Information field: Key MIC bit. If true, we will calculate EAPOL MIC and fill it into Key MIC field.
 		TRUE, // EAPOL-Key Information field: Secure bit.
 		FALSE, // EAPOL-Key Information field: Error bit. True for MIC failure report.
 		FALSE, // EAPOL-Key Information field: Requst bit.
 		KeyReplayCounter,//pSTA->perSTAKeyInfo.KeyReplayCounter, // EAPOL-KEY Replay Counter field.
 		pGlInfo->GNonce, // EAPOL-Key Key Nonce field (32-byte).
 		pGlInfo->KeyRSC, // EAPOL-Key Key RSC field (8-byte).
-		NULL, // Key Data field: Pointer to RSN IE, NULL if 
+		NULL, // Key Data field: Pointer to RSN IE, NULL if
 		pGlInfo->GTK  // Key Data field: Pointer to GTK, NULL if Key Data Length = 0.
 	);
 
@@ -1080,8 +1080,8 @@ Authenticator_StateREKEYNEGOTIATING(
 
 // Description:
 // Output:
-// Modify: 
-void 
+// Modify:
+void
 Authenticator_StateREKEYESTABLISHED(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
@@ -1114,8 +1114,8 @@ Authenticator_StateREKEYESTABLISHED(
 
 // Description:
 // Output:
-// Modify: 
-void 
+// Modify:
+void
 Authenticator_StateKEYERROR(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA,
@@ -1150,7 +1150,7 @@ Authenticator_StateKEYERROR(
 //		Now Global/group key data (PMK, GTK, ANonce): all kept in pMgntInfo->globalKeyInfo.
 //		global key state: recorded in pEntry->perSTAKeyInfo.GrState. (I think it should be kept in per station.)
 //
-void 
+void
 Authenticator_GlobalReset(
 	IN	PADAPTER		Adapter
 	)
@@ -1162,7 +1162,7 @@ Authenticator_GlobalReset(
 	int 		i;
 	u1Byte	RdmBuf[20], NonceBuf[KEY_NONCE_LEN];
 	static u1Byte	CAM_CONST_BROAD[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-	AESCCMP_BLOCK		blockKey;	
+	AESCCMP_BLOCK		blockKey;
 
 
 	//--- [AnnieWorkaround] See 11i D3.0 page91, GTK should be generated by PRF-X.
@@ -1191,7 +1191,7 @@ Authenticator_GlobalReset(
 		NonceBuf[16+i] = RdmBuf[19-i];
 	}
 	NonceBuf[KEY_NONCE_LEN-1] = 0;	//[AnnieWorkaround] Remove it if ANonce addition is ready. 2005-11-25.
-	RT_PRINT_DATA( COMP_AUTHENTICATOR, DBG_LOUD, "Authenticator_GlobalReset(): NonceBuf", NonceBuf, KEY_NONCE_LEN );	
+	RT_PRINT_DATA( COMP_AUTHENTICATOR, DBG_LOUD, "Authenticator_GlobalReset(): NonceBuf", NonceBuf, KEY_NONCE_LEN );
 
 	// 1. Install PMK
 	if( pGlInfo->PassphraseLen < 64 ){
@@ -1216,13 +1216,13 @@ Authenticator_GlobalReset(
 	pGlInfo->TxMICKey = pGlInfo->GTK + GTK_MIC_TX_POS;
 	pGlInfo->RxMICKey = pGlInfo->GTK + GTK_MIC_RX_POS;
 
-	//AP WPA AES,CCW	
+	//AP WPA AES,CCW
 	PlatformMoveMemory( blockKey.x , pGlInfo->GTK , 16);
 	AES_SetKey(blockKey.x, AESCCMP_BLK_SIZE*8, (pu4Byte)pGlInfo->AESGTK);
 	//
 	pSecInfo->GroupTransmitKeyIdx = 1;
-	
-			
+
+
 
 	// 3. Install ANonce
 //	CopyMem( pGlInfo->ANonce, NonceBuf, KEY_NONCE_LEN );
@@ -1234,7 +1234,7 @@ Authenticator_GlobalReset(
 
 	// 5. Reset KeyRSC
 	pGlInfo->KeyRSC = 0;
-	
+
 	// 6. Reset time slot.
 	pGlInfo->CurrentTimeSlot = 0;
 
@@ -1257,16 +1257,16 @@ Authenticator_GlobalReset(
 
 	//reset SWCamTabe and HWCamtable ,add by CCW
 	AP_ClearAllKey(Adapter);
-	
+
 	if( (MgntActQuery_ApType(Adapter) == RT_AP_TYPE_NORMAL ||
-	MgntActQuery_ApType(Adapter) == RT_AP_TYPE_IBSS_EMULATED 
-		 || MgntActQuery_ApType(Adapter) == RT_AP_TYPE_LINUX) && 
+	MgntActQuery_ApType(Adapter) == RT_AP_TYPE_IBSS_EMULATED
+		 || MgntActQuery_ApType(Adapter) == RT_AP_TYPE_LINUX) &&
      	( pMgntInfo->NdisVersion  < RT_NDIS_VERSION_6_20 ))
 	{
 	switch( pSecInfo->PairwiseEncAlgorithm )
 	{
 	case RT_ENC_ALG_TKIP:
-		AP_Setkey(  Adapter , 
+		AP_Setkey(  Adapter ,
 			     CAM_CONST_BROAD,
 			     1,  // Index entry
 			     CAM_TKIP,
@@ -1275,7 +1275,7 @@ Authenticator_GlobalReset(
 		break;
 
 	case RT_ENC_ALG_AESCCMP:
-		AP_Setkey(  Adapter , 
+		AP_Setkey(  Adapter ,
 			     	CAM_CONST_BROAD,
 			     	1,  // Index entry
 			     	CAM_AES,
@@ -1283,7 +1283,7 @@ Authenticator_GlobalReset(
 			     	pGlInfo->GTK);
 		break;
 
-	case RT_ENC_ALG_WEP40: 
+	case RT_ENC_ALG_WEP40:
 	case RT_ENC_ALG_WEP104:
 		{
 			static u1Byte	CAM_CONST_ADDR[4][6] = {
@@ -1292,13 +1292,13 @@ Authenticator_GlobalReset(
 				{0x00, 0x00, 0x00, 0x00, 0x00, 0x02},
 				{0x00, 0x00, 0x00, 0x00, 0x00, 0x03}};
 				u1Byte EncAlgo = ((pSecInfo->PairwiseEncAlgorithm == RT_ENC_ALG_WEP40) ? CAM_WEP40 : CAM_WEP104);
-	
+
 			for(i = 0; i < 4; i++)
 			{
 				if(pSecInfo->KeyLen[i] > 0)
 				{
 					AP_Setkey(
-						Adapter , 
+						Adapter ,
 						CAM_CONST_ADDR[i],
 						i,  // Index entry
 						EncAlgo,
@@ -1313,9 +1313,9 @@ Authenticator_GlobalReset(
 		break;
 	}
 	}
-	
+
 	RT_TRACE( COMP_AUTHENTICATOR, DBG_LOUD, ("<=== Authenticator_GlobalReset()\n") );
-	
+
 }
 
 

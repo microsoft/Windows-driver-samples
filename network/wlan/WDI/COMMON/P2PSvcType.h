@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //
 // Copyright (c) 2013 Realtek Semiconductor, Inc. All rights reserved.
-// 
+//
 //---------------------------------------------------------------------------
 // Description:
 //		P2P Service interface for upper layers
@@ -43,7 +43,7 @@ typedef u4Byte P2PSVC_REASON, *PP2PSVC_REASON;
 
 #define P2PSVC_DEFINE_REASON(__reasonStr) (#__reasonStr)
 
-static char* P2PSVC_REASON_STR_TAB[] = 
+static char* P2PSVC_REASON_STR_TAB[] =
 {
 	P2PSVC_DEFINE_REASON(P2PSVC_REASON_NONE),						// 0x00000000
 	P2PSVC_DEFINE_REASON(P2PSVC_REASON_PEER_UNRECOGNIZED),			// 0x00000001
@@ -168,10 +168,10 @@ typedef struct _P2PSVC_SVC_NAME_HASH_TAB
 	UCHAR 							hash[6];
 }P2PSVC_SVC_NAME_HASH_TAB, *PP2PSVC_SVC_NAME_HASH_TAB;
 
-static P2PSVC_SVC_NAME_HASH_TAB gP2PSVC_NameHashTab[] = 
+static P2PSVC_SVC_NAME_HASH_TAB gP2PSVC_NameHashTab[] =
 {
 	{L"org.wi-fi.wfds",				{0x6d, 0xb8, 0x71, 0x03, 0x11, 0xf8}},
-		
+
 	{L"org.wi-fi.wfds.send.rx",		{0xeb, 0xac, 0xb9, 0x5f, 0x37, 0x4e}},
 	{L"org.wi-fi.wfds.send.tx",		{0x28, 0x6d, 0xef, 0xe4, 0x6d, 0xd5}},
 
@@ -192,11 +192,11 @@ typedef struct _P2PSVC_OBJ_LIST
 {
 	// Hdr
 	RT_OBJECT_HEADER				hdr;	// len is form Value to the end of the structure including the var len field
-	
+
 	// Fixed
 	u4Byte							nObjs;
 	u4Byte							ObjTab[P2PSVC_MAX_OBJ_LIST_ENTRIES];
-	
+
 	// Var
 	u1Byte							varStart[1];
 }P2PSVC_OBJ_LIST, *PP2PSVC_OBJ_LIST;

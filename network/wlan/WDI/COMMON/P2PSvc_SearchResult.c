@@ -40,7 +40,7 @@ p2psvc_EvalSearchResultObjListLen(
 			u1Byte							curSvcNameLen = 0;
 
 			// adv-id
-			idxAdvSvcInfoBuf += 4; 
+			idxAdvSvcInfoBuf += 4;
 
 			// config-method (addendm v0.43)
 			idxAdvSvcInfoBuf += 2;
@@ -48,26 +48,26 @@ p2psvc_EvalSearchResultObjListLen(
 			// svc-name-len
 			curSvcNameLen = (*(pu1Byte)(osAdvSvcInfo.Octet + idxAdvSvcInfoBuf));
 			totalSvcNameLen_2 += curSvcNameLen;
-			idxAdvSvcInfoBuf += 1; 																				
+			idxAdvSvcInfoBuf += 1;
 
 			// svc-name
 			//RT_PRINT_STR(COMP_P2P, DBG_LOUD, "svc-name:\n", osAdvSvcInfo.Octet + i, curSvcNameLen);
 			idxAdvSvcInfoBuf += curSvcNameLen;
 
 			// TODO: shall check if the svc matches our req because hashes of other seek req may be carried in our ProbeReq so we may get more svc names then we actually want
-			
+
 			nAdvSvc++;
 		}
 
 		totalSvcNameLen_1 = osAdvSvcInfo.Length - (nAdvSvc * (4 + 2 + 1)); // minus adv-id(4), config-method(2) and svc-name-length(1)
 
-		if(totalSvcNameLen_1 != totalSvcNameLen_2) 
+		if(totalSvcNameLen_1 != totalSvcNameLen_2)
 		{
 			//RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] totalSvcNameLen_1(%u) != totalSvcNameLen_2(%u)\n", totalSvcNameLen_1, totalSvcNameLen_2));
 			//RT_PRINT_DATA(COMP_P2P, DBG_WARNING, "osAdvSvcInfo:\n", osAdvSvcInfo.Octet, osAdvSvcInfo.Length);
 			break;
 		}
-		
+
 		reqBufSize = 0;
 		reqBufSize += FIELD_OFFSET(P2PSVC_OBJ_LIST, varStart);
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + 1); 											// search-id
@@ -81,8 +81,8 @@ p2psvc_EvalSearchResultObjListLen(
 		reqBufSize += (nAdvSvc * (RT_OBJECT_HEADER_SIZE)) + totalSvcNameLen_1; 				// svc-name
 
 		if(pnAdvSvc) *pnAdvSvc = nAdvSvc;
-	}while(FALSE);	
-	
+	}while(FALSE);
+
 	return reqBufSize;
 }
 
@@ -101,7 +101,7 @@ P2PSvc_Free_SearchResultObjList(
 	{
 		PVOID 								pEntry = NULL;
 		PP2PSVC_SR_LIST_ENTRY 				pSREntry = NULL;
-	
+
 		pEntry = RTRemoveHeadListWithCnt(pListHead, pListCnt);
 		pSREntry = (PP2PSVC_SR_LIST_ENTRY)pEntry;
 		P2PSvc_FreeMem(pEntry, P2PSVC_SR_LIST_LEN(pSREntry));
@@ -153,7 +153,7 @@ P2PSvc_ToProcessProbeRsp(
 #pragma warning( disable:6328 )
 					RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Timeout waiting for SD rsp, try again by accept probe rsp, sdReqTxTime: %u\n", pSREntryInList->sdReqTxTime));
 					RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, "Target dev addr:\n", devAddr);
-					
+
 					pSREntryInList->sdReqTxTime = 0;
 					bAccept = TRUE;
 					break;
@@ -200,9 +200,9 @@ P2PSvc_GetSearchResult(
 {
 		RT_STATUS							rtStatus = RT_STATUS_SUCCESS;
 		PRT_LIST_ENTRY 						pEntry = NULL;
-	
+
 		if(ppSREntry) *ppSREntry = NULL;
-	
+
 		do
 		{
 			for(pEntry = RTGetHeadList(&pP2PSvcInfo->searchResultList); pEntry != &pP2PSvcInfo->searchResultList; pEntry = RTNextEntryList(pEntry))
@@ -210,19 +210,19 @@ P2PSvc_GetSearchResult(
 				PP2PSVC_SR_LIST_ENTRY 	pSREntry = (PP2PSVC_SR_LIST_ENTRY)pEntry;
 				PRT_OBJECT_HEADER 		pSearchIdObj = NULL;
 				PRT_OBJECT_HEADER 		pDevAddrObj = NULL;
-	
+
 				// Match search id
 				if(NULL == (pSearchIdObj = P2PSvc_GetParam(&pSREntry->srObjList, P2PSVC_OBJ_HDR_ID_DATA_SEARCH_ID, 0)))
 				{
 					rtStatus = RT_STATUS_INVALID_DATA;
 					break;
 				}
-	
+
 				if(searchId != *(pu1Byte)pSearchIdObj->Value)
 				{
 					continue;;
 				}
-	
+
 				// Match dev addr
 				if(NULL == (pDevAddrObj = P2PSvc_GetParam(&pSREntry->srObjList, P2PSVC_OBJ_HDR_ID_DATA_DEV_ADDR, 0)))
 				{
@@ -233,15 +233,15 @@ P2PSvc_GetSearchResult(
 				{
 					continue;
 				}
-	
+
 				// Target found
 				if(ppSREntry) *ppSREntry = pSREntry;
 				break;
 			}
-	
+
 			if(RT_STATUS_SUCCESS != rtStatus) break;
 		}while(FALSE);
-	
+
 		return rtStatus;
 	}
 
@@ -265,7 +265,7 @@ P2PSvc_SeekReqNeedSD(
 		{// shall not happen
 			break;
 		}
-		
+
 		if(0 == pSeekSvcInfoReqObj->Length)
 		{
 			PRT_OBJECT_HEADER 				pSeekSvcNameObj = NULL;
@@ -273,7 +273,7 @@ P2PSvc_SeekReqNeedSD(
 			{// shall not happen
 				break;
 			}
-		
+
 			if('*' == *((pu1Byte)pSeekSvcNameObj->Value + pSeekSvcNameObj->Length - 1))
 			{// ended with *, assume UTF-8 encode of * uses only a single byte
 				bNeedSD = TRUE;
@@ -282,14 +282,14 @@ P2PSvc_SeekReqNeedSD(
 
 			break;
 		}
-		
+
 		//4 Check if we've already done SD
 		// Get a svc desc
 		if(NULL == (pSvcDescObjList = P2PSvc_GetParam(&pSREntryInList->srObjList, P2PSVC_OBJ_HDR_ID_DATA_SVC_DESC_LIST, 0)))
 		{
 			break;
 		}
-		
+
 		// Check if the svc desc has svc-info
 		if(NULL == (pSvcInfoObj = P2PSvc_GetParam((PP2PSVC_OBJ_LIST)pSvcDescObjList, P2PSVC_OBJ_HDR_ID_DATA_SVC_INFO, 0)))
 		{
@@ -313,7 +313,7 @@ P2PSvc_SeekReqNeedSD(
 
 //
 // Description:
-//		Update search result list if 
+//		Update search result list if
 //		1. the input entry can be found in the list and the content is different
 //		2. the input entry can't be found in the list
 //
@@ -322,7 +322,7 @@ P2PSvc_SeekReqNeedSD(
 RT_STATUS
 P2PSvc_UpdateSearchResult(
 	IN  PP2PSVC_INFO						pP2PSvcInfo,
-	IN	 u1Byte								searchId, 
+	IN	 u1Byte								searchId,
 	IN  pu1Byte								devAddr,
 	IN  PP2PSVC_SR_LIST_ENTRY				pSREntryToUpdate,
 	OUT PBOOLEAN							pbDuplicatedEntry,
@@ -342,7 +342,7 @@ P2PSvc_UpdateSearchResult(
 		}
 
 		if(pSREntryInList)
-		{// remove the old one and insert the new to the head	
+		{// remove the old one and insert the new to the head
 
 			if(P2PSVC_OBJ_LIST_LEN(&pSREntryToUpdate->srObjList) == P2PSVC_OBJ_LIST_LEN(&pSREntryInList->srObjList) &&
 				0 == PlatformCompareMemory(&pSREntryToUpdate->srObjList, &pSREntryInList->srObjList, P2PSVC_OBJ_LIST_LEN(&pSREntryToUpdate->srObjList)))
@@ -383,7 +383,7 @@ P2PSvc_UpdateSearchResult(
 //		svc-info is empty.
 //
 //		Fixed fields including:
-//			search-id, dev-addr, dev-name, 
+//			search-id, dev-addr, dev-name,
 //
 //		Var fields describing each services advertised by the dev are:
 //			adv-id, svc-name, (no svc-info), svc-status
@@ -400,13 +400,13 @@ P2PSvc_UpdateSearchResult(
 // 5. config-method (2) (addendum v0.43)
 // 6. svc-name (n, n <= 255)
 // 7. svc-info (n, n <= 65535)
-// 8. svc-status (1) 
+// 8. svc-status (1)
 //
 RT_STATUS
 P2PSvc_MakeSearchResultDataFromProbeRsp(
 	IN  PP2PSVC_INFO						pP2PSvcInfo,
-	IN  PP2PSVC_REQ_INFO_ENTRY 				pSeekInfoEntry, 
-	IN  pu1Byte								devAddr, 
+	IN  PP2PSVC_REQ_INFO_ENTRY 				pSeekInfoEntry,
+	IN  pu1Byte								devAddr,
 	IN  POCTET_STRING						posP2PAttrs,
 	IN  OCTET_STRING						osAdvSvcInfo,
 	OUT PP2PSVC_SR_LIST_ENTRY				*ppSREntryOut
@@ -422,12 +422,12 @@ P2PSvc_MakeSearchResultDataFromProbeRsp(
 	P2PSVC_FUNC_IN(DBG_TRACE);
 
 	do
-	{	
-		u4Byte 								idxAdvSvc = 0, idxAdvSvcInfoBuf = 0; 
-		u1Byte								nAdvSvc = 0; 
+	{
+		u4Byte 								idxAdvSvc = 0, idxAdvSvcInfoBuf = 0;
+		u1Byte								nAdvSvc = 0;
 
 		*ppSREntryOut = NULL;
-		
+
 		if(0 == (reqBufSize = p2psvc_EvalSearchResultObjListLen(posP2PAttrs, osAdvSvcInfo, 0, &nAdvSvc)))
 		{
 			rtStatus = RT_STATUS_INVALID_DATA;
@@ -441,7 +441,7 @@ P2PSvc_MakeSearchResultDataFromProbeRsp(
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] Failed to allocate memory for pSREntry\n"));
 			break;
 		}
-		
+
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("alloc mem for size: %u\n", reqBufSize));
 
 		PlatformFillMemory(pSREntry, reqBufSize, 0xFE);
@@ -452,9 +452,9 @@ P2PSvc_MakeSearchResultDataFromProbeRsp(
 
 		pObjList = &pSREntry->srObjList;
 
-		P2PSVC_OBJ_LIST_INIT(pObjList, 
-					RT_OB_HDR_TYPE_DATA, 
-					P2PSVC_OBJ_HDR_ID_INDIC_SEARCH_RESULT, 
+		P2PSVC_OBJ_LIST_INIT(pObjList,
+					RT_OB_HDR_TYPE_DATA,
+					P2PSVC_OBJ_HDR_ID_INDIC_SEARCH_RESULT,
 					P2PSVC_MIN_SUPPORT_VER);
 
 		//1 Note that because we have search id in the obj, the search result would belong to a specific seek req
@@ -500,7 +500,7 @@ P2PSvc_MakeSearchResultDataFromProbeRsp(
 		*ppSREntryOut = pSREntry;
 
 		RT_PRINT_DATA(COMP_P2P, DBG_TRACE, "P2PSvc_MakeSearchResultDataFromProbeRsp():\n", pObjList, P2PSVC_OBJ_LIST_LEN(pObjList));
-		
+
 	}while(FALSE);
 
 	if(RT_STATUS_SUCCESS != rtStatus)
@@ -590,7 +590,7 @@ P2PSvc_MakeSearchResultDataFromSDRsp(
 		reqBufSize += nSvcInfoDesc * (RT_OBJECT_HEADER_SIZE + 4);								// adv-id
 		reqBufSize += (nSvcInfoDesc * (RT_OBJECT_HEADER_SIZE)) + totalSvcNameLen;			// svc-name
 		reqBufSize += (nSvcInfoDesc * (RT_OBJECT_HEADER_SIZE)) + totalSvcInfoLen; 			// svc-info
-		reqBufSize += nSvcInfoDesc * (RT_OBJECT_HEADER_SIZE + 1);								// svc-status	
+		reqBufSize += nSvcInfoDesc * (RT_OBJECT_HEADER_SIZE + 1);								// svc-status
 
 		if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_AllocMem(pP2PSvcInfo->pAdapter, &pNewSREntry, reqBufSize)))
 		{
@@ -607,10 +607,10 @@ P2PSvc_MakeSearchResultDataFromSDRsp(
 		pNewSREntry->bDirty = FALSE;
 
 		pNewObjList = &pNewSREntry->srObjList;
-		
-		P2PSVC_OBJ_LIST_INIT(pNewObjList, 
-					RT_OB_HDR_TYPE_DATA, 
-					P2PSVC_OBJ_HDR_ID_INDIC_SEARCH_RESULT, 
+
+		P2PSVC_OBJ_LIST_INIT(pNewObjList,
+					RT_OB_HDR_TYPE_DATA,
+					P2PSVC_OBJ_HDR_ID_INDIC_SEARCH_RESULT,
 					P2PSVC_MIN_SUPPORT_VER);
 
 		P2PSvc_MakeObj(pNewObjList, P2PSVC_OBJ_HDR_ID_DATA_SEARCH_ID, pSearchIdObj->Length, pSearchIdObj->Value);
@@ -620,12 +620,12 @@ P2PSvc_MakeSearchResultDataFromSDRsp(
 
 		if(pIsSDDoneObj != NULL)
 			P2PSvc_MakeObj(pNewObjList, P2PSVC_OBJ_HDR_ID_DATA_IS_SD_DONE, sizeof(BOOLEAN), pIsSDDoneObj->Value);
-					
+
 		for(idxSvcInfoDesc = 0; idxSvcInfoDesc < nSvcInfoDesc; idxSvcInfoDesc++)
 		{
 			PP2PSVC_OBJ_LIST				pSvcDescObjList = NULL;
 			u1Byte							svcNameLen = 0;
-		
+
 			if(0 == P2PSvc_MakeSvcDescObjList(pNewObjList, &pSvcDescObjList)) {rtStatus = RT_STATUS_INVALID_DATA ; break;}
 
 			if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_ParseAnqpQueryRsp(pSvcRspTlv, idxSvcInfoDesc, &svcNameLen, &pSvcNameBuf, &advId, &svcStatus, &svcInfoLen, &pSvcInfoBuf)))
@@ -651,7 +651,7 @@ P2PSvc_MakeSearchResultDataFromSDRsp(
 		// Free the old one
 		RTRemoveEntryListWithCnt((PRT_LIST_ENTRY)pOldSREntry, &pP2PSvcInfo->searchResultListCnt);
 		P2PSvc_FreeMem(pOldSREntry, P2PSVC_SR_LIST_LEN(pOldSREntry));
-		
+
 	}while(FALSE);
 
 	if(RT_STATUS_SUCCESS != rtStatus)

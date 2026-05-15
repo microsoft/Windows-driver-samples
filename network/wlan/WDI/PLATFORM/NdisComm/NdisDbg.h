@@ -15,7 +15,7 @@ typedef enum _RTL_EXT_C2H_EVT
 
 // OP codes definition between the user layer and driver
 typedef enum _BT_CTRL_OPCODE_UPPER{
-	BT_UP_OP_BT_READY										= 0x00, 
+	BT_UP_OP_BT_READY										= 0x00,
 	BT_UP_OP_BT_SET_MODE									= 0x01,
 	BT_UP_OP_BT_SET_TX_RX_PARAMETER							= 0x02,
 	BT_UP_OP_BT_SET_GENERAL									= 0x03,
@@ -25,9 +25,9 @@ typedef enum _BT_CTRL_OPCODE_UPPER{
 }BT_CTRL_OPCODE_UPPER,*PBT_CTRL_OPCODE_UPPER;
 
 typedef enum _BT_SET_GENERAL{
-	BT_GSET_REG												= 0x00, 
-	BT_GSET_RESET											= 0x01, 
-	BT_GSET_TARGET_BD_ADDR									= 0x02, 
+	BT_GSET_REG												= 0x00,
+	BT_GSET_RESET											= 0x01,
+	BT_GSET_TARGET_BD_ADDR									= 0x02,
 	BT_GSET_TX_PWR_FINETUNE									= 0x03,
 	BT_GSET_TRACKING_INTERVAL								= 0x04,
 	BT_GSET_THERMAL_METER									= 0x05,
@@ -37,7 +37,7 @@ typedef enum _BT_SET_GENERAL{
 }BT_SET_GENERAL,*PBT_SET_GENERAL;
 
 typedef enum _BT_GET_GENERAL{
-	BT_GGET_REG												= 0x00, 
+	BT_GGET_REG												= 0x00,
 	BT_GGET_STATUS											= 0x01,
 	BT_GGET_REPORT											= 0x02,
 	BT_GGET_AFH_MAP											= 0x03,
@@ -80,7 +80,7 @@ typedef enum _BT_REPORT_TYPE{
 
 //OP codes definition between driver and bt fw
 typedef enum _BT_CTRL_OPCODE_LOWER{
-	BT_LO_OP_GET_BT_VERSION										= 0x00, 
+	BT_LO_OP_GET_BT_VERSION										= 0x00,
 	BT_LO_OP_RESET												= 0x01,
 	BT_LO_OP_TEST_CTRL											= 0x02,
 	BT_LO_OP_SET_BT_MODE										= 0x03,
@@ -169,7 +169,7 @@ typedef enum _BT_CTRL_STATUS{
 
 typedef enum _BT_OPCODE_STATUS{
 	BT_OP_STATUS_SUCCESS									= 0x00, // Success
-	BT_OP_STATUS_VERSION_MISMATCH							= 0x01,	
+	BT_OP_STATUS_VERSION_MISMATCH							= 0x01,
 	BT_OP_STATUS_UNKNOWN_OPCODE								= 0x02,
 	BT_OP_STATUS_ERROR_PARAMETER							= 0x03,
 	BT_OP_STATUS_MAX
@@ -395,7 +395,7 @@ DbgWriteEFuse(
 
 BOOLEAN
 DbgUpdateEFuse(
-	IN	PADAPTER	pAdapter	
+	IN	PADAPTER	pAdapter
 );
 
 BOOLEAN
@@ -415,7 +415,7 @@ DbgWriteBTEFuse(
 
 BOOLEAN
 DbgUpdateBTEFuse(
-	IN	PADAPTER	pAdapter	
+	IN	PADAPTER	pAdapter
 );
 
 BOOLEAN

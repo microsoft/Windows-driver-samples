@@ -3,7 +3,7 @@
 //		//: Comment at the beginning
 //		OS: * Ebd6 Ebd7 WinXP Vista Win7 Win8 WinBlue
 //		+: Add for OS
-//		-: Remove for OS 
+//		-: Remove for OS
 //
 
 +(*) [Debug.c]
@@ -12,7 +12,7 @@
 +(*) [GeneralFunc.c]
 +(*) [DriverInterface.c]
 +(*) [Transmit.c]
-+(*) [Receive.c]	
++(*) [Receive.c]
 +(*) [MgntGen.c]
 +(*) [MgntConstructPacket.c]
 +(*) [MgntSendPacket.c]

@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Object><Action>
-//  
+//
 //      i.e.
 //
 //       KrnlHlprNDISPoolDataDestroy
@@ -51,7 +51,7 @@
 
 /**
  @kernel_helper_function="KrnlHlprNDISPoolDataDestroy"
- 
+
    Purpose:  Cleanup a NDIS_POOL_DATA object.                                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -66,13 +66,13 @@ _IRQL_requires_same_
 inline VOID KrnlHlprNDISPoolDataPurge(_Inout_ NDIS_POOL_DATA* pNDISPoolData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprNDISPoolDataPurge()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pNDISPoolData);
 
    if(pNDISPoolData->ndisHandle)
@@ -100,19 +100,19 @@ inline VOID KrnlHlprNDISPoolDataPurge(_Inout_ NDIS_POOL_DATA* pNDISPoolData)
                  sizeof(NDIS_POOL_DATA));
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprNDISPoolDataPurge()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprNDISPoolDataDestroy"
- 
+
    Purpose:  Cleanup a NDIS_POOL_DATA object.                                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -128,13 +128,13 @@ _Success_(*ppNDISPoolData == 0)
 inline VOID KrnlHlprNDISPoolDataDestroy(_Inout_ NDIS_POOL_DATA** ppNDISPoolData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprNDISPoolDataDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppNDISPoolData);
 
    if(*ppNDISPoolData)
@@ -146,19 +146,19 @@ inline VOID KrnlHlprNDISPoolDataDestroy(_Inout_ NDIS_POOL_DATA** ppNDISPoolData)
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprNDISPoolDataDestroy()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprPendDataCreate"
- 
+
    Purpose:  Populates a NDIS_POOL_DATA object with the various NDIS Pools.                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -176,13 +176,13 @@ NTSTATUS KrnlHlprNDISPoolDataPopulate(_Inout_ NDIS_POOL_DATA* pNDISPoolData,
                                       _In_opt_ UINT32 memoryTag)             /* WFPSAMPLER_NDIS_POOL_TAG */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprNDISPoolDataPopulate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pNDISPoolData);
 
    NTSTATUS                        status            = STATUS_SUCCESS;
@@ -251,19 +251,19 @@ NTSTATUS KrnlHlprNDISPoolDataPopulate(_Inout_ NDIS_POOL_DATA* pNDISPoolData,
       KrnlHlprNDISPoolDataPurge(pNDISPoolData);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprNDISPoolDataPopulate()\n");
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprPendDataCreate"
- 
+
    Purpose:  Allocates and populates a NDIS_POOL_DATA object with the various NDIS Pools.       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -282,13 +282,13 @@ NTSTATUS KrnlHlprNDISPoolDataCreate(_Outptr_ NDIS_POOL_DATA** ppNDISPoolData,
                                     _In_opt_ UINT32 memoryTag)                /* WFPSAMPLER_NDIS_POOL_TAG */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprNDISPoolDataCreate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppNDISPoolData);
 
    NTSTATUS status = STATUS_SUCCESS;
@@ -314,13 +314,13 @@ NTSTATUS KrnlHlprNDISPoolDataCreate(_Outptr_ NDIS_POOL_DATA** ppNDISPoolData,
 #pragma warning(pop)
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprNDISPoolDataCreate() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }

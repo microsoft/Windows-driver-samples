@@ -14,7 +14,7 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   - Add support for ADVANCED_PACKET_INJECTION, 
+//      December  13,   2013  -     1.1   - Add support for ADVANCED_PACKET_INJECTION,
 //                                             FLOW_ASSOCIATION, and PEND_ENDPOINT_CLOSURE callouts
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,13 +30,13 @@ _IRQL_requires_same_
 VOID PrvExposedCalloutsUndefine()
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PrvExposedCalloutsUndefine()\n");
 
 #endif /// DBG
-   
+
    for(UINT32 calloutIndex = 0;
        calloutIndex < EXPOSED_CALLOUT_COUNT;
        calloutIndex++)
@@ -46,13 +46,13 @@ VOID PrvExposedCalloutsUndefine()
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PrvExposedCalloutsUndefine()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
@@ -63,13 +63,13 @@ _Success_(return == STATUS_SUCCESS)
 NTSTATUS PrvExposedCalloutsDefine()
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PrvExposedCalloutsDefine()\n");
 
 #endif /// DBG
-   
+
    NTSTATUS status = 0;
    UINT32   flags  = 0;
 
@@ -281,9 +281,9 @@ NTSTATUS PrvExposedCalloutsDefine()
                                  status);
 
 #if(NTDDI_VERSION >= NTDDI_WIN7)
-      
+
             calloutFlags |= FWP_CALLOUT_FLAG_ALLOW_MID_STREAM_INSPECTION;
-      
+
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
 
       ppRegisteredCallouts[BASE_INDEX_FSI + fsiIndex]->calloutKey   = *(ppFastStreamInjection[fsiIndex]);
@@ -382,14 +382,14 @@ NTSTATUS PrvExposedCalloutsDefine()
                   WFPSAMPLER_CALLOUT_DRIVER_TAG);
          HLPR_BAIL_ON_ALLOC_FAILURE(ppRegisteredCallouts[BASE_INDEX_PBA + pbaIndex],
                                     status);
-   
+
          ppRegisteredCallouts[BASE_INDEX_PBA + pbaIndex]->calloutKey   = *(ppProxyByALERedirect[pbaIndex]);
          ppRegisteredCallouts[BASE_INDEX_PBA + pbaIndex]->flags        = flags;
          ppRegisteredCallouts[BASE_INDEX_PBA + pbaIndex]->classifyFn   = ClassifyProxyByALERedirect;
          ppRegisteredCallouts[BASE_INDEX_PBA + pbaIndex]->notifyFn     = NotifyProxyByALERedirectNotification;
          ppRegisteredCallouts[BASE_INDEX_PBA + pbaIndex]->flowDeleteFn = 0;
       }
-   
+
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
 
    HLPR_BAIL_LABEL:
@@ -398,14 +398,14 @@ NTSTATUS PrvExposedCalloutsDefine()
       PrvExposedCalloutsUndefine();
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PrvExposedCalloutsDefine() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
@@ -415,13 +415,13 @@ _Success_(return == STATUS_SUCCESS)
 NTSTATUS KrnlHlprExposedCalloutsUnregister()
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprExposedCalloutsUnregister()\n");
 
 #endif /// DBG
-   
+
    NTSTATUS status = STATUS_SUCCESS;
 
    for(UINT32 calloutIndex = 0;
@@ -450,14 +450,14 @@ NTSTATUS KrnlHlprExposedCalloutsUnregister()
    PrvExposedCalloutsUndefine();
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprExposedCalloutsUnregister() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
@@ -467,13 +467,13 @@ _Success_(return == STATUS_SUCCESS)
 NTSTATUS KrnlHlprExposedCalloutsRegister()
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprExposedCalloutsRegister()\n");
 
 #endif /// DBG
-   
+
    NTSTATUS status = STATUS_SUCCESS;
 
    status = PrvExposedCalloutsDefine();
@@ -508,14 +508,14 @@ NTSTATUS KrnlHlprExposedCalloutsRegister()
       KrnlHlprExposedCalloutsUnregister();
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprExposedCalloutsRegister() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
@@ -526,13 +526,13 @@ _Success_(return != 0)
 PSTR KrnlHlprExposedCalloutToString(_In_ const GUID* pCalloutKey)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprExposedCalloutToString()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pCalloutKey);
 
    PSTR         pCalloutString   = 0;
@@ -1254,12 +1254,12 @@ PSTR KrnlHlprExposedCalloutToString(_In_ const GUID* pCalloutKey)
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprExposedCalloutToString()\n");
 
 #endif /// DBG
-   
+
    return pCalloutString;
 }

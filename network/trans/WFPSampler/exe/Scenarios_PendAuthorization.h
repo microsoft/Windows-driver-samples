@@ -6,7 +6,7 @@
 //      Scenarios_PendAuthorization.h
 //
 //   Abstract:
-//      This module contains prototypes for functions which run the specified PEND_AUTHORIZATION 
+//      This module contains prototypes for functions which run the specified PEND_AUTHORIZATION
 //         scenario.
 //
 //   Author:

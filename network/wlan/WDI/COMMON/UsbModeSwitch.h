@@ -3,8 +3,8 @@
 
 typedef enum _USB_MODE
 {
-	USB_MODE_AUTO, 
-	USB_MODE_U2, 
+	USB_MODE_AUTO,
+	USB_MODE_U2,
 	USB_MODE_U3,
 }USB_MODE, *PUSB_MODE;
 
@@ -60,17 +60,17 @@ typedef struct _USB_MODE_MECH
 #define	UsbModeSwitch_SetFirstScanOver(_Adapter, _bFirstScanOver)	\
 		(_Adapter)->UsbModeMechanism.bFirstScanOver = (_bFirstScanOver)
 #define	UsbModeSwitch_SetUsbSwitchFast(_Adapter, _UsbSwitchFast)	\
-		(_Adapter)->UsbModeMechanism.RegUsbSwFast = (_UsbSwitchFast)	
+		(_Adapter)->UsbModeMechanism.RegUsbSwFast = (_UsbSwitchFast)
 #define	UsbModeSwitch_SetUsbSwitchWps(_Adapter, _UsbSwitchWps)	\
-		(_Adapter)->UsbModeMechanism.RegUsbWps = (_UsbSwitchWps)	
+		(_Adapter)->UsbModeMechanism.RegUsbWps = (_UsbSwitchWps)
 #define	UsbModeSwitch_SetUsbSwitchPostive(_Adapter, _UsbSwitchPositive)	\
-		(_Adapter)->UsbModeMechanism.RegUsbSp = (_UsbSwitchPositive)	
+		(_Adapter)->UsbModeMechanism.RegUsbSp = (_UsbSwitchPositive)
 #define	UsbModeSwitch_SetUsbSwitchChannel(_Adapter, _UsbSwitchChnl)	\
-		(_Adapter)->UsbModeMechanism.RegUsbChnl = (_UsbSwitchChnl)	
+		(_Adapter)->UsbModeMechanism.RegUsbChnl = (_UsbSwitchChnl)
 #define	UsbModeSwitch_SetUsbSwitchSpeed(_Adapter, _UsbSwitchSpeed)	\
-		(_Adapter)->UsbModeMechanism.RegUsbSwitchSpeed = (_UsbSwitchSpeed)	
+		(_Adapter)->UsbModeMechanism.RegUsbSwitchSpeed = (_UsbSwitchSpeed)
 #define	UsbModeSwitch_SetUsbSwitchThL(_Adapter, _UsbSwitchThL)	\
-		(_Adapter)->UsbModeMechanism.RegUsbSwitchThL = (_UsbSwitchThL)	
+		(_Adapter)->UsbModeMechanism.RegUsbSwitchThL = (_UsbSwitchThL)
 #define	UsbModeSwitch_SetUsbSwitchThH(_Adapter, _UsbSwitchThH)	\
 		(_Adapter)->UsbModeMechanism.RegUsbSwitchThH = (_UsbSwitchThH)
 #define	UsbModeSwitch_SetUsbSwitchThRssi(_Adapter, _UsbSwitchThRssi)	\
@@ -142,7 +142,7 @@ u1Byte
 UsbModeQuerySwitchChannel(
 	PADAPTER	Adapter
 	);
-	
+
 VOID
 UsbModeSwitchCheckExt(
 	PADAPTER	Adapter

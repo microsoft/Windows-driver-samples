@@ -22,7 +22,7 @@
 
 /**
  @helper_function="HlprWinSockCleanup"
- 
+
    Purpose:  Terminates use of the Winsock DLL for the process's use.                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -48,7 +48,7 @@ UINT32 HlprWinSockCleanup()
 
 /**
  @helper_function="HlprWinSockInitialize"
- 
+
    Purpose:  Initializes use of the Winsock DLL for the process's use.                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -74,7 +74,7 @@ UINT32 HlprWinSockInitialize()
 
 /**
  @helper_function="HlprWinSockDestroyWSAEvent"
- 
+
    Purpose:  Free a WSAEvent.                                                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -103,7 +103,7 @@ UINT32 HlprWinSockDestroyWSAEvent(_Inout_ WSAEVENT* pWSAEvent)
 
 /**
  @helper_function="HlprWinSockSetWSAEvent"
- 
+
    Purpose:  Set a WSAEvent to signaled.                                                        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -128,7 +128,7 @@ UINT32 HlprWinSockSetWSAEvent(_In_ WSAEVENT wsaEvent)
 
 /**
  @helper_function="HlprWinSockCreateWSAEvent"
- 
+
    Purpose:  Create a WSAEvent.                                                                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -156,7 +156,7 @@ UINT32 HlprWinSockCreateWSAEvent(_Inout_ WSAEVENT* pWSAEvent)
 
 /**
  @helper_function="HlprWinSockDestroySocket"
- 
+
    Purpose:  Destroy a socket gracefully.                                                       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -206,7 +206,7 @@ UINT32 HlprWinSockDestroySocket(_Inout_ SOCKET* pSocket)
 
 /**
  @helper_function="HlprWinSockCreateSocket"
- 
+
    Purpose:  Create a new socket.                                                               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -248,10 +248,10 @@ UINT32 HlprWinSockCreateSocket(_In_ SOCKADDR_STORAGE* pSockAddrStorage,
 
 /**
  @helper_function="HlprWinSockSetAbortiveDisconnect"
- 
+
    Purpose:  Set the linger socket option to FALSE.                                             <br>
                                                                                                 <br>
-   Notes:    This function needs to be called prior to HlprWinSockDestroySocket for stream 
+   Notes:    This function needs to be called prior to HlprWinSockDestroySocket for stream
              sockets that get a WSAECONNRESET.                                                  <br>
                                                                                                 <br>
    MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/Windows/Desktop/MS740476.aspx              <br>
@@ -285,7 +285,7 @@ UINT32 HlprWinSockSetAbortiveDisconnect(_In_ SOCKET abortedSocket)
 
 /**
  @helper_function="HlprWinSockSetSocketReceiveTimeout"
- 
+
    Purpose:  Specify a timeout for blocking receive calls.                                      <br>
                                                                                                 <br>
    Notes:    This function needs to be called prior to binding the socket.                      <br>
@@ -318,7 +318,7 @@ UINT32 HlprWinSockSetSocketReceiveTimeout(_In_ SOCKET receivingSocket,
 
 /**
  @helper_function="HlprWinSockSetSocketSendTimeout"
- 
+
    Purpose:  Specify a timeout for blocking send calls.                                         <br>
                                                                                                 <br>
    Notes:    This function needs to be called prior to binding the socket.                      <br>
@@ -352,7 +352,7 @@ UINT32 HlprWinSockSetSocketSendTimeout(_In_ SOCKET sendingSocket,
 
 /**
  @helper_function="HlprWinSockSetSocketNonBlocking"
- 
+
    Purpose:  Enable non-blocking mode on the socket.                                            <br>
                                                                                                 <br>
    Notes:    This function needs to be called prior to binding the socket.                      <br>
@@ -390,7 +390,7 @@ UINT32 HlprWinSockSetSocketNonBlocking(_In_ SOCKET unboundSocket)
 
 /**
  @helper_function="HlprWinSockAcquirePortReservationForSocket"
- 
+
    Purpose:  Request a runtime reservation for the provided ports.                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -435,7 +435,7 @@ UINT32 HlprWinSockAcquirePortReservationForSocket(_In_ SOCKET unboundSocket,
 
 /**
  @helper_function="HlprWinSockAssociatePortReservationWithSocket"
- 
+
    Purpose:  Associate the socket with the persistent port(s) that were reserved previously.    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -474,7 +474,7 @@ UINT32 HlprWinSockAssociatePortReservationWithSocket(_In_ SOCKET unboundSocket,
 
 /**
  @private_function="HlprWinSockQueryPortReservation"
- 
+
    Purpose:  Find the token for the previously created port reservations.                       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -522,7 +522,7 @@ UINT32 HlprWinSockQueryPortReservation(_In_ UINT8 ipProtocol,
 
 /**
  @private_function="HlprWinSockDestroyPortReservation"
- 
+
    Purpose:  Removes the reservation of specific ports for the Proxy service's use.             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -570,7 +570,7 @@ UINT32 HlprWinSockDestroyPortReservation(_In_ UINT8 ipProtocol,
 
 /**
  @private_function="HlprWinSockCreatePortReservation"
- 
+
    Purpose:  Reserves specific ports for the Proxy service's use.                               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -615,8 +615,8 @@ UINT32 HlprWinSockCreatePortReservation(_In_ UINT8 ipProtocol,
 
 /**
  @helper_function="HlprWinSockAssociateConnectionRedirectRecordsAndContextWithProxySocket"
- 
-   Purpose:  Retrieve the original REDIRECT_RECORDS from the original socket and associate them 
+
+   Purpose:  Retrieve the original REDIRECT_RECORDS from the original socket and associate them
              with the new (proxy) socket.                                                       <br>
                                                                                                 <br>
    Notes:    This function needs to be called prior to binding the proxied socket.              <br>
@@ -704,7 +704,7 @@ UINT32 HlprWinSockAssociateConnectionRedirectRecordsAndContextWithProxySocket(_I
    {
       ASSERT(redirectContextSize == REDIRECT_CONTEXT_SIZE);
 
-      /// The context passed in WFPSamplerCalloutDriver.sys is the SOCKADDR_STORAGE info of the 
+      /// The context passed in WFPSamplerCalloutDriver.sys is the SOCKADDR_STORAGE info of the
       /// classified peer endpoint ...
       RtlCopyMemory(pProxyPeerSockAddrStorage,
                     pRedirectContext,
@@ -754,7 +754,7 @@ UINT32 HlprWinSockAssociateConnectionRedirectRecordsAndContextWithProxySocket(_I
 
 /**
  @helper_function="HlprWinSockBindToSocket"
- 
+
    Purpose:  Bind a socket to a protocol, port, and network address.                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -786,7 +786,7 @@ UINT32 HlprWinSockBindToSocket(_In_ SOCKET unboundSocket,
 
 /**
  @helper_function="HlprWinSockListenOnSocket"
- 
+
    Purpose:  Place the socket in a state in which it listens for incoming connections.          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -815,7 +815,7 @@ UINT32 HlprWinSockListenOnSocket(_In_ SOCKET boundSocket)
 
 /**
  @helper_function="HlprWinSockAcceptConnection"
- 
+
    Purpose:  Place the socket in a state in which it listens for incoming connections.          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -852,7 +852,7 @@ UINT32 HlprWinSockAcceptConnection(_In_ SOCKET listeningSocket,
 
 /**
  @helper_function="HlprWinSockConnectSocket"
- 
+
    Purpose:  Establish the TCP handshake with the remote peer.                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -888,7 +888,7 @@ UINT32 HlprWinSockConnectSocket(_In_ SOCKET unconnectedSocket,
 
 /**
  @helper_function="HlprWinSockReceiveTCPData"
- 
+
    Purpose:  Receive TCP data from the peer.                                                    <br>
                                                                                                 <br>
    Notes:    For use with TCP only.                                                             <br>
@@ -946,7 +946,7 @@ UINT32 HlprWinSockReceiveTCPData(_In_ SOCKET receivingSocket,
 
 /**
  @helper_function="HlprWinSockSendTCPData"
- 
+
    Purpose:  Transmit TCP data to the peer.                                                     <br>
                                                                                                 <br>
    Notes:    For use with TCP only.                                                             <br>

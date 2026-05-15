@@ -12,7 +12,7 @@ typedef enum _RT_WAPI_CALLBACK_FUNC_DEF
 	//One Param
 	WAPI_ENABLEWAPISUPPORT=0,
 	WAPI_INIT=1,
-	WAPI_RETURNALLCAMENTRY=2,	
+	WAPI_RETURNALLCAMENTRY=2,
 	WAPI_RETURNALLSTAINFO=3,
 	WAPI_FREEALLSTAINFO=4,
 	WAPI_CONSTRUCTBEACON=5,
@@ -35,7 +35,7 @@ typedef enum _RT_WAPI_CALLBACK_FUNC_DEF
 	WAPI_SETAUTHENCRYPTSTATE = 20,
 	//four Param
 	WAPI_SETCAMENTRY = 21,
-	
+
 	WAPI_MAX =100,
 }RT_WAPI_FUNC_E;
 
@@ -53,13 +53,13 @@ typedef enum _RT_WAPI_QUERYSET_VARIABLE
 	WAPI_VAR_FIRSTAUTHENTIATEINPROGRESS,
 	WAPI_VAR_NOTSETENCMACHEADER,
 	WAPI_VAR_WAPIPSK,
-	
+
 	WAPI_VAR_MAX =255,
 }RT_WAPI_QUERYSET_VARIABLE;
 
 typedef enum _WAPI_REQUEST_TYPE
 {
-     WAPI_REQUEST_QUERY,  
+     WAPI_REQUEST_QUERY,
      WAPI_REQUEST_SET,
      WAPI_REQUEST_METHOD,
 } WAPI_REQUEST_TYPE, *PWAPI_REQUEST_TYPE;
@@ -112,11 +112,11 @@ typedef struct _WAPI_REQUEST
 #define DOT11_AUTH_ALGO_WAPI_PSK                           DOT11_AUTH_ALGO_IHV_START   + 0x00000010L
 #define DOT11_AUTH_ALGO_WAPI_CERTIFICATE              DOT11_AUTH_ALGO_IHV_START   + 0x00000011L
 #define DOT11_CIPHER_ALGO_WAPI_SMS4                       DOT11_CIPHER_ALGO_IHV_START + 0x00000010L
- 
 
-#define WAPI_LITTLE_ENDIAN   
-#define ENCRYPT  0     
-#define DECRYPT  1 
+
+#define WAPI_LITTLE_ENDIAN
+#define ENCRYPT  0
+#define DECRYPT  1
 typedef unsigned char muint8;
 typedef unsigned short muint16;
 typedef unsigned int muint32;
@@ -193,7 +193,7 @@ typedef struct tag_Wapi_Handler_Def
 	//int		directory;     			/* Directory */
 	INT32		wapi_func_name; 	/* Use enum to define the function name. */
 	RT_STATUS	(*wapi_func1)
-				(	IN	PADAPTER		pAdapter); 
+				(	IN	PADAPTER		pAdapter);
 	RT_STATUS	(*wapi_func2)
 				(	IN	PADAPTER		pAdapter,
 					IN	PVOID			pWapiParam);
@@ -215,7 +215,7 @@ typedef struct tag_Wapi_Handler_Def
 //		//One Param
 //		WAPI_ENABLEWAPISUPPORT=0,
 //		WAPI_INIT=1,
-//		WAPI_RETURNALLCAMENTRY=2,	
+//		WAPI_RETURNALLCAMENTRY=2,
 //		WAPI_RETURNALLSTAINFO=3,
 //		WAPI_FREEALLSTAINFO=4,
 //		WAPI_CONSTRUCTBEACON=5,
@@ -238,7 +238,7 @@ typedef struct tag_Wapi_Handler_Def
 //		WAPI_SETAUTHENCRYPTSTATE = 20,
 //		//four Param
 //		WAPI_SETCAMENTRY = 21,
-//		
+//
 //		WAPI_MAX =100,
 //	}RT_WAPI_FUNC_E;
 
@@ -317,11 +317,11 @@ typedef enum _RT_WAPI_PACKET_TYPE
 typedef struct	_RT_WAPI_STA_INFO
 {
 	RT_LIST_ENTRY		list;
-	u1Byte				PeerMacAddr[6];	
+	u1Byte				PeerMacAddr[6];
 	RT_WAPI_KEY		      wapiUsk;
 	RT_WAPI_KEY		      wapiUskUpdate;
 	RT_WAPI_KEY		      wapiMsk;
-	RT_WAPI_KEY		      wapiMskUpdate;	
+	RT_WAPI_KEY		      wapiMskUpdate;
 	u1Byte				lastRxUnicastPN[16];
 	u1Byte                       lastTxUnicastPN[16];
 	u1Byte                       lastRxMulticastPN[16];
@@ -354,7 +354,7 @@ typedef struct _RT_WAPI_T
 	u1Byte		assoRspWapiIELength;
 	u1Byte		sendbeaconWapiIE[256];
 	u1Byte		sendbeaconWapiIELength;
-//BKID 
+//BKID
 	RT_WAPI_BKID		wapiBKID[WAPI_MAX_BKID_NUM];
 	RT_LIST_ENTRY		wapiBKIDIdleList;
 	RT_LIST_ENTRY  		wapiBKIDStoreList;
@@ -398,9 +398,9 @@ typedef struct _RT_WAPI_T
 	//RT_LIST_ENTRY		wapiCamIdleList;
 	//RT_LIST_ENTRY		wapiCamUsedList;
 
-// For WAPI IHV Support 
-	u1Byte	 bIsWapiIHVSupport; 
-	
+// For WAPI IHV Support
+	u1Byte	 bIsWapiIHVSupport;
+
 }RT_WAPI_T,*PRT_WAPI_T;
 
 
@@ -425,7 +425,7 @@ WAPI_EventQuerySetInformation(
     OUT   PULONG                    BytesNeeded
     );
 
-void 
+void
 WAPI_OptionHandler(
 	PADAPTER	Adapter,
 	pu1Byte		DestAddr,
@@ -456,7 +456,7 @@ WAPI_OidHandler(
 	OUT	PULONG			BytesNeeded
 	);
 
-u1Byte 	
+u1Byte
 WAPI_QuerySetVariable(
 	IN  	PADAPTER	Adapter,
 	IN	u1Byte		QuerySet,
@@ -474,5 +474,5 @@ WAPI_QuerySetVariable(
 __inline RT_STATUS WAPI_SecFuncHandler(UINT32 WapiFunc, PVOID pWapiParam,...){ return RT_STATUS_NOT_SUPPORT;}
 
 #endif // #ifndef __INC_SUPPLICANT_H
-#endif 
+#endif
 

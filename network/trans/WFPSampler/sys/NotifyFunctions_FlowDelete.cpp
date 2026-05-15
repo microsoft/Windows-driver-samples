@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //
 //       FlowDeleteNotification
@@ -72,7 +72,7 @@ VOID NTAPI NotifyFlowDeleteNotification(_In_ UINT16 layerID,
 
          KeAcquireSpinLock(&(pFlowContext->pALEEndpointClosureContext->spinLock),
                            &irql);
-         
+
          KrnlHlprPendDataDestroy(&pPendData);
 
          KeReleaseSpinLock(&(pFlowContext->pALEEndpointClosureContext->spinLock),

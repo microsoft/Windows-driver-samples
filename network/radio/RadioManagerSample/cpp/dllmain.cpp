@@ -21,7 +21,7 @@ EXTERN_C BOOL WINAPI DllMain
     LPVOID pvReserved
 )
 {
-    return s_AtlModule.DllMain(dwReason, pvReserved); 
+    return s_AtlModule.DllMain(dwReason, pvReserved);
 }
 
 STDAPI DllCanUnloadNow(void)
@@ -30,8 +30,8 @@ STDAPI DllCanUnloadNow(void)
 }
 
 STDAPI DllGetClassObject(
-    _In_ REFCLSID rclsid, 
-    _In_ REFIID riid, 
+    _In_ REFCLSID rclsid,
+    _In_ REFIID riid,
     _Outptr_ LPVOID* ppv
     )
 {

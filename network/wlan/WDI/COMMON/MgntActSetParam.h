@@ -15,7 +15,7 @@
 #endif
 
 typedef	union _TURBOMODE_TYPE{
-	u1Byte	charData;		
+	u1Byte	charData;
 	struct
 	{
 		u1Byte		SupportTurboMode:1;
@@ -54,7 +54,7 @@ typedef enum _HT_CAP_OP_CODE{
 	HT_CAP_OP_BW_SGNL = 25,
 	HT_CAP_OP_CTS_ENABLE = 26,
 	//------------------------------------------// realtek custom
-	HT_CAP_OP_SEND_ADDBA = 0x81,		
+	HT_CAP_OP_SEND_ADDBA = 0x81,
 	HT_CAP_OP_RTS_THRESHOLD = 0x82,
 	HT_CAP_OP_FRAGMENT = 0x83,
 	HT_CAP_OP_PREAMBLE = 0x84,
@@ -83,7 +83,7 @@ typedef enum _HT_CAP_OP_CODE{
 //Name : MgntActSet_RSNA_REMOVE_DEAULT_KEY
 //Function : Remove Key from PerStable
 //Input : Keyindex = Perstation DefKeybuf index.
-//           MacAddress = Per-station's MAC address 
+//           MacAddress = Per-station's MAC address
 //------------------------------------------
 BOOLEAN
 MgntActSet_RSNA_REMOVE_DEAULT_KEY(
@@ -97,7 +97,7 @@ MgntActSet_RSNA_REMOVE_DEAULT_KEY(
 //Function : Remove Key from PerStable
 //Input : Keyindex = Perstation DefKeybuf index.
 //           pKeyMaterial = conent of key
-//           MacAddress = Per-station's MAC address 
+//           MacAddress = Per-station's MAC address
 //------------------------------------------
 //vivi added for new cam search flow, 20091028
 BOOLEAN
@@ -112,8 +112,8 @@ MgntActSet_RSNA_ADD_DEAULT_KEY(
 //------------------------------------------
 //Name : MgntActSet_RSNA_REMOVE_MAPPING_KEY
 //Function : Remove Key from PerStable
-//Input : 
-//           MacAddress = Per-station's MAC address 
+//Input :
+//           MacAddress = Per-station's MAC address
 //------------------------------------------
 BOOLEAN
 MgntActSet_RSNA_REMOVE_MAPPING_KEY(
@@ -125,7 +125,7 @@ MgntActSet_RSNA_REMOVE_MAPPING_KEY(
 //Name : MgntActSet_RSNA_ADD_MAPPING_KEY
 //Function : Remove Key from PerStable
 //Input : pKeyMaterial = conent of key
-//           MacAddress = Per-station's MAC address 
+//           MacAddress = Per-station's MAC address
 //------------------------------------------
 //vivi added for new cam search flow, 20091028
 BOOLEAN
@@ -285,15 +285,15 @@ MgntActSet_802_11_WIRELESS_MODE(
 
 BOOLEAN
 MgntActSet_802_11_RETRY_LIMIT(
-	PADAPTER Adapter, 
-	u2Byte ShortRetryLimit, 
+	PADAPTER Adapter,
+	u2Byte ShortRetryLimit,
 	u2Byte LongRetryLimit
 );
 
 // Use this interface to swith channel and bandwidth in MAC layer --------------
 VOID
 MgntActSet_802_11_CHANNEL_AND_BANDWIDTH(
-	PADAPTER			pAdapter, 
+	PADAPTER			pAdapter,
 	u1Byte 				Primary20MhzChannel,
 	CHANNEL_WIDTH		BandWidthMode,
 	EXTCHNL_OFFSET		ExtChnlOffsetOf40MHz,
@@ -305,7 +305,7 @@ MgntActSet_802_11_CHANNEL_AND_BANDWIDTH(
 // Use this interface to change Reg 20Mhz channel ------------------------------
 BOOLEAN
 MgntActSet_802_11_REG_20MHZ_CHANNEL_AND_SWITCH(
-	PADAPTER	Adapter, 
+	PADAPTER	Adapter,
 	u1Byte 		channel
 );
 // ----------------------------------------------------------------------
@@ -313,7 +313,7 @@ MgntActSet_802_11_REG_20MHZ_CHANNEL_AND_SWITCH(
 // Annie, 2004-12-27
 BOOLEAN
 MgntActSet_802_11_CHANNELPLAN(
-	PADAPTER	Adapter, 
+	PADAPTER	Adapter,
 	u2Byte		ChannelPlan
 );
 
@@ -346,7 +346,7 @@ MgntActSet_802_11_CONFIGURATION(
 	u1Byte			ChannelNumber
 );
 
-BOOLEAN 
+BOOLEAN
 MgntActSet_802_11_PowerSaveMode(
 	PADAPTER		Adapter,
 	RT_PS_MODE		rtPsMode
@@ -370,7 +370,7 @@ MgntActSet_802_11_BeaconInterval(
 	u2Byte			u2BeaconPeriod
 );
 
-VOID 
+VOID
 MgntActSet_802_11_ScanWithMagicPacket(
 	PADAPTER		Adapter,
 	pu1Byte			pDstAddr
@@ -546,7 +546,7 @@ MgntActSet_S5_WAKEUP_INFO(
 	IN	u4Byte			InformationBufferLength
 );
 
-#if (P2P_SUPPORT == 1)	
+#if (P2P_SUPPORT == 1)
 VOID
 MgntActSet_P2PMode(
 	IN	PADAPTER		Adapter,
@@ -587,7 +587,7 @@ MgntActSet_P2PListenChannel(
 	IN	PADAPTER	Adapter,
 	IN	u1Byte 		ListenChannel
 	);
-#endif	// #if (P2P_SUPPORT == 1)	
+#endif	// #if (P2P_SUPPORT == 1)
 
 #if ( WPS_SUPPORT == 1 )
 RT_STATUS
@@ -596,7 +596,7 @@ MgntActSet_WPS_Information(
 	IN	pu1Byte			InformationBuffer,
 	IN	u2Byte			InformationBufferLength
 	);
-#endif 
+#endif
 
 #endif // #ifndef __INC_MGNTACTSETPARAM_H
 

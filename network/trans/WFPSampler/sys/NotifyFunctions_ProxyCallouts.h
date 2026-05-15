@@ -6,13 +6,13 @@
 //      NotifyFunctions_ProxyCallouts.h
 //
 //   Abstract:
-//      This module contains prototypes of WFP Notify functions for the proxy callouts using WFP's 
+//      This module contains prototypes of WFP Notify functions for the proxy callouts using WFP's
 //         REDIRECT layers.
 //
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //
 //       NotifyProxyByALERedirectNotification
@@ -20,7 +20,7 @@
 //       <Module>
 //          Notify                            -       Function is an FWPS_CALLOUT_NOTIFY_FN
 //       <Scenario>
-//          ProxyByALERedirectNotification    -       Function demonstates use of notifications for 
+//          ProxyByALERedirectNotification    -       Function demonstates use of notifications for
 //                                                       callouts using WFP's REDIRECT layers
 //
 //   Author:

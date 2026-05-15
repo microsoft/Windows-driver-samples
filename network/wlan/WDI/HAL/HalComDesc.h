@@ -5,22 +5,22 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	HalComDesc.h
-	
+
 Abstract:
 	Defined 92C/88E common Descriptor structure.
-	    
+
 Major Change History:
 	When       Who               What
 	---------- ---------------   -------------------------------
-	2011-12-14 Isaiah            Create.	
+	2011-12-14 Isaiah            Create.
 --*/
 
 /*--------------------------Define Parameters-------------------------------*/
-    
-/*------------------------------Define structure----------------------------*/ 
+
+/*------------------------------Define structure----------------------------*/
 
 
-/*------------------------------ Tx Desc definition Macro ------------------------*/ 
+/*------------------------------ Tx Desc definition Macro ------------------------*/
 //#pragma mark -- Tx Desc related definition. --
 //----------------------------------------------------------------------------
 //-----------------------------------------------------------
@@ -122,91 +122,91 @@ typedef enum _DESC_RATE_{
 	// CCK Rates, TxHT = 0
 	DESC_RATE1M 	=		0x00,
 	DESC_RATE2M 	=		0x01,
-	DESC_RATE5_5M		=	0x02,		
-	DESC_RATE11M		=	0x03,		
+	DESC_RATE5_5M		=	0x02,
+	DESC_RATE11M		=	0x03,
 	// OFDM Rates, TxHT = 0
 	DESC_RATE6M 	=		0x04,
 	DESC_RATE9M 	=		0x05,
-	DESC_RATE12M		=	0x06,		
-	DESC_RATE18M		=	0x07,		
-	DESC_RATE24M		=	0x08,		
-	DESC_RATE36M		=	0x09,		
-	DESC_RATE48M		=	0x0A,		
-	DESC_RATE54M		=	0x0B,		
+	DESC_RATE12M		=	0x06,
+	DESC_RATE18M		=	0x07,
+	DESC_RATE24M		=	0x08,
+	DESC_RATE36M		=	0x09,
+	DESC_RATE48M		=	0x0A,
+	DESC_RATE54M		=	0x0B,
 	// MCS Rates, TxHT = 1
-	DESC_RATEMCS0		=	0x0C,		
-	DESC_RATEMCS1		=	0x0D,		
-	DESC_RATEMCS2		=	0x0E,		
-	DESC_RATEMCS3		=	0x0F,		
-	DESC_RATEMCS4		=	0x10,		
-	DESC_RATEMCS5		=	0x11,		
-	DESC_RATEMCS6		=	0x12,		
-	DESC_RATEMCS7		=	0x13,		
-	DESC_RATEMCS8		=	0x14,		
-	DESC_RATEMCS9		=	0x15,		
-	DESC_RATEMCS10		=	0x16,		
-	DESC_RATEMCS11		=	0x17,		
-	DESC_RATEMCS12		=	0x18,		
-	DESC_RATEMCS13		=	0x19,		
-	DESC_RATEMCS14		=	0x1A,		
-	DESC_RATEMCS15		=	0x1B,		
-	DESC_RATEMCS16		=	0x1C,		
-	DESC_RATEMCS17		=	0x1D,		
-	DESC_RATEMCS18		=	0x1E,		
-	DESC_RATEMCS19		=	0x1F,		
-	DESC_RATEMCS20		=	0x20,		
-	DESC_RATEMCS21		=	0x21,		
-	DESC_RATEMCS22		=	0x22,		
-	DESC_RATEMCS23		=	0x23,		
-	DESC_RATEMCS24		=	0x24,		
-	DESC_RATEMCS25		=	0x25,		
-	DESC_RATEMCS26		=	0x26,		
-	DESC_RATEMCS27		=	0x27,		
-	DESC_RATEMCS28		=	0x28,		
-	DESC_RATEMCS29		=	0x29,		
-	DESC_RATEMCS30		=	0x2A,		
+	DESC_RATEMCS0		=	0x0C,
+	DESC_RATEMCS1		=	0x0D,
+	DESC_RATEMCS2		=	0x0E,
+	DESC_RATEMCS3		=	0x0F,
+	DESC_RATEMCS4		=	0x10,
+	DESC_RATEMCS5		=	0x11,
+	DESC_RATEMCS6		=	0x12,
+	DESC_RATEMCS7		=	0x13,
+	DESC_RATEMCS8		=	0x14,
+	DESC_RATEMCS9		=	0x15,
+	DESC_RATEMCS10		=	0x16,
+	DESC_RATEMCS11		=	0x17,
+	DESC_RATEMCS12		=	0x18,
+	DESC_RATEMCS13		=	0x19,
+	DESC_RATEMCS14		=	0x1A,
+	DESC_RATEMCS15		=	0x1B,
+	DESC_RATEMCS16		=	0x1C,
+	DESC_RATEMCS17		=	0x1D,
+	DESC_RATEMCS18		=	0x1E,
+	DESC_RATEMCS19		=	0x1F,
+	DESC_RATEMCS20		=	0x20,
+	DESC_RATEMCS21		=	0x21,
+	DESC_RATEMCS22		=	0x22,
+	DESC_RATEMCS23		=	0x23,
+	DESC_RATEMCS24		=	0x24,
+	DESC_RATEMCS25		=	0x25,
+	DESC_RATEMCS26		=	0x26,
+	DESC_RATEMCS27		=	0x27,
+	DESC_RATEMCS28		=	0x28,
+	DESC_RATEMCS29		=	0x29,
+	DESC_RATEMCS30		=	0x2A,
 	DESC_RATEMCS31		=	0x2B,
-	// VHT MCS Rates, 
-	DESC_RATEVHTSS1MCS0 	=	0x2C,		
-	DESC_RATEVHTSS1MCS1	=	0x2D,		
-	DESC_RATEVHTSS1MCS2 	=	0x2E,		
-	DESC_RATEVHTSS1MCS3 	=	0x2F,		
-	DESC_RATEVHTSS1MCS4 	=	0x30,		
-	DESC_RATEVHTSS1MCS5 	=	0x31,		
-	DESC_RATEVHTSS1MCS6 	=	0x32,		
-	DESC_RATEVHTSS1MCS7 	=	0x33,		
-	DESC_RATEVHTSS1MCS8 	=	0x34,		
-	DESC_RATEVHTSS1MCS9 	=	0x35,		
-	DESC_RATEVHTSS2MCS0 	=	0x36,		
-	DESC_RATEVHTSS2MCS1 	=	0x37,		
-	DESC_RATEVHTSS2MCS2 	=	0x38,		
-	DESC_RATEVHTSS2MCS3 	=	0x39,		
-	DESC_RATEVHTSS2MCS4 	=	0x3A,		
-	DESC_RATEVHTSS2MCS5 	=	0x3B,		
-	DESC_RATEVHTSS2MCS6 	=	0x3C,		
-	DESC_RATEVHTSS2MCS7 	=	0x3D,		
-	DESC_RATEVHTSS2MCS8 	=	0x3E,		
-	DESC_RATEVHTSS2MCS9 	=	0x3F,		
-	DESC_RATEVHTSS3MCS0 	=	0x40,		
-	DESC_RATEVHTSS3MCS1 	=	0x41,		
-	DESC_RATEVHTSS3MCS2 	=	0x42,		
-	DESC_RATEVHTSS3MCS3 	=	0x43,		
-	DESC_RATEVHTSS3MCS4 	=	0x44,		
-	DESC_RATEVHTSS3MCS5 	=	0x45,		
-	DESC_RATEVHTSS3MCS6 	=	0x46,		
-	DESC_RATEVHTSS3MCS7 	=	0x47,		
-	DESC_RATEVHTSS3MCS8 	=	0x48,		
-	DESC_RATEVHTSS3MCS9 	=	0x49,		
-	DESC_RATEVHTSS4MCS0 	=	0x4A,		
-	DESC_RATEVHTSS4MCS1 	=	0x4B,		
-	DESC_RATEVHTSS4MCS2 	=	0x4C,		
-	DESC_RATEVHTSS4MCS3 	=	0x4D,		
-	DESC_RATEVHTSS4MCS4 	=	0x4E,		
-	DESC_RATEVHTSS4MCS5 	=	0x4F,		
-	DESC_RATEVHTSS4MCS6 	=	0x50,		
-	DESC_RATEVHTSS4MCS7 	=	0x51,		
-	DESC_RATEVHTSS4MCS8 	=	0x52,		
-	DESC_RATEVHTSS4MCS9 	=	0x53,		
+	// VHT MCS Rates,
+	DESC_RATEVHTSS1MCS0 	=	0x2C,
+	DESC_RATEVHTSS1MCS1	=	0x2D,
+	DESC_RATEVHTSS1MCS2 	=	0x2E,
+	DESC_RATEVHTSS1MCS3 	=	0x2F,
+	DESC_RATEVHTSS1MCS4 	=	0x30,
+	DESC_RATEVHTSS1MCS5 	=	0x31,
+	DESC_RATEVHTSS1MCS6 	=	0x32,
+	DESC_RATEVHTSS1MCS7 	=	0x33,
+	DESC_RATEVHTSS1MCS8 	=	0x34,
+	DESC_RATEVHTSS1MCS9 	=	0x35,
+	DESC_RATEVHTSS2MCS0 	=	0x36,
+	DESC_RATEVHTSS2MCS1 	=	0x37,
+	DESC_RATEVHTSS2MCS2 	=	0x38,
+	DESC_RATEVHTSS2MCS3 	=	0x39,
+	DESC_RATEVHTSS2MCS4 	=	0x3A,
+	DESC_RATEVHTSS2MCS5 	=	0x3B,
+	DESC_RATEVHTSS2MCS6 	=	0x3C,
+	DESC_RATEVHTSS2MCS7 	=	0x3D,
+	DESC_RATEVHTSS2MCS8 	=	0x3E,
+	DESC_RATEVHTSS2MCS9 	=	0x3F,
+	DESC_RATEVHTSS3MCS0 	=	0x40,
+	DESC_RATEVHTSS3MCS1 	=	0x41,
+	DESC_RATEVHTSS3MCS2 	=	0x42,
+	DESC_RATEVHTSS3MCS3 	=	0x43,
+	DESC_RATEVHTSS3MCS4 	=	0x44,
+	DESC_RATEVHTSS3MCS5 	=	0x45,
+	DESC_RATEVHTSS3MCS6 	=	0x46,
+	DESC_RATEVHTSS3MCS7 	=	0x47,
+	DESC_RATEVHTSS3MCS8 	=	0x48,
+	DESC_RATEVHTSS3MCS9 	=	0x49,
+	DESC_RATEVHTSS4MCS0 	=	0x4A,
+	DESC_RATEVHTSS4MCS1 	=	0x4B,
+	DESC_RATEVHTSS4MCS2 	=	0x4C,
+	DESC_RATEVHTSS4MCS3 	=	0x4D,
+	DESC_RATEVHTSS4MCS4 	=	0x4E,
+	DESC_RATEVHTSS4MCS5 	=	0x4F,
+	DESC_RATEVHTSS4MCS6 	=	0x50,
+	DESC_RATEVHTSS4MCS7 	=	0x51,
+	DESC_RATEVHTSS4MCS8 	=	0x52,
+	DESC_RATEVHTSS4MCS9 	=	0x53,
 	DESC_RATEMAX
 }DESC_RATE_E, *PDESC_RATE_E;
 
@@ -224,7 +224,7 @@ typedef enum _DESC_RATE_{
 #define TX_DESC_SIZE_8822BS		48
 #define TX_INFO_SIZE_8822B		TX_DESC_SIZE_8822BS
 
-/*------------------------------  Tx Desc field Macro ----------------------------*/ 
+/*------------------------------  Tx Desc field Macro ----------------------------*/
 //#pragma mark -- Tx Desc field. --
 //----------------------------------------------------------------------------
 
@@ -248,14 +248,14 @@ typedef enum _DESC_RATE_{
 
 
 
-/*------------------------------Tx Desc definition----------------------------*/ 
+/*------------------------------Tx Desc definition----------------------------*/
 #pragma pack (1)
 typedef struct _Phy_CCK_Rx_Status_Report
 {
 	/* For CCK rate descriptor. This is a unsigned 8:1 variable. LSB bit presend
 	   0.5. And MSB 7 bts presend a signed value. Range from -64~+63.5. */
 	u1Byte	adc_pwdb_X[4];
-	u1Byte	SQ_rpt;	
+	u1Byte	SQ_rpt;
 	u1Byte	cck_agc_rpt;
 	u1Byte	cck_bb_pwr;
 }PHY_STS_CCK_T;
@@ -272,7 +272,7 @@ typedef struct _Phy_CCK_Rx_Status_Report
 /*--------------------------Tx Descriptor related function---------------------*/
 
 u1Byte
-MTxBFPacketTypeToSNDPktSel(	
+MTxBFPacketTypeToSNDPktSel(
 	IN	u1Byte			Type
 	);
 
@@ -283,7 +283,7 @@ HwRateToMRate(
 );
 
 u1Byte
-MRateToHwRate(	
+MRateToHwRate(
 	IN	u1Byte			rate
 );
 
@@ -293,7 +293,7 @@ HwRateToMRate_2(
 	);
 
 u1Byte
-MRateToRateIndex(	
+MRateToRateIndex(
 	IN	u1Byte			rate
 	);
 
@@ -302,16 +302,16 @@ u1Byte
 QueryIsShort(
 	IN	PADAPTER	Adapter,
 	IN	u1Byte		TxHT,
-	IN	u1Byte		TxRate,	
+	IN	u1Byte		TxRate,
 	IN	PRT_TCB		pTcb
 );
 
 u1Byte
-MapHwQueueToFirmwareQueue(	
-	IN	PRT_TCB		pTcb, 
+MapHwQueueToFirmwareQueue(
+	IN	PRT_TCB		pTcb,
 	IN	u1Byte		QueueID
 );
-	
+
 
 
 u1Byte
@@ -319,14 +319,14 @@ QueueMapping(
 	u1Byte 	QueueID
 	);
 
-#if TX_AGGREGATION 	
+#if TX_AGGREGATION
 VOID
 TxSdioAggregation(
 	IN	PADAPTER		Adapter,
 	IN	u1Byte			queueId
 	);
 #endif
-	
+
 
 
 /*--------------------------Rx Descriptor related function---------------------*/
@@ -350,13 +350,13 @@ UpdateRxSignalStatistics(
 	IN OUT	PRT_RFD		pRfd
 );
 
-s4Byte 
+s4Byte
 TranslateToDbm(
 	IN	PADAPTER	Adapter,
 	IN	u1Byte		SignalStrengthIndex	// 0-100 index.
 );
 
-u1Byte 
+u1Byte
 GetSignalQuality(
 	IN		PADAPTER	Adapter
 );
@@ -385,7 +385,7 @@ RxDesc_FlushScanList(
 	IN		PADAPTER	Adapter
 );
 
-u1Byte 
+u1Byte
 EVMdbToPercentage(
 	IN	s1Byte		Value
 );

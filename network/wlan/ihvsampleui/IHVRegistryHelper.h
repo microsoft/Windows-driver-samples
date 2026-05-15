@@ -24,17 +24,17 @@ class CRegHelper
 
 private:
    static BOOL SetKeyAndValue(
-       const wchar_t *pszKey, 
-       const wchar_t *pszSubkey, 
-       const wchar_t *pszValue 
+       const wchar_t *pszKey,
+       const wchar_t *pszSubkey,
+       const wchar_t *pszValue
        );
-   
+
    static BOOL DeleteKey(const wchar_t *pszSubkey);
-   
+
    static BOOL SetRegValue(
-       const wchar_t *pszKeyName, 
+       const wchar_t *pszKeyName,
        const wchar_t *pszKeyword,
-       const wchar_t *pszValue 
+       const wchar_t *pszValue
        );
 };
 

@@ -6,11 +6,11 @@
 //	Define the debug levels
 //
 //	1.	DBG_TRACE and DBG_LOUD are used for normal cases.
-//	So that, they can help SW engineer to develope or trace states changed 
-//	and also help HW enginner to trace every operation to and from HW, 
-//	e.g IO, Tx, Rx. 
+//	So that, they can help SW engineer to develope or trace states changed
+//	and also help HW enginner to trace every operation to and from HW,
+//	e.g IO, Tx, Rx.
 //
-//	2.	DBG_WARNNING and DBG_SERIOUS are used for unusual or error cases, 
+//	2.	DBG_WARNNING and DBG_SERIOUS are used for unusual or error cases,
 //	which help us to debug SW or HW.
 //
 //-----------------------------------------------------------------------------
@@ -20,14 +20,14 @@
 #define DBG_OFF					0
 
 //
-//	Deprecated! Don't use it! 
+//	Deprecated! Don't use it!
 //	TODO: fix related debug message!
 //
 //#define DBG_SEC					1
 
 //
-//	Fatal bug. 
-//	For example, Tx/Rx/IO locked up, OS hangs, memory access violation, 
+//	Fatal bug.
+//	For example, Tx/Rx/IO locked up, OS hangs, memory access violation,
 //	resource allocation failed, unexpected HW behavior, HW BUG and so on.
 //
 #define DBG_SERIOUS				2	// WPP Error condition
@@ -39,8 +39,8 @@
 #define DBG_WARNING			3	// WPP Warning
 
 //
-//	Normal case with useful information about current SW or HW state. 
-//	For example, Tx/Rx descriptor to fill, Tx/Rx descriptor completed status, 
+//	Normal case with useful information about current SW or HW state.
+//	For example, Tx/Rx descriptor to fill, Tx/Rx descriptor completed status,
 //	SW protocol state change, dynamic mechanism state change and so on.
 //
 #define DBG_LOUD				4	// WPP Information
@@ -57,7 +57,7 @@
 //
 // Trace framework definition when WPP based tracing is enabled
 // Re-map WPP trace level in following DBG level, revised by Roger, 2014.02.11.
-//		
+//
 //#define WPP_LEVEL_NONE				0
 //#define WPP_LEVEL_FATAL				1	// fatal error
 //#define WPP_LEVEL_ERROR				2	// error condition
@@ -163,7 +163,7 @@
 	#ifndef WPP_COMPID_LOGGER
 		#define WPP_COMPID_LOGGER(CTL)	(WPP_CONTROL(WPP_BIT_ ## CTL).Logger),
 	#endif
-	
+
 #else // WPP_SOFTWARE_TRACE == 0
 
 
@@ -188,10 +188,10 @@
 #define COMP_AUTHENTICATOR	BIT14	// For AP mode Authenticator. Added by Annie, 2006-01-30.
 #define COMP_BEACON			BIT15	// For Beacon related, by rcnjko.
 #define COMP_WFD				BIT16	// WiFi Display
-#define COMP_RM					BIT17	// For Radio Measurement. 
+#define COMP_RM					BIT17	// For Radio Measurement.
 #define COMP_MP					BIT18	// For mass production test, by shien chang, 2006.07.13
 #define COMP_CKIP				BIT19	// For CCX 1 S13: CKIP. Added by Annie, 2006-08-14.
-#define COMP_RSNA				BIT20	// For RSNA IBSS , 061201, by CCW. 
+#define COMP_RSNA				BIT20	// For RSNA IBSS , 061201, by CCW.
 #define COMP_INDIC				BIT21	// For link indication
 #define COMP_LED				BIT22	// For LED.
 #define COMP_RF					BIT23	// For RF.
@@ -204,7 +204,7 @@
 #define COMP_POWER_TRACKING	BIT25	//FOR 8190 TX POWER TRACKING
 #define COMP_RX_REORDER		BIT26	// 8190 Rx Reorder
 #define COMP_AMSDU				BIT27	// For A-MSDU Debugging
-#define COMP_WPS				BIT28   //WPS Debug Message 
+#define COMP_WPS				BIT28   //WPS Debug Message
 #define COMP_CMD				BIT29
 #define COMP_EFUSE				BIT30
 #define COMP_CCX				BIT31	//CCX Debug Flag
@@ -252,14 +252,14 @@
 /*------------------------------Define structure----------------------------*/
 /* 2007/07/13 MH  *//*------For DeBuG Print modeue------*/
 
-/* Defnie structure to store different debug flag variable. Every debug flag 
+/* Defnie structure to store different debug flag variable. Every debug flag
      is a UINT32 integer and you can assign 32 different events. */
 typedef struct tag_DBGP_Debug_Flag_Structure
 {
 	UINT32	Mans;			/* Main Scheduler module. */
 	UINT32	Rtos;			/* RTOS module. */
-	UINT32	Alarm;		/* Alarm module. */	
-	UINT32	Pm;			/* Performance monitor module. */	
+	UINT32	Alarm;		/* Alarm module. */
+	UINT32	Pm;			/* Performance monitor module. */
 }DBGP_FLAG_T;
 
 /* Define debug print header for every service module.*/
@@ -280,9 +280,9 @@ typedef struct tag_DBGP_Service_Module_Header_Name_Structure
 // Each module has independt 32 bit debug flag you cnn define the flag as yout require.
 typedef enum tag_DBGP_Flag_Type_Definition
 {
-	FQoS				= 0,	
+	FQoS				= 0,
 	FTX					= 1,
-	FRX					= 2,	
+	FRX					= 2,
 	FSEC				= 3,
 	FMGNT				= 4,
 	FMLME				= 5,
@@ -327,7 +327,7 @@ typedef enum tag_DBGP_Flag_Type_Definition
 #define		TX_PATH			BIT2
 
 // Define RX relative debug  bit				--> FRX
-#define		RX_DATA				BIT0	
+#define		RX_DATA				BIT0
 #define		RX_PHY_STS				BIT1
 #define		RX_PHY_SS				BIT2
 #define		RX_PHY_SQ				BIT3
@@ -440,7 +440,7 @@ typedef enum tag_DBGP_Flag_Type_Definition
 #define		IOCTL_BT_RX_ACLDATA_DETAIL	BIT19
 #define		IOCTL_BT_TP					BIT20
 // section 4 : BT connection state machine.
-#define 		IOCTL_STATE					BIT21	
+#define 		IOCTL_STATE					BIT21
 #define		IOCTL_BT_LOGO					BIT22
 #define		IOCTL_BT_MGNT_PACKET			BIT23
 // section 5 : BT function trace

@@ -12,7 +12,7 @@
 //
 //      <Scope><Object><Action><Modifier>
 //      <Scope><Object><Action>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -22,7 +22,7 @@
 //          }
 //       <Object>
 //          {
-//            ScenarioFlowAssociation      - Function pertains to all of the Flow Association 
+//            ScenarioFlowAssociation      - Function pertains to all of the Flow Association
 //                                              Scenarios
 //            RPC                          - Function is and RPC entry point.
 //          }
@@ -30,8 +30,8 @@
 //          {
 //            Add                          - Function adds objects
 //            Remove                       - Function removes objects
-//            Invoke                       - Function implements the scenario based on parameters 
-//                                              passed from the commandline interface 
+//            Invoke                       - Function implements the scenario based on parameters
+//                                              passed from the commandline interface
 //                                              (WFPSampler.exe).
 //          }
 //       <Modifier>
@@ -62,10 +62,10 @@
 
 /**
  @private_function="PrvScenarioFlowAssociationDeleteFwpmObjects"
- 
+
    Purpose:  Function that disables the SCENARIO_FLOW_ASSOCIATION scenarios.                    <br>
                                                                                                 <br>
-   Notes:    Scenario removes the filters using specified filtering conditions at the specified 
+   Notes:    Scenario removes the filters using specified filtering conditions at the specified
              layer.  Associated callouts and provider contexts are removed as well.             <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -160,12 +160,12 @@ UINT32 PrvScenarioFlowAssociationDeleteFwpmObjects(_In_ const FWPM_FILTER* pFilt
 
 /**
  @private_function="PrvScenarioFlowAssociationAddFwpmObjects"
- 
+
    Purpose:  Function that enables the SCENARIO_FLOW_ASSOCIATION scenarios.                     <br>
                                                                                                 <br>
    Notes:    Scenario adds a filter using specified filtering conditions to the specified layer.
-             This filter is associated with WFPSampler's default sublayer and provider.  The 
-             appropriate callout and provider context is then added and associated with the 
+             This filter is associated with WFPSampler's default sublayer and provider.  The
+             appropriate callout and provider context is then added and associated with the
              filter.                                                                            <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -268,8 +268,8 @@ UINT32 PrvScenarioFlowAssociationAddFwpmObjects(_In_ const FWPM_FILTER* pFilter,
 
 /**
  @scenario_function="ScenarioFlowAssociationRemove"
- 
-   Purpose:  Function that removes corresponding objects for a previously added 
+
+   Purpose:  Function that removes corresponding objects for a previously added
              SCENARIO_FLOW_ASSOCIATION.                                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -289,7 +289,7 @@ UINT32 ScenarioFlowAssociationRemove(_In_ const FWPM_FILTER* pFilter)
 
    Purpose:  Scenario which will associate context with the layers and callouts provided.       <br>
                                                                                                 <br>
-   Notes:    Adds a filter which references one of the 
+   Notes:    Adds a filter which references one of the
              WFPSAMPLER_CALLOUT_FLOW_ASSOCIATION callouts for the provided layer.               <br>
                                                                                                 <br>
                                                                                                 <br>
@@ -309,8 +309,8 @@ UINT32 ScenarioFlowAssociationAdd(_In_ const FWPM_FILTER* pFilter,
 
 /**
  @rpc_function="RPCInvokeScenarioFlowAssociation"
- 
-   Purpose:  RPC exposed function used to dipatch the scenario routines for 
+
+   Purpose:  RPC exposed function used to dipatch the scenario routines for
              SCENARIO_FLOW_ASSOCIATION.                                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

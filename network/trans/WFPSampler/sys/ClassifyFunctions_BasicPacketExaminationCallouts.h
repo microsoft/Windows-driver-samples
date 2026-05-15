@@ -6,7 +6,7 @@
 //      ClassifyFunctions_BasicPacketExaminationCallouts.h
 //
 //   Abstract:
-//      This module contains prototypes of WFP Classify functions for examining indicated 
+//      This module contains prototypes of WFP Classify functions for examining indicated
 //         NET_BUFFER_LISTS.
 //
 //   Author:

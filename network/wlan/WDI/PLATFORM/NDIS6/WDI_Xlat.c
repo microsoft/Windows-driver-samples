@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
 //	File name:		WDI_Xlat.c
-//	Description:	
+//	Description:
 //
 //	Author:			haich
 //
@@ -23,7 +23,7 @@ wdi_xlat_Zalloc(
 	IN  UINT 					len
 	)
 {
-	// Note: Attempt to allocate pool with a tag that does not contain any 
+	// Note: Attempt to allocate pool with a tag that does not contain any
 	// letters or digits would irritate driver verifier.
 	// The use of 'XLAT' is called multicharacter constant.
 	if(NDIS_STATUS_SUCCESS == NdisAllocateMemoryWithTag(pp, len, 'XLAT'))
@@ -54,7 +54,7 @@ wdi_xlat_ParamConstructor(
 	)
 {
 	WDI_TASK_PARAM				*param = (WDI_TASK_PARAM *)(buf + allocSize - sizeof(WDI_TASK_PARAM));
-	
+
 	param->hTask = hTask;
 	param->allocSize = allocSize;
 
@@ -147,7 +147,7 @@ wdi_xlat_P2PScanType(
 		RT_TRACE_F(COMP_OID_SET, DBG_WARNING, ("unknown WDI P2P scan type: %u, use passive instead\n", wdiType));
 		*type = dot11_wfd_scan_type_passive;
 	}
-		
+
 	return;
 }
 
@@ -226,7 +226,7 @@ Wdi_Xlat_FreeOid(
 	)
 {
 	WDI_TASK_PARAM				*param = (WDI_TASK_PARAM *)WDI_XLAT_GET_OID_MP_RSVD_0(req);
-	
+
 	wdi_xlat_Free(req, param->allocSize);
 
 	return;
@@ -389,7 +389,7 @@ Wdi_Xlat_AllocResetOid(
 									;
 
 	DOT11_RESET_REQUEST			*resetReq = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -429,8 +429,8 @@ Wdi_Xlat_AllocChangeOpModeOid(
 									;
 
 	DOT11_CURRENT_OPERATION_MODE *opMode = NULL;
-	
-	
+
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -447,9 +447,9 @@ Wdi_Xlat_AllocChangeOpModeOid(
 
 	// Prep op mode
 	wdi_xlat_OperationMode(
-		param->OperationMode, 
+		param->OperationMode,
 		(DOT11_CURRENT_OPERATION_MODE *)req->DATA.SET_INFORMATION.InformationBuffer);
-	
+
 	return req;
 }
 
@@ -467,9 +467,9 @@ Wdi_Xlat_AllocWfdDiscoverOid(
 									+ param->VendorIEs.ElementCount			// vendor IE
 									+ sizeof(WDI_TASK_PARAM)
 									;
-	
+
 	DOT11_WFD_DISCOVER_REQUEST	*discReq = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -486,11 +486,11 @@ Wdi_Xlat_AllocWfdDiscoverOid(
 
 	// Prep reset req, ignore resetReq->dot11MacAddress here
 	discReq = (DOT11_WFD_DISCOVER_REQUEST *)req->DATA.SET_INFORMATION.InformationBuffer;
-	{		
+	{
 		// discover type
 		wdi_xlat_P2PDiscoverType(
-			param->DiscoverMode.DiscoveryType, 
-			(0 != param->DiscoverMode.ForcedDiscovery), 
+			param->DiscoverMode.DiscoveryType,
+			(0 != param->DiscoverMode.ForcedDiscovery),
 			&discReq->DiscoverType);
 
 		// scan type
@@ -512,10 +512,11 @@ Wdi_Xlat_AllocWfdDiscoverOid(
 			discReq->uIEsLength = param->VendorIEs.ElementCount;
 			discReq->uIEsOffset = sizeof(*discReq);
 			NdisMoveMemory(
-				(u1Byte *)discReq + discReq->uIEsOffset, 
+				(u1Byte *)discReq + discReq->uIEsOffset,
 				param->VendorIEs.pElements, param->VendorIEs.ElementCount);
 		}
-	}
+
+	}
 
 	return req;
 }
@@ -536,7 +537,7 @@ Wdi_Xlat_AllocDevInfoOid(
 									;
 
 	DOT11_WFD_DEVICE_INFO		*devInfo = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -561,7 +562,7 @@ Wdi_Xlat_AllocDevInfoOid(
 	devInfo->ConfigMethods = param->DeviceInfoParameters.ConfigurationMethods;
 	devInfo->PrimaryDeviceType.CategoryID = param->DeviceInfoParameters.DeviceType.CategoryID;
 	devInfo->PrimaryDeviceType.SubCategoryID = param->DeviceInfoParameters.DeviceType.SubcategoryID;
-	PlatformMoveMemory(devInfo->PrimaryDeviceType.OUI, 
+	PlatformMoveMemory(devInfo->PrimaryDeviceType.OUI,
 		param->DeviceInfoParameters.DeviceType.OUI,
 		sizeof(param->DeviceInfoParameters.DeviceType.OUI));
 
@@ -589,7 +590,7 @@ Wdi_Xlat_AllocDevCapOid(
 									;
 
 	DOT11_WFD_DEVICE_CAPABILITY_CONFIG *devCap = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -617,7 +618,7 @@ Wdi_Xlat_AllocDevCapOid(
 	devCap->bDeviceLimitReached = TEST_FLAG(param->DeviceCapabilityBitmap , dcP2PDeviceLimit);
 
 	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("[%s] devCap: %02X \n", "p2pattr", param->DeviceCapabilityBitmap ));
-	
+
 	devCap->bInvitationProcedureEnabled = TEST_FLAG(param->DeviceCapabilityBitmap , dcP2PInvitationProcedure);
 	devCap->WPSVersionsEnabled = param->WPSVersionsEnabled;
 
@@ -640,7 +641,7 @@ Wdi_Xlat_AllocGrpCapOid(
 									;
 
 	DOT11_WFD_GROUP_OWNER_CAPABILITY_CONFIG *grpCap = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -688,7 +689,7 @@ Wdi_Xlat_AllocSecDevTypeOid(
 	ULONG						it = 0;
 
 	DOT11_WFD_SECONDARY_DEVICE_TYPE_LIST *secDevTypeList = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -716,7 +717,7 @@ Wdi_Xlat_AllocSecDevTypeOid(
 		secDevTypeList->SecondaryDeviceTypes[it].CategoryID = param->pElements[it].CategoryID;
 
 		secDevTypeList->SecondaryDeviceTypes[it].SubCategoryID = param->pElements[it].SubcategoryID;
-		PlatformMoveMemory(secDevTypeList->SecondaryDeviceTypes[it].OUI, 
+		PlatformMoveMemory(secDevTypeList->SecondaryDeviceTypes[it].OUI,
 			param->pElements[it].OUI,
 			sizeof(param->pElements[it].OUI));
 	}
@@ -741,7 +742,7 @@ Wdi_Xlat_AllocListenStateDiscoverabilityOid(
 									;
 
 	ULONG 						*listenStateDiscoverability = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -780,7 +781,7 @@ Wdi_Xlat_AllocListenChannelOid(
 	)
 {
 	WDI_MESSAGE_HEADER			*wdiHdr = (WDI_MESSAGE_HEADER *)hTask->pNdisRequest->DATA.METHOD_INFORMATION.InformationBuffer;
-	
+
 	u1Byte						*buf = NULL;
 	NDIS_OID_REQUEST			*req = NULL;
 	WDI_TASK_PARAM				*taskParam = NULL;
@@ -790,7 +791,7 @@ Wdi_Xlat_AllocListenChannelOid(
 									;
 
 	DOT11_WFD_DEVICE_LISTEN_CHANNEL *listenChnl = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -823,7 +824,7 @@ Wdi_Xlat_AllocGetDialogTokenOid(
 	)
 {
 	WDI_MESSAGE_HEADER			*wdiHdr = (WDI_MESSAGE_HEADER *)hTask->pNdisRequest->DATA.METHOD_INFORMATION.InformationBuffer;
-	
+
 	u1Byte						*buf = NULL;
 	NDIS_OID_REQUEST			*req = NULL;
 	WDI_TASK_PARAM				*taskParam = NULL;
@@ -831,7 +832,7 @@ Wdi_Xlat_AllocGetDialogTokenOid(
 									+ sizeof(UCHAR) 					// the output buffer
 									+ sizeof(WDI_TASK_PARAM)
 									;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -866,7 +867,7 @@ Wdi_Xlat_AllocSendGONegReqReqOid(
 									;
 
 	DOT11_SEND_GO_NEGOTIATION_REQUEST_PARAMETERS *reqParam = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -903,7 +904,7 @@ Wdi_Xlat_AllocSendGONegReqReqOid(
 
 		reqParam->GroupCapability = param->GONegotiationRequestInfo.RequestParams.GroupCapability;
 	}
-	
+
 	if(param->VendorIEs.ElementCount)
 	{
 		reqParam->uIEsLength = param->VendorIEs.ElementCount;
@@ -931,7 +932,7 @@ Wdi_Xlat_AllocSendInvitationReqOid(
 									;
 
 	DOT11_SEND_INVITATION_REQUEST_PARAMETERS *reqParam = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -972,18 +973,18 @@ Wdi_Xlat_AllocSendInvitationReqOid(
 			reqParam->bUseSpecifiedOperatingChannel = TRUE;
 			reqParam->OperatingChannel.ChannelNumber = (UCHAR)param->InvitationRequestInfo.OperatingChannel.ChannelNumber;
 			reqParam->OperatingChannel.OperatingClass = param->InvitationRequestInfo.OperatingChannel.OperatingClass;
-			PlatformMoveMemory(reqParam->OperatingChannel.CountryRegionString, 
+			PlatformMoveMemory(reqParam->OperatingChannel.CountryRegionString,
 				param->InvitationRequestInfo.OperatingChannel.CountryOrRegionString,
 				sizeof(param->InvitationRequestInfo.OperatingChannel.CountryOrRegionString));
 		}
 		cpMacAddr(reqParam->GroupID.DeviceAddress, param->InvitationRequestInfo.GroupID.DeviceAddress.Address);
 		reqParam->GroupID.SSID.uSSIDLength = param->InvitationRequestInfo.GroupID.GroupSSID.ElementCount;
-		PlatformMoveMemory(reqParam->GroupID.SSID.ucSSID, 
-			param->InvitationRequestInfo.GroupID.GroupSSID.pElements, 
+		PlatformMoveMemory(reqParam->GroupID.SSID.ucSSID,
+			param->InvitationRequestInfo.GroupID.GroupSSID.pElements,
 			param->InvitationRequestInfo.GroupID.GroupSSID.ElementCount);
 		reqParam->bLocalGO = param->InvitationRequestInfo.RequestParams.IsLocalGO;
 	}
-	
+
 	if(param->VendorIEs.ElementCount)
 	{
 		reqParam->uIEsLength = param->VendorIEs.ElementCount;
@@ -1011,7 +1012,7 @@ Wdi_Xlat_AllocSendPDReqOid(
 									;
 
 	DOT11_SEND_PROVISION_DISCOVERY_REQUEST_PARAMETERS *reqParam = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -1039,13 +1040,13 @@ Wdi_Xlat_AllocSendPDReqOid(
 	if(param->Optional.ProvisionDiscoveryRequestInfo_IsPresent)
 	{
 		reqParam->GroupCapability = param->ProvisionDiscoveryRequestInfo.RequestParams.GroupCapability;
-		
+
 		if(param->ProvisionDiscoveryRequestInfo.Optional.GroupID_IsPresent)
 		{
 			cpMacAddr(reqParam->GroupID.DeviceAddress, param->ProvisionDiscoveryRequestInfo.GroupID.DeviceAddress.Address);
 			reqParam->GroupID.SSID.uSSIDLength = param->ProvisionDiscoveryRequestInfo.GroupID.GroupSSID.ElementCount;
-			PlatformMoveMemory(reqParam->GroupID.SSID.ucSSID, 
-				param->ProvisionDiscoveryRequestInfo.GroupID.GroupSSID.pElements, 
+			PlatformMoveMemory(reqParam->GroupID.SSID.ucSSID,
+				param->ProvisionDiscoveryRequestInfo.GroupID.GroupSSID.pElements,
 				param->ProvisionDiscoveryRequestInfo.GroupID.GroupSSID.ElementCount);
 			reqParam->bUseGroupID = TRUE;
 		}
@@ -1093,7 +1094,7 @@ Wdi_Xlat_AllocSendGONegResponseOid(
 									;
 
 	DOT11_SEND_GO_NEGOTIATION_RESPONSE_PARAMETERS *rspParam = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -1132,8 +1133,8 @@ Wdi_Xlat_AllocSendGONegResponseOid(
 		{
 			cpMacAddr(rspParam->GroupID.DeviceAddress, param->GONegotiationResponseInfo.GroupID.DeviceAddress.Address);
 			rspParam->GroupID.SSID.uSSIDLength = param->GONegotiationResponseInfo.GroupID.GroupSSID.ElementCount;
-			PlatformMoveMemory(rspParam->GroupID.SSID.ucSSID, 
-				param->GONegotiationResponseInfo.GroupID.GroupSSID.pElements, 
+			PlatformMoveMemory(rspParam->GroupID.SSID.ucSSID,
+				param->GONegotiationResponseInfo.GroupID.GroupSSID.pElements,
 				param->GONegotiationResponseInfo.GroupID.GroupSSID.ElementCount);
 			rspParam->bUseGroupID = TRUE;
 		}
@@ -1167,7 +1168,7 @@ Wdi_Xlat_AllocSendGONegConfirmOid(
 									;
 
 	DOT11_SEND_GO_NEGOTIATION_CONFIRMATION_PARAMETERS *rspParam = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -1201,8 +1202,8 @@ Wdi_Xlat_AllocSendGONegConfirmOid(
 		{
 			cpMacAddr(rspParam->GroupID.DeviceAddress, param->GONegotiationConfirmationInfo.GroupID.DeviceAddress.Address);
 			rspParam->GroupID.SSID.uSSIDLength = param->GONegotiationConfirmationInfo.GroupID.GroupSSID.ElementCount;
-			PlatformMoveMemory(rspParam->GroupID.SSID.ucSSID, 
-				param->GONegotiationConfirmationInfo.GroupID.GroupSSID.pElements, 
+			PlatformMoveMemory(rspParam->GroupID.SSID.ucSSID,
+				param->GONegotiationConfirmationInfo.GroupID.GroupSSID.pElements,
 				param->GONegotiationConfirmationInfo.GroupID.GroupSSID.ElementCount);
 			rspParam->bUseGroupID = TRUE;
 		}
@@ -1235,7 +1236,7 @@ Wdi_Xlat_AllocSendInvitationRspOid(
 									;
 
 	DOT11_SEND_INVITATION_RESPONSE_PARAMETERS *rspParam = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -1265,7 +1266,7 @@ Wdi_Xlat_AllocSendInvitationRspOid(
 		rspParam->Status = param->InvitationResponseInfo.ResponseParams.StatusCode;
 		rspParam->MinimumConfigTimeout.ClientTimeout = (UCHAR)param->InvitationResponseInfo.ResponseParams.ClientConfigTimeout;
 		rspParam->MinimumConfigTimeout.GOTimeout = (UCHAR)param->InvitationResponseInfo.ResponseParams.GOConfigTimeout;
-		
+
 		if(param->InvitationResponseInfo.Optional.GroupBSSID_IsPresent)
 		{
 			cpMacAddr(rspParam->GroupBSSID, param->InvitationResponseInfo.GroupBSSID.Address);
@@ -1277,12 +1278,12 @@ Wdi_Xlat_AllocSendInvitationRspOid(
 			rspParam->bUseSpecifiedOperatingChannel = TRUE;
 			rspParam->OperatingChannel.ChannelNumber = (UCHAR)param->InvitationResponseInfo.OperatingChannel.ChannelNumber;
 			rspParam->OperatingChannel.OperatingClass = param->InvitationResponseInfo.OperatingChannel.OperatingClass;
-			PlatformMoveMemory(rspParam->OperatingChannel.CountryRegionString, 
+			PlatformMoveMemory(rspParam->OperatingChannel.CountryRegionString,
 				param->InvitationResponseInfo.OperatingChannel.CountryOrRegionString,
 				sizeof(param->InvitationResponseInfo.OperatingChannel.CountryOrRegionString));
 		}
 	}
-	
+
 	if(param->VendorIEs.ElementCount)
 	{
 		rspParam->uIEsLength = param->VendorIEs.ElementCount;
@@ -1311,7 +1312,7 @@ Wdi_Xlat_AllocSendPDRspOid(
 									;
 
 	DOT11_SEND_PROVISION_DISCOVERY_RESPONSE_PARAMETERS *rspParam = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -1337,7 +1338,7 @@ Wdi_Xlat_AllocSendPDRspOid(
 	rspParam->DialogToken = param->ResponseParams.DialogToken;
 	rspParam->RequestContext = NULL;
 	rspParam->uSendTimeout = param->ResponseParams.SendTimeout;
-	
+
 	if(param->VendorIEs.ElementCount)
 	{
 		rspParam->uIEsLength = param->VendorIEs.ElementCount;
@@ -1365,7 +1366,7 @@ Wdi_Xlat_AllocIncomingAssociationDecisionOid(
 									;
 
 	DOT11_INCOMING_ASSOC_DECISION_V2 *xlatdParam = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 
@@ -1420,7 +1421,7 @@ Wdi_Xlat_AllocWpsEnabledOid(
 	// Ref N62C_SET_OID_DOT11_WPS_ENABLED
 
 	BOOLEAN						*xlatdParam = NULL;
-	
+
 	if(!wdi_xlat_Zalloc(&buf, allocSize))
 		return NULL;
 

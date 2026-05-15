@@ -12,7 +12,7 @@
 //   Naming Convention:
 //
 //      <Scope><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -38,7 +38,7 @@
 //          }
 //       <Modifier>
 //          {
-//            Help                        - Function provides context sensitive help for the 
+//            Help                        - Function provides context sensitive help for the
 //                                             scenario.
 //            RandomizedData              - Function acts on the PC_BASIC_ACTION_DATA.
 //          }
@@ -68,7 +68,7 @@
 
 /**
  @private_function="PrvBasicActionScenarioParseRandomizedData"
- 
+
    Purpose:  Parse the command line parameters for implementing randomization such as:          <br>
                 Random chance of returning block        (-rab PERCENTAGE)                       <br>
                 Random chance of returning continue     (-rac PERCENTAGE)                       <br>
@@ -176,7 +176,7 @@ UINT32 PrvBasicActionScenarioParseRandomizedData(_In_reads_(stringCount) PCWSTR*
          pPCBasicActionData->percentPermit = 100 - (pPCBasicActionData->percentBlock + pPCBasicActionData->percentContinue);
    }
 
-   if((pPCBasicActionData->percentBlock + 
+   if((pPCBasicActionData->percentBlock +
       pPCBasicActionData->percentContinue +
       pPCBasicActionData->percentPermit) > 100)
    {
@@ -191,7 +191,7 @@ UINT32 PrvBasicActionScenarioParseRandomizedData(_In_reads_(stringCount) PCWSTR*
 /**
  @scenario_function="BasicActionBlockScenarioExecute"
 
-   Purpose:  Gather and package data neccessary to setup the BASIC_ACTION_BLOCK scenario, then 
+   Purpose:  Gather and package data neccessary to setup the BASIC_ACTION_BLOCK scenario, then
              invoke RPC to implement the scenario in the WFPSampler service.                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -244,7 +244,7 @@ UINT32 BasicActionBlockScenarioExecute(_In_reads_(stringCount) PCWSTR* ppCLPStri
 /**
  @scenario_function="BasicActionContinueScenarioExecute"
 
-   Purpose:  Gather and package data neccessary to setup the BASIC_ACTION_CONTINUE scenario, 
+   Purpose:  Gather and package data neccessary to setup the BASIC_ACTION_CONTINUE scenario,
              then invoke RPC to implement the scenario in the WFPSampler service.               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -300,7 +300,7 @@ UINT32 BasicActionContinueScenarioExecute(_In_reads_(stringCount) PCWSTR* ppCLPS
 /**
  @scenario_function="BasicActionPermitScenarioExecute"
 
-   Purpose:  Gather and package data neccessary to setup the BASIC_ACTION_PERMIT scenario, then 
+   Purpose:  Gather and package data neccessary to setup the BASIC_ACTION_PERMIT scenario, then
              invoke RPC to implement the scenario in the WFPSampler service.                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -356,7 +356,7 @@ UINT32 BasicActionPermitScenarioExecute(_In_reads_(stringCount) PCWSTR* ppCLPStr
 /**
  @scenario_function="BasicActionRandomScenarioExecute"
 
-   Purpose:  Gather and package data neccessary to setup the BASIC_ACTION_RANDOM scenario, then 
+   Purpose:  Gather and package data neccessary to setup the BASIC_ACTION_RANDOM scenario, then
              invoke RPC to implement the scenario in the WFPSampler service.                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -426,7 +426,7 @@ UINT32 BasicActionRandomScenarioExecute(_In_reads_(stringCount) PCWSTR* ppCLPStr
 
 /**
  @public_function="BasicActionScenarioLogHelp"
- 
+
    Purpose:  Log usage information for the BASIC_ACTION* scenarios to the console.              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

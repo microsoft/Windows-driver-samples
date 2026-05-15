@@ -29,12 +29,12 @@
 
 //
 // 1. Each Platform shall provide a 2 sec timer to invoke NicIFLinkStatusWatchdog.
-// 2. Currently, both MgntLinkStatusWatchdog and HalDmWatchDog are designed to 
-//    be callbacked in 2 sec period. We might want to seperate it in future to 
+// 2. Currently, both MgntLinkStatusWatchdog and HalDmWatchDog are designed to
+//    be callbacked in 2 sec period. We might want to seperate it in future to
 //    provide more flexible setting on callback period.
 //
 // 061010, by rcnjko.
-// 	
+//
 #define NicIFLinkStatusWatchdog(_Adapter)		\
 			MgntLinkMultiPortStatusWatchdog(_Adapter);	\
 			HalDmWatchDog(_Adapter)
@@ -107,13 +107,13 @@ NicIFCheckResetOrNot(
 VOID
 NicIFCoalesceReceivedPacketAndFreeUnusedRFD(
 	PADAPTER		Adapter,
-	PRT_RFD			pRfd	
+	PRT_RFD			pRfd
 	);
 
 VOID
 NicIFReturnPacket(
 	PADAPTER		Adapter,
-	PRT_RFD			pRfd	
+	PRT_RFD			pRfd
 	);
 
 VOID

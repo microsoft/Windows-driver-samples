@@ -112,7 +112,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_PROJNAME                "SampleIHVExt"
     IDS_TITLE_GETKEY            "IHV Get Key Page"

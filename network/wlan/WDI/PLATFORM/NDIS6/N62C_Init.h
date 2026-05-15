@@ -7,7 +7,7 @@
 #define MP_BSS_ENTRY_MAX_ENTRIES_MAX           512
 
 /**
- * Time duration after it was created at which a BSS entry is 
+ * Time duration after it was created at which a BSS entry is
  * considered to have expired
  */
 #define MP_BSS_ENTRY_EXPIRE_TIME_DEFAULT       750000000       // 75 seconds
@@ -53,16 +53,16 @@
 #define STA_ADHOC_STA_MAX_ENTRIES_MAX           512
 
 /**
- * Time duration after it was created at which an BSS entry is 
+ * Time duration after it was created at which an BSS entry is
  * considered to have expired
  */
 #define STA_BSS_ENTRY_EXPIRE_TIME_DEFAULT       750000000       // 75 seconds
 #define STA_BSS_ENTRY_EXPIRE_TIME_MIN           150000000       // 15 seconds
 #define STA_BSS_ENTRY_EXPIRE_TIME_MAX          2000000000       // 200 seconds
 
-/** 
- * Number of beacon intervals after which if we havent 
- * received a beacon from the AP we assume we have 
+/**
+ * Number of beacon intervals after which if we havent
+ * received a beacon from the AP we assume we have
  * lost connectivity
  */
 #define STA_INFRA_ROAM_NO_BEACON_COUNT_DEFAULT  20
@@ -84,16 +84,16 @@
 #define MP_ASSIGN_NDIS_OBJECT_HEADER(_header, _type, _revision, _size) \
     (_header).Type = _type; \
     (_header).Revision = _revision; \
-    (_header).Size = _size; 
+    (_header).Size = _size;
 
-VOID 
+VOID
 N62CUpdateRegSetting(
 	PADAPTER pAdapter
 	);
 
 NDIS_STATUS
 N62CInitialize(
-	IN PADAPTER								pHelperAdapter,	
+	IN PADAPTER								pHelperAdapter,
        IN    NDIS_HANDLE         MiniportAdapterHandle,
     	IN  PNDIS_MINIPORT_INIT_PARAMETERS     MiniportInitParameters
 	);
@@ -137,7 +137,7 @@ N62CSet80211Attributes(
 /*
 NDIS_STATUS
 N62CStartMP(
-	IN	PADAPTER		pAdapter	
+	IN	PADAPTER		pAdapter
 	);
 */
 

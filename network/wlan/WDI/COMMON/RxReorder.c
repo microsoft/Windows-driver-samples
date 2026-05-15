@@ -136,13 +136,13 @@ IndicateRxReorderList(
 				}
 				if(index > 0)
 				{
-					if(PlatformCompareMemory(pReorderEntry->pRfd->Address3,pRfdIndicateArray[index-1]->Address3,6) != 0)		
+					if(PlatformCompareMemory(pReorderEntry->pRfd->Address3,pRfdIndicateArray[index-1]->Address3,6) != 0)
 					{
 						bPktInBuf = TRUE;
 						break;
 					}
 				}
-			
+
 				pReorderEntry = (PRX_REORDER_ENTRY)RTRemoveHeadList(&pTS->RxPendingPktList);
 
 				if(SN_EQUAL(pReorderEntry->SeqNum, pTS->RxIndicateSeq))
@@ -151,7 +151,7 @@ IndicateRxReorderList(
 				RT_TRACE(COMP_RX_REORDER, DBG_LOUD, ("RxReorderIndicatePacket(): Packets indication!! IndicateSeq: %d\n",  pReorderEntry->SeqNum));
 				pRfdIndicateArray[index] = pReorderEntry->pRfd;
 				index++;
-				
+
 				RTInsertTailList(&pMgntInfo->RxReorder_Unused_List, &pReorderEntry->List);
 			}
 			else
@@ -194,7 +194,7 @@ IndicateRxReorderList(
 	if(bPktInBuf)
 	{
 		u1Byte	set_penf_timer=FALSE;
-		
+
 		{
 			if(pTS->RxIndicateState != RXTS_INDICATE_REORDER)
 				set_penf_timer = TRUE;
@@ -232,7 +232,7 @@ ISinWindow(
 		else
 			return FALSE;
 	}
-	else 
+	else
 	{
 		if( ( NewSeqNum  + 4096 - RxIndicateSeq ) < REORDER_WIN_SIZE )
 			return TRUE;
@@ -271,7 +271,7 @@ CheckRxTsIndicateSeq(
 		RT_TRACE(COMP_RX_REORDER, DBG_WARNING, ("CheckRxTsIndicateSeq(): out-off squence !! Packet Drop! IndicateSeq: %d, NewSeq: %d\n", pTS->RxIndicateSeq, NewSeqNum));
 		return FALSE;
 	}
-	
+
 	//
 	// Sliding window manipulation. Conditions includes:
 	// 1. Incoming SeqNum is equal to WinStart =>Window shift 1
@@ -313,7 +313,7 @@ FlushRxTsPendingPkts(
 		pTS->RxIndicateState = RXTS_INDICATE_IDLE;
 		return;
 	}
-	
+
 	pGenBuf = GetGenTempBuffer (Adapter, sizeof(PRT_RFD)*REORDER_WIN_SIZE);
 	RfdArray = (PRT_RFD *)pGenBuf->Buffer.Ptr;
 
@@ -328,7 +328,7 @@ FlushRxTsPendingPkts(
 	DrvIFIndicatePackets(Adapter, RfdArray, RfdCnt);
 
 	ReturnGenTempBuffer(Adapter, pGenBuf);
-	
+
 	pTS->RxIndicateSeq = 0xffff;
 	pTS->RxIndicateState = RXTS_INDICATE_IDLE;
 }
@@ -459,9 +459,9 @@ RxPktPendingTimeout(
 	PADAPTER			Adapter = (PADAPTER)pTimer->Adapter;
 	PRX_TS_RECORD 		pRxTS = (PRX_TS_RECORD)pTimer->Context;
 	BOOLEAN				bSupportAvoidRxDpcWatchdogVoilation = FALSE;
-	
+
 	RT_TRACE(COMP_RX_REORDER, DBG_WARNING, ("==>RxPktPendingTimeout()\n"));
-	
+
 	//Only 8814AE set bSupportAvoidRxDpcWatchdogVoilation true now.
 	Adapter->HalFunc.GetHwRegHandler(Adapter, HW_VAR_AVOID_RX_DPC_WATCHDOG_VIOLATION, (pu1Byte)(&bSupportAvoidRxDpcWatchdogVoilation));
 	if(bSupportAvoidRxDpcWatchdogVoilation)
@@ -477,7 +477,7 @@ RxPktPendingTimeout(
 			return;
 		}
 	}
-	
+
 	PlatformAcquireSpinLock(Adapter, RT_RX_SPINLOCK);
 
 	// Only do indication process in Batch and Reorder state in this function.

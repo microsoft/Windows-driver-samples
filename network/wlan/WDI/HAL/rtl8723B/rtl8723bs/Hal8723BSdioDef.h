@@ -155,7 +155,7 @@ GetInitialTxBufferBoundary8723BS(
 	IN  PADAPTER Adapter
 	);
 
-RT_STATUS	
+RT_STATUS
 InitializeAdapter8723BSdio(
 	IN PADAPTER			Adapter,
 	IN u1Byte			Channel
@@ -334,7 +334,7 @@ GetRxPacketShiftBytes8723BSdio(
 BOOLEAN
 HalQueryRxDMARequest8723BSdio(
 	IN 	PADAPTER 		Adapter,
-	OUT pu2Byte		pRxReqLength	
+	OUT pu2Byte		pRxReqLength
 	);
 
 BOOLEAN
@@ -373,13 +373,13 @@ HalRxAggr8723BSdio(
 
 BOOLEAN
 HalQueryTxBufferStatus8723BSdio(
-	IN	PADAPTER	Adapter	
+	IN	PADAPTER	Adapter
 	);
 
 BOOLEAN
 HalQueryTxBufferAvailable8723BSdio(
 	IN	PADAPTER	Adapter,
-	IN	PSDIO_OUT_CONTEXT pContext	
+	IN	PSDIO_OUT_CONTEXT pContext
 	);
 
 BOOLEAN

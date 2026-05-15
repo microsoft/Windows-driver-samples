@@ -3,17 +3,17 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	N6C_PlatformDef.c
-	
+
 Abstract:
-	Common implemetation of function defined in PlatformDef.h 
-	for NDIS6 PCI and USB. 
-	    
+	Common implemetation of function defined in PlatformDef.h
+	for NDIS6 PCI and USB.
+
 Major Change History:
 	When       Who               What
 	---------- ---------------   -------------------------------
 	2007-03-29 Rcnjko            Create.
 	2007-05-18 Rcnjko            Move common implementation from USB\ and PCI\ to here.
-	
+
 --*/
 
 #include "Mp_Precomp.h"
@@ -79,13 +79,13 @@ ndis6TimerCallback(
 	BOOLEAN 			bTimerCanceled = FALSE;
 
 	RT_TRACE(COMP_SYSTEM, DBG_LOUD, ("=====>Ndis6TimerCallback(%s), status(%#x), ActiveTimerCallbackCount(%d)\n", pTimer->szID, pTimer->Status, pPortCommonInfo->ActiveTimerCallbackCount));
-		
+
 	NdisAcquireSpinLock(&(pPortCommonInfo->TimerLock));
-	
+
 	if(pTimer->Status & (RT_TIMER_STATUS_RELEASED))
 	{
 		RT_TRACE(COMP_SYSTEM, DBG_LOUD, ("ndis6TimerCallback(): TimerName: %s: This timer has been released! \n", pTimer->szID));
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock)); 		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		return ;
 	}
 	//
@@ -94,7 +94,7 @@ ndis6TimerCallback(
 	pTimer->Status |= RT_TIMER_STATUS_FIRED;
 
 	//
-	// Clear RT_TIMER_STATUS_SET flag before pTimer->CallBackFunc(pTimer), 
+	// Clear RT_TIMER_STATUS_SET flag before pTimer->CallBackFunc(pTimer),
 	// because we might schedule the same timer again there.
 	//
 	pTimer->Status &= ( ~(RT_TIMER_STATUS_SET | RT_TIMER_STATUS_CANCEL_NG) );
@@ -109,22 +109,22 @@ ndis6TimerCallback(
 	{
 		pPortCommonInfo->ActiveTimerCallbackCount++;
 		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
-		
+
 		pTimer->CallBackFunc(pTimer);
-		
+
 		NdisAcquireSpinLock(&(pPortCommonInfo->TimerLock));
 		pPortCommonInfo->ActiveTimerCallbackCount--;
 	}
 
-	
+
 	//
-	// Clear RT_TIMER_STATUS_FIRED	
+	// Clear RT_TIMER_STATUS_FIRED
 	//
 	pTimer->Status &= (~RT_TIMER_STATUS_FIRED);
-	
+
 	//
 	// Check if driver is waiting us to unload.
-	//	
+	//
 	if(pPortCommonInfo->ActiveTimerCallbackCount == 0)
 		NdisSetEvent(&(pPortCommonInfo->AllTimerCompletedEvent));
 
@@ -174,14 +174,14 @@ Ndis6LeaveCallbackOfWorkItem(
 
 	if( pPlatformExt == NULL )
 		return ;
-	
+
 	NdisAcquireSpinLock( &(pPlatformExt->Lock) );
 
 	pRtWorkItem->RefCount--;
 
 	if(pRtWorkItem->RefCount == 0)
 		NdisSetEvent( &(pPlatformExt->Event) );
-	
+
 	NdisReleaseSpinLock( &(pPlatformExt->Lock) );
 }
 
@@ -210,7 +210,7 @@ VOID
 PlatformInitializeTimer(
 	IN	PVOID				Adapter,
 	IN	PRT_TIMER			pTimer,
-	IN	RT_TIMER_CALL_BACK	CallBackFunc, 
+	IN	RT_TIMER_CALL_BACK	CallBackFunc,
 	IN	PVOID				pContext,
 	IN	const char*			szID
 	)
@@ -219,16 +219,16 @@ PlatformInitializeTimer(
 	PRT_NDIS6_COMMON	pNdisCommon = pAdapter->pNdisCommon;
 	PRT_TIMER_HANDLE	pHandle;
 	PPORT_COMMON_INFO 	pPortCommonInfo = pAdapter->pPortCommonInfo;
-	
+
 	NDIS_STATUS			ndisStatus = NDIS_STATUS_SUCCESS;
 
 	//
-	// 060120, rcnjko: 
-	// NdisMInitializeTimer() is noly allowed in context of PASSIVE level, 
+	// 060120, rcnjko:
+	// NdisMInitializeTimer() is noly allowed in context of PASSIVE level,
 	// otherwise, it might cause OS deadlock. 2006.01.20, by rcnjko.
 	//
-	// 061024, rcnjko: 
-	// Set RT_TIMER_STATUS_INITIALIZED before NdisMInitializeTimer() to 
+	// 061024, rcnjko:
+	// Set RT_TIMER_STATUS_INITIALIZED before NdisMInitializeTimer() to
 	// prevent race condition.
 	//
 	NdisAcquireSpinLock(&(pPortCommonInfo->TimerLock));
@@ -236,7 +236,7 @@ PlatformInitializeTimer(
 	if( !(pTimer->Status & RT_TIMER_STATUS_INITIALIZED) )
 	{
 		pHandle = &(pTimer->Handle);
-		
+
 		pTimer->Adapter = pAdapter;
 		pTimer->CallBackFunc = CallBackFunc;
 		pTimer->Status = RT_TIMER_STATUS_INITIALIZED;
@@ -261,8 +261,8 @@ PlatformInitializeTimer(
 		pHandle->TimerCharacteristics.AllocationTag = '2918';
 		pHandle->TimerCharacteristics.TimerFunction = ndis6TimerCallback;
 		pHandle->TimerCharacteristics.FunctionContext = pTimer;
-		
-		
+
+
 		ndisStatus = NdisAllocateTimerObject(
 				pNdisCommon->hNdisAdapter,
 				&pHandle->TimerCharacteristics,
@@ -272,15 +272,15 @@ PlatformInitializeTimer(
 		if(ndisStatus == NDIS_STATUS_SUCCESS)
 		{
 			DebugResourceTimerCreateTimerMirror(
-					pAdapter, 
-					pPortCommonInfo->uNumberOfAllocatedTimers, 
+					pAdapter,
+					pPortCommonInfo->uNumberOfAllocatedTimers,
 					pTimer
 				);
-			
+
 			pPortCommonInfo->uNumberOfAllocatedTimers++;
 
 			N6CTimerResourceInsert(pAdapter, pTimer); // This timer has been inserted for further handling
-		}	
+		}
 		else
 		{
 			pTimer->Status |= RT_TIMER_STATUS_RELEASED;
@@ -303,44 +303,44 @@ PlatformSetPeriodicTimer(
 	)
 {
 	PADAPTER				pAdapter = (PADAPTER)Adapter;
-	PPORT_COMMON_INFO		pPortCommonInfo = pAdapter->pPortCommonInfo;	
+	PPORT_COMMON_INFO		pPortCommonInfo = pAdapter->pPortCommonInfo;
 	LARGE_INTEGER           fireTime;
 
 	RT_TRACE(COMP_SYSTEM, DBG_TRACE, ("--->PlatformSetTimer() msDelay(%d)\n",msDelay));
 
 	NdisAcquireSpinLock(&(pPortCommonInfo->TimerLock));
-	
+
 	if(pTimer->Status & RT_TIMER_STATUS_RELEASED)
 	{
 		RT_TRACE(COMP_SYSTEM, DBG_WARNING, ("PlatformSetTimer(): timer(%s) is alreadyreleased!!!\n", pTimer->szID));
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		return FALSE;
 	}
 
 	if(!(pTimer->Status & RT_TIMER_STATUS_INITIALIZED))
 	{
 		RT_ASSERT(FALSE, ("PlatformSetTimer(): timer(%s) is not yet initialized!!! Status 0x%x\n", pTimer->szID, pTimer->Status));
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		return FALSE;
 	}
 
 	if(RT_DRIVER_HALT(pAdapter))
 	{
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		return FALSE;
 	}
 
 	if(pTimer->Status & RT_TIMER_STATUS_SUSPENDED)
 	{
 		RT_TRACE(COMP_INIT, DBG_WARNING, ("PlatformSetPeriodicTimer(): timer(%s) is paused!!!\n", pTimer->szID));
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		return FALSE;
 	}
 /*
 	//fix the bug that outstandingcount cannot be zero caused by cancel timer failure, vivi, 20100526
-	//We encounter a condition on 92du like this(BlinkTimer):                       
+	//We encounter a condition on 92du like this(BlinkTimer):
 	//set timer -->cancel timer( but failed)-->set timer-->callback function-->set timer-->callback function;
-	//In this flow, the value of outstandingcount will be: 1-->1-->2-->1-->2-->1, 
+	//In this flow, the value of outstandingcount will be: 1-->1-->2-->1-->2-->1,
 	//the value can not be zero finally, then driver will wait for outstandingcount to be zero, and then timerout
 	//now we fix this issue by this method, when RT_TIMER_STATUS_CANCEL_NG has been set, we can not settimer,
 	//until callback function has been executed
@@ -348,15 +348,15 @@ PlatformSetPeriodicTimer(
 		return FALSE;
 */
 	//
-	// 061024, rcnjko: 
-	// We shall schedule the timer before setting RT_TIMER_STATUS_SET 
-	// to make sure this flag is set only iff corresponding timer object 
-	// had been  scheduled (i.e. placed in timer queued) and 
-	// is not yet fired (i.e. execute its callback function). 
+	// 061024, rcnjko:
+	// We shall schedule the timer before setting RT_TIMER_STATUS_SET
+	// to make sure this flag is set only iff corresponding timer object
+	// had been  scheduled (i.e. placed in timer queued) and
+	// is not yet fired (i.e. execute its callback function).
 	//
 	// 2007.04.30, Roger:
 	// In Win98Me, Sometimes we could not set timer successful due to system out resource,
-	// but we have no idea about that, i.e, NdisMSetTimer() success or not. So we should monitor some 
+	// but we have no idea about that, i.e, NdisMSetTimer() success or not. So we should monitor some
 	// timer's resolution time to avoid this problem.
 	//
 
@@ -373,10 +373,10 @@ PlatformSetPeriodicTimer(
 		pTimer->szID, pTimer->Status
 		));
 
-	NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+	NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 
 	//
-	// We schedule timer after timer status are configured 
+	// We schedule timer after timer status are configured
 	// to prevent callback routine happen before PlatformSetTimer() done.
 	//
 
@@ -388,15 +388,15 @@ PlatformSetPeriodicTimer(
 //
 // Description:
 //	Schedule the timer by the following reles.
-//	(1) If the previous timer had been scheduled and is not fired yet: 
-//	    NdisSetTimer() cancel the previous one and schedule the current input timer according to the new 
+//	(1) If the previous timer had been scheduled and is not fired yet:
+//	    NdisSetTimer() cancel the previous one and schedule the current input timer according to the new
 //	    timer interval.
 //	(2) If the previous timer had been fired and the callback routine is not complete yet:
 //	    The input timer will be inserted into the system queue. After the previous callback routine is complete, then
 //	    (2.1) the system schedule the new timer if the msDelay of the new timer had been expired; or
 //	    (2.2) the system wait until the specified interval is expired.
 // Note:
-//	According to the rules described above, the timer can set twice at the same at most, one is running in 
+//	According to the rules described above, the timer can set twice at the same at most, one is running in
 //	routine and another is in the queue. So we should maintain the number of timers carefully.
 // By Bruce, 2008-12-01.
 //
@@ -413,47 +413,47 @@ PlatformSetTimer(
 	LARGE_INTEGER               fireTime;
 
 	NdisAcquireSpinLock(&(pPortCommonInfo->TimerLock));
-	
+
 	RT_TRACE(COMP_SYSTEM, DBG_LOUD, ("=====>PlatformSetTimer(%s), status(%#x), msDelay(%d)\n", pTimer->szID, pTimer->Status, msDelay));
 
 	if(pTimer->Status & RT_TIMER_STATUS_RELEASED)
 	{
 		RT_TRACE(COMP_INIT, DBG_WARNING, ("PlatformSetTimer(): timer(%s) is alreadyreleased!!!\n", pTimer->szID));
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		return FALSE;
 	}
 
 	if(!(pTimer->Status & RT_TIMER_STATUS_INITIALIZED))
 	{
 		RT_ASSERT(FALSE, ("PlatformSetTimer(): timer(%s) is not yet initialized!!! Status 0x%x\n", pTimer->szID, pTimer->Status));
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		return FALSE;
 	}
 
 	if(pTimer->Status & RT_TIMER_STATUS_SUSPENDED)
 	{
 		RT_TRACE(COMP_INIT, DBG_WARNING, ("PlatformSetTimer(): timer(%s) is paused!!!\n", pTimer->szID));
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		return FALSE;
 	}
 
 	if(RT_DRIVER_HALT(pAdapter) && ! HAS_REQUEST_TO_HANDLE(pAdapter))
 	{
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("PlatformSetTimer(): return because bDriverStopped=%d or bSurpriseRemoved=%d\n", pAdapter->bDriverStopped, pAdapter->bSurpriseRemoved));
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		return FALSE;
 	}
 
 	//
-	// 061024, rcnjko: 
-	// We shall schedule the timer before setting RT_TIMER_STATUS_SET 
-	// to make sure this flag is set only iff corresponding timer object 
-	// had been  scheduled (i.e. placed in timer queued) and 
-	// is not yet fired (i.e. execute its callback function). 
+	// 061024, rcnjko:
+	// We shall schedule the timer before setting RT_TIMER_STATUS_SET
+	// to make sure this flag is set only iff corresponding timer object
+	// had been  scheduled (i.e. placed in timer queued) and
+	// is not yet fired (i.e. execute its callback function).
 	//
 	// 2007.04.30, Roger:
 	// In Win98Me, Sometimes we could not set timer successful due to system out resource,
-	// but we have no idea about that, i.e, NdisMSetTimer() success or not. So we should monitor some 
+	// but we have no idea about that, i.e, NdisMSetTimer() success or not. So we should monitor some
 	// timer's resolution time to avoid this problem.
 	//
 
@@ -470,10 +470,10 @@ PlatformSetTimer(
 		pTimer->szID,
 		pTimer->Status));
 
-	NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+	NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 
 	//
-	// We schedule timer after timer status are configured 
+	// We schedule timer after timer status are configured
 	// to prevent callback routine happen before PlatformSetTimer() done.
 	//
 	fireTime.QuadPart = Int32x32To64((LONG)msDelay, -10000);
@@ -487,9 +487,9 @@ PlatformSetTimer(
 // Description:
 //	Cancel the input timer.
 // Note:
-//	This function only cancel the immediately preceding call to NdisMSetTimer if the interval 
+//	This function only cancel the immediately preceding call to NdisMSetTimer if the interval
 //	given to NdisMSetTimer has not yet expired.
-//	A call to NdisMCancelTimer while the MiniportTimer function is running has 
+//	A call to NdisMCancelTimer while the MiniportTimer function is running has
 //	no effect on the execution of MiniportTimer. It continues to run until it returns control.
 //	In other words, PlatformCancelTimer() cannot cancel the running thread.
 // Sync from 818xB. By Bruce, 2008-12-01.
@@ -502,8 +502,8 @@ PlatformCancelTimer(
 {
 	PADAPTER			pAdapter = (PADAPTER)Adapter;
 	PPORT_COMMON_INFO 	pPortCommonInfo = pAdapter->pPortCommonInfo;
-	BOOLEAN				bCanceled = FALSE;	
-	
+	BOOLEAN				bCanceled = FALSE;
+
 	NdisAcquireSpinLock(&(pPortCommonInfo->TimerLock));
 
 //	RT_ASSERT((pTimer->Status & RT_TIMER_STATUS_INITIALIZED), ("Cancel timer without initialize !!\n"))
@@ -511,23 +511,23 @@ PlatformCancelTimer(
 	if( !(pTimer->Status & RT_TIMER_STATUS_INITIALIZED) )
 	{
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("%s: This timer does not initialized! \n", __FUNCTION__));
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		return FALSE;
 	}
-	
+
 	if(pTimer->Status & (RT_TIMER_STATUS_RELEASED))
 	{
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("%s: TimerName: %s: This timer has been released! \n", __FUNCTION__, pTimer->szID));
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		return TRUE;
 	}
-		
+
 	//
-	// 061024, rcnjko: 
-	// We reset RT_TIMER_STATUS_SET before canceling the timer object 
+	// 061024, rcnjko:
+	// We reset RT_TIMER_STATUS_SET before canceling the timer object
 	// to make sure we only try to cancel is only cancel once.
-	// Besides, OutStandingTimerCnt is decreased here if we cancel the 
-	// timer object sucessfully, otherwise, it will be decreased in the 
+	// Besides, OutStandingTimerCnt is decreased here if we cancel the
+	// timer object sucessfully, otherwise, it will be decreased in the
 	// end of callback function.
 	//
 	// 2007.04.30, Roger:
@@ -543,10 +543,10 @@ PlatformCancelTimer(
 		// Clear RT_TIMER_STATUS_SET flag to make sure we only cancel it once after set.
 		//
 		//pTimer->Status &= (~RT_TIMER_STATUS_SET); //YJ,move,120112
-		pTimer->Status &= (~RT_TIMER_STATUS_PERIODIC); 
+		pTimer->Status &= (~RT_TIMER_STATUS_PERIODIC);
 		//NdisReleaseSpinLock(&(pNdisCommon->TimerLock)); //YJ,del,120112
-	
-		bCanceled = NdisCancelTimerObject(pTimer->Handle.NdisTimerHandle);	
+
+		bCanceled = NdisCancelTimerObject(pTimer->Handle.NdisTimerHandle);
 
 		//NdisAcquireSpinLock(&(pNdisCommon->TimerLock));   //YJ,del,120112
 		if(!bCanceled)
@@ -557,10 +557,10 @@ PlatformCancelTimer(
 			RT_TRACE(COMP_SYSTEM, DBG_WARNING, ("<=====PlatformCancelTimer(%s), cancel NG, status(%#x)\n", pTimer->szID, pTimer->Status));
 		}
 		else
-		{ // Successfully cancel the timer. 
+		{ // Successfully cancel the timer.
 			pTimer->Status &= (~RT_TIMER_STATUS_SET);   //YJ,move,120111
 
-			pTimer->TimerStallSlotCount = 0; // For Timer stall checking mechanism, by Roger. 2007.05.16.	
+			pTimer->TimerStallSlotCount = 0; // For Timer stall checking mechanism, by Roger. 2007.05.16.
 
 			NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 
@@ -572,7 +572,7 @@ PlatformCancelTimer(
 		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		RT_TRACE(COMP_SYSTEM, DBG_WARNING, ("PlatformCancelTimer(%s), timer is NOT set case: status(%#x)!!!\n", pTimer->szID, pTimer->Status));
 	}
-	
+
 	return bCanceled;
 }
 
@@ -580,7 +580,7 @@ PlatformCancelTimer(
 //
 // Description:
 //	Release this timer and prohibit from setting timer.
-//	In general, we can release timer to set released flag to prohibit setting a timer except 
+//	In general, we can release timer to set released flag to prohibit setting a timer except
 //	the timer is initialized again.
 // By Bruce, 2008-12-01.
 //
@@ -595,31 +595,31 @@ PlatformReleaseTimer(
 	BOOLEAN				bCanceled = FALSE;
 	PADAPTER			pAdapter = (PADAPTER)Adapter;
 	PPORT_COMMON_INFO	pPortCommonInfo = pAdapter->pPortCommonInfo;
-	
+
 	RT_ASSERT(KeGetCurrentIrql() == PASSIVE_LEVEL, ("Timer Releasing Should be Called in PASSIVE_LEVEL!\n"));
 
 	NdisAcquireSpinLock(&(pPortCommonInfo->TimerLock));
-	
+
 	if( !(pTimer->Status & RT_TIMER_STATUS_INITIALIZED) )
 	{
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("%s: This timer does not initialized! \n", __FUNCTION__));
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		return FALSE;
 	}
-	
+
 	if(!(pTimer->Status & RT_TIMER_STATUS_RELEASED))
 	{
 		bDoRelease = TRUE;
 		// Clean System Timer Queue
-		if( NdisCancelTimerObject(pTimer->Handle.NdisTimerHandle) == FALSE )	
+		if( NdisCancelTimerObject(pTimer->Handle.NdisTimerHandle) == FALSE )
 		{
-			NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));	
+			NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 			// Clean System DPC Queue for All Processors
 			KeFlushQueuedDpcs();
 			NdisAcquireSpinLock(&(pPortCommonInfo->TimerLock));
-		}	
+		}
 	}
-	NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));	
+	NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 
 	if(bDoRelease)
 	{
@@ -630,15 +630,15 @@ PlatformReleaseTimer(
 		// Release System Timer
 		NdisFreeTimerObject(pTimer->Handle.NdisTimerHandle);
 
-		pTimer->Status = RT_TIMER_STATUS_RELEASED;	
-	
+		pTimer->Status = RT_TIMER_STATUS_RELEASED;
+
 		pPortCommonInfo->uNumberOfReleasedTimers++;
 	}
 
 	return TRUE;
 }
 
-	
+
 //
 // Description:
 //		- Timer resource management for SoC off on Windows Mobile platform
@@ -659,8 +659,8 @@ PlatformSuspendTimer(
 	PADAPTER			pAdapter = (PADAPTER)Adapter;
 	PPORT_COMMON_INFO 	pPortCommonInfo = pAdapter->pPortCommonInfo;
 	BOOLEAN				bCanceled = FALSE;
-	
-		
+
+
 	NdisAcquireSpinLock(&(pPortCommonInfo->TimerLock));
 
 	pTimer->PreviousStatus = pTimer->Status;
@@ -668,29 +668,29 @@ PlatformSuspendTimer(
 	if( !(pTimer->Status & RT_TIMER_STATUS_INITIALIZED) )
 	{
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("%s: This timer does not initialized! \n", __FUNCTION__));
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		return FALSE;
 	}
 
 	if(pTimer->Status & (RT_TIMER_STATUS_RELEASED))
 	{
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("%s: TimerName: %s: This timer has been released! \n", __FUNCTION__, pTimer->szID));
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 	return TRUE;
 }
 
 	if((pTimer->Status & (RT_TIMER_STATUS_SET) || pTimer->Status & (RT_TIMER_STATUS_PERIODIC)))
 	{
 		RT_TRACE(COMP_SYSTEM, DBG_TRACE, ("=====>PlatformSuspendTimer(%s), status(%#x)\n", pTimer->szID, pTimer->Status));
-		
+
 		pTimer->Status &= (~RT_TIMER_STATUS_PERIODIC);
 
 
-	#if (IS_OS_WINCE)	// WinCE7 only supports N5 Timer Interface	
-		NdisMCancelTimer(&(pTimer->Handle.NdisTimerHandle), &bCanceled);	
-	#else	
-		bCanceled = NdisCancelTimerObject(pTimer->Handle.NdisTimerHandle);	
-	#endif		
+	#if (IS_OS_WINCE)	// WinCE7 only supports N5 Timer Interface
+		NdisMCancelTimer(&(pTimer->Handle.NdisTimerHandle), &bCanceled);
+	#else
+		bCanceled = NdisCancelTimerObject(pTimer->Handle.NdisTimerHandle);
+	#endif
 
 		if(!bCanceled)
 		{ // Timer had already been fired or was not set successful before, by Roger. 2007.04.30.
@@ -700,19 +700,19 @@ PlatformSuspendTimer(
 			RT_TRACE(COMP_SYSTEM, DBG_WARNING, ("<=====PlatformSuspendTimer(%s), cancel NG, status(%#x)\n", pTimer->szID, pTimer->Status));
 		}
 		else
-		{ // Successfully cancel the timer. 
+		{ // Successfully cancel the timer.
 
 			//
 			// Clear RT_TIMER_STATUS_SET flag to make sure we only cancel it once after set.
 			//
 			pTimer->Status &= (~RT_TIMER_STATUS_SET);   //YJ,move,120111
 
-			pTimer->TimerStallSlotCount = 0; // For Timer stall checking mechanism, by Roger. 2007.05.16.	
+			pTimer->TimerStallSlotCount = 0; // For Timer stall checking mechanism, by Roger. 2007.05.16.
 
 			NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 
 			RT_TRACE(COMP_SYSTEM, DBG_TRACE, ("<=====PlatformSuspendTimer(%s), cancel OK, status(%#x)\n", pTimer->szID, pTimer->Status));
-		}		
+		}
 		pTimer->Status |= RT_TIMER_STATUS_SUSPENDED;
 	}
 	else
@@ -721,13 +721,13 @@ PlatformSuspendTimer(
 		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		RT_TRACE(COMP_SYSTEM, DBG_TRACE, ("PlatformSuspendTimer(%s), timer is NOT set case: status(%#x)!!!\n", pTimer->szID, pTimer->Status));
 	}
-	
+
 	return bCanceled;
 }
 
 
 //
-//	Description: 
+//	Description:
 //		- Timer resource management for SoC off on Windows Mobile platform
 //		- This routine will resume suspended timer
 //		- Periodic timer will be rescheduing within this routine according to previous satus
@@ -746,48 +746,48 @@ PlatformResumeTimer(
 {
 	PADAPTER			pAdapter = (PADAPTER)Adapter;
 	PPORT_COMMON_INFO 	pPortCommonInfo = pAdapter->pPortCommonInfo;
-	BOOLEAN				bCanceled = TRUE;	
+	BOOLEAN				bCanceled = TRUE;
 	u4Byte				PreviousTimerStatus = 0;
 
-		
-	NdisAcquireSpinLock(&(pPortCommonInfo->TimerLock));	
+
+	NdisAcquireSpinLock(&(pPortCommonInfo->TimerLock));
 
 	if( !(pTimer->Status & RT_TIMER_STATUS_INITIALIZED) )
 	{
 		RT_TRACE(COMP_SYSTEM, DBG_LOUD, ("%s: This timer does not initialized! \n", __FUNCTION__));
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		return FALSE;
 	}
-	
+
 	if(pTimer->Status & (RT_TIMER_STATUS_RELEASED))
 	{
 		RT_TRACE(COMP_SYSTEM, DBG_LOUD, ("%s: TimerName: %s: This timer has been released! \n", __FUNCTION__, pTimer->szID));
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		return FALSE;
 	}
 
 	if(!(pTimer->Status & (RT_TIMER_STATUS_SUSPENDED)))
 	{
 		RT_TRACE(COMP_SYSTEM, DBG_LOUD, ("%s: TimerName: %s: This timer had not been paused before, so timer resumption is not required.\n", __FUNCTION__, pTimer->szID));
-		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));		
+		NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 		return FALSE;
 	}
 
 	PreviousTimerStatus = pTimer->PreviousStatus;
-	
+
 	pTimer->Status &= ~RT_TIMER_STATUS_SUSPENDED;
 	pTimer->PreviousStatus = pTimer->Status;
-	
-	NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));	
+
+	NdisReleaseSpinLock(&(pPortCommonInfo->TimerLock));
 
 	if(PreviousTimerStatus & RT_TIMER_STATUS_PERIODIC){
 		RT_TRACE(COMP_SYSTEM, DBG_LOUD, ("Reschedule Periodic Timer(%s), status(%#x)\n", pTimer->szID, PreviousTimerStatus));
 		PlatformSetPeriodicTimer(pTimer->Adapter, pTimer, pTimer->msDelay);
 	}
-	
+
 	return bCanceled;
 }
-	
+
 //
 // Description:
 //	Initialize the event and queue associated to the all timers.
@@ -802,11 +802,11 @@ N6InitTimerSync(
 {
 	PADAPTER pDefaultAdapter = GetDefaultAdapter((PADAPTER)Adapter);
 	PPORT_COMMON_INFO pPortCommonInfo = pDefaultAdapter->pPortCommonInfo;
-	
+
 	RT_TRACE(COMP_INIT, DBG_TRACE, ("---> PlatformInitTimerSync()\n"));
 
 	pPortCommonInfo->ActiveTimerCallbackCount = 1;	// Set default number of outstanding timer as 1.
-	
+
 	RT_TRACE(COMP_SYSTEM, DBG_LOUD, ("=====>N6InitTimerSync(): Set ActiveTimerCallbackCount to 1 !\n"));
 
 	PLATFORM_INIT_RT_SPINLOCK(pPortCommonInfo->TimerLock);
@@ -817,7 +817,7 @@ N6InitTimerSync(
 
 	pPortCommonInfo->uNumberOfAllocatedTimers = 0;
 	pPortCommonInfo->uNumberOfReleasedTimers = 0;
-	
+
 	N6CTimerResourceInit(Adapter); // Initialization for Timer resource handling
 
 	RT_TRACE(COMP_INIT, DBG_TRACE, ("<--- PlatformInitTimerSync()\n"));
@@ -831,7 +831,7 @@ N6WaitTimerSync(
 	PPORT_COMMON_INFO pPortCommonInfo = ((PADAPTER)Adapter)->pPortCommonInfo;
 	BOOLEAN				bAllTimerCompleted = FALSE;
 	u4Byte				i = 0;
-	
+
 	RT_TRACE(COMP_INIT, DBG_TRACE, ("---> N6WaitTimerSync()\n"));
 
 
@@ -841,9 +841,9 @@ N6WaitTimerSync(
 	KeFlushQueuedDpcs();
 
 	PLATFORM_ACQUIRE_RT_SPINLOCK(pPortCommonInfo->TimerLock);
-	
+
 	pPortCommonInfo->ActiveTimerCallbackCount--;	// Since we set default ActiveTimerCallbackCount as 1 N6InitTimerSync()
-	
+
 	RT_TRACE(COMP_SYSTEM, DBG_LOUD, ("=====>N6WaitTimerSync(): ActiveTimerCallbackCount = %d!!!\n", pPortCommonInfo->ActiveTimerCallbackCount));
 
 	RT_ASSERT(pPortCommonInfo->ActiveTimerCallbackCount >= 0, ("pPortCommonInfo->ActiveTimerCallbackCount should not be negative !\n"));
@@ -870,12 +870,12 @@ N6WaitTimerSync(
 	}
 
 	PLATFORM_ACQUIRE_RT_SPINLOCK(pPortCommonInfo->TimerLock);
-	
+
 	if(((PADAPTER)Adapter)->MgntInfo.RegSuspendTimerInLowPwr)
 		pPortCommonInfo->ActiveTimerCallbackCount = 1;	// Since sync method was finished, so reset default number of outstanding timer as 1.
 
 	PLATFORM_RELEASE_RT_SPINLOCK(pPortCommonInfo->TimerLock);
-	
+
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("N6WaitTimerSync(): bAllTimerCompleted: %d, pPortCommonInfo->ActiveTimerCallbackCount: %d\n", bAllTimerCompleted, pPortCommonInfo->ActiveTimerCallbackCount));
 
 	RT_TRACE(COMP_INIT, DBG_TRACE, ("<--- N6WaitTimerSync()\n"));
@@ -920,17 +920,17 @@ N6CInitThread(
 	PRT_NDIS_COMMON	pNdisCommon = Adapter->pNdisCommon;
 	BOOLEAN			bSupportUsbTxThread;
 	BOOLEAN			bSupportUsbIOThread;
-	
+
 	Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_USB_TX_THREAD, (PBOOLEAN)&bSupportUsbTxThread);
 	Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_USB_IO_THREAD, (PBOOLEAN)&bSupportUsbIOThread);
-	
+
 	NdisAllocateSpinLock(&(pNdisCommon->ThreadLock));
 	NdisInitializeEvent(&(pNdisCommon->AllThreadCompletedEvent));
 
 	PlatformInitializeThread(
-		Adapter,  
-		&pNdisCommon->InitializeAdapterThread,  
-		(RT_THREAD_CALL_BACK)InitializeAdapterThread,  
+		Adapter,
+		&pNdisCommon->InitializeAdapterThread,
+		(RT_THREAD_CALL_BACK)InitializeAdapterThread,
 		"InitializeAdapterThread",
 		FALSE,
 		0,
@@ -941,35 +941,35 @@ N6CInitThread(
 	// SDIO Tx thread initialization
 	//
 	PlatformInitializeThread(
-		Adapter,  
-		&pNdisCommon->TxHandleThread,  
-		(RT_THREAD_CALL_BACK)N6SdioTxThreadCallback,  
+		Adapter,
+		&pNdisCommon->TxHandleThread,
+		(RT_THREAD_CALL_BACK)N6SdioTxThreadCallback,
 		"N6SdioTxThreadCallback",
 		FALSE,
 		0,
 		NULL);
 
 	PlatformRunThread(
-		Adapter, 
-		&pNdisCommon->TxHandleThread, 
+		Adapter,
+		&pNdisCommon->TxHandleThread,
 		PASSIVE_LEVEL,
 		NULL);
-#if RTL8723_SDIO_IO_THREAD_ENABLE 
+#if RTL8723_SDIO_IO_THREAD_ENABLE
 	//
 	// SDIO Register IO  thread initialization
 	//
 	PlatformInitializeThread(
-		Adapter,  
-		&pNdisCommon->IOHandleThread,  
-		(RT_THREAD_CALL_BACK)N6SdioIOThreadCallback,  
+		Adapter,
+		&pNdisCommon->IOHandleThread,
+		(RT_THREAD_CALL_BACK)N6SdioIOThreadCallback,
 		"N6SdioIOThreadCallback",
 		FALSE,
 		0,
 		NULL);
 
 	PlatformRunThread(
-		Adapter, 
-		&pNdisCommon->IOHandleThread, 
+		Adapter,
+		&pNdisCommon->IOHandleThread,
 		PASSIVE_LEVEL,
 		NULL);
 #endif
@@ -984,7 +984,7 @@ N6CDeInitThread(
 	)
 {
 	PADAPTER		Adapter = (PADAPTER)pContext;
-	
+
 	PRT_NDIS6_COMMON pNdisCommon = Adapter->pNdisCommon;
 	BOOLEAN		bSupportUsbTxThread;
 	BOOLEAN		bSupportUsbIOThread;
@@ -993,7 +993,7 @@ N6CDeInitThread(
 	Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_USB_IO_THREAD, (PBOOLEAN)&bSupportUsbIOThread);
 
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("N6CDeInitThread()\n"));
-	
+
 	PlatformWaitThreadEnd(Adapter,&(pNdisCommon->InitializeAdapterThread));
 	PlatformCancelThread(Adapter, &(pNdisCommon->InitializeAdapterThread));
 	PlatformReleaseThread(Adapter, &(pNdisCommon->InitializeAdapterThread));
@@ -1004,16 +1004,16 @@ N6CDeInitThread(
 	PlatformWaitThreadEnd(Adapter, &(pNdisCommon->TxHandleThread));
 	PlatformCancelThread(Adapter, &(pNdisCommon->TxHandleThread));
 	PlatformReleaseThread(Adapter, &(pNdisCommon->TxHandleThread));
-#if RTL8723_SDIO_IO_THREAD_ENABLE 
+#if RTL8723_SDIO_IO_THREAD_ENABLE
 	// Cancel and release IO handle thread
-	PlatformWaitThreadEnd(Adapter, &(pNdisCommon->IOHandleThread));	
-	PlatformCancelThread(Adapter, &(pNdisCommon->IOHandleThread));	
+	PlatformWaitThreadEnd(Adapter, &(pNdisCommon->IOHandleThread));
+	PlatformCancelThread(Adapter, &(pNdisCommon->IOHandleThread));
 	PlatformReleaseThread(Adapter, &(pNdisCommon->IOHandleThread));
-#endif	
+#endif
 
 	PlatformFreeWorkItem( &(Adapter->pPortCommonInfo->WdiData.TaskWorkItem) );
 	PlatformFreeWorkItem( &(Adapter->pPortCommonInfo->WdiData.PropertyWorkItem) );
-	
+
 	PlatformWaitThreadEnd(Adapter, &(Adapter->pPortCommonInfo->WdiData.TaskThread));
 	PlatformCancelThread(Adapter, &(Adapter->pPortCommonInfo->WdiData.TaskThread));
 	PlatformReleaseThread(Adapter, &(Adapter->pPortCommonInfo->WdiData.TaskThread));
@@ -1090,7 +1090,7 @@ PlatformInitializeWorkItem(
 
 	PlatformZeroMemory( pPlatformExt, sizeof(PLATFORM_EXT) );
 	pRtWorkItem->pPlatformExt = pPlatformExt;
-	
+
 	NdisInitializeEvent( &(pPlatformExt->Event) );
 
 	NdisAllocateSpinLock( &(pPlatformExt->Lock) );
@@ -1151,7 +1151,7 @@ PlatformStartWorkItem(
 }
 
 
-// 
+//
 // Description:
 //	Wait the workitem complete if it is running and stop the workitem from scheduling it.
 //
@@ -1164,9 +1164,9 @@ PlatformStopWorkItem(
 
 	if( pPlatformExt == NULL )
 		return;
-	
+
 	NdisAcquireSpinLock( &(pPlatformExt->Lock) );
-	
+
 	// Check if Workitem is initialized.
 	if(pRtWorkItem->Adapter== NULL || pRtWorkItem->CallbackFunc==NULL || pPlatformExt==NULL ||	pRtWorkItem->bFree)
 	{
@@ -1232,7 +1232,7 @@ PlatformFreeWorkItem(
 	RT_TRACE(COMP_DBG, DBG_LOUD, ("===> PlatformFreeWorkItem(): %s\n", pRtWorkItem->szID));
 
 	PlatformStopWorkItem(pRtWorkItem);
-	
+
 	NdisAcquireSpinLock( &(pPlatformExt->Lock) );
 	if(pRtWorkItem->bFree)
 	{
@@ -1252,17 +1252,17 @@ PlatformFreeWorkItem(
 
 	NdisFreeIoWorkItem(pRtWorkItem->Handle);
 	pRtWorkItem->bFree = TRUE;
-	
+
 	RT_TRACE(COMP_DBG, DBG_LOUD, ("<=== PlatformFreeWorkItem(): %s\n", pRtWorkItem->szID));
 }
 
 //
 // Description:
-//	Schedule a work item. 
+//	Schedule a work item.
 // 2006.09.28, by shien chang.
 //
 
-BOOLEAN 
+BOOLEAN
 PlatformScheduleWorkItem(
 	IN	PRT_WORK_ITEM	pRtWorkItem
 )
@@ -1274,13 +1274,13 @@ PlatformScheduleWorkItem(
 		return bResult;
 
 	NdisAcquireSpinLock( &(pPlatformExt->Lock) );
-	
+
 	if(pRtWorkItem->bFree)
 	{
 		NdisReleaseSpinLock( &(pPlatformExt->Lock) );
 		return bResult;
 	}
-	
+
 
 	// Make sure at most one such workitem executed.
 	if(pRtWorkItem->RefCount == 1)
@@ -1288,8 +1288,8 @@ PlatformScheduleWorkItem(
 		pRtWorkItem->RefCount ++;
 		NdisReleaseSpinLock( &(pPlatformExt->Lock) );
 
-		NdisQueueIoWorkItem( pRtWorkItem->Handle, 
-							Ndis6WorkItemCallback, 
+		NdisQueueIoWorkItem( pRtWorkItem->Handle,
+							Ndis6WorkItemCallback,
 							pRtWorkItem);
 		bResult = TRUE;
 	}
@@ -1327,18 +1327,18 @@ PlatformIsWorkItemScheduled(
 		return FALSE;
 
 	NdisAcquireSpinLock( &(pPlatformExt->Lock) );
-	
+
 	if(pRtWorkItem->bFree)
 	{
 		NdisReleaseSpinLock( &(pPlatformExt->Lock) );
 		return FALSE;
 	}
-	
+
 
 	// We define both the RefCount 0 and 2 as scheduled.
 	// 2006.09.29, by shien chang.
 	bScheduled = !(pRtWorkItem->RefCount == 1);
-	
+
 	NdisReleaseSpinLock( &(pPlatformExt->Lock) );
 
 	return bScheduled;
@@ -1384,8 +1384,8 @@ PlatformAllocateMemoryWithTag(
 	RT_STATUS		rtstatus = RT_STATUS_SUCCESS;
 	NDIS_HANDLE		MiniportAdapterHandle = GlobalRtDriverContext.NdisContext.Ndis6MiniportDriverHandle;
 
-	*pPtr = NdisAllocateMemoryWithTagPriority( MiniportAdapterHandle, 
-											length, 
+	*pPtr = NdisAllocateMemoryWithTagPriority( MiniportAdapterHandle,
+											length,
 											Tag,
 											NormalPoolPriority);
 	if (*pPtr == NULL)
@@ -1434,8 +1434,8 @@ PlatformAllocateMemoryWithZero(
 	RT_STATUS		rtstatus = RT_STATUS_SUCCESS;
 	NDIS_HANDLE		MiniportAdapterHandle = ((PADAPTER)Adapter)->pNdisCommon->hNdisAdapter;
 
-	*pPtr = NdisAllocateMemoryWithTagPriority( MiniportAdapterHandle, 
-											length, 
+	*pPtr = NdisAllocateMemoryWithTagPriority( MiniportAdapterHandle,
+											length,
 											'7818',
 											NormalPoolPriority);
 	if (*pPtr == NULL)
@@ -1447,7 +1447,7 @@ PlatformAllocateMemoryWithZero(
 	RTL_AllocateMemory_Len += length;
 
 	NdisZeroMemory(*pPtr,length);
-	
+
 	return rtstatus;
 }
 
@@ -1562,16 +1562,16 @@ PlatformGetCurrentTime(
 	// The return value is in microsecond
 	u8Byte			ret;
 	LARGE_INTEGER	CurrentTime;
-	
+
 	NdisGetCurrentSystemTime(&CurrentTime);	// driver version
 	ret=CurrentTime.QuadPart/10;
-	
+
 	return ret;
 }
 
 //
 //	Description:
-//		Handle TKIP MIC error. 
+//		Handle TKIP MIC error.
 //		For example, indicate the MIC error event to supplicant.
 //
 //	Note:
@@ -1649,7 +1649,7 @@ PlatformHandleTKIPMICError(
 					&TKIPFailureParam,
 					sizeof(DOT11_TKIPMIC_FAILURE_PARAMETERS));
 		}
-		
+
 
 	}
 //	else
@@ -1661,7 +1661,7 @@ PlatformHandleTKIPMICError(
 
 //
 // Description:
-//	
+//
 // Added by Annie, 2005-09-23,
 // Ref: 8185 WMacRequestPreAuthentication().
 //
@@ -1708,7 +1708,7 @@ PlatformRequestPreAuthentication(
 	//
 	PlatformZeroMemory( uArray, sizeof uArray );
 	pucCurPtr = &uArray[0];
-	
+
 	pPMKID = (PDOT11_PMKID_CANDIDATE_LIST_PARAMETERS)pucCurPtr;
 	pPMKID->Header.Type = NDIS_OBJECT_TYPE_DEFAULT;
 	pPMKID->Header.Revision = DOT11_PMKID_CANDIDATE_LIST_PARAMETERS_REVISION_1;
@@ -1719,13 +1719,13 @@ PlatformRequestPreAuthentication(
 	//------------------------------------------------------------------
 	// (1) Include associated current BSSID into list
 	//------------------------------------------------------------------
-	
-	// The current associated BSSID should always be in the StatusBuffer.		
+
+	// The current associated BSSID should always be in the StatusBuffer.
 	pCandidate = (PDOT11_BSSID_CANDIDATE)pucCurPtr;
 	pCandidate->uFlags  =  DOT11_PMKID_CANDIDATE_PREAUTH_ENABLED;
-	
+
 	PlatformMoveMemory( pCandidate->BSSID, pMgntInfo->Bssid, 6 );
-	iNumBssid++;	
+	iNumBssid++;
 	pucCurPtr += sizeof(DOT11_BSSID_CANDIDATE);		// pointer to next PMKID_CANDIDATE.
 
 	// WPA2 beta site: It makes sense to clear the driver PMKID cache at the time of Disconnect.
@@ -1733,17 +1733,17 @@ PlatformRequestPreAuthentication(
 	{
 		bRequireIndication = TRUE;
 	}
-	
+
 
 	//------------------------------------------------------------------
 	// (2) Include other BSSID for roaming candidate list (with the same SSID)
-	//------------------------------------------------------------------	
+	//------------------------------------------------------------------
 	for( i=0; i<pMgntInfo->NumBssDesc; i++ )	// reference enumeration method as SelectNetworkBySSID().
-	{	
+	{
 		pBssDesc = &(pMgntInfo->bssDesc[i]);
-		
-		// The number of entries indicated in the CandidateList should not be greater 
-		//than the size of the PMKID cache supported by the driver and exposed through  
+
+		// The number of entries indicated in the CandidateList should not be greater
+		//than the size of the PMKID cache supported by the driver and exposed through
 		//OID_802_11_CAPABILITY value NoOfPMKIDs
 		if( iNumBssid >= NUM_PRE_AUTH_KEY )
 		{
@@ -1814,7 +1814,7 @@ PlatformRequestPreAuthentication(
 	{
 		UINT	UsedSize =	sizeof(DOT11_PMKID_CANDIDATE_LIST_PARAMETERS)	+	\
 							(iNumBssid)*sizeof(DOT11_BSSID_CANDIDATE);
-		
+
 		pPMKID->uCandidateListSize = iNumBssid;
 		pPMKID->uCandidateListOffset = sizeof(DOT11_PMKID_CANDIDATE_LIST_PARAMETERS);;
 
@@ -1828,8 +1828,8 @@ PlatformRequestPreAuthentication(
 					UsedSize
 					);
 	}
-	
-	RT_TRACE( COMP_SEC, DBG_LOUD, ("<=== PlatformRequestPreAuthentication()\n" ) );	
+
+	RT_TRACE( COMP_SEC, DBG_LOUD, ("<=== PlatformRequestPreAuthentication()\n" ) );
 
 }
 
@@ -1841,7 +1841,7 @@ PlatformHandlePwiseKeyUpdata(
 }
 
 // Description:
-//		Handle Network Offload  
+//		Handle Network Offload
 //		Try to Cancel Sacn
 //
 //	Added by CCW. 2013.04.17.
@@ -1860,7 +1860,7 @@ PlatformHandleNLOnScanCancel(
 
 //
 // Description:
-//		Handle Network Offload  
+//		Handle Network Offload
 //		Try to found out AP in Off load  List , and Indicate to upper layer
 //
 VOID
@@ -1883,23 +1883,23 @@ PlatformHandleNLOnScanComplete(
 
 	if( pNLOInfo->NumDot11OffloadNetwork == 0)
 	{
-		RT_TRACE(COMP_MLME , DBG_LOUD , ("return: pNdisCommon->NumDot11OffloadNetwork == 0 !\n"));		
+		RT_TRACE(COMP_MLME , DBG_LOUD , ("return: pNdisCommon->NumDot11OffloadNetwork == 0 !\n"));
 		return;
 	}
-	
+
 	if(pNdisCommon->bToIndicateNLOScanComplete == FALSE)
 	{
 		// Return to prevent from OS sets RESET_REQUEST & CONNECT_REQUEST after indicating
 		// NDIS_STATUS_DOT11_OFFLOAD_NETWORK_STATUS_CHANGED during normal (non-NLO)
 		// scan request flow. It will cause that the reconnect flow is interrupted by OID RESET_REQUEST
 		// & CONNECT_REQUEST such that the first reconnect (to the default AP) action fail after PNP wake.
-		RT_TRACE(COMP_MLME , DBG_LOUD , ("Return: NOT NLO scan request!\n"));		
+		RT_TRACE(COMP_MLME , DBG_LOUD , ("Return: NOT NLO scan request!\n"));
 		return;
 	}
-	
+
 	// Need to check : bHiddenSSIDEnable can used now ??
 	pMgntInfo->bHiddenSSIDEnable = TRUE;
-	
+
 	if(!OS_SUPPORT_WDI(Adapter))
 	{
 
@@ -1922,7 +1922,7 @@ PlatformHandleNLOnScanComplete(
 					{
 						NeedIndicate = TRUE;
 					}
-				
+
 				}
 			}
 		}
@@ -1935,22 +1935,22 @@ PlatformHandleNLOnScanComplete(
 		);
 	}
 	else
-	{		
+	{
 	WDI_IndicateNLODiscovery(Adapter);
 	}
 
 	pNdisCommon->bToIndicateNLOScanComplete = FALSE;
-	
+
 	RT_TRACE( COMP_MLME , DBG_LOUD, (" <===== PlatformHandleNLOnScanComplete  !!\n") );
 
 	return;
 }
 
 
-// 
+//
 //   Description:
-//		Handle Network Offload  scan state 
-//		Check need scan or not 
+//		Handle Network Offload  scan state
+//		Check need scan or not
 //
 VOID
 PlatformHandleNLOnScanRequest(
@@ -1964,7 +1964,7 @@ PlatformHandleNLOnScanRequest(
 	PRT_NLO_INFO			pNLOInfo 	= &(pMgntInfo->NLOInfo);
 	BOOLEAN					bNeedScan 	= FALSE;
 
-	// check enable NOL mode 
+	// check enable NOL mode
 	if( pNLOInfo->NumDot11OffloadNetwork == 0 )
 	{
 		RT_TRACE(COMP_MLME , DBG_TRACE , ("<=== return: pNdisCommon->NumDot11OffloadNetwork == 0 !\n"));
@@ -1973,9 +1973,9 @@ PlatformHandleNLOnScanRequest(
 
 	RT_TRACE(COMP_MLME , DBG_LOUD, ("===> PlatformHandleNLOnScanRequest \n ") );
 	RT_TRACE(COMP_MLME, DBG_TRACE, ("Oidcounter = %d \n",pNdisCommon->Oidcounter));
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("pNdisCommon->ScanPeriod: %d\n", pNdisCommon->ScanPeriod));
-	RT_TRACE(COMP_MLME, DBG_LOUD, ("pNdisCommon->FastScanPeriod: %d\n", pNLOInfo->FastScanPeriod));	
+	RT_TRACE(COMP_MLME, DBG_LOUD, ("pNdisCommon->FastScanPeriod: %d\n", pNLOInfo->FastScanPeriod));
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("pNdisCommon->FastScanIterations: %d\n", pNLOInfo->FastScanIterations));
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("pNdisCommon->SlowScanPeriod: %d\n", pNLOInfo->SlowScanPeriod));
 
@@ -1991,7 +1991,7 @@ PlatformHandleNLOnScanRequest(
 
 	pNdisCommon->Oidcounter = 0;
 
-	// Set up NEW ScanPeriod 
+	// Set up NEW ScanPeriod
 	if( bNeedScan )
 	{
 		if( pNLOInfo->FastScanIterations > 0 )
@@ -2009,9 +2009,9 @@ PlatformHandleNLOnScanRequest(
 		}
 	}
 
-	// Scan state 
-	// Note : 
-	// 	Check NIC "CAN" scan or not 
+	// Scan state
+	// Note :
+	// 	Check NIC "CAN" scan or not
 	if( bNeedScan )
 	{
 		if( pNdisCommon->bFilterHiddenAP )
@@ -2024,10 +2024,10 @@ PlatformHandleNLOnScanRequest(
 		RT_TRACE(COMP_MLME, DBG_LOUD, ("pNdisCommon->bToIndicateNLOScanComplete set to %s\n", pNdisCommon->bToIndicateNLOScanComplete?"TRUE":"FALSE"));
 
 		//
-		// Marked since the NLO may be initialized when disconnected. 
+		// Marked since the NLO may be initialized when disconnected.
 		//
-		
-		// Note : May need check BusyTraffic for ... 
+
+		// Note : May need check BusyTraffic for ...
 		//if(pMgntInfo->bMediaConnect && !MgntRoamingInProgress(pMgntInfo)
 		//&& !MgntScanInProgress(pMgntInfo) && !MgntIsLinkInProgress(pMgntInfo) &&
 		//!GET_RM_INFO(pMgntInfo)->bGoingOn)
@@ -2053,7 +2053,7 @@ PlatformHandleNLOnScanRequest(
 			RT_TRACE(COMP_MLME, DBG_LOUD, ("N6C_OID_DOT11_FLUSH_BSS_LIST\n"));
 			NdisRequest.RequestType = NdisRequestSetInformation;
 			N6C_OID_DOT11_FLUSH_BSS_LIST(Adapter, &NdisRequest);
-		
+
 			//Win8: Restart the passive scan ----------------------------------------------
 			if(NULL == (req = CustomScan_AllocReq(GET_CUSTOM_SCAN_INFO(Adapter), NULL, NULL)))
 			{
@@ -2066,7 +2066,7 @@ PlatformHandleNLOnScanRequest(
 			CustomScan_AddScanChnl(req, 6, 1, SCAN_ACTIVE, (u2Byte)pNdisCommon->ScanPeriod, MGN_6M, NULL);
 			CustomScan_AddScanChnl(req, 11, 1, SCAN_ACTIVE, (u2Byte)pNdisCommon->ScanPeriod, MGN_6M, NULL);
 
-			CustomScan_IssueReq(GET_CUSTOM_SCAN_INFO(Adapter), req, CUSTOM_SCAN_SRC_TYPE_UNSPECIFIED, "nlo scan req");			
+			CustomScan_IssueReq(GET_CUSTOM_SCAN_INFO(Adapter), req, CUSTOM_SCAN_SRC_TYPE_UNSPECIFIED, "nlo scan req");
 		}
 	}
 
@@ -2092,7 +2092,7 @@ PlatformReleaseDataFrameQueued(
 	PRT_NDIS6_COMMON		pNdisCommon = pAdapter->pNdisCommon;
 	PNET_BUFFER_LIST		pNetBufferList;
 	PNDIS_ADAPTER_TYPE		pDevice = GET_NDIS_ADAPTER(pAdapter);
-	PNET_BUFFER_LIST		pCurrNetBufferList, pNextNetBufferList;	
+	PNET_BUFFER_LIST		pCurrNetBufferList, pNextNetBufferList;
 	BOOLEAN 			bUseWorkItem = FALSE;
 	KIRQL			OldIrql;
 
@@ -2115,7 +2115,7 @@ PlatformReleaseDataFrameQueued(
 	}
 	else
 	{ // Old method
-		
+
 		while(TRUE)
 		{
 			PlatformAcquireSpinLock(pAdapter, RT_BUFFER_SPINLOCK);
@@ -2158,10 +2158,10 @@ PlatformReleaseDataFrameQueued(
 // this function should move to N63C
 VOID
 PlatformIndicateP2PEvent(
-	PVOID pvP2PInfo, 
+	PVOID pvP2PInfo,
 	u4Byte EventID,
 	PMEMORY_BUFFER pInformation
-) 
+)
 {
 	N63CIndicateP2PEvent(pvP2PInfo, EventID, pInformation);
 }
@@ -2198,7 +2198,7 @@ PlatformIndicateCustomStatus(
 	)
 {
 	RT_STATUS		rtStatus = RT_STATUS_SUCCESS;
-	
+
 	if(target == RT_CUSTOM_INDI_TARGET_NONE)
 	{
 		RT_TRACE_F(COMP_INDIC, DBG_WARNING, ("No Target (RT_CUSTOM_INDI_TARGET_NONE)!\n"));
@@ -2301,7 +2301,7 @@ PlatformIndicatePMWakeReason(
 				bIndicate = FALSE;
 			}
 		}
-		
+
 		if(bIndicate)
 		{
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("IndicatePMWakeReason(): WakeReason(%#X)\n", pPMWakeReason->WakeReason));
@@ -2311,14 +2311,14 @@ PlatformIndicatePMWakeReason(
 				NDIS_STATUS_PM_WAKE_REASON,
 				pPMWakeReason,
 				WakeReasonInfoLen);
-		}	
+		}
 
 		ReturnGenTempBuffer(Adapter, pGenBufPMWakeReason);
 	}
 }
 
 //
-// Description: Starting with NDIS 6.30, MiniPortCheckForHang function must not be registered 
+// Description: Starting with NDIS 6.30, MiniPortCheckForHang function must not be registered
 //		for drivers running on low power SoC platforms to avoid negative power impact caused
 // 		by the periodic Check-for-Hang activity. <MSDN>
 //		So we should set watchdog timer by driver to support on low power SoC platforms.

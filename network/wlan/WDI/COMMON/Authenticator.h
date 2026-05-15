@@ -8,27 +8,27 @@
 
 // On event
 
-void 
+void
 Authenticator_OnDeauthenticationRequest(
 	IN	PADAPTER				Adapter,
 	IN	PAUTH_PKEY_MGNT_TAG	pKeyMgnt
 	);
 
 
-void 
+void
 Authenticator_OnAuthenticationRequest(
 	IN	PADAPTER				Adapter,
 	IN	PAUTH_PKEY_MGNT_TAG	pKeyMgnt
 	);
 
-void 
+void
 Authenticator_OnReAuthenticationRequest(
 	IN	PADAPTER				Adapter,
 	IN	PAUTH_PKEY_MGNT_TAG	pKeyMgnt
 	);
 
 
-void 
+void
 Authenticator_OnEAPOLKeyRecvd(
 	IN	PADAPTER				Adapter,
 	IN	PAUTH_PKEY_MGNT_TAG	pKeyMgnt,
@@ -36,7 +36,7 @@ Authenticator_OnEAPOLKeyRecvd(
 	);
 
 
-OCTET_STRING 
+OCTET_STRING
 EAPOLkeyGetRSNIE(
 	IN	OCTET_STRING	eapolkeypkt,
 	IN	ELEMENT_ID		ID
@@ -48,7 +48,7 @@ KeyMgntTimeout(
 	PRT_TIMER		pTimer
 );
 
-void 
+void
 Authenticator_OnTimeoutCountExceeded(
 	IN	PADAPTER				Adapter,
 	IN	PAUTH_PKEY_MGNT_TAG	pKeyMgnt
@@ -56,87 +56,87 @@ Authenticator_OnTimeoutCountExceeded(
 
 // Status handle
 
-void 
+void
 Authenticator_StateDISCONNECT(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA,
 	IN	u1Byte			ReasonCode
 	);
 
-void 
+void
 Authenticator_StateDISCONNECTED(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
 	);
 
-void 
+void
 Authenticator_StateINITIALIZE(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
 	);
 
-void 
+void
 Authenticator_StateAUTHENTICATION(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
 	);
 
-void 
+void
 Authenticator_StateAUTHENTICATION2(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
 	);
 
 
-void 
+void
 Authenticator_StatePTKSTART(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
 	);
 
-void 
+void
 Authenticator_StatePTKINITNEGOTIATING(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
 	);
 
-void 
+void
 Authenticator_StatePTKINITDONE(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
 	);
 
-void 
+void
 Authenticator_StateUPDATEKEYS(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
 	);
 
-void 
+void
 Authenticator_StateINTEGRITYFAILURE(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
 	);
 
-void 
+void
 Authenticator_StateKEYUPDATE(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
 	);
 
-void 
+void
 Authenticator_StateREKEYNEGOTIATING(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
 	);
 
-void 
+void
 Authenticator_StateREKEYESTABLISHED(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA
 	);
 
-void 
+void
 Authenticator_StateKEYERROR(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_STA	pSTA,
@@ -144,7 +144,7 @@ Authenticator_StateKEYERROR(
 	);
 
 
-void 
+void
 Authenticator_GlobalReset(
 	IN	PADAPTER		Adapter
 	);

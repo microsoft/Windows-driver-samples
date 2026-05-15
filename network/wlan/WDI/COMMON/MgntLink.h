@@ -48,10 +48,10 @@
 #define	ROAM_RETRY_LIMIT				2
 
 //
-// 061207, Roger: 
+// 061207, Roger:
 // Turbo mode related parameter.
 //
-#define TCA_CHECK_PERIOD			1000	// in ms. 
+#define TCA_CHECK_PERIOD			1000	// in ms.
 #define TCA_DEF_CHECK_INTERVAL		2		// in # of TCA_CHECK_PERIOD.
 #define TCA_NG_EXTRA_CHECK_INTERVAL	2		// in# of TCA_CHECK_PERIOD, extra penalty when TCA is NG.
 #define TCA_OK_CHECK_INTERVAL		1		// in# of TCA_CHECK_PERIOD.
@@ -67,8 +67,8 @@
 #define BUSY_TRAFFIC_HIGH_TP							80		// Tx/Rx packets in a certain period, Justin: make this value smaller, so can adjust the USB aggregation faster
 
 // 2014/09/25 MH Add for very high speed
-#define BUSY_TRAFFIC_VERY_HIGH_THREADHOLD			10000		
-#define BUSY_TRAFFIC_VERY_HIGH_TP						250		
+#define BUSY_TRAFFIC_VERY_HIGH_THREADHOLD			10000
+#define BUSY_TRAFFIC_VERY_HIGH_TP						250
 
 #define	SCAN_DELAY_TIME_MS_LONG						1000
 #define	SCAN_DELAY_TIME_MS_SHORT					50
@@ -86,7 +86,7 @@
 		((_pMgntInfo)->AsocTimer.Status&RT_TIMER_STATUS_SET)			||	\
 		((_pMgntInfo)->bJoinInProgress)								\
 	)
-#endif	
+#endif
 
 #define	MgntLinkStatusUpdateRxBeacon(_Adapter)		\
 			_Adapter->MgntInfo.LinkDetectInfo.NumRecvBcnInPeriod ++;
@@ -209,7 +209,7 @@ enum StatusCode
 	StatusCode_security_disabled		= 5,
 	StatusCode_unacceptable_lifetime	= 6,
 	StatusCode_notsame_BSS			= 7,
-	
+
 	StatusCode_notsupport_cap         = 10,
 	StatusCode_reassoc_denied         = 11,
 	StatusCode_assoc_denied             = 12,
@@ -241,11 +241,11 @@ enum StatusCode
 enum	_ReasonCode{
 	unspec_reason	= 0x1,
 	auth_not_valid	= 0x2,
-	deauth_lv_ss	= 0x3, 
+	deauth_lv_ss	= 0x3,
 	inactivity		= 0x4,
-	ap_overload		= 0x5, 
+	ap_overload		= 0x5,
 	class2_err		= 0x6,
-	class3_err		= 0x7, 
+	class3_err		= 0x7,
 	disas_lv_ss		= 0x8,
 	asoc_not_auth	= 0x9,
 
@@ -302,20 +302,20 @@ extern u4Byte DSSS_Freq_Channel[];
 extern BOOLEAN		bDebugFixBssid;
 extern u1Byte		debug_fixed_bssid[];
 
-BOOLEAN 
+BOOLEAN
 AssembleFragmentWcnIeFromMmpdu(
 	IN	PADAPTER		Adapter,
 	IN    PSIMPLE_CONFIG_T	pSimpleConfig,
 	IN OUT	POCTET_STRING posMmpdu
 );
 
-PRT_WLAN_BSS 
+PRT_WLAN_BSS
 BssDescDupByDesc(
 	IN	PADAPTER		Adapter,
 	IN	PRT_WLAN_BSS	pRtBSS
 	);
 
-PRT_WLAN_BSS 
+PRT_WLAN_BSS
 BssDescDupByBssid(
 	IN	PADAPTER		Adapter,
 	IN	pu1Byte			pBssid
@@ -419,7 +419,7 @@ MlmeAssociateRequest(
 	u4Byte			asocTmot,
 	u2Byte			asCap,
 	u2Byte			asListenInterval,
-	BOOLEAN			Reassociate	
+	BOOLEAN			Reassociate
 );
 
 RT_STATUS
@@ -485,7 +485,7 @@ MgntDisconnectIBSS(
 #define	FORCE_NO_INDICATE		0x02
 
 
-void 
+void
 MgntIndicateMediaStatus(
 	PADAPTER			Adapter,
 	RT_MEDIA_STATUS	mstatus,
@@ -539,7 +539,7 @@ WatchDogTimerCallback(
 VOID
 SendDataFrameQueued(
 	PADAPTER	Adapter
-	);				
+	);
 // -------------------------------------------
 VOID
 MgntResetScanProcess(
@@ -718,7 +718,7 @@ BOOLEAN
 MgntDisconnect(
 	IN	PADAPTER		Adapter,
 	IN	u1Byte			asRsn
-); 
+);
 
 
 VOID
@@ -771,19 +771,19 @@ MgntScanInProgress(
 	PMGNT_INFO	pMgntInfo
 );
 
-BOOLEAN 
+BOOLEAN
 MgntIsLinkInProgress(
 	PMGNT_INFO		pMgntInfo
 );
 
-BOOLEAN 
+BOOLEAN
 MgntIsTimeOutForIndication(
 	PMGNT_INFO		pMgntInfo
 );
 
 u1Byte
 AutoSelectChannel(
-	PADAPTER		Adapter, 
+	PADAPTER		Adapter,
 	PRT_WLAN_BSS	pBssList,
 	int				nNumBss
 );
@@ -848,7 +848,7 @@ FtUpdateEntryInfo(
 	IN	FT_ENTRY_ACTION		action,
 	IN	pu1Byte				pTargetAddr,
 	IN	PVOID				pInfoBuffer,
-	IN	u4Byte				BufLen	
+	IN	u4Byte				BufLen
 	);
 
 BOOLEAN

@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //
 //       SubscriptionBFEStateChangeCallback
@@ -19,7 +19,7 @@
 //       <Module>
 //          Subscription           -   Function pertains to a subscription.
 //       <Scenario>
-//          BFEStateChangeCallback -   Function demonstates use of the BFE service state change 
+//          BFEStateChangeCallback -   Function demonstates use of the BFE service state change
 //                                        callback.
 //
 //   Author:
@@ -38,8 +38,8 @@
 
 /**
  @notify_function="SubscriptionBFEStateChangeCallback"
- 
-   Purpose:  Callback, invoked on BFE service state change, which will get or release a handle 
+
+   Purpose:  Callback, invoked on BFE service state change, which will get or release a handle
              to the engine.                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -58,7 +58,7 @@ VOID CALLBACK SubscriptionBFEStateChangeCallback(_Inout_ VOID* pContext,
               " ---> SubscriptionBFEStateChangeCallback()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pContext);
 
    NTSTATUS                status      = STATUS_SUCCESS;

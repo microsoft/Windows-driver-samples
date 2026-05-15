@@ -14,7 +14,7 @@ typedef struct _ADAPTER ADAPTER, *PADAPTER;
 #define	COPY_ANSI_LAST_STRING(__pDest, __MaxSize, __pSource)	\
 	memcpy(__pDest, &(__pSource[(strlen(__pSource) > (__MaxSize - 1)) ? (strlen(__pSource) - (__MaxSize - 1)) : 0]), (strlen(__pSource) > (__MaxSize - 1)) ? (__MaxSize - 1) : strlen(__pSource) + 1)
 
-// =================================================================================== 
+// ===================================================================================
 //      Define RT_EVENT for all platform here
 // ===================================================================================
 	typedef NDIS_EVENT	RT_EVENT;
@@ -27,7 +27,7 @@ typedef struct _ADAPTER ADAPTER, *PADAPTER;
 // ===================================================================================
 
 
-// =================================================================================== 
+// ===================================================================================
 //      Define RT_SPIN_LOCK for all platform here
 // ===================================================================================
 
@@ -36,7 +36,7 @@ typedef struct _ADAPTER ADAPTER, *PADAPTER;
 	#define	PLATFORM_FREE_RT_SPINLOCK(__RtSpinLock)		NdisFreeSpinLock(&(__RtSpinLock))
 	#define	PLATFORM_ACQUIRE_RT_SPINLOCK(__RtSpinLock)	NdisAcquireSpinLock(&(__RtSpinLock))
 	#define	PLATFORM_RELEASE_RT_SPINLOCK(__RtSpinLock)	NdisReleaseSpinLock(&(__RtSpinLock))
-	
+
 // ===================================================================================
 
 
@@ -51,9 +51,9 @@ typedef struct _ADAPTER ADAPTER, *PADAPTER;
 	#define PlatformEFIOWrite4Byte(_a,_b,_c)		\
 			PlatformIOWrite4Byte(_a,WLAN_IOREG_DEVICE_ID,_b,EF4Byte(_c))
 	#define PlatformEFIOSyncWriteNByte(_a,_b,_c,_d)		\
-			PlatformIOSyncWriteNByte(_a,WLAN_IOREG_DEVICE_ID,_b,_c,_d)		
+			PlatformIOSyncWriteNByte(_a,WLAN_IOREG_DEVICE_ID,_b,_c,_d)
 
-	
+
 		#define PlatformEFIORead1Byte(_a,_b)		\
 				PlatformIORead1Byte(_a,WLAN_IOREG_DEVICE_ID,_b)
 		#define PlatformEFIORead2Byte(_a,_b)		\
@@ -62,7 +62,7 @@ typedef struct _ADAPTER ADAPTER, *PADAPTER;
 				EF4Byte(PlatformIORead4Byte(_a,WLAN_IOREG_DEVICE_ID,_b))
 		#define PlatformEFIOReadNByte(_a,_b,_c,_d)		\
 				PlatformIOReadNByte(_a,WLAN_IOREG_DEVICE_ID,_b,_c,_d)
-	
+
 #define GET_SHARED_MEMORY_WITH_OFFSET(_src, _dest, _offset, _length)		\
 			(_dest)->VirtualAddress=(_src)->VirtualAddress + (_offset);			\
 			(_dest)->PhysicalAddressHigh=(_src)->PhysicalAddressHigh;			\
@@ -107,7 +107,7 @@ typedef  	UCHAR	RT_THREAD_LEVEL;
 #define RT_THREAD_LEVEL_DISPATCH	BIT2
 
 //
-// PlatformSleepUs() will put the thread into wait queue for specified period 
+// PlatformSleepUs() will put the thread into wait queue for specified period
 // in us and OS can reschedule now.
 // So, we MUST make sure we are in proper context to use this function.
 //
@@ -126,9 +126,9 @@ typedef  	UCHAR	RT_THREAD_LEVEL;
 
 	#define INTMAX_C(v)  (v)
 	#define UINTMAX_C(v) (v)
-	
+
 	#define i64fmt		"I64"
-	
+
 // Macro for getting Ibss Addition IEs. By Bruce, 2007-08-13.
 
 	#define	GetIbssAdditionalData(_pAdapter, _pOctetString)												\
@@ -143,7 +143,7 @@ typedef  	UCHAR	RT_THREAD_LEVEL;
 				(_pOctetString)->Length = 0;															\
 			}
 
-	#define GetIbssbJoinOnly(	_pAdapter)	(_pAdapter->pNdisCommon->dot11IbssParams.bDot11IbssJoinOnly)			
+	#define GetIbssbJoinOnly(	_pAdapter)	(_pAdapter->pNdisCommon->dot11IbssParams.bDot11IbssJoinOnly)
 	//
 	// Note:
 	//	According to Ndis6 WDK, this default value should be "FALSE", and XP in DTM should be
@@ -152,8 +152,8 @@ typedef  	UCHAR	RT_THREAD_LEVEL;
 	#define	DEFAULT_HIDDEN_SSID		(FALSE)
 
 #ifndef PCI_TYPE1_ADDRESS
-	#define PCI_CONF_ADDRESS   0x0CF8   // PCI Configuration Space Address 
-	#define PCI_CONF_DATA		0x0CFC   // PCI Configuration Space Data 
+	#define PCI_CONF_ADDRESS   0x0CF8   // PCI Configuration Space Address
+	#define PCI_CONF_DATA		0x0CFC   // PCI Configuration Space Data
 #endif
 
 
@@ -166,14 +166,14 @@ typedef struct _RT_VALID_PAIR_BOOLEAN
 {
 	BOOLEAN 	bVaild;
 	BOOLEAN 	Data;
-	
-} RT_VALID_PAIR_BOOLEAN, *PRT_VALID_PAIR_BOOLEAN; 
+
+} RT_VALID_PAIR_BOOLEAN, *PRT_VALID_PAIR_BOOLEAN;
 
 typedef struct _RT_VALID_PAIR_U4BYTE
 {
 	BOOLEAN 	bVaild;
 	u4Byte		Data;
-	
+
 } RT_VALID_PAIR_U4BYTE, *PRT_VALID_PAIR_U4BYTE;
 // ---------------------------------------------------------------------------
 
@@ -187,7 +187,7 @@ typedef struct _VIRTUAL_MEMORY{
 	PVOID				Ptr;
 	u4Byte				Length;
 }VIRTUAL_MEMORY,*PVIRTUAL_MEMORY;
-	
+
 typedef struct _PHYSICAL_MEMORY{
 	u4Byte				AddressLow;
 	u4Byte				AddressHigh;
@@ -222,12 +222,12 @@ typedef struct __RT_THREAD
 	u1Byte					Status;
 	PVOID					pPlatformExt;
 	PVOID					pContext;
-	RT_THREAD_CALL_BACK		CallbackFunc;	
+	RT_THREAD_CALL_BACK		CallbackFunc;
 	RT_THREAD_CALL_BACK		PreTheradExitCb;
 	u2Byte					RefCnt;
 	u2Byte					ScheduleCnt;	// only for debug information
 	BOOLEAN					bEventTriger;
-	char						szID[36]; 
+	char						szID[36];
 	u1Byte					Argc;
 	u1Byte					Argv[1];
 }RT_THREAD, *PRT_THREAD;
@@ -260,10 +260,10 @@ typedef struct _RT_WORK_ITEM
 {
 	RT_WORKITEM_HANDLE			Handle;			// Platform-dependent handle for this workitem, e.g. Ndis Workitem object.
 	PVOID						Adapter;		// Pointer to Adapter object.
-	PVOID						pContext;		// Parameter to passed to CallBackFunc(). 
+	PVOID						pContext;		// Parameter to passed to CallBackFunc().
 	RT_WORKITEM_CALL_BACK		CallbackFunc;	// Callback function of the workitem.
-	u1Byte						RefCount;		// 0: driver is going to unload, 1: No such workitem scheduled, 2: one workitem is schedueled. 
-	PVOID						pPlatformExt;	// Pointer to platform-dependent extension.	
+	u1Byte						RefCount;		// 0: driver is going to unload, 1: No such workitem scheduled, 2: one workitem is schedueled.
+	PVOID						pPlatformExt;	// Pointer to platform-dependent extension.
 	BOOLEAN						bFree;
 	char						szID[36];		// An identity string of this workitem.
 }RT_WORK_ITEM, *PRT_WORK_ITEM;
@@ -281,7 +281,7 @@ typedef enum _RT_SPINLOCK_TYPE{
 	RT_RM_SPINLOCK = 3,
 	RT_CAM_SPINLOCK = 4,
 	RT_SCAN_SPINLOCK = 5,
-	RT_LOG_SPINLOCK = 7, 
+	RT_LOG_SPINLOCK = 7,
 	RT_BW_SPINLOCK = 8,
 	RT_CHNLOP_SPINLOCK = 9,
 	RT_RF_OPERATE_SPINLOCK = 10,
@@ -300,7 +300,7 @@ typedef enum _RT_SPINLOCK_TYPE{
 	RT_WAPI_OPTION_SPINLOCK=26,
 	RT_WAPI_RX_SPINLOCK=27,
 
-      // add for 92D CCK control issue  
+      // add for 92D CCK control issue
 	RT_CCK_PAGEA_SPINLOCK = 28,
 	RT_BUFFER_SPINLOCK = 29,
 	RT_CHANNEL_AND_BANDWIDTH_SPINLOCK = 30,
@@ -313,10 +313,10 @@ typedef enum _RT_SPINLOCK_TYPE{
 	RT_DBG_SPIN_LOCK = 37,
 	RT_IQK_SPINLOCK = 38,
 	RT_PENDED_OID_SPINLOCK = 39,
-	RT_CHNLLIST_SPINLOCK = 40,	
-	RT_INDIC_SPINLOCK = 41,		//protect indication		
+	RT_CHNLLIST_SPINLOCK = 40,
+	RT_INDIC_SPINLOCK = 41,		//protect indication
 	RT_DRV_STATE_SPINLOCK = 42,
-	RT_RFD_SPINLOCK = 43,	
+	RT_RFD_SPINLOCK = 43,
 	RT_ACS_SPINLOCK = 44,	// Auto Channel Switching
 	RT_RX_REF_CNT_SPINLOCK = 45,
 	RT_SYNC_IO_CNT_SPINLOCK = 46,
@@ -459,7 +459,7 @@ PlatformAllocateMemoryWithTag(
 	OUT     PVOID		*pPtr,
 	IN      u4Byte		length
 	);
-    
+
 VOID
 PlatformFreeMemory(
 	IN PVOID		ptr,
@@ -478,7 +478,7 @@ PlatformAllocateMemoryWithZero(
 #define	PlatformAllocateMemory(__Adapter, __Ptr, __Len) \
 			PlatformAllocateMemoryWithTag(__Adapter, GenTag(__FUNCTION__), __Ptr, __Len)
 #define	PlatformFreeMemory(ptr, length) \
-			PlatformFreeMemory(ptr, length)			
+			PlatformFreeMemory(ptr, length)
 #define	PlatformAllocateMemoryWithZero(__Adapter, __Ptr, __Len) \
 			PlatformAllocateMemoryWithZero(__Adapter, __Ptr, __Len)
 
@@ -580,7 +580,7 @@ VOID
 PlatformInitializeTimer(
 	PVOID				Adapter,
 	PRT_TIMER			pTimer,
-	RT_TIMER_CALL_BACK	CallBackFunc, 
+	RT_TIMER_CALL_BACK	CallBackFunc,
 	PVOID				pContext,
 	const char*				szID
 	);
@@ -611,7 +611,7 @@ PlatformReleaseTimer(
 	PVOID				Adapter,
 	PRT_TIMER			pTimer
 	);
-	
+
 BOOLEAN
 PlatformSuspendTimer(
 	IN	PVOID				Adapter,
@@ -622,7 +622,7 @@ BOOLEAN
 PlatformResumeTimer(
 	IN	PVOID				Adapter,
 	IN	PRT_TIMER			pTimer
-	);	
+	);
 
 RT_STATUS
 PlatformInitializeWorkItem(
@@ -648,7 +648,7 @@ PlatformFreeWorkItem(
 	PRT_WORK_ITEM				pRtWorkItem
 );
 
-BOOLEAN 
+BOOLEAN
 PlatformScheduleWorkItem(
 	PRT_WORK_ITEM				pRtWorkItem
 );
@@ -657,7 +657,7 @@ VOID
 PlatformLeaveCallbackOfWorkItem(
 	PRT_WORK_ITEM	pRtWorkItem
 );
-	
+
 BOOLEAN
 PlatformIsWorkItemScheduled(
 	PRT_WORK_ITEM				pRtWorkItem
@@ -874,7 +874,7 @@ PlatformResetPciSpace(
 	IN		PADAPTER	Adapter,
 	IN 		u1Byte		Value
 	);
-	
+
 BOOLEAN
 PlatformSwitchClkReq(
 	IN		PADAPTER	Adapter,
@@ -893,13 +893,13 @@ PlatformSetPciConfiguration(
 	);
 
 
-VOID 
+VOID
 PlatformBackupPciCfgSpaceReg(
 	IN	PADAPTER Adapter
 	);
 
 
-VOID 
+VOID
 PlatformRestorePciCfgSpaceReg(
 	IN	PADAPTER Adapter
 	);
@@ -930,12 +930,12 @@ PlatformEnable92CEDMA64(
 
 VOID
 PlatformSetPciPMEEnable(
-	IN		PADAPTER		Adapter	
+	IN		PADAPTER		Adapter
 	);
 
 VOID
 PlatformClearPciPMEStatus(
-	IN		PADAPTER		Adapter	
+	IN		PADAPTER		Adapter
 	);
 
 u4Byte
@@ -1007,7 +1007,7 @@ RT_STATUS
 PlatformInitializeThread(
 	IN	PADAPTER			Adapter,
 	IN	PRT_THREAD			pRtThread,
-	IN	RT_THREAD_CALL_BACK	CallBackFunc, 
+	IN	RT_THREAD_CALL_BACK	CallBackFunc,
 	IN	const char*			szID,
 	IN	BOOLEAN				EventTriger,
 	IN	u4Byte				Period,
@@ -1018,7 +1018,7 @@ RT_STATUS
 PlatformInitializeThreadEx(
 	IN	PADAPTER			Adapter,
 	IN	PRT_THREAD			pRtThread,
-	IN	RT_THREAD_CALL_BACK	CallBackFunc, 
+	IN	RT_THREAD_CALL_BACK	CallBackFunc,
 	IN  RT_THREAD_CALL_BACK PreThreadExitCb,
 	IN	const char*			szID,
 	IN	BOOLEAN				EventTriger,
@@ -1068,23 +1068,23 @@ PlatformReleaseThread(
 #define SEMA_UPBND	(0x7FFFFFFF)
 
 VOID
-PlatformInitializeSemaphore(	
+PlatformInitializeSemaphore(
 	IN 	PPlatformSemaphore	Sema,
 	IN	u4Byte	InitCnt
 	);
 
 RT_STATUS
-PlatformAcquireSemaphore(	
+PlatformAcquireSemaphore(
 	IN 	PPlatformSemaphore	Sema
 	);
 
 VOID
-PlatformReleaseSemaphore(	
+PlatformReleaseSemaphore(
 	IN 	PPlatformSemaphore	Sema
 	);
 
 VOID
-PlatformFreeSemaphore(	
+PlatformFreeSemaphore(
 	IN 	PPlatformSemaphore	Sema
 	);
 
@@ -1114,8 +1114,8 @@ PlatformInitReady(
 
 
 //
-// <Roger_Notes> The following Export SDIO Commands are for IO_RW_DIRECT Command (CMD52) 
-// and IO_RW_EXTENDED Command (CMD53) to read or write 
+// <Roger_Notes> The following Export SDIO Commands are for IO_RW_DIRECT Command (CMD52)
+// and IO_RW_EXTENDED Command (CMD53) to read or write
 // corresponding offset and data for specific device ID.
 // 2010.12.23.
 //
@@ -1161,7 +1161,7 @@ PlatformInitReady(
 			PlatformSdioCmd52Write2Byte(_a,SDIO_LOCAL_DEVICE_ID,1,_b,EF2Byte(_c))
 #define PlatformEFSdioLocalCmd52Write4Byte(_a,_b,_c)		\
 			PlatformSdioCmd52Write4Byte(_a,SDIO_LOCAL_DEVICE_ID,1,_b,EF4Byte(_c))
-			
+
 //
 // Use CMD53 to perform SDIO Local I/O Bus domain Read/Write for Function 1 space.
 // We will NOT use CMD53 to access SDIO Function 0 space.
@@ -1180,7 +1180,7 @@ PlatformInitReady(
 			PlatformEFSdioCmd53Write2Byte(_a,SDIO_LOCAL_DEVICE_ID,_b,EF2Byte(_c))
 #define PlatformEFSdioLocalCmd53Write4Byte(_a,_b,_c)		\
 			PlatformEFSdioCmd53Write4Byte(_a,SDIO_LOCAL_DEVICE_ID,_b,EF4Byte(_c))
-			
+
 //20130422 KaiYuan add for 8814 available page read
 #define PlatformEFMacLocalCmd53ReadNByte(_a,_b,_c,_d)		\
 			PlatformEFSdioCmd53ReadNByte(_a,WLAN_IOREG_DEVICE_ID,_b,_c,_d)
@@ -1241,7 +1241,7 @@ PlatformSdioCmd52Write4Byte(
 // For P2P Platform-dependant Indication ------------------------------------
 VOID
 PlatformIndicateP2PEvent(
-	PVOID pvP2PInfo, 
+	PVOID pvP2PInfo,
 	u4Byte EventID,
 	PMEMORY_BUFFER pInformation
 );

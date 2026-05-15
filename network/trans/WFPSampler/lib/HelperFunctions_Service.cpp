@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -65,7 +65,7 @@
 
 /**
  @helper_function="PrvHlprServiceQueryState"
- 
+
    Purpose: Return the state of the service.                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -154,7 +154,7 @@ UINT32 PrvHlprServiceQueryState(_In_ PCWSTR pServiceName,
 
 /**
  @helper_function="PrvHlprServiceStateToString"
- 
+
    Purpose: Return a string representation of the service state.                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -187,7 +187,7 @@ PCWSTR PrvHlprServiceStateToString(_In_ const UINT32 state)
 
 /**
  @helper_function="PrvHlprServiceControl"
- 
+
    Purpose: Issue a control to the specified service.                                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -302,11 +302,11 @@ UINT32 PrvHlprServiceControl(_In_ PCWSTR pServiceName,
 
 /**
  @helper_function="HlprServiceNotificationRegister"
- 
-   Purpose: Register a notification function which is triggered by the service's transition in 
+
+   Purpose: Register a notification function which is triggered by the service's transition in
             state.                                                                              <br>
                                                                                                 <br>
-   Notes:   The caller is responsible for closing the service handle using 
+   Notes:   The caller is responsible for closing the service handle using
             HLPR_CLOSE_SERVICE_HANDLE.                                                          <br>
                                                                                                 <br>
                                                                                                 <br>
@@ -381,7 +381,7 @@ UINT32 HlprServiceNotificationStateChangeRegister(_In_ PCWSTR pServiceName,
 
 /**
  @helper_function="HlprServiceQueryState"
- 
+
    Purpose: Return the state of the service.                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -405,7 +405,7 @@ UINT32 HlprServiceQueryState(_In_ PCWSTR pServiceName)
 
 /**
  @helper_function="HlprServiceStart"
- 
+
    Purpose: Issue a start control to the specified service.                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -457,7 +457,7 @@ UINT32 HlprServiceStart(_In_ PCWSTR pServiceName)
 
 /**
  @helper_function="HlprServiceStop"
- 
+
    Purpose: Issue a stop control to the specified service.                                      <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

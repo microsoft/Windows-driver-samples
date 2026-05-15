@@ -60,7 +60,7 @@ typedef struct _RT_CHANNEL_INFO {
 
 	CHANNEL_WIDTH	RegBWSetting;
 	BOOLEAN			bSwBwInProgress;
-	CHNLOP			ChnlOp; 
+	CHNLOP			ChnlOp;
 
 	u1Byte			PrimaryChannelNumber;
 	CHANNEL_WIDTH	CurrentChannelBandWidth;

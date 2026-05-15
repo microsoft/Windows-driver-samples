@@ -22,15 +22,15 @@ pool_OnBoundary(
 	{
 		if(pool->end <= (u1Byte *)entry)
 			break;
-		
+
 		if((u1Byte *)entry < pool->start)
 			break;
-		
+
 		if(((u1Byte *)entry - pool->start) % pool->entrySize)
 			break;
 
 		bOnBoundary = TRUE;
-		
+
 	}while(FALSE);
 
 	if(!bOnBoundary)
@@ -64,7 +64,7 @@ pool_DumpFreeList(
 
 	RT_TRACE_F(pool->dbgComp, pool->dbgLevel, ("Head:\n"));
 	pool_DumpListEntry(pool, &pool->freeList);
-	
+
 	for(pEntry = RTGetHeadList(&pool->freeList);
 		pEntry != &pool->freeList;
 		pEntry = RTNextEntryList(pEntry)
@@ -98,7 +98,7 @@ Pool_Init(
 	pool->start = pos;
 	pool->end = end;
 	pool->entrySize = entrySize;
-	
+
 	RTInitializeListHead(&pool->freeList);
 	pool->freeCount = 0;
 
@@ -129,7 +129,7 @@ Pool_Acquire(
 
 	RT_ASSERT(pool, ("%s(): pool is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(pool_sig == pool->sig, ("%s(): invalid pool\n", __FUNCTION__));
-	
+
 	if(RTIsListEmpty(&pool->freeList)) return NULL;
 
 	entry = (VOID *)RTRemoveHeadListWithCnt(&pool->freeList, &pool->freeCount);
@@ -139,7 +139,7 @@ Pool_Acquire(
 		pool->lowMark = pool->freeCount;
 		RT_TRACE_F(pool->dbgComp, pool->dbgLevel, ("%s: lowMark: %u, cap: %u\n", pool->name, pool->freeCount, pool->cap));
 	}
-	
+
 	return entry;
 }
 
@@ -153,7 +153,7 @@ Pool_Release(
 	RT_ASSERT(pool_sig == pool->sig, ("%s(): invalid pool\n", __FUNCTION__));
 
 	RT_ASSERT(entry < (VOID *)pool->end, ("%s(): entry (%p) beyond end (%p)\n", __FUNCTION__, entry, pool->end));
-	RT_ASSERT((VOID *)pool->start <= entry, ("%s(): entry (%p) below start (%p)\n", __FUNCTION__, entry, pool->start));	
+	RT_ASSERT((VOID *)pool->start <= entry, ("%s(): entry (%p) below start (%p)\n", __FUNCTION__, entry, pool->start));
 
 	if(pool_OnBoundary(pool, entry))
 	{
@@ -163,7 +163,7 @@ Pool_Release(
 	{
 		Pool_Dump(pool);
 	}
-	
+
 	return;
 }
 
@@ -174,7 +174,7 @@ Pool_Dump(
 {
 	RT_ASSERT(pool, ("%s(): pool is NULL!!!\n", __FUNCTION__));
 	RT_ASSERT(pool_sig == pool->sig, ("%s(): invalid pool\n", __FUNCTION__));
-	
+
 	RT_TRACE_F(pool->dbgComp, pool->dbgLevel, ("---\n"));
 	RT_TRACE_F(pool->dbgComp, pool->dbgLevel, ("name: %s\n", pool->name));
 	RT_TRACE_F(pool->dbgComp, pool->dbgLevel, ("start addr: %p\n", pool->start));

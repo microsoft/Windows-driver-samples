@@ -6,7 +6,7 @@
 
 #define STMEDIT_TAG_LQWI 'wLeS'   // Light Weight Queue Work Items.
 
-typedef struct _LW_ENTRY 
+typedef struct _LW_ENTRY
 {
     struct _LW_ENTRY *Next;
 } LW_ENTRY, *PLW_ENTRY;

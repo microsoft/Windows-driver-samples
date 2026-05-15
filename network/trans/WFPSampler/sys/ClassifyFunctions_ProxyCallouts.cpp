@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //
 //       ClassifyProxyByALERedirect
@@ -22,7 +22,7 @@
 //          Prv                    -       Function is a private helper to this module.
 //          Trigger                -
 //       <Scenario>
-//          ProxyByALERedirect     -       Function demonstates use of 
+//          ProxyByALERedirect     -       Function demonstates use of
 //                                            FWPM_LAYER_ALE_CONNECT_REDIRECT_V{4/6} and
 //                                            FWPM_LAYER_ALE_BIND_REDIRECT_V{4/6} for proxying.
 //                                            (For use in Win7+)
@@ -50,9 +50,9 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, fix 
-//                                              proxying by injection to use INBOUND_IPPACKET, fix 
-//                                              proxying by ALE to a local service, and add support 
+//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, fix
+//                                              proxying by injection to use INBOUND_IPPACKET, fix
+//                                              proxying by ALE to a local service, and add support
 //                                              for multiple redirectors.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@
 
 /**
  @private_function="PerformProxyInjectionAtInboundNetwork"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -549,7 +549,7 @@ NTSTATUS PerformProxyInjectionAtInboundNetwork(_In_ CLASSIFY_DATA** ppClassifyDa
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PerformProxyInjectionAtInboundNetwork() [status: %#x]\n",
@@ -562,7 +562,7 @@ NTSTATUS PerformProxyInjectionAtInboundNetwork(_In_ CLASSIFY_DATA** ppClassifyDa
 
 /**
  @private_function="PerformProxyInjectionAtOutboundTransport"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -580,13 +580,13 @@ NTSTATUS PerformProxyInjectionAtOutboundTransport(_In_ CLASSIFY_DATA** ppClassif
                                                   _In_ BOOLEAN isInline = FALSE)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PerformProxyInjectionAtOutboundTransport()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppClassifyData);
    NT_ASSERT(ppInjectionData);
    NT_ASSERT(pProxyData);
@@ -762,13 +762,13 @@ NTSTATUS PerformProxyInjectionAtOutboundTransport(_In_ CLASSIFY_DATA** ppClassif
    if(pProxyData->flags & PCPDF_PROXY_REMOTE_PORT)
    {
       FWP_VALUE remotePort;
-   
+
       RtlZeroMemory(&remotePort,
                     sizeof(FWP_VALUE));
-   
+
       remotePort.type   = FWP_UINT16;
       remotePort.uint16 = pProxyData->proxyRemotePort;
-   
+
       switch(protocol)
       {
          case IPPROTO_TCP:
@@ -782,7 +782,7 @@ NTSTATUS PerformProxyInjectionAtOutboundTransport(_In_ CLASSIFY_DATA** ppClassif
             status = KrnlHlprTCPHeaderModifyDestinationPort(&remotePort,
                                                             pNetBufferList,
                                                             tcpHeaderSize);
-   
+
             break;
          }
          case IPPROTO_UDP:
@@ -796,7 +796,7 @@ NTSTATUS PerformProxyInjectionAtOutboundTransport(_In_ CLASSIFY_DATA** ppClassif
             status = KrnlHlprUDPHeaderModifyDestinationPort(&remotePort,
                                                             pNetBufferList,
                                                             udpHeaderSize);
-   
+
             break;
          }
       }
@@ -858,21 +858,21 @@ NTSTATUS PerformProxyInjectionAtOutboundTransport(_In_ CLASSIFY_DATA** ppClassif
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PerformProxyInjectionAtOutboundTransport() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @private_function="ProxyUsingInjectionMethodDeferredProcedureCall"
- 
-   Purpose:  Invokes the appropriate private injection routine to perform the injection at 
+
+   Purpose:  Invokes the appropriate private injection routine to perform the injection at
              DISPATCH_LEVEL.                                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -888,13 +888,13 @@ VOID ProxyUsingInjectionMethodDeferredProcedureCall(_In_ KDPC* pDPC,
                                                     _In_opt_ PVOID pArg2)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> BasicPacketInjectionDeferredProcedureCall()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(pDPC);
    UNREFERENCED_PARAMETER(pContext);
    UNREFERENCED_PARAMETER(pArg2);
@@ -937,19 +937,19 @@ VOID ProxyUsingInjectionMethodDeferredProcedureCall(_In_ KDPC* pDPC,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- ProxyUsingInjectionMethodDeferredProcedureCall()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @private_function="ProxyUsingInjectionMethodWorkItemRoutine"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -963,13 +963,13 @@ VOID ProxyUsingInjectionMethodWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
                                               _In_opt_ PVOID pContext)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> ProxyUsingInjectionMethodWorkItemRoutine()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(pDeviceObject);
 
    NT_ASSERT(pContext);
@@ -1009,19 +1009,19 @@ VOID ProxyUsingInjectionMethodWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- ProxyUsingInjectionMethodWorkItemRoutine()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @private_function="TriggerProxyInjectionInline"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1043,13 +1043,13 @@ NTSTATUS TriggerProxyInjectionInline(_In_ const FWPS_INCOMING_VALUES* pClassifyV
                                      _In_ PC_PROXY_DATA* pProxyData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> TriggerProxyInjectionInline()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pClassifyValues);
    NT_ASSERT(pMetadata);
    NT_ASSERT(pNetBufferList);
@@ -1103,20 +1103,20 @@ NTSTATUS TriggerProxyInjectionInline(_In_ const FWPS_INCOMING_VALUES* pClassifyV
    HLPR_BAIL_LABEL:
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- TriggerProxyInjectionInline() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @private_function="TriggerProxyInjectionOutOfBand"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1138,13 +1138,13 @@ NTSTATUS TriggerProxyInjectionOutOfBand(_In_ const FWPS_INCOMING_VALUES* pClassi
                                         _In_ PC_PROXY_DATA* pPCData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> TriggerProxyInjectionOutOfBand()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pClassifyValues);
    NT_ASSERT(pMetadata);
    NT_ASSERT(pNetBufferList);
@@ -1201,14 +1201,14 @@ NTSTATUS TriggerProxyInjectionOutOfBand(_In_ const FWPS_INCOMING_VALUES* pClassi
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- TriggerProxyInjectionOutOfBand() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
@@ -1219,7 +1219,7 @@ NTSTATUS TriggerProxyInjectionOutOfBand(_In_ const FWPS_INCOMING_VALUES* pClassi
 
 /**
  @private_function="PerformProxySocketRedirection"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1237,13 +1237,13 @@ NTSTATUS PerformProxySocketRedirection(_In_ CLASSIFY_DATA** ppClassifyData,
                                        _Inout_ REDIRECT_DATA** ppRedirectData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PerformProxySocketRedirection()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppClassifyData);
    NT_ASSERT(ppRedirectData);
    NT_ASSERT((*ppRedirectData)->pWritableLayerData);
@@ -1254,7 +1254,7 @@ NTSTATUS PerformProxySocketRedirection(_In_ CLASSIFY_DATA** ppClassifyData,
    FWPS_INCOMING_VALUES* pClassifyValues = (FWPS_INCOMING_VALUES*)(*ppClassifyData)->pClassifyValues;
    FWP_VALUE*            pProtocolValue  = 0;
    UINT8                 ipProtocol      = 0;
-   
+
    pProtocolValue = KrnlHlprFwpValueGetFromFwpsIncomingValues(pClassifyValues,
                                                               &FWPM_CONDITION_IP_PROTOCOL);
    if(pProtocolValue)
@@ -1285,20 +1285,20 @@ NTSTATUS PerformProxySocketRedirection(_In_ CLASSIFY_DATA** ppClassifyData,
 #pragma warning(pop)
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PerformProxySocketRedirection() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @private_function="PerformProxyConnectRedirection"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1316,13 +1316,13 @@ NTSTATUS PerformProxyConnectRedirection(_In_ CLASSIFY_DATA** ppClassifyData,
                                         _Inout_ REDIRECT_DATA** ppRedirectData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PerformProxyConnectRedirection()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppClassifyData);
    NT_ASSERT(ppRedirectData);
    NT_ASSERT(*ppClassifyData);
@@ -1371,13 +1371,13 @@ NTSTATUS PerformProxyConnectRedirection(_In_ CLASSIFY_DATA** ppClassifyData,
    if(pProtocolValue)
       ipProtocol = pProtocolValue->uint8;
 
-   /// For non-TCP, this setting will not be enforced being that local redirection of this tuple is only 
+   /// For non-TCP, this setting will not be enforced being that local redirection of this tuple is only
    /// available during bind time. and ideally redirection should be performed using ALE_BIND_REDIRECT instead.
    if((*ppRedirectData)->pProxyData->flags & PCPDF_PROXY_LOCAL_ADDRESS)
       INETADDR_SET_ADDRESS((PSOCKADDR)&(pConnectRequest->localAddressAndPort),
                            (*ppRedirectData)->pProxyData->proxyLocalAddress.pBytes);
 
-   /// For non-TCP, this setting will not be enforced being that local redirection of this tuple is only 
+   /// For non-TCP, this setting will not be enforced being that local redirection of this tuple is only
    /// available during bind time. and ideally redirection should be performed using ALE_BIND_REDIRECT instead.
    if((*ppRedirectData)->pProxyData->flags & PCPDF_PROXY_LOCAL_PORT)
       INETADDR_SET_PORT((PSOCKADDR)&(pConnectRequest->localAddressAndPort),
@@ -1438,14 +1438,14 @@ NTSTATUS PerformProxyConnectRedirection(_In_ CLASSIFY_DATA** ppClassifyData,
 #pragma warning(pop)
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PerformProxyConnectRedirection() [status:%#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
@@ -1453,7 +1453,7 @@ NTSTATUS PerformProxyConnectRedirection(_In_ CLASSIFY_DATA** ppClassifyData,
 
 /**
  @private_function="ProxyByALERedirectDeferredProcedureCall"
- 
+
    Purpose:  Invokes the appropriate private redirection routine to at DISPATCH_LEVEL.          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1491,7 +1491,7 @@ VOID ProxyByALERedirectDeferredProcedureCall(_In_ KDPC* pDPC,
    {
       NTSTATUS              status          = STATUS_SUCCESS;
       FWPS_INCOMING_VALUES* pClassifyValues = (FWPS_INCOMING_VALUES*)pDPCData->pClassifyData->pClassifyValues;
-   
+
       if(pClassifyValues->layerId == FWPS_LAYER_ALE_CONNECT_REDIRECT_V4 ||
          pClassifyValues->layerId == FWPS_LAYER_ALE_CONNECT_REDIRECT_V6)
          status = PerformProxyConnectRedirection(&(pDPCData->pClassifyData),
@@ -1500,7 +1500,7 @@ VOID ProxyByALERedirectDeferredProcedureCall(_In_ KDPC* pDPC,
               pClassifyValues->layerId == FWPS_LAYER_ALE_BIND_REDIRECT_V6)
          status = PerformProxySocketRedirection(&(pDPCData->pClassifyData),
                                                 &(pDPCData->pRedirectData));
-   
+
       if(status != STATUS_SUCCESS)
          DbgPrintEx(DPFLTR_IHVNETWORK_ID,
                     DPFLTR_ERROR_LEVEL,
@@ -1523,7 +1523,7 @@ VOID ProxyByALERedirectDeferredProcedureCall(_In_ KDPC* pDPC,
 
 /**
  @private_function="ProxyByALERedirectWorkItemRoutine"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1537,13 +1537,13 @@ VOID ProxyByALERedirectWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
                                        _In_opt_ PVOID pContext)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> ProxyByALERedirectWorkItemRoutine()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(pDeviceObject);
 
    NT_ASSERT(pContext);
@@ -1577,19 +1577,19 @@ VOID ProxyByALERedirectWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- ProxyUsingInjectionMethodWorkItemRoutine()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @private_function="TriggerProxyByALERedirectInline"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1610,13 +1610,13 @@ NTSTATUS TriggerProxyByALERedirectInline(_In_ const FWPS_INCOMING_VALUES* pClass
                                          _Inout_ REDIRECT_DATA** ppRedirectData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> TriggerProxyByALERedirectInline()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pClassifyValues);
    NT_ASSERT(pMetadata);
    NT_ASSERT(pLayerData);
@@ -1659,20 +1659,20 @@ NTSTATUS TriggerProxyByALERedirectInline(_In_ const FWPS_INCOMING_VALUES* pClass
                WFPSAMPLER_CALLOUT_DRIVER_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- TriggerProxyByALERedirectInline() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @private_function="TriggerProxyByALERedirectOutOfBand"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1694,13 +1694,13 @@ NTSTATUS TriggerProxyByALERedirectOutOfBand(_In_ const FWPS_INCOMING_VALUES* pCl
                                             _Inout_ REDIRECT_DATA* pRedirectData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> TriggerProxyByALERedirectOutOfBand()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pClassifyValues);
    NT_ASSERT(pMetadata);
    NT_ASSERT(pLayerData);
@@ -1756,7 +1756,7 @@ NTSTATUS TriggerProxyByALERedirectOutOfBand(_In_ const FWPS_INCOMING_VALUES* pCl
       status = KrnlHlprThreadedDPCQueue(ProxyByALERedirectDeferredProcedureCall,
                                         pClassifyData,
                                         pRedirectData,
-                                        0);      
+                                        0);
    else
       status = KrnlHlprDPCQueue(ProxyByALERedirectDeferredProcedureCall,
                                 pClassifyData,
@@ -1772,20 +1772,20 @@ NTSTATUS TriggerProxyByALERedirectOutOfBand(_In_ const FWPS_INCOMING_VALUES* pCl
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- TriggerProxyByALERedirectOutOfBand() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @classify_function="ClassifyProxyByALERedirect"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>
@@ -1794,11 +1794,11 @@ NTSTATUS TriggerProxyByALERedirectOutOfBand(_In_ const FWPS_INCOMING_VALUES* pCl
                 FWPM_LAYER_ALE_REDIRECT_CONNECT_V4                                              <br>
                 FWPM_LAYER_ALE_REDIRECT_CONNECT_V6                                              <br>
                                                                                                 <br>
-             Microsoft recommends using FWPM_LAYER_STREAM_V{4/6} rather than proxying network 
-             data to a local service.  Doing so will make for a better ecosystem, however if you 
-             feel you must proxy, then it is advised to use 
-             FWPM_LAYER_ALE_REDIRECT_CONNECT_V{4/6}, and have the proxy service call the 
-             REDIRECT_RECORD IOCTLs so multiple proxies can coexst without losing data on the 
+             Microsoft recommends using FWPM_LAYER_STREAM_V{4/6} rather than proxying network
+             data to a local service.  Doing so will make for a better ecosystem, however if you
+             feel you must proxy, then it is advised to use
+             FWPM_LAYER_ALE_REDIRECT_CONNECT_V{4/6}, and have the proxy service call the
+             REDIRECT_RECORD IOCTLs so multiple proxies can coexst without losing data on the
              origin of the data.                                                                <br>
                                                                                                 <br>
    MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/Windows/Hardware/FF551229.aspx             <br>
@@ -1904,18 +1904,18 @@ VOID NTAPI ClassifyProxyByALERedirect(_In_ const FWPS_INCOMING_VALUES* pClassify
 
 #pragma warning(push)
 #pragma warning(disable: 6014) /// pRedirectData will be freed in completionFn using ProxyInjectionCompletionDataDestroy
-      
+
             status = KrnlHlprRedirectDataCreate(&pRedirectData,
                                                 pClassifyContext,
                                                 pFilter,
                                                 pClassifyOut,
                                                 *(g_WFPSamplerDeviceData.ppRedirectionHandles[index]));
             HLPR_BAIL_ON_FAILURE(status);
-      
+
 #pragma warning(pop)
 
       /// FWP_CONDITION_FLAG_IS_REAUTHORIZE will be set if:
-      ///   1) a callout with a higher priority completed its pended classification and the current 
+      ///   1) a callout with a higher priority completed its pended classification and the current
       ///      callout is seeing the connection for the first time
       ///   2) FWPS_CLASSIFY_FLAG_REAUTHORIZE_IF_MODIFIED_BY_OTHERS was set when calling FwpsApplyModifiedLayerData
       ///      and another callout has further redirected the initial connection.
@@ -1957,7 +1957,7 @@ VOID NTAPI ClassifyProxyByALERedirect(_In_ const FWPS_INCOMING_VALUES* pClassify
 
             else
             {
-               /// No more redirection if someone else has done it locally.  We could catch the new 
+               /// No more redirection if someone else has done it locally.  We could catch the new
                /// connection from their proxy if we really must act on it.
                /// Set the rights to write back as it was removed when acquiring the layer data
                if(pConnectRequest->localRedirectHandle)
@@ -1972,7 +1972,7 @@ VOID NTAPI ClassifyProxyByALERedirect(_In_ const FWPS_INCOMING_VALUES* pClassify
             }
 
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
-            
+
          }
       }
 
@@ -2067,7 +2067,7 @@ VOID NTAPI ClassifyProxyByALERedirect(_In_ const FWPS_INCOMING_VALUES* pClassify
 
 /**
  @classify_function="ClassifyProxyByInjection"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -2138,12 +2138,12 @@ VOID NTAPI ClassifyProxyByInjection(_In_ const FWPS_INCOMING_VALUES* pClassifyVa
                        DPFLTR_ERROR_LEVEL,
                        " !!!! ClassifyProxyByInjection: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                        status);
-         
+
             HLPR_BAIL;
          }
 
          version = KrnlHlprIPHeaderGetVersionField((NET_BUFFER_LIST*)pNetBufferList);
-         
+
          protocol = KrnlHlprIPHeaderGetProtocolField((NET_BUFFER_LIST*)pNetBufferList,
                                                      version == IPV4 ? AF_INET : AF_INET6);
 
@@ -2248,7 +2248,7 @@ VOID NTAPI ClassifyProxyByInjection(_In_ const FWPS_INCOMING_VALUES* pClassifyVa
 
 /**
  @classify_function="ClassifyProxyByALE"
- 
+
    Purpose:  Stub function for downlevel OS's trying to use uplevel functionality.              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -2303,7 +2303,7 @@ VOID NTAPI ClassifyProxyByALERedirect(_In_ const FWPS_INCOMING_VALUES* pClassify
 
 /**
  @classify_function="ClassifyProxyByInjection"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -2334,7 +2334,7 @@ VOID NTAPI ClassifyProxyByInjection(_In_ const FWPS_INCOMING_VALUES* pClassifyVa
    NT_ASSERT(pFilter->providerContext->dataBuffer);
    NT_ASSERT(pFilter->providerContext->dataBuffer->data);
    NT_ASSERT(pFilter->providerContext->dataBuffer->size == sizeof(PC_PROXY_DATA));
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> ClassifyProxyByInjection() [Layer: %s][FilterID: %#I64x][Rights: %#x]",

@@ -3,7 +3,7 @@
 
 #define	PAIRWISE_KEYIDX		0
 
-/* 
+/*
 	WDK TKIP key format defintion:
 	Bit(28) of Key Index	|Bit 0-127			|Bit 128-191	|Bit 192-255
 	------------------------+-------------------+---------------+-----------
@@ -40,7 +40,7 @@ typedef	u4Byte	RT_SEC_STATUS;
 #define	RT_SEC_STATUS_DATA_MIC_FAILURE				(RT_SEC_STATUS)0x00000008	// TKIP data packet is MIC failure
 #define	RT_SEC_STATUS_MGNT_MIC_FAILURE				(RT_SEC_STATUS)0x00000009	// TKIP mgnt packet is MIC failure
 #define	RT_SEC_STATUS_MFP_MGNT_MHDR_FAILURE			(RT_SEC_STATUS)0x0000000A	// CCXv5 MFP TKIP MHDRIE is invalid
-#define	RT_SEC_STATUS_MFP_MGNT_LEN_FAILURE			(RT_SEC_STATUS)0x0000000B	// 802.11w BIP data to long 
+#define	RT_SEC_STATUS_MFP_MGNT_LEN_FAILURE			(RT_SEC_STATUS)0x0000000B	// 802.11w BIP data to long
 #define	RT_SEC_STATUS_MFP_MGNT_MMIE_FAILURE			(RT_SEC_STATUS)0x0000000C   // 802.11w MMIE fail
 #define	RT_SEC_STATUS_MFP_MGNT_MMIE_MIC_FAILURE		(RT_SEC_STATUS)0x0000000D   // 802.11w MMIE Mic fail
 #define	RT_SEC_STATUS_UNKNOWN_TA					(RT_SEC_STATUS)0x0000000E   // Unknow TA, no Key to decrypt
@@ -134,7 +134,7 @@ typedef struct _N5_802_11_PMKID
 #define AES_CBC_IV_LENGTH_1W 16
 
 
-// 
+//
 // Need to move TypeDef.h .....
 //
 typedef struct _MMIE_STRUC{
@@ -152,14 +152,14 @@ typedef struct {
 
 
 /* AES operations */
-VOID 
+VOID
 AES_KeyExpansion_1W(
     u1Byte			Key[],
     u4Byte 			KeyLength,
     AES_CTX_STRUC 	*paes_ctx
 );
 
-VOID 
+VOID
 AES_Encrypt_1W(
     u1Byte 		PlainBlock[],
     u4Byte 		PlainBlockSize,
@@ -171,7 +171,7 @@ AES_Encrypt_1W(
 
 
 /* AES-CMAC operations */
-VOID 
+VOID
 AES_CMAC_GenerateSubKey_1W(
     u1Byte Key[],
     u4Byte KeyLength,
@@ -207,7 +207,7 @@ int SecMFPDecodeAESCCM_1W(
 
 
 //---------------------------------
-// End of 802.1w 
+// End of 802.1w
 //---------------------------------
 
 void
@@ -219,7 +219,7 @@ TKIPGenerateKey(
 	const UCHAR	*TK
 );
 
-void 
+void
 SecEncodeAESCCM(
 	PRT_SECURITY_T   pSec,
 	u4Byte			pulKey[],
@@ -240,7 +240,7 @@ void SecRSNAEncodeAESCCM(
 	u1Byte			*plaintext,
 	u4Byte			headerLen,
 	u4Byte 			totalLen
-	
+
 );
 
 //------------------------------------------------
@@ -257,7 +257,7 @@ void SecMFPEncodeAESCCM(
 	u4Byte 			totalLen
 );
 
-int 
+int
 SecDecodeAESCCM(
 	PRT_SECURITY_T   pSec,
 	u4Byte			pulKey[],
@@ -517,11 +517,11 @@ typedef enum{
 	RSNIE_TYPE_WPA2 = 2
 }RSNIE_TYPE;
 
-//typedef enum { 
-//	ERROR_BUFFER_TOO_SMALL = -1, 
-//	ERROR_INVALID_PARA = -2, 
+//typedef enum {
+//	ERROR_BUFFER_TOO_SMALL = -1,
+//	ERROR_INVALID_PARA = -2,
 //	ERROR_INVALID_RSNIE = -3,
-//	ERROR_INVALID_MULTICASTCIPHER = -4, 
+//	ERROR_INVALID_MULTICASTCIPHER = -4,
 //	ERROR_INVALID_UNICASTCIPHER = -5,
 //	ERROR_INVALID_AUTHKEYMANAGE = -6,
 //	ERROR_UNSUPPORTED_RSNEVERSION = -7,
@@ -539,7 +539,7 @@ typedef enum{
 #define DOT11_MAX_CIPHER_ALGORITHMS	0x0a
 
 //
-// For pairwise cipher suite and 
+// For pairwise cipher suite and
 // Authentication and Key Management Suite List in RSN IE.
 //
 typedef struct _DOT11_RSN_IE_SUITE{
@@ -556,7 +556,7 @@ typedef struct _DOT11_RSN_IE_SUITE{
 #define GET_RSNIE_SUITE_PTR(__pPtr, __Idx) 		(((DOT11_RSN_IE_SUITE *)((pu1Byte)(__pPtr) + 2)) + (__Idx))
 
 //
-// For pairwise cipher suite and 
+// For pairwise cipher suite and
 // Authentication and Key Management Suite List in RSN IE.
 //
 #define GET_RSN_CAP_PREAUTH(__pPtr) 				LE_BITS_TO_2BYTE(__pPtr, 0, 1)
@@ -733,9 +733,9 @@ typedef enum{
 #define	RSN_CIPHER_SUITE_OUI_TYPE_WEP40					1	// WEP-40
 #define	RSN_CIPHER_SUITE_OUI_TYPE_TKIP					2	// TKIP
 #define	RSN_CIPHER_SUITE_OUI_TYPE_RESERVED				3	// Reserved
-#define	RSN_CIPHER_SUITE_OUI_TYPE_CCMP					4	// CCMP ¡V default pairwise cipher suite and default group cipher suite for data frames in an RSNA
+#define	RSN_CIPHER_SUITE_OUI_TYPE_CCMP					4	// CCMP ï¿½V default pairwise cipher suite and default group cipher suite for data frames in an RSNA
 #define	RSN_CIPHER_SUITE_OUI_TYPE_WEP104				5	// WEP-104
-#define	RSN_CIPHER_SUITE_OUI_TYPE_BIP					6	// BIP¡Xdefault group management cipher suite in an RSNA with management frame protection enabled
+#define	RSN_CIPHER_SUITE_OUI_TYPE_BIP					6	// BIPï¿½Xdefault group management cipher suite in an RSNA with management frame protection enabled
 #define	RSN_CIPHER_SUITE_OUI_TYPE_GRP_ADDR_DISALLOWED	7	// Group addressed traffic not allowed
 
 // WPA Cipher suite OUI type with OUI 0x00 0F AC
@@ -743,13 +743,13 @@ typedef enum{
 #define	WPA_CIPHER_SUITE_OUI_TYPE_WEP40					1	// WEP-40
 #define	WPA_CIPHER_SUITE_OUI_TYPE_TKIP					2	// TKIP
 #define	WPA_CIPHER_SUITE_OUI_TYPE_WRAP					3	// WRAP
-#define	WPA_CIPHER_SUITE_OUI_TYPE_CCMP					4	// CCMP ¡V default pairwise cipher suite and default group cipher suite for data frames in an RSNA
+#define	WPA_CIPHER_SUITE_OUI_TYPE_CCMP					4	// CCMP ï¿½V default pairwise cipher suite and default group cipher suite for data frames in an RSNA
 #define	WPA_CIPHER_SUITE_OUI_TYPE_WEP104				5	// WEP-104
 
 
 //2004/06/29, kcwu TKIP_MIC implement in TKIP_MIC.c
 u4Byte
-SecMICGetUINT32( 
+SecMICGetUINT32(
 	pu1Byte p
  );
 
@@ -759,14 +759,14 @@ SecMICPutUINT32(
 	u4Byte val
 );
 
-VOID 
+VOID
 SecMICClear(
 	MicData *micdata
 );
 
-VOID 
+VOID
 SecMICSetKey(
-	MicData *micdata, 
+	MicData *micdata,
 	pu1Byte key
 );
 
@@ -783,7 +783,7 @@ SecMICAppend(
 	s4Byte nBytes
 );
 
-VOID 
+VOID
 SecMICGetMIC(
 	MicData *micdata,
 	pu1Byte dst
@@ -800,7 +800,7 @@ AES_SetKey(
 );
 
 void AES_WRAP(PADAPTER	Adapter,
-			  u1Byte* plain, int plain_len, 
+			  u1Byte* plain, int plain_len,
 			  u1Byte * iv,	int iv_len,
 			  u1Byte * kek,	int kek_len,
 			  u1Byte *cipher, u2Byte *cipher_len
@@ -809,7 +809,7 @@ void AES_WRAP(PADAPTER	Adapter,
 
 
 void AES_UnWRAP(PADAPTER Adapter,
-				u1Byte * cipher, int cipher_len, 
+				u1Byte * cipher, int cipher_len,
 			    u1Byte * kek,	int kek_len,
 			    u1Byte * plain);
 
@@ -820,73 +820,73 @@ void TestAES_WRAP(PADAPTER	Adapter);
 //----------------------------------------------------------------------------
 //CKIP.c
 //----------------------------------------------------------------------------
-void 
+void
 CKIP_TEST(
 	ADAPTER * Adapter
 	);
 
-int 
+int
 DecodeCKIP(
-	ADAPTER * Adapter, 
+	ADAPTER * Adapter,
 	UCHAR *pkt,
-	int pktlen, 
-	UCHAR *key, 
+	int pktlen,
+	UCHAR *key,
 	int mickeyid
 	);
 
-int 
+int
 EncodeCKIP(
-	ADAPTER * Adapter, 
+	ADAPTER * Adapter,
 	UCHAR *pkt,
-	int pktlen, 
-	UCHAR *hdr, 
-	UCHAR *key, 
-	int keylen, 
+	int pktlen,
+	UCHAR *hdr,
+	UCHAR *key,
+	int keylen,
 	int mickeyid
 	);
 
-int 
+int
 ckip_miccalc(
-	ADAPTER * Adapter, 
-	UCHAR	*CK, 
-	UCHAR	*pDA, 
-	UCHAR	*pSA, 
-	UCHAR	*payload, 
-	int		payloadlen, 
+	ADAPTER * Adapter,
+	UCHAR	*CK,
+	UCHAR	*pDA,
+	UCHAR	*pSA,
+	UCHAR	*payload,
+	int		payloadlen,
 	UCHAR	*calcmic,
-	int		mickeyid 	
+	int		mickeyid
 	);
 
-int 
+int
 ckip_encrypt(
-	UCHAR *CK, 
-	UCHAR *iv, 
-	UCHAR *ecr, 
+	UCHAR *CK,
+	UCHAR *iv,
+	UCHAR *ecr,
 	int ecrlen
-	); 
+	);
 
-void 
+void
 AES_Encrypt(
-	const ULONG in_blk[4], 
-	ULONG out_blk[4], 
+	const ULONG in_blk[4],
+	ULONG out_blk[4],
 	ULONG e_key[]
 	);
 
 
-BOOLEAN 
+BOOLEAN
 SecInsertDenyBssidList(
  	PRT_SECURITY_T	pSec,
 	u1Byte			BssidToDeny[6],
 	u8Byte			DenyStartTime
 );
 
-BOOLEAN 
+BOOLEAN
 SecIsInDenyBssidList(
  	PRT_SECURITY_T	pSec,
 	u1Byte			BssidToCheck[6]
 );
 
-BOOLEAN 
+BOOLEAN
 SecFillHeader(
 	PADAPTER	Adapter,
 	PRT_TCB		pTcb
@@ -927,7 +927,7 @@ SecCatPMKID(
 );
 
 
-BOOLEAN 
+BOOLEAN
 SecDropForKeyAbsent(
 	PADAPTER			Adapter,
 	PRT_TCB				pTcb
@@ -946,12 +946,12 @@ SecIsTxKeyInstalled(
 	IN	pu1Byte			pRA
 );
 
-void 
+void
 Supplicant_AES_UnWRAP(
 	PADAPTER Adapter,
-	u1Byte	* cipher, 
-	int		cipher_len, 
-	u1Byte	* kek,	
+	u1Byte	* cipher,
+	int		cipher_len,
+	u1Byte	* kek,
 	int		kek_len,
 	u1Byte	* plain
 );
@@ -1012,7 +1012,7 @@ SAQueryTimerCallback(
 
 //
 // ---------------------------------------------------------------
-// 2011/03/04 MH Move all new CAN search metho to here forcommon binary . 
+// 2011/03/04 MH Move all new CAN search metho to here forcommon binary .
 // We need to reorganize the locaton in he future.
 //
 
@@ -1041,7 +1041,7 @@ SEC_AsocEntry_ResetEntry(
 
 
 //
-// 2011/03/04 MH Move all new CAN search metho to here forcommon binary . 
+// 2011/03/04 MH Move all new CAN search metho to here forcommon binary .
 // We need to reorganize the locaton in he future.
 // ---------------------------------------------------------------
 //

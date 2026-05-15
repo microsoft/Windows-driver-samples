@@ -4,17 +4,17 @@
  * Module:		HALDM.h
  *
  *
- * Note:		The header file records 
- *			
+ * Note:		The header file records
  *
- * Export:		
  *
- * Abbrev:			
+ * Export:
  *
- * History:		
- *	Data		Who		Remark 
+ * Abbrev:
+ *
+ * History:
+ *	Data		Who		Remark
  *	09/22/2011  MHC    	Create initial version.
- * 
+ *
 ******************************************************************************/
 #ifndef	__HALDM_H__
 #define __HALDM_H__
@@ -39,16 +39,16 @@
 //============================================================
 // function prototype
 //============================================================
-void	InitHalDm(								
-    IN	PADAPTER	Adapter	
+void	InitHalDm(
+    IN	PADAPTER	Adapter
     );
 void    DeInitHalDm(
     IN PADAPTER Adapter
     );
 
 
-void	HalDmWatchDog(						
-   IN	PADAPTER	Adapter	
+void	HalDmWatchDog(
+   IN	PADAPTER	Adapter
     );
 
 
@@ -57,12 +57,12 @@ dm_initial_gain_MinPWDB(
 	IN	PADAPTER	pAdapter
 );
 
-void 
+void
 dm_CCK_PacketDetectionThresh(
 	IN	PADAPTER	pAdapter
 );
 
-VOID 
+VOID
 dm_CCK_PacketDetectionThresh_DMSP(
 	IN	PADAPTER	pAdapter
 );
@@ -114,8 +114,8 @@ DM_OverwriteCckCcaThres(
 	IN	u1Byte		ccaThres
 	);
 
-VOID	
-DM_HwPbcGPIOChk(	
+VOID
+DM_HwPbcGPIOChk(
 	IN	PADAPTER	pAdapter
 	);
 

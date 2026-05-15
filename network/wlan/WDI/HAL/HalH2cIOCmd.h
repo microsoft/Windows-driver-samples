@@ -2,7 +2,7 @@
 #define __INC_HAL_H2CIOCMD_H
 
 //--------------------------------------------
-//3				Host Message Box 
+//3				Host Message Box
 //--------------------------------------------
 
 //_RSVDPAGE_LOC_CMD0
@@ -132,7 +132,7 @@
 #define GET_H2CCMD_INACTIVE_PS_PARM_FUNC_ENABLE(__pH2CCmd)						LE_BITS_TO_1BYTE((__pH2CCmd),	0, 1)
 
 // Disconnect_Decision_Control
-// <Note> 
+// <Note>
 // 1. The value "CHECK_PERIOD" should be larger than 5 which Fw checks beacon lost period.
 // 2. "TRY_OK_BCN_LOST_CNT" should be smaller than "CHECK_PERIOD".
 #define SET_H2CCMD_DISCONNECT_DECISION_CTRL_ENABLE(__pH2CCmd, __Value)				SET_BITS_TO_LE_1BYTE((__pH2CCmd),	0, 1, __Value)
@@ -150,14 +150,14 @@
 #define SET_H2CCMD_KEEP_ALIVE_ACCPEPT_USER_DEFINED(__pH2CCmd, __Value)	SET_BITS_TO_LE_1BYTE((__pH2CCmd),	1, 1, __Value)
 #define SET_H2CCMD_KEEP_ALIVE_PERIOD(__pH2CCmd, __Value)				SET_BITS_TO_LE_1BYTE((__pH2CCmd)+1, 0, 8, __Value)
 
-typedef enum _H2C_CMD 
+typedef enum _H2C_CMD
 {
 	H2C_RSVDPAGE = 0,
 	H2C_MSRRPT = 1,
 	H2C_SCAN = 2,					// No used in 8723B, 8192E, 8812/8821
 	H2C_KEEP_ALIVE_CTRL = 3,
 	H2C_DISCONNECT_DECISION = 4,
-	
+
 	H2C_INIT_OFFLOAD = 6,			// No used in 8723B, 8192E, 8812/8821
 	H2C_AP_OFFLOAD = 8,				//
 	H2C_BCN_RSVDPAGE = 9,			//
@@ -167,16 +167,16 @@ typedef enum _H2C_CMD
 	H2C_FCS_INFO = 0x11,
 
 	H2C_NAN	= 0x1B,
-	
-	H2C_SETPWRMODE = 0x20,		
+
+	H2C_SETPWRMODE = 0x20,
 
 	H2C_PS_TUNING_PARA = 0x21,		// No used in 8723B, 8192E, 8812/8821
 	H2C_PS_TUNING_PARA2 = 0x22,		//
 	H2C_PS_LPS_PARA = 0x23,			//
 	H2C_P2P_PS_OFFLOAD = 0x24,		//
 
-	H2C_INACTIVE_PS = 0x27,	
-	
+	H2C_INACTIVE_PS = 0x27,
+
 	H2C_RA_MASK 			= 0x40,
 	H2C_TxBF 				= 0x41,				// ADDed from 8192E and 8812
 	H2C_RSSI_REPORT 		= 0x42,
@@ -186,7 +186,7 @@ typedef enum _H2C_CMD
 	H2C_RA_PARA_ADJUST 	= 0x47,
 	H2C_FW_TRACE_EN 		= 0x49,
 
-	
+
 	H2C_BT_FW_PATCH = 0x6a,
 	H2C_WIFI_CALIBRATION = 0x6d,	// 8723B used only
 
@@ -202,7 +202,7 @@ typedef enum _H2C_CMD
 	H2C_AOAC_RSVDPAGE3 = 0x88,
 
 	//Not defined in new 88E H2C CMD Format
-	H2C_SELECTIVE_SUSPEND_ROF_CMD,	
+	H2C_SELECTIVE_SUSPEND_ROF_CMD,
 	H2C_P2P_PS_MODE,				// This be replaced with H2C_P2P_PS_OFFLOAD(0x24)
 	H2C_PSD_RESULT,
 	MAX_H2CCMD
@@ -359,7 +359,7 @@ SetFwFcsInfoCmd(
 );
 
 VOID
-HalSetFwKeepAliveCmd(	
+HalSetFwKeepAliveCmd(
 	IN	PADAPTER	pAdapter,
 	IN	BOOLEAN		bFuncEn
 );

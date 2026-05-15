@@ -6,7 +6,7 @@
 
 VOID
 SetSelfMimoPsMode(
-	IN	PADAPTER 	Adapter, 
+	IN	PADAPTER 	Adapter,
 	IN	u1Byte 		NewMimoPsMode
 	)
 {
@@ -59,13 +59,13 @@ OnMimoPs(
 				RT_TRACE_F(COMP_HT, DBG_WARNING, ("[WARNING] Cannot get HT Capability IE from (Re-)Assoc Packet!\n"));
 				return RT_STATUS_INVALID_DATA;
 			}
-			MimoPs = GET_HT_CAPABILITY_ELE_MIMO_PWRSAVE(HTCapIe.Octet);			
+			MimoPs = GET_HT_CAPABILITY_ELE_MIMO_PWRSAVE(HTCapIe.Octet);
 		}
 		break;
 	}
 
 	Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_USE_RA_MASK, &bUseRAMask);
-	
+
 	if(ACTING_AS_AP(Adapter) || pMgntInfo->mIbss)
 	{
 		pEntry = AsocEntry_GetEntry(pMgntInfo, pSrcAddr);
@@ -79,7 +79,7 @@ OnMimoPs(
 				pMcsFilter = MCS_FILTER_1SS;
 			else
 				pMcsFilter = MCS_FILTER_ALL;
-			
+
 			pEntry->HTInfo.HTHighestOperaRate = HTGetHighestMCSRate(
 																Adapter,
 																pEntry->HTInfo.McsRateSet,
@@ -94,7 +94,7 @@ OnMimoPs(
 			else
 			{
 				Adapter->HalFunc.UpdateHalRATRTableHandler(
-											Adapter, 
+											Adapter,
 											&pMgntInfo->dot11OperationalRateSet,
 											pMgntInfo->dot11HTOperationalRateSet,pEntry);
 			}
@@ -114,7 +114,7 @@ OnMimoPs(
 			pMcsFilter = MCS_FILTER_1SS;
 		else
 			pMcsFilter = MCS_FILTER_ALL;
-		
+
 		pMgntInfo->HTHighestOperaRate = HTGetHighestMCSRate(
 														Adapter,
 														pMgntInfo->dot11HTOperationalRateSet,
@@ -128,7 +128,7 @@ OnMimoPs(
 		else
 		{
 			Adapter->HalFunc.UpdateHalRATRTableHandler(
-										Adapter, 
+										Adapter,
 										&pMgntInfo->dot11OperationalRateSet,
 										pMgntInfo->dot11HTOperationalRateSet,
 										NULL);
@@ -159,7 +159,7 @@ ConstructMimoPsFrame(
 		Content = 1;
 	else if(NewMimoPsMode==1)
 		Content = 3;
-	else 
+	else
 		return;
 
 	ConstructMaFrameHdr(Adapter, pAddr, ACT_CAT_HT, ACT_MIMO_PWR_SAVE, &osMimoPsFrame);
@@ -192,6 +192,6 @@ SendMimoPsFrame(
 		if(pTcb->PacketLength != 0)
 			MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
-	
+
 	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 }

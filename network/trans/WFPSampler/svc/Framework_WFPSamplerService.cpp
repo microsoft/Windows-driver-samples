@@ -6,13 +6,13 @@
 //      Framework_WFPSamplerService.cpp
 //
 //   Abstract:
-//      This module contains functions which form the entry point to the WFPSampler service 
+//      This module contains functions which form the entry point to the WFPSampler service
 //         (WFPSamplerService.exe).
 //
 //   Naming Convention:
 //
 //      <Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Object>
@@ -86,7 +86,7 @@ SERVICE_DATA* pServiceData = 0;
 
 /**
  @private_function="PrvRegistryCreateEntries"
- 
+
    Purpose: Adds registry keys that allow operation during Safe-Mode with Networking.           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -123,7 +123,7 @@ UINT32 PrvRegistryCreateEntries()
 
 /**
  @private_function="PrvRegistryDestroyEntries"
- 
+
    Purpose: Removes the registry keys that allow operation during Safe-Mode.                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -149,7 +149,7 @@ UINT32 PrvRegistryDestroyEntries()
 
 /**
  @framework_function="ServiceEventLogError"
- 
+
    Purpose:  Log errors in the eventlog.                                                        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -219,7 +219,7 @@ VOID ServiceEventLogError(_In_ PCWSTR pFunctionName,
 
 /**
  @framework_function="ServiceStatusReportToSCM"
- 
+
    Purpose:  Inform the Service Control Manager of the WFPSampler service's current state.      <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -290,7 +290,7 @@ UINT32 ServiceStatusReportToSCM(_In_ UINT32 currentState,
 
 /**
  @framework_function="ServiceControlHandler"
- 
+
    Purpose:  Take action on the indicated service control.                                      <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -337,10 +337,10 @@ VOID ServiceControlHandler(_In_ UINT32 serviceControl)
 
 /**
  @framework_function="ServiceTerminate"
- 
+
    Purpose:  Cleanup and stop the WFPSampler service.                                           <br>
                                                                                                 <br>
-   Notes:    Cleanup entails relinquishing Windows Firewall categories, tearing down the RPC 
+   Notes:    Cleanup entails relinquishing Windows Firewall categories, tearing down the RPC
              server interface and stopping the service.                                         <br>
                                                                                                 <br>
    MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/Windows/Desktop/MS688715.aspx              <br>
@@ -378,10 +378,10 @@ UINT32 ServiceTerminate()
 
 /**
  @framework_function="ServiceInitialize"
- 
+
    Purpose:  Create environment to successfully run and start the WFPSampler service.           <br>
                                                                                                 <br>
-   Notes:    Creation entails taking the firewall category from Windows Firewall, building the 
+   Notes:    Creation entails taking the firewall category from Windows Firewall, building the
              RPC server interface, and starting the WFPSampler service.                         <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -491,7 +491,7 @@ UINT32 ServiceInitialize()
 
 /**
  @framework_function="ServiceUninstall"
- 
+
    Purpose:  Remove the WFPSampler service from the Service Control Manager.                    <br>
                                                                                                 <br>
    Notes:    Uninstalling will remove all WFP objects associated to the WFPSampler service.     <br>
@@ -581,7 +581,7 @@ VOID ServiceUninstall()
 
    HlprLogInfo(L"ServiceUninstall() [status: %#x]",
                status);
-   
+
    HLPR_BAIL_LABEL:
 
    if(engineHandle)
@@ -596,7 +596,7 @@ VOID ServiceUninstall()
 
 /**
  @framework_function="ServiceInstall"
- 
+
    Purpose:  Add the WFPSampler service to the Service Control Manager and start it.            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -725,7 +725,7 @@ UINT32 ServiceInstall()
 
 /**
  @framework_function="ServiceMain"
- 
+
    Purpose:  Entry point for the Service Control Manager to hook into the WFPSampler service.   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -784,7 +784,7 @@ VOID ServiceMain(_In_ const UINT32 argumentCount,
 /**
  @framework_function="wmain"
 
-   Purpose:  Entry point for WFPSamplerService.Exe.  Accepts several parameters which are 
+   Purpose:  Entry point for WFPSamplerService.Exe.  Accepts several parameters which are
              parsed and dealt with accordingly.                                                 <br>
                 -i  - installs the WFPSampler service.                                          <br>
                 -u  - uninstalls the WFPSampler service and its associated objects.             <br>

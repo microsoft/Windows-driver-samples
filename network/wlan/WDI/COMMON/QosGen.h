@@ -37,23 +37,23 @@ QosParsingDebug_MsduLifetimeIE(
 //=============================================================================
 
 
-VOID 
+VOID
 QosInitializeSTA(
 	IN	PADAPTER		Adapter
 	);
 
-VOID 
+VOID
 QosDeinitializeSTA(
 	IN	PADAPTER		Adapter
 	);
 
-VOID 
+VOID
 QosInitializeBssDesc(
 	IN	PBSS_QOS		pBssQos
 	);
 
 
-VOID 
+VOID
 QosParsingQoSElement(
 	IN	PADAPTER		Adapter,
 	IN	BOOLEAN			bEDCAParms,
@@ -61,7 +61,7 @@ QosParsingQoSElement(
 	OUT	PRT_WLAN_BSS	pBssDesc
 	);
 
-VOID 
+VOID
 QosSetLegacyWMMParamWithHT(
 	IN	PADAPTER		Adapter,
 	OUT	PRT_WLAN_BSS	pBssDesc
@@ -186,7 +186,7 @@ VOID
 QosInitTs(
 	IN PADAPTER			Adapter,
 	IN PQOS_TSTREAM		pTs,
-	IN u1Byte			TSID, 
+	IN u1Byte			TSID,
 	IN PWMM_TSPEC		pTSpec
 	);
 
@@ -196,20 +196,20 @@ QosFlushTs(
 	IN PQOS_TSTREAM		pTs
 	);
 
-PQOS_TSTREAM 
+PQOS_TSTREAM
 QosAddTs(
 	IN PADAPTER			Adapter,
-	IN u1Byte			TSID, 
-	IN pu1Byte			RA, 
+	IN u1Byte			TSID,
+	IN pu1Byte			RA,
 	IN pu1Byte			TA,
 	IN PWMM_TSPEC		pTSpec
 	);
 
-PQOS_TSTREAM 
+PQOS_TSTREAM
 QosGetTs(
 	IN PADAPTER			Adapter,
-	IN u1Byte			TSID, 
-	IN pu1Byte			RA, 
+	IN u1Byte			TSID,
+	IN pu1Byte			RA,
 	IN pu1Byte			TA
 	);
 
@@ -257,7 +257,7 @@ QosResetTs(
 	IN PQOS_TSTREAM		pTs
 	);
 
-BOOLEAN 
+BOOLEAN
 QosResetAllTs(
 	IN PADAPTER			Adapter
 	);

@@ -1,9 +1,9 @@
 /******************************************************************************
- * 
+ *
  *     (c) Copyright  2008, RealTEK Technologies Inc. All Rights Reserved.
- * 
+ *
  *		03/04/2011 Cosa Modify
- * 
+ *
 ******************************************************************************/
 #ifndef	__INC_HAL_EFUSE_H__
 #define	__INC_HAL_EFUSE_H__
@@ -17,17 +17,17 @@
 #define	EFUSE_SUPPORT_92S				1
 #define	EFUSE_SUPPORT_92C				1
 #define	EFUSE_SUPPORT_92D				1
-#define	EFUSE_SUPPORT_8188E				1	
-#define	EFUSE_SUPPORT_8188F				1	
+#define	EFUSE_SUPPORT_8188E				1
+#define	EFUSE_SUPPORT_8188F				1
 #define	EFUSE_SUPPORT_8812A				1
-#define	EFUSE_SUPPORT_8811A				1	
-#define	EFUSE_SUPPORT_8821A				1	
-#define	EFUSE_SUPPORT_8192E				1	
-#define	EFUSE_SUPPORT_8814A				1	
+#define	EFUSE_SUPPORT_8811A				1
+#define	EFUSE_SUPPORT_8821A				1
+#define	EFUSE_SUPPORT_8192E				1
+#define	EFUSE_SUPPORT_8814A				1
 #define	EFUSE_SUPPORT_8723B				1
 #define	EFUSE_SUPPORT_8703B				1
-#define	EFUSE_SUPPORT_8822B				1	
-#define	EFUSE_SUPPORT_8723D				1	
+#define	EFUSE_SUPPORT_8822B				1
+#define	EFUSE_SUPPORT_8723D				1
 
 #else
 #define	EFUSE_SUPPORT_92S					0
@@ -127,7 +127,7 @@ typedef enum _PACKAGE_TYPE_E
 // <Roger_Notes> To prevent out of boundary programming case, leave 1byte and program full section
 // 9bytes + 1byt + 5bytes and pre 1byte.
 // For worst case:
-// | 1byte|----8bytes----|1byte|--5bytes--| 
+// | 1byte|----8bytes----|1byte|--5bytes--|
 // |         |            Reserved(14bytes)	      |
 //
 #define		EFUSE_OOB_PROTECT_BYTES 		15	// PG data exclude header, dummy 6 bytes frome CP test and reserved 1byte.
@@ -160,11 +160,11 @@ typedef enum _PACKAGE_TYPE_E
 /*--------------------------Define Parameters-------------------------------*/
 
 
-/*------------------------------Define structure----------------------------*/ 
+/*------------------------------Define structure----------------------------*/
 typedef struct PG_PKT_STRUCT_A{
 	UINT8 offset;
 	UINT8 word_en;
-	UINT8 data[8];	
+	UINT8 data[8];
 	u1Byte word_cnts;
 }PGPKT_STRUCT,*PPGPKT_STRUCT;
 
@@ -192,28 +192,28 @@ typedef struct _EFUSE_HAL{
 
 	// EFUSE Configuration, initialized in HAL_CmnInitPGData().
 	const u2Byte  MaxSecNum_WiFi;
-	const u2Byte  MaxSecNum_BT;	
-	const u2Byte  WordUnit;	
+	const u2Byte  MaxSecNum_BT;
+	const u2Byte  WordUnit;
 	const u2Byte  PhysicalLen_WiFi;
-	const u2Byte  PhysicalLen_BT;	
+	const u2Byte  PhysicalLen_BT;
 	const u2Byte  LogicalLen_WiFi;
-	const u2Byte  LogicalLen_BT;	
+	const u2Byte  LogicalLen_BT;
 	const u2Byte  BankSize;
 	const u2Byte  TotalBankNum;
 	const u2Byte  BankNum_WiFi;
-	const u2Byte  BankNum_BT;	
+	const u2Byte  BankNum_BT;
 	const u2Byte  OOBProtectBytes;
 	const u2Byte  ProtectBytes;
-	const u2Byte  BankAvailBytes;	
+	const u2Byte  BankAvailBytes;
 	const u2Byte  TotalAvailBytes_WiFi;
-	const u2Byte  TotalAvailBytes_BT;	
+	const u2Byte  TotalAvailBytes_BT;
 
-	const u2Byte  HeaderRetry;	
-	const u2Byte  DataRetry;	
+	const u2Byte  HeaderRetry;
+	const u2Byte  DataRetry;
 
 	RT_ERROR_CODE 	  Status;
 }EFUSE_HAL, *PEFUSE_HAL;
-/*------------------------------Define structure----------------------------*/ 
+/*------------------------------Define structure----------------------------*/
 
 
 /*------------------------Export global variable----------------------------*/
@@ -256,18 +256,18 @@ EFUSE_ShadowUpdateChk(
 	IN		PADAPTER	pAdapter,
 	IN		u1Byte		efuseType,
 	IN		BOOLEAN		bPseudoTest);
-VOID 
+VOID
 EFUSE_RenewShadowMaps(
 	IN		PADAPTER	pAdapter,
 	IN		u1Byte		efuseType,
 	IN		BOOLEAN		bPseudoTest);
 
 
-extern	VOID 
+extern	VOID
 EFUSE_ForceWriteVendorId(
 	IN		PADAPTER	pAdapter);
 
-BOOLEAN	
+BOOLEAN
 EFUSE_ProgramMap(
 	IN	PADAPTER	Adapter,
 	IN	ps1Byte 		pFileName,
@@ -304,9 +304,9 @@ Hal_ReadEFuse_Pseudo(
 	u1Byte      	*pbuf,
 	IN	BOOLEAN	bPseudoTest
 	);
-VOID 
+VOID
 EFUSE_LoadMap(
-	IN		PADAPTER	pAdapter, 
+	IN		PADAPTER	pAdapter,
 	IN		u1Byte		efuseType,
 	IN OUT	u1Byte		*Efuse,
 	IN		BOOLEAN		bPseudoTest);
@@ -316,7 +316,7 @@ EFUSE_PowerSwitch(
 	IN	PADAPTER	pAdapter,
 	IN	UINT8		bWrite,
 	IN	UINT8		PwrState);
-INT32 
+INT32
 EFUSE_PgPacketWrite(
 	IN	PADAPTER	pAdapter,
 	IN 	UINT8		efuseType,
@@ -369,14 +369,14 @@ EFUSE_WordEnableDataRead(	IN	UINT8	word_en,
 							IN	UINT8	*targetdata);
 INT32
 EFUSE_OneByteRead(
-	IN	PADAPTER	pAdapter, 
+	IN	PADAPTER	pAdapter,
 	IN	u2Byte		addr,
 	IN	UINT8		*data,
 	IN	BOOLEAN		bPseudoTest);
 INT32
 EFUSE_OneByteWrite(
-	IN	PADAPTER	pAdapter,  
-	IN	u2Byte		addr, 
+	IN	PADAPTER	pAdapter,
+	IN	u2Byte		addr,
 	IN	UINT8		data,
 	IN	BOOLEAN		bPseudoTest);
 
@@ -388,7 +388,7 @@ EFUSE_PgPacketRead(	IN	PADAPTER	pAdapter,
 UINT8
 EFUSE_WordEnableDataWrite(	IN	PADAPTER	pAdapter,
 							IN	u2Byte		efuse_addr,
-							IN	UINT8		word_en, 
+							IN	UINT8		word_en,
 							IN	UINT8		*data,
 							IN	BOOLEAN		bPseudoTest);
 
@@ -398,7 +398,7 @@ EFUSE_ContentWrite1Byte(
 	IN		UINT8		bank,
 	IN		u2Byte		Offset,
 	IN 		UINT8		Value	);
-	
+
 VOID
 efuse_ShadowRead1Byte_BT(
 	IN		PADAPTER	pAdapter,

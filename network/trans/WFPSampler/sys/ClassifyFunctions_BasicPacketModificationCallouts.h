@@ -6,7 +6,7 @@
 //      ClassifyFunctions_BasicPacketModificationCallouts.h
 //
 //   Abstract:
-//      This module contains prototypes for WFP Classify functions for modifying and injecting 
+//      This module contains prototypes for WFP Classify functions for modifying and injecting
 //         packets back into the data path using the clone / block / inject method.
 //
 //   Author:

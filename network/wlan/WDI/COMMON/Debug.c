@@ -3,7 +3,7 @@
 #if WPP_SOFTWARE_TRACE
 #include "Debug.tmh"
 #endif
- 
+
 u4Byte GlobalDebugLevel			= 	DBG_LOUD;
 //
 // 2009/06/22 MH Allow Fre build to print none debug info at init time.
@@ -48,7 +48,7 @@ u8Byte GlobalDebugComponents	= 	\
 //									COMP_WPS				|
 //									COMP_CMD				|
 //									COMP_EFUSE				|
-//									COMP_CCX				|	
+//									COMP_CCX				|
 //									COMP_IOCTL				|
 //									COMP_P2P				|
 //									COMP_TDLS				|
@@ -106,15 +106,15 @@ DBGP_HEAD_T		DBGP_Head;
  *
  *---------------------------------------------------------------------------*/
 extern	void	DBGP_Flag_Init(void)
-{    
+{
     UINT8	i;
-    
+
 	for (i = 0; i < DBGP_TYPE_MAX; i++)
 	{
  		DBGP_Type[i] = 0;
 	}
-    
-#if DBG		
+
+#if DBG
 	// 2010/06/02 MH Free build driver can not out any debug message!!!
 	// Init Debug flag enable condition
 
@@ -183,13 +183,13 @@ extern	void	DBGP_Flag_Init(void)
 //								DBG_CTRL_TRACE					|
 //								DBG_CTRL_INBAND_NOISE			|
 								0;
-	
-	// 2011/07/20 MH Add for short cut 
+
+	// 2011/07/20 MH Add for short cut
 	DBGP_Type[FSHORT_CUT] = 	\
-//								SHCUT_TX 						| 
+//								SHCUT_TX 						|
 //								SHCUT_RX						|
 								0;
-								
+
 	// 2011/09/28 Sinda Add for batch indication
 	DBGP_Type[FBATCH_INDICATION] = 	\
 //									INDICATE_TRACE					|
@@ -218,12 +218,12 @@ extern	void	DBGP_Flag_Init(void)
 //								FMPBT_C2H_CONTENT				|
 //								FMPBT_C2H_STATE					|
 								0;
-	
+
 	DBGP_Type[FMPHAL]			=	\
 //								FMPHAL_CONTENT					|
 //								FMPHAL_STATE					|
-								0;	
-	
+								0;
+
 	DBGP_Type[FPHY] 		=	\
 //								PHY_BBR 		  |
 //								PHY_BBW 		  |
@@ -238,49 +238,49 @@ extern	void	DBGP_Flag_Init(void)
 //								PHY_SICR		  |
 //								PHY_SICW		  |
 //								PHY_TXPWR_EFUSE   |
-								0;		
+								0;
 
 	DBGP_Type[FRW_POINT]			=	\
 //								FRW_POINT_TX				|
-//								FRW_POINT_TX_DATA			|	
-//								FRW_POINT_RX				|	
-//								FRW_POINT_RX_DATA			|	
-//								FRW_POINT_DBG				|	
+//								FRW_POINT_TX_DATA			|
+//								FRW_POINT_RX				|
+//								FRW_POINT_RX_DATA			|
+//								FRW_POINT_DBG				|
 								0;
 
 	DBGP_Type[FBEAM]			=	\
 //								FBEAM_FUN				|
 //								FBEAM_ERROR			|
 //								FBEAM_DATA				|
-								0;	
+								0;
 
 	DBGP_Type[FACTION_TIMER]	=	\
 //								COMP_ACTION_TIMER_LIFE				|
 //								COMP_ACTION_TIMER_ITEM				|
-								0;	
-	
+								0;
+
 	DBGP_Type[FHAL_MAC_ID]		=	\
 //								COMP_MAC_ID				|
-								0;	
+								0;
 
 	DBGP_Type[FCHNL]			=	\
 //								FCHNL_FUN				|
 //								FCHNL_ERROR				|
 //								FCHNL_INFO				|
-								0;	
+								0;
 	DBGP_Type[FCCX]			=	\
 //								CCX_CELLPWRLMT			|
 //								CCX_RM					|
 //								CCX_CAC					|
-								0;	
+								0;
 
 	DBGP_Type[FUSWITCH]			=	\
 //								FUSWITCH_FUN				|
 //								FUSWITCH_ERROR				|
 //								FUSWITCH_INFO				|
-								0;	
+								0;
 
-#endif	
+#endif
 	/* Define debug header of every service module. */
 	DBGP_Head.pMANS	= "\n\r[MANS] ";
 	DBGP_Head.pRTOS	= "\n\r[RTOS] ";
@@ -290,7 +290,7 @@ extern	void	DBGP_Flag_Init(void)
 	DBGP_Head.pRAPD	= "\n\r[RAPD] ";
 	DBGP_Head.pTXPB	= "\n\r[TXPB] ";
 	DBGP_Head.pQUMG	= "\n\r[QUMG] ";
-    	
+
 }	/* DBGP_Flag_Init */
 
 
@@ -327,7 +327,7 @@ extern	void	DBG_PrintAllFlag(void)
 	RT_TRACE(COMP_CMD, DBG_LOUD, 	("DBGFLAG 13   FDM\n"));
 	RT_TRACE(COMP_CMD, DBG_LOUD, 	("DBGFLAG 14   FDBG_CTRL\n"));
 	RT_TRACE(COMP_CMD, DBG_LOUD, 	("DBGFLAG 15   FC2H\n"));
-	RT_TRACE(COMP_CMD, DBG_LOUD, 	("DBGFLAG 16   FBT\n"));			
+	RT_TRACE(COMP_CMD, DBG_LOUD, 	("DBGFLAG 16   FBT\n"));
 }	// DBG_PrintAllFlag
 
 
@@ -382,7 +382,7 @@ extern	void	DBG_PrintFlagEvent(UINT8	DbgFlag)
 
 		case	FMLME:
 		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 0    MEDIA_STS\n"));
-		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 1    LINK_STS\n"));		
+		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 1    LINK_STS\n"));
 		break;
 
 		case	FRESOURCE:
@@ -391,7 +391,7 @@ extern	void	DBG_PrintFlagEvent(UINT8	DbgFlag)
 
 		case	FBEACON:
 		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 0    BCN_SHOW\n"));
-		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 1    BCN_PEER\n"));		
+		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 1    BCN_PEER\n"));
 		break;
 
 		case	FISR:
@@ -413,15 +413,15 @@ extern	void	DBG_PrintFlagEvent(UINT8	DbgFlag)
 		case	FMP:
 		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 0    MP_RX\n"));
 		break;
-		
+
 		case	FEEPROM:
 		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 0    EEPROM_W\n"));
-		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 1    EFUSE_PG\n"));		
+		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 1    EFUSE_PG\n"));
 		break;
-		
+
 		case	FPWR:
 		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 0    LPS\n"));
-		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 1    IPS\n"));		
+		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 1    IPS\n"));
 		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 2    PWRSW\n"));
 		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 3    PWRHW\n"));
 		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 4    PWRHAL\n"));
@@ -429,22 +429,22 @@ extern	void	DBG_PrintFlagEvent(UINT8	DbgFlag)
 
 		case	FDM:
 		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 0    WA_IOT\n"));
-		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 1    DM_PWDB\n"));		
-		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 2    DM_Monitor\n"));		
-		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 3    DM_DIG\n"));		
+		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 1    DM_PWDB\n"));
+		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 2    DM_Monitor\n"));
+		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 3    DM_DIG\n"));
 		break;
 
 		case	FDBG_CTRL:
 		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 0    DBG_CTRL_TRACE\n"));
-		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 1    DBG_CTRL_INBAND_NOISE\n"));		
+		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 1    DBG_CTRL_INBAND_NOISE\n"));
 		break;
-		
+
 		case	FC2H:
 		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 0    C2H_Summary\n"));
-		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 1    C2H_PacketData\n"));		
-		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 2    C2H_ContentData\n"));		
+		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 1    C2H_PacketData\n"));
+		RT_TRACE(COMP_CMD, DBG_LOUD, 	("BIT 2    C2H_ContentData\n"));
 		break;
-				
+
 		default:
 			break;
 	}

@@ -271,7 +271,7 @@ MbbRecvNtbUnpackIpNdp32(_In_ PMBB_RECEIVE_NDP_CONTEXT ReceiveNdpContext, _In_ PN
         }
 
         incompletedDatagramLength = MBB_NDP32_GET_DATAGRAM_LENGTH(Ndp32, *IncompletedDatagramIndex);
-        
+
         UINT32 const fragmentIndex = fr->BeginIndex;
         fragment = NetRingGetFragmentAtIndex(fr, fragmentIndex);
         fragment->Capacity = incompletedDatagramLength;
@@ -296,7 +296,7 @@ MbbRecvNtbUnpackIpNdp32(_In_ PMBB_RECEIVE_NDP_CONTEXT ReceiveNdpContext, _In_ PN
         packet->Layout = {};
 
         pr->BeginIndex = NetRingIncrementIndex(pr, pr->BeginIndex);
-        fr->BeginIndex = NetRingIncrementIndex(fr, fr->BeginIndex);    
+        fr->BeginIndex = NetRingIncrementIndex(fr, fr->BeginIndex);
     }
     return status;
 }
@@ -354,7 +354,7 @@ MbbRecvNtbUnpackIpNdp16(_In_ PMBB_RECEIVE_NDP_CONTEXT ReceiveNdpContext, _In_ PN
         packet->Layout = {};
 
         pr->BeginIndex = NetRingIncrementIndex(pr, pr->BeginIndex);
-        fr->BeginIndex = NetRingIncrementIndex(fr, fr->BeginIndex); 
+        fr->BeginIndex = NetRingIncrementIndex(fr, fr->BeginIndex);
     }
 
     return status;
@@ -581,7 +581,7 @@ void EvtRxQueueCancel(_In_ NETPACKETQUEUE RxQueue)
     }
 
     NET_RING * fr = NetRingCollectionGetFragmentRing(rings);
-    fr->BeginIndex = fr->EndIndex; 
+    fr->BeginIndex = fr->EndIndex;
 
     // Cancel received Ndps which may be received after EvtRxQueueCancel started, these Ndps may never be processed by EvtRxQueueAdvance
     MbbRecvCancelNdps(deviceContext, netAdapterContext->SessionId);

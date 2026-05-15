@@ -6,24 +6,24 @@ Abstract:
 
    Datagram-Data Transparent Proxy Callout Driver Sample.
 
-   This sample callout driver intercepts UDP and non-error ICMP traffic 
-   of interest and proxies them to a new destination address and/or port 
-   (for UDP); response traffic will be proxied back to have the original 
-   tuple values. The proxying is transparent to the application. 
+   This sample callout driver intercepts UDP and non-error ICMP traffic
+   of interest and proxies them to a new destination address and/or port
+   (for UDP); response traffic will be proxied back to have the original
+   tuple values. The proxying is transparent to the application.
 
-   Inspection parameters and proxy settings are configurable via the 
+   Inspection parameters and proxy settings are configurable via the
    following registry values --
 
    HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\ddproxy\Parameters
-      
+
     o  InspectUdp (REG_DWORD) : 0 (ICMP); 1 (UDP, default)
-    o  DestinationAddressToIntercept (REG_SZ) : literal IPv4/IPv6 string 
-                                                (e.g. “10.0.0.1”)
+    o  DestinationAddressToIntercept (REG_SZ) : literal IPv4/IPv6 string
+                                                (e.g. ï¿½10.0.0.1ï¿½)
     o  DestinationPortToIntercept (REG_DWORD) : applicable if InspectUdp is 1
     o  NewDestinationAddress(REG_SZ) : literal IPv4/IPv6 string
     o  NewDestinationPort(REG_DWORD)
 
-   The sample is IP version agnostic. It performs proxying for both IPv4 
+   The sample is IP version agnostic. It performs proxying for both IPv4
    and IPv6 traffic.
 
 Environment:
@@ -54,7 +54,7 @@ Environment:
 #define INITGUID
 #include <guiddef.h>
 
-// 
+//
 // Configurable parameters (addresses and ports are in host order)
 //
 
@@ -70,7 +70,7 @@ UINT8*   configNewDestAddrV6 = NULL;
 
 SOCKADDR_STORAGE destAddr, newDestAddr;
 
-// 
+//
 // Callout and sublayer GUIDs
 //
 
@@ -117,7 +117,7 @@ DEFINE_GUID(
     0x94, 0xc9, 0xf0, 0xd5, 0x25, 0xbb, 0xc1, 0x69
 );
 
-// 
+//
 // Callout driver global variables
 //
 
@@ -142,7 +142,7 @@ void* gThreadObj;
 DRIVER_INITIALIZE DriverEntry;
 EVT_WDF_DRIVER_UNLOAD EvtDriverUnload;
 
-// 
+//
 // Callout driver implementation
 //
 
@@ -158,7 +158,7 @@ DDProxyLoadIPAddress(
    DECLARE_UNICODE_STRING_SIZE(value, INET6_ADDRSTRLEN);
    IN_ADDR *resultV4 = &((SOCKADDR_IN*)result)->sin_addr;
    IN6_ADDR *resultV6 = &((SOCKADDR_IN6*)result)->sin6_addr;
-   
+
    status = WdfRegistryQueryUnicodeString(key, valueName, NULL, &value);
    result->ss_family = AF_UNSPEC;
 
@@ -292,7 +292,7 @@ DDProxyAddFilter(
    NTSTATUS status = STATUS_SUCCESS;
 
    FWPM_FILTER filter = {0};
-   FWPM_FILTER_CONDITION filterConditions[3] = {0}; 
+   FWPM_FILTER_CONDITION filterConditions[3] = {0};
    UINT conditionIndex;
 
    filter.layerKey = *layerKey;
@@ -310,7 +310,7 @@ DDProxyAddFilter(
 
    if (remoteAddr != NULL)
    {
-      filterConditions[conditionIndex].fieldKey = 
+      filterConditions[conditionIndex].fieldKey =
          FWPM_CONDITION_IP_REMOTE_ADDRESS;
       filterConditions[conditionIndex].matchType = FWP_MATCH_EQUAL;
 
@@ -318,14 +318,14 @@ DDProxyAddFilter(
           IsEqualGUID(layerKey, &FWPM_LAYER_ALE_FLOW_ESTABLISHED_V4))
       {
          filterConditions[conditionIndex].conditionValue.type = FWP_UINT32;
-         filterConditions[conditionIndex].conditionValue.uint32 = 
+         filterConditions[conditionIndex].conditionValue.uint32 =
             *(UINT32*)remoteAddr;
       }
       else
       {
-         filterConditions[conditionIndex].conditionValue.type = 
+         filterConditions[conditionIndex].conditionValue.type =
             FWP_BYTE_ARRAY16_TYPE;
-         filterConditions[conditionIndex].conditionValue.byteArray16 = 
+         filterConditions[conditionIndex].conditionValue.byteArray16 =
             (FWP_BYTE_ARRAY16*)remoteAddr;
       }
 
@@ -345,7 +345,7 @@ DDProxyAddFilter(
       filterConditions[conditionIndex].matchType = FWP_MATCH_EQUAL;
       filterConditions[conditionIndex].conditionValue.type = FWP_UINT16;
       filterConditions[conditionIndex].conditionValue.uint16 = remotePort;
-      
+
       conditionIndex++;
    }
 
@@ -369,9 +369,9 @@ DDProxyRegisterFlowEstablishedCallouts(
    )
 /* ++
 
-   This function registers callouts and filters at the following layers 
+   This function registers callouts and filters at the following layers
    to intercept flow creations for the original and the proxy flows.
-   
+
       FWPM_LAYER_ALE_FLOW_ESTABLISHED_V4
       FWPM_LAYER_ALE_FLOW_ESTABLISHED_V6
 
@@ -402,7 +402,7 @@ DDProxyRegisterFlowEstablishedCallouts(
    calloutRegistered = TRUE;
 
    displayData.name = L"Datagram-Data Proxy Flow-Established Callout";
-   displayData.description = 
+   displayData.description =
       L"Intercepts flow creations for the original and the proxy flows";
 
    mCallout.calloutKey = *calloutKey;
@@ -424,7 +424,7 @@ DDProxyRegisterFlowEstablishedCallouts(
    status = DDProxyAddFilter(
                L"Datagram-Data Proxy Flow-Established Filter (Original Flow)",
                L"Intercepts flow creations for the original flow",
-               IsEqualGUID(layerKey, &FWPM_LAYER_ALE_FLOW_ESTABLISHED_V4) ? 
+               IsEqualGUID(layerKey, &FWPM_LAYER_ALE_FLOW_ESTABLISHED_V4) ?
                   configInspectDestAddrV4 : configInspectDestAddrV6,
                configInspectDestPort,
                FWP_DIRECTION_OUTBOUND,
@@ -441,7 +441,7 @@ DDProxyRegisterFlowEstablishedCallouts(
    status = DDProxyAddFilter(
                L"Datagram-Data Proxy Flow-Established Filter (Proxy Flow)",
                L"Intercepts flow creations for the proxy flow",
-               IsEqualGUID(layerKey, &FWPM_LAYER_ALE_FLOW_ESTABLISHED_V4) ? 
+               IsEqualGUID(layerKey, &FWPM_LAYER_ALE_FLOW_ESTABLISHED_V4) ?
                   configNewDestAddrV4 : configNewDestAddrV6,
                configNewDestPort,
                FWP_DIRECTION_OUTBOUND,
@@ -478,7 +478,7 @@ DDProxyRegisterDatagramDataCallouts(
    )
 /* ++
 
-   This function registers callouts and filters that intercept TCP traffic at 
+   This function registers callouts and filters that intercept TCP traffic at
    WFP FWPM_LAYER_DATAGRAM_DATA_V4 or FWPM_LAYER_DATAGRAM_DATA_V6 layer.
 
 -- */
@@ -531,7 +531,7 @@ DDProxyRegisterDatagramDataCallouts(
    status = DDProxyAddFilter(
                L"Datagram-Data Proxy Filter (Outbound)",
                L"Proxies destination address/port for UDP/ICMP",
-               IsEqualGUID(layerKey, &FWPM_LAYER_DATAGRAM_DATA_V4) ? 
+               IsEqualGUID(layerKey, &FWPM_LAYER_DATAGRAM_DATA_V4) ?
                   configInspectDestAddrV4 : configInspectDestAddrV6,
                configInspectDestPort,
                FWP_DIRECTION_OUTBOUND,
@@ -548,7 +548,7 @@ DDProxyRegisterDatagramDataCallouts(
    status = DDProxyAddFilter(
                L"Datagram-Data Proxy Filter (Inbound)",
                L"Proxies destination address/port for UDP/ICMP",
-               IsEqualGUID(layerKey, &FWPM_LAYER_DATAGRAM_DATA_V4) ? 
+               IsEqualGUID(layerKey, &FWPM_LAYER_DATAGRAM_DATA_V4) ?
                   configNewDestAddrV4 : configNewDestAddrV6,
                configNewDestPort,
                FWP_DIRECTION_INBOUND,
@@ -583,7 +583,7 @@ DDProxyRegisterCallouts(
 /* ++
 
    This function registers dynamic callouts and filters that intercept UDP or
-   non-error ICMP traffic at WFP FWPM_LAYER_DATAGRAM_DATA_V{4|6} and 
+   non-error ICMP traffic at WFP FWPM_LAYER_DATAGRAM_DATA_V{4|6} and
    FWPM_LAYER_ALE_FLOW_ESTABLISHED_V{4|6} layers.
 
    Callouts and filters will be removed during DriverUnload.
@@ -620,11 +620,11 @@ DDProxyRegisterCallouts(
    }
    inTransaction = TRUE;
 
-   RtlZeroMemory(&DDProxySubLayer, sizeof(FWPM_SUBLAYER)); 
+   RtlZeroMemory(&DDProxySubLayer, sizeof(FWPM_SUBLAYER));
 
    DDProxySubLayer.subLayerKey = DD_PROXY_SUBLAYER;
    DDProxySubLayer.displayData.name = L"Datagram-Data Proxy Sub-Layer";
-   DDProxySubLayer.displayData.description = 
+   DDProxySubLayer.displayData.description =
       L"Sub-Layer for use by Datagram-Data Proxy callouts";
    DDProxySubLayer.flags = 0;
    DDProxySubLayer.weight = FWP_EMPTY; // auto-weight.;
@@ -738,8 +738,8 @@ DDProxyRemoveFlows(void)
       }
 
       //
-      // Releasing the lock here since removing the flow context 
-      // will invoke the callout's flowDeleteFn synchronously 
+      // Releasing the lock here since removing the flow context
+      // will invoke the callout's flowDeleteFn synchronously
       // if there are no active classifications in progress.
       //
       KeReleaseInStackQueuedSpinLock(&flowListLockHandle);
@@ -800,7 +800,7 @@ EvtDriverUnload(
    {
       KeSetEvent(
          &gPacketQueueEvent,
-         IO_NO_INCREMENT, 
+         IO_NO_INCREMENT,
          FALSE
          );
    }
@@ -865,7 +865,7 @@ DDProxyInitDriverObjects(
                *pDriver,
                &SDDL_DEVOBJ_KERNEL_ONLY
                );
-               
+
    if (!pInit)
    {
       status = STATUS_INSUFFICIENT_RESOURCES;
@@ -963,9 +963,9 @@ DriverEntry(
    if (configInspectUdp)
    {
       if ((configInspectDestPort == configNewDestPort) &&
-          (((configInspectDestAddrV4 == NULL) || 
-            (configNewDestAddrV4 == NULL)) && 
-          ((configInspectDestAddrV6 == NULL) || 
+          (((configInspectDestAddrV4 == NULL) ||
+            (configNewDestAddrV4 == NULL)) &&
+          ((configInspectDestAddrV6 == NULL) ||
            (configNewDestAddrV6 == NULL))))
       {
          status = STATUS_DEVICE_CONFIGURATION_ERROR;
@@ -974,9 +974,9 @@ DriverEntry(
    }
    else
    {
-      if (((configInspectDestAddrV4 == NULL) || 
-           (configNewDestAddrV4 == NULL)) && 
-          ((configInspectDestAddrV6 == NULL) || 
+      if (((configInspectDestAddrV4 == NULL) ||
+           (configNewDestAddrV4 == NULL)) &&
+          ((configInspectDestAddrV6 == NULL) ||
            (configNewDestAddrV6 == NULL)))
       {
          status = STATUS_DEVICE_CONFIGURATION_ERROR;
@@ -996,10 +996,10 @@ DriverEntry(
    }
 
    InitializeListHead(&gFlowList);
-   KeInitializeSpinLock(&gFlowListLock);   
+   KeInitializeSpinLock(&gFlowListLock);
 
    InitializeListHead(&gPacketQueue);
-   KeInitializeSpinLock(&gPacketQueueLock);   
+   KeInitializeSpinLock(&gPacketQueueLock);
    KeInitializeEvent(
       &gPacketQueueEvent,
       NotificationEvent,
@@ -1007,7 +1007,7 @@ DriverEntry(
       );
 
    gWdmDevice = WdfDeviceWdmGetDeviceObject(device);
-   
+
    status = DDProxyRegisterCallouts(gWdmDevice);
 
    if (!NT_SUCCESS(status))
@@ -1043,7 +1043,7 @@ DriverEntry(
    ZwClose(threadHandle);
 
 Exit:
-   
+
    if (!NT_SUCCESS(status))
    {
       if (gEngineHandle != NULL)

@@ -38,7 +38,7 @@ typedef struct TL_INSPECT_PENDED_PACKET_
    ADDRESS_FAMILY addressFamily;
    TL_INSPECT_PACKET_TYPE type;
    FWP_DIRECTION  direction;
-   
+
    UINT32 authConnectDecision;
    HANDLE completionContext;
 

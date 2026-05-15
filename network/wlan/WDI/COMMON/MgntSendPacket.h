@@ -5,7 +5,7 @@
 
 VOID
 SendBeaconFrame(
-	PADAPTER	Adapter, 
+	PADAPTER	Adapter,
 	u1Byte		QueueIndex
 	);
 
@@ -48,7 +48,7 @@ SendReassociateReq(
 	PADAPTER	Adapter,
 	pu1Byte		ReasocStaAddr,
 	u2Byte		ReasocCap,
-	u2Byte		asocListenInterval,	
+	u2Byte		asocListenInterval,
 	pu1Byte		CurrentasocStaAddr
 	);
 
@@ -126,11 +126,11 @@ SendEapolKeyPacket(
 	KeyType			eKeyType, // EAPOL-Key Information field: Key Type bit: type_Group or type_Pairwise.
 	BOOLEAN			bInstall, // EAPOL-Key Information field: Install Flag.
 	BOOLEAN			bKeyAck, // EAPOL-Key Information field: Key Ack bit.
-	BOOLEAN			bKeyMIC, // EAPOL-Key Information field: Key MIC bit. If true, we will calculate EAPOL MIC and fill it into Key MIC field. 
+	BOOLEAN			bKeyMIC, // EAPOL-Key Information field: Key MIC bit. If true, we will calculate EAPOL MIC and fill it into Key MIC field.
 	BOOLEAN			bSecure, // EAPOL-Key Information field: Secure bit.
 	BOOLEAN			bError, // EAPOL-Key Information field: Error bit. True for MIC failure report.
 	BOOLEAN			bRequest, // EAPOL-Key Information field: Requst bit.
-	
+
 	u8Byte			u8bKeyReplayCounter, // EAPOL-KEY Replay Counter field.
 	pu1Byte			pKeyNonce, // EAPOL-Key Key Nonce field (32-byte).
 	u8Byte			u8bKeyRSC, // EAPOL-Key Key RSC field (8-byte).
@@ -214,7 +214,7 @@ ApSendNullPacket(
 VOID
 SendEAPOLStarPacket(
 	IN	PADAPTER			Adapter,
-	IN	BOOLEAN				bEncrypt 
+	IN	BOOLEAN				bEncrypt
 	);
 
 VOID

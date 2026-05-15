@@ -36,7 +36,7 @@ P2PSvc_ParseAnqpQueryReq(
 	do
 	{
 		u2Byte						idx = 0;
-		
+
 		// svc-name-len
 		if(anqpQueryReqLen < idx + 1) 					{rtStatus = RT_STATUS_INVALID_LENGTH; break;}
 		svcNameLen = *(pu1Byte)(anqpQueryReqBuf + idx);
@@ -51,7 +51,7 @@ P2PSvc_ParseAnqpQueryReq(
 		if(anqpQueryReqLen < idx + 1) 					{rtStatus = RT_STATUS_INVALID_LENGTH; break;}
 		svcInfoReqLen = *(pu1Byte)(anqpQueryReqBuf + idx);
 		idx += 1;
-		
+
 		// svc-info-req
 		if(anqpQueryReqLen < idx + svcInfoReqLen) 		{rtStatus = RT_STATUS_INVALID_LENGTH; break;}
 		svcInfoReqBuf = (pu1Byte)(anqpQueryReqBuf + idx);
@@ -125,7 +125,7 @@ P2PSvc_ParseAnqpQueryRsp(
 			if(anqpQueryRspLen < offset + 2) 				{rtStatus = RT_STATUS_INVALID_LENGTH; break;}
 			else 											{configMethod = *(pu2Byte)(anqpQueryRspBuf + offset);}
 			offset += 2;
-			
+
 			// svc-name-len
 			if(anqpQueryRspLen < offset + 1) 				{rtStatus = RT_STATUS_INVALID_LENGTH; break;}
 			else 											{svcNameLen = *(pu1Byte)(anqpQueryRspBuf + offset);}
@@ -145,7 +145,7 @@ P2PSvc_ParseAnqpQueryRsp(
 			if(anqpQueryRspLen < offset + 2) 				{rtStatus = RT_STATUS_INVALID_LENGTH; break;}
 			else 											{svcInfoLen = *(pu2Byte)(anqpQueryRspBuf + offset);}
 			offset += 2;
-			
+
 			// svc-info-req
 			if(anqpQueryRspLen < offset + svcInfoLen) 		{rtStatus = RT_STATUS_INVALID_LENGTH; break;}
 			else 											{svcInfoBuf = (pu1Byte)(anqpQueryRspBuf + offset);}
@@ -154,11 +154,11 @@ P2PSvc_ParseAnqpQueryRsp(
 			if(idxSvcInfoDesc == index)
 			{
 				break;
-			} 
+			}
 		}
 
 		if(RT_STATUS_SUCCESS != rtStatus)
-		{	
+		{
 			DbgPrint("ng: 0x%08X, offset: %u\n", rtStatus, offset);
 			RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "ANQP Query Rsp:\n", anqpQueryRspBuf, anqpQueryRspLen);
 			break;
@@ -192,10 +192,10 @@ P2PSvc_SDReq(
 	u2Byte									bytesWritten = 0;
 
 	P2PSVC_FUNC_IN(DBG_LOUD);
-	
+
 	cpMacAddr(pSDContext->UserSDReq.TargetDeviceAddress, devAddr);
 	cpMacAddr(pSDContext->TargetDeviceAddress, devAddr);
-	
+
 	pSDContext->UserSDReq.ServiceReqTLVSize = 1;
 
 	pSDContext->UserSDReq.ServiceReqTLVList[0].TransactionID = searchId;
@@ -206,8 +206,8 @@ P2PSvc_SDReq(
 	bytesWritten += 1;
 
 	// svc-name
-	PlatformMoveMemory(pSDContext->UserSDReq.ServiceReqTLVList[0].ServiceDesc.Buffer + bytesWritten, 
-		pSvcNameObj->Value, 
+	PlatformMoveMemory(pSDContext->UserSDReq.ServiceReqTLVList[0].ServiceDesc.Buffer + bytesWritten,
+		pSvcNameObj->Value,
 		pSvcNameObj->Length);
 	bytesWritten += (u2Byte)pSvcNameObj->Length;
 
@@ -216,13 +216,13 @@ P2PSvc_SDReq(
 	bytesWritten += 1;
 
 	// svc-info-req
-	PlatformMoveMemory(pSDContext->UserSDReq.ServiceReqTLVList[0].ServiceDesc.Buffer + bytesWritten, 
-		pSvcInfoReqObj->Value, 
+	PlatformMoveMemory(pSDContext->UserSDReq.ServiceReqTLVList[0].ServiceDesc.Buffer + bytesWritten,
+		pSvcInfoReqObj->Value,
 		pSvcInfoReqObj->Length);
 	bytesWritten += (u2Byte)pSvcInfoReqObj->Length;
 
 	pSDContext->UserSDReq.ServiceReqTLVList[0].ServiceDesc.BufferLength = bytesWritten;
-	
+
 	pSDContext->bRequester = TRUE;
 	pSDContext->DialogToken = IncreaseDialogToken(pP2PInfo->DialogToken);
 	//pSDContext->TransactionID = 0xAA; // seems this is for parsing recvd SDRsp

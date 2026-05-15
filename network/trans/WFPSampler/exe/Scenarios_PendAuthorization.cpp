@@ -6,13 +6,13 @@
 //      Scenarios_PendAuthorization.cpp
 //
 //   Abstract:
-//      This module contains functions which prepares and sends data for the PEND_AUTHORIZATION 
+//      This module contains functions which prepares and sends data for the PEND_AUTHORIZATION
 //         scenario implementation.
 //
 //   Naming Convention:
 //
 //      <Scope><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -27,10 +27,10 @@
 //          }
 //       <Action>
 //          {
-//            Execute                   - Function packages data and invokes RPC to the WFPSampler 
+//            Execute                   - Function packages data and invokes RPC to the WFPSampler
 //                                           service.
 //            Log                       - Function writes to the console.
-//            Parse                     - Function pulls data into the required format from the 
+//            Parse                     - Function pulls data into the required format from the
 //                                           provided data.
 //          }
 //       <Modifier>
@@ -53,8 +53,8 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Add support for specifying a different sublayer, change 
-//                                              parameter, and limit scenario to only supported 
+//      December  13,   2013  -     1.1   -  Add support for specifying a different sublayer, change
+//                                              parameter, and limit scenario to only supported
 //                                              layers
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@
 
 /**
  @private_function="PrvPendAuthorizationScenarioParseAuthorizationData"
- 
+
    Purpose:  Parse the command line parameters for pending authorization data such as:          <br>
                 delay before callout returns (-d DELAY_IN_MS)                                   <br>
                 final action - BLOCK         (-fab)                                             <br>
@@ -141,9 +141,9 @@ UINT32 PrvPendAuthorizationScenarioParseAuthorizationData(_In_reads_(stringCount
                              ppCLPStrings[stringIndex]))
       {
          pPCPendAuthorizationData->useThreadedDPC = TRUE;
-      
+
          found++;
-      
+
          continue;
       }
 
@@ -169,7 +169,7 @@ UINT32 PrvPendAuthorizationScenarioParseAuthorizationData(_In_reads_(stringCount
 /**
  @scenario_function="PendAuthorizationScenarioExecute"
 
-   Purpose:  Gather and package data neccessary to setup the PEND_AUTHORIZATION scenario, then 
+   Purpose:  Gather and package data neccessary to setup the PEND_AUTHORIZATION scenario, then
              invoke RPC to implement the scenario in the WFPSampler service.                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -240,7 +240,7 @@ UINT32 PendAuthorizationScenarioExecute(_In_reads_(stringCount) PCWSTR* ppCLPStr
 
 /**
  @public_function="PendAuthorizationScenarioLogHelp"
- 
+
    Purpose:  Log usage information for the PEND_AUTHORIZATION scenario to the console.          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

@@ -70,7 +70,7 @@
 
 // Forward declaration.
 typedef enum _RT_STATUS RT_STATUS;
-typedef struct _RT_TCB	RT_TCB, *PRT_TCB; 
+typedef struct _RT_TCB	RT_TCB, *PRT_TCB;
 typedef struct _SDIO_OUT_CONTEXT *PSDIO_OUT_CONTEXT;
 typedef struct _SDIO_IN_CONTEXT *PSDIO_IN_CONTEXT;
 //
@@ -80,13 +80,13 @@ typedef struct _SDIO_IN_CONTEXT *PSDIO_IN_CONTEXT;
 #define PLATFORM_LIMITED_RX_BUF_SIZE(_ADAPTER) FALSE
 // Some USB 1.1 host driver cannot afford too large bulkout size on Win2k platform
 #define PLATFORM_LIMITED_TX_BUF_SIZE(_ADAPTER) FALSE
-	
 
-extern	PCHAR 
+
+extern	PCHAR
 PlatformSystemPowerString(
 	SYSTEM_POWER_STATE Type
 );
-extern 	PCHAR 
+extern 	PCHAR
 PlatformDevicePowerString(
 	DEVICE_POWER_STATE Type
 );
@@ -111,7 +111,7 @@ RT_STATUS
 PlatformSdioCmd53ReadWrite(
 	PRT_SDIO_DEVICE	sdiodevice,
 	UCHAR			DeviceID,
-	UCHAR			funcNum,			
+	UCHAR			funcNum,
 	ULONG			byteCount,
 	ULONG			registerIndex,
 	BOOLEAN			writeFlag,
@@ -121,7 +121,7 @@ PlatformSdioCmd53ReadWrite(
 RT_STATUS
 PlatformSdioCmd53ReadWriteBlock(
 	PRT_SDIO_DEVICE	sdiodevice,
-	UCHAR			funcNum,			
+	UCHAR			funcNum,
 	ULONG			byteCount,
 	ULONG			registerIndex,
 	BOOLEAN			writeFlag,
@@ -131,7 +131,7 @@ PlatformSdioCmd53ReadWriteBlock(
 RT_STATUS
 PlatformSdioCmd53ReadWriteByte(
 	PRT_SDIO_DEVICE	sdiodevice,
-	UCHAR			funcNum,			
+	UCHAR			funcNum,
 	ULONG			byteCount,
 	ULONG			registerIndex,
 	BOOLEAN			writeFlag,
@@ -141,7 +141,7 @@ PlatformSdioCmd53ReadWriteByte(
 RT_STATUS
 PlatformSdioCmd53ReadWriteMDL(
 	PRT_SDIO_DEVICE	sdiodevice,
-	UCHAR			funcNum,	
+	UCHAR			funcNum,
 	PMDL			pmdl,
 	ULONG			byteCount,
 	ULONG			registerIndex,
@@ -153,9 +153,9 @@ RT_STATUS
 PlatformSdioCmd52ReadWrite(
 	PRT_SDIO_DEVICE	sdiodevice,
 	UCHAR			DeviceID,
-	UCHAR			funcNum,		
+	UCHAR			funcNum,
 	ULONG			byteCount,
-	ULONG			registerIndex,	
+	ULONG			registerIndex,
 	BOOLEAN			writeToDevice,
 	PVOID			buffer
 );
@@ -175,7 +175,7 @@ PlatformSdioCmd52ReadWriteByte(
 //
 NTSTATUS
 IssueIrpForAsynSdioIOWrite(
-	PRT_SDIO_DEVICE	device, 
+	PRT_SDIO_DEVICE	device,
 	u2Byte			Count,
 	u4Byte			Index,
 	PVOID			pOutRegisterData
@@ -184,9 +184,9 @@ IssueIrpForAsynSdioIOWrite(
 #if RTL8723_SDIO_IO_THREAD_ENABLE
 VOID
 SdioAsynIOWriteEnqueue(
-	PRT_SDIO_DEVICE	device, 
+	PRT_SDIO_DEVICE	device,
 	u1Byte		DeviceID,
-	UCHAR		FuncNum,	
+	UCHAR		FuncNum,
 	u2Byte			Count,
 	u4Byte		Index,
 	PVOID			pOutRegisterData
@@ -195,9 +195,9 @@ SdioAsynIOWriteEnqueue(
 
 NTSTATUS
 SdioAsynIOWrite(
-	PRT_SDIO_DEVICE	device, 
+	PRT_SDIO_DEVICE	device,
 	u1Byte		DeviceID,
-	UCHAR		FuncNum,	
+	UCHAR		FuncNum,
 	u2Byte			Count,
 	u4Byte		Index,
 	PVOID			pOutRegisterData

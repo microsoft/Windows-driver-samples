@@ -73,7 +73,7 @@ HRESULT CSampleRadioInstance::_Init(_In_ PCWSTR pszKeyName, _In_ ISampleRadioMan
     DWORD   dwError;
     WCHAR   szInstanceName[128] = {};
     DWORD   cchInstanceName = ARRAYSIZE(szInstanceName);
-	
+
     _ATLTRY
     {
         _strInstanceId = pszKeyName;
@@ -116,9 +116,9 @@ HRESULT CSampleRadioInstance::_Init(_In_ PCWSTR pszKeyName, _In_ ISampleRadioMan
 
 				// ignore the case when there is no IsMultiComm value in the registry, set ERROR_SUCCESS to continue with _Init
 				dwError = ERROR_SUCCESS;
-            }            
+            }
         }
-    }    
+    }
 
     // register the regkey value change event
     if (ERROR_SUCCESS == dwError)
@@ -247,7 +247,7 @@ IFACEMETHODIMP CSampleRadioInstance::GetRadioState(_Out_ DEVICE_RADIO_STATE *pRa
         }
 
         *pRadioState = radioState;
-    }    
+    }
 
     return HRESULT_FROM_WIN32(dwError);
 }

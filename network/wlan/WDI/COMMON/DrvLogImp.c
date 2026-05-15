@@ -3,7 +3,7 @@
 //		DrvLogImp.c
 //
 //	Description:
-//		Driver log event mechanism.	
+//		Driver log event mechanism.
 //
 //-----------------------------------------------------------------------------
 
@@ -19,14 +19,14 @@
 
 //
 //	Description:
-//		Table of attribute of type of logs. 
+//		Table of attribute of type of logs.
 //
-//		Note that: 
+//		Note that:
 //		1. the order MUST be the same as enum _DRV_LOG_TYPE_E declared.
 //		2. Size of Description must < MAX_LOG_DESC_LEN.
-//		
-#define DEFAULT_LOG_CNT_PWR 5 // 2^5 = 32 
-DRV_LOG_TYPE_ATTR_IMP_T g_LogTypes[LTYPE_TOTAL_COUNT] = 
+//
+#define DEFAULT_LOG_CNT_PWR 5 // 2^5 = 32
+DRV_LOG_TYPE_ATTR_IMP_T g_LogTypes[LTYPE_TOTAL_COUNT] =
 {
 	// MaxLogCountPwr, Description
 	{DEFAULT_LOG_CNT_PWR, "Error"}, // LTYPE_ERROR
@@ -42,13 +42,13 @@ DRV_LOG_TYPE_ATTR_IMP_T g_LogTypes[LTYPE_TOTAL_COUNT] =
 //		- Type: value enum _DRV_LOG_TYPE_E, which declare catagory of this log.
 //		- Description: null-terminated char string, one MUST restrict size of it smaller than MAX_LOG_DESC_LEN.
 //
-//		Note that: 
+//		Note that:
 //		1. the order MUST be the same as enum _DRV_LOG_ID_E declared.
 //		2. Size of Description must < MAX_LOG_DESC_LEN.
 //
-DRV_LOG_ATTR_IMP_T g_LogAttributes[LID_TOTAL_COUNT] = 
+DRV_LOG_ATTR_IMP_T g_LogAttributes[LID_TOTAL_COUNT] =
 {
-	// Type, Description 
+	// Type, Description
 	{LTYPE_DOT11D, "Entering a regulatory domain"}, // LID_DOT11D_RESET
 	{LTYPE_DOT11D, "Get a valid country IE"}, // LID_DOT11D_GET_COUNTRY_IE
 	{LTYPE_DOT11D, "Active scan: Channels"}, // LID_DOT11D_ACTIVE_SCAN_CHNL
@@ -61,7 +61,7 @@ DRV_LOG_ATTR_IMP_T g_LogAttributes[LID_TOTAL_COUNT] =
 
 //
 //	Description:
-//		Allocate memory for driver log mechansim. 
+//		Allocate memory for driver log mechansim.
 //
 //	Assumption:
 //		Target address had been initalized to NULL pointer.
@@ -98,7 +98,7 @@ AllocDrvLogMemory(
 	//
 	for(i = 0; i < (u4Byte)LTYPE_TOTAL_COUNT; i++)
 	{
-		Size = sizeof(DRV_LOG_POOL_T) + ( sizeof(DRV_LOG_DATA_IMP_T) << g_LogTypes[i].MaxLogCountPwr); 
+		Size = sizeof(DRV_LOG_POOL_T) + ( sizeof(DRV_LOG_DATA_IMP_T) << g_LogTypes[i].MaxLogCountPwr);
 		status = PlatformAllocateMemory(pAdapter, &pTmp, Size);
 		if( RT_STATUS_SUCCESS != status )
 		{
@@ -110,22 +110,22 @@ AllocDrvLogMemory(
 			RT_TRACE(COMP_INIT, DBG_LOUD, ("AllocDrvLogMemory(): %p is allocated for driver log pool %d\n", pTmp, i));
 			PlatformZeroMemory(pTmp, Size);
 			SET_DRV_LOG_POOL(pAdapter, i, pTmp);
-			GET_DRV_LOG_POOL(pAdapter, i)->pLogDataRing = (PDRV_LOG_DATA_IMP_T)((pu1Byte)pTmp + sizeof(DRV_LOG_POOL_T)); 
+			GET_DRV_LOG_POOL(pAdapter, i)->pLogDataRing = (PDRV_LOG_DATA_IMP_T)((pu1Byte)pTmp + sizeof(DRV_LOG_POOL_T));
 
 			RT_PRINT_DATA(COMP_INIT, DBG_TRACE, "driver log pool: ", (pu1Byte)pTmp, sizeof(DRV_LOG_POOL_T));
 		}
 	}
-	
+
 	return TRUE;
 }
 
 
 //
 //	Description:
-//		Free memory block for driver log mechansim. 
+//		Free memory block for driver log mechansim.
 //
 //	Assumption:
-//		Target address is NOT NULL pointer if it had been allocated sucessfully. 
+//		Target address is NOT NULL pointer if it had been allocated sucessfully.
 //
 VOID
 FreeDrvLogMemory(
@@ -150,7 +150,7 @@ FreeDrvLogMemory(
 		pTmp = (PVOID)GET_DRV_LOG_POOL(pAdapter, i);
 		if(pTmp != NULL)
 		{
-			Size = sizeof(DRV_LOG_POOL_T) + ( sizeof(DRV_LOG_DATA_IMP_T) << g_LogTypes[i].MaxLogCountPwr); 
+			Size = sizeof(DRV_LOG_POOL_T) + ( sizeof(DRV_LOG_DATA_IMP_T) << g_LogTypes[i].MaxLogCountPwr);
 			RT_TRACE(COMP_INIT, DBG_LOUD, ("FreeDrvLogMemory(): free %p, log pool %d.\n", pTmp, i));
 			PlatformFreeMemory(pTmp, Size);
 		}
@@ -174,11 +174,11 @@ AddDrvLog(
 	IN	PADAPTER		pAdapter,
 	IN	DRV_LOG_ID_E	eLogId,
 	IN	pu1Byte			pBuffer,
-	IN	u4Byte			BufferLen	
+	IN	u4Byte			BufferLen
 	)
 {
 	DRV_LOG_TYPE_E eLogType = (DRV_LOG_TYPE_E)g_LogAttributes[eLogId].Type;
-	PDRV_LOG_POOL_T pLogPool = GET_DRV_LOG_POOL(pAdapter, eLogType); 
+	PDRV_LOG_POOL_T pLogPool = GET_DRV_LOG_POOL(pAdapter, eLogType);
 	u8Byte CurrTime = PlatformGetCurrentTime();
 	u4Byte MaxLogCount = ((u4Byte)1 << g_LogTypes[eLogType].MaxLogCountPwr);
 	u4Byte LogCountMask = MaxLogCount - 1;
@@ -188,7 +188,7 @@ AddDrvLog(
 
 	if( pLogPool->LogCountUsed < MaxLogCount )
 	{
-		pLogData = pLogPool->pLogDataRing + 
+		pLogData = pLogPool->pLogDataRing +
 					( (pLogPool->LogStartIndex + pLogPool->LogCountUsed) & LogCountMask );
 		pLogPool->LogCountUsed++;
 	}
@@ -213,7 +213,7 @@ AddDrvLog(
 //		Retrive one log data from specified pool
 //
 //	Assumption:
-//		pDstLogData	must pointer to a buffer with enough space, 
+//		pDstLogData	must pointer to a buffer with enough space,
 //		e.g. sizeof(DRV_LOG_DATA_IMP_T).
 //
 BOOLEAN
@@ -223,7 +223,7 @@ RemoveDrvLog(
 	OUT	PDRV_LOG_DATA_T	pDstLogData
 	)
 {
-	PDRV_LOG_POOL_T pLogPool = GET_DRV_LOG_POOL(pAdapter, eLogType); 
+	PDRV_LOG_POOL_T pLogPool = GET_DRV_LOG_POOL(pAdapter, eLogType);
 
 	PlatformAcquireSpinLock(pAdapter, RT_LOG_SPINLOCK);
 	if(pLogPool->LogCountUsed == 0)
@@ -238,8 +238,8 @@ RemoveDrvLog(
 		u4Byte LogCountMask = MaxLogCount - 1;
 
 		PlatformMoveMemory(
-			pDstLogData, 
-			pSrcLogData, 
+			pDstLogData,
+			pSrcLogData,
 			sizeof(DRV_LOG_DATA_T) + pSrcLogData->BufferLenUsed);
 		pLogPool->LogStartIndex = (pLogPool->LogStartIndex + 1) & LogCountMask;
 		pLogPool->LogCountUsed--;

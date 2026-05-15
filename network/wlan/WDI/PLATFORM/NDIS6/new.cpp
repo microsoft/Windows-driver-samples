@@ -45,7 +45,7 @@ void* __cdecl operator new(
     NT_ASSERT( AllocationContext == 0 );
 
     return pData;
-} 
+}
 
 
 void __cdecl operator delete(

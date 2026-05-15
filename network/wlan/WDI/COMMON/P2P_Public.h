@@ -1,10 +1,10 @@
 //---------------------------------------------------------------------------
 //
 // Copyright (c) 2014 Realtek Semiconductor, Inc. All rights reserved.
-// 
+//
 //---------------------------------------------------------------------------
 // Description:
-//		
+//
 //
 
 #ifndef __INC_P2P_PUBLIC_H
@@ -113,7 +113,7 @@ BOOLEAN
 p2p_validate_DevDiscReq(
 	IN  P2P_MESSAGE				*msg
 	);
-	
+
 BOOLEAN
 p2p_validate_DevDiscRsp(
 	IN  P2P_MESSAGE				*msg

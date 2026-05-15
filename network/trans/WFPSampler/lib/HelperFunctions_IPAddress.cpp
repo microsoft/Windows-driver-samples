@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -24,9 +24,9 @@
 //          }
 //       <Object>
 //          {
-//            IPAddressV4String - Function pertains to null terminated wide character string 
+//            IPAddressV4String - Function pertains to null terminated wide character string
 //                                   representaions of IPv4 Addresses
-//            IPAddressV6String - Function pertains to null terminated wide character string 
+//            IPAddressV6String - Function pertains to null terminated wide character string
 //                                   representaions of IPv6 Addresses
 //          }
 //       <Action>
@@ -62,7 +62,7 @@
 
 /**
  @helper_function="HlprIPAddressV4StringIsValidFormat"
- 
+
    Purpose: Determine if a string may be an IPv4 address by verifying the string:               <br>
                is at least 7 characters                                                         <br>
                has at least 3 decimals('.')                                                     <br>
@@ -115,7 +115,7 @@ BOOLEAN HlprIPAddressV4StringIsValidFormat(_In_ PCWSTR pIPAddress)
 
 /**
  @helper_function="HlprIPAddressV4StringToValue"
- 
+
    Purpose:  Convert a string representing an IPv4 Address to it's 4 BYTE value.                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -177,7 +177,7 @@ UINT32 HlprIPAddressV4StringToValue(_In_ PCWSTR pIPv4AddressString,
 
 /**
  @helper_function="HlprIPAddressV6StringIsValidFormat"
- 
+
    Purpose: Determine if a string may be an IPv6 address by verifying the string:               <br>
                is at least 3 characters                                                         <br>
                has at least 2 colons (':')                                                      <br>
@@ -231,7 +231,7 @@ BOOLEAN HlprIPAddressV6StringIsValidFormat(_In_ PCWSTR pIPAddress)
 
 /**
  @helper_function="HlprIPAddressV4StringToValue"
- 
+
    Purpose:  Convert a string representing an IPv6 Address to it's 16 BYTE value.               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

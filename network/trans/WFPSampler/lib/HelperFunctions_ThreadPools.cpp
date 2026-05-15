@@ -22,7 +22,7 @@
 
 /**
  @helper_function="HlprThreadPoolDataPurge"
- 
+
    Purpose:  Cleanup a THREADPOOL_DATA object.                                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -58,7 +58,7 @@ inline VOID HlprThreadPoolDataPurge(_Inout_ THREADPOOL_DATA* pThreadPoolData)
 
 /**
  @helper_function="HlprThreadPoolDataDestroy"
- 
+
    Purpose:  Cleanup and free a THREADPOOL_DATA object.                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -80,7 +80,7 @@ inline VOID HlprThreadPoolDataDestroy(_Inout_ THREADPOOL_DATA** ppThreadPoolData
 
 /**
  @helper_function="HlprThreadPoolDataPurge"
- 
+
    Purpose:  Cleanup a THREADPOOL_DATA object.                                                  <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using
@@ -123,7 +123,7 @@ UINT32 HlprThreadPoolDataPopulate(_Inout_ THREADPOOL_DATA* pThreadPoolData,
                    status);
 
       HLPR_BAIL;
-   }  
+   }
 
    SetThreadpoolCallbackPool(&(pThreadPoolData->callbackEnvironment),
                              pThreadPoolData->pThreadPool);
@@ -142,7 +142,7 @@ UINT32 HlprThreadPoolDataPopulate(_Inout_ THREADPOOL_DATA* pThreadPoolData,
 
 /**
  @helper_function="HlprThreadPoolDataDestroy"
- 
+
    Purpose:  Allocate and populate a THREADPOOL_DATA object.                                    <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using

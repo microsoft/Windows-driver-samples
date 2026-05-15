@@ -5,15 +5,15 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	HalComLed.h
-	
+
 Abstract:
 	LED related data structure and interface to manipulate LED.
-	    
+
 Major Change History:
 	When       Who               What
 	---------- ---------------   -------------------------------
 	2012-12-23 Isaiah           Create.
-	
+
 --*/
 
 //================================================================================
@@ -28,7 +28,7 @@ Major Change History:
 #define LED_INITIAL_INTERVAL			1800
 
 
-// LED Customerization 
+// LED Customerization
 
 //NETTRONIX
 #define LED_BLINK_NORMAL_INTERVAL_NETTRONIX	100
@@ -127,16 +127,16 @@ typedef	enum _LED_STATE{
 	LED_BLINK_RUNTOP = 13, 	// Customized for RunTop
 	LED_BLINK_CAMEO = 14,
 	LED_BLINK_XAVI = 15,
-	LED_BLINK_ALWAYS_ON = 16,	
+	LED_BLINK_ALWAYS_ON = 16,
 	LED_BLINK_LINK_IN_PROCESS = 17,  //Customized for Belkin AC950
 	LED_BLINK_AUTH_ERROR = 18,  //Customized for Belkin AC950
-	LED_BLINK_Azurewave_5Mbps = 19,		
-	LED_BLINK_Azurewave_10Mbps = 20,		
-	LED_BLINK_Azurewave_20Mbps = 21,		
-	LED_BLINK_Azurewave_40Mbps = 22,			
-	LED_BLINK_Azurewave_80Mbps = 23,		
-	LED_BLINK_Azurewave_MAXMbps = 24,		
-	LED_BLINK_LINK_IDEL = 25,	
+	LED_BLINK_Azurewave_5Mbps = 19,
+	LED_BLINK_Azurewave_10Mbps = 20,
+	LED_BLINK_Azurewave_20Mbps = 21,
+	LED_BLINK_Azurewave_40Mbps = 22,
+	LED_BLINK_Azurewave_80Mbps = 23,
+	LED_BLINK_Azurewave_MAXMbps = 24,
+	LED_BLINK_LINK_IDEL = 25,
 	LED_BLINK_WPS_LINKED = 26,
 	LED_BLINK_TIME_BY_REG = 27,
 	LED_BLINK_ECS_Below_1Mbps = 28,
@@ -155,7 +155,7 @@ typedef enum _LED_PIN{
 
 
 
-	
+
 
 //================================================================================
 // SDIO LED Definition.
@@ -176,7 +176,7 @@ typedef	enum _LED_STRATEGY_SDIO{
 	SW_LED_MODE2, // SW control 1 LED via GPIO0, customized for AzWave 8187 minicard.
 	SW_LED_MODE3, // SW control 1 LED via GPIO0, customized for Sercomm Printer Server case.
 	SW_LED_MODE4, //for Edimax / Belkin
-	SW_LED_MODE5, //for Sercomm / Belkin	
+	SW_LED_MODE5, //for Sercomm / Belkin
 	SW_LED_MODE6,	//for 88CU minicard, porting from ce SW_LED_MODE7
 	SW_LED_MODE7,	//for ECS
 	HW_LED, // HW control 2 LEDs, LED0 and LED1 (there are 4 different control modes, see MAC.CONFIG1 for details.)
@@ -196,15 +196,15 @@ typedef struct _LED_SDIO{
 	// ALPHA, added by chiyoko, 20090106
 	BOOLEAN				bLedNoLinkBlinkInProgress;
 	BOOLEAN				bLedLinkBlinkInProgress;
-	BOOLEAN				bLedStartToLinkBlinkInProgress;	
+	BOOLEAN				bLedStartToLinkBlinkInProgress;
 	BOOLEAN				bLedScanBlinkInProgress;
 	BOOLEAN				bLedWPSBlinkInProgress;
-	
+
 	u4Byte				BlinkTimes; // Number of times to toggle led state for blinking.
 	LED_STATE			BlinkingLedState; // Next state for blinking, either LED_ON or LED_OFF are.
 
 	RT_TIMER			BlinkTimer; // Timer object for led blinking.
-	RT_WORK_ITEM		BlinkWorkItem; // Workitem used by BlinkTimer to manipulate H/W to blink LED. 
+	RT_WORK_ITEM		BlinkWorkItem; // Workitem used by BlinkTimer to manipulate H/W to blink LED.
 } LED_SDIO, *PLED_SDIO;
 
 VOID
@@ -237,7 +237,7 @@ LedControlSDIO(
 		SwLedOn_8723D(_Adapter,_pLed);		\
 	else	 																													\
 		IS_HARDWARE_TYPE_8188E(_Adapter) ? SwLedOn_8188E(_Adapter, _pLed) : SwLedOn_Dummy(_Adapter, _pLed)
-		
+
 #define SwLedOff(_Adapter, _pLed) \
 	if(IS_HARDWARE_TYPE_8814A(_Adapter))	\
 		SwLedOff_8814A(_Adapter, _pLed);		\
@@ -257,13 +257,13 @@ LedControlSDIO(
 		SwLedOff_8723D(_Adapter,_pLed);					\
 	else																														\
 		IS_HARDWARE_TYPE_8188E(_Adapter) ? SwLedOff_8188E(_Adapter, _pLed) : SwLedOff_Dummy(_Adapter, _pLed)
-	
+
 
 VOID
 InitSwLeds(
 	IN	PADAPTER	Adapter
 	);
-	
+
 VOID
 DeInitSwLeds(
 	IN	PADAPTER	Adapter
@@ -280,5 +280,5 @@ SwLedOff_Dummy(
     IN	PADAPTER		Adapter,
     IN	PVOID		pLed
     );
-	
+
 #endif	/*__INC_HALCOMLED_H*/

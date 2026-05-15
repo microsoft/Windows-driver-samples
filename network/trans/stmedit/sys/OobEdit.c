@@ -40,7 +40,7 @@ StreamEditInitializeWorkitemPool(
         NT_ASSERT(Globals.WdmDevice);
         Status = LwInitializeQueue(Globals.WdmDevice, &Globals.ProcessingQueues[nCount],  StreamEditOobPoolWorker);
 
-        if (!NT_SUCCESS(Status)) 
+        if (!NT_SUCCESS(Status))
 		{
             DoTraceLevelMessage(TRACE_LEVEL_ERROR, CO_GENERAL, "Worker Queue Initialization failed with %!STATUS!", Status);
             break;
@@ -70,14 +70,14 @@ StreamOobInjectCompletionFn(
 
     DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_ENTER_EXIT, "-><- %!FUNC!: NBL %p, Status=%!STATUS!, MDL %p",  NetBufferList, NetBufferList->Status, mdl);
 
-    
+
     // Supress warning 28922: Redundant test against NULL. Pointer is already guaranteed to be non-NULL.
-    // Rationale : mdl is not guaranteed to be non-NULL here... 
-    
+    // Rationale : mdl is not guaranteed to be non-NULL here...
+
 #pragma prefast(push)
 #pragma prefast(disable:28922)
- 
-    if (mdl != NULL)  
+
+    if (mdl != NULL)
 	{
         //
         // The MDL mapped over a pool alloc which we need to free here.
@@ -225,7 +225,7 @@ StreamOobQueueUpOutgoingData(
 
     OutgoingData = (POUTGOING_STREAM_DATA)ExAllocateFromLookasideListEx(&Globals.LookasideList);
 
-    if (OutgoingData == NULL) 
+    if (OutgoingData == NULL)
 	{
         Status = STATUS_INSUFFICIENT_RESOURCES;
         return Status;
@@ -266,7 +266,7 @@ StreamOobFlushOutgoingData(
     {
         KeAcquireInStackQueuedSpinLock(&FlowContext->OobInfo.EditLock, &LockHandle);
 
-        if (!IsListEmpty(&FlowContext->OobInfo.OutgoingDataQueue)) 
+        if (!IsListEmpty(&FlowContext->OobInfo.OutgoingDataQueue))
 		{
             LIST_ENTRY* Entry = RemoveHeadList(&FlowContext->OobInfo.OutgoingDataQueue);
             OutgoingData = CONTAINING_RECORD(Entry, OUTGOING_STREAM_DATA, Link);
@@ -301,7 +301,7 @@ StreamOobFlushOutgoingData(
                         OutgoingData->Mdl
                     );
 
-        if (!NT_SUCCESS(Status)) 
+        if (!NT_SUCCESS(Status))
 		{
             DoTraceLevelMessage(TRACE_LEVEL_ERROR, CO_GENERAL,
                     "OobFlushOutgoingData: FwpsStreamInjectAsync() failed with Status %!STATUS!", Status);
@@ -316,7 +316,7 @@ StreamOobFlushOutgoingData(
     {
         while (OutgoingData != NULL)
         {
-            if (OutgoingData->isClone) 
+            if (OutgoingData->isClone)
 			{
                 FwpsDiscardClonedStreamData(OutgoingData->NetBufferList, 0, FALSE);
             }
@@ -333,7 +333,7 @@ StreamOobFlushOutgoingData(
             //
             KeAcquireInStackQueuedSpinLock(&FlowContext->OobInfo.EditLock, &LockHandle);
 
-            if (!IsListEmpty(&FlowContext->OobInfo.OutgoingDataQueue)) 
+            if (!IsListEmpty(&FlowContext->OobInfo.OutgoingDataQueue))
 			{
                 LIST_ENTRY* Entry = RemoveHeadList(&FlowContext->OobInfo.OutgoingDataQueue);
                 OutgoingData = CONTAINING_RECORD(Entry, OUTGOING_STREAM_DATA, Link);
@@ -419,7 +419,7 @@ StreamOobReinjectData(
                         &NetBufferList
                         );
 
-        if (!NT_SUCCESS(Status)) 
+        if (!NT_SUCCESS(Status))
 		{
             DoTraceLevelMessage(TRACE_LEVEL_ERROR, CO_GENERAL, "AllocateNetBufferAndNetBufferList failed with %!STATUS!\n", Status);
             break;
@@ -444,17 +444,17 @@ StreamOobReinjectData(
 
     if (!NT_SUCCESS(Status))
     {
-        if (NetBufferList != NULL) 
+        if (NetBufferList != NULL)
 		{
             FwpsFreeNetBufferList(NetBufferList);
         }
 
-        if (mdl != NULL) 
+        if (mdl != NULL)
 		{
             IoFreeMdl(mdl);
         }
 
-        if (DataCopy != NULL) 
+        if (DataCopy != NULL)
 		{
             ExFreePoolWithTag(DataCopy, STMEDIT_TAG_MDL_DATA );
         }
@@ -512,7 +512,7 @@ StreamOobInjectReplacement(
                             NULL
                             );
 
-        if (NT_SUCCESS(Status)) 
+        if (NT_SUCCESS(Status))
 		{
             NetBufferList = NULL;
         }
@@ -557,7 +557,7 @@ StreamOobCopyDataToFlatBuffer(
         streamData.dataOffset.netBufferOffset  = 0;
         streamData.dataOffset.streamDataOffset = 0;
 
-        if (!StreamEditCopyDataForInspection(TaskEntry->FlowCtx, &streamData, streamData.dataLength)) 
+        if (!StreamEditCopyDataForInspection(TaskEntry->FlowCtx, &streamData, streamData.dataLength))
 		{
 			Status = STATUS_INSUFFICIENT_RESOURCES;
         }
@@ -614,7 +614,7 @@ _Inout_ PTASK_ENTRY TaskEntry
 		TaskEntry->DataLength,
 		TaskEntry->StreamFlags,
 		FlowContext->OobInfo.PendedDataLength);
-	
+
     StreamData.dataLength = TaskEntry->DataLength;
     StreamData.netBufferListChain = TheNbl = TaskEntry->NetBufferList;
     StreamData.flags = TaskEntry->StreamFlags;
@@ -721,7 +721,7 @@ _Inout_ PTASK_ENTRY TaskEntry
                     if (i != 0)
                     {
                         Status = StreamOobReinjectData(FlowContext, dataStart, i, TaskEntry->StreamFlags);
-                        if (!NT_SUCCESS(Status)) 
+                        if (!NT_SUCCESS(Status))
 						{
                             goto Exit;
                         }
@@ -740,7 +740,7 @@ _Inout_ PTASK_ENTRY TaskEntry
                                     Globals.StringXLength
                                     );
 
-                    if (!NT_SUCCESS(Status)) 
+                    if (!NT_SUCCESS(Status))
 					{
                         goto Exit;
                     }
@@ -752,7 +752,7 @@ _Inout_ PTASK_ENTRY TaskEntry
 
                     // Still more data to be searched for the match
                     //
-                    if (FlowContext->ScratchDataLength > 0) 
+                    if (FlowContext->ScratchDataLength > 0)
 					{
                         dataStart = (BYTE*)FlowContext->ScratchBuffer + FlowContext->ScratchDataOffset;
                         --i;
@@ -770,7 +770,7 @@ _Inout_ PTASK_ENTRY TaskEntry
                 // 1 == FlowContext->OobInfo.RefCount ==> This is the last
                 // (data-processing) Task being processed for the flow
                 //
-                if (bIsLastNbl && FlowContext->bNoMoreData && (0 == FlowContext->OobInfo.PendingTasks)) 
+                if (bIsLastNbl && FlowContext->bNoMoreData && (0 == FlowContext->OobInfo.PendingTasks))
 				{
 					DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_GENERAL,
 						"FlowCtx %p -> giving up on partial match search - offset %lu, scratch length %Iu",
@@ -793,7 +793,7 @@ _Inout_ PTASK_ENTRY TaskEntry
                         "FlowCtx %p -> partial match @ offset %lu, match length %Iu",
                         FlowContext, i, (FlowContext->ScratchDataLength - i));
 
-                    if (i != 0) 
+                    if (i != 0)
 					{
                         // Inject any data before partial match back into the stream
                         //
@@ -804,7 +804,7 @@ _Inout_ PTASK_ENTRY TaskEntry
                                         TaskEntry->StreamFlags
                                      );
 
-                        if (!NT_SUCCESS(Status)) 
+                        if (!NT_SUCCESS(Status))
 						{
                             goto Exit;
                         }
@@ -871,7 +871,7 @@ _Inout_ PTASK_ENTRY TaskEntry
                                 TaskEntry->StreamFlags
                            );
 
-                if (!NT_SUCCESS(Status)) 
+                if (!NT_SUCCESS(Status))
 				{
                     goto Exit;
                 }
@@ -905,7 +905,7 @@ _Inout_ PTASK_ENTRY TaskEntry
                                     FlowContext->PartialSFlags
                                 );
 
-                    if (!NT_SUCCESS(Status)) 
+                    if (!NT_SUCCESS(Status))
 					{
                         goto Exit;
                     }
@@ -928,7 +928,7 @@ _Inout_ PTASK_ENTRY TaskEntry
                                     NULL
                                  );
 
-                    if (!NT_SUCCESS(Status)) 
+                    if (!NT_SUCCESS(Status))
 					{
                         goto Exit;
                     }
@@ -948,7 +948,7 @@ _Inout_ PTASK_ENTRY TaskEntry
                                 TaskEntry->StreamFlags
                             );
 
-                if (!NT_SUCCESS(Status)) 
+                if (!NT_SUCCESS(Status))
 				{
                     goto Exit;
                 }
@@ -986,7 +986,7 @@ _Inout_ PTASK_ENTRY TaskEntry
 				FlowContext->ScratchDataLength,
 				FlowContext->PartialSFlags);
 
-			if (!NT_SUCCESS(Status)) 
+			if (!NT_SUCCESS(Status))
 			{
 				goto Exit;
 			}
@@ -1004,7 +1004,7 @@ _Inout_ PTASK_ENTRY TaskEntry
     //
     Status = StreamOobFlushOutgoingData(FlowContext);
 
-    if (!NT_SUCCESS(Status)) 
+    if (!NT_SUCCESS(Status))
 	{
         goto Exit;
     }
@@ -1035,7 +1035,7 @@ _Inout_ PTASK_ENTRY TaskEntry
                             NULL
                         );
 
-        if (!NT_SUCCESS(Status)) 
+        if (!NT_SUCCESS(Status))
 		{
             DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_GENERAL, "FIN injection for FlowCtx %p failed with %!STATUS!", FlowContext, Status);
             goto Exit;
@@ -1046,7 +1046,7 @@ _Inout_ PTASK_ENTRY TaskEntry
 
 Exit:
 
-    if (TaskEntry->NetBufferList != NULL) 
+    if (TaskEntry->NetBufferList != NULL)
 	{
         FwpsDiscardClonedStreamData(TaskEntry->NetBufferList, 0, FALSE);
         TaskEntry->NetBufferList = NULL;
@@ -1086,7 +1086,7 @@ StreamEditOobProcessTask(
 
         Status = StreamOobEditData(TaskEntry);
 
-        if (!NT_SUCCESS(Status)) 
+        if (!NT_SUCCESS(Status))
 		{
             KeAcquireInStackQueuedSpinLock(&FlowCtx->OobInfo.EditLock, &LockHandle);
             FlowCtx->OobInfo.EditState = OOB_EDIT_ERROR;
@@ -1152,7 +1152,7 @@ StreamEditOobProcessTask(
         (VOID)StreamOobFlushOutgoingData(FlowCtx);
         Status = FwpsFlowAbort(FlowCtx->FlowHandle);
 
-        if (!NT_SUCCESS(Status)) 
+        if (!NT_SUCCESS(Status))
 		{
            (VOID) FwpsFlowRemoveContext(FlowCtx->FlowHandle, FlowCtx->LayerId, FlowCtx->CalloutId);
         }
@@ -1289,7 +1289,7 @@ OobEditClassify(
         return;
     }
 
-    if (FlowContext->bFlowTerminating) 
+    if (FlowContext->bFlowTerminating)
 	{
         DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_GENERAL,
                 "Received data classified after FIN for FlowCtx %p.", FlowContext);

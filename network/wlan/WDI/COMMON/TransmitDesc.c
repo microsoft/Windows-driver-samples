@@ -9,12 +9,12 @@
 *
 * Overview:	Decide whether protection mode is required to be enabled
 *			If protection is required to be enabled, decide how to send protection frame
-* 
-* Input:		
+*
+* Input:
 *		PADAPTER		Adapter,
 *		PRT_TCB			pTcb
 *
-* Output:				
+* Output:
 *		PRT_TCB			pTcb
 *
 *			(Following content of TCB will be changed)
@@ -53,8 +53,8 @@ _IOT_ProtectionFrame(
 		pTcb->bCTSEnable 	= TRUE;
 		Ret = TRUE;
 	}
-	
-	return Ret; 
+
+	return Ret;
 }
 
 void _RTS_CTS_settingframe(
@@ -66,7 +66,7 @@ void _RTS_CTS_settingframe(
 
 	if(_IOT_ProtectionFrame(Adapter, pTcb))
 		return;
-	
+
 	if(Adapter->RegWirelessMode <= WIRELESS_MODE_G)
 	{
 		pTcb->bRTSEnable 	= pMgntInfo->bForcedProtectRTSFrame;
@@ -95,15 +95,15 @@ _HT_ProtectionFrame(
 		return FALSE;
 
 	//3 Check HTInfo Operation Mode
-	if((HTOpMode == HT_OPMODE_MIXED) && 
-		(CHNL_RUN_ABOVE_40MHZ(pMgntInfo)  || 
+	if((HTOpMode == HT_OPMODE_MIXED) &&
+		(CHNL_RUN_ABOVE_40MHZ(pMgntInfo)  ||
 		!CHNL_RUN_ABOVE_40MHZ(pMgntInfo)))
 	{
 		pTcb->RTSRate = MGN_24M; // Rate is 24Mbps.
 		pTcb->bRTSEnable = TRUE;
 		return TRUE;
 	}
-	
+
 
 	//3 Check Dynamic MIMO Power save condition
 	if(ACTING_AS_AP(Adapter) || ACTING_AS_IBSS(Adapter))
@@ -140,25 +140,25 @@ _HT_ProtectionFrame(
 		else
 		{
 			pTcb->bRTSEnable = TRUE;
-		
-			if(IsFirstGoAdapter(Adapter) && 
+
+			if(IsFirstGoAdapter(Adapter) &&
 				(AsocEntry_GetEntry(pMgntInfo, pTcb->DestinationAddress) != NULL))
 			{
 				pTcb->bRTSEnable = FALSE;
 				pTcb->bCTSEnable = TRUE;
 				pTcb->bHwProtection = TRUE;
 				if(!Adapter->RASupport)
-					pTcb->RTSRate = MGN_24M; // Rate is 24Mbps.				
+					pTcb->RTSRate = MGN_24M; // Rate is 24Mbps.
 			}
 		}
-		
+
 		return (pTcb->bRTSEnable||pTcb->bCTSEnable);
 	}
 	else
 	{
-		if(IsFirstGoAdapter(Adapter) && 
+		if(IsFirstGoAdapter(Adapter) &&
 			(AsocEntry_GetEntry(pMgntInfo, pTcb->DestinationAddress) != NULL))
-		{				
+		{
 			pTcb->bRTSEnable = FALSE;
 			pTcb->bCTSEnable = TRUE;
 			if(!Adapter->RASupport)
@@ -194,13 +194,13 @@ MgntQuery_ProtectionFrame(
 	//When Bt only, we do not need to send RTS/CTS for better TP.
 	//But when connect to N mode AP with cuncurrent, we need send RTS/CTS
 	if(pTcb->bBTTxPacket && pMgntInfo->mAssoc)
-	{	
+	{
 		pTcb->bRTSSTBC			= FALSE;
 		pTcb->bRTSShort			= FALSE; // Since protection frames are always sent by legacy rate, ShortGI will never be used.
 		pTcb->bCTSEnable		= FALSE; // Most of protection using RTS/CTS
 		pTcb->RTSSC			= 0;		// 20MHz: Don't care;  40MHz: Duplicate.
 		pTcb->RTSCCA			= 0;
-		pTcb->RTSBW			= 0; // RTS frame bandwidth is always 20MHz	
+		pTcb->RTSBW			= 0; // RTS frame bandwidth is always 20MHz
 		//pTcb->bRTSEnable		=TRUE;
 		//pTcb->RTSRate			=MGN_11M;
 		return;
@@ -216,7 +216,7 @@ MgntQuery_ProtectionFrame(
 		pTcb->bNeedAckReply		= FALSE;
 		pTcb->bNeedCRCAppend	= TRUE;
 		goto NO_PROTECTION;
-	}	
+	}
 	else
 	{	// Unicast packet case
 		pTcb->bNeedAckReply		= TRUE;
@@ -233,16 +233,16 @@ MgntQuery_ProtectionFrame(
 
 		//3 Forced Protection mode
 		if(pMgntInfo->ForcedProtectionMode == PROTECTION_MODE_FORCE_ENABLE)
-		{				
+		{
 			_RTS_CTS_settingframe(Adapter, pTcb);
 			pTcb->RTSBW		= pMgntInfo->ForcedProtectBW;
 			pTcb->RTSSC		= pMgntInfo->ForcedProtectSC;
 			pTcb->RTSCCA		= pMgntInfo->ForcedProtectCCA;
-			pTcb->RTSRate		= pMgntInfo->ForcedProtectRate;				
+			pTcb->RTSRate		= pMgntInfo->ForcedProtectRate;
 			return;
 		}
 		else if(pMgntInfo->ForcedProtectionMode == PROTECTION_MODE_FORCE_DISABLE)
-		{			
+		{
 			goto NO_PROTECTION;
 		}
 
@@ -250,9 +250,9 @@ MgntQuery_ProtectionFrame(
 		if ( (pTcb->FragLength[0] > MgntActQuery_802_11_RTS_THRESHOLD(Adapter)) && (pTcb->bAggregate == FALSE))
 		{
 			if(IS_WIRELESS_MODE_N(Adapter))
-			{				
+			{
 				pTcb->RTSRate = MGN_24M; // Rate is 24Mbps.
-			}	
+			}
 			else
 			{
 				pTcb->RTSRate = ComputeAckRate( pMgntInfo->mBrates, pMgntInfo->HighestBasicRate );
@@ -293,12 +293,12 @@ MgntQuery_ProtectionFrame(
 		pTcb->RTSRate = Adapter->HalFunc.GetHwRateFromMRateHandler(RtsRate);
 	}
 
-	
+
 	// Determine RTS frame preamble mode.
 	if(pTcb->RTSRate == MGN_1M)
 		pTcb->bRTSShort = FALSE;
 	else
-		pTcb->bRTSShort = MgntIsShortPreambleMode( Adapter, pTcb );	
+		pTcb->bRTSShort = MgntIsShortPreambleMode( Adapter, pTcb );
 
 	return;
 
@@ -337,7 +337,7 @@ MgntQuery_PreambleMode(
 	)
 {
 	// 1M can only use Long Preamble. Ref. 802.11b 18.2.2.2. 2005.01.18, by rcnjko.
-	if(pTcb->DataRate == MGN_1M) 
+	if(pTcb->DataRate == MGN_1M)
 		pTcb->bUseShortPreamble = FALSE;
 	else
 		pTcb->bUseShortPreamble = MgntIsShortPreambleMode( Adapter, pTcb );
@@ -348,9 +348,9 @@ MgntQuery_PreambleMode(
 * Function:	MgntQuery_TxTime
 *
 * OverView:	Calculate Tx duration and RTS duration.
-*			This function needs to refer to protection mode, so calling this function after 
+*			This function needs to refer to protection mode, so calling this function after
 *			protection mode is determined.
-*			This function needs to refer to preamble mode, so calling this function after 
+*			This function needs to refer to preamble mode, so calling this function after
 *			protection mode is determined.
 * Input:
 *			PADAPTER		Adapter,
@@ -384,10 +384,10 @@ MgntQuery_TxTime(
 		// Figure out ACK rate according to BSS basic rate and Tx rate, 2006.03.08 by rcnjko.
 		AckRate = ComputeAckRate( Adapter->MgntInfo.mBrates, (u1Byte)(pTcb->DataRate) );
 		// Figure out ACK time according to the AckRate and assume long preamble is used on receiver, 2006.03.08, by rcnjko.
-		AckTime = ComputeTxTime( sAckCtsLng/8, AckRate, FALSE, FALSE);			
+		AckTime = ComputeTxTime( sAckCtsLng/8, AckRate, FALSE, FALSE);
 	}
 
-	
+
 	for(FragIndex = 0; FragIndex < pTcb->FragCount; FragIndex++)
 	{
 		//2 Initialize
@@ -397,8 +397,8 @@ MgntQuery_TxTime(
 		//2 Frame transmission time (Frame Body)
 		ThisFrameTime = ComputeTxTime(
 							pTcb->FragLength[FragIndex]+((pTcb->bNeedCRCAppend)?sCrcLng:0),
-							pTcb->DataRate, 
-							FALSE, 
+							pTcb->DataRate,
+							FALSE,
 							pTcb->bUseShortPreamble);
 
 		pTcb->TxDescDuration[FragIndex] += ThisFrameTime;
@@ -407,13 +407,13 @@ MgntQuery_TxTime(
 		if(FragIndex > 0)
 			pTcb->DurationFieldVal[FragIndex-1] += (ThisFrameTime + 2*aSifsTime + AckTime);
 
-			
+
 		//2 Ack transmission time (SIFS + ACK)
 		if(pTcb->bNeedAckReply)
 		{
 			pTcb->TxDescDuration[FragIndex] += (aSifsTime + AckTime);
 			pTcb->DurationFieldVal[FragIndex] += (aSifsTime + AckTime);
-		}			
+		}
 
 		//2Protection frame time (RTS + SIFS + CTS + SIFS)
 		if(pTcb->bRTSEnable)
@@ -440,18 +440,18 @@ MgntQuery_TxTime(
 
 /**
 * Function:	MgntQuery_AggregationCapability
-* 
+*
 * Overview:	Query whether the packet is allowed to be AMPDU aggregated.
 *			Query the Aggregation Capability. Including MPDUFactor and AMPDUDensity.
-* 
-* Input:		
+*
+* Input:
 * 		PADAPTER	Adapter
 *		pu1Byte		dstaddr
 *		PRT_TCB		pTcb
-* 			
-* Output:		
+*
+* Output:
 *		PRT_TCB		pTcb
-* Return:     	
+* Return:
 *		None
 */
 VOID
@@ -463,11 +463,11 @@ MgntQuery_AggregationCapability(
 {
 
 	PMGNT_INFO				pMgntInfo = &Adapter->MgntInfo;
-	PRT_HIGH_THROUGHPUT	pHTInfo = GET_HT_INFO(pMgntInfo);	
+	PRT_HIGH_THROUGHPUT	pHTInfo = GET_HT_INFO(pMgntInfo);
 	pu1Byte 					pFrame = GET_FRAME_OF_FIRST_FRAG(Adapter, pTcb);
 	PTX_TS_RECORD			pTxTs;
 	PRT_WLAN_STA			pEntry = NULL;
-#if (P2P_SUPPORT == 1)	
+#if (P2P_SUPPORT == 1)
 	PP2P_INFO				pP2PInfo = GET_P2P_INFO(Adapter);
 #endif
 
@@ -490,31 +490,31 @@ MgntQuery_AggregationCapability(
 	//
 	//if(pMgntInfo->dot11PowerSaveMode != eActive)
 		//return;
-	
+
 	if(!IsQoSDataFrame(pFrame) || IsSecProtEapol(pTcb->EncInfo.SecProtInfo) )
 		return;
-		
+
 	// Joseph 20090617: Fix TP low due to DHCP frame transmission.
 	// Some weird Ralink AP lease IP address only 60s. This produces a lot of DHCP frames.
 	// We just stop A-MPDU aggregation within first 4s after connection.
 	// At the rest of time, we do not aggregate DHCP and ARP packets and do not affect other packets.
 	if(	(pTcb->specialDataType == PACKET_DHCP||pTcb->specialDataType == PACKET_ARP||pTcb->specialDataType == PACKET_EAPOL)||//pTcb->specialDataType != PACKET_NORMAL || //change by ylb 20141222, Fix ICMP cannot aggregate AMPDU
-		((GetDefaultAdapter(Adapter)==Adapter) && 
+		((GetDefaultAdapter(Adapter)==Adapter) &&
 		 (GetDefaultAdapter(Adapter)->MgntInfo.CntAfterLink<2))	)
 		return;
-		
+
 	if(pMgntInfo->IOTAction & HT_IOT_ACT_TX_NO_AGGREGATION)
 		return;
-	
+
 	// For RTL819X, if pairwisekey = wep/tkip, we don't aggrregation.
 	if(!Adapter->HalFunc.GetNmodeSupportBySecCfgHandler(Adapter))
-		return; 
+		return;
 
 	if(WAPI_QuerySetVariable(Adapter, WAPI_QUERY, WAPI_VAR_NOTSETENCMACHEADER, 0))
 		return;
 
-	// Note : pHTInfo->bCurrentAMPDUEnable should be enabled only when AMPDU is enabled 
-	// in registry and current operation mode is HT. 
+	// Note : pHTInfo->bCurrentAMPDUEnable should be enabled only when AMPDU is enabled
+	// in registry and current operation mode is HT.
 	if(pHTInfo->bCurrentAMPDUEnable == FALSE)
 		return;
 
@@ -537,7 +537,7 @@ MgntQuery_AggregationCapability(
 		{
 			if(pEntry->IOTAction & HT_IOT_ACT_AMSDU_AMPDU)
 				;
-			else 
+			else
 				return;
 		}
 	}
@@ -545,7 +545,7 @@ MgntQuery_AggregationCapability(
 	{
 		if(pMgntInfo->IOTAction & HT_IOT_ACT_AMSDU_AMPDU)
 			;
-		else 
+		else
 			return;
 	}
 
@@ -554,13 +554,13 @@ MgntQuery_AggregationCapability(
 	// This part shall be integrate to other function.
 	//
 	RT_TRACE(COMP_QOS, DBG_TRACE, ("GetTs=%d\r\n", pMgntInfo->SecurityInfo.SecLvl));
-	
+
 	if(GetTs(Adapter, (PTS_COMMON_INFO*)(&pTxTs), dstaddr, pTcb->priority, TX_DIR, TRUE))
 	{
 		if(pTxTs->TxAdmittedBARecord.bValid == FALSE)
 		{
 			//
-			// Caution: Now we just establish ADDBA protocol and use A-MPDU for 
+			// Caution: Now we just establish ADDBA protocol and use A-MPDU for
 			// every transmission.
 			//
 			// For Vwifi to support AMPDU, while keep the default port behavior, by Bohn , 2009.10.01
@@ -581,7 +581,7 @@ MgntQuery_AggregationCapability(
 						bSecIsTxKeyInstalled = FALSE;
 				}
 				else
-				{						
+				{
 					bSecIsTxKeyInstalled = FALSE;
 				}
 			}
@@ -589,7 +589,7 @@ MgntQuery_AggregationCapability(
 			{// STA mode or Ad hoc mode
 				bSecIsTxKeyInstalled = SecIsTxKeyInstalled(Adapter, pMgntInfo->Bssid);
 			}
-			
+
 			if(pMgntInfo->SecurityInfo.SecLvl > RT_SEC_LVL_NONE && !bSecIsTxKeyInstalled)
 			{
 				RT_TRACE(COMP_QOS, DBG_TRACE, ("pMgntInfo->SecurityInfo.SecLv=%d\r\n", pMgntInfo->SecurityInfo.SecLvl));
@@ -611,7 +611,7 @@ MgntQuery_AggregationCapability(
 		}
 
 
-		//2 //(1)Decide whether aggregation is required according to protocol handshake		
+		//2 //(1)Decide whether aggregation is required according to protocol handshake
 		if(ACTING_AS_AP(Adapter) || ACTING_AS_IBSS(Adapter))
 		{
 			PRT_WLAN_STA pEntry = AsocEntry_GetEntry(pMgntInfo, dstaddr);
@@ -629,10 +629,10 @@ MgntQuery_AggregationCapability(
 		}
 		else
 		{
-			if(	(pTcb->bAggregate) && 
+			if(	(pTcb->bAggregate) &&
 				((pMgntInfo->IOTAction & HT_IOT_ACT_AMSDU_AMPDU) == 0))
 				goto FORCED_AGG_SETTING;
-		
+
 			pTcb->bAMPDUEnable = TRUE;
 			pTcb->AMPDUFactor = pHTInfo->CurrentAMPDUFactor;
 			pTcb->AMPDUDensity = pHTInfo->CurrentMPDUDensity;
@@ -643,16 +643,16 @@ MgntQuery_AggregationCapability(
 				TDLS_GetHtAMPDU(Adapter, dstaddr, pTcb);
 			}
 		}
-		
+
 	}
 	else if(pMgntInfo->IOTAction & HT_IOT_ACT_AMSDU_ENABLE)
 	{
-		// If driver does not use AMPDU by default but use A-MSDU instead, and packet 
+		// If driver does not use AMPDU by default but use A-MSDU instead, and packet
 		// size is small. We do this because we hope TCP ack packet can be aggregated
 		if(pTcb->bAggregate == FALSE && pTcb->PacketLength <= 200 &&
 			pMgntInfo->IOTPeer!= HT_IOT_PEER_REALTEK_92SE &&
-			pMgntInfo->IOTPeer!=HT_IOT_PEER_REALTEK	)	
-		{			
+			pMgntInfo->IOTPeer!=HT_IOT_PEER_REALTEK	)
+		{
 			pTcb->bAMPDUEnable = TRUE;
 			pTcb->AMPDUFactor = pHTInfo->CurrentAMPDUFactor;
 			pTcb->AMPDUDensity = pHTInfo->CurrentMPDUDensity;
@@ -660,12 +660,12 @@ MgntQuery_AggregationCapability(
 	}
 	else if(TDLS_IsTxTDLSPacket(Adapter, pTcb))
 	{
-		TDLS_CheckAggregation(Adapter, dstaddr, pTcb);	
+		TDLS_CheckAggregation(Adapter, dstaddr, pTcb);
 	}
-	
+
 FORCED_AGG_SETTING:
 	//2//
-	//2 //(2) The OID control may overwrite protocol handshake 
+	//2 //(2) The OID control may overwrite protocol handshake
 	//2//
 	switch(pHTInfo->ForcedAMPDUMode )
 	{
@@ -676,16 +676,16 @@ FORCED_AGG_SETTING:
 					// Temply used to fix long run chariot may drop half ,as AMPDU not enable(Add BA not success).zhiyuan 2012/05/09
 					pTcb->bAMPDUEnable = TRUE;
 					pTcb->AMPDUDensity = pHTInfo->ForcedMPDUDensity;
-					pTcb->AMPDUFactor = pHTInfo->ForcedAMPDUFactor;		
-				}				
+					pTcb->AMPDUFactor = pHTInfo->ForcedAMPDUFactor;
+				}
 				break;
-				
+
 		case HT_AMPDU_ENABLE:
 				pTcb->bAMPDUEnable = TRUE;
 				pTcb->AMPDUDensity = pHTInfo->ForcedMPDUDensity;
 				pTcb->AMPDUFactor = pHTInfo->ForcedAMPDUFactor;
 				break;
-				
+
 		case HT_AMPDU_DISABLE:
 				pTcb->bAMPDUEnable = FALSE;
 				pTcb->AMPDUDensity = 0;
@@ -694,26 +694,26 @@ FORCED_AGG_SETTING:
 
 		default:
 			break;
-			
-	}	
+
+	}
 }
 
 
-BOOLEAN 
-MgntQuery_RA_ShortGI(	
+BOOLEAN
+MgntQuery_RA_ShortGI(
 	IN	PADAPTER			Adapter,
 	IN	u1Byte				macId,
 	IN	PRT_WLAN_STA		pEntry,
 	IN	WIRELESS_MODE		WirelessMode,
 	IN	CHANNEL_WIDTH		ChnlBW
 )
-{	
+{
 	BOOLEAN						bShortGI;
 	PMGNT_INFO					pMgntInfo = &Adapter->MgntInfo;
 	PRT_HIGH_THROUGHPUT			pHTInfo = GET_HT_INFO(pMgntInfo);
 	PRT_VERY_HIGH_THROUGHPUT	pVHTInfo = GET_VHT_INFO(pMgntInfo);
 	BOOLEAN	bShortGI20MHz = FALSE,bShortGI40MHz = FALSE, bShortGI80MHz = FALSE;
-	
+
 	if(IS_N_WIRELESS_MODE(WirelessMode))
 	{
 		if(macId == MAC_ID_STATIC_FOR_BROADCAST_MULTICAST)
@@ -753,7 +753,7 @@ MgntQuery_RA_ShortGI(
 	}
 
 	return bShortGI;
-}	
+}
 
 
 VOID
@@ -778,7 +778,7 @@ MgntQuery_ShortGI(
 
 		if(Adapter->RASupport)
 		{
-			bUseSGI = pTcb->macId; 
+			bUseSGI = pTcb->macId;
 			Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_RA_SGI, (pu1Byte)&bUseSGI);
 			if(bUseSGI)
 				pTcb->bUseShortGI = TRUE;
@@ -831,9 +831,9 @@ MgntQuery_Tx_LDPC(
 	else if(pHTInfo->bCurrentHTSupport == FALSE)
 		pTcb->bLDPC = FALSE;
 	else if(ACTING_AS_AP(Adapter) || ACTING_AS_IBSS(Adapter))
-	{ 
+	{
 		pu1Byte 		pRaddr = Frame_pRaddr(osMpdu);
-		PRT_WLAN_STA	pEntry = AsocEntry_GetEntry(pMgntInfo, pRaddr);	
+		PRT_WLAN_STA	pEntry = AsocEntry_GetEntry(pMgntInfo, pRaddr);
 
 		if(pEntry == NULL)
 			pTcb->bLDPC = FALSE;
@@ -848,7 +848,7 @@ MgntQuery_Tx_LDPC(
 		{
 			if(TEST_FLAG(pEntry->HTInfo.LDPC, LDPC_HT_ENABLE_TX))
 				pTcb->bLDPC = TRUE;
-			else 
+			else
 				pTcb->bLDPC = FALSE;
 		}
 		else
@@ -862,15 +862,15 @@ MgntQuery_Tx_LDPC(
 				pTcb->bLDPC =TRUE;
 			else
 				pTcb->bLDPC = FALSE;
-		}	
+		}
 		else
 		{
 			if(TEST_FLAG(pHTInfo->HtCurLdpc, LDPC_HT_ENABLE_TX) )
 				pTcb->bLDPC =TRUE;
 			else
 				pTcb->bLDPC = FALSE;
-		}	
-	}	
+		}
+	}
 }	/* MgntQuery_LDPC */
 
 
@@ -917,7 +917,7 @@ MgntSet_TX_LDPC(
 				SET_FLAG(pVHTInfo->VhtCurLdpc, LDPC_VHT_ENABLE_TX);
 			else
 				CLEAR_FLAG(pVHTInfo->VhtCurLdpc, LDPC_VHT_ENABLE_TX);
-		}	
+		}
 		else
 		{
 			if(bLDPC && TEST_FLAG(pHTInfo->HtCurLdpc, LDPC_HT_CAP_TX))
@@ -960,14 +960,14 @@ MgntQuery_Tx_STBC(
 	else if(pHTInfo->bCurrentHTSupport == FALSE)
 		pTcb->bSTBC = FALSE;
 	else if(ACTING_AS_AP(Adapter) || ACTING_AS_IBSS(Adapter))
-	{ 
+	{
 		pu1Byte			pRaddr = Frame_pRaddr(osMpdu);
-		PRT_WLAN_STA	pEntry = AsocEntry_GetEntry(pMgntInfo, pRaddr);	
+		PRT_WLAN_STA	pEntry = AsocEntry_GetEntry(pMgntInfo, pRaddr);
 
 		if(pEntry == NULL)
 			pTcb->bSTBC = FALSE;
  		else
-		{ 
+		{
 			if(IS_AC_WIRELESS_MODE(pEntry->WirelessMode))
  			{
 				if(pEntry->VHTInfo.STBC)
@@ -982,8 +982,8 @@ MgntQuery_Tx_STBC(
 				if(pEntry->HTInfo.STBC)
 				{
 					pTcb->bSTBC = TRUE;
-				}	
-				else 
+				}
+				else
 					pTcb->bSTBC = FALSE;
 			}
 			else
@@ -1000,18 +1000,18 @@ MgntQuery_Tx_STBC(
 			}
 			else
 				pTcb->bSTBC = FALSE;
-		}	
+		}
 		else
 		{
 			if(TEST_FLAG(pHTInfo->HtCurStbc, STBC_HT_ENABLE_TX) )
 			{
 				pTcb->bSTBC =TRUE;
-			}	
+			}
 			else
 				pTcb->bSTBC = FALSE;
-		}	
+		}
 	}
-}	
+}
 
 
 VOID
@@ -1026,7 +1026,7 @@ MgntQuery_BandwidthMode(
 	OCTET_STRING				osMpdu;
 
 	FillOctetString(osMpdu, GET_FRAME_OF_FIRST_FRAG(Adapter, pTcb), (u2Byte)pTcb->BufferList[0].Length);
-	
+
 	if(pHTInfo->bCurrentHTSupport == FALSE)
 		return;
 	else if(IsFrameTypeCtrl(osMpdu.Octet) || IsFrameTypeMgnt(osMpdu.Octet))
@@ -1045,14 +1045,14 @@ MgntQuery_BandwidthMode(
 	if(ACTING_AS_AP(Adapter) || ACTING_AS_IBSS(Adapter))
 	{
 		pu1Byte 		pRaddr = Frame_pRaddr(osMpdu);
-		PRT_WLAN_STA	pEntry = AsocEntry_GetEntry(pMgntInfo, pRaddr);	
+		PRT_WLAN_STA	pEntry = AsocEntry_GetEntry(pMgntInfo, pRaddr);
 
 		if(pEntry == NULL)
 			pTcb->BWOfPacket = CHANNEL_WIDTH_20;
 		else
 		{
 			if((GetDefaultAdapter(Adapter)->MgntInfo.bForceGoTxData20MBw == TRUE) && IsFirstGoAdapter(Adapter))
-				pTcb->BWOfPacket = CHANNEL_WIDTH_20;	
+				pTcb->BWOfPacket = CHANNEL_WIDTH_20;
 			else
 				pTcb->BWOfPacket = pEntry->BandWidth;
 		}
@@ -1072,18 +1072,18 @@ MgntQuery_BandwidthMode(
 
 VOID
 MgntSet_RA_Ratr_Index(
-	IN	PMGNT_INFO			pMgntInfo,	
+	IN	PMGNT_INFO			pMgntInfo,
 	IN	MAC_ID_OWNER_TYPE	MacIdOwnerType,
 	IN	u1Byte				ratr_index,
 	IN	PRT_WLAN_STA		pEntry
 	)
 {
 	switch(MacIdOwnerType){
-		
+
 	case MAC_ID_OWNER_BT:
 		pMgntInfo->BT_RatrInx = ratr_index;
 		break;
-	case MAC_ID_OWNER_INFRA_STA: 
+	case MAC_ID_OWNER_INFRA_STA:
 	case MAC_ID_OWNER_DEFAULT_PORT:
 		pMgntInfo->ratr_index = ratr_index;
 		break;
@@ -1142,7 +1142,7 @@ MgntQuery_TxRateSelectMode(
 	{
 		// STA mode
 		if(pMgntInfo->mAssoc && !ACTING_AS_AP(Adapter))
-		{		
+		{
 			//Sinda 20150827, should assign a value to OdmAid to avoud ODM access NULL.
 			// 0 mean station entry of default port.
 			pTcb->OdmAid = 0;
@@ -1150,9 +1150,9 @@ MgntQuery_TxRateSelectMode(
 		else if(pMgntInfo->mIbss || ACTING_AS_AP(Adapter))
 		{
 			pEntry = AsocEntry_GetEntry(pMgntInfo, pTcb->DestinationAddress);
-			
+
 			if(pEntry != NULL)
-			{				
+			{
 				// This is used for ODM Luke's requirement, they want to use AID corresponding SUM ID num for
 				// collect RX PHY status info, we should take multi-port consideration,
 				// revised by Roger, 2013.10.15.
@@ -1164,19 +1164,19 @@ MgntQuery_TxRateSelectMode(
 				// 0 mean station entry of default port.
 				pTcb->OdmAid = 0;
 			}
-			
+
 			if(pTcb->bTxUseDriverAssingedRate == FALSE)
 			{
 				if(pTcb->bBroadcast || pTcb->bMulticast)
 				{
-						pTcb->DataRate = pMgntInfo->LowestBasicRate; 
-					
+						pTcb->DataRate = pMgntInfo->LowestBasicRate;
+
 					pTcb->bTxUseDriverAssingedRate = TRUE;
 				}
 				else if(pEntry != NULL)
 				{
 					if((pEntry->AssociatedMacId >= MacIdHalGetMaxHWMacId(Adapter))  && (pEntry->DataRate != 0))
-					{	
+					{
 						pTcb->DataRate = pEntry->DataRate;
 						pTcb->bSpecifShortGI = TRUE;
 						pTcb->bUseShortGI = pEntry->bUseShortGI;
@@ -1201,7 +1201,7 @@ MgntQuery_TxRateSelectMode(
 	if(pTcb->bTxDisableRateFallBack == FALSE)
 	{
 		u1Byte	ratr_index = pMgntInfo->Multi_RatrInx;
-		
+
 		if(pTcb->bBTTxPacket)
 			ratr_index = pMgntInfo->BT_RatrInx;
 		else if(ACTING_AS_AP(Adapter) || ACTING_AS_IBSS(Adapter))
@@ -1228,24 +1228,24 @@ MgntQuery_TxRateSelectMode(
 
 /**
 * Function:	FillFrameField
-* 
+*
 * Overview:	Filling the per frame information into each frame header.
 *			Now we only insert duration field and seqeunce number in this function.
-* 
-* Input:		
+*
+* Input:
 *	PRT_TCB		pTcb,
 *	u2Byte		SeqNum
-* 			
-* Output:		
+*
+* Output:
 *	PRT_TCB		pTcb
 *				(Frame in the Buffer of pTcb will be modified)
-* 		
-* Return:     	
+*
+* Return:
 *		None
 */
 VOID
 FillFrameField(
-	PADAPTER	Adapter,	
+	PADAPTER	Adapter,
 	PRT_TCB		pTcb,
 	u2Byte		SeqNum
 	)
@@ -1267,12 +1267,12 @@ FillFrameField(
 			SET_80211_HDR_DURATION(pTcb->BufferList[BufferIndex].VirtualAddress+HwDescOffset, pTcb->DurationFieldVal[FragIndex]);
 		}
 
-		// Seq numbers are not assigned to control frames. 
+		// Seq numbers are not assigned to control frames.
 		if(IsCtrlFrame(pFrame) == FALSE)
 		{
 			SET_80211_HDR_SEQUENCE(pTcb->BufferList[BufferIndex].VirtualAddress+HwDescOffset, SeqNum);
-		}	
+		}
 
 		BufferIndex += pTcb->FragBufCount[FragIndex];
-	}	
+	}
 }

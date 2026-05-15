@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -66,7 +66,7 @@
 
 /**
  @helper_function="HlprFwpmCalloutDeleteByKey"
- 
+
    Purpose:  Wrapper for the FwpmCalloutDeleteByKey API                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -115,7 +115,7 @@ UINT32 HlprFwpmCalloutDeleteByKey(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmCalloutAdd"
- 
+
    Purpose:  Wrapper for the FwpmCalloutAdd API                                                 <br>
                                                                                                 <br>
    Notes:    Callout ID is written to pCallout->calloutId.                                      <br>
@@ -163,7 +163,7 @@ UINT32 HlprFwpmCalloutAdd(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmCalloutRemoveAll"
- 
+
    Purpose:  Remove all callouts associated with the specified provider.                        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -234,7 +234,7 @@ UINT32 HlprFwpmCalloutRemoveAll(_In_opt_ HANDLE* pEngineHandle,
 
 /**
  @helper_function="HlprFwpmCalloutEnum"
- 
+
    Purpose:  Wrapper for the FwpmCalloutEnum API                                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -293,7 +293,7 @@ UINT32 HlprFwpmCalloutEnum(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmCalloutDestroyEnumHandle"
- 
+
    Purpose:  Wrapper for the FwpmCalloutDestroyEnumHandle API                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -343,7 +343,7 @@ UINT32 HlprFwpmCalloutDestroyEnumHandle(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmCalloutCreateEnumHandle"
- 
+
    Purpose:  Wrapper for the FwpmCalloutCreateEnumHandle API                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

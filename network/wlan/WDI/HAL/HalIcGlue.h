@@ -292,7 +292,7 @@
 
 #define SET_TX_DESC_USB_TXAGG_NUM_8188F(__pTxDesc, __Value)
 
-void PHY_IQCalibrate_8188F(	
+void PHY_IQCalibrate_8188F(
 #if (DM_ODM_SUPPORT_TYPE & ODM_AP)
 	IN PDM_ODM_T		pDM_Odm,
 #else
@@ -419,11 +419,11 @@ void PHY_IQCalibrate_8188F(
 #define	REG_RXQ_TXBD_IDX_8192E			0x03B4
 #define		rA_RSSIDump_92E 			0xcb0
 #define		rB_RSSIDump_92E 			0xcb1
-#define		rS1_RXevmDump_92E			0xcb2 
+#define		rS1_RXevmDump_92E			0xcb2
 #define		rS2_RXevmDump_92E			0xcb3
 #define		rA_RXsnrDump_92E			0xcb4
 #define		rB_RXsnrDump_92E			0xcb5
-#define		rA_CfoShortDump_92E		0xcb6 
+#define		rA_CfoShortDump_92E		0xcb6
 #define		rB_CfoShortDump_92E		0xcb8
 #define   	rA_CfoLongDump_92E			0xcba
 #define		rB_CfoLongDump_92E			0xcbc
@@ -864,7 +864,7 @@ HalSetFWWoWlanMode8723B(
 	);
 
 VOID
-HalSetFwKeepAliveCmd8723B(	
+HalSetFwKeepAliveCmd8723B(
 	IN	PADAPTER	pAdapter,
 	IN	BOOLEAN bFuncEn
 	);
@@ -904,7 +904,7 @@ SetFwWiFiCalibrationCmd_8723B(
 	);
 
 VOID
-FillH2CCmd8723B(	
+FillH2CCmd8723B(
 	IN	PADAPTER		Adapter,
 	IN	u1Byte	ElementID,
 	IN	u4Byte	CmdLen,
@@ -939,13 +939,13 @@ HalDownloadRSVDPage8723BE(
 	);
 
 u1Byte
-hal_DBIRead_8723BE(	
+hal_DBIRead_8723BE(
 	IN	PADAPTER 	Adapter,
 	IN 	u2Byte		Addr
 	);
 
 VOID
-hal_DBIWrite_8723BE(	
+hal_DBIWrite_8723BE(
 	IN	PADAPTER 	Adapter,
 	IN 	u2Byte		Addr,
 	IN	u1Byte		Data
@@ -1057,7 +1057,7 @@ PHY_GetTxPowerIndex_8723B(
 	IN	PADAPTER			Adapter,
 	IN	u1Byte					RFPath,
 	IN	u1Byte				Rate,
-	IN	CHANNEL_WIDTH		BandWidth,	
+	IN	CHANNEL_WIDTH		BandWidth,
 	IN	u1Byte				Channel
 	);
 
@@ -1065,11 +1065,11 @@ VOID
 PHY_SetTxPowerIndex_8723B(
 	IN	PADAPTER			Adapter,
 	IN	u4Byte				PowerIndex,
-	IN	u1Byte				RFPath, 
+	IN	u1Byte				RFPath,
 	IN	u1Byte				Rate
 	);
 
-u4Byte 
+u4Byte
 PHY_GetTxBBSwing_8723B(
 	IN	PADAPTER	Adapter,
 	IN	BAND_TYPE 	Band,
@@ -1094,13 +1094,13 @@ TxDescriptorChecksum_8723B(
 
 VOID
 SwLedOn_8723B(
-	IN	PADAPTER			Adapter, 
+	IN	PADAPTER			Adapter,
 	IN	PLED_SDIO			pLed
 	);
 
 VOID
 SwLedOff_8723B(
-	IN	PADAPTER			Adapter, 
+	IN	PADAPTER			Adapter,
 	IN	PLED_SDIO			pLed
 	);
 

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //
 // Copyright (c) 2015 Realtek Semiconductor, Inc. All rights reserved.
-// 
+//
 //---------------------------------------------------------------------------
 // Description:
 //		Defines values specified in the WFA P2P Specification.
@@ -15,7 +15,7 @@
 
 #define P2P_MAX_GO_INTENT 15
 
-typedef	enum _P2P_ATTR_ID 
+typedef	enum _P2P_ATTR_ID
 {
 	P2P_ATTR_STATUS = 0,
 	P2P_ATTR_MINOR_REASON_CODE = 1,
@@ -47,7 +47,7 @@ typedef	enum _P2P_ATTR_ID
 	P2P_ATTR_ADV_SVC_INFO = 25,
 	P2P_ATTR_SESSION_ID_INFO = 26,
 	P2P_ATTR_FEATURE_CAP_INFO = 27,
-	
+
 	P2P_ATTR_VENDOR_SPECIFIC = 221
 }P2P_ATTR_ID, *PP2P_ATTR_ID;
 
@@ -83,7 +83,7 @@ typedef enum _P2P_ACTION_FRAME_TYPES
 }P2P_ACTION_FRAME_TYPES, *PP2P_ACTION_FRAME_TYPES;
 
 // P2P public action frames
-typedef enum _P2P_PUBLIC_ACTION_FRAME_TYPES 
+typedef enum _P2P_PUBLIC_ACTION_FRAME_TYPES
 {
 	P2P_GO_NEG_REQ = 0,
 	P2P_GO_NEG_RSP = 1,

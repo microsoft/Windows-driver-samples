@@ -33,7 +33,7 @@ p2pattr_make_DevType(
 	FrameBuf_Add_be_u2(pBuf, catId);
 	FrameBuf_Add_Data(pBuf, oui, 4);
 	FrameBuf_Add_be_u2(pBuf, subCatId);
-	
+
 	return;
 }
 
@@ -45,7 +45,7 @@ p2pattr_make_WpsDevType(
 	)
 {
 	p2pattr_make_DevType(pBuf, type->CategoryId, type->Oui, type->SubCategoryId);
-	
+
 	return;
 }
 
@@ -54,11 +54,11 @@ VOID
 p2pattr_make_WpsSecDevTypeList(
 	IN  FRAME_BUF				*pBuf,
 	IN  u1Byte					numSecDevType,
-	IN  const P2P_WPS_ATTRIBUTES_DEVICE_TYPE *pSecDevTypeList 
+	IN  const P2P_WPS_ATTRIBUTES_DEVICE_TYPE *pSecDevTypeList
 	)
 {
 	u1Byte 						itTypeList = 0;
-	
+
 	FrameBuf_Add_u1(pBuf, numSecDevType);
 	for(itTypeList = 0; itTypeList < numSecDevType; itTypeList++)
 	{
@@ -98,7 +98,7 @@ p2pattr_make_CliInfoDesc(
 	if(NULL == (pLen = FrameBuf_Add(pBuf, 1))) return;
 
 	initBufLen = FrameBuf_Length(pBuf);
-	
+
 	FrameBuf_Add_Data(pBuf, pDesc->DeviceAddress, 6);
 	FrameBuf_Add_Data(pBuf, pDesc->InterfaceAddress, 6);
 	FrameBuf_Add_u1(pBuf, pDesc->DeviceCapability);
@@ -109,7 +109,7 @@ p2pattr_make_CliInfoDesc(
 
 	if(FrameBuf_Length(pBuf) - initBufLen > 0 && FrameBuf_Length(pBuf) - initBufLen < 0xFF)
 	{
-		*pLen = (u1Byte)(FrameBuf_Length(pBuf) - initBufLen);		
+		*pLen = (u1Byte)(FrameBuf_Length(pBuf) - initBufLen);
 	}
 
 	return;
@@ -123,17 +123,17 @@ p2pattr_make_CliInfoDescList(
 	)
 {
 	u1Byte						itList = 0;
-	
+
 	for(itList = 0; itList < ASSOCIATE_ENTRY_NUM; itList++)
 	{
 		const RT_WLAN_STA 		*pEntry = pCliList + itList;
-				
+
 		if(!(pEntry->bUsed && pEntry->bAssociated && pEntry->bP2PClient))
 			continue;
 
 		p2pattr_make_CliInfoDesc(pBuf, pEntry);
 	}
-	
+
 	return;
 }
 
@@ -148,12 +148,12 @@ p2pattr_make_IntfAddrList(
 	u1Byte						itList = 0;
 
 	FrameBuf_Add_u1(pBuf, numIntfAddr);
-	
+
 	for(itList = 0; itList < numIntfAddr; itList++)
 	{
 		FrameBuf_Add_Data(pBuf, intfAddrList + (6 * itList), 6);
 	}
-	
+
 	return;
 }
 
@@ -169,10 +169,10 @@ p2pattr_Make_ChannelEntryList(
 	{
 		if(!commonChannels->regClass[it].channels)
 			continue;
-		
-		P2PAttr_Make_ChannelEntry(pBuf, 
-			commonChannels->regClass[it].regClass, 
-			commonChannels->regClass[it].channels, 
+
+		P2PAttr_Make_ChannelEntry(pBuf,
+			commonChannels->regClass[it].regClass,
+			commonChannels->regClass[it].channels,
 			commonChannels->regClass[it].channel);
 	}
 
@@ -202,7 +202,7 @@ P2PAttr_Make_Status(
 	FrameBuf_Add_u1(pBuf, P2P_ATTR_STATUS);
 	FrameBuf_Add_le_u2(pBuf, 1);
 	FrameBuf_Add_u1(pBuf, status);
-	
+
 	//RT_TRACE_F(COMP_P2P, FrameBuf_DbgLevel(pBuf), ("[%s] statue: %u, channel: %u\n", MOD_TRACE_TAG, status));
 
 	return;
@@ -217,7 +217,7 @@ P2PAttr_Make_MinorReasonCode(
 	FrameBuf_Add_u1(pBuf, P2P_ATTR_MINOR_REASON_CODE);
 	FrameBuf_Add_le_u2(pBuf, 1);
 	FrameBuf_Add_u1(pBuf, minorReasonCode);
-	
+
 	RT_TRACE_F(COMP_P2P, FrameBuf_DbgLevel(pBuf), ("[%s] minor reason code: %u\n", MOD_TRACE_TAG, minorReasonCode));
 
 	return;
@@ -236,7 +236,7 @@ P2PAttr_Make_Capability(
 	FrameBuf_Add_u1(pBuf, grpCap);
 
 	RT_TRACE_F(COMP_P2P, FrameBuf_DbgLevel(pBuf), ("[%s] devCap: %02X, grpCap: %02X\n", MOD_TRACE_TAG, devCap, grpCap));
-	
+
 	return;
 }
 
@@ -270,7 +270,7 @@ P2PAttr_Make_GoIntent(
 	return;
 }
 
-VOID 
+VOID
 P2PAttr_Make_ConfigTimeout(
 	IN  FRAME_BUF				*pBuf,
 	IN  u1Byte 					goTimeout,
@@ -306,7 +306,7 @@ P2PAttr_Make_ListenChannel(
 	return;
 }
 
-VOID 
+VOID
 P2PAttr_Make_GroupBssid(
 	IN  FRAME_BUF				*pBuf,
 	IN  const pu1Byte			grpBssid
@@ -321,7 +321,7 @@ P2PAttr_Make_GroupBssid(
 	return;
 }
 
-VOID 
+VOID
 P2PAttr_Make_ExtListenTiming(
 	IN  FRAME_BUF				*pBuf,
 	IN  u2Byte					period,
@@ -338,7 +338,7 @@ P2PAttr_Make_ExtListenTiming(
 	return;
 }
 
-VOID 
+VOID
 P2PAttr_Make_IntendedIntfAddr(
 	IN  FRAME_BUF				*pBuf,
 	IN  const pu1Byte			intfAddr
@@ -380,7 +380,7 @@ P2PAttr_Make_ChannelEntry(
 
 	if(0 == nChannels)
 		return;
-	
+
 	// Regulatory class
 	FrameBuf_Add_u1(pBuf, regClass);
 
@@ -388,7 +388,7 @@ P2PAttr_Make_ChannelEntry(
 	FrameBuf_Add_u1(pBuf, nChannels);
 
 	// Channel list
-	for(it = 0; it < nChannels; it++) 
+	for(it = 0; it < nChannels; it++)
 		FrameBuf_Add_u1(pBuf, channelList[it]);
 
 	return;
@@ -412,13 +412,13 @@ P2PAttr_Make_ChannelList(
 			#if (MULTICHANNEL_SUPPORT == 1)	// For Compilation: Only PCI-E Support MultiChannel Now
 
 			u1Byte uPortConnected20MhzChannel = MultiChannelGetPortConnected20MhzChannel(GetDefaultAdapter(pP2PInfo->pAdapter));
-			
+
 			MgntActSet_P2PChannelList(
-					pP2PInfo->pAdapter, 
-					1, 
+					pP2PInfo->pAdapter,
+					1,
 					&uPortConnected20MhzChannel
 				);
-			
+
 			#endif
 		#endif
 		}
@@ -439,7 +439,7 @@ P2PAttr_Make_ChannelList(
 	return;
 }
 
-VOID 
+VOID
 P2PAttr_Make_Noa(
 	IN  FRAME_BUF 				*pBuf,
 	IN  u1Byte					noaIEIndex,
@@ -493,19 +493,19 @@ P2PAttr_Make_NoaFromPsSet(
 	for(itNoaDesc = 0; itNoaDesc < P2P_MAX_NUM_NOA_DESC; itNoaDesc++)
 	{
 		u1Byte					countType = 0;
-		
+
 		if(FALSE == pPs->NoASet[itNoaDesc].bNoAEn) continue;
 
 		if(2 < pPs->NoASet[itNoaDesc].NoACnt || pPs->NoASet[itNoaDesc].NoACnt < 1)
 			countType = 1;
-		else 
+		else
 			countType = pPs->NoASet[itNoaDesc].NoACnt;
-			
+
 		FrameBuf_Add_u1(pBuf, countType);
 		FrameBuf_Add_le_u4(pBuf, pPs->NoASet[itNoaDesc].NoADur);
 		FrameBuf_Add_le_u4(pBuf, pPs->NoASet[itNoaDesc].NoAInt);
 	}
-	
+
 	P2PAttr_Update_AttrHdrLen(pBuf, pLen);
 
 	return;
@@ -525,7 +525,7 @@ P2PAttr_Make_DevInfo(
 {
 	u1Byte						*pLen = NULL;
 	u1Byte						itTypeList = 0;
-	
+
 	FrameBuf_Add_u1(pBuf, P2P_ATTR_DEVICE_INFO);
 	if(NULL == (pLen = FrameBuf_Add(pBuf, 2))) return;
 
@@ -548,7 +548,7 @@ P2PAttr_Make_GroupInfo(
 	IN  const RT_WLAN_STA		*pCliList
 	)
 {
-	
+
 	pu1Byte						pLen = NULL;
 	FRAME_BUF					tBuf;
 
@@ -563,8 +563,8 @@ P2PAttr_Make_GroupInfo(
 
 	if(0 == FrameBuf_Length(&tBuf))
 	{
-		// Clause 3.2.4: the p2p group owner shall not 
-		// include a p2p group info subelement if it 
+		// Clause 3.2.4: the p2p group owner shall not
+		// include a p2p group info subelement if it
 		// has zero connected p2p clients
 		return;
 	}
@@ -576,7 +576,7 @@ P2PAttr_Make_GroupInfo(
 	return;
 }
 
-VOID 
+VOID
 P2PAttr_Make_GroupId(
 	IN  FRAME_BUF				*pBuf,
 	IN  const pu1Byte			grpDevAddr,
@@ -596,7 +596,7 @@ P2PAttr_Make_GroupId(
 }
 
 
-VOID 
+VOID
 P2PAttr_Make_Interface(
 	IN  FRAME_BUF				*pBuf,
 	IN  const pu1Byte			devAddr,
@@ -632,13 +632,13 @@ P2PAttr_Make_OperatingChannel(
 	FrameBuf_Add_Data(pBuf, country, 3);
 	FrameBuf_Add_u1(pBuf, regClass);
 	FrameBuf_Add_u1(pBuf, channel);
-	
+
 	RT_TRACE_F(COMP_P2P, FrameBuf_DbgLevel(pBuf), ("[%s] country: 0x%02X%02X%02X, reg class: %u, channel: %u\n", MOD_TRACE_TAG, country[0], country[1], country[2], regClass, channel));
 
 	return;
 }
 
-VOID 
+VOID
 P2PAttr_Make_InvitationFlags(
 	IN  FRAME_BUF				*pBuf,
 	IN  u1Byte					flags

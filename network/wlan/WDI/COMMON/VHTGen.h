@@ -22,9 +22,9 @@
 #define SET_VHT_CAPABILITY_ELE_MAX_RXAMPDU_FACTOR(_pEleStart, _val)		SET_BITS_TO_LE_2BYTE((_pEleStart)+2, 7, 3, _val) //B23~B25
 #define SET_VHT_CAPABILITY_ELE_LINK_ADAPTION(_pEleStart, _val)				SET_BITS_TO_LE_1BYTE((_pEleStart)+3, 2, 2, _val) // B26~B27
 #define SET_VHT_CAPABILITY_ELE_MCS_RX_MAP(_pEleStart, _val)				SET_BITS_TO_LE_2BYTE((_pEleStart)+4, 0, 16, _val)   //B0~B15 indicate Rx MCS MAP, we write 0 to indicate MCS0~7. by page
-#define SET_VHT_CAPABILITY_ELE_MCS_RX_HIGHEST_RATE(_pEleStart, _val)				SET_BITS_TO_LE_2BYTE((_pEleStart)+6, 0, 13, _val)  
+#define SET_VHT_CAPABILITY_ELE_MCS_RX_HIGHEST_RATE(_pEleStart, _val)				SET_BITS_TO_LE_2BYTE((_pEleStart)+6, 0, 13, _val)
 #define SET_VHT_CAPABILITY_ELE_MCS_TX_MAP(_pEleStart, _val)				SET_BITS_TO_LE_2BYTE((_pEleStart)+8, 0, 16, _val)   //B0~B15 indicate Tx MCS MAP, we write 0 to indicate MCS0~7. by page
-#define SET_VHT_CAPABILITY_ELE_MCS_TX_HIGHEST_RATE(_pEleStart, _val)				SET_BITS_TO_LE_2BYTE((_pEleStart)+10, 0, 13, _val)  
+#define SET_VHT_CAPABILITY_ELE_MCS_TX_HIGHEST_RATE(_pEleStart, _val)				SET_BITS_TO_LE_2BYTE((_pEleStart)+10, 0, 13, _val)
 
 
 #define GET_VHT_CAPABILITY_ELE_MAX_MPDU_LENGTH(_pEleStart)			LE_BITS_TO_1BYTE(_pEleStart, 0, 2)
@@ -56,7 +56,7 @@
 #define GET_VHT_OPERATION_ELE_CENTER_FREQ1(_pEleStart)	LE_BITS_TO_1BYTE((_pEleStart)+1,0,8)
 #define GET_VHT_OPERATION_ELE_CENTER_FREQ2(_pEleStart)     LE_BITS_TO_1BYTE((_pEleStart)+2,0,8)
 
-//VHT Operating Mode 
+//VHT Operating Mode
 #define SET_VHT_OPERATING_MODE_FIELD_CHNL_WIDTH(_pEleStart, _val)		SET_BITS_TO_LE_1BYTE(_pEleStart, 0, 2, _val)
 #define SET_VHT_OPERATING_MODE_FIELD_RX_NSS(_pEleStart, _val)			SET_BITS_TO_LE_1BYTE(_pEleStart, 4, 3, _val)
 #define SET_VHT_OPERATING_MODE_FIELD_RX_NSS_TYPE(_pEleStart, _val)	SET_BITS_TO_LE_1BYTE(_pEleStart, 7, 1, _val)
@@ -142,15 +142,15 @@ typedef struct _RT_VERY_HIGH_THROUGHPUT{
 	BOOLEAN				bRegShortGI80MHz;			// Capability setting for Tx Short GI for 80MHz
 	BOOLEAN				bCurShortGI80MHz;			// Tx Short GI for 80MHz
 
-	u1Byte				VhtLdpcCap;					// Capability combination of VHT LDPC LDPC_VHT_XXX 
+	u1Byte				VhtLdpcCap;					// Capability combination of VHT LDPC LDPC_VHT_XXX
 	u1Byte				VhtCurLdpc;					// Current combination of VHT LDPC LDPC_VHT_XXX of target connection supports LDPC
 
 	u1Byte				VhtStbcCap;					// Capability combination of STBC_VHT_XXX.
 	u1Byte				VhtCurStbc;					// Current setting of STBC
 
-	u2Byte				VhtBeamformCap;				// Capability combination of VHT LDPC LDPC_VHT_XXX 
-	u2Byte				VhtCurBeamform;				// Current combination of BEAMFORMING_VHT_XXX in BSS connection 
-	
+	u2Byte				VhtBeamformCap;				// Capability combination of VHT LDPC LDPC_VHT_XXX
+	u2Byte				VhtCurBeamform;				// Current combination of BEAMFORMING_VHT_XXX in BSS connection
+
 	u1Byte				AMPDU_Len;					// Maximum A-MPUD Length Exponent
 
 	// VHT related information for "Self"
@@ -160,10 +160,10 @@ typedef struct _RT_VERY_HIGH_THROUGHPUT{
 	// VHT related information for "Peer"
 	u1Byte				PeerVHTCapBuf[32];
 	u1Byte				PeerVHTInfoBuf[32];
-	
+
 	// 40MHz Channel Offset settings.
 	CHANNEL_WIDTH		PeerChnlBW;
-	
+
 	// Operating Mode Notification
 	BOOLEAN				bOpModeNotif;
 	CHANNEL_WIDTH		BWToSwitch;
@@ -208,7 +208,7 @@ typedef struct _RT_VHTINFO_STA_ENTRY{
 typedef struct _BSS_VHT{
 
 	BOOLEAN					bdSupportVHT;
-	
+
 	// VHT related elements
 	u1Byte					bdVHTCapBuf[13];
 	u2Byte					bdVHTCapLen;

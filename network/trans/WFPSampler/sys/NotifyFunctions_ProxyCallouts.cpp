@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //
 //       NotifyProxyByALERedirectNotification
@@ -19,7 +19,7 @@
 //       <Module>
 //          Notify                            -       Function is an FWPS_CALLOUT_NOTIFY_FN
 //       <Scenario>
-//          ProxyByALERedirectNotification    -       Function demonstates use of notifications for 
+//          ProxyByALERedirectNotification    -       Function demonstates use of notifications for
 //                                                       callouts using WFP's REDIRECT layers
 //
 //   Author:
@@ -29,19 +29,19 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense and 
+//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense and
 //                                              improve traces
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "Framework_WFPSamplerCalloutDriver.h" /// . 
+#include "Framework_WFPSamplerCalloutDriver.h" /// .
 #include "NotifyFunctions_ProxyCallouts.tmh"   /// $(OBJ_PATH)\$(O)\
 
 #if(NTDDI_VERSION >= NTDDI_WIN7)
 
 /**
  @private_function="PrvProxyByALERedirectNotificationWorkItemRoutine"
- 
+
    Purpose:  Traces the appropriate notification event.                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -55,13 +55,13 @@ VOID PrvProxyByALERedirectNotificationWorkItemRoutine(_In_ PDEVICE_OBJECT pDevic
                                                       _Inout_opt_ PVOID pContext)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PrvProxyByALERedirectNotificationWorkItemRoutine()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(pDeviceObject);
 
    NT_ASSERT(pContext);
@@ -164,19 +164,19 @@ VOID PrvProxyByALERedirectNotificationWorkItemRoutine(_In_ PDEVICE_OBJECT pDevic
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PrvProxyByALERedirectNotificationWorkItemRoutine()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @notify_function="NotifyProxyByALERedirectNotification"
- 
+
    Purpose:  Traces the notification event.                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

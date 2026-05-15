@@ -6,7 +6,7 @@
 //      Scenarios_AdvancedPacketInjection.h
 //
 //   Abstract:
-//      This module contains prototypes for functions which run the specified 
+//      This module contains prototypes for functions which run the specified
 //         ADVANCED_PACKET_INJECTION scenario.
 //
 //   Author:

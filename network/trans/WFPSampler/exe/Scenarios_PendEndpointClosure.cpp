@@ -12,7 +12,7 @@
 //   Naming Convention:
 //
 //      <Scope><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -27,10 +27,10 @@
 //          }
 //       <Action>
 //          {
-//            Execute                     - Function packages data and invokes RPC to the WFPSampler 
+//            Execute                     - Function packages data and invokes RPC to the WFPSampler
 //                                             service.
 //            Log                         - Function writes to the console.
-//            Parse                       - Function pulls data into the required format from the 
+//            Parse                       - Function pulls data into the required format from the
 //                                             provided data.
 //          }
 //       <Modifier>
@@ -62,7 +62,7 @@
 
 /**
  @private_function="PrvPendEndpointClosureScenarioParseClosureData"
- 
+
    Purpose:  Parse the command line parameters for closure data such as:                        <br>
                 delay before callout returns (-p DELAY_IN_MS)                                   <br>
                                                                                                 <br>
@@ -116,9 +116,9 @@ UINT32 PrvPendEndpointClosureScenarioParseClosureData(_In_reads_(stringCount) PC
                              ppCLPStrings[stringIndex]))
       {
          pPCPendEndpointClosureData->useThreadedDPC = TRUE;
-      
+
          found++;
-      
+
          continue;
       }
 
@@ -140,7 +140,7 @@ UINT32 PrvPendEndpointClosureScenarioParseClosureData(_In_reads_(stringCount) PC
 /**
  @scenario_function="PendEndpointClosureScenarioExecute"
 
-   Purpose:  Gather and package data neccessary to setup the PEND_ENDPOINT_CLOSURE scenario, 
+   Purpose:  Gather and package data neccessary to setup the PEND_ENDPOINT_CLOSURE scenario,
              then invoke RPC to implement the scenario in the WFPSampler service.               <br>
                                                                                                 <br>
    Notes:    This scenario is only supported on Win7+.                                          <br>
@@ -225,7 +225,7 @@ UINT32 PendEndpointClosureScenarioExecute(_In_reads_(stringCount) PCWSTR* ppCLPS
 
 /**
  @public_function="PendEndpointClosureScenarioLogHelp"
- 
+
    Purpose:  Log usage information for the PEND_ENDPOINT_CLOSURE scenario to the console.       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

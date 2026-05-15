@@ -6,23 +6,23 @@
 //      ClassifyFunctions_FastPacketInjectionCallouts.cpp
 //
 //   Abstract:
-//      This module contains WFP Classify functions that inject packets back into the data path 
+//      This module contains WFP Classify functions that inject packets back into the data path
 //         using the clone / block / inject method.  This method is inline only, no modification,
-//         and uses as little validation and error checking as possible.  Certain scenarios will 
-//         definitely fail injection, such as injection to loopback, or IPsec encrypted packets.   
+//         and uses as little validation and error checking as possible.  Certain scenarios will
+//         definitely fail injection, such as injection to loopback, or IPsec encrypted packets.
 //         These functions are meant for test performance purposes only.
 //
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //       ClassifyFastPacketInjection
 //
 //       <Module>
 //          Classify             - Function is an FWPS_CALLOUT_CLASSIFY_FN
 //       <Scenario>
-//          FastPacketInjection  - Function demonstrates the clone / block / inject model in the 
+//          FastPacketInjection  - Function demonstrates the clone / block / inject model in the
 //                                    fastest form available (inline, no validation, etc.).
 //
 //
@@ -38,9 +38,9 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, enhance 
-//                                              traces, fix weakhost injection, fix expected 
-//                                              offsets,and add support for multiple injectors and 
+//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, enhance
+//                                              traces, fix weakhost injection, fix expected
+//                                              offsets,and add support for multiple injectors and
 //                                              controlData.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,8 +52,8 @@
 
 /**
  @classify_function="ClassifyFastPacketInjection"
- 
-   Purpose:  Blocks the current NET_BUFFER_LIST and injects a clone back to the stack without 
+
+   Purpose:  Blocks the current NET_BUFFER_LIST and injects a clone back to the stack without
              modification.                                                                      <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>
@@ -217,7 +217,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             flags = pClassifyValues->incomingValue[FWPS_FIELD_OUTBOUND_IPPACKET_V4_FLAGS].value.uint32;
 
             injectionHandle = g_pIPv4OutboundNetworkInjectionHandles[index];
-      
+
             break;
          }
          case FWPS_LAYER_OUTBOUND_IPPACKET_V6:
@@ -227,7 +227,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             flags = pClassifyValues->incomingValue[FWPS_FIELD_OUTBOUND_IPPACKET_V6_FLAGS].value.uint32;
 
             injectionHandle = g_pIPv6OutboundNetworkInjectionHandles[index];
-      
+
             break;
          }
          case FWPS_LAYER_IPFORWARD_V4:
@@ -247,7 +247,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             if(flags & FWP_CONDITION_FLAG_IS_INBOUND_PASS_THRU)
                injectionHandle = g_pIPv4InboundNetworkInjectionHandles[index];
             else if(flags & FWP_CONDITION_FLAG_IS_OUTBOUND_PASS_THRU)
-               injectionHandle = g_pIPv4OutboundNetworkInjectionHandles[index];      
+               injectionHandle = g_pIPv4OutboundNetworkInjectionHandles[index];
 
             break;
          }
@@ -325,7 +325,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             flags = pClassifyValues->incomingValue[FWPS_FIELD_OUTBOUND_TRANSPORT_V4_FLAGS].value.uint32;
 
             injectionHandle = g_pIPv4OutboundTransportInjectionHandles[index];
-      
+
             break;
          }
          case FWPS_LAYER_OUTBOUND_TRANSPORT_V6:
@@ -339,7 +339,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             flags = pClassifyValues->incomingValue[FWPS_FIELD_OUTBOUND_TRANSPORT_V6_FLAGS].value.uint32;
 
             injectionHandle = g_pIPv6OutboundTransportInjectionHandles[index];
-      
+
             break;
          }
          case FWPS_LAYER_DATAGRAM_DATA_V4:
@@ -368,7 +368,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
 
                injectionHandle = g_pIPv4OutboundTransportInjectionHandles[index];
             }
-      
+
             break;
          }
          case FWPS_LAYER_DATAGRAM_DATA_V6:
@@ -485,7 +485,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             else
             {
                interfaceIndex = pClassifyValues->incomingValue[FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V4_INTERFACE_INDEX].value.uint32;
-               
+
                subInterfaceIndex = pClassifyValues->incomingValue[FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V4_SUB_INTERFACE_INDEX].value.uint32;
 
                injectionHandle = g_pIPv4InboundTransportInjectionHandles[index];
@@ -515,7 +515,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             else
             {
                interfaceIndex = pClassifyValues->incomingValue[FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V6_INTERFACE_INDEX].value.uint32;
-               
+
                subInterfaceIndex = pClassifyValues->incomingValue[FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V6_SUB_INTERFACE_INDEX].value.uint32;
 
                injectionHandle = g_pIPv6InboundTransportInjectionHandles[index];
@@ -525,7 +525,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
                else
                   bytesRetreated = ipHeaderSize + transportHeaderSize;
             }
-      
+
             break;
          }
          case FWPS_LAYER_ALE_AUTH_CONNECT_V4:
@@ -622,7 +622,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
 
                bytesRetreated = ipHeaderSize;
             }
-      
+
             break;
          }
          case FWPS_LAYER_ALE_FLOW_ESTABLISHED_V6:
@@ -677,7 +677,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             direction = (FWP_DIRECTION)pClassifyValues->incomingValue[FWPS_FIELD_STREAM_PACKET_V4_DIRECTION].value.uint8;
 
             flags = pClassifyValues->incomingValue[FWPS_FIELD_STREAM_PACKET_V4_FLAGS].value.uint32;
-   
+
             if(direction == FWP_DIRECTION_INBOUND)
             {
                interfaceIndex = pClassifyValues->incomingValue[FWPS_FIELD_STREAM_PACKET_V4_INTERFACE_INDEX].value.uint32;
@@ -691,7 +691,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             else
             {
                pRemoteAddress = &(pClassifyValues->incomingValue[FWPS_FIELD_STREAM_PACKET_V4_IP_REMOTE_ADDRESS].value.uint32);
-            
+
                injectionHandle = g_pIPv4OutboundTransportInjectionHandles[index];
 
                bytesRetreated = ipHeaderSize;
@@ -722,7 +722,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             else
             {
                pRemoteAddress = pClassifyValues->incomingValue[FWPS_FIELD_STREAM_PACKET_V6_IP_REMOTE_ADDRESS].value.byteArray16->byteArray16;
-            
+
                injectionHandle = g_pIPv6OutboundTransportInjectionHandles[index];
 
                bytesRetreated = ipHeaderSize;
@@ -730,9 +730,9 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
 
             break;
          }
-      
+
 #if(NTDDI_VERSION >= NTDDI_WIN8)
-      
+
          case FWPS_LAYER_INBOUND_MAC_FRAME_ETHERNET:
          {
             UINT16 etherType = pClassifyValues->incomingValue[FWPS_FIELD_INBOUND_MAC_FRAME_ETHERNET_ETHER_TYPE].value.uint16;
@@ -755,7 +755,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             }
             else
                injectionHandle = g_pInboundMACInjectionHandles[index];
- 
+
             bytesRetreated = ethernetHeaderSize;
 
             break;
@@ -802,7 +802,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             ndisPort = pClassifyValues->incomingValue[FWPS_FIELD_OUTBOUND_MAC_FRAME_NATIVE_NDIS_PORT].value.uint32;
 
             injectionHandle = g_pOutboundMACInjectionHandles[index];
-   
+
             break;
          }
          case FWPS_LAYER_INGRESS_VSWITCH_ETHERNET:
@@ -825,7 +825,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             }
             else
                injectionHandle = g_pIngressVSwitchEthernetInjectionHandles[index];
-   
+
             break;
          }
          case FWPS_LAYER_EGRESS_VSWITCH_ETHERNET:
@@ -848,10 +848,10 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             }
             else
                injectionHandle = g_pEgressVSwitchEthernetInjectionHandles[index];
-   
+
             break;
          }
-         
+
 #endif // (NTDDI_VERSION >= NTDDI_WIN8)
 
       }
@@ -869,7 +869,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
          if(injectionState != FWPS_PACKET_INJECTED_BY_SELF &&
             injectionState != FWPS_PACKET_PREVIOUSLY_INJECTED_BY_SELF)
          {
-            /// Due to TCP's locking semantics, TCP can only be injected Out of Band at any 
+            /// Due to TCP's locking semantics, TCP can only be injected Out of Band at any
             /// transport layer or equivalent.
             if(protocol == TCP &&
                (injectionHandle == g_pIPv4InboundTransportInjectionHandles[index] ||
@@ -1080,7 +1080,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
 #endif ///(NTDDI_VERSION >= NTDDI_WIN8)
 
             HLPR_BAIL_LABEL:
-            
+
             if(status != STATUS_SUCCESS)
             {
                if(pClonedNetBufferList)
@@ -1103,8 +1103,8 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
 
 /**
  @classify_function="ClassifyFastPacketInjection"
- 
-   Purpose:  Blocks the current NET_BUFFER_LIST and injects a clone back to the stack without 
+
+   Purpose:  Blocks the current NET_BUFFER_LIST and injects a clone back to the stack without
              modification.                                                                      <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>
@@ -1234,7 +1234,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             flags = pClassifyValues->incomingValue[FWPS_FIELD_OUTBOUND_IPPACKET_V4_FLAGS].value.uint32;
 
             injectionHandle = g_pIPv4OutboundNetworkInjectionHandles[index];
-      
+
             break;
          }
          case FWPS_LAYER_OUTBOUND_IPPACKET_V6:
@@ -1244,7 +1244,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             flags = pClassifyValues->incomingValue[FWPS_FIELD_OUTBOUND_IPPACKET_V6_FLAGS].value.uint32;
 
             injectionHandle = g_pIPv6OutboundNetworkInjectionHandles[index];
-      
+
             break;
          }
          case FWPS_LAYER_IPFORWARD_V4:
@@ -1330,7 +1330,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             flags = pClassifyValues->incomingValue[FWPS_FIELD_OUTBOUND_TRANSPORT_V4_FLAGS].value.uint32;
 
             injectionHandle = g_pIPv4OutboundTransportInjectionHandles[index];
-      
+
             break;
          }
          case FWPS_LAYER_OUTBOUND_TRANSPORT_V6:
@@ -1344,7 +1344,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             flags = pClassifyValues->incomingValue[FWPS_FIELD_OUTBOUND_TRANSPORT_V6_FLAGS].value.uint32;
 
             injectionHandle = g_pIPv6OutboundTransportInjectionHandles[index];
-      
+
             break;
          }
          case FWPS_LAYER_DATAGRAM_DATA_V4:
@@ -1373,7 +1373,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
 
                injectionHandle = g_pIPv4OutboundTransportInjectionHandles[index];
             }
-      
+
             break;
          }
          case FWPS_LAYER_DATAGRAM_DATA_V6:
@@ -1490,7 +1490,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             else
             {
                interfaceIndex = pClassifyValues->incomingValue[FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V4_INTERFACE_INDEX].value.uint32;
-               
+
                subInterfaceIndex = pClassifyValues->incomingValue[FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V4_SUB_INTERFACE_INDEX].value.uint32;
 
                injectionHandle = g_pIPv4InboundTransportInjectionHandles[index];
@@ -1520,7 +1520,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             else
             {
                interfaceIndex = pClassifyValues->incomingValue[FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V6_INTERFACE_INDEX].value.uint32;
-               
+
                subInterfaceIndex = pClassifyValues->incomingValue[FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V6_SUB_INTERFACE_INDEX].value.uint32;
 
                injectionHandle = g_pIPv6InboundTransportInjectionHandles[index];
@@ -1530,7 +1530,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
                else
                   bytesRetreated = ipHeaderSize + transportHeaderSize;
             }
-      
+
             break;
          }
          case FWPS_LAYER_ALE_AUTH_CONNECT_V4:
@@ -1627,7 +1627,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
 
                bytesRetreated = ipHeaderSize;
             }
-      
+
             break;
          }
          case FWPS_LAYER_ALE_FLOW_ESTABLISHED_V6:
@@ -1688,7 +1688,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
          if(injectionState != FWPS_PACKET_INJECTED_BY_SELF &&
             injectionState != FWPS_PACKET_PREVIOUSLY_INJECTED_BY_SELF)
          {
-            /// Due to TCP's locking semantics, TCP can only be injected Out of Band at any 
+            /// Due to TCP's locking semantics, TCP can only be injected Out of Band at any
             /// transport layer or equivalent.
             if(protocol == TCP &&
                (injectionHandle == g_pIPv4InboundTransportInjectionHandles[index] ||
@@ -1854,7 +1854,7 @@ VOID NTAPI ClassifyFastPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
             }
 
             HLPR_BAIL_LABEL:
-            
+
             if(status != STATUS_SUCCESS)
             {
                if(pClonedNetBufferList)

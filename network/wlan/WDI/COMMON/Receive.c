@@ -24,7 +24,7 @@ InitializeRxVariables(
 
 	Adapter->NumRfd = Adapter->MAX_NUM_RFD;
 	for(QueueID=0 ; QueueID < MAX_RX_QUEUE ; QueueID++)
-		Adapter->NumRxDesc[QueueID]= Adapter->MAX_NUM_RX_DESC;	
+		Adapter->NumRxDesc[QueueID]= Adapter->MAX_NUM_RX_DESC;
 
 #if (MAX_RX_QUEUE ==2)
 		Adapter->NumRxDesc[RX_CMD_QUEUE] = RX_DESC_NUM;
@@ -71,11 +71,11 @@ ChkValidRFDs(
 	PADAPTER	Adapter,
 	pu4Byte		pRfdAddr
 	)
-{	
+{
 	BOOLEAN		bValid = FALSE;
 	u2Byte		RfdIdx;
-	
-	
+
+
 	for(RfdIdx = 0; RfdIdx < (u2Byte)(Adapter->NumRfd + 1); RfdIdx++)
 	{
 		if(Adapter->RfdListAddr[RfdIdx] == pRfdAddr)
@@ -93,10 +93,10 @@ ChkValidVAs(
 	PADAPTER	Adapter,
 	pu4Byte		pVirtualAddr
 	)
-{	
+{
 	BOOLEAN		bValid = FALSE;
 	u2Byte		RfdIdx;
-	
+
 	for(RfdIdx = 0; RfdIdx<Adapter->NumRfd; RfdIdx++)
 	{
 		if(Adapter->RfdVirtualAddr[RfdIdx] == pVirtualAddr)
@@ -110,7 +110,7 @@ PrepareRFDs(
 	PADAPTER	Adapter
 	)
 {
-	
+
 	u2Byte		i;
 	PRT_RFD		pRfd;
 	RT_STATUS	status;
@@ -133,13 +133,13 @@ PrepareRFDs(
 
 	do{
 		Adapter->RfdBuffer.Length=Adapter->NumRfd*sizeof(RT_RFD);
-	
+
 		RT_TRACE_F(COMP_INIT, DBG_TRACE, ("before RfdBuffer\n"));
 
 		status=PlatformAllocateMemory(Adapter, &Adapter->RfdBuffer.Ptr,Adapter->RfdBuffer.Length);
 		if(status!=RT_STATUS_SUCCESS)
 		{
-			RT_TRACE_F(COMP_INIT, DBG_TRACE, ("RfdBuffer fail\n"));		
+			RT_TRACE_F(COMP_INIT, DBG_TRACE, ("RfdBuffer fail\n"));
 			return status;
 		}
 		PlatformZeroMemory(Adapter->RfdBuffer.Ptr,Adapter->RfdBuffer.Length);
@@ -150,26 +150,26 @@ PrepareRFDs(
 #endif
 
 		pRfd=(PRT_RFD)Adapter->RfdBuffer.Ptr;
-		
+
 		RT_TRACE_F(COMP_INIT, DBG_TRACE, ("before DrvIFAssociateRFD\n"));
-		
+
 		for(i=0;i<Adapter->NumRfd;i++)
 		{
 			status=DrvIFAssociateRFD(Adapter,&pRfd[i]);
 			pRfd[i].SeqNum = i;
 			Adapter->RfdListAddr[i] = (pu4Byte)&pRfd[i];
-			Adapter->RfdVirtualAddr[i] = (pu4Byte)pRfd[i].Buffer.VirtualAddress;		
+			Adapter->RfdVirtualAddr[i] = (pu4Byte)pRfd[i].Buffer.VirtualAddress;
 
 			if(status!=RT_STATUS_SUCCESS)
 			{
-				RT_TRACE_F(COMP_INIT, DBG_TRACE, ("DrvIFAssociateRFD fail\n"));			
+				RT_TRACE_F(COMP_INIT, DBG_TRACE, ("DrvIFAssociateRFD fail\n"));
 				return status;
 			}
 			PlatformAcquireSpinLock(Adapter, RT_RFD_SPINLOCK);
 			RTInsertTailListWithCnt(&Adapter->RfdIdleQueue, &pRfd[i].List, &Adapter->NumIdleRfd);
 			PlatformReleaseSpinLock(Adapter, RT_RFD_SPINLOCK);
 		}
-		// <Roger_EXP> To keep track the head of RfdIdleQueue. 2008.06.03. 
+		// <Roger_EXP> To keep track the head of RfdIdleQueue. 2008.06.03.
 		Adapter->RfdListAddr[i] = (pu4Byte)&Adapter->RfdIdleQueue;
 
 		RT_TRACE_F(COMP_INIT, DBG_TRACE, ("before pAMSDU\n"));
@@ -177,26 +177,26 @@ PrepareRFDs(
 		status = PlatformAllocateMemory(Adapter, (PVOID *)&Adapter->pAMSDU, Adapter->MAX_SUBFRAME_TOTAL_COUNT*sizeof(ALIGNED_SHARED_MEMORY));
 		if(status != RT_STATUS_SUCCESS)
 		{
-			RT_TRACE_F(COMP_INIT, DBG_TRACE, ("pAMSDU fail\n"));		
+			RT_TRACE_F(COMP_INIT, DBG_TRACE, ("pAMSDU fail\n"));
 			return status;
 		}
-		
+
 		RT_TRACE_F(COMP_INIT, DBG_TRACE, ("before MAX_SUBFRAME_TOTAL_COUNT pAMSDU\n"));
-		
+
 		for(i=0;i < Adapter->MAX_SUBFRAME_TOTAL_COUNT;i++)
 		{
 			status=PlatformAllocateAlignedSharedMemory(Adapter, Adapter->pAMSDU+i, NIC_MAX_PACKET_SIZE);
 			if( status != RT_STATUS_SUCCESS )
 			{
-				RT_TRACE_F(COMP_INIT, DBG_TRACE, ("MAX_SUBFRAME_TOTAL_COUNT pAMSDU fail\n"));			
+				RT_TRACE_F(COMP_INIT, DBG_TRACE, ("MAX_SUBFRAME_TOTAL_COUNT pAMSDU fail\n"));
 				return status;
 		}
 		}
-		
+
 	}while(FALSE);
 
 	DefragInitialize(Adapter);
-	
+
 #if RX_AGGREGATION
 	PlatformAcquireSpinLock(Adapter, RT_RFD_SPINLOCK);
 	RTInitializeListHead(&Adapter->RfdTmpList);
@@ -255,17 +255,17 @@ FreeRFDs(
 			pRfd=(PRT_RFD)RTRemoveHeadListWithCnt(&Adapter->RfdBusyQueue[QueueID], &Adapter->NumBusyRfd[QueueID]);
 			RT_ASSERT(ChkValidRFDs(Adapter, (pu4Byte)&(pRfd->List)), ("(1)FreeRFDs(): Invalid RFD\n"));
 			RTInsertTailListWithCnt(&Adapter->RfdIdleQueue, &pRfd->List, &Adapter->NumIdleRfd);
-			
+
 			if (rfdbusy[QueueID]++ > Adapter->MAX_NUM_RX_DESC)
 			{
 				// 2011/03/30 MH This is an ASSERTION CASE need debug for RFD busy queue pointer!!!
-				// We already found two case may cause incorrect RFD busy queue pointer A). ISR DPC is 
+				// We already found two case may cause incorrect RFD busy queue pointer A). ISR DPC is
 				// executed after driver is goinfto unload or surpeised removes. B). DTM card we will indicate
 				// packets twice and return RFD, this may cause incorrect idle RFD pointer!!! We need to
-				// declare dould RFD number more than RX_DESC. We ae afraid of third case, so add a 
+				// declare dould RFD number more than RX_DESC. We ae afraid of third case, so add a
 				// workaround method for unknow case temporarily.
-				// If we escape from the case, the RFD aligned share memory may not be released. after a 
-				// period of long time. resource may be insufficient.				
+				// If we escape from the case, the RFD aligned share memory may not be released. after a
+				// period of long time. resource may be insufficient.
 				RT_ASSERT(TRUE, ("FreeRFDs(): Something Wrong!\n"));
 				break;
 			}
@@ -282,35 +282,35 @@ FreeRFDs(
 			nFreed=0;
 			while(!RTIsListEmpty(&Adapter->RfdIdleQueue))
 			{
-				pRfd=(PRT_RFD)RTRemoveHeadListWithCnt(&Adapter->RfdIdleQueue, 
+				pRfd=(PRT_RFD)RTRemoveHeadListWithCnt(&Adapter->RfdIdleQueue,
 														&Adapter->NumIdleRfd);
 				RT_ASSERT(ChkValidRFDs(Adapter, (pu4Byte)&(pRfd->List)), ("(2)FreeRFDs(): Invalid RFD\n"));
-	
-				// If starting address of rx buffer is shifted because of the existence of QoS 
+
+				// If starting address of rx buffer is shifted because of the existence of QoS
 				// control(in 818xb and 8190) or the existence of RxDrvInfo(in 8190), driver
 				// sholud shift it back, otherwise, it returns wrong address. 2006.1.5 by emily
 				if(pRfd->Status.bShift)
-				{					
-					pRfd->Buffer.VirtualAddress -= Adapter->HalFunc.GetRxPacketShiftBytesHandler(pRfd);			
+				{
+					pRfd->Buffer.VirtualAddress -= Adapter->HalFunc.GetRxPacketShiftBytesHandler(pRfd);
 					pRfd->Status.bShift = 0;
 				}
-				
+
 				DrvIFDisassociateRFD(Adapter,pRfd);
-                
+
 				nFreed++;
 			}
 			if(nFreed != Adapter->NumRfd){
-				RT_TRACE(COMP_INIT, DBG_SERIOUS, ("Freed RFD less than allocated!nFreed:%d alloc:%d .\n",nFreed,Adapter->NumRfd));			
+				RT_TRACE(COMP_INIT, DBG_SERIOUS, ("Freed RFD less than allocated!nFreed:%d alloc:%d .\n",nFreed,Adapter->NumRfd));
 			}
 			RT_ASSERT(nFreed==Adapter->NumRfd,("Freed RFD less than allocated!!\n"));
 		}
 		PlatformReleaseSpinLock(Adapter, RT_RFD_SPINLOCK);
-		
+
 		if(Adapter->RfdBuffer.Ptr != NULL)
 		{
 			PlatformFreeMemory(Adapter->RfdBuffer.Ptr,Adapter->RfdBuffer.Length);
 		}
-		
+
 		if(Adapter->pAMSDU != NULL)
 		{
 		for(i = 0;i <Adapter->MAX_SUBFRAME_TOTAL_COUNT; i++)
@@ -318,7 +318,7 @@ FreeRFDs(
 			PlatformFreeAlignedSharedMemory(Adapter, Adapter->pAMSDU+i);
 		}
 
-		PlatformFreeMemory((PVOID)Adapter->pAMSDU, Adapter->MAX_SUBFRAME_TOTAL_COUNT*sizeof(ALIGNED_SHARED_MEMORY));		
+		PlatformFreeMemory((PVOID)Adapter->pAMSDU, Adapter->MAX_SUBFRAME_TOTAL_COUNT*sizeof(ALIGNED_SHARED_MEMORY));
 		}
 
 	}
@@ -361,20 +361,20 @@ SpareRxDesc(
 
 
 
-VOID 
+VOID
 ResetRxStatistics(
 	PADAPTER	Adapter
 	)
 {
 	// Joseph 20090703: Restore last sniff value.
 	u4Byte	temp = Adapter->RxStats.LastRxSniffMediaPktCnt;
-	
+
 	PlatformZeroMemory( &Adapter->RxStats, sizeof(RT_RX_STATISTICS) );
 
 	// Joseph 20090703: Restore last sniff value.
 	Adapter->RxStats.LastRxSniffMediaPktCnt = temp;
 	Adapter->RxStats.LastLinkQuality = 0xFF;
-	
+
 }
 
 VOID
@@ -391,12 +391,12 @@ CountRxFragmentStatistics(
 	{
 		return;
 	}
-	
+
 	Adapter->RxStats.NumRxFramgment++;
 
 }
 
-VOID 
+VOID
 CountRxStatistics(
 	PADAPTER	Adapter,
 	PRT_RFD		pRfd
@@ -421,7 +421,7 @@ CountRxStatistics(
 	{
 		return;
 	}
-	
+
 	if(!pMgntInfo->bMediaConnect || MgntRoamingInProgress(pMgntInfo))
 		Adapter->RxStats.LastLinkQuality = 0xFF;
 	//
@@ -435,9 +435,9 @@ CountRxStatistics(
 	FillOctetString(pduOS, pRfd->Buffer.VirtualAddress + PLATFORM_GET_FRAGOFFSET(pRfd), pRfd->PacketLength);
 	pdu = pRfd->Buffer.VirtualAddress + PLATFORM_GET_FRAGOFFSET(pRfd);
 
-	pDaddr = Frame_pDaddr(pduOS);	
+	pDaddr = Frame_pDaddr(pduOS);
 	pTaddr = Frame_Addr2(pduOS);
-	
+
 	if( pRfd->Status.bCRC || pRfd->Status.bICV || pRfd->Status.bHwError )
 	{
 		// Statistics for error packets are now handled in CountRxErrStatistics().
@@ -448,10 +448,10 @@ CountRxStatistics(
 	//We should spearate the Date and Mgnt packet to avoid dectet roaming case in watchdog(no packet receive)
 	//
 	else if (IsMgntFrame(pdu))
-	{	
+	{
 		Adapter->RxStats.NumRxMgntPacket++;
 		bLedBlinking=FALSE;
-	}	
+	}
 	else if(IsDataFrame(pdu))
 	{
 		Adapter->RxStats.NumRxOkTotal ++;
@@ -463,20 +463,20 @@ CountRxStatistics(
 			Adapter->RxStats.NumRxOKSmallPacket++;
 		else if(pRfd->PacketLength < 1000)
 			Adapter->RxStats.NumRxOKMiddlePacket++;
-		else 
+		else
 			Adapter->RxStats.NumRxOKLargePacket++;
 
 		rateIndex = pRfd->Status.DataRateIdx;
 		// We get the rate index and save it when do QueryRxStatus
-	
+
 		Adapter->RxStats.ReceivePacketDataRateCounter[rateIndex]++;   //for Rx Data Rate Counter , by Jacken 2008/03/12
-				
+
 		if(GET_TDLS_ENABLED(pMgntInfo) && pMgntInfo->bMediaConnect && pMgntInfo->mAssoc)
 		{
 			if(PlatformCompareMemory(pTaddr, pMgntInfo->Bssid, 6)==0)
 				Adapter->RxStats.ReceivedRateFromAPHistogram[rateIndex]++;
 		}
-				
+
 	}
 
 	if( MacAddr_isBcst( pDaddr ) ){
@@ -487,7 +487,7 @@ CountRxStatistics(
 		Adapter->RxStats.NumRxMulticast ++;
 		Adapter->RxStats.NumRxBytesMulticast += pRfd->PacketLength ;
 	}
-	else{		
+	else{
 		if(pRfd->bIsAggregateFrame)
 			Adapter->RxStats.NumRxUnicast += pRfd->nTotalSubframe;
 		else
@@ -501,7 +501,7 @@ CountRxStatistics(
 				Adapter->MgntInfo.LinkDetectInfo.NumRxUnicastOkInPeriod+=pRfd->nTotalSubframe;
 			else
 				Adapter->MgntInfo.LinkDetectInfo.NumRxUnicastOkInPeriod++;
-			
+
 			// 2009.03.03 Leave DC mode immediately when detect high traffic
 			if(pMgntInfo->bMediaConnect && !MgntInitAdapterInProgress(pMgntInfo))
 			{
@@ -514,16 +514,16 @@ CountRxStatistics(
 					}
 				}
 			}
-		}	
+		}
 	}
 
 	if( pRfd->Status.BandWidth == 1)
-		
+
 		Adapter->RxStats.NumRx40MHzPacket++;
 	else
 		Adapter->RxStats.NumRx20MHzPacket++;
 
-	
+
 	//To avoid led always blink when in rx, by Maddest 20080307;
 	if(bLedBlinking)
 	{
@@ -542,7 +542,7 @@ CountRxStatistics(
 
 
 
-VOID 
+VOID
 CountRxErrStatistics(
 	PADAPTER	Adapter,
 	PRT_RFD		pRfd
@@ -556,7 +556,7 @@ CountRxErrStatistics(
 	pu1Byte				pBssid;
 	BOOLEAN				bAddrMatch = FALSE;
 	BOOLEAN				bIsMulticast = FALSE;
-	
+
 	pduOS.Octet = pRfd->Buffer.VirtualAddress;
 	pduOS.Length = pRfd->PacketLength;
 
@@ -568,7 +568,7 @@ CountRxErrStatistics(
 
 	if(pRfd->Status.bCRC)
 		Adapter->RxStats.NumRxCrxErrorPacket++;
-	
+
 	// When RF is off, we should not count the packet for hw/sw synchronize
 	// reason, ie. there may be a duration while sw switch is changed and hw
 	// switch is being changed. 2006.12.04, by shien chang.
@@ -602,29 +602,29 @@ CountRxErrStatistics(
 			CountRxCCMPDecryptErrorsStatistics(Adapter, pRfd);
 		}
 	}
-	
-	if(pRfd->Status.bCRC)		
+
+	if(pRfd->Status.bCRC)
 	{ // CRC error packet.
 		if(pRfd->PacketLength < 500)
 			Adapter->RxStats.NumRxCrcErrSmallPacket++;
 		else if(pRfd->PacketLength < 1000)
 			Adapter->RxStats.NumRxCrcErrMiddlePacket++;
-		else 
+		else
 			Adapter->RxStats.NumRxCrcErrLargePacket++;
 	}
-	else 
+	else
 	{ // CRC OK packet.
 		if( IsFrameTypeData(pduOS.Octet) &&
 			Frame_Retry(pduOS))
 		{ // Type data && Retry bit set.
 			Adapter->RxStats.NumRxRetryCount++;
 
-			
+
 			if(pRfd->PacketLength < 500)
 				Adapter->RxStats.NumRxRetrySmallPacket++;
 			else if(pRfd->PacketLength < 1000)
 				Adapter->RxStats.NumRxRetryMiddlePacket++;
-			else 
+			else
 				Adapter->RxStats.NumRxRetryLargePacket++;
 		}
 	}
@@ -632,7 +632,7 @@ CountRxErrStatistics(
 	if(pRfd->Status.bICV)
 	{ // ICV error.
 		RT_ENC_ALG	alg = RT_ENC_ALG_NO_CIPHER;
-	
+
 		Adapter->RxStats.NumRxIcvErr ++;
 
 		alg = (bAddrMatch) ? pSecInfo->PairwiseEncAlgorithm : pSecInfo->GroupEncAlgorithm;
@@ -658,7 +658,7 @@ CountRxErrStatistics(
 		if(!pRfd->Status.Decrypted)
 		{
 			RT_TRACE(COMP_RECV, DBG_LOUD, ("CountRxErrStatistics:() CountRxDecryptErrorStatistics\n"));
-		
+
 			CountRxDecryptErrorStatistics(Adapter, pRfd);
 
 			if(pSecInfo->GroupEncAlgorithm == RT_ENC_ALG_WEP40 ||
@@ -666,11 +666,11 @@ CountRxErrStatistics(
 						pSecInfo->PairwiseEncAlgorithm == RT_ENC_ALG_WEP40 ||
 						pSecInfo->PairwiseEncAlgorithm == RT_ENC_ALG_WEP104)
 			{
-				CountWEPUndecryptableStatistics(Adapter, pRfd);		
+				CountWEPUndecryptableStatistics(Adapter, pRfd);
 			}
-		}	
+		}
 		else
-			CountRxDecryptSuccessStatistics(Adapter, pRfd);		
+			CountRxDecryptSuccessStatistics(Adapter, pRfd);
 	}
 }
 
@@ -737,7 +737,7 @@ CountRxTKIPLocalMICFailuresStatistics(
 	else
 	{
 		Adapter->RxStats.NumRxTKIPLocalMICFailuresUnicast ++;
-	}	
+	}
 }
 
 //
@@ -784,7 +784,7 @@ CountRxTKIPDecryptErrorsStatistics(
 	else
 	{
 		Adapter->RxStats.NumRxTKIPICVErrorUnicast ++;
-	}	
+	}
 
 }
 
@@ -813,7 +813,7 @@ CountRxCCMPDecryptErrorsStatistics(
 	else
 	{
 		Adapter->RxStats.NumRxCCMPDecryptErrorsUnicast ++;
-	}	
+	}
 
 }
 
@@ -841,7 +841,7 @@ CountWEPICVErrorStatistics(
 	else
 	{
 		Adapter->RxStats.NumRxWEPICVErrorUnicast ++;
-	}	
+	}
 
 }
 
@@ -870,7 +870,7 @@ CountTKIPICVErrorStatistics(
 	else
 	{
 		Adapter->RxStats.NumRxTKIPICVErrorUnicast ++;
-	}	
+	}
 
 }
 
@@ -926,7 +926,7 @@ CountRxDecryptErrorStatistics(
 	else
 	{
 		Adapter->RxStats.NumRxDecryptFailureUnicast++;
-	}	
+	}
 
 }
 
@@ -954,7 +954,7 @@ CountWEPUndecryptableStatistics(
 	else
 	{
 		Adapter->RxStats.NumRxWEPUndecryptableUnicast++;
-	}	
+	}
 
 }
 
@@ -985,7 +985,7 @@ CountRxTKIPRelpayStatistics(
 	else
 	{
 		Adapter->RxStats.NumRxTKIPReplayUnicast ++;
-	}	
+	}
 
 }
 
@@ -1014,7 +1014,7 @@ CountRxCCMPRelpayStatistics(
 	else
 	{
 		Adapter->RxStats.NumRxCCMPReplayUnicast ++;
-	}	
+	}
 
 }
 
@@ -1050,10 +1050,10 @@ CountRxMgntCCMPRelpayStatistics(
 // Description:
 //	Count the number of unencrypted mgnt TKIP packets for encryption mode is enabled (CCXv5 S67 MFP).
 // Arguments:
-//	[in] Adapter - 
+//	[in] Adapter -
 //		The NIC context.
 //	[in] pRfd -
-//		The Rx buffer and information. 
+//		The Rx buffer and information.
 // By Bruce, 2009-10-15.
 //
 VOID
@@ -1069,10 +1069,10 @@ CountRxMgntTKIPNoEncryptStatistics(
 // Description:
 //	Count the number of unencrypted mgnt AES packets for encryption mode is enabled (CCXv5 S67 MFP).
 // Arguments:
-//	[in] Adapter - 
+//	[in] Adapter -
 //		The NIC context.
 //	[in] pRfd -
-//		The Rx buffer and information. 
+//		The Rx buffer and information.
 // By Bruce, 2009-10-15.
 //
 VOID
@@ -1088,10 +1088,10 @@ CountRxMgntCCMPNoEncryptStatistics(
 // Description:
 //	Count the number of CCXv5 MFP TKIP MHDRIE invalid.
 // Arguments:
-//	[in] Adapter - 
+//	[in] Adapter -
 //		The NIC context.
 //	[in] pRfd -
-//		The Rx buffer and information. 
+//		The Rx buffer and information.
 // By Bruce, 2009-10-15.
 //
 VOID
@@ -1107,10 +1107,10 @@ CountRxMgntMFPTKIPMHDRStatistics(
 // Description:
 //	Count the number of mgnt TKIP packet descrypted error.
 // Arguments:
-//	[in] Adapter - 
+//	[in] Adapter -
 //		The NIC context.
 //	[in] pRfd -
-//		The Rx buffer and information. 
+//		The Rx buffer and information.
 // By Bruce, 2009-10-16.
 //
 VOID
@@ -1126,10 +1126,10 @@ CountRxMgntTKIPDecryptErrorsStatistics(
 // Description:
 //	Count the number of mgnt AES packet descrypted error.
 // Arguments:
-//	[in] Adapter - 
+//	[in] Adapter -
 //		The NIC context.
 //	[in] pRfd -
-//		The Rx buffer and information. 
+//		The Rx buffer and information.
 // By Bruce, 2009-10-16.
 //
 VOID
@@ -1204,7 +1204,7 @@ RxStatisticsWatchdog(
 			{
 				Adapter->RxStats.CurRxDataRate.RawValue= legacy_rate[slct_idx];
 			}
-			
+
 		}
 	}
 
@@ -1216,17 +1216,17 @@ RxStatisticsWatchdog(
 #if SW_CRC_CHECK
 /**
 * Function:	SwCrcCheck
-* 
-* Overview:	This function do Crc check to received packets. 
+*
+* Overview:	This function do Crc check to received packets.
 *			It returns FALSE if the SW CRC check is not identical to HW CRC check.
-* 
-* Input:		
+*
+* Input:
 *		PRT_RFD		pRfd
-* 			
-* Output:		
+*
+* Output:
 *		None
-* 		
-* Return:     	
+*
+* Return:
 *		TRUE: 	SW CRC check is identical to HW CRC check.
 *		FALSE:	SW CRC check is not identical to HW CRC check.
 */
@@ -1345,21 +1345,21 @@ ParseSubframe(
 
 	//
 	// Record AMSDU size if it is a valid AMSDU packet
-	// 
+	//
 	AMSDU_UpdateRxAMSDUSizeHistogram(Adapter, pRfd->PacketLength);
 
-	
+
 	if(Frame_WEP(frame)!=0)
 	{	// For MPDU and MSDU head overhead in first frag
 		SecGetEncryptionOverhead(
 			Adapter,
-			&EncryptionMPDUHeadOverhead, 
-			NULL, 
-			&EncryptionMSDUHeadOverhead, 
+			&EncryptionMPDUHeadOverhead,
+			NULL,
+			&EncryptionMSDUHeadOverhead,
 			NULL,
 			TRUE,
 			MacAddr_isMulticast(Frame_pDaddr(frame)));
-		
+
 		EncryptionHeadOverhead=EncryptionMPDUHeadOverhead;// + EncryptionMSDUHeadOverhead;
 	}
 
@@ -1367,7 +1367,7 @@ ParseSubframe(
 	nRemain_Length = pRfd->PacketLength - LLCOffset;
 
 	pRfd->bIsAggregateFrame = bIsAggregateFrame;
-	
+
 	if(!bIsAggregateFrame)
 	{
 		pRfd->nTotalSubframe = 1;
@@ -1376,14 +1376,14 @@ ParseSubframe(
 		return 1;
 	}
 	else
-	{	
+	{
 		pRfd->nTotalSubframe = 0;
 		while(nRemain_Length > ETHERNET_HEADER_SIZE)
 		{
 			nSubframe_Length = N2H2BYTE(*((UNALIGNED pu2Byte)(frame.Octet + LLCOffset + 12)));
 
 			//
-			// Prevent unexpected MDL length requirement when packet indicateion, which might 
+			// Prevent unexpected MDL length requirement when packet indicateion, which might
 			// cause system using improper addresses, added by Roger, 2010.05.26.
 			//
 			if(nSubframe_Length<1)
@@ -1391,12 +1391,12 @@ ParseSubframe(
 				RT_ASSERT(FALSE, ("Invalid A-MSDU subframe size: %d, drop it!!\n", nSubframe_Length));
 				break;
 			}
-			
+
 			if(nRemain_Length<(ETHERNET_HEADER_SIZE + nSubframe_Length))
 			{
 			#if 0//cosa
 				RT_ASSERT(
-					(nRemain_Length>=(ETHERNET_HEADER_SIZE + nSubframe_Length)), 
+					(nRemain_Length>=(ETHERNET_HEADER_SIZE + nSubframe_Length)),
 					("ParseSubframe(): A-MSDU subframe parse error!! Subframe Length: %d\n", nSubframe_Length) );
 			#endif
 				//DbgPrint("ParseSubframe(): A-MSDU subframe parse error!! pRfd->nTotalSubframe : %d\n", pRfd->nTotalSubframe);
@@ -1405,7 +1405,7 @@ ParseSubframe(
 				//DbgPrint("The Packet SeqNum is %d\n",SeqNum);
 				return 0;
 			}
-			
+
 			LLCOffset += ETHERNET_HEADER_SIZE;
 			pRfd->SubframeArray[pRfd->nTotalSubframe] = frame.Octet + LLCOffset;
 			pRfd->SubframeLenArray[pRfd->nTotalSubframe] = nSubframe_Length;
@@ -1423,19 +1423,19 @@ ParseSubframe(
 				nPadding_Length = 4 - ((nSubframe_Length + ETHERNET_HEADER_SIZE) % 4);
 				if(nPadding_Length == 4)
 					nPadding_Length = 0;
-				
+
 
 				if(nRemain_Length < nPadding_Length)
 				{
 					RT_ASSERT(
-						(nRemain_Length >= nPadding_Length), 
+						(nRemain_Length >= nPadding_Length),
 						("ParseSubframe(): A-MSDU subframe parse error!!! Remain Length: %d\n", nRemain_Length));
 					return 0;
 				}
-				
+
 				nRemain_Length -= nPadding_Length;
 				LLCOffset = LLCOffset + nSubframe_Length + nPadding_Length;
-			}			
+			}
 		}
 		AMSDU_UpdateRxAMSDUNumHistogram(Adapter, pRfd->nTotalSubframe);
 		return pRfd->nTotalSubframe;
@@ -1463,7 +1463,7 @@ RxCheckSWDecryption(
 		//
 		// Case : Used SW Decrypt all Packet
 		//
-		
+
 		if(RT_SEC_STATUS_SUCCESS != (secStatus = SecSoftwareDecryption(Adapter, pRfd)))
 		{
 			RT_TRACE_F(COMP_SEC, DBG_WARNING, ("Failed (0x%08X) from SecSoftwareDecryption()\n", secStatus));
@@ -1473,9 +1473,9 @@ RxCheckSWDecryption(
 	else if(Adapter->HalFunc.GetNmodeSupportBySWSecHandler(Adapter))
 	{
 		//
-		// Case : SWRxDecryptFlag == False , in WEP or TKIP & 24N-mode & bHalfWiirelessN24GMode  
+		// Case : SWRxDecryptFlag == False , in WEP or TKIP & 24N-mode & bHalfWiirelessN24GMode
 		//
-	
+
 		if(!SecSoftwareDecryption(Adapter, pRfd))
 		{
 			bFreeRfd = TRUE;
@@ -1487,7 +1487,7 @@ RxCheckSWDecryption(
 
 
 
-	
+
 
 VOID
 ProcessReceivedPacket(
@@ -1500,7 +1500,7 @@ ProcessReceivedPacket(
 // Here handles and monitors the system/driver state for Rx path. Please place codes here.
 // =========================================================================
 
-	// Get shifted bytes of Starting address of 802.11 header. 2006.09.28, by Emily	
+	// Get shifted bytes of Starting address of 802.11 header. 2006.09.28, by Emily
 	pRfd->Buffer.VirtualAddress += Adapter->HalFunc.GetRxPacketShiftBytesHandler(pRfd);
 
 	pRfd->bRxBTdata = FALSE;
@@ -1516,7 +1516,7 @@ ProcessReceivedPacket(
 {
 	// NOTE: -----------------------------------------------------------------------
 	// 	This function is a packet distributor for each port. Please distrubute your packet herein.
-	
+
 	PADAPTER pSingleAdapter = MultiPortFeedPacketToMultipleAdapter(Adapter, pRfd);
 
 	if(pSingleAdapter == NULL)
@@ -1558,12 +1558,12 @@ ProcessReceivedPacketForEachPortSpecific(
 	RT_SEC_STATUS	secStatus = RT_SEC_STATUS_SUCCESS;
 	BOOLEAN 		bSupportRemoteWakeUp;
 
-	Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_WOWLAN , &bSupportRemoteWakeUp);	
+	Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_WOWLAN , &bSupportRemoteWakeUp);
 
 	/* 2007/01/16 MH Add RX command packet handle here. */
 	/* 2007/03/01 MH We have to release RFD and return if rx pkt is cmd pkt. */
 	if (Adapter->HalFunc.RxCommandPacketHandler(Adapter, pRfd))
-	{	
+	{
 		ReturnRFDList(Adapter, pRfd);
 		return;
 	}
@@ -1579,7 +1579,7 @@ ProcessReceivedPacketForEachPortSpecific(
 			return;
 		}
 	}
-	
+
 	// =========================================================================
 	// Here defines and handles signle MPDU for a single port. Please let it be the first line
 	// =========================================================================
@@ -1591,18 +1591,18 @@ ProcessReceivedPacketForEachPortSpecific(
 		ReturnRFDList(Adapter, pRfd);
 		return;
 	}
-	
+
 	GetDefaultAdapter(Adapter)->bRemoveTsInRxPath = TRUE;
-	
+
 	bSecEAPOLPacket = SecIsEAPOLPacket( Adapter, &frame);// Remenber the IsSecEAPOL, 2009.08.26, by Bohn
 
 	pSaddr_ori= Frame_pSaddr(frame);
 	PlatformMoveMemory(Saddr, pSaddr_ori, 6);
 	PlatformMoveMemory(pRfd->Address3,Frame_Addr3(frame),6);
-	
+
 	pSaddr = Saddr;
 	pMgntInfo = &Adapter->MgntInfo;
-	
+
 	//Go determines Client is active or not by sherry 20130117
 	if((IsMgntNullFrame(frame.Octet)) && eqMacAddr(Frame_pRaddr(frame), Adapter->CurrentAddress))
 	{
@@ -1611,13 +1611,13 @@ ProcessReceivedPacketForEachPortSpecific(
 			// RT_TRACE(COMP_MLME,DBG_LOUD,("It is Go port receive packet \n"));
 			// RT_PRINT_DATA(COMP_MLME, DBG_LOUD,"recv null function data: \n",frame.Octet,frame.Length);
 			pMgntInfo->LinkDetectInfo.RxNullDataNum++;
-			
+
 			if(Frame_PwrMgt(frame))
 				Adapter->bRecvEnterPSForGo = TRUE;
 			else
 				Adapter->bRecvEnterPSForGo	= FALSE;
 		}
-			
+
 	}
 
 #if (STATISTIC_SUPPORT == 1)
@@ -1638,7 +1638,7 @@ ProcessReceivedPacketForEachPortSpecific(
 		pRfd->Status.bContainHTC = HTCCheck(	Adapter, pRfd, &frame	);
 
 		if(pRfd->Status.bHwError)
-		{		
+		{
 			bFreeRfd = TRUE;
 			break;
 		}
@@ -1673,12 +1673,12 @@ ProcessReceivedPacketForEachPortSpecific(
 		{
 				break;
 		}
-		
+
 		CCX_QueryIHVSupport(Adapter, &bIhvFrameLogMode);
 
 		if(!MgntFilterReceivedPacket(Adapter, pRfd) && !bIhvFrameLogMode)
 		{
-			if (IsMgntFrame(frame.Octet)) 
+			if (IsMgntFrame(frame.Octet))
 				break;
 			bFreeRfd=TRUE;
 			break;
@@ -1691,7 +1691,7 @@ ProcessReceivedPacketForEachPortSpecific(
 		// TODO: SecurityCheckMPDU
 
 		if(!DefragPacket(Adapter, &pRfd, &bQueued))
-		{		
+		{
 			bFreeRfd=TRUE;
 			break;
 		}
@@ -1714,16 +1714,16 @@ ProcessReceivedPacketForEachPortSpecific(
 			bFreeRfd = TRUE;
 			break;
 		}
-	
+
 		// TODO: SecurityCheckMSDU
-		
+
 		if(Frame_ContainQc(frame) && GET_QOS_CTRL_HC_CFP_USRSVD(frame.Octet)  == 1)
 		{ 	//2Here we handle the condition of multiple packets in single frame
 			if(ParseSubframe(Adapter, pRfd) == 0)
 			{
 				bFreeRfd=TRUE;
 				break;
-			}			
+			}
 			if(pMgntInfo->OpMode==RT_OP_MODE_AP)
 			{
 				PRT_RFD PRFD_Array[MAX_SUBFRAME_COUNT];
@@ -1779,14 +1779,14 @@ ProcessReceivedPacketForEachPortSpecific(
 					bFreeRfd = TRUE;
 					break;
 				}
-				
+
 				if(nIndicateCnt == 0 )
 				{
 					bFreeRfd = TRUE;
 					break;
 				}
 			}
-		
+
 			if(!TranslateHandleRxDot11FrameHeader(Adapter, pRfd))
 			{
 				bFreeRfd=TRUE;
@@ -1798,11 +1798,11 @@ ProcessReceivedPacketForEachPortSpecific(
 
 			pRfd->nTotalSubframe = 0; // This indicates that this is not an aggregation frame.
 			pRfd->bIsAggregateFrame = FALSE;
-			
+
 			if(pMgntInfo->OpMode==RT_OP_MODE_AP)
 			{
 				//
-				// Win7 handles intra-BSS bridging through the regular reception and transmission path, 
+				// Win7 handles intra-BSS bridging through the regular reception and transmission path,
 				// i.e. miniport does not have to build the logic of forwarding intra-BSS frames to appropriate peers.
 				//
 				if(!MgntCheckForwarding(Adapter, pRfd))
@@ -1827,17 +1827,17 @@ ProcessReceivedPacketForEachPortSpecific(
 				{
 					RT_DISP(FRX, RX_PATH_AP_MODE, ("AP mode need to indicate\n"));
 				}
-					
+
 			}
 
 			// Parse the RFD.
 			if (CCX_ParseRfd(Adapter, pRfd, frame, &bFreeRfd))
 			{
 				break;
-			}		
+			}
 
 			if(!TranslateHandleRxDot11FrameHeader(Adapter, pRfd))
-			{		
+			{
 				bFreeRfd=TRUE;
 				break;
 			}
@@ -1857,14 +1857,14 @@ ProcessReceivedPacketForEachPortSpecific(
 	{
 		BOOLEAN 	bReorder = FALSE;
 		BOOLEAN 	bStopRxreorder = FALSE;
-	
+
 		CountRxStatistics(Adapter, pRfd);
 
 		if(ACTING_AS_AP(Adapter))
 		{
 			// For Win8 NdisTest - WFD_DataTransmission_ext:
-			if(	pRfd->Status.pRxTS != NULL 
-				&& (!bSecEAPOLPacket) 
+			if(	pRfd->Status.pRxTS != NULL
+				&& (!bSecEAPOLPacket)
 				&& pMgntInfo->pHTInfo->bCurRxReorderEnable )
 			{
 				bReorder = TRUE;
@@ -1872,8 +1872,8 @@ ProcessReceivedPacketForEachPortSpecific(
 		}
 		else
 		{
-			if(	pMgntInfo->pHTInfo->bCurrentHTSupport 
-				&& pMgntInfo->pHTInfo->bCurRxReorderEnable 
+			if(	pMgntInfo->pHTInfo->bCurrentHTSupport
+				&& pMgntInfo->pHTInfo->bCurRxReorderEnable
 				&& pRfd->Status.pRxTS!=NULL && (!bSecEAPOLPacket))
 				bReorder = TRUE;
 
@@ -1893,18 +1893,18 @@ ProcessReceivedPacketForEachPortSpecific(
 		}
 
 		GetDefaultAdapter(Adapter)->bRemoveTsInRxPath = FALSE;
-		
+
 		{
 			if(bReorder)
 			{
-#if RX_AGGREGATION 
+#if RX_AGGREGATION
 				if(pRfd->RxAggrInfo.bIsRxAggr)
 					RxReorderAggrBatchIndicate(Adapter, pRfd);
 				else
 #endif
 					RxReorderIndicatePacket(Adapter, pRfd);
 			}
-			else 
+			else
 			{
 #if RX_AGGREGATION
 				if(pRfd->RxAggrInfo.bIsRxAggr && pRfd->RxAggrInfo.bIsLastPkt)
@@ -1918,10 +1918,10 @@ ProcessReceivedPacketForEachPortSpecific(
 					// Flush pending Rx Packets.
 					FlushAllRxTsPendingPkts(Adapter);
 				}
-				
+
 				DrvIFIndicatePacket(Adapter, pRfd);
 				if(pRfd->Status.pRxTS!=NULL)
-					pRfd->Status.pRxTS->RxIndicateSeq = (pRfd->Status.Seq_Num+1)%4096;					
+					pRfd->Status.pRxTS->RxIndicateSeq = (pRfd->Status.Seq_Num+1)%4096;
 			}
 		}
 	}
@@ -1958,9 +1958,9 @@ DefragPacket(
 	FragNum=(u1Byte)Frame_FragNum(frame);
 	bMoreFrag=(BOOLEAN)Frame_MoreFrag(frame);
 	bEncrypted=(BOOLEAN)Frame_WEP(frame);
-	
+
 	RT_TRACE_F(COMP_RECV, DBG_TRACE, ("SeqNum %d FragNum %d bMoreFrag %d bEncrypted %d\n", SeqNum, FragNum, bMoreFrag, bEncrypted));
-	
+
 	*pbQueued=FALSE;
 
 	if(bEncrypted && !pMgntInfo->SafeModeEnabled)
@@ -1974,7 +1974,7 @@ DefragPacket(
 			NULL,
 			TRUE,
 			MacAddr_isMulticast(Frame_pDaddr(frame)));
-		
+
 		MAKE_RFD_OFFSET_AT_BACK(*ppRfd, EncryptionOverhead);
 	}
 
@@ -2000,8 +2000,8 @@ DefragPacket(
 		else
 			*pbQueued=TRUE;
 	}
-	
-	// At this point, we check the number of free RFDs. 
+
+	// At this point, we check the number of free RFDs.
 	// If it is lower than LowRfdThreshold, just release the LRU entry of DefragArray and
 	// return associate RFDs. 2006.07.25, by shien chang
 	// Note 1: The reason we didn't recycle RFDs at the above codes is even no fragment
@@ -2012,13 +2012,13 @@ DefragPacket(
 	{
 		for (i=0; i<*GET_LOW_RFD_THRESHOLD(Adapter); i++)
 		{
-			// for 92se test we disable to prevent the check			
-			//Alghouth there many be more than one rx queuem but there should be only one 
+			// for 92se test we disable to prevent the check
+			//Alghouth there many be more than one rx queuem but there should be only one
 			//queue for received data. 2006.1.3, by Emily
 			//if (Adapter->NumIdleRfd+Adapter->NumBusyRfd[RX_MPDU_QUEUE] < Adapter->LowRfdThreshold)
 			if ((*GET_NUM_IDLE_RFD(Adapter)+*GET_NUM_BUSY_RFD(Adapter, RX_MPDU_QUEUE))< *GET_LOW_RFD_THRESHOLD(Adapter))
 			{
-				RT_TRACE(COMP_RECV, DBG_LOUD, 
+				RT_TRACE(COMP_RECV, DBG_LOUD,
 					("DefragPacket(): Number of RFDs (%d) is lower than threshold (%d).",
 					Adapter->NumIdleRfd, Adapter->LowRfdThreshold));
 				DefragRecycleRFD(Adapter);
@@ -2027,7 +2027,7 @@ DefragPacket(
 				break;
 		}
 	}
-	
+
 	if(!(*pbQueued))
 	{
 		//1 Note:	We must get all ppRfd information again
@@ -2035,11 +2035,11 @@ DefragPacket(
 
 		// Should be the same for all fragment
 		bEncrypted=(BOOLEAN)Frame_WEP(frame);
-	
+
 		if(bEncrypted && !pMgntInfo->SafeModeEnabled)
 		{
 			//2 Check MIC and remove MIC
-			
+
 			//2004/07/07, kcwu, check mic
 			bReturn = SecCheckMIC(Adapter, *ppRfd);
 
@@ -2050,7 +2050,7 @@ DefragPacket(
 				NULL,
 				&EncryptionOverhead,
 				TRUE,
-				MacAddr_isMulticast(Frame_pDaddr(frame)));		
+				MacAddr_isMulticast(Frame_pDaddr(frame)));
 			MAKE_RFD_LIST_OFFSET_AT_BACK(Adapter, *ppRfd, EncryptionOverhead);
 		}
 	}
@@ -2067,7 +2067,7 @@ TranslateRxPacketHeader(
 	OCTET_STRING	frame;
 	BOOLEAN			RemoveLLCFlag=FALSE;
 	u2Byte			LLCOffset;
-	u2Byte			offset;	
+	u2Byte			offset;
 	u2Byte			EncryptionMPDUHeadOverhead, EncryptionMSDUHeadOverhead, EncryptionHeadOverhead=0;
 	u1Byte			SrcAddr[6];
 	u1Byte			DestAddr[6];
@@ -2083,7 +2083,7 @@ TranslateRxPacketHeader(
 	FillOctetString(frame, pRfd->Buffer.VirtualAddress + pRfd->FragOffset, pRfd->FragLength);
 
 	//
-	// Figure out "LLCOffset", and 
+	// Figure out "LLCOffset", and
 	// "offset", the offset to advance from 802.11 frame to 802.3.
 	//
 	LLCOffset = Frame_FrameHdrLng(frame);
@@ -2110,26 +2110,26 @@ TranslateRxPacketHeader(
 	{	// For MPDU and MSDU head overhead in first frag
 		SecGetEncryptionOverhead(
 			Adapter,
-			&EncryptionMPDUHeadOverhead, 
-			NULL, 
-			&EncryptionMSDUHeadOverhead, 
+			&EncryptionMPDUHeadOverhead,
+			NULL,
+			&EncryptionMSDUHeadOverhead,
 			NULL,
 			TRUE,
 			MacAddr_isMulticast(Frame_pDaddr(frame)));
-		
+
 		EncryptionHeadOverhead=EncryptionMPDUHeadOverhead;// + EncryptionMSDUHeadOverhead;
 	}
 
-	
+
 	LLCOffset +=EncryptionHeadOverhead;
 	offset +=EncryptionHeadOverhead;
 
-	if(	EF1Byte( frame.Octet[LLCOffset + 0] )==0xaa	&& 
-		EF1Byte( frame.Octet[LLCOffset + 1] )==0xaa	&& 
+	if(	EF1Byte( frame.Octet[LLCOffset + 0] )==0xaa	&&
+		EF1Byte( frame.Octet[LLCOffset + 1] )==0xaa	&&
 		EF1Byte( frame.Octet[LLCOffset + 2] )==0x03
 		)
 	{	// check if need remove LLC header
-	
+
 		RemoveLLCFlag=TRUE;
 		for(i=0;i<NeedCheckTypes;i++)
 		{
@@ -2150,7 +2150,7 @@ TranslateRxPacketHeader(
 			}
 		}
 	}
-		
+
 	//
 	// Setup Address Fields in ethernet header.
 	//
@@ -2170,7 +2170,7 @@ TranslateRxPacketHeader(
 		(frame.Octet+offset)[12]=( (u1Byte)(len>>8) );
 		(frame.Octet+offset)[13]=( (u1Byte)(len&0xff) );
 	}
-	
+
 	//
 	// Advance offset.
 	//
@@ -2237,14 +2237,14 @@ TranslateHandleRxDot11FrameHeader(
 		|| MgntActQuery_ApType(Adapter) == RT_AP_TYPE_LINUX )
 	{
 	//
-	// 061227, rcnjko: 
-	// Translate header for NDIS6 faked AP mode (UI make upper layer take us as AdHoc mode). 
+	// 061227, rcnjko:
+	// Translate header for NDIS6 faked AP mode (UI make upper layer take us as AdHoc mode).
 	//
-	if( pMgntInfo->OpMode == RT_OP_MODE_AP ) 
+	if( pMgntInfo->OpMode == RT_OP_MODE_AP )
 	{
 		if(GET_80211_HDR_TO_DS(pHeader) == 1 && GET_80211_HDR_FROM_DS(pHeader) == 0)
 		{ // Translate (1,0) to (0,0)
-			u1Byte	tmpAddr[6];	
+			u1Byte	tmpAddr[6];
 			u1Byte	tmpAddr2[6];
 
 			SET_80211_HDR_FROM_DS(pHeader, 0);
@@ -2276,16 +2276,16 @@ TranslateHandleRxDot11FrameHeader(
 	{	// For MPDU and MSDU head overhead in first frag
 		SecGetEncryptionOverhead(
 			Adapter,
-			&EncryptionMPDUHeadOverhead, 
-			NULL, 
-			&EncryptionMSDUHeadOverhead, 
+			&EncryptionMPDUHeadOverhead,
+			NULL,
+			&EncryptionMSDUHeadOverhead,
 			NULL,
 			TRUE,
 			MacAddr_isMulticast(Frame_pDaddr(frame)));
-		
+
 		EncryptionHeadOverhead=EncryptionMPDUHeadOverhead;// + EncryptionMSDUHeadOverhead;
 	}
-	
+
 	LLCOffset +=EncryptionHeadOverhead;
 	offset +=EncryptionHeadOverhead;
 
@@ -2326,14 +2326,14 @@ TranslateRxLLCHeaders(
 		cpMacAddr(DestinationAddress, pLLC - ETHERNET_HEADER_SIZE);
 		cpMacAddr(srcaddr, pLLC - ETHERNET_HEADER_SIZE + ETHERNET_ADDRESS_LENGTH);
 
-		
+
 		pFrame = pLLC -ETHERNET_HEADER_SIZE;
-		if(	*(pLLC + 0) == 0xaa	&& 
-			*(pLLC + 1) == 0xaa	&& 
+		if(	*(pLLC + 0) == 0xaa	&&
+			*(pLLC + 1) == 0xaa	&&
 			*(pLLC + 2) == 0x03
 			)
 		{	// check if need remove LLC header
-		
+
 			RemoveLLCFlag=TRUE;
 			for(i=0;i<NeedCheckTypes;i++)
 			{
@@ -2346,7 +2346,7 @@ TranslateRxLLCHeaders(
 			if(RemoveLLCFlag)
 				pFrame += 8;
 		}
-			
+
 		cpMacAddr(pFrame	,DestinationAddress);
 		cpMacAddr(pFrame+6	,srcaddr);
 
@@ -2407,7 +2407,7 @@ ReturnRFD(
 	if(pParentRfd != NULL)
 	{
 		RT_ASSERT(pParentRfd->nChildCnt>0, ("ReturnRFDList(): Error handle Parent Rfd\n"));
-	
+
 		pParentRfd->nChildCnt--;
 
 		if(pParentRfd->nChildCnt==0)
@@ -2457,7 +2457,7 @@ ReturnRFDList(
 VOID
 MakeRFDListOffsetAtBack(
 	PADAPTER	Adapter,
-	PRT_RFD		pRfd, 
+	PRT_RFD		pRfd,
 	u2Byte		offset
 	)
 {
@@ -2484,7 +2484,7 @@ MakeRFDListOffsetAtBack(
 			pCurrentRfd->FragLength-=offset;
 		}
 		else
-		{	
+		{
 			//2 We need to remove last RFD
 			pPreviousRfd->FragLength-=(offset - pCurrentRfd->FragLength);
 
@@ -2492,9 +2492,9 @@ MakeRFDListOffsetAtBack(
 			ReturnRFDList(Adapter, pCurrentRfd);
 
 			pRfd->nTotalFrag--;
-			pPreviousRfd->NextRfd=NULL;			
+			pPreviousRfd->NextRfd=NULL;
 		}
-		
+
 		pRfd->PacketLength-= offset;
 	}
 }
@@ -2553,7 +2553,7 @@ RxCheckLength(
 		return	FALSE;
 
 	if(!IsDataFrame(frame.Octet))
-		return TRUE;	
+		return TRUE;
 
 	if(IsMgntNullFrame(frame.Octet))
 		return TRUE;
@@ -2567,12 +2567,12 @@ RxCheckLength(
 	if(pRfd->bRxBTdata)
 		return TRUE;
 
-	// 
+	//
 	if( pRfd->Status.bIsQosData )
 	{
 		NeedLength += sQoSCtlLng;
 	}
-	
+
 	if( pRfd->Status.bContainHTC)
 		NeedLength += sHTCLng;
 
@@ -2583,7 +2583,7 @@ RxCheckLength(
 		//SecGetEncryptionOverhead(PADAPTER Adapter, pu2Byte pMPDUHead, pu2Byte pMPDUTail, pu2Byte pMSDUHead, pu2Byte pMSDUTail, BOOLEAN bByPacket, BOOLEAN bIsBroadcastPkt)
 
 		NeedLength += pSec->EncryptionHeadOverhead +  pSec->EncryptionTailOverhead;
-		
+
 		// 2010/04/30 MH Add TKIP MIC length check.
 		// 2010/05/13 MH Add broadcast tkip length check. Multicast will corver broadcast.
 		PlatformMoveMemory(DestAddr, Frame_Addr1(frame), ETHERNET_ADDRESS_LENGTH);
@@ -2595,7 +2595,7 @@ RxCheckLength(
 
 	return ( pRfd->PacketLength >= NeedLength ) ? TRUE:FALSE;
 
-	
+
 }
 
 //
@@ -2617,13 +2617,13 @@ RxNotifyThreadCallback(
 	{
 		if( PlatformAcquireSemaphore(&(pNdisCommon->RxNotifySemaphore)) != RT_STATUS_SUCCESS )
 			break;
-		
+
 		if(pAdapter->bDriverIsGoingToUnload == TRUE)
 		{
 			RT_TRACE(COMP_INIT, DBG_LOUD, ("[Rx Thread] Driver is going to unload\n"));
 			break;
 		}
-		
+
 		/****************************************************************************************************
 		* 20150707 Sinda
 		* WDI will check MAC address in frame header when TID is WDI_EXT_TID_UNKNOWN(0x1f) or PeerId is Wildcard(0xffff)
@@ -2653,6 +2653,6 @@ RxNotifyThreadCallback(
 			}
 		}
 		PlatformReleaseSpinLock(pAdapter, RT_RX_QUEUE_SPINLOCK);
-	}			
+	}
 }
 

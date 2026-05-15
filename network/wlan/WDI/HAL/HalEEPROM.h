@@ -2,7 +2,7 @@
 #define __INC_EEPROM_H
 
 #define	EEPROM_MAX_SIZE			256
-#define	CLOCK_RATE					50			//100us		
+#define	CLOCK_RATE					50			//100us
 
 //- EEPROM opcodes
 #define EEPROM_READ_OPCODE		06
@@ -30,7 +30,7 @@ GetEEpromSize(
 	PADAPTER	Adapter
 	);
 
-u2Byte 
+u2Byte
 ReadEEprom(
 	PADAPTER	Adapter,
 	u2Byte 		Reg
@@ -38,31 +38,31 @@ ReadEEprom(
 
 
 
-VOID 
+VOID
 ShiftOutBits(
 	PADAPTER	Adapter,
 	u2Byte		data,
 	u2Byte		count
 	);
 
-u2Byte 
+u2Byte
 ShiftInBits(
 	PADAPTER	Adapter
 	);
 
-VOID 
+VOID
 RaiseClock(
 	PADAPTER	Adapter,
 	u2Byte		*x
 	);
 
-VOID 
+VOID
 LowerClock(
 	PADAPTER	Adapter,
 	u2Byte		*x
 	);
 
-VOID 
+VOID
 EEpromCleanup(
 	PADAPTER	Adapter
 	);
@@ -89,7 +89,7 @@ StandBy(
 	PADAPTER	Adapter
 	);
 
-extern	BOOLEAN	
+extern	BOOLEAN
 EEPROM_ProgramMap(
 	IN	PADAPTER	Adapter,
 	IN	ps1Byte 		pFileName);

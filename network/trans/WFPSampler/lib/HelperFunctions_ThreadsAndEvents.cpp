@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -31,7 +31,7 @@
 //          {
 //            Cleanup       -
 //            Set           -
-//            Start         - 
+//            Start         -
 //            Stop          -
 //            Wait          -
 //          }
@@ -59,7 +59,7 @@
 
 /**
  @helper_function="HlprEventReset"
- 
+
    Purpose:  Sets the event to nonsignaled.                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -77,7 +77,7 @@ VOID HlprEventReset(_In_opt_ HANDLE event)
 
 /**
  @helper_function="HlprEventSet"
- 
+
    Purpose:  Signals an event.                                                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -94,7 +94,7 @@ VOID HlprEventSet(_In_opt_ HANDLE event)
 
 /**
  @helper_function="HlprThreadStart"
- 
+
    Purpose:  Generates a new thread.                                                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -175,7 +175,7 @@ UINT32 HlprThreadStart(_Inout_ THREAD_DATA* pThreadData,
 
 /**
  @helper_function="HlprThreadStop"
- 
+
    Purpose:  Signals a thread to stop and cleans it up.                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -208,7 +208,7 @@ UINT32 HlprThreadStop(_Inout_ THREAD_DATA* pThreadData)
 
 /**
  @helper_function="HlprThreadStop"
- 
+
    Purpose:  Signals a thread to stop and cleans it up, and frees any allocated memory.         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -237,7 +237,7 @@ UINT32 HlprThreadStop(_Inout_ THREAD_DATA** ppThreadData)
 
 /**
  @helper_function="HlprThreadCleanup"
- 
+
    Purpose:  Cleans up a previously allocated thread.                                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -313,7 +313,7 @@ VOID HlprThreadCleanup(_Inout_opt_ THREAD_DATA* pThreadData)
 
 /**
  @helper_function="HlprThreadWaitForCompletion"
- 
+
    Purpose: Waits for a thread to complete.                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -338,7 +338,7 @@ UINT32 HlprThreadWaitForCompletion(_Inout_opt_ THREAD_DATA* pThreadData)
 
 /**
  @helper_function="HlprThreadWaitForEvent"
- 
+
    Purpose:  Waits for a particular event to be set within the thread.                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -378,7 +378,7 @@ UINT32 HlprThreadWaitForEvent(_In_ HANDLE eventHandle,
          {
             status = WAIT_TIMEOUT;
 
-            HlprLogInfo(L"HlprThreadWaitForEvent() [status: %#x]", 
+            HlprLogInfo(L"HlprThreadWaitForEvent() [status: %#x]",
                         status);
 
             break;

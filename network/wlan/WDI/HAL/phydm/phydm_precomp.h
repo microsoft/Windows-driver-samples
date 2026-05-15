@@ -1,7 +1,7 @@
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
- *                                        
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
@@ -29,14 +29,14 @@
 #define		TEST_FALG___		1
 #endif
 
-#if (DM_ODM_SUPPORT_TYPE ==ODM_CE) 
+#if (DM_ODM_SUPPORT_TYPE ==ODM_CE)
 #define 	RTL8192CE_SUPPORT 				0
 #define 	RTL8192CU_SUPPORT 				0
-#define 	RTL8192C_SUPPORT 				0	
+#define 	RTL8192C_SUPPORT 				0
 
 #define 	RTL8192DE_SUPPORT 				0
 #define 	RTL8192DU_SUPPORT 				0
-#define 	RTL8192D_SUPPORT 				0	
+#define 	RTL8192D_SUPPORT 				0
 
 #define 	RTL8723AU_SUPPORT				0
 #define 	RTL8723AS_SUPPORT				0
@@ -61,7 +61,7 @@
 
 	#ifdef AP_BUILD_WORKAROUND
 	#include "../8192cd_headers.h"
-	#include "../8192cd_debug.h"		
+	#include "../8192cd_debug.h"
 	#endif
 
 #elif (DM_ODM_SUPPORT_TYPE ==ODM_CE)
@@ -75,8 +75,8 @@
 #endif
 
 //2 OutSrc Header Files
- 
-#include "phydm.h" 
+
+#include "phydm.h"
 #include "phydm_hwconfig.h"
 #include "phydm_debug.h"
 #include "phydm_regdefine11ac.h"
@@ -131,7 +131,7 @@ PHY_SetTxPowerLimit(
 //#include "rtl8188e/phydm_rtl8188e.h"
 //#include "rtl8188e/hal8188ereg.h"
 //#if (DM_ODM_SUPPORT_TYPE == ODM_CE)
-//	#include "rtl8188e_hal.h" 
+//	#include "rtl8188e_hal.h"
 //	#include "rtl8188e/halphyrf_8188e_ce.h"
 //#endif
 //#if (DM_ODM_SUPPORT_TYPE == ODM_WIN)
@@ -141,7 +141,7 @@ PHY_SetTxPowerLimit(
 //	#include "rtl8188e/halphyrf_8188e_ap.h"
 //#endif
 
-//#if (RTL8192E_SUPPORT==1) 
+//#if (RTL8192E_SUPPORT==1)
 //
 //	#if (DM_ODM_SUPPORT_TYPE == ODM_WIN)
 //		#include "rtl8192e/halphyrf_8192e_win.h" /*FOR_8192E_IQK*/
@@ -150,7 +150,7 @@ PHY_SetTxPowerLimit(
 //	#elif (DM_ODM_SUPPORT_TYPE == ODM_CE)
 //		#include "rtl8192e/halphyrf_8192e_ce.h" /*FOR_8192E_IQK*/
 //	#endif
-//	
+//
 //#include "rtl8192e/phydm_rtl8192e.h" //FOR_8192E_IQK
 //#if (DM_ODM_SUPPORT_TYPE != ODM_AP)
 //	#include "rtl8192e/halhwimg8192e_bb.h"
@@ -244,7 +244,7 @@ PHY_SetTxPowerLimit(
 //#include "rtl8881a/odm_RegConfig8881A.h"
 //#endif
 
-#if (RTL8723B_SUPPORT==1) 
+#if (RTL8723B_SUPPORT==1)
 #include "rtl8723b/halhwimg8723b_mac.h"
 #include "rtl8723b/halhwimg8723b_rf.h"
 #include "rtl8723b/halhwimg8723b_bb.h"
@@ -261,7 +261,7 @@ PHY_SetTxPowerLimit(
 #endif
 #endif
 
-//#if (RTL8821A_SUPPORT==1) 
+//#if (RTL8821A_SUPPORT==1)
 //#include "rtl8821a/halhwimg8821a_mac.h"
 //#include "rtl8821a/halhwimg8821a_rf.h"
 //#include "rtl8821a/halhwimg8821a_bb.h"
@@ -279,7 +279,7 @@ PHY_SetTxPowerLimit(
 //#endif
 //#endif
 
-//#if (RTL8821B_SUPPORT==1) 
+//#if (RTL8821B_SUPPORT==1)
 //#include "rtl8821b/halhwimg8821b_mac.h"
 //#include "rtl8821b/halhwimg8821b_rf.h"
 //#include "rtl8821b/halhwimg8821b_bb.h"
@@ -292,7 +292,7 @@ PHY_SetTxPowerLimit(
 //#include "rtl8821b/halphyrf_8821b.h"
 //#endif
 
- 
+
 //#include "rtl8822b/halhwimg8822b_mac.h"
 //#include "rtl8822b/halhwimg8822b_rf.h"
 //#include "rtl8822b/halhwimg8822b_bb.h"
@@ -304,7 +304,7 @@ PHY_SetTxPowerLimit(
 //#include "rtl8822b/version_rtl8822b.h"
 
 
-//#if (RTL8703B_SUPPORT==1) 
+//#if (RTL8703B_SUPPORT==1)
 //#include "rtl8703b/phydm_regconfig8703b.h"
 //#include "rtl8703b/halhwimg8703b_mac.h"
 //#include "rtl8703b/halhwimg8703b_rf.h"
@@ -317,7 +317,7 @@ PHY_SetTxPowerLimit(
 //#endif
 //#endif
 
-//#if (RTL8188F_SUPPORT == 1) 
+//#if (RTL8188F_SUPPORT == 1)
 //#include "rtl8188f/halhwimg8188f_mac.h"
 //#include "rtl8188f/halhwimg8188f_rf.h"
 //#include "rtl8188f/halhwimg8188f_bb.h"

@@ -149,8 +149,8 @@ Ap_SendDisassocWithOldChnlWorkitemCallback(
 	IN PVOID			pContext
 	);
 
-VOID 
-AP_DisconnectAfterSTANewConnected(	
+VOID
+AP_DisconnectAfterSTANewConnected(
 	PADAPTER Adapter
 	);
 
@@ -195,8 +195,8 @@ AP_SendAsocRsp(
 
 BOOLEAN
 AP_DisassociateStation(
-	IN	PADAPTER		Adapter, 
-	IN	PRT_WLAN_STA	pSta, 
+	IN	PADAPTER		Adapter,
+	IN	PRT_WLAN_STA	pSta,
 	IN	u1Byte			asRsn);
 
 VOID
@@ -219,7 +219,7 @@ VOID
 AP_PS_FillTim(
 	IN	PMGNT_INFO	pMgntInfo);
 
-VOID 
+VOID
 AP_PS_OnPSPoll(
 	IN	PADAPTER		Adapter,
 	IN	OCTET_STRING	osMpdu);
@@ -232,13 +232,13 @@ AP_ForwardPacketWithFromDS(
 
 BOOLEAN
 AP_FromWdsToBss(
-	IN	PADAPTER		Adapter, 
+	IN	PADAPTER		Adapter,
 	IN	PRT_RFD			pRfd,
 	IN	BOOLEAN			bNeedCopy);
 
 BOOLEAN
 AP_FromBssToWds(
-	IN	PADAPTER		Adapter, 
+	IN	PADAPTER		Adapter,
 	IN	PRT_RFD			pRfd,
 	IN	BOOLEAN			bNeedCopy);
 
@@ -253,7 +253,7 @@ AP_CheckRSNIE(
 	IN	PRT_WLAN_STA	pEntry,
 	IN	OCTET_STRING	asocpdu);
 
-void 
+void
 AP_OnEAPOL(
 	IN	PADAPTER		Adapter,
 	IN	PRT_RFD			pRfd );
@@ -262,7 +262,7 @@ AP_OnEAPOL(
 
 AP_STATE
 GetAPState(
-	IN	PADAPTER		pAdapter	
+	IN	PADAPTER		pAdapter
 	);
 
 VOID
@@ -361,7 +361,7 @@ Ap_PsTxFeedbackCallback(
 	const RT_TX_FEEDBACK_INFO * const pTxFeedbackInfo
 );
 
-VOID 
+VOID
 AP_AllPowerSaveDisable(
 	IN PADAPTER 	pAdapter
 );

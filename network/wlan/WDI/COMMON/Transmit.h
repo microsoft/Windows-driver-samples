@@ -3,7 +3,7 @@
 /*---------------------------Define---------------------------------------------*/
 
 //
-// <Roger_Notes> We using different FW fragment size for PCIe and Usb interface respectively. 
+// <Roger_Notes> We using different FW fragment size for PCIe and Usb interface respectively.
 // 2009.05.05.
 //
 	#define		RT_LOCAL_FW_BUF_SIZE				0x8000 // size 32k
@@ -30,7 +30,7 @@
 #define	RT_TCB_FLAG_PS_PRE_TRANSMIT			BIT4	// Means that we set it in PS queue before PreTransmitTCB(), we should send it in PreTransmitTCB().
 #define	RT_TCB_FLAG_RAW_DATA				BIT5	// Sent by raw data. Do not change the content.
 
-#define NIC_SEND_HANG_THRESHOLD_NORMAL		4        
+#define NIC_SEND_HANG_THRESHOLD_NORMAL		4
 #define NIC_SEND_HANG_THRESHOLD_POWERSAVE 	8
 #define	MAX_DOZE_WAITING_TIMES				100		// The time of micro-second * 10 to wait before config RF OFF/Sleep.
 
@@ -56,14 +56,14 @@
 
 #define IsThereBufferInTxDesc(_Adapter, _Queue)			\
 		((_Adapter)->nBufInTxDesc[_Queue] > 0)
-		
+
 #define IncrementTxDescToFill(_Adapter, _Queue, _N)		\
 		(_Adapter)->NextTxDescToFill[_Queue]=((_Adapter)->NextTxDescToFill[_Queue]+_N)%(_Adapter)->NumTxDesc[_Queue];			\
 		(_Adapter)->nBufInTxDesc[_Queue]+=_N;
 
 #define IncrementTxDescToCheck(_Adapter, _Queue, _N)	\
 		(_Adapter)->NextTxDescToCheck[_Queue]=((_Adapter)->NextTxDescToCheck[_Queue]+_N)%(_Adapter)->NumTxDesc[_Queue];	\
-		(_Adapter)->nBufInTxDesc[_Queue] -=_N;	
+		(_Adapter)->nBufInTxDesc[_Queue] -=_N;
 
 // TODO: Modify this !!
 #define FRAGMENT_THRESHOLD(_Adapter)		((u2Byte)((_Adapter)->MgntInfo.FragThreshold-4))

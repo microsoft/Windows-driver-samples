@@ -32,7 +32,7 @@ _Analysis_mode_(_Analysis_code_type_user_code_)
 #include "IHVClassFactory.h"
 #include <new>
 
-const GUID GUID_SAMPLE_IHVUI_CLSID = 
+const GUID GUID_SAMPLE_IHVUI_CLSID =
 { 0x4a01f9f9, 0x6012, 0x4343, { 0xa8, 0xc4, 0x10, 0xb5, 0xdf, 0x32, 0x67, 0x2a } };
 
 

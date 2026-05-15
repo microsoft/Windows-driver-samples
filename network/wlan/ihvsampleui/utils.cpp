@@ -67,7 +67,7 @@ Wstr2Wstr
     {
         hr = E_OUTOFMEMORY;
     }
-    
+
 error:
     return hr;
 }

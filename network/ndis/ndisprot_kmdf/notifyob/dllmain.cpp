@@ -12,10 +12,10 @@ Abstract:
     notify object dll and the Wdf Coinstaller library.
 
 --*/
-          
+
 #include "Common.hpp"
 #include <DriverSpecs.h>
-_Analysis_mode_(_Analysis_code_type_user_code_)  
+_Analysis_mode_(_Analysis_code_type_user_code_)
 #include <strsafe.h>
 #include "ProtNotify_i.c"
 
@@ -61,7 +61,7 @@ DllMain(
     if (Reason == DLL_PROCESS_ATTACH) {
         //
         // Initialize the COM Server module with the object map.
-	// Do this prior to loading the coinstaller as the detach 
+	// Do this prior to loading the coinstaller as the detach
         // assumes the Module is initialized.
         //
         _Module.Init(ObjectMap, Instance);
@@ -159,8 +159,8 @@ HMODULE
 LoadWdfCoInstaller(
     )
 {
-   
-    #pragma prefast(suppress:6262, "Supprress overflow warnings")        
+
+    #pragma prefast(suppress:6262, "Supprress overflow warnings")
     HRESULT hr = S_OK;
     HMODULE library = NULL;
     WCHAR coinstaller[MAX_PATH] = {0};
@@ -190,7 +190,7 @@ LoadWdfCoInstaller(
     //
     // Load the Wdf Coinstaller library.
     //
-#pragma prefast(suppress:28160, "Suppressing false positive from PFD")                
+#pragma prefast(suppress:28160, "Suppressing false positive from PFD")
     library = LoadLibrary(coinstaller);
     if (library == NULL) {
         hr = GetLastError();

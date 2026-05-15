@@ -4,7 +4,7 @@
 #include "ChannelInfo.tmh"
 #endif
 
-u1Byte	
+u1Byte
 CHNL_GetCenterFrequency(
 	IN	u1Byte				Channel,
 	IN	CHANNEL_WIDTH		ChnlBW,
@@ -60,7 +60,7 @@ CHNL_GetExt20OffsetOf5G(
 			ExtChnlOffset = EXTCHNL_OFFSET_UPPER;
 
 	RT_DISP(FCHNL, FCHNL_INFO,  ("%s channel=%d, ExtChnlOffset=%d\n", __FUNCTION__, channel, ExtChnlOffset));
-	
+
 	return ExtChnlOffset;
 }
 
@@ -76,13 +76,13 @@ CHNL_IsLegalChannel(
 
 	RtActChannelList(Adapter, RT_CHNL_LIST_ACTION_GET_CHANNEL_LIST, NULL, &pChanneList);
 
-	//Skip check legal channel when doing fast USB switch, since we only have one channel in channel list, 20150408, Sean. 
+	//Skip check legal channel when doing fast USB switch, since we only have one channel in channel list, 20150408, Sean.
 
 		if (pChanneList->ChannelLen == 1)
 		{
 			return (u1Byte)freq_channel;
 		}
-	
+
 	for(i = 0; i < pChanneList->ChannelLen; i ++)
 	{
 		if(freq_channel == pChanneList->ChnlListEntry[i].ChannelNum)
@@ -102,13 +102,13 @@ CHNL_IsLegalChannel(
 }
 
 
-BOOLEAN 
+BOOLEAN
 CHNL_IsLegal5GChannel(
 	IN PADAPTER			Adapter,
 	IN u1Byte			channel
 )
 {
-	
+
 	u1Byte i=0;
 	u1Byte Channel_5G[45] = {36,38,40,42,44,46,48,50,52,54,56,58,
 		60,62,64,100,102,104,106,108,110,112,114,116,118,120,122,
@@ -153,7 +153,7 @@ CHNL_ReleaseOpLock(
 {
 	PMGNT_INFO				pMgntInfo = &Adapter->MgntInfo;
 	PRT_CHANNEL_INFO		pChnlInfo = pMgntInfo->pChannelInfo;
-	
+
 	PlatformAcquireSpinLock(Adapter, RT_CHNLOP_SPINLOCK);
 	pChnlInfo->ChnlOp = CHNLOP_NONE;
 	PlatformReleaseSpinLock(Adapter, RT_CHNLOP_SPINLOCK);
@@ -162,13 +162,13 @@ CHNL_ReleaseOpLock(
 
 BOOLEAN
 CHNL_ValidForWirelessMode(
-	u1Byte	channel,		
+	u1Byte	channel,
 	u2Byte	wirelessmode
 	)
-{	
+{
 
 	BOOLEAN ret = FALSE;
-	
+
 	do
 	{
 		if(IS_5G_WIRELESS_MODE(wirelessmode) && channel > 14)
@@ -176,7 +176,7 @@ CHNL_ValidForWirelessMode(
 			ret = TRUE;
 			break;
 		}
-		
+
 		if(IS_24G_WIRELESS_MODE(wirelessmode) && channel <= 14)
 		{
 			ret = TRUE;
@@ -206,10 +206,10 @@ CHNL_GetRegBWSupport(
 		else if(IS_WIRELESS_MODE_5G(Adapter))
 			retBW = (pHTInfo->bRegBW40MHzFor5G ? CHANNEL_WIDTH_40:CHANNEL_WIDTH_20) ;
 	}
-	else	
+	else
 		retBW = pChnlInfo->RegBWSetting;
-			
-	
+
+
 	return retBW;
 }
 
@@ -245,7 +245,7 @@ chnl_GetBWFrom_IE(
 			ChnlBW = CHANNEL_WIDTH_20;
 		else													// 40 STA -> 40 AP
 		{
-			if(	PeerExtChnlOffset == EXTCHNL_OFFSET_UPPER && 
+			if(	PeerExtChnlOffset == EXTCHNL_OFFSET_UPPER &&
 				CHNL_IsLegalChannel(Adapter, pMgntInfo->dot11CurrentChannelNumber + 2))
 				bBW40MHz = TRUE;
 			else if(PeerExtChnlOffset== EXTCHNL_OFFSET_LOWER &&
@@ -258,7 +258,7 @@ chnl_GetBWFrom_IE(
 			{
 				ChnlBW = PeerChnlBW;
 				ExtChnlOffset = PeerExtChnlOffset;
-			}	
+			}
 			else
 			{
 				ChnlBW = CHANNEL_WIDTH_20;
@@ -270,7 +270,7 @@ chnl_GetBWFrom_IE(
 	else
 		ChnlBW = CHANNEL_WIDTH_20;
 
-	
+
 	if(bBW40MHz && pVHTInfo->bCurrentVHTSupport)
 	{
 		bBW80MHz = (CHNL_GetRegBWSupport(Adapter) >= CHANNEL_WIDTH_80)?(pVHTInfo->PeerChnlBW?1:0):0;
@@ -293,7 +293,7 @@ CHNL_ChangeBwChnlFromPeerWorkitemCallBack(
 	IN	PVOID			Context
 )
 {
-	PADAPTER			Adapter = (PADAPTER)Context;	
+	PADAPTER			Adapter = (PADAPTER)Context;
 	CHANNEL_WIDTH		ChnlBW;
 	EXTCHNL_OFFSET		ExtChnlOffset;
 	PMGNT_INFO			pMgntInfo = &Adapter->MgntInfo;
@@ -328,17 +328,17 @@ CHNL_ChangeBwChnlFromPeerWorkitemCallBack(
 			return;
 		}
 	}
-	
+
 #if 0
 	if(GetDefaultAdapter(Adapter)->bInHctTest)
 	{
 		RT_DISP(FCHNL, FCHNL_ERROR, ("%s: hct test , return \n", __FUNCTION__));
 		return;
-	
-	}
-#endif	
 
-	
+	}
+#endif
+
+
 	chnl_GetBWFrom_IE(Adapter, &ChnlBW, &ExtChnlOffset);
 
 	if(	pChnlInfo->CurrentChannelBandWidth != ChnlBW ||
@@ -353,8 +353,8 @@ CHNL_ChangeBwChnlFromPeerWorkitemCallBack(
 			pMgntInfo->dot11CurrentChannelNumber, ChnlBW, ExtChnlOffset));
 
 		CHNL_SetBwChnl(Adapter, pMgntInfo->dot11CurrentChannelNumber, ChnlBW, ExtChnlOffset);
-		// We should set RA H2C cmd because the BW in TxDesc will be filled again by Fw, we 
-		// need to inform Fw the BW changed information. 2012.11.26. by tynli. 
+		// We should set RA H2C cmd because the BW in TxDesc will be filled again by Fw, we
+		// need to inform Fw the BW changed information. 2012.11.26. by tynli.
 		// Suggested by SD1 Alex Chou.
 		if(!ACTING_AS_AP(Adapter) && !ACTING_AS_IBSS(Adapter))
 		{
@@ -396,8 +396,8 @@ CHNL_GetCurrnetChnlInfo(
 	{
 		*pBufLen = 4;
 		return FALSE;
-	}		
-	
+	}
+
 	*pBufLen = 4;
 
 	*pBuf = pChnlInfo->CurrentChannelBandWidth;
@@ -407,7 +407,7 @@ CHNL_GetCurrnetChnlInfo(
 
 	return TRUE;
 }
-	
+
 
 
 VOID
@@ -437,9 +437,9 @@ chnl_HalSwBwChnl(
 	{
 		u1Byte	offset;
 
-		Mgnt_SwChnl(Adapter, pChnlCommInfo->CurrentChannelCenterFrequency, 1);		
+		Mgnt_SwChnl(Adapter, pChnlCommInfo->CurrentChannelCenterFrequency, 1);
 
-		// last bandwidth offset 
+		// last bandwidth offset
 		if(pHalData->nCur40MhzPrimeSC == HAL_PRIME_CHNL_OFFSET_UPPER)
 			offset = EXTCHNL_OFFSET_LOWER;
 		else if (pHalData->nCur40MhzPrimeSC == HAL_PRIME_CHNL_OFFSET_LOWER)
@@ -447,7 +447,7 @@ chnl_HalSwBwChnl(
 		else
 			offset = EXTCHNL_OFFSET_NO_EXT;
 		// 1.20M to 40M or 40M to 20M
-		// 2.40M to 40M as offset different or bandtype different	
+		// 2.40M to 40M as offset different or bandtype different
 		if(	(pHalData->CurrentChannelBW != pChnlCommInfo->CurrentChannelBandWidth )||
 			(pHalData->CurrentChannelBW == CHANNEL_WIDTH_40 && pChnlCommInfo->Ext20MHzChnlOffsetOf40MHz !=offset) ||
 			(pHalData->LastBandType !=pHalData->CurrentBandType))
@@ -457,12 +457,12 @@ chnl_HalSwBwChnl(
 				pChnlCommInfo->CurrentChannelBandWidth,
 				pChnlCommInfo->Ext20MHzChnlOffsetOf40MHz
 				);
-		}	
+		}
 	}
 
-	
+
 	FunctionOut(COMP_SCAN);
-}	
+}
 
 
 VOID
@@ -480,12 +480,12 @@ CHNL_SetBwChnlCallback(
 
 	if(RT_DRIVER_HALT(Adapter))
 	{
-		RT_DISP(FCHNL, FCHNL_ERROR, ("<===%s bDriverStopped %d bSurpriseRemoved %d bDriverIsGoingToUnload %d\n", __FUNCTION__, Adapter->bDriverStopped, Adapter->bSurpriseRemoved, Adapter->bDriverIsGoingToUnload));	
+		RT_DISP(FCHNL, FCHNL_ERROR, ("<===%s bDriverStopped %d bSurpriseRemoved %d bDriverIsGoingToUnload %d\n", __FUNCTION__, Adapter->bDriverStopped, Adapter->bSurpriseRemoved, Adapter->bDriverIsGoingToUnload));
 		return;
 	}
 
 	if(Adapter->bInSetPower && RT_CANNOT_IO(Adapter))
-	
+
 	{
 		RT_DISP(FCHNL, FCHNL_ERROR, ("<===%s can NOT IO\n", __FUNCTION__));
 		bSwBW = FALSE;
@@ -493,10 +493,10 @@ CHNL_SetBwChnlCallback(
 
 	if(MgntResetOrPnPInProgress(Adapter))
 	{
-		RT_DISP(FCHNL, FCHNL_ERROR, ("<===%s MgntResetOrPnPInProgress\n", __FUNCTION__));			
+		RT_DISP(FCHNL, FCHNL_ERROR, ("<===%s MgntResetOrPnPInProgress\n", __FUNCTION__));
 		bSwBW = FALSE;
 	}
-	
+
 	if(bSwBW == FALSE)
 	{
 		PlatformAcquireSpinLock(Adapter, RT_BW_SPINLOCK);
@@ -504,18 +504,18 @@ CHNL_SetBwChnlCallback(
 		PlatformReleaseSpinLock(Adapter, RT_BW_SPINLOCK);
 		return;
 	}
-	
+
 	if(MgntInitAdapterInProgress(pMgntInfo))
 	{
 		PlatformSetTimer(Adapter, &pChnlInfo->SwBwTimer, 100);
 		return;
 	}
-	
+
    if(RT_IsSwChnlAndBwInProgress(Adapter))
-   { 
-  		RT_DISP(FCHNL, FCHNL_FUN, ("<===%s pHalData->SwChnlInProgress: %d, pHalData->SetBWModeInProgress: %d, pHalData->bSwChnlAndSetBWInProgress: %d\n", 
+   {
+  		RT_DISP(FCHNL, FCHNL_FUN, ("<===%s pHalData->SwChnlInProgress: %d, pHalData->SetBWModeInProgress: %d, pHalData->bSwChnlAndSetBWInProgress: %d\n",
 				__FUNCTION__, pHalData->SwChnlInProgress, pHalData->SetBWModeInProgress, pHalData->bSwChnlAndSetBWInProgress));
-	
+
        	PlatformSetTimer(Adapter, &pChnlInfo->SwBwTimer, 10);
 		return;
    }
@@ -526,7 +526,7 @@ CHNL_SetBwChnlCallback(
 		PlatformSetTimer(Adapter, &pChnlInfo->SwBwTimer, 10);
 		return;
 	}
-	   
+
 	if(!CHNL_AcquireOpLock(Adapter, CHNLOP_SWBW))
 	{
 		PlatformSetTimer(Adapter, &pChnlInfo->SwBwTimer, 10);
@@ -543,29 +543,29 @@ CHNL_SetBwChnlCallback(
 	}
 
 	PlatformAcquireSpinLock(Adapter, RT_BW_SPINLOCK);
-	pChnlInfo->bSwBwInProgress = TRUE;	
+	pChnlInfo->bSwBwInProgress = TRUE;
 	PlatformReleaseSpinLock(Adapter, RT_BW_SPINLOCK);
 
 	chnl_HalSwBwChnl(Adapter);
-		
-	// bandtype different only occur in 92d ; for 92c/92s  last band type is the same as current band type		
-	pHalData->LastBandType = pHalData->CurrentBandType;  
+
+	// bandtype different only occur in 92d ; for 92c/92s  last band type is the same as current band type
+	pHalData->LastBandType = pHalData->CurrentBandType;
 
 	PlatformAcquireSpinLock(Adapter, RT_BW_SPINLOCK);
 	pChnlInfo->bSwBwInProgress = FALSE;
 	PlatformReleaseSpinLock(Adapter, RT_BW_SPINLOCK);
 
-	CHNL_ReleaseOpLock(Adapter);	
-	
+	CHNL_ReleaseOpLock(Adapter);
+
 	RT_DISP(FCHNL, FCHNL_FUN, ("<===%s\n", __FUNCTION__));
 }
 
 CHANNEL_WIDTH
 CHNL_CheckChnlPlanWithBW(
 	IN	PADAPTER			pAdapter,
-	IN	u1Byte				PrimaryChnl,	
-	IN	CHANNEL_WIDTH		Bandwidth,	
-	IN	EXTCHNL_OFFSET		BwOffset	
+	IN	u1Byte				PrimaryChnl,
+	IN	CHANNEL_WIDTH		Bandwidth,
+	IN	EXTCHNL_OFFSET		BwOffset
 )
 {
 	CHANNEL_WIDTH finalBw = CHANNEL_WIDTH_20;
@@ -624,7 +624,7 @@ CHNL_CheckChnlPlanWithBW(
 		{
 			bFind =TRUE;
 			findcnt =0;
-			break;			
+			break;
 		}
 	}
 
@@ -634,7 +634,7 @@ CHNL_CheckChnlPlanWithBW(
 	{
 		// remove, advised by Bryant, this will cause IOT issue with TP link Ap
 		// TP link will be 40MHz, but NIC is 20MHz => problem.
-#if 0	
+#if 0
 		if( BT_1Ant(pAdapter) && BT_IsBtLinkExist(pAdapter) &&
 			IS_WIRELESS_MODE_24G(pAdapter) )
 		{
@@ -645,10 +645,10 @@ CHNL_CheckChnlPlanWithBW(
 		{
 			if(bFind)
 				finalBw = CHANNEL_WIDTH_40;
-			else 
+			else
 				finalBw = CHANNEL_WIDTH_20;
 		}
-	}			
+	}
 
 	return finalBw;
 }
@@ -667,7 +667,7 @@ CHNL_SetBwChnl(
 {
 	PMGNT_INFO					pMgntInfo = &pAdapter->MgntInfo;
 	PRT_CHANNEL_INFO			pChnlInfo = GET_CHNL_INFO(pMgntInfo);
-	
+
 	PADAPTER					DefAdapter = GetDefaultAdapter(pAdapter);
 	PMGNT_INFO					pDefMgntInfo = &DefAdapter->MgntInfo;
 	PRT_CHANNEL_INFO			pDefChnlInfo = GET_CHNL_INFO(pDefMgntInfo);
@@ -695,12 +695,12 @@ CHNL_SetBwChnl(
 	ToSetBandWidth = Bandwidth;
 	ToSTAExtChnlOffsetof40MHz = BwOffset;
 	ToSTACenterFrequency = CHNL_GetCenterFrequency(PrimaryChnl, Bandwidth, BwOffset);
-	
+
 	ToSetBandWidth = CHNL_CheckChnlPlanWithBW(pAdapter,PrimaryChnl,Bandwidth,BwOffset);
 
 	if((ToSetBandWidth != Bandwidth) &&  ToSetBandWidth==CHANNEL_WIDTH_20)
 		ToSTACenterFrequency =PrimaryChnl;
-	
+
 	if(Bandwidth == CHANNEL_WIDTH_80)
 	{
 		if(ToSTACenterFrequency > pMgntInfo->dot11CurrentChannelNumber)
@@ -708,7 +708,7 @@ CHNL_SetBwChnl(
 		else if(ToSTACenterFrequency < pMgntInfo->dot11CurrentChannelNumber)
 			ToSTAExtChnlOffsetof80MHz = EXTCHNL_OFFSET_LOWER;
 		else
-			ToSTAExtChnlOffsetof80MHz = EXTCHNL_OFFSET_NO_EXT;		
+			ToSTAExtChnlOffsetof80MHz = EXTCHNL_OFFSET_NO_EXT;
 	}
 
 	RT_DISP(FCHNL, FCHNL_FUN,  ("Set ToSetBandWidth = %d, ToSTAExtChnlOffset = %d,ToSTAExtChnlOffsetof80MHz %d, ToSTACenterFrequency= %d \n", ToSetBandWidth, ToSTAExtChnlOffsetof40MHz,ToSTAExtChnlOffsetof80MHz,ToSTACenterFrequency));
@@ -723,7 +723,7 @@ CHNL_SetBwChnl(
 	// TODO: 2007.7.13 by Emily Wait 2000ms  in order to garantee that switching
 	//   bandwidth is executed after scan is finished. It is a temporal solution
 	//   because software should ganrantee the last operation of switching bandwidth
-	//   is executed properlly. 
+	//   is executed properlly.
 	if(!(RT_DRIVER_HALT(DefAdapter)))
 		PlatformSetTimer(DefAdapter, &pDefChnlInfo->SwBwTimer, 0);
 
@@ -746,9 +746,9 @@ CHNL_SetChnlInfoFromDestPort(
 	pDestMgntInfo->dot11CurrentChannelNumber = pSrcMgntInfo->dot11CurrentChannelNumber;
 	pDestMgntInfo->dot11CurrentChannelBandWidth = pSrcMgntInfo->dot11CurrentChannelBandWidth;
 
-	// Best way is restart AP mode. 2012.01.08 lanhsin. 
+	// Best way is restart AP mode. 2012.01.08 lanhsin.
 	//pDestMgntInfo->CurrentBssWirelessMode = pDestMgntInfo->dot11CurrentWirelessMode = pSrcMgntInfo->dot11CurrentWirelessMode;
-	
+
 	pDestChnlInfo->PrimaryChannelNumber = pSrcChnlInfo->PrimaryChannelNumber;
 	pDestChnlInfo->CurrentChannelBandWidth =  pSrcChnlInfo->CurrentChannelBandWidth;
 	pDestChnlInfo->CurrentChannelCenterFrequency = pSrcChnlInfo->CurrentChannelCenterFrequency;
@@ -756,7 +756,7 @@ CHNL_SetChnlInfoFromDestPort(
 	pDestChnlInfo->Ext20MHzChnlOffsetOf40MHz = pSrcChnlInfo->Ext20MHzChnlOffsetOf40MHz;
 	pDestChnlInfo->Ext40MHzChnlOffsetOf80MHz = pSrcChnlInfo->Ext40MHzChnlOffsetOf80MHz;
 
-	RT_DISP(FCHNL, FCHNL_FUN, ("%s: pDestChnlInfo->CurrentChannelCenterFrequency=%d, pSrcChnlInfo->CurrentChannelCenterFrequency=%d\n", 
+	RT_DISP(FCHNL, FCHNL_FUN, ("%s: pDestChnlInfo->CurrentChannelCenterFrequency=%d, pSrcChnlInfo->CurrentChannelCenterFrequency=%d\n",
 		__FUNCTION__, pDestChnlInfo->CurrentChannelCenterFrequency, pSrcChnlInfo->CurrentChannelCenterFrequency));
 }
 
@@ -813,7 +813,7 @@ RT_GetChannelNumber(
 		RT_TRACE_F(COMP_SCAN, DBG_WARNING, ("[WARNING] Get hw channel = 0 by HW_VAR_CUR_CENTER_CHNL, access hal directly = %d\n",
 			hwCenterChannel));
 	}
-	
+
 	if(((GetDefaultAdapter(pAdapter)->pPortCommonInfo->pChnlCommInfo->CurrentChannelCenterFrequency) == hwCenterChannel))
 	{
 		return (GetDefaultAdapter(pAdapter)->pPortCommonInfo->pChnlCommInfo->PrimaryChannelNumber);

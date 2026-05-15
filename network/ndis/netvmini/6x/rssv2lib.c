@@ -23,7 +23,7 @@ Abstract:
 #define  PRAGMA_STRUCTURE_PADDED        4324
 #define  PRAGMA_NO_RETTYPE_FOR_FUNC     4508
 #pragma warning(disable: PRAGMA_NO_RETTYPE_FOR_FUNC)
-#pragma warning(disable: PRAGMA_ZERO_SIZED_ARRAY) 
+#pragma warning(disable: PRAGMA_ZERO_SIZED_ARRAY)
 #pragma warning(disable: PRAGMA_NAMELESS_STRUCT_UNION)
 #pragma warning(disable: PRAGMA_STRUCTURE_PADDED)
 #include <ndis.h>
@@ -63,7 +63,7 @@ Return Value:
     Context->IsNativeRss = IsNativeRss;
     Context->RssV2Oid = RssV2Oid;
     Context->MaxIndex = RssV2Oid->NumberOfRssEntries;
-    Context->LimitIndex = 0; 
+    Context->LimitIndex = 0;
     Context->StartIndex = 0;
     Context->LastStartIndex = 0;
 }
@@ -182,14 +182,14 @@ RssV2GetNextCommand (
 /*++
 Routine Description:
 
-    This routine returns next command from the current command group (which 
-    target the same SwitchId & VPortId). 
+    This routine returns next command from the current command group (which
+    target the same SwitchId & VPortId).
 
 Arguments:
 
     Context - parsing context
 
-    SkipProcessedCommands - TRUE, if user wants to commands which already 
+    SkipProcessedCommands - TRUE, if user wants to commands which already
                             have EntryStatus changed from NDIS_STATUS_PENDING.
                             FALSE, if user wants to iterate over all commands.
 
@@ -205,14 +205,14 @@ Return Value:
     {
         if (Context->StartIndex < Context->LimitIndex)
         {
-            command = RSSV2_GET_COMMAND(Context->RssV2Oid, 
+            command = RSSV2_GET_COMMAND(Context->RssV2Oid,
                                         Context->StartIndex++);
         }
         else
         {
             command = NULL;
         }
-    } while (SkipProcessedCommands && 
+    } while (SkipProcessedCommands &&
              (command != NULL) &&
              (command->EntryStatus != NDIS_STATUS_PENDING));
 
@@ -289,7 +289,7 @@ RssV2NQEnforcerGetBitfield (
 /*++
 Routine Description:
 
-    Routine finds a pointer to the bitfield for specified 
+    Routine finds a pointer to the bitfield for specified
     (RSS-)local processor index.
 
 Arguments:
@@ -306,8 +306,8 @@ Return Value:
 {
     ASSERT(LocalCpuIndex < QueueMap->MaxProcessors);
 
-    return (PULONG_PTR)((PUINT8)QueueMap + 
-                        sizeof(RSSV2_QUEUE_MAP) + 
+    return (PULONG_PTR)((PUINT8)QueueMap +
+                        sizeof(RSSV2_QUEUE_MAP) +
                         RSSV2_BITFIELD_OFFSET(LocalCpuIndex));
 }
 
@@ -320,7 +320,7 @@ RssV2NQEnforceGetReference (
 /*++
 Routine Description:
 
-    Routine finds a pointer to the reference counter for the specified 
+    Routine finds a pointer to the reference counter for the specified
     (RSS-)local processor index.
 
 Arguments:
@@ -337,8 +337,8 @@ Return Value:
 {
     ASSERT(LocalCpuIndex < QueueMap->MaxProcessors);
 
-    return (PUINT8)((PUINT8)QueueMap + 
-                    sizeof(RSSV2_QUEUE_MAP) + 
+    return (PUINT8)((PUINT8)QueueMap +
+                    sizeof(RSSV2_QUEUE_MAP) +
                     RSSV2_BITFIELD_SIZE(QueueMap->MaxProcessors) +
                     RSSV2_REFERENCE_OFFSET(LocalCpuIndex));
 }
@@ -387,7 +387,7 @@ Arguments:
 
     QueueMap - Pointer to the queue map
 
-    MaxNumberOfProcessorsInRssTable - Maximum number of processors which 
+    MaxNumberOfProcessorsInRssTable - Maximum number of processors which
                                       RSS table can ever contain.
 
 Return Value:
@@ -410,7 +410,7 @@ RssV2NQEnforcerReference (
 /*++
 Routine Description:
 
-    Routine marks processor as holding a reference. Corresponding bit in 
+    Routine marks processor as holding a reference. Corresponding bit in
     the bitfiled is set to 1, and reference count is incremented.
 
 Arguments:
@@ -448,7 +448,7 @@ RssV2NQEnforcerDereference (
 Routine Description:
 
     Routine removes one reference cause by the processor. Reference count
-    is decremented, and if it becomes zero, a corresponding bit in 
+    is decremented, and if it becomes zero, a corresponding bit in
     the bitfiled is cleared to 0.
 
 Arguments:
@@ -482,7 +482,7 @@ Return Value:
 VOID
 RssV2NQEnforcerUpdate (
     _Inout_ PRSSV2_QUEUE_MAP QueueMap,
-    _In_ UINT8 OldCpuIndex, 
+    _In_ UINT8 OldCpuIndex,
     _In_ UINT8 NewCpuIndex
     )
 /*++
@@ -540,8 +540,8 @@ Return Value:
 
     numberOfProcessors = 0;
 
-    for (localCpuIndex = 0; 
-         localCpuIndex < QueueMap->MaxProcessors; 
+    for (localCpuIndex = 0;
+         localCpuIndex < QueueMap->MaxProcessors;
          localCpuIndex += BITS_PER_WORD)
     {
         bitfield = RssV2NQEnforcerGetBitfield(QueueMap, localCpuIndex);
@@ -576,9 +576,9 @@ Return Value:
 --*/
 {
     KeAcquireSpinLockAtDpcLevel(&GlobalQueueMap->SpinLock);
-    
-    RtlMoveMemory(LocalQueueMap, 
-                  GlobalQueueMap, 
+
+    RtlMoveMemory(LocalQueueMap,
+                  GlobalQueueMap,
                   RssV2NQEnforcerGetQueueMapSize(GlobalQueueMap->MaxProcessors));
 }
 
@@ -616,9 +616,9 @@ Routine Description:
 Arguments:
 
     GlobalQueueMap - Pointer to the global queue map (e.g. VPort's) visible by
-                     many processors. 
+                     many processors.
 
-    LocalQueueMap - Pointer to the queue map on stack. If NQ-check succeeds, 
+    LocalQueueMap - Pointer to the queue map on stack. If NQ-check succeeds,
                     the global queue map will be updated from the local copy.
                     If NQ-check fails, local copy will be discarded and global
                     copy is unchanged.
@@ -627,10 +627,10 @@ Arguments:
 
 Return Value:
 
-    NDIS_STATUS_SUCCESS - if the accumulated local changes lead to valid 
+    NDIS_STATUS_SUCCESS - if the accumulated local changes lead to valid
                          configuration.
-    
-    NDIS_STATUS_NO_QUEUES - if the accumulated local configuration exceeds 
+
+    NDIS_STATUS_NO_QUEUES - if the accumulated local configuration exceeds
                             QueueLimit.
 
 --*/
@@ -639,8 +639,8 @@ Return Value:
 
     if (RssV2NQEnforcerGetNumberOfProcs(LocalQueueMap) <= QueueLimit)
     {
-        RtlMoveMemory(GlobalQueueMap, 
-                      LocalQueueMap, 
+        RtlMoveMemory(GlobalQueueMap,
+                      LocalQueueMap,
                       RssV2NQEnforcerGetQueueMapSize(GlobalQueueMap->MaxProcessors));
 
         status = NDIS_STATUS_SUCCESS;

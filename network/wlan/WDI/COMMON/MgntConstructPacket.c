@@ -15,21 +15,21 @@ AppendQoSElement(
 {
 	u1Byte			szQoSOUI[] ={221, 0, 0x00, 0x50, 0xf2, OUI_SUB_WMM, 0, 1};
 	OCTET_STRING	tmp;
-	
+
 	if (OUI_Subtype == OUI_SUBTYPE_QOS_CAPABI)
 	{
 		szQoSOUI[0] = 46;
 		szQoSOUI[1] = (u1Byte)element->Length;
 		FillOctetString(tmp, szQoSOUI, 2);
-		PacketAppendData(packet, tmp);	
-	}	
+		PacketAppendData(packet, tmp);
+	}
 	else
 	{
 	szQoSOUI[1] = element->Length + 6;
 	szQoSOUI[6] = OUI_Subtype;
 	FillOctetString(tmp, szQoSOUI, 8);
 	PacketAppendData(packet, tmp);
-	}	
+	}
 
 	// QoS Capability IE
 	PacketAppendData(packet, *element);
@@ -43,7 +43,7 @@ SelectSupportedRatesElement(
 	IN	BOOLEAN			bFilterCck,
 	OUT	POCTET_STRING	pSuppRates,
 	OUT	POCTET_STRING	pExtSuppRates
-)	
+)
 {
 	OCTET_STRING 	FilteredSuppRates;
 	u1Byte 			FilteredSuppRatesBuf[MAX_NUM_RATES];
@@ -73,7 +73,7 @@ SelectSupportedRatesElement(
 		PlatformMoveMemory(FilteredSuppRates.Octet, SuppRates.Octet, SuppRates.Length);
 		FilteredSuppRates.Length = SuppRates.Length;
 	}
-		
+
 	pSuppRates->Length = 0;
 	pExtSuppRates->Length = 0;
 
@@ -88,7 +88,7 @@ SelectSupportedRatesElement(
 	}
 	else if(wirelessmode & (WIRELESS_MODE_G|WIRELESS_MODE_N_24G|WIRELESS_MODE_AC_24G))
 	{
-		u4Byte i; 
+		u4Byte i;
 
 		for(i = 0; i < FilteredSuppRates.Length; i++)
 		{
@@ -125,10 +125,10 @@ SelectSupportedRatesElement(
 
 			SupRateAddLen = MAX_SUP_RATE_LEN - pSuppRates->Length;
 			NewLen_ExtSupRate = pExtSuppRates->Length - SupRateAddLen;
-			
+
 			CopyMem( pSuppRates->Octet+pSuppRates->Length,  pExtSuppRates->Octet, SupRateAddLen);
 			pSuppRates->Length = MAX_SUP_RATE_LEN;
-		
+
 			CopyMem( TmpRateBuffer, pExtSuppRates->Octet+SupRateAddLen, NewLen_ExtSupRate);
 			CopyMem(pExtSuppRates->Octet, TmpRateBuffer, NewLen_ExtSupRate);
 			pExtSuppRates->Length = NewLen_ExtSupRate;
@@ -139,9 +139,9 @@ SelectSupportedRatesElement(
 	}
 	else
 	{
-		RT_ASSERT(FALSE, ("SelectSupportedRatesElement(): Unknown wirelessmode: 0x%x\n", wirelessmode));	
+		RT_ASSERT(FALSE, ("SelectSupportedRatesElement(): Unknown wirelessmode: 0x%x\n", wirelessmode));
 	}
-#else	
+#else
 	switch( wirelessmode )
 	{
 	case WIRELESS_MODE_A:
@@ -161,7 +161,7 @@ SelectSupportedRatesElement(
 	case WIRELESS_MODE_N_24G:	//Added by Emily 2006.11.10
 	case WIRELESS_MODE_AC_24G:
 		{
-			u4Byte i; 
+			u4Byte i;
 
 			for(i = 0; i < FilteredSuppRates.Length; i++)
 			{
@@ -198,10 +198,10 @@ SelectSupportedRatesElement(
 
 				SupRateAddLen = MAX_SUP_RATE_LEN - pSuppRates->Length;
 				NewLen_ExtSupRate = pExtSuppRates->Length - SupRateAddLen;
-				
+
 				CopyMem( pSuppRates->Octet+pSuppRates->Length,  pExtSuppRates->Octet, SupRateAddLen);
 				pSuppRates->Length = MAX_SUP_RATE_LEN;
-			
+
 				CopyMem( TmpRateBuffer, pExtSuppRates->Octet+SupRateAddLen, NewLen_ExtSupRate);
 				CopyMem(pExtSuppRates->Octet, TmpRateBuffer, NewLen_ExtSupRate);
 				pExtSuppRates->Length = NewLen_ExtSupRate;
@@ -211,29 +211,29 @@ SelectSupportedRatesElement(
 			RT_PRINT_DATA(COMP_SEC, DBG_TRACE, "pExtSuppRates", pExtSuppRates->Octet, pExtSuppRates->Length);
 		}
 		break;
-	
+
 	// Note: HT rate is filled in HTCapability Information Element, so the supported MCS rate is not initialized here
 	default:
 		RT_ASSERT(FALSE, ("SelectSupportedRatesElement(): Unknown wirelessmode: 0x%x\n", wirelessmode));
 		break;
 	}
-#endif	
+#endif
 }
 
 
 
 /*
-  *  According to experiment, Realtek AP to STA (based on rtl8190) may achieve best performance 
-  *  if both STA and AP set limitation of aggregation size to 32K, that is, set AMPDU density to 2 
-  *  (Ref: IEEE 11n specification). However, if Realtek STA associates to other AP, STA should set 
-  *  limitation of aggregation size to 8K, otherwise, performance of traffic stream from STA to AP 
-  *  will be much less than the traffic stream from AP to STA if both of the stream runs concurrently 
+  *  According to experiment, Realtek AP to STA (based on rtl8190) may achieve best performance
+  *  if both STA and AP set limitation of aggregation size to 32K, that is, set AMPDU density to 2
+  *  (Ref: IEEE 11n specification). However, if Realtek STA associates to other AP, STA should set
+  *  limitation of aggregation size to 8K, otherwise, performance of traffic stream from STA to AP
+  *  will be much less than the traffic stream from AP to STA if both of the stream runs concurrently
   *  at the same time.
-  *  
+  *
   *  Frame Format
   *  Element ID		Length		OUI			Type1		Reserved
   *  1 byte			1 byte		3 bytes		1 byte		1 byte
-  * 
+  *
   *  OUI 		= 0x00, 0xe0, 0x4c,
   *  Type 	= 0x02
   *  Reserved 	= 0x00
@@ -248,7 +248,7 @@ ConstructRTKAggElement(
 {
 	BOOLEAN		bSupportRemoteWakeUp;
 	PlatformZeroMemory(posRTKAggIE->Octet, 7);
-	
+
 	posRTKAggIE->Octet[0] = 0x00;
 	posRTKAggIE->Octet[1] = 0xe0;
 	posRTKAggIE->Octet[2] = 0x4c;
@@ -260,12 +260,12 @@ ConstructRTKAggElement(
 
 	if(IS_VENDOR_8812A_C_CUT(Adapter))
 		posRTKAggIE->Octet[6] |= RT_HT_CAP_USE_JAGUAR_CCUT;
-	
+
 	Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_WOWLAN , &bSupportRemoteWakeUp);
 
 	if(bSupportRemoteWakeUp)
 		posRTKAggIE->Octet[5] |=RT_HT_CAP_USE_WOW;
-		
+
 	posRTKAggIE->Length = 7;
 }
 
@@ -276,7 +276,7 @@ ConstructBeaconFrame(
 	PADAPTER		Adapter
 	)
 {
-	PMGNT_INFO		pMgntInfo = &Adapter->MgntInfo;	
+	PMGNT_INFO		pMgntInfo = &Adapter->MgntInfo;
 	OCTET_STRING		DSParms;
 	OCTET_STRING		IBSSParms;
 	u8Byte			TimeStamp;
@@ -291,7 +291,7 @@ ConstructBeaconFrame(
 	u1Byte			EDCAInfo[1];
 	OCTET_STRING		IbssAdditionalIEs;
 	BOOLEAN		bFilterCck = FALSE;
-	
+
 	pbcn = pMgntInfo->beaconframe.Octet;
 
 	//-------------------------------------------------------------------------
@@ -311,9 +311,9 @@ ConstructBeaconFrame(
 
 	//
 	// Sequence Control.
-	// 
-	// TODO: 
-	// 1. If the beacon is send by TransmitTcb, Seq shall be 0, otherwise, we shall fill it with 
+	//
+	// TODO:
+	// 1. If the beacon is send by TransmitTcb, Seq shall be 0, otherwise, we shall fill it with
 	// proper value.
 	// 2. We shall fix SendBeaconFrame to allow PCI use TransmitTCB to send beacon.
 	//
@@ -374,14 +374,14 @@ ConstructBeaconFrame(
 	// Supported rate.
 	FillOctetString(SuppRates, SuppRatesContent, 0);
 	FillOctetString(ExtSuppRates, ExtSuppRatesContent, 0);
-	// Set supported and extended supported rate according to Wirelessmode and dot11OperationalRateSet. 
+	// Set supported and extended supported rate according to Wirelessmode and dot11OperationalRateSet.
 
 	P2P_FilerCck(Adapter, &bFilterCck);
 
 	SelectSupportedRatesElement( pMgntInfo->dot11CurrentWirelessMode, pMgntInfo->dot11OperationalRateSet, bFilterCck,&SuppRates, &ExtSuppRates );
 
 	PacketMakeElement(&pMgntInfo->beaconframe, EID_SupRates, SuppRates);
-	
+
 	// DS parameters element.
 	// Note:
 	//	We should have changed the dot11CurrentChannelNumber before constructing beacon frame no matter when the media is connected.
@@ -406,7 +406,7 @@ ConstructBeaconFrame(
 		// Update DTIM Count.
 		if(pMgntInfo->mDtimCount == 0)
 			pMgntInfo->mDtimCount = pMgntInfo->dot11DtimPeriod - 1;
-		else 
+		else
 			pMgntInfo->mDtimCount--;
 
 		AP_PS_FillTim(pMgntInfo);
@@ -415,7 +415,7 @@ ConstructBeaconFrame(
 	}
 
 	DFS_ApConstructBeaconIEcsa(Adapter);
-	
+
 	// Wireless mode dependent elements.
 	if( IS_WIRELESS_OFDM_24G(Adapter))
 	{
@@ -453,8 +453,8 @@ ConstructBeaconFrame(
 		}
 	}
 
-	RT_DISP(FBEACON, BCN_SHOW, 
-	("Support Mode=%x pMgntInfo->mIbss=%d pMgntInfo->dot11CurrentWirelessMode=%x\n", 
+	RT_DISP(FBEACON, BCN_SHOW,
+	("Support Mode=%x pMgntInfo->mIbss=%d pMgntInfo->dot11CurrentWirelessMode=%x\n",
 	Adapter->HalFunc.GetSupportedWirelessModeHandler(Adapter), pMgntInfo->mIbss, pMgntInfo->dot11CurrentWirelessMode));
 
 	//
@@ -465,7 +465,7 @@ ConstructBeaconFrame(
 	{
 		// Construct HTCapability and HTInfo IE
 		OCTET_STRING		osHTCap, osHTInfo;
-		
+
 		FillOctetString(osHTCap, &(pMgntInfo->pHTInfo->SelfHTCap), sizeof(pMgntInfo->pHTInfo->SelfHTCap));
 		FillOctetString(osHTInfo, &(pMgntInfo->pHTInfo->SelfHTInfo), sizeof(pMgntInfo->pHTInfo->SelfHTInfo));
 		HTConstructCapabilityElement(Adapter, &osHTCap, FALSE);
@@ -498,7 +498,7 @@ ConstructBeaconFrame(
 		PacketMakeElement(&pMgntInfo->beaconframe, EID_VHTOperation, osVHTOperation);
 	}
 
-	
+
 	//2004/07/22, kcwu, construct Security IE
 	//2004/09/15, kcwu, decide to construct which kind of element,WPA or WPA2
 	if(pMgntInfo->SecurityInfo.AuthMode > RT_802_11AuthModeAutoSwitch)
@@ -517,14 +517,14 @@ ConstructBeaconFrame(
 			AppendAdditionalIEs(&pMgntInfo->beaconframe, IbssAdditionalIEs);
 		}
 
-		if(pMgntInfo->pStaQos->QosCapability != QOS_DISABLE)	
+		if(pMgntInfo->pStaQos->QosCapability != QOS_DISABLE)
 		{
 			FillOctetString(osEDCAInfoElem, EDCAInfo, 1);
-			PlatformZeroMemory(osEDCAInfoElem.Octet, 1); 
+			PlatformZeroMemory(osEDCAInfoElem.Octet, 1);
 			AppendQoSElement(&pMgntInfo->beaconframe, &osEDCAInfoElem, OUI_SUBTYPE_WMM_INFO);
 		}
 	}
-	
+
 	//
 	// Append additional IEs. By haich, 2008.08.01.
 	//
@@ -548,18 +548,18 @@ ConstructBeaconFrame(
 
 	WPS_ConstructBeaconFrame(Adapter);
 
-    
+
 #if (P2P_SUPPORT == 1)
 	P2P_Append_BeaconIe(Adapter);
 #endif
 
 	WFD_AppendBeaconIEs(Adapter, pMgntInfo->BcnSharedMemory.Length, &(pMgntInfo->beaconframe));
-	
+
 }
 
 
 //
-// Description: Construct a beacon frame according to current status and 
+// Description: Construct a beacon frame according to current status and
 // 				update the beacon to HW beacon queue.
 // 2005.06.15, by rcnjko.
 //
@@ -582,7 +582,7 @@ Isdot11acAvailable(
 {
 	u4Byte	Availabledot11acCountry[] = {0x818, 0x368, 0x398, 0x417, 0x516, 0x643, 0x804, 0x360};
 	u1Byte  index, result;
-	
+
 	result = TRUE;
 	// RT_TRACE(COMP_INIT, DBG_LOUD, ("$$$ Isdot11acAvailable(): Adapter->bDisable11ac = %d\n", Adapter->bDisable11ac));
 	if(Adapter->bDisable11ac)
@@ -612,7 +612,7 @@ ConstructProbeRequest(
 	BOOLEAN			bForcePowerSave
 	)
 {
-	PMGNT_INFO      	pMgntInfo = &Adapter->MgntInfo;	
+	PMGNT_INFO      	pMgntInfo = &Adapter->MgntInfo;
 	OCTET_STRING		os;
 	OCTET_STRING		ProbeReq;
 	pu1Byte			pProbeRequestPartial;
@@ -622,7 +622,7 @@ ConstructProbeRequest(
 	u1Byte			ExtSuppRatesContent[255]; // NOTE! Length of Support Rates <= 255.
 	u1Byte			RegSuppRatesIdx=0;
 	WIRELESS_MODE	wirelessmode = WIRELESS_MODE_UNKNOWN;
-	
+
 	pProbeRequestPartial = Buffer;
 
 	SET_80211_HDR_FRAME_CONTROL(pProbeRequestPartial, 0);
@@ -630,7 +630,7 @@ ConstructProbeRequest(
 	SET_80211_HDR_PWR_MGNT(pProbeRequestPartial, (bForcePowerSave) ? 1 : 0);
 	SET_80211_HDR_DURATION(pProbeRequestPartial, 0);
 	SET_80211_HDR_ADDRESS1(pProbeRequestPartial, BroadcastAddress);
-	SET_80211_HDR_ADDRESS2(pProbeRequestPartial, Adapter->CurrentAddress);	
+	SET_80211_HDR_ADDRESS2(pProbeRequestPartial, Adapter->CurrentAddress);
 	if(bBroadcastBssid)
 	{
 		SET_80211_HDR_ADDRESS3(pProbeRequestPartial, BroadcastAddress);
@@ -639,7 +639,7 @@ ConstructProbeRequest(
 	{
 		SET_80211_HDR_ADDRESS3(pProbeRequestPartial, Adapter->MgntInfo.Bssid);
 	}
-		
+
 	SET_80211_HDR_FRAGMENT_SEQUENCE(pProbeRequestPartial, 0);
 
 	//3 Size of Probe Request, can not use sizeof(GeneralPacketPartial)
@@ -659,11 +659,11 @@ ConstructProbeRequest(
 	// Supported rates
 	FillOctetString(SuppRates, SuppRatesContent, 0);
 	FillOctetString(ExtSuppRates, ExtSuppRatesContent, 0);
-	
+
 	//
 	// Basic rate setting should follow default setting in registry
 	// instead of CurrentWirelessMode. Otherwise, previous connection may effect on
-	// later connection. Neo, 2011/11/9	
+	// later connection. Neo, 2011/11/9
 
 	// 2011/03/17 MH For 92D, we need to change RegWirelessMode when dual mac contrl algorithm
 	// want to switch between 2.4G & 5G.
@@ -690,7 +690,7 @@ ConstructProbeRequest(
 			wirelessmode = WIRELESS_MODE_AC_5G;
 		else
 			wirelessmode = WIRELESS_MODE_N_5G;
-		
+
 		if (Adapter->RegWirelessMode == WIRELESS_MODE_AC_5G)
 			wirelessmode = WIRELESS_MODE_AC_5G;
 		else if (Adapter->RegWirelessMode == WIRELESS_MODE_N_5G)
@@ -698,10 +698,10 @@ ConstructProbeRequest(
 		else if (Adapter->RegWirelessMode == WIRELESS_MODE_A)
 			wirelessmode = WIRELESS_MODE_A;
 	}
-#if 0 
+#if 0
 	if(!Isdot11acAvailable(Adapter))
 	{
-		if(wirelessmode == WIRELESS_MODE_AC_5G)	
+		if(wirelessmode == WIRELESS_MODE_AC_5G)
 		{
 			wirelessmode = WIRELESS_MODE_N_5G;
 		}
@@ -727,7 +727,7 @@ ConstructProbeRequest(
 	// Simple config IE. by CCW - copy from 818x
 	//
 	if(GET_SIMPLE_CONFIG_ENABLED(pMgntInfo))
-	{		
+	{
 		WPS_AppendElement(Adapter, &ProbeReq, TRUE, WPS_INFO_PROBEREQ_IE);
 	}
 
@@ -735,7 +735,7 @@ ConstructProbeRequest(
 	// For CCXv4 S59.2.3
 	//
 	CCX_RM_AppendRmCapIE(Adapter, &ProbeReq);
-	
+
 
 	//merge from 1020 to pass WHCK Scan_AdditionalIE
 	if(	pMgntInfo->AdditionalProbeReqIESize > 0&&
@@ -745,7 +745,7 @@ ConstructProbeRequest(
 		OCTET_STRING osAdditionalIEs;
 		osAdditionalIEs.Length = (u2Byte)pMgntInfo->AdditionalProbeReqIESize;
 		osAdditionalIEs.Octet = (pu1Byte)pMgntInfo->AdditionalProbeReqIEData;
-		
+
 
 		AppendAdditionalIEs(&ProbeReq, osAdditionalIEs);
 	}
@@ -769,7 +769,7 @@ ConstructProbeRequest(
 		OCTET_STRING osAdditionalIEs;
 		osAdditionalIEs.Length = (u2Byte)pMgntInfo->AdditionalProbeReqIESize;
 		osAdditionalIEs.Octet = (pu1Byte)pMgntInfo->AdditionalProbeReqIEData;
-		
+
 
 		AppendAdditionalIEs(&ProbeReq, osAdditionalIEs);
 	}
@@ -788,7 +788,7 @@ ConstructProbeRequest(
 
 	// Append WFD Probe request IEs
 	WFD_AppendProbeReqIEs(Adapter, Adapter->MAX_TRANSMIT_BUFFER_SIZE, &ProbeReq);
-	
+
 	*pLength=ProbeReq.Length;
 }
 
@@ -817,7 +817,7 @@ ConstructProbeRequestEx(
 	OCTET_STRING		os;
 	u1Byte				RegSuppRatesIdx=0;
 	WIRELESS_MODE		wirelessmode = WIRELESS_MODE_UNKNOWN;
-	
+
 	pProbeRequestPartial = Buffer;
 
 	SET_80211_HDR_FRAME_CONTROL(pProbeRequestPartial, 0);
@@ -827,7 +827,7 @@ ConstructProbeRequestEx(
 	SET_80211_HDR_ADDRESS1(pProbeRequestPartial, BroadcastAddress);
 	SET_80211_HDR_ADDRESS2(pProbeRequestPartial, Adapter->CurrentAddress);
 	SET_80211_HDR_ADDRESS3(pProbeRequestPartial, BroadcastAddress);
-		
+
 	SET_80211_HDR_FRAGMENT_SEQUENCE(pProbeRequestPartial, 0);
 
 	//3 Size of Probe Request, can not use sizeof(GeneralPacketPartial)
@@ -844,7 +844,7 @@ ConstructProbeRequestEx(
 	//
 	// Basic rate setting should follow default setting in registry
 	// instead of CurrentWirelessMode. Otherwise, previous connection may effect on
-	// later connection. Neo, 2011/11/9	
+	// later connection. Neo, 2011/11/9
 
 	// 2011/03/17 MH For 92D, we need to change RegWirelessMode when dual mac contrl algorithm
 	// want to switch between 2.4G & 5G.
@@ -871,7 +871,7 @@ ConstructProbeRequestEx(
 			wirelessmode = WIRELESS_MODE_AC_5G;
 		else
 			wirelessmode = WIRELESS_MODE_N_5G;
-		
+
 		if (Adapter->RegWirelessMode == WIRELESS_MODE_AC_5G)
 			wirelessmode = WIRELESS_MODE_AC_5G;
 		else if (Adapter->RegWirelessMode == WIRELESS_MODE_N_5G)
@@ -910,11 +910,11 @@ ConstructProbeRequestEx(
 #if P2P_SUPPORT == 1
 	// Solution for service discovery.
 	P2P_Append_ProbeReqIe(&ProbeReq, GET_P2P_INFO(Adapter));
-#endif	
+#endif
 
 	// Append WFD Probe request IEs
 	WFD_AppendProbeReqIEs(Adapter, Adapter->MAX_TRANSMIT_BUFFER_SIZE, &ProbeReq);
-	
+
 	if((Adapter->HalFunc.GetSupportedWirelessModeHandler(Adapter) & WIRELESS_MODE_AC_5G) &&
 		(Adapter->RegWirelessMode ==WIRELESS_MODE_AUTO || Adapter->RegWirelessMode == WIRELESS_MODE_AC_5G))
 	{
@@ -922,7 +922,7 @@ ConstructProbeRequestEx(
 		VHTConstructCapabilityElement(Adapter, &os, FALSE);
 		PacketMakeElement(&ProbeReq, EID_VHTCapability, os);
 	}
-	
+
 	*pLength=ProbeReq.Length;
 }
 
@@ -948,7 +948,7 @@ ConstructAuthenticatePacket(
 	SET_80211_HDR_FRAME_CONTROL(osAuthPkt.Octet, 0);
 	SET_80211_HDR_TYPE_AND_SUBTYPE(osAuthPkt.Octet, Type_Auth);
 	SET_80211_HDR_DURATION(osAuthPkt.Octet, 0);
-	
+
 	SET_80211_HDR_ADDRESS1(osAuthPkt.Octet, auStaAddr);
 	SET_80211_HDR_ADDRESS2(osAuthPkt.Octet, Adapter->CurrentAddress);
 	SET_80211_HDR_ADDRESS3(osAuthPkt.Octet, Adapter->MgntInfo.Bssid);
@@ -956,7 +956,7 @@ ConstructAuthenticatePacket(
 
 	if(AuthSeq != 3)
 	{
-		//add for CCX NETWORK EAP (LEAP) 2006.07.31 ,by CCW 
+		//add for CCX NETWORK EAP (LEAP) 2006.07.31 ,by CCW
 		if( !Adapter->MgntInfo.bNETWORKEAP)
 			SET_AUTH_FRAME_AUTH_ALG_NUM(osAuthPkt.Octet, AuthAlg); // Auth Algorithm:	Open system
 		else
@@ -977,7 +977,7 @@ ConstructAuthenticatePacket(
 		else if(1 == AuthSeq)
 		{
 				//4 // RSN IE
-				if(RT_STATUS_SUCCESS != (rtStatus = 
+				if(RT_STATUS_SUCCESS != (rtStatus =
 					Sec_AppendRSNIE(
 						Adapter, // Adapter context
 						(CONTENT_PKT_TYPE_802_11 | CONTENT_PKT_TYPE_CLIENT), // content type
@@ -991,7 +991,7 @@ ConstructAuthenticatePacket(
 				}
 
 				//4 // Fast Transition MD IE
-				if(RT_STATUS_SUCCESS != (rtStatus = 
+				if(RT_STATUS_SUCCESS != (rtStatus =
 					FT_AppendMdIE(
 							Adapter, // Adapter context
 							(CONTENT_PKT_TYPE_802_11 | CONTENT_PKT_TYPE_CLIENT), // content type
@@ -1005,7 +1005,7 @@ ConstructAuthenticatePacket(
 				}
 
 				//4 // Fast Transition FT IE
-				if(RT_STATUS_SUCCESS != (rtStatus = 
+				if(RT_STATUS_SUCCESS != (rtStatus =
 					FT_AppendFtIE(
 							Adapter, // Adapter context
 							(CONTENT_PKT_TYPE_802_11 | CONTENT_PKT_TYPE_CLIENT), // content type
@@ -1024,11 +1024,11 @@ ConstructAuthenticatePacket(
 		// Set WEP bit, see also MgntGetEncryptionInfo(), 2005.08.18, by rcnjko.
 		SET_80211_HDR_WEP(osAuthPkt.Octet, 1);
 
-		// Auth Alg Num. 
+		// Auth Alg Num.
 		*((UNALIGNED pu2Byte)(osAuthPkt.Octet+28)) = EF2Byte(AuthAlg); // 24+4+0, 802.11 Header + IV + field offset
 		// Auth Seq Num.
 		*((UNALIGNED pu2Byte)(osAuthPkt.Octet+30)) = EF2Byte(AuthSeq); // 24+4+2
-		// Status Code. 
+		// Status Code.
 		*((UNALIGNED pu2Byte)(osAuthPkt.Octet+32)) = EF2Byte(AuthStatusCode); // 24+4+4
 		osAuthPkt.Length = 34; // 24+4+6
 
@@ -1095,7 +1095,7 @@ ConstructAssociateReq(
 	u1Byte					ExtSuppRatesContent[255]; // NOTE! Length of Extended Support Rates <= 255.
 	BOOLEAN					bFilterCck = FALSE;
 	RT_STATUS				rtStatus = RT_STATUS_SUCCESS;
-	
+
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("===> ConstructAssociateReq()\n"));
 
@@ -1105,7 +1105,7 @@ ConstructAssociateReq(
 	//
 	if (CCX_Construct_DiagChnl_AssocReq(Adapter, Buffer, pLength))
 		return;
-	
+
 	pAsocPartial = Buffer;
 
 	SET_80211_HDR_FRAME_CONTROL(pAsocPartial, 0);
@@ -1155,7 +1155,7 @@ ConstructAssociateReq(
 			else
 			{
 				//4 // WPA IE
-				if(RT_STATUS_SUCCESS != (rtStatus = 
+				if(RT_STATUS_SUCCESS != (rtStatus =
 					Sec_AppendWPAIE(
 					Adapter, // Adapter context
 					(CONTENT_PKT_TYPE_802_11 | CONTENT_PKT_TYPE_CLIENT), // content type
@@ -1169,7 +1169,7 @@ ConstructAssociateReq(
 				}
 
 				//4 // RSN IE
-				if(RT_STATUS_SUCCESS != (rtStatus = 
+				if(RT_STATUS_SUCCESS != (rtStatus =
 					Sec_AppendRSNIE(
 						Adapter, // Adapter context
 						(CONTENT_PKT_TYPE_802_11 | CONTENT_PKT_TYPE_CLIENT), // content type
@@ -1183,7 +1183,7 @@ ConstructAssociateReq(
 				}
 
 				//4 // Fast Transition MD IE
-				if(RT_STATUS_SUCCESS != (rtStatus = 
+				if(RT_STATUS_SUCCESS != (rtStatus =
 					FT_AppendMdIE(
 							Adapter, // Adapter context
 							(CONTENT_PKT_TYPE_802_11 | CONTENT_PKT_TYPE_CLIENT), // content type
@@ -1198,9 +1198,9 @@ ConstructAssociateReq(
 			}
 		}
 	}
-	
+
 	DFS_StaConstructAssociateReq(Adapter, asocCap, AsocReq);
-	
+
 	if( pMgntInfo->pStaQos->CurrentQosMode > QOS_DISABLE )
 	{
 		PacketMakeElement( &AsocReq, EID_Vendor, pMgntInfo->pStaQos->WMMIE );
@@ -1214,7 +1214,7 @@ ConstructAssociateReq(
 
 	// For CCX 2 S36, Radio Management Capability element, 2006.05.15, by rcnjko.
 	CCX_RM_AppendRmCapIE(Adapter, &AsocReq);
-	
+
 	// For CCX 2 S38, WLAN Device Version Number element.
 	CCX_AppendCcxVerIE(Adapter, &AsocReq);
 
@@ -1223,9 +1223,9 @@ ConstructAssociateReq(
 
 	// Include High Throuput capability
 	if( pMgntInfo->pHTInfo->bCurrentHTSupport )
-	{		
+	{
 		// Construct HTCapability and HTInfo IE
-		OCTET_STRING		osHTCap;	
+		OCTET_STRING		osHTCap;
 		RT_TRACE(COMP_HT, DBG_LOUD, ("ConstructAssociateReq(): Trying to associate to an 802.11n HT AP\n"));
 		FillOctetString(osHTCap, &(pMgntInfo->pHTInfo->SelfHTCap), sizeof(pMgntInfo->pHTInfo->SelfHTCap));
 		HTConstructCapabilityElement(Adapter, &osHTCap, TRUE);
@@ -1234,17 +1234,17 @@ ConstructAssociateReq(
 		else
 			PacketMakeElement(&AsocReq, EID_HTCapability, osHTCap);
 
-		BSS_AppendExentedCapElement(Adapter, &AsocReq);	
+		BSS_AppendExentedCapElement(Adapter, &AsocReq);
 	}
 
 	if(pMgntInfo->pVHTInfo->bCurrentVHTSupport )
-	{		
-		OCTET_STRING		osVHTCap;	
+	{
+		OCTET_STRING		osVHTCap;
 		u1Byte				opmode = 0;
 		OCTET_STRING		osVHTNotif;
 		CHANNEL_WIDTH		opNotifBW = CHNL_GetRegBWSupport(Adapter);
 		u1Byte				opNotifNss = pMgntInfo->pVHTInfo->nRxSPStream;
-		
+
 		RT_TRACE(COMP_HT, DBG_LOUD, ("ConstructAssociateReq(): Trying to associate to an 802.11ac VHT AP\n"));
 		FillOctetString(osVHTCap, &(pMgntInfo->pVHTInfo->SelfVHTCap), sizeof(pMgntInfo->pVHTInfo->SelfVHTCap));
 		VHTConstructCapabilityElement(Adapter, &osVHTCap, TRUE);
@@ -1256,7 +1256,7 @@ ConstructAssociateReq(
 			DbgPrint("pMgntInfo->pVHTInfo->bOpModeNotif = TRYE BW = %d\n", opNotifBW);
 			opNotifNss = pMgntInfo->pVHTInfo->RxSSToSwitch;
 		}
-		
+
 		RT_TRACE(COMP_HT, DBG_LOUD, ("ConstructAssociateReq(): carry operating mode notification with BW(%d) RxSS(%d)\n", opNotifBW, opNotifNss));
 		FillOctetString(osVHTNotif, &opmode, sizeof(opmode));
 		SET_VHT_OPERATING_MODE_FIELD_CHNL_WIDTH(&opmode, opNotifBW);
@@ -1265,12 +1265,12 @@ ConstructAssociateReq(
 
 		PacketMakeElement(&AsocReq, EID_OpModeNotification, osVHTNotif);
 	}
-	
+
 	// For WiFi VHT Testbed, it requires special feature: VHT under TKIP & WEP mode
 	if(pMgntInfo->VhtWeakSecurity > 0)
 	{
 		OCTET_STRING		osHTCap;
-		OCTET_STRING		osVHTCap;	
+		OCTET_STRING		osVHTCap;
 		WIRELESS_MODE		wirelessModeBackup = pMgntInfo->dot11CurrentWirelessMode;
 
 		RT_TRACE(COMP_HT, DBG_LOUD, ("ConstructAssociateReq(): Trying to associate to an 802.11n HT AP\n"));
@@ -1281,7 +1281,7 @@ ConstructAssociateReq(
 		pMgntInfo->dot11CurrentWirelessMode = WIRELESS_MODE_AC_5G;
 		MgntRefreshSuppRateSet(Adapter);
 		pMgntInfo->dot11CurrentWirelessMode = wirelessModeBackup;
-		
+
 		// HT IE
 		HTConstructCapabilityElement(Adapter, &osHTCap, TRUE);
 		PacketMakeElement(&AsocReq, EID_HTCapability, osHTCap);
@@ -1289,12 +1289,12 @@ ConstructAssociateReq(
 		VHTConstructCapabilityElement(Adapter, &osVHTCap, TRUE);
 		PacketMakeElement(&AsocReq, EID_VHTCapability, osVHTCap);
 	}
-	
-	// Construct Realtek Proprietary Aggregation mode (Set AMPDU Factor to 2, 32k)	
+
+	// Construct Realtek Proprietary Aggregation mode (Set AMPDU Factor to 2, 32k)
 	//2008.08.13 If connect to realtek ap, append realtek OUI for WOW
 	if(pMgntInfo->bRealtekAggCapExist)
 	{
-		OCTET_STRING		osRealtekIEType2;	
+		OCTET_STRING		osRealtekIEType2;
 		FillOctetString(osRealtekIEType2, pMgntInfo->RTIEType2Buffer, sizeof(pMgntInfo->RTIEType2Buffer));
 		ConstructRTKAggElement(Adapter, &osRealtekIEType2);
 		PacketMakeElement(&AsocReq, EID_Vendor, osRealtekIEType2);
@@ -1307,7 +1307,7 @@ ConstructAssociateReq(
 	{
 		WPS_AppendElement(Adapter, &AsocReq, FALSE, WPS_INFO_ASOCREQ_IE);
 	}
-	
+
 	//
 	// CCX4 CAC -- TSPEC IE, 2006.06.26, by shien chang.
 	//
@@ -1349,14 +1349,14 @@ ConstructAssociateReq(
 		osCustomizedIE.Octet = &pMgntInfo->CustomizedAsocIEBuf[0];
 		AppendAdditionalIEs(&AsocReq, osCustomizedIE);
 	}
-#endif	
-	
+#endif
+
 	//
 	// Append additional IEs. By haich, 2008.11.27.
 	//
-	RT_PRINT_DATA(COMP_OID_SET | COMP_MLME, DBG_LOUD, "ConstructAssociateReq(): append AssocReqIE", 
+	RT_PRINT_DATA(COMP_OID_SET | COMP_MLME, DBG_LOUD, "ConstructAssociateReq(): append AssocReqIE",
 			pMgntInfo->AdditionalAssocReqIEData, pMgntInfo->AdditionalAssocReqIESize);
-	
+
 	if(pMgntInfo->AdditionalAssocReqIESize > 0&&
 		pMgntInfo->AdditionalAssocReqIEData != NULL &&
 		AsocReq.Length + pMgntInfo->AdditionalAssocReqIESize <= sMaxMpduLng)
@@ -1364,7 +1364,7 @@ ConstructAssociateReq(
 		OCTET_STRING osAdditionalIEs;
 		osAdditionalIEs.Length = (u2Byte)pMgntInfo->AdditionalAssocReqIESize;
 		osAdditionalIEs.Octet = (pu1Byte)pMgntInfo->AdditionalAssocReqIEData;
-		
+
 
 		AppendAdditionalIEs(&AsocReq, osAdditionalIEs);
 	}
@@ -1372,9 +1372,9 @@ ConstructAssociateReq(
 #if (P2P_SUPPORT == 1)
 	P2P_Append_AssociationReqIe(&AsocReq, Adapter);
 #endif
-    
+
 	WFD_AppendAssocReqIEs(Adapter, Adapter->MAX_TRANSMIT_BUFFER_SIZE, &AsocReq);
-	
+
 	*pLength=AsocReq.Length;
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<=== ConstructAssociateReq()\n"));
@@ -1393,7 +1393,7 @@ ConstructReAssociateReq(
 	OCTET_STRING	ReasocSuppRates
 	)
 {
-	PMGNT_INFO			pMgntInfo = &Adapter->MgntInfo;	
+	PMGNT_INFO			pMgntInfo = &Adapter->MgntInfo;
 	OCTET_STRING		ReAsocReq;
 	pu1Byte				pReAsocPartial;
 	OCTET_STRING		SuppRates;
@@ -1405,7 +1405,7 @@ ConstructReAssociateReq(
 	RT_STATUS			rtStatus = RT_STATUS_SUCCESS;
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("===> ConstructReAssociateReq()\n"));
-	
+
 	pReAsocPartial = Buffer;
 	//Init CCKM IE
 	CCKMIE.Octet = CCKMIEBuff;
@@ -1445,7 +1445,7 @@ ConstructReAssociateReq(
 	}
 
 	if(!GET_SIMPLE_CONFIG_ENABLED(pMgntInfo))
-	{	
+	{
 		// RSNIE. 2004/07/22, kcwu.
 		if(pMgntInfo->SecurityInfo.AuthMode > RT_802_11AuthModeAutoSwitch)
 		{
@@ -1458,7 +1458,7 @@ ConstructReAssociateReq(
 				else if(pMgntInfo->SecurityInfo.AuthMode > RT_802_11AuthModeAutoSwitch)
 				{
 					//4 // WPA IE
-					if(RT_STATUS_SUCCESS != (rtStatus = 
+					if(RT_STATUS_SUCCESS != (rtStatus =
 						Sec_AppendWPAIE(
 						Adapter, // Adapter context
 						(CONTENT_PKT_TYPE_802_11 | CONTENT_PKT_TYPE_CLIENT), // content type
@@ -1472,7 +1472,7 @@ ConstructReAssociateReq(
 					}
 
 					//4 // RSN IE
-					if(RT_STATUS_SUCCESS != (rtStatus = 
+					if(RT_STATUS_SUCCESS != (rtStatus =
 						Sec_AppendRSNIE(
 							Adapter, // Adapter context
 							(CONTENT_PKT_TYPE_802_11 | CONTENT_PKT_TYPE_CLIENT), // content type
@@ -1486,7 +1486,7 @@ ConstructReAssociateReq(
 					}
 
 					//4 // Fast Transition MD IE
-					if(RT_STATUS_SUCCESS != (rtStatus = 
+					if(RT_STATUS_SUCCESS != (rtStatus =
 						FT_AppendMdIE(
 								Adapter, // Adapter context
 								(CONTENT_PKT_TYPE_802_11 | CONTENT_PKT_TYPE_CLIENT), // content type
@@ -1500,7 +1500,7 @@ ConstructReAssociateReq(
 					}
 
 					//4 // Fast Transition FT IE
-					if(RT_STATUS_SUCCESS != (rtStatus = 
+					if(RT_STATUS_SUCCESS != (rtStatus =
 						FT_AppendFtIE(
 								Adapter, // Adapter context
 								(CONTENT_PKT_TYPE_802_11 | CONTENT_PKT_TYPE_CLIENT), // content type
@@ -1530,7 +1530,7 @@ ConstructReAssociateReq(
 
 	// For CCX 2 S36, Radio Management Capability element, 2006.05.15, by rcnjko.
 	CCX_RM_AppendRmCapIE(Adapter, &ReAsocReq);
-	
+
 	// For CCX 2 S38, WLAN Device Version Number element.
 	CCX_AppendCcxVerIE(Adapter, &ReAsocReq);
 
@@ -1539,15 +1539,15 @@ ConstructReAssociateReq(
 
 	// CCKM Fast Roam , by CCW
 	CCX_ConstructReAssociateReq(Adapter, &ReAsocReq);
-	
+
 
 	// Include High Throuput capability && Realtek proprietary
 	if( pMgntInfo->pHTInfo->bCurrentHTSupport )
-	{		
+	{
 		//
 		// Construct HTCapability and HTInfo IE
-		// 
-		OCTET_STRING		osHTCap;	
+		//
+		OCTET_STRING		osHTCap;
 		RT_TRACE(COMP_HT, DBG_LOUD, ("ConstructAssociateReq(): Trying to associate to an 802.11n HT AP\n"));
 		FillOctetString(osHTCap, &(pMgntInfo->pHTInfo->SelfHTCap), sizeof(pMgntInfo->pHTInfo->SelfHTCap));
 		HTConstructCapabilityElement(Adapter, &osHTCap, TRUE);
@@ -1558,13 +1558,13 @@ ConstructReAssociateReq(
 	}
 
 	if( pMgntInfo->pVHTInfo->bCurrentVHTSupport )
-	{		
-		OCTET_STRING		osVHTCap;	
+	{
+		OCTET_STRING		osVHTCap;
 		u1Byte				opmode = 0;
 		OCTET_STRING		osVHTNotif;
 		CHANNEL_WIDTH		opNotifBW = CHNL_GetRegBWSupport(Adapter);
 		u1Byte				opNotifNss = pMgntInfo->pVHTInfo->nRxSPStream;
-		
+
 		RT_TRACE(COMP_HT, DBG_LOUD, ("ConstructAssociateReq(): Trying to associate to an 802.11ac VHT AP\n"));
 		FillOctetString(osVHTCap, &(pMgntInfo->pVHTInfo->SelfVHTCap), sizeof(pMgntInfo->pVHTInfo->SelfVHTCap));
 		VHTConstructCapabilityElement(Adapter, &osVHTCap, TRUE);
@@ -1576,7 +1576,7 @@ ConstructReAssociateReq(
 			DbgPrint("pMgntInfo->pVHTInfo->bOpModeNotif = TRYE BW = %d 222\n", opNotifBW);
 			opNotifNss = pMgntInfo->pVHTInfo->RxSSToSwitch;
 		}
-		
+
 		RT_TRACE(COMP_HT, DBG_LOUD, ("ConstructAssociateReq(): carry operating mode notification with BW(%d) RxSS(%d)\n", opNotifBW, opNotifNss));
 		FillOctetString(osVHTNotif, &opmode, sizeof(opmode));
 		SET_VHT_OPERATING_MODE_FIELD_CHNL_WIDTH(&opmode, opNotifBW);
@@ -1592,13 +1592,13 @@ ConstructReAssociateReq(
 	//2008.08.13 If connect to realtek ap, append realtek OUI for WOW
 	if(pMgntInfo->bRealtekAggCapExist)
 	{
-		OCTET_STRING		osRealtekIEType2;	
+		OCTET_STRING		osRealtekIEType2;
 		FillOctetString(osRealtekIEType2, pMgntInfo->RTIEType2Buffer, sizeof(pMgntInfo->RTIEType2Buffer));
 		ConstructRTKAggElement(Adapter, &osRealtekIEType2);
 		PacketMakeElement(&ReAsocReq, EID_Vendor, osRealtekIEType2);
 	}
 
-	
+
 	//
 	// Simple config IE. by CCW - copy from 818x
 	//
@@ -1617,12 +1617,12 @@ ConstructReAssociateReq(
 		PQOS_TSTREAM	pTs = NULL;
 		PSTA_QOS		pStaQos = pMgntInfo->pStaQos;
 		u1Byte			tidVoice = 0;
-		RT_DISP( FCCX, CCX_CAC, ( "VoTs exists, append Voice TSPEC Signal TSPEC in Reassoc Req\n" ) ); 
-		
+		RT_DISP( FCCX, CCX_CAC, ( "VoTs exists, append Voice TSPEC Signal TSPEC in Reassoc Req\n" ) );
+
 		CCX_CAC_ConstructVoiceTspec(Adapter, tsVoice);
 		FillOctetString(VoiceEle, &tsVoice[2], TSPEC_SIZE - 2);
 		PacketMakeElement( &ReAsocReq, EID_Vendor, VoiceEle );
-		
+
 		CCX_CAC_ConstructSignalTspec(Adapter, tsSignal);
 		FillOctetString(SignalEle, &tsSignal[2], TSPEC_SIZE - 2);
 		PacketMakeElement( &ReAsocReq, EID_Vendor, SignalEle );
@@ -1632,7 +1632,7 @@ ConstructReAssociateReq(
 		if (QOS_RATE_TO_BPS( QosGetNPR(Adapter, pTs) ) >=
 			GET_TSPEC_MIN_PHY_RATE(pTs->OutStandingTSpec) )
 		{
-			RT_DISP( FCCX, CCX_CAC, ( "Append TSRS in Reassoc Req\n" ) ); 
+			RT_DISP( FCCX, CCX_CAC, ( "Append TSRS in Reassoc Req\n" ) );
 			QosConstructTSRS(Adapter, pTs, &ReAsocReq);
 		}
 	}
@@ -1640,7 +1640,7 @@ ConstructReAssociateReq(
 #if (P2P_SUPPORT == 1)
 	P2P_Append_AssociationReqIe(&ReAsocReq, Adapter);
 #endif
-    
+
 	WFD_AppendAssocReqIEs(Adapter, Adapter->MAX_TRANSMIT_BUFFER_SIZE, &ReAsocReq);
 
 	WriteEF4Byte(pLength, ReAsocReq.Length);
@@ -1760,17 +1760,17 @@ ConstructAssociateRsp(
 	}
 
 	if(ACTING_AS_AP(Adapter))
-	{	
+	{
 		//
 		// Append IE for AsocRsp from OS.
 		//
-		PRT_WLAN_STA pEntry = AsocEntry_GetEntry(pMgntInfo, asocStaAddr);		
+		PRT_WLAN_STA pEntry = AsocEntry_GetEntry(pMgntInfo, asocStaAddr);
 
 		if(pEntry)
 		{
 			OCTET_STRING		asocReqIe = {NULL, 0};
 			OCTET_STRING		wpsIe = {NULL, 0};
-			
+
 			if(pEntry->AP_AsocRspIEFromOSLength > 0&&
 				pEntry->AP_AsocRspIEFromOS != NULL &&
 				AsocRsp.Length + pEntry->AP_AsocRspIEFromOSLength <= sMaxMpduLng)
@@ -1827,7 +1827,7 @@ ConstructDeauthenticatePacket(
 	SET_80211_HDR_ADDRESS2(pdeauth, Adapter->CurrentAddress);
 	SET_80211_HDR_ADDRESS3(pdeauth, Adapter->MgntInfo.Bssid);
 	SET_80211_HDR_FRAGMENT_SEQUENCE(pdeauth, 0);
-	
+
 	// Size of this Frame until last fixed size field.
 	Deauth.Octet	 = Buffer;
 	Deauth.Length = sMacHdrLng;
@@ -1836,29 +1836,29 @@ ConstructDeauthenticatePacket(
 	// Security Header: leave space for it if necessary.
 	//-------------------------------------------------------------------------
 	CCX_ConstructDeauthenticatePacket(Adapter, pdeauth, &Deauth);
-	
+
 	if( pMgntInfo->bInBIPMFPMode )
 	{
 		if( pSecInfo->PairwiseEncAlgorithm == RT_ENC_ALG_AESCCMP && // Now we just support AES MFP !!
 			!(MacAddr_isBcst(auSta) ))
 		{
 			// Set WEP bit !!
-			SET_80211_HDR_WEP( pdeauth  , 1 );  
+			SET_80211_HDR_WEP( pdeauth  , 1 );
 
 			if(pSecInfo->EncryptionHeadOverhead > 0)
 			{
 				PlatformZeroMemory( ( Deauth.Octet+ Deauth.Length ) , pSecInfo->EncryptionHeadOverhead);
 				Deauth.Length += pSecInfo->EncryptionHeadOverhead;
-			}	
+			}
 		}
 	}
-	
+
 	// Add reason code
 	WriteEF2Byte( ( Deauth.Octet+ Deauth.Length ) , asRsn );
 	Deauth.Length += 2;
 
 	//
-	// if need, Append MHDRIE 
+	// if need, Append MHDRIE
 	//
 	CCX_AppendMHDRIE( Adapter, &Deauth );
 
@@ -1897,7 +1897,7 @@ ConstructDisassociatePacket(
 	SET_80211_HDR_ADDRESS2(pdisassoc, Adapter->CurrentAddress);
 	SET_80211_HDR_ADDRESS3(pdisassoc, Adapter->MgntInfo.Bssid);
 	SET_80211_HDR_FRAGMENT_SEQUENCE(pdisassoc, 0);
-	
+
 	// Size of this Frame until last fixed size field.
 	Disas.Octet	 = Buffer;
 	Disas.Length	 = sMacHdrLng;
@@ -1905,7 +1905,7 @@ ConstructDisassociatePacket(
 	//-------------------------------------------------------------------------
 	// Security Header: leave space for it if necessary.
 	//-------------------------------------------------------------------------
-	CCX_ConstructDisassociatePacket(Adapter, pdisassoc, &Disas);	
+	CCX_ConstructDisassociatePacket(Adapter, pdisassoc, &Disas);
 
 	if( pMgntInfo->bInBIPMFPMode )
 	{
@@ -1913,16 +1913,16 @@ ConstructDisassociatePacket(
 			!(MacAddr_isBcst(asSta) ))
 		{
 			// Set WEP bit !!
-			SET_80211_HDR_WEP( pdisassoc  , 1 );  
+			SET_80211_HDR_WEP( pdisassoc  , 1 );
 
 			if(pSecInfo->EncryptionHeadOverhead > 0)
 			{
 				PlatformZeroMemory( ( Disas.Octet+ Disas.Length ) , pSecInfo->EncryptionHeadOverhead);
 				Disas.Length += pSecInfo->EncryptionHeadOverhead;
-			}	
+			}
 		}
-		
-		
+
+
 	}
 
 	// Add reason code
@@ -1930,7 +1930,7 @@ ConstructDisassociatePacket(
 	Disas.Length += 2;
 
 	//
-	// if need, Append MHDRIE 
+	// if need, Append MHDRIE
 	//
 	CCX_AppendMHDRIE( Adapter, &Disas );
 
@@ -1943,7 +1943,7 @@ ConstructDisassociatePacket(
 }
 
 //
-// Description: 
+// Description:
 //	Construct a Probe Response packet.
 // Arguments:
 //	[in] Adapter -
@@ -1994,16 +1994,16 @@ ConstructProbeRsp(
 	u1Byte			ExtSuppRatesContent[255]; // NOTE! Length of Extended Support Rates <= 255.
 	OCTET_STRING		ERPInfo;
 	u1Byte			ERPInfoContent[1];
-	
+
 	OCTET_STRING		IbssAdditionalIEs;
 	OCTET_STRING		osEDCAInfoElem;
 	u1Byte			EDCAInfo[1];
-	BOOLEAN			bFilterCck = FALSE;	
+	BOOLEAN			bFilterCck = FALSE;
 	PMGNT_INFO 		pDefaultMgntInfo;
-	
+
 	pMgntInfo = &Adapter->MgntInfo;
 	pProbeRsp = Buffer;
-	
+
 	//-------------------------------------------------------------------------
 	// MAC Header.
 	//-------------------------------------------------------------------------
@@ -2019,7 +2019,7 @@ ConstructProbeRsp(
 
 	// Sequence Control.
 	SET_80211_HDR_FRAGMENT_SEQUENCE(pProbeRsp, 0);
-	
+
 
 	//-------------------------------------------------------------------------
 	// Frame Body.
@@ -2036,11 +2036,11 @@ ConstructProbeRsp(
 	// Capability information.
 	if( ACTING_AS_AP(Adapter) )
 	{
-		SET_BEACON_PROBE_RSP_CAPABILITY_INFO(pProbeRsp, (pMgntInfo->mCap & ~cIBSS) ); 
+		SET_BEACON_PROBE_RSP_CAPABILITY_INFO(pProbeRsp, (pMgntInfo->mCap & ~cIBSS) );
 	}
 	else
 	{
-		SET_BEACON_PROBE_RSP_CAPABILITY_INFO(pProbeRsp, (pMgntInfo->mCap & ~cESS) ); 
+		SET_BEACON_PROBE_RSP_CAPABILITY_INFO(pProbeRsp, (pMgntInfo->mCap & ~cESS) );
 	}
 
 	if( pMgntInfo->SecurityInfo.PairwiseEncAlgorithm!= RT_ENC_ALG_NO_CIPHER )
@@ -2075,10 +2075,10 @@ ConstructProbeRsp(
 
 	P2P_FilerCck(Adapter, &bFilterCck);
 
-	// Set supported and extended supported rate according to Wirelessmode and dot11OperationalRateSet. 
+	// Set supported and extended supported rate according to Wirelessmode and dot11OperationalRateSet.
 	SelectSupportedRatesElement( pMgntInfo->dot11CurrentWirelessMode, pMgntInfo->dot11OperationalRateSet, bFilterCck, &SuppRates, &ExtSuppRates );
 	PacketMakeElement(&ProbeRspFrame, EID_SupRates, SuppRates);
-	
+
 	// DS parameters element.
 	DSParms.Octet = &pMgntInfo->dot11CurrentChannelNumber;
 	DSParms.Length = 1;
@@ -2137,10 +2137,10 @@ ConstructProbeRsp(
 			AppendAdditionalIEs(&ProbeRspFrame, IbssAdditionalIEs);
 		}
 
-		if(pMgntInfo->pStaQos->QosCapability != QOS_DISABLE)	
+		if(pMgntInfo->pStaQos->QosCapability != QOS_DISABLE)
 		{
 			FillOctetString(osEDCAInfoElem, EDCAInfo, 1);
-			PlatformZeroMemory(osEDCAInfoElem.Octet, 1); 
+			PlatformZeroMemory(osEDCAInfoElem.Octet, 1);
 			AppendQoSElement(&ProbeRspFrame, &osEDCAInfoElem, OUI_SUBTYPE_WMM_INFO);
 		}
 	}
@@ -2171,7 +2171,7 @@ ConstructProbeRsp(
 	if(IS_WIRELESS_MODE_N(Adapter))
 	{
 		OCTET_STRING		osHTCap, osHTInfo;
-		
+
 		FillOctetString(osHTCap, &(pMgntInfo->pHTInfo->SelfHTCap), sizeof(pMgntInfo->pHTInfo->SelfHTCap));
 		FillOctetString(osHTInfo, &(pMgntInfo->pHTInfo->SelfHTInfo), sizeof(pMgntInfo->pHTInfo->SelfHTInfo));
 		HTConstructCapabilityElement(Adapter, &osHTCap, FALSE);
@@ -2205,9 +2205,9 @@ ConstructProbeRsp(
 		PacketMakeElement(&ProbeRspFrame, EID_VHTCapability, osVHTCap);
 		PacketMakeElement(&ProbeRspFrame, EID_VHTOperation, osVHTOperation);
 	}
-	
+
 	WAPI_SecFuncHandler(WAPI_CONSTRUCTPROBERSP, Adapter, (PVOID)&ProbeRspFrame, WAPI_END);
-	
+
 	//
 	// Simple config IE. by CCW - copy from 818x
 	//
@@ -2221,7 +2221,7 @@ ConstructProbeRsp(
 #if (P2P_SUPPORT == 1)
 	P2P_Append_GoProbeRspIe(&ProbeRspFrame, Adapter, Type_Probe_Rsp, pRfdProbeReq, posProbeReq);
 #endif
-    
+
 	WFD_AppendProbeRspIEs(Adapter, Adapter->MAX_TRANSMIT_BUFFER_SIZE, &ProbeRspFrame, pRfdProbeReq, posProbeReq);
 
 	*pLength = ProbeRspFrame.Length;
@@ -2241,19 +2241,19 @@ ConstructCustomizedData(
 {
 	PMGNT_INFO     		pMgntInfo;
 	pu1Byte			pHeader;
-	
+
 	pMgntInfo = &Adapter->MgntInfo;
 	pHeader = Buffer;
-	
+
 	SET_80211_HDR_FRAME_CONTROL(pHeader, 0);
 	SET_80211_HDR_TYPE_AND_SUBTYPE(pHeader, Type_Data);
 	SET_80211_HDR_PWR_MGNT(pHeader, 0);
-	
+
 	SET_80211_HDR_TO_DS(pHeader, 1);
 	SET_80211_HDR_ADDRESS1(pHeader, pMgntInfo->Bssid);
 	SET_80211_HDR_ADDRESS2(pHeader, Adapter->CurrentAddress);
 	SET_80211_HDR_ADDRESS3(pHeader, pMgntInfo->Bssid);
-	
+
 	SET_80211_HDR_DURATION(pHeader, 0);
 	SET_80211_HDR_FRAGMENT_SEQUENCE(pHeader, 0);
 
@@ -2279,15 +2279,15 @@ ConstructNullFunctionData(
 {
 	PMGNT_INFO     		pMgntInfo;
 	pu1Byte			pHeader;
-	
+
 	pMgntInfo = &Adapter->MgntInfo;
 	pHeader = Buffer;
-	
-	// [APSD] QoS Null Function Data , 2006-06-22, by Isaiah 
+
+	// [APSD] QoS Null Function Data , 2006-06-22, by Isaiah
 	SET_80211_HDR_FRAME_CONTROL(pHeader, 0);
 	SET_80211_HDR_TYPE_AND_SUBTYPE(pHeader, ( (bQoS) ? Type_QosNull: Type_Null_Frame) );
 	SET_80211_HDR_PWR_MGNT(pHeader, (bForcePowerSave) ? 1 : 0 );
-	
+
 	switch(pMgntInfo->OpMode)
 	{
 	case RT_OP_MODE_INFRASTRUCTURE:	// 1,0
@@ -2338,11 +2338,11 @@ ConstructBtNullFunctionData(
 {
 	PMGNT_INFO     		pMgntInfo;
 	pu1Byte			pHeader;
-	
+
 	pMgntInfo = &Adapter->MgntInfo;
 	pHeader = Buffer;
-	
-	// [APSD] QoS Null Function Data , 2006-06-22, by Isaiah 
+
+	// [APSD] QoS Null Function Data , 2006-06-22, by Isaiah
 	SET_80211_HDR_FRAME_CONTROL(pHeader, 0);
 	SET_80211_HDR_TYPE_AND_SUBTYPE(pHeader, ( (bQoS) ? Type_QosNull: Type_Null_Frame) );
 	SET_80211_HDR_PWR_MGNT(pHeader, (bForcePowerSave) ? 1 : 0 );
@@ -2439,13 +2439,13 @@ ConstructMagicPacket(
 	PMGNT_INFO     		pMgntInfo;
 	pu1Byte			pHeader;
 	int							i;
-	
+
 	pMgntInfo = &Adapter->MgntInfo;
 	pHeader = Buffer;
-	
+
 	SET_80211_HDR_FRAME_CONTROL(pHeader, 0);
 	SET_80211_HDR_TYPE_AND_SUBTYPE(pHeader, Type_Data);
-	
+
 	switch(pMgntInfo->OpMode)
 	{
 	case RT_OP_MODE_INFRASTRUCTURE:	// 1,0
@@ -2462,7 +2462,7 @@ ConstructMagicPacket(
 
 	case RT_OP_MODE_AP:				// 0,1
 		SET_80211_HDR_FROM_DS(pHeader, 1);
-		SET_80211_HDR_ADDRESS1(pHeader, StaAddr);	
+		SET_80211_HDR_ADDRESS1(pHeader, StaAddr);
 
 		// Old:
 		//PlatformMoveMemory( pHeader->Addr2, pMgntInfo->Bssid, 6 ); // BSSID
@@ -2520,11 +2520,11 @@ ConstructEapolKeyPacket(
 	KeyType			eKeyType, // EAPOL-Key Information field: Key Type bit: type_Group or type_Pairwise.
 	BOOLEAN			bInstall, // EAPOL-Key Information field: Install Flag.
 	BOOLEAN			bKeyAck, // EAPOL-Key Information field: Key Ack bit.
-	BOOLEAN			bKeyMIC, // EAPOL-Key Information field: Key MIC bit. If true, we will calculate EAPOL MIC and fill it into Key MIC field. 
+	BOOLEAN			bKeyMIC, // EAPOL-Key Information field: Key MIC bit. If true, we will calculate EAPOL MIC and fill it into Key MIC field.
 	BOOLEAN			bSecure, // EAPOL-Key Information field: Secure bit.
 	BOOLEAN			bError, // EAPOL-Key Information field: Error bit. True for MIC failure report.
 	BOOLEAN			bRequest, // EAPOL-Key Information field: Requst bit.
-	
+
 	u8Byte			u8bKeyReplayCounter, // EAPOL-KEY Replay Counter field.
 	pu1Byte			pKeyNonce, // EAPOL-Key Key Nonce field (32-byte).
 	u8Byte			u8bKeyRSC, // EAPOL-Key Key RSC field (8-byte).
@@ -2546,7 +2546,7 @@ ConstructEapolKeyPacket(
 	u2Byte			u2bEapolKeyMsgSz = 0;
 	u2Byte			u2bEapolKeyDataLen = 0;
 	u1Byte			tmpBuf[256];
-	OCTET_STRING		osKeyNonce;	
+	OCTET_STRING		osKeyNonce;
 	OCTET_STRING		osEapolKeyIV;
 	OCTET_STRING		osKeyRSC;
 	OCTET_STRING		osKeyID;
@@ -2581,7 +2581,7 @@ ConstructEapolKeyPacket(
 	//-------------------------------------------------------------------------
 	SET_80211_HDR_FRAME_CONTROL(pHeader, 0);
 	SET_80211_HDR_TYPE_AND_SUBTYPE(pHeader, Type_Data);
-	
+
 	switch(pMgntInfo->OpMode)
 	{
 	case RT_OP_MODE_INFRASTRUCTURE:	// 1,0
@@ -2617,7 +2617,7 @@ ConstructEapolKeyPacket(
 	{ // EAPOL-Key of Group key handshake will be encrypted via PTK, 2005.07.01, by rcnjko.
 		PlatformFillMemory( &(Buffer[*pLength]), pSecInfo->EncryptionHeadOverhead, 0x00);
 		*pLength += pSecInfo->EncryptionHeadOverhead;
-	}	
+	}
 
 	//-------------------------------------------------------------------------
 	// Frame Body.
@@ -2639,7 +2639,7 @@ ConstructEapolKeyPacket(
 	pEapol->packet_type = LIB1X_EAPOL_KEY;
 	short2net(u2bEapolKeyMsgSz, ((pu1Byte)&(pEapol->packet_body_length)) );
 	*pLength += LIB1X_EAPOL_HDRLEN;
-	
+
 	//
 	// 3. EAPOL-Key descriptor.
 	//
@@ -2679,7 +2679,7 @@ ConstructEapolKeyPacket(
 	PlatformFillMemory(tmpBuf, KEY_IV_LEN, 0);
 	FillOctetString(osEapolKeyIV, tmpBuf, KEY_IV_LEN);
 	Message_setKeyIV(osEapolKey, osEapolKeyIV);
-	
+
 	// 3.7 Key RSC.
 	FillOctetString(osKeyRSC, &(u8bKeyRSC), sizeof(u8bKeyRSC));
 	Message_setKeyRSC(osEapolKey, osKeyRSC);
@@ -2691,15 +2691,15 @@ ConstructEapolKeyPacket(
 
 	// 3.9 Key MIC. We will fill it up later if required.
 	Message_clearMIC(osEapolKey);
-	
+
 	// 3.10 Key Data Length.
 	Message_setKeyDataLength(osEapolKey, u2bEapolKeyDataLen);
-	
+
 	// 3.11 Key Data.
 	// IE.
 	if(posRSNIE != NULL && posRSNIE->Length > 0)
 	{
-		PacketMakeElement( &osEapolKey, 
+		PacketMakeElement( &osEapolKey,
 			(pSecInfo->SecLvl == RT_SEC_LVL_WPA) ? EID_Vendor : EID_WPA2, (*posRSNIE) );
 	}
 	// KDE.
@@ -2731,19 +2731,19 @@ ConstructEapolKeyPacket(
 		PKDE_STRUCT pKDE = NULL;
 		u1Byte		 KEDOUI[] = {0x00,0x0F,0xAC};   //00-0F-AC
 		pKDE = (PKDE_STRUCT)( &(osEapolKey.Octet[osEapolKey.Length]));
-		//   KeyID  = bit0~bit2 
+		//   KeyID  = bit0~bit2
 		//   TX       = bit3
 		//   resved = bit4~bit7 and byte2
 		//   GTK data length = ( Length -6 )
-		
+
 		pKDE->IEType= 0xdd;  //IE ID = 0xDD
-		
+
 		if( pSecInfo->PairwiseEncAlgorithm == RT_ENC_ALG_AESCCMP )
 		{
 			pKDE->IELen = 0x16;      // 18+4 = 22
 			osEapolKey.Length += 24+8+2;
 		}
-		else if( pSecInfo->PairwiseEncAlgorithm == RT_ENC_ALG_TKIP ) 
+		else if( pSecInfo->PairwiseEncAlgorithm == RT_ENC_ALG_TKIP )
 		{
 			pKDE->IELen = 0x26;     // 34+4 = 38
 			osEapolKey.Length += 40+8+2;
@@ -2752,7 +2752,7 @@ ConstructEapolKeyPacket(
 		PlatformMoveMemory(pKDE->OUI, KEDOUI, 3);
 
 		pKDE->Datatype = 0x01;
-		
+
 		pKDE->KID = 0x01; //Set Group Key ID = 1;
 
 		pKDE->Reserved = 0x00; // Set Reserved to all 0;
@@ -2763,13 +2763,13 @@ ConstructEapolKeyPacket(
 			PlatformMoveMemory(pKDE->GTK , pGTK , 16);
 		else if( pSecInfo->PairwiseEncAlgorithm == RT_ENC_ALG_TKIP )
 			PlatformMoveMemory(pKDE->GTK , pGTK , 32);
-		
+
 		if(pKEK)
 		{
 			// Encode Key Data field if necessary.
 			EncEapolKeyData(Adapter, osEapolKey, pKEK, PTK_LEN_EAPOLENC);
 		}
-	}	
+	}
 	*pLength += u2bEapolKeyMsgSz;
 
 	// Figure out EAPOL-Key MIC if required.
@@ -2789,7 +2789,7 @@ ConstructEapolKeyPacket(
 
 //
 //   Description: Construct EAPOL-Star Packet Let AP try to re-key !!
-//   
+//
 VOID
 ConstructEAPOLStartPacket(
 	IN	PADAPTER			Adapter,
@@ -2848,7 +2848,7 @@ ConstructEAPOLStartPacket(
 		*pLength += pSecInfo->EncryptionHeadOverhead;
 	}
 
-	
+
 	//-------------------------------------------------------------------------
 	// Frame Body.
 	//-------------------------------------------------------------------------
@@ -2899,7 +2899,7 @@ ConstructCcxRmReport(
 	//-------------------------------------------------------------------------
 	// MAC Header.
 	//-------------------------------------------------------------------------
-	RT_ASSERT(pMgntInfo->OpMode==RT_OP_MODE_INFRASTRUCTURE, 
+	RT_ASSERT(pMgntInfo->OpMode==RT_OP_MODE_INFRASTRUCTURE,
 		("ConstructCcxRmReport(): OpMode(%d) != RT_OP_MODE_INFRASTRUCTURE(%d)\n", pMgntInfo->OpMode, RT_OP_MODE_INFRASTRUCTURE));
 
 	SET_80211_HDR_FRAME_CONTROL(pHeader, 0);
@@ -2930,12 +2930,12 @@ ConstructCcxRmReport(
 	{
 		PlatformZeroMemory(&(Buffer[*pLength]), pSecInfo->EncryptionHeadOverhead);
 		*pLength += pSecInfo->EncryptionHeadOverhead;
-	}	
+	}
 
 	//-------------------------------------------------------------------------
 	// Frame Body.
 	//-------------------------------------------------------------------------
-	pRmRptPkt =  (PRM_REPORT_PACKET)(Buffer + *pLength); 
+	pRmRptPkt =  (PRM_REPORT_PACKET)(Buffer + *pLength);
 
 	//
 	// 1. Cisco Aironet SNAP Header.
@@ -2944,21 +2944,21 @@ ConstructCcxRmReport(
 	*pLength += CISCO_AIRONET_SNAP_LENGTH;
 
 	//
-	// 2. IAPP ID & Length 
+	// 2. IAPP ID & Length
 	//
-	IappIdLen = (CISCO_RM_RPT_IAPP_LENGTH - CISCO_AIRONET_SNAP_LENGTH - 1) + posRpts->Length;	
+	IappIdLen = (CISCO_RM_RPT_IAPP_LENGTH - CISCO_AIRONET_SNAP_LENGTH - 1) + posRpts->Length;
 
 	RT_TRACE(COMP_SEND, DBG_LOUD, ("IAPP ID & Length: 0x%04X\n", IappIdLen));
 	RT_ASSERT((IappIdLen < 0x1000), ("ConstructCcxRmReport(): IappIdLen(%#X) should < 0x1000 !!!\n", IappIdLen));
 	SET_RMRPT_IAPPIDLEN(pRmRptPkt, IappIdLen);
 
 	//
-	// 3. IAPP Type 
+	// 3. IAPP Type
 	//
 	SET_RMRPT_IAPPTYPE(pRmRptPkt, CCX_RM_IAPP_TYPE);
 
 	//
-	// 4. IAPP SubType 
+	// 4. IAPP SubType
 	//
 	SET_RMRPT_IAPPSUBTYPE(pRmRptPkt, CCX_RM_REPORT_IAPP_SUBTYPE);
 
@@ -3094,19 +3094,19 @@ ConstructCcxROGUEAPReport(
 	{
 		PlatformZeroMemory(&(Buffer[*pLength]), pSecInfo->EncryptionHeadOverhead);
 		*pLength += pSecInfo->EncryptionHeadOverhead;
-	}	
+	}
 
 	//-------------------------------------------------------------------------
 	// Frame Body.
 	//-------------------------------------------------------------------------
-	pROGUEAPRptPkt =  (PROGUEAP_REPORT_PACKET)(Buffer + *pLength); 
+	pROGUEAPRptPkt =  (PROGUEAP_REPORT_PACKET)(Buffer + *pLength);
 
 	//
 	// 1. Cisco Aironet SNAP Header.
 	//
 	PlatformMoveMemory( pROGUEAPRptPkt->SnapHeader, CiscoAironetSnap, CISCO_AIRONET_SNAP_LENGTH);
-	
-	*pLength += CISCO_AIRONET_SNAP_LENGTH; 
+
+	*pLength += CISCO_AIRONET_SNAP_LENGTH;
 
 
 	//
@@ -3114,29 +3114,29 @@ ConstructCcxROGUEAPReport(
 	//
 
 	PlatformMoveMemory(&(pROGUEAPRptPkt->ROGUEAPLen) , ROGUEAPRptLen , 2 );
-	
+
 	//
 	// 3.message type : 0x40
 	//
-	
+
 	pROGUEAPRptPkt->message_type = H2N1BYTE(ROGUEAP_message_type);
-	
+
 	//
 	// 4.function code : 0x8e
 	//
-	
+
 	pROGUEAPRptPkt->function_code = H2N1BYTE(ROGUEAP_function_code);
-	
+
 	//
-	// 5.Destination MAC Address. 
+	// 5.Destination MAC Address.
 	//
 	PlatformMoveMemory(pROGUEAPRptPkt->DstAddr, pMgntInfo->Bssid, 6);
-	
+
 	//
 	// 6.Source MAC Address.
 	//
 	PlatformMoveMemory(pROGUEAPRptPkt->SrcAddr, Adapter->CurrentAddress, 6);
-	
+
 	//
 	// 7.Failure Reason
 	//
@@ -3160,12 +3160,12 @@ ConstructCcxROGUEAPReport(
 			break;
 	}
 
-	
+
 	//
 	// 8. Rogue AP Mac address
 	//
 	PlatformMoveMemory(pROGUEAPRptPkt->RogueAPAddr, pMgntInfo->ROGUE_AP_ENTEY[index].bssid , 6);
-	
+
 	//
 	// 9.Rogue AP name
 	//
@@ -3174,10 +3174,10 @@ ConstructCcxROGUEAPReport(
 	*pLength += 40;
 
 	ln = *pLength;
-	
+
 
 	//RT_PRINT_DATA((COMP_RM|COMP_SEND), DBG_LOUD, ("ROGUE AP Report: "), Buffer, *pLength);
-		
+
 }
 
 
@@ -3207,11 +3207,11 @@ ConstructMaFrameHdr(
 	MaHdr[1] = Action;
 
 	FillOctetString(osTemp, MaHdr, 2);
-	PacketAppendData(posMaFrame, osTemp);	
-	
+	PacketAppendData(posMaFrame, osTemp);
+
 }
 
-// 
+//
 // Description:
 // 	Append the additional IEs to the Beacon frame, by Bruce, 2007-08-13.
 // Note:
@@ -3282,7 +3282,7 @@ ConstructQosADDTSPacket(
 
 	FillOctetString(osTempField, WMM_Filed, sizeof(WMM_Filed));
 	PacketAppendData(&osAddTs, osTempField);
-	
+
 	//-------------------------------------------------------------------------
 	// TSPEC IE & TSRS
 	//-------------------------------------------------------------------------
@@ -3293,20 +3293,20 @@ ConstructQosADDTSPacket(
 		PacketAppendData(&osAddTs, osTempField);
 
 		// TSRS
-		// CCXv4 S54, A STA shall use the TSRS IE in the ADDTS request or (Re-)association Request. This value of Nominal PHY rate must be 
+		// CCXv4 S54, A STA shall use the TSRS IE in the ADDTS request or (Re-)association Request. This value of Nominal PHY rate must be
 		// greater than or equal to the Minimum PHY rate expressed in the TSPEC IE. By Bruce, 2009-06-23.
 		if (QOS_RATE_TO_BPS( QosGetNPR(Adapter, pStream) ) >=
 			GET_TSPEC_MIN_PHY_RATE(pStream->OutStandingTSpec) )
 		{
 			QosConstructTSRS(Adapter, pStream, &osAddTs);
 		}
-		
+
 		pStream->DialogToken = pStaQos->DialogToken;
 		pStream ++;
 	}
 
 	//-------------------------------------------------------------------------
-	// MHDR IE for MFP  
+	// MHDR IE for MFP
 	//-------------------------------------------------------------------------
 	CCX_AppendMHDRIE(Adapter, &osAddTs);
 
@@ -3337,7 +3337,7 @@ ConstructQosDELTSPacket(
 	RT_ASSERT(pTs!=NULL, ("ConstructQosDELTSPacket(): pTs should not be NULL\n"));
 
 	FillOctetString(osDelTs, Buffer, 0);
-	
+
 	//-------------------------------------------------------------------------
 	// MAC Header.
 	//-------------------------------------------------------------------------
@@ -3355,7 +3355,7 @@ ConstructQosDELTSPacket(
 	// Security Header: leave space for it if necessary.
 	//-------------------------------------------------------------------------
 	CCX_ConstructQosDELTSPacket(Adapter, &osDelTs);
-	
+
 	//-------------------------------------------------------------------------
 	// WMM Action Frame Fixed Field
 	//-------------------------------------------------------------------------
@@ -3366,7 +3366,7 @@ ConstructQosDELTSPacket(
 
 	FillOctetString(osTempField, WMM_Filed, sizeof(WMM_Filed));
 	PacketAppendData(&osDelTs, osTempField);
-	
+
 	//-------------------------------------------------------------------------
 	// TSPEC IE
 	//-------------------------------------------------------------------------
@@ -3376,13 +3376,13 @@ ConstructQosDELTSPacket(
 		PacketAppendData(&osDelTs, osTempField);
 		pStream ++;
 	}
-	
+
 	//-------------------------------------------------------------------------
-	// MHDR IE for MFP  
+	// MHDR IE for MFP
 	//-------------------------------------------------------------------------
 	CCX_AppendMHDRIE(Adapter, &osDelTs );
 
-	*pLength = osDelTs.Length;	
+	*pLength = osDelTs.Length;
 }
 
 //
@@ -3408,8 +3408,8 @@ ConstructCcxNeighborPoll(
 	//
 	// Figure out IAPP pakcet length.
 	//
-	IappIdLen = 0x10; 
-	
+	IappIdLen = 0x10;
+
 	//-------------------------------------------------------------------------
 	// MAC Header.
 	//-------------------------------------------------------------------------
@@ -3441,18 +3441,18 @@ ConstructCcxNeighborPoll(
 	{
 		PlatformZeroMemory(&(Buffer[*pLength]), pSecInfo->EncryptionHeadOverhead);
 		*pLength += pSecInfo->EncryptionHeadOverhead;
-	}	
+	}
 
 	//-------------------------------------------------------------------------
 	// Frame Body.
 	//-------------------------------------------------------------------------
-	pIappPkt = (Buffer + *pLength); 
+	pIappPkt = (Buffer + *pLength);
 
 	//
 	// 1. Cisco Aironet SNAP Header.
 	//
 	SET_AARPT_IAPP_SNAP_HEADER(pIappPkt, CiscoAironetSnap, CISCO_AIRONET_SNAP_LENGTH);
-	*pLength += CISCO_AIRONET_SNAP_LENGTH; 
+	*pLength += CISCO_AIRONET_SNAP_LENGTH;
 
 
 	//
@@ -3461,21 +3461,21 @@ ConstructCcxNeighborPoll(
 	tmp2Byte = H2N2BYTE(IappIdLen);
 	SET_AARPT_IAPPIDLEN(pIappPkt, &tmp2Byte);
 	*pLength +=  2;
-	
+
 	//
 	// 3. IAPP type: 0x33
 	//
 	SET_AARPT_IAPPTYPE(pIappPkt, CCX_L2ROAM_IAPP_TYPE);
 	*pLength +=  1;
-	
+
 	//
 	// 4. Function code: 0x01
 	//
 	SET_AARPT_IAPPFUNCTION(pIappPkt, 0x01);
 	*pLength +=  1;
-	
-	// 
-	// 5. Destination MAC Address. 
+
+	//
+	// 5. Destination MAC Address.
 	//
 	SET_AARPT_IAPPDEST(pIappPkt, pMgntInfo->Bssid, 6);
 	*pLength +=  6;
@@ -3507,7 +3507,7 @@ ConstructARPResponse(
 	PRT_SECURITY_T			pSecInfo = &(pMgntInfo->SecurityInfo);
 	pu1Byte				pARPRspPkt = Buffer;
 	static u1Byte			ARPLLCHeader[8] = {0xAA, 0xAA, 0x03, 0x00, 0x00, 0x00, 0x08, 0x06};
-	
+
 	//-------------------------------------------------------------------------
 	// MAC Header.
 	//-------------------------------------------------------------------------
@@ -3542,14 +3542,14 @@ ConstructARPResponse(
 		PlatformZeroMemory(&(Buffer[*pLength]), pSecInfo->EncryptionHeadOverhead);
 		*pLength += pSecInfo->EncryptionHeadOverhead;
 		SET_80211_HDR_WEP(pARPRspPkt, 1);  //Suggested by CCW.
-	}	
+	}
 
 	//-------------------------------------------------------------------------
 	// Frame Body.
 	//-------------------------------------------------------------------------
-	pARPRspPkt =  (pu1Byte)(Buffer + *pLength); 
+	pARPRspPkt =  (pu1Byte)(Buffer + *pLength);
 	// LLC header
-	PlatformMoveMemory(pARPRspPkt, ARPLLCHeader, 8);	
+	PlatformMoveMemory(pARPRspPkt, ARPLLCHeader, 8);
 	*pLength += 8;
 
 	// ARP element
@@ -3579,17 +3579,17 @@ ConstructCtsPacket(
 	pu1Byte			pCts;
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("===> ConstructCtsPacket()\n"));
-	
+
 	pCts = Buffer;
 
 	SET_80211_HDR_FRAME_CONTROL(pCts, 0);
 	SET_80211_HDR_TYPE_AND_SUBTYPE(pCts, Type_CTS);
 	SET_80211_HDR_DURATION(pCts, 0);
-	
+
 	SET_80211_HDR_ADDRESS1(pCts, pStaAddr);
 
 	*pLength = 10;
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<=== ConstructCtsPacket()\n"));
 }
 
@@ -3598,10 +3598,10 @@ ConstructCtsPacket(
 // Description:
 //	Construct the IP66 NS packet to support NS offload.
 //
-// buffer : 
+// buffer :
 //		Packet buffer
-// pLength : 
-//		Packet Length after construct 
+// pLength :
+//		Packet Length after construct
 // PTAAdress :
 //		IPv6 , Target Link address ( MAC address )
 VOID
@@ -3609,7 +3609,7 @@ ConstructNSPacket(
 	IN	PADAPTER		Adapter,
 	IN	pu1Byte			Buffer,
 	IN	pu4Byte			pLength,
-	IN	pu1Byte			pTAAddress   
+	IN	pu1Byte			pTAAddress
 	)
 {
 	PMGNT_INFO			pMgntInfo = &(Adapter->MgntInfo);
@@ -3620,7 +3620,7 @@ ConstructNSPacket(
 	static u1Byte			IPv6HeadInfo[4] = {0x60, 0x00, 0x00, 0x00};
 	static u1Byte			IPv6HeadContx[4] = {0x00, 0x20, 0x3a, 0xff};
 	static u1Byte			ICMPv6Head[8] = {0x88, 0x00, 0x00, 0x00 , 0x60 , 0x00 , 0x00 , 0x00};
-	
+
 	//-------------------------------------------------------------------------
 	// MAC Header.
 	//-------------------------------------------------------------------------
@@ -3655,26 +3655,26 @@ ConstructNSPacket(
 		PlatformZeroMemory(&(Buffer[*pLength]), pSecInfo->EncryptionHeadOverhead);
 		*pLength += pSecInfo->EncryptionHeadOverhead;
 		SET_80211_HDR_WEP(pNSRspPkt, 1);  //Suggested by CCW.
-	}	
+	}
 
 	//-------------------------------------------------------------------------
 	// Frame Body.
 	//-------------------------------------------------------------------------
-	pNSRspPkt =  (pu1Byte)(Buffer + *pLength); 
+	pNSRspPkt =  (pu1Byte)(Buffer + *pLength);
 	// LLC header
-	PlatformMoveMemory(pNSRspPkt, NSLLCHeader, 8);	
+	PlatformMoveMemory(pNSRspPkt, NSLLCHeader, 8);
 	pNSRspPkt += 8;
 	*pLength += 8;
 
 	//-------------------------------------------------------------------------
-	// IPv6 Heard 
+	// IPv6 Heard
 	//-------------------------------------------------------------------------
 	// 1 . Information (4 bytes): 0x60 0x00 0x00 0x00
-	PlatformMoveMemory(pNSRspPkt, IPv6HeadInfo, 4);	
+	PlatformMoveMemory(pNSRspPkt, IPv6HeadInfo, 4);
 	pNSRspPkt += 4;
 	*pLength += 4;
-	// 2 . playload : 0x00 0x20 , NextProt : 0x3a (ICMPv6) HopLim : 0xff 
-	PlatformMoveMemory(pNSRspPkt, IPv6HeadContx, 4);	
+	// 2 . playload : 0x00 0x20 , NextProt : 0x3a (ICMPv6) HopLim : 0xff
+	PlatformMoveMemory(pNSRspPkt, IPv6HeadContx, 4);
 	pNSRspPkt += 4;
 	*pLength += 4;
 	// 3 . SA : 16 bytes , DA : 16 bytes ( Fw will filled )
@@ -3683,10 +3683,10 @@ ConstructNSPacket(
 	*pLength += 32;
 
 	//-------------------------------------------------------------------------
-	// ICMPv6  
+	// ICMPv6
 	//-------------------------------------------------------------------------
 	// 1. Type : 0x88 (NA) , Code : 0x00 , ChechSum : 0x00 0x00 (RSvd) NAFlag: 0x60 0x00 0x00 0x00 ( Solicited , Override)
-	PlatformMoveMemory(pNSRspPkt, ICMPv6Head, 8);	
+	PlatformMoveMemory(pNSRspPkt, ICMPv6Head, 8);
 	pNSRspPkt += 8;
 	*pLength += 8;
 	// 2. TA : 16 bytes
@@ -3694,10 +3694,10 @@ ConstructNSPacket(
 	pNSRspPkt += 16;
 	*pLength += 16;
 	//-------------------------------------------------------------------------
-	// ICMPv6  Target Link Layer address 
+	// ICMPv6  Target Link Layer address
 	//-------------------------------------------------------------------------
 	pNSRspPkt[0] = 0x02 ; // Type
-	pNSRspPkt[1] = 0x01 ; // Len 1 unit of 8 octes 
+	pNSRspPkt[1] = 0x01 ; // Len 1 unit of 8 octes
 	pNSRspPkt += 2;
 	*pLength += 2;
 	//PlatformMoveMemory(pNSRspPkt, pTAAddress, 6);
@@ -3860,7 +3860,7 @@ FT_AppendMdIE(
 	PRT_WLAN_BSS			pTargetBss = NULL;
 	u1Byte					pktType = 0xFF;
 
-	CHECK_NULL_RETURN_STATUS(posOutContent);	
+	CHECK_NULL_RETURN_STATUS(posOutContent);
 
 	do
 	{
@@ -3878,10 +3878,10 @@ FT_AppendMdIE(
 		{
 			pktType = PacketGetType(*posOutContent);
 		}
-		
+
 		if(TEST_FLAG(contentType, CONTENT_PKT_TYPE_CLIENT))
 		{
-			if(!pInfoBuf || InfoBufLen < sizeof(RT_WLAN_BSS))			
+			if(!pInfoBuf || InfoBufLen < sizeof(RT_WLAN_BSS))
 			{
 				RT_TRACE_F(COMP_SEC, DBG_SERIOUS, ("Invalid input buffer or length, pInfoBuf = %p, InfoBufLen = %d\n", pInfoBuf, InfoBufLen));
 				rtStatus = RT_STATUS_INVALID_DATA;
@@ -3928,15 +3928,15 @@ FT_AppendMdIE(
 				RT_TRACE_F(COMP_MLME, DBG_TRACE, ("pktType = 0x%02X, no need to append MD IE\n", pktType));
 				break;
 			}
-			
+
 			// MD Element
-			FillOctetString(osMdIe, pEntry->MDE, (u2Byte)(pEntry->MDELen));	
+			FillOctetString(osMdIe, pEntry->MDE, (u2Byte)(pEntry->MDELen));
 		}
 		else
 		{
 			//3 // ToDo: Support AP mode later.
 			rtStatus = RT_STATUS_NOT_SUPPORT;
-			break;			
+			break;
 		}
 
 		if(maxBufLen < ((u4Byte)posOutContent->Length + osMdIe.Length))
@@ -4000,7 +4000,7 @@ FT_AppendFtIE(
 	PRT_WLAN_BSS			pTargetBss = NULL;
 	u1Byte					pktType = 0xFF;
 
-	CHECK_NULL_RETURN_STATUS(posOutContent);	
+	CHECK_NULL_RETURN_STATUS(posOutContent);
 
 	do
 	{
@@ -4018,10 +4018,10 @@ FT_AppendFtIE(
 		{
 			pktType = PacketGetType(*posOutContent);
 		}
-		
+
 		if(TEST_FLAG(contentType, CONTENT_PKT_TYPE_CLIENT))
 		{
-			if(!pInfoBuf || InfoBufLen < sizeof(RT_WLAN_BSS))			
+			if(!pInfoBuf || InfoBufLen < sizeof(RT_WLAN_BSS))
 			{
 				RT_TRACE_F(COMP_SEC, DBG_SERIOUS, ("Invalid input buffer or length, pInfoBuf = %p, InfoBufLen = %d\n", pInfoBuf, InfoBufLen));
 				rtStatus = RT_STATUS_INVALID_DATA;
@@ -4068,15 +4068,15 @@ FT_AppendFtIE(
 				RT_TRACE_F(COMP_MLME, DBG_TRACE, ("pktType = 0x%02X, no need to append Ft IE\n", pktType));
 				break;
 			}
-			
+
 			// MD Element
-			FillOctetString(osFtIe, pEntry->FTE, (u2Byte)(pEntry->FTELen));				
+			FillOctetString(osFtIe, pEntry->FTE, (u2Byte)(pEntry->FTELen));
 		}
 		else
 		{
 			//3 // ToDo: Support AP mode later.
 			rtStatus = RT_STATUS_NOT_SUPPORT;
-			break;			
+			break;
 		}
 
 		if(maxBufLen < ((u4Byte)posOutContent->Length + osFtIe.Length))

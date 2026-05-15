@@ -22,7 +22,7 @@ p2p_build_GoNegReqIe(
 	pu1Byte						pLen = NULL;
 	u1Byte						grpCap = 0;
 	P2P_WPS_ATTRIBUTES 			*pWps = &pP2PInfo->WpsAttributes;
-	
+
 	u1Byte						intent = 0;
 
 	if(NULL == (pLen = p2p_add_IEHdr(pBuf))) return;
@@ -36,8 +36,8 @@ p2p_build_GoNegReqIe(
 	}
 	else
 		grpCap = pP2PInfo->GroupCapability;
-	
-	P2PAttr_Make_Capability(pBuf, 
+
+	P2PAttr_Make_Capability(pBuf,
 		pP2PInfo->DeviceCapability & ~P2P_DEV_CAP_CLIENT_DISCOVERABILITY, // this cap valid only in P2P Group Info and AssocReq
 		grpCap);
 
@@ -54,10 +54,10 @@ p2p_build_GoNegReqIe(
 
 	P2PAttr_Make_ChannelList(pBuf, pP2PInfo, &pP2PInfo->ChannelEntryList);
 
-	P2PAttr_Make_DevInfo(pBuf, 
-		pP2PInfo->DeviceAddress, 
-		pWps->ConfigMethod, 
-		&pWps->PrimaryDeviceType, 
+	P2PAttr_Make_DevInfo(pBuf,
+		pP2PInfo->DeviceAddress,
+		pWps->ConfigMethod,
+		&pWps->PrimaryDeviceType,
 		pWps->SecondaryDeviceTypeLength, pWps->SecondaryDeviceTypeList,
 		pWps->DeviceNameLength, pWps->DeviceName);
 
@@ -80,7 +80,7 @@ p2p_build_GoNegRspIe(
 	pu1Byte						pLen = NULL;
 	u1Byte						grpCap = 0;
 	PP2P_WPS_ATTRIBUTES 		pWps = &pP2PInfo->WpsAttributes;
-	
+
 	u1Byte						status = 0;
 	u1Byte						intent = 0;
 	pu1Byte						pGrpDevAddr = NULL;
@@ -92,7 +92,7 @@ p2p_build_GoNegRspIe(
 	if(NULL == (pLen = p2p_add_IEHdr(pBuf))) return;
 
 	pDev = p2p_DevList_Find(&pP2PInfo->devList, da, P2P_DEV_TYPE_DEV);
-	
+
 	if(P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter))
 		status = pP2PInfo->NegotiationResponseStatus;
 	else
@@ -108,8 +108,8 @@ p2p_build_GoNegRspIe(
 	}
 	else
 		grpCap = pP2PInfo->GroupCapability;
-	
-	P2PAttr_Make_Capability(pBuf, 
+
+	P2PAttr_Make_Capability(pBuf,
 		pP2PInfo->DeviceCapability & ~P2P_DEV_CAP_CLIENT_DISCOVERABILITY, // this cap valid only in P2P Group Info and AssocReq
 		grpCap);
 
@@ -117,13 +117,13 @@ p2p_build_GoNegRspIe(
 	{
 		intent = pP2PInfo->GOIntent;
 	}
-	else 
+	else
 	{
 		// TODO: this is bad doing jobs other than making IE here!!!
 		// The tie breaker bit in a GONRsp shall be toggled from the corresponding GONReq
 		//
 		pP2PInfo->GOIntent = (pP2PInfo->GOIntent | !(pP2PInfo->ConnectionContext.ConnectingDevice.GOIntent & 0x01));
-		
+
 		intent = pP2PInfo->GOIntent;
 	}
 
@@ -137,10 +137,10 @@ p2p_build_GoNegRspIe(
 	else
 		P2PAttr_Make_ChannelList(pBuf, pP2PInfo, &pP2PInfo->ChannelEntryList);
 
-	P2PAttr_Make_DevInfo(pBuf, 
-		pP2PInfo->DeviceAddress, 
-		pWps->ConfigMethod, 
-		&pWps->PrimaryDeviceType, 
+	P2PAttr_Make_DevInfo(pBuf,
+		pP2PInfo->DeviceAddress,
+		pWps->ConfigMethod,
+		&pWps->PrimaryDeviceType,
 		pWps->SecondaryDeviceTypeLength, pWps->SecondaryDeviceTypeList,
 		pWps->DeviceNameLength, pWps->DeviceName);
 
@@ -166,23 +166,23 @@ p2p_build_GoNegRspIe(
 
 	if(pGrpDevAddr)
 		P2PAttr_Make_GroupId(pBuf, pGrpDevAddr, pGrpSsidBuf, grpSsidLen);
-	
+
 	//
 	// Going to be GO:
-	// The Operating Channel attribute shall indicate the intended Operating Channel 
-	// of the P2P Group. The channel indicated in the Operating Channel attribute shall 
-	// be one of the channels in the Channel List attribute in the GO Negotiation Response 
+	// The Operating Channel attribute shall indicate the intended Operating Channel
+	// of the P2P Group. The channel indicated in the Operating Channel attribute shall
+	// be one of the channels in the Channel List attribute in the GO Negotiation Response
 	// frame.
 	//
 	// Going to be Client:
-	// The Operating Channel attribute may indicate a preferred Operating Channel of the 
-	// P2P Group, or may be omitted. Any channel indicated in the Operating Channel attribute 
+	// The Operating Channel attribute may indicate a preferred Operating Channel of the
+	// P2P Group, or may be omitted. Any channel indicated in the Operating Channel attribute
 	// shall be one of the channels in the Channel List attribute in the GO Negotiation Response frame.
 	//
 	P2PAttr_Make_OperatingChannel(pBuf, pP2PInfo->CountryString, pP2PInfo->RegulatoryClass, pP2PInfo->OperatingChannel);
 
 	p2p_update_IeHdrLen(pBuf, pLen);
-	
+
 	return;
 }
 
@@ -224,8 +224,8 @@ p2p_build_GoNegConfIe(
 	}
 	else
 		grpCap = pP2PInfo->GroupCapability;
-	
-	P2PAttr_Make_Capability(pBuf, 
+
+	P2PAttr_Make_Capability(pBuf,
 		pP2PInfo->DeviceCapability & ~P2P_DEV_CAP_CLIENT_DISCOVERABILITY, // this cap valid only in P2P Group Info and AssocReq
 		grpCap);
 
@@ -250,18 +250,18 @@ p2p_build_GoNegConfIe(
 			grpSsidLen = pP2PInfo->SSIDLen;
 		}
 	}
-	
+
 	if(pGrpDevAddr)
 		P2PAttr_Make_GroupId(pBuf, pGrpDevAddr, pGrpSsidBuf, grpSsidLen);
 
 	//
-	// Going to be GO: 
-	// The Operating Channel attribute shall indicate the intended Operating Channel of the 
-	// P2P Group. The channel indicated in the Operating Channel attribute shall be one of the 
+	// Going to be GO:
+	// The Operating Channel attribute shall indicate the intended Operating Channel of the
+	// P2P Group. The channel indicated in the Operating Channel attribute shall be one of the
 	// channels in the Channel List attribute in the GO Negotiation Confirmation frame.
 	//
 	// Going to be Client:
-	// The Operating Channel attribute in the GO Negotiation Confirmation frame shall be the 
+	// The Operating Channel attribute in the GO Negotiation Confirmation frame shall be the
 	// Operating Channel attribute from the GO Negotiation Response frame.
 	//
 	if(pP2PInfo->ConnectionContext.bGoingToBeGO)
@@ -304,7 +304,7 @@ p2p_build_InvitationReqIe(
 		goTimeout = pP2PInfo->GOConfigurationTimeout;
 		cliTimeout = pP2PInfo->ClientConfigurationTimeout;
 	}
-	else 
+	else
 	{// otherwise, we're either a GO or client in operating phase, wo we don't have to fill the conf time
 		// Ref Clause 3.1.5.1, a normal invitation always have them to be 0
 		goTimeout = 0;
@@ -316,28 +316,28 @@ p2p_build_InvitationReqIe(
 
 	P2PAttr_Make_ChannelList(pBuf, pP2PInfo, &pP2PInfo->ChannelEntryList);
 
-	P2PAttr_Make_DevInfo(pBuf, 
-		pP2PInfo->DeviceAddress, 
-		pWps->ConfigMethod, 
-		&pWps->PrimaryDeviceType, 
-		pWps->SecondaryDeviceTypeLength, 
+	P2PAttr_Make_DevInfo(pBuf,
+		pP2PInfo->DeviceAddress,
+		pWps->ConfigMethod,
+		&pWps->PrimaryDeviceType,
+		pWps->SecondaryDeviceTypeLength,
 		pWps->SecondaryDeviceTypeList,
 		pWps->DeviceNameLength,
-		pWps->DeviceName);		
+		pWps->DeviceName);
 
-	P2PAttr_Make_GroupId(pBuf, 
-		pP2PInfo->InvitationContext.GODeviceAddress, 
-		pP2PInfo->InvitationContext.SsidBuf, 
+	P2PAttr_Make_GroupId(pBuf,
+		pP2PInfo->InvitationContext.GODeviceAddress,
+		pP2PInfo->InvitationContext.SsidBuf,
 		pP2PInfo->InvitationContext.SsidLen);
-	
+
 	//
-	// GO: 
+	// GO:
 	// the Operating Channel attribute indicates the Operating Channel of the P2P Group
 	//
 	// Peristent GO:
 	//  the Operating Channel attribute indicates the intended Operating Channel of the P2P Group
 	//
-	// Client: 
+	// Client:
 	// an Operating Channel attribute shall also be present, indicating the Operating Channel of the P2P Group
 	//
 	// Persistent Client:
@@ -367,12 +367,12 @@ p2p_build_InvitationReqIe(
 			opChannel = pP2PInfo->InvitationContext.OpChannel;
 		}
 	}
-	
+
 	P2PAttr_Make_OperatingChannel(pBuf, pP2PInfo->CountryString, pP2PInfo->RegulatoryClass, opChannel);
 
 	if(pP2PInfo->InvitationContext.bPersistentInvitation)
 		SET_FLAG(invitFlag, P2P_INVITATION_FLAGS_TYPE);
-	
+
 	P2PAttr_Make_InvitationFlags(pBuf, invitFlag);
 
 	p2p_update_IeHdrLen(pBuf, pLen);
@@ -414,7 +414,7 @@ p2p_build_InvitationRspIe(
 		goTimeout = pP2PInfo->GOConfigurationTimeout;
 		cliTimeout = pP2PInfo->ClientConfigurationTimeout;
 	}
-	else 
+	else
 	{// non persistent case
 		goTimeout = 0;
 		cliTimeout = 0;
@@ -426,10 +426,10 @@ p2p_build_InvitationRspIe(
 	P2PAttr_Make_ChannelList(pBuf, pP2PInfo, &pDev->p2p->commonChannels);
 
 	//
-	// GO or Persisstent GO: 
+	// GO or Persisstent GO:
 	// intended Operating Channel
 	//
-	// Client or Persistent Client (optional): 
+	// Client or Persistent Client (optional):
 	// not specified in the spec
 	//
 	if(pP2PInfo->InvitationContext.bPersistentInvitation)
@@ -457,7 +457,7 @@ p2p_build_InvitationRspIe(
 		//
 		opChannel = pP2PInfo->InvitationContext.InvitedDevice.OperatingChannel;
 	}
-	
+
 	P2PAttr_Make_OperatingChannel(pBuf, pP2PInfo->CountryString, pP2PInfo->RegulatoryClass, opChannel);
 
 	p2p_update_IeHdrLen(pBuf, pLen);
@@ -497,10 +497,10 @@ p2p_build_DevDiscRspIe(
 	pu1Byte						pLen = NULL;
 
 	if(NULL == (pLen = p2p_add_IEHdr(pBuf))) return;
-	
+
 	P2PAttr_Make_Status(pBuf, status);
 	p2p_update_IeHdrLen(pBuf, pLen);
-	
+
 	return;
 }
 
@@ -530,16 +530,16 @@ p2p_build_PdReqIe(
 	}
 	else
 		grpCap = pP2PInfo->GroupCapability;
-	
-	P2PAttr_Make_Capability(pBuf, 
+
+	P2PAttr_Make_Capability(pBuf,
 		pP2PInfo->DeviceCapability & ~P2P_DEV_CAP_CLIENT_DISCOVERABILITY, // this cap valid only in P2P Group Info and AssocReq
 		grpCap);
 
-	P2PAttr_Make_DevInfo(pBuf, 
-		pP2PInfo->DeviceAddress, 
-		pWps->ConfigMethod, 
-		&pWps->PrimaryDeviceType, 
-		pWps->SecondaryDeviceTypeLength, 
+	P2PAttr_Make_DevInfo(pBuf,
+		pP2PInfo->DeviceAddress,
+		pWps->ConfigMethod,
+		&pWps->PrimaryDeviceType,
+		pWps->SecondaryDeviceTypeLength,
 		pWps->SecondaryDeviceTypeList,
 		pWps->DeviceNameLength,
 		pWps->DeviceName);
@@ -590,11 +590,11 @@ p2p_add_WpsIeConfigMethods(
 	)
 {
 	pu1Byte						pLen = NULL;
-	
+
 	FrameBuf_Add_u1(pBuf, (u1Byte)EID_Vendor);
 
 	pLen = FrameBuf_Add(pBuf, 1);
-	
+
 	FrameBuf_Add_be_u4(pBuf, 0x0050F204);
 
 	// Version
@@ -624,7 +624,7 @@ p2p_add_P2PPublicActionHdr(
 	)
 {
 	RT_TRACE_F(COMP_P2P, pBuf->dbgLevel, ("token: %u\n", dialogToken));
-	
+
 	FrameBuf_Add_u1(pBuf, WLAN_ACTION_PUBLIC);
 	FrameBuf_Add_u1(pBuf, WLAN_PA_VENDOR_SPECIFIC);
 	FrameBuf_Add_be_u4(pBuf, P2P_IE_VENDOR_TYPE);
@@ -641,7 +641,7 @@ p2p_Construct_GoNegReq(
 	IN  const u1Byte 			*da,
 	IN  u1Byte					dialogToken
 	)
-{	
+{
 	FunctionIn(COMP_P2P);
 
 	// MAC Header
@@ -662,15 +662,15 @@ p2p_Construct_GoNegReq(
 	// WFD IE
 	WFD_AppendP2pGoNegReqIEs(pP2PInfo->pAdapter, FrameBuf_Cap(pBuf), &pBuf->os);
 
-	RT_TRACE(COMP_P2P, DBG_LOUD, 
+	RT_TRACE(COMP_P2P, DBG_LOUD,
 		("%s(): intent = %u, tie breaker: %u, dialog token: %u\n",
 		__FUNCTION__,
 		pP2PInfo->GOIntent >> 1,
 		pP2PInfo->GOIntent & 0x01,
 		dialogToken));
-	
+
 	FrameBuf_Dump(pBuf, 0, DBG_LOUD, __FUNCTION__);
-	
+
 	FunctionOut(COMP_P2P);
 
 	return;
@@ -704,7 +704,7 @@ p2p_Construct_GoNegRsp(
 	// WFD IE
 	WFD_AppendP2pGoNegRspIEs(pP2PInfo->pAdapter, FrameBuf_Cap(pBuf), &pBuf->os);
 
-	RT_TRACE(COMP_P2P, DBG_LOUD, 
+	RT_TRACE(COMP_P2P, DBG_LOUD,
 		("%s(): intent = %u, tie breaker: %u, dialog token: %u\n",
 		__FUNCTION__,
 		pP2PInfo->GOIntent >> 1,
@@ -725,7 +725,7 @@ p2p_Construct_GoNegConf(
 	IN  FRAME_BUF 				*pBuf,
 	IN  const u1Byte 			*da
 	)
-{	
+{
 	FunctionIn(COMP_P2P);
 
 	// MAC Header
@@ -771,7 +771,7 @@ p2p_Construct_InvitationReq(
 
 	// Additional IE
 	P2P_AddIe_Append(&pP2PInfo->AdditionalIEs, P2P_ADD_IE_INVITATION_REQUEST, pBuf);
-	
+
 	/* Below use octet string ONLY */
 	{
 		WFD_AppendP2pInvitationReqIEs(pP2PInfo->pAdapter, FrameBuf_Cap(pBuf), &pBuf->os);
@@ -795,9 +795,9 @@ p2p_Construct_InvitationRsp(
 	//
 	// Assume that pP2PInfo->Status has been set.
 	//
-	
+
 	FunctionIn(COMP_P2P);
-	
+
 	// MAC Header
 	p2p_add_ActionFrameMacHdr(pBuf, da, pP2PInfo->DeviceAddress, pP2PInfo->DeviceAddress);
 
@@ -809,7 +809,7 @@ p2p_Construct_InvitationRsp(
 
 	// Additional IE
 	P2P_AddIe_Append(&pP2PInfo->AdditionalIEs, P2P_ADD_IE_INVITATION_RESPONSE, pBuf);
-	
+
 	// WFD IE
 	WFD_AppendP2pInvitationRspIEs(pP2PInfo->pAdapter, FrameBuf_Cap(pBuf), &pBuf->os);
 
@@ -828,7 +828,7 @@ p2p_Construct_DevDiscReq(
 	IN  const u1Byte 			*da,
 	IN  const u1Byte			*bssid
 	)
-{	
+{
 	FunctionIn(COMP_P2P);
 
 	// MAC Header
@@ -841,7 +841,7 @@ p2p_Construct_DevDiscReq(
 	p2p_build_DevDiscReqIe(pBuf, pP2PInfo);
 
 	FrameBuf_Dump(pBuf, 0, DBG_LOUD, __FUNCTION__);
-	
+
 	FunctionOut(COMP_P2P);
 
 	return;
@@ -855,7 +855,7 @@ p2p_Construct_DevDiscRsp(
 	IN  const u1Byte 			*da,
 	IN  u1Byte					status
 	)
-{	
+{
 	FunctionIn(COMP_P2P);
 
 	// MAC Header
@@ -866,9 +866,9 @@ p2p_Construct_DevDiscRsp(
 
 	// P2P IE
 	p2p_build_DevDiscRspIe(pBuf, pP2PInfo, status);
-	
+
 	FrameBuf_Dump(pBuf, 0, DBG_LOUD, __FUNCTION__);
-	
+
 	FunctionOut(COMP_P2P);
 
 	return;
@@ -995,7 +995,7 @@ p2p_Construct_FakePDRsp(
 	pu1Byte			pPdReqFrame = NULL;
 	OCTET_STRING	osPdReq, osTmpIe;
 	pu1Byte			pPdRspTa = NULL;;
-	
+
 	FunctionIn(COMP_P2P);
 
 	do
@@ -1006,7 +1006,7 @@ p2p_Construct_FakePDRsp(
 			rtStatus = RT_STATUS_INVALID_PARAMETER;
 			break;
 		}
-		
+
 		if(!pRspDev->txFrames[P2P_FID_PD_REQ])
 		{
 			RT_ASSERT(FALSE, ("pRspDev->txFrames[P2P_FID_PD_REQ] = NULL\n"));
@@ -1038,7 +1038,7 @@ p2p_Construct_FakePDRsp(
 		{
 			PacketMakeElement(&(pBuf->os), EID_Vendor, osTmpIe);
 		}
-		
+
 		// WFD IE
 		if(pRspDev->rxFrames[P2P_FID_PROBE_RSP]->frameLen > 0)
 		{
@@ -1046,10 +1046,10 @@ p2p_Construct_FakePDRsp(
 			if(osTmpIe.Length > 0)
 			{
 				PacketMakeElement(&(pBuf->os), EID_Vendor, osTmpIe);
-			}			
+			}
 		}
 		FrameBuf_Dump(pBuf, 0, DBG_LOUD, __FUNCTION__);
-	}while(FALSE);	
+	}while(FALSE);
 
 	FunctionOut(COMP_P2P);
 

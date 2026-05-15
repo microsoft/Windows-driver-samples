@@ -6,9 +6,9 @@
 #define PageNum_512(_Len)		(u4Byte)(((_Len)>>9) + ((_Len)&0x1FF ? 1:0))
 
 //
-// Check if FW header exists. We do not consider the lower 4 bits in this case. 
+// Check if FW header exists. We do not consider the lower 4 bits in this case.
 // By tynli. 2009.12.04.
-// Add new FW signature recognized ID 23xx for RTL8723. 
+// Add new FW signature recognized ID 23xx for RTL8723.
 //
 // Signature header for RLE0380 Test chip: 0x2300, RTL8723A Normal Chip: 0x2301
 // Added by Roger, 2011.07.28.
@@ -28,7 +28,7 @@
 #define IS_H2CQUEUE_EMPTY(_pHalData) (_pHalData->H2CQueueTail == _pHalData->H2CQueueHead)
 #endif
 
-#define GET_FIRMWARE(_Adapter)   ((PRT_FIRMWARE) (((HAL_DATA_TYPE*)(_Adapter->HalData))->pFirmware))  
+#define GET_FIRMWARE(_Adapter)   ((PRT_FIRMWARE) (((HAL_DATA_TYPE*)(_Adapter->HalData))->pFirmware))
 
 
 //#define FillH2CCmd(_Adapter, _ElementID, _CmdLen,_pCmdBuffer)  \
@@ -47,7 +47,7 @@
 //--------------------------------------------------
 typedef enum _DESC_PACKET_TYPE{
 	DESC_PACKET_TYPE_INIT = 0,
-	DESC_PACKET_TYPE_NORMAL = 1,	
+	DESC_PACKET_TYPE_NORMAL = 1,
 	DESC_PACKET_TYPE_CMD
 }DESC_PACKET_TYPE;
 
@@ -62,8 +62,8 @@ typedef enum _FIRMWARE_SOURCE{
 	FW_SOURCE_HEADER_FILE = 1,		//from header file
 }FIRMWARE_SOURCE, *PFIRMWARE_SOURCE;
 
-typedef struct _RT_FIRMWARE{	
-	FIRMWARE_SOURCE	eFWSource;	
+typedef struct _RT_FIRMWARE{
+	FIRMWARE_SOURCE	eFWSource;
 	u1Byte			szFwBuffer[FW_SIZE];
 	u4Byte			ulFwLength;
 	u1Byte			szWoWLANFwBuffer[FW_SIZE];
@@ -86,7 +86,7 @@ typedef struct _RT_FIRMWARE{
 #define GET_FIRMWARE_HDR_FUNCTION(__FwHdr)		LE_BITS_TO_4BYTE(__FwHdr, 24, 8) // Reserved for different FW function indcation, for further use when driver needs to download different FW in different conditions
 #define GET_FIRMWARE_HDR_VERSION(__FwHdr)		LE_BITS_TO_4BYTE(__FwHdr+4, 0, 16)// FW Version
 #define GET_FIRMWARE_HDR_SUB_VER(__FwHdr)		LE_BITS_TO_4BYTE(__FwHdr+4, 16, 8) // FW Subversion, default 0x00
-#define GET_FIRMWARE_HDR_RSVD1(__FwHdr)			LE_BITS_TO_4BYTE(__FwHdr+4, 24, 8) 		
+#define GET_FIRMWARE_HDR_RSVD1(__FwHdr)			LE_BITS_TO_4BYTE(__FwHdr+4, 24, 8)
 
 //--- LONG WORD 1 ----
 #define GET_FIRMWARE_HDR_MONTH(__FwHdr)			LE_BITS_TO_4BYTE(__FwHdr+8, 0, 8) // Release time Month field
@@ -113,7 +113,7 @@ typedef struct _RT_FIRMWARE{
 //				New	Firmware Header(8-byte alinment required)
 //=====================================================
 //--- LONG WORD 0 ----
-#define GET_FIRMWARE_HDR_SIGNATURE_3081(__FwHdr)		LE_BITS_TO_4BYTE(__FwHdr, 0, 16) 
+#define GET_FIRMWARE_HDR_SIGNATURE_3081(__FwHdr)		LE_BITS_TO_4BYTE(__FwHdr, 0, 16)
 #define GET_FIRMWARE_HDR_CATEGORY_3081(__FwHdr)		LE_BITS_TO_4BYTE(__FwHdr, 16, 8) // AP/NIC and USB/PCI
 #define GET_FIRMWARE_HDR_FUNCTION_3081(__FwHdr)			LE_BITS_TO_4BYTE(__FwHdr, 24, 8) // Reserved for different FW function indcation, for further use when driver needs to download different FW in different conditions
 #define GET_FIRMWARE_HDR_VERSION_3081(__FwHdr)			LE_BITS_TO_4BYTE(__FwHdr+4, 0, 16)// FW Version
@@ -171,8 +171,8 @@ typedef struct _RT_FIRMWARE{
 #endif
 
 //-------------------------------------------------------
-// H2C Command length 
-// The defines should be seperated into 92C series and 88E series ICs 
+// H2C Command length
+// The defines should be seperated into 92C series and 88E series ICs
 // because of the H2C Box length are different. 2012.04.18. Noted by tynli.
 //-------------------------------------------------------
 
@@ -264,18 +264,18 @@ typedef struct _RT_FIRMWARE{
 #define H2C_8192E_FCS_INFO_LEN				7
 #define H2C_8192E_FCS_MACID_BITMAP_LEN	7
 
-typedef struct _H2C_JOINBSSRPT_PARM{	
-	u1Byte	OpMode;	
+typedef struct _H2C_JOINBSSRPT_PARM{
+	u1Byte	OpMode;
 	u1Byte	Ps_Qos_Info;
-	u1Byte	Bssid[6];	
-	u2Byte	BcnItv;	
+	u1Byte	Bssid[6];
+	u2Byte	BcnItv;
 	u2Byte	Aid;
 }H2C_JOINBSSRPT_PARM, *PH2C_JOINBSSRPT_PARM;
 
 
 typedef struct _C2H_EVT_HDR{
 	u1Byte	CmdID: 4;
-	u1Byte	CmdLen: 4; 
+	u1Byte	CmdLen: 4;
 	u1Byte	CmdSeq;
 }C2H_EVT_HDR, *PC2H_EVT_HDR;
 
@@ -302,7 +302,7 @@ typedef struct _H2C_WPA_TWO_WAY_PARA{
 	u1Byte			pairwise_en_alg;
 	u1Byte			group_en_alg;
 	H2C_WPA_PTK		wpa_ptk_value;
-#if(USE_OLD_WOWLAN_DEBUG_FW == 1)	
+#if(USE_OLD_WOWLAN_DEBUG_FW == 1)
 	u8Byte			IV;
 #endif
 }H2C_WPA_TWO_WAY_PARA, *PH2C_WPA_TWO_WAY_PARA;
@@ -314,12 +314,12 @@ typedef struct _H2C_REMOTE_WAKE_CTRL_INFO{
 
 typedef struct _NDP_INFO_{
     u1Byte    bEnable:1;
-    u1Byte    bCheckRemoveIP:1;   // Need to Check Sender IP or not 
-    u1Byte    Rsvd:6;   // Need to Check Sender IP or not 
+    u1Byte    bCheckRemoveIP:1;   // Need to Check Sender IP or not
+    u1Byte    Rsvd:6;   // Need to Check Sender IP or not
     u1Byte    NumberOfTargetIP; // Number of Check IP which NA query IP
     u1Byte    TagetLinkAddress[6];  // Maybe support change MAC address !!
         u1Byte     RemoteIPv6Address[16]; // Just respond IP
-        u1Byte     TargetIP[2][16]; //  target IP 
+        u1Byte     TargetIP[2][16]; //  target IP
 }NDP_INFO,*PNDP_INFO;
 
 
@@ -358,7 +358,7 @@ typedef struct _H2C_SS_DRV_CTRL{
 	u1Byte	PriodScanTime;		// Fw periodical scan time. unit: 1sec.
 	u1Byte	bRFEEnable;			// for 8812A switch band
 	u1Byte	RFEType;
-	u1Byte	Rsvd[7];				
+	u1Byte	Rsvd[7];
 }H2C_SS_DRV_CTRL, *PH2C_SS_DRV_CTRL;
 
 
@@ -386,9 +386,9 @@ typedef enum _RTL8192C_C2H_EVT
 	C2H_TSF = 1,
 	C2H_AP_RPT_RSP = 2,
 	C2H_CCX_TX_RPT = 3,	// The FW notify the report of the specific tx packet.
-	C2H_BT_RSSI = 4,		
+	C2H_BT_RSSI = 4,
 	C2H_BT_OP_MODE = 5,
-	C2H_EXT_RA_RPT = 6, 
+	C2H_EXT_RA_RPT = 6,
 	C2H_HW_INFO_EXCH = 10,
 	C2H_C2H_H2C_TEST = 11,
 	C2H_BT_INFO = 12,
@@ -398,7 +398,7 @@ typedef enum _RTL8192C_C2H_EVT
 
 typedef enum _FW_SCAN_OFFLOAD_TYPE{
 	FW_SCAN_OFFLOAD_D0 = 0,
-	FW_SCAN_OFFLOAD_D3 = 1,	
+	FW_SCAN_OFFLOAD_D3 = 1,
 }FW_SCAN_OFFLOAD_TYPE;
 
 //==========================================================

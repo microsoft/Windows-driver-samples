@@ -19,7 +19,7 @@ u8Byte	RTL_P2P_FreeMemory_Len;
 
 static u1Byte	BroadcastAddress[6]={0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 
-static u1Byte P2PSocialChannels[] = 
+static u1Byte P2PSocialChannels[] =
 {
 	1,
 	6,
@@ -38,7 +38,7 @@ P2PAdapterAcceptActionFrame(
 	PADAPTER pAdapter,
 	OCTET_STRING osPacket
 )
-{	
+{
 	BOOLEAN 		bReturnValue = FALSE;
 	ACT_PKT_TYPE	pktType = PacketGetActionFrameType(&osPacket);
 
@@ -70,7 +70,7 @@ P2PAdapterAcceptMgntFrame(
 )
 {
 	// Accept all management frames
-	
+
 	BOOLEAN bStatus = FALSE;
 
 	switch(P2P_FRAME_GET_TYPE(osPacket.Octet))
@@ -99,7 +99,7 @@ P2PAdapterAcceptFrame(
 {
 	BOOLEAN bStatus = FALSE;
 
-	if(IsMgntAction(osPacket.Octet)) 
+	if(IsMgntAction(osPacket.Octet))
 	{
 		bStatus = P2PAdapterAcceptActionFrame(pAdapter, osPacket);
 	}
@@ -124,7 +124,7 @@ P2PMemoryBufferFree(
 		RTL_P2P_FreeMemory_count++;
 		RTL_P2P_FreeMemory_Len += pMemoryBuffer->Length;
 	}
-	
+
 	PlatformZeroMemory(pMemoryBuffer, sizeof(MEMORY_BUFFER));
 	pMemoryBuffer->Length = 0;
 }
@@ -158,7 +158,7 @@ P2PMemoryBufferClone(
 	else
 	{
 		rtStatus = PlatformAllocateMemory(
-				pP2PInfo->pAdapter, 
+				pP2PInfo->pAdapter,
 				&pDestination->Buffer,
 				pSource->Length
 			);
@@ -166,19 +166,19 @@ P2PMemoryBufferClone(
 		if(rtStatus == RT_STATUS_SUCCESS)
 		{
 			pDestination->Length = pSource->Length;
-			
+
 			PlatformMoveMemory(
-					pDestination->Buffer, 
-					pSource->Buffer, 
+					pDestination->Buffer,
+					pSource->Buffer,
 					pDestination->Length
 				);
-			
+
 			bStatus = TRUE;
 
 			RTL_P2P_AllocateMemory_count ++;
 			RTL_P2P_AllocateMemory_Len += pSource->Length;
 		}
-		else 
+		else
 		{
 			PlatformZeroMemory(pDestination, sizeof(MEMORY_BUFFER));
 			pDestination->Length = 0;
@@ -211,7 +211,7 @@ P2PMemoryBufferCopy(
 				CopyMem(pDestination->Buffer, pSource->Buffer, pSource->Length);
 			bStatus = TRUE;
 		}
-	}	
+	}
 
 	return bStatus;
 }
@@ -231,7 +231,7 @@ P2PDeviceListDump(
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("=======================================================\n"));
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("DeviceList: Entry(%u)\n", i));
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("=======================================================\n"));
-		
+
 		RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, "MacAddress: ", pDeviceList->DeviceEntry[i].MacAddress);
 		if(pDeviceList->DeviceEntry[i].DeviceAddress != NULL)
 		RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, "DeviceAddress: ", pDeviceList->DeviceEntry[i].DeviceAddress);
@@ -239,13 +239,13 @@ P2PDeviceListDump(
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("RecvSignalPower: %d\n", pDeviceList->DeviceEntry[i].RecvSignalPower));
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("SignalStrength: %d\n", pDeviceList->DeviceEntry[i].SignalStrength));
 
-		RT_TRACE(COMP_P2P, DBG_LOUD, ("ProbeResponseHostTimestamp: 0x%08X%08X\n", 
-				(u4Byte)(pDeviceList->DeviceEntry[i].ProbeResponseHostTimestamp >> 32), 
+		RT_TRACE(COMP_P2P, DBG_LOUD, ("ProbeResponseHostTimestamp: 0x%08X%08X\n",
+				(u4Byte)(pDeviceList->DeviceEntry[i].ProbeResponseHostTimestamp >> 32),
 				(u4Byte) pDeviceList->DeviceEntry[i].ProbeResponseHostTimestamp)
 			);
 
-		RT_TRACE(COMP_P2P, DBG_LOUD, ("BeaconHostTimestamp: 0x%08X%08X\n", 
-				(u4Byte)(pDeviceList->DeviceEntry[i].BeaconHostTimestamp >> 32), 
+		RT_TRACE(COMP_P2P, DBG_LOUD, ("BeaconHostTimestamp: 0x%08X%08X\n",
+				(u4Byte)(pDeviceList->DeviceEntry[i].BeaconHostTimestamp >> 32),
 				(u4Byte) pDeviceList->DeviceEntry[i].BeaconHostTimestamp)
 			);
 	}
@@ -274,7 +274,7 @@ P2PIndicateFakeInvitRsp(
 	{
 		return FALSE;
 	}
-	
+
 	if(NULL == (pGenBuf = GetGenTempBuffer(pAdapter, GEN_TEMP_BUFFER_SIZE)))
 	{
 		RT_TRACE_F(COMP_WFD, DBG_SERIOUS, ("[ERROR] Memory allocation failed!\n"));
@@ -301,10 +301,10 @@ P2PIndicateFakeInvitRsp(
 		PacketMakeElement(&fbuf.os, EID_Vendor, osWFDIE);
 	}
 
-	p2p_IndicateActionFrameReceived(pP2PInfo, 
-		P2P_EVENT_RECEIVED_INVITATION_RESPONSE, 
-		RT_STATUS_SUCCESS, 
-		fbuf.os.Octet, 
+	p2p_IndicateActionFrameReceived(pP2PInfo,
+		P2P_EVENT_RECEIVED_INVITATION_RESPONSE,
+		RT_STATUS_SUCCESS,
+		fbuf.os.Octet,
 		fbuf.os.Length);
 
 	ReturnGenTempBuffer(pAdapter, pGenBuf);
@@ -335,7 +335,7 @@ P2PDeviceListFind(
 )
 {
 	u4Byte i = 0;
-		
+
 	for(i = 0; i < pDeviceList->uNumberOfDevices; i++)
 	{
 		if(eqMacAddr(pDeviceList->DeviceEntry[i].MacAddress, pMacAddress))
@@ -343,7 +343,7 @@ P2PDeviceListFind(
 			return &pDeviceList->DeviceEntry[i];
 		}
 	}
-	
+
 	return NULL;
 }
 
@@ -361,15 +361,15 @@ P2PDeviceListInsertTail(
 	BOOLEAN bStatus = FALSE;
 	u1Byte index = pDeviceList->uNumberOfDevices;
 	pu1Byte header = (pu1Byte) mbPacket.Buffer;
-		
+
 	if(index < P2P_MAX_DEVICE_LIST)
 	{
 		cpMacAddr(pDeviceList->DeviceEntry[index].MacAddress, pMacAddress);
-	
+
 		if(pDeviceAddress) cpMacAddr(pDeviceList->DeviceEntry[index].DeviceAddress, pDeviceAddress);
-		
+
 		pDeviceList->DeviceEntry[index].ChannelNumber= P2PGetChannel(pP2PInfo);
-		
+
 		pDeviceList->DeviceEntry[index].RecvSignalPower = pRfd->Status.RecvSignalPower;
 		pDeviceList->DeviceEntry[index].SignalStrength= pRfd->Status.SignalStrength;
 
@@ -389,17 +389,17 @@ P2PDeviceListInsertTail(
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: Wrong Mgnt Packet Type \n", __FUNCTION__));
 			return FALSE;
 		}
-		
+
 		if(bStatus)
 		{
 			pDeviceList->uNumberOfDevices++;
 		}
-		else 
+		else
 		{
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: Memory Clone Failure!\n", __FUNCTION__));
 		}
 	}
-	else 
+	else
 	{
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: Size Limit Reached!\n", __FUNCTION__));
 	}
@@ -407,7 +407,7 @@ P2PDeviceListInsertTail(
 	return bStatus;
 }
 
-static BOOLEAN 
+static BOOLEAN
 P2PGetWpsSelectedRegistrar(
 	OCTET_STRING osWpsIE
 )
@@ -415,7 +415,7 @@ P2PGetWpsSelectedRegistrar(
 	u1Byte	WPS_OUI[] = {0x00, 0x50, 0xF2, 0x04};
 	u4Byte 	offset = 0;
 	u1Byte 	SelectedRegistrarID[] = {0x10, 0x41};
-	
+
 	if(!eqNByte(osWpsIE.Octet, WPS_OUI, sizeof(WPS_OUI)))
 	{
 		RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "Not a valid good WPS IE!\n", osWpsIE.Octet, osWpsIE.Length);
@@ -432,7 +432,7 @@ P2PGetWpsSelectedRegistrar(
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: Found: WpsSelectedRegistrar: %d\n", __FUNCTION__, osWpsIE.Octet[offset + 4]));
 			return (BOOLEAN)(osWpsIE.Octet[offset + 4]);
 		}
-		
+
 		// Length 2 Bytes and ID 2 Bytes
 		offset += 4 + P2P_WPS_ATTR_READ_EF_2_BYTE(osWpsIE.Octet + offset + 2);
 	}
@@ -444,7 +444,7 @@ static VOID
 P2PDeviceListUpdate (
 	IN PP2P_INFO pP2PInfo,
 	OUT PP2P_DEVICE_LIST pDeviceList,
-	IN PRT_RFD pRfd, 
+	IN PRT_RFD pRfd,
 	IN pu1Byte pMacAddress,
 	IN pu1Byte pDeviceAddress,
 	IN MEMORY_BUFFER mbPacket
@@ -455,11 +455,11 @@ P2PDeviceListUpdate (
 	MEMORY_BUFFER mbObject = {NULL, 0};
 	pu1Byte header = (pu1Byte) mbPacket.Buffer;
 
-	
+
 #if 0	// Debug MAC Address Filter
 {
 	#define MAX_MAX_FILTER 10
-	
+
 	u1Byte Macfilter[MAX_MAX_FILTER][6] = {
 			{0x00, 0xe0, 0x4c, 0x78, 0x01, 0x1c},
 			{0x00, 0xe0, 0x4c, 0x78, 0x00, 0x02},
@@ -469,7 +469,7 @@ P2PDeviceListUpdate (
 
 	BOOLEAN update = TRUE;
 	u1Byte i = 0;
-	
+
 	for(i = 0; i < MAX_MAX_FILTER; i++)
 	{
 		if(eqMacAddr(pMacAddress, Macfilter[i]))
@@ -487,7 +487,7 @@ P2PDeviceListUpdate (
 		OCTET_STRING osPacket = {mbPacket.Buffer, (u2Byte) mbPacket.Length};
 		OCTET_STRING osSsid = {NULL, 0};
 		OCTET_STRING osWpsIE = {NULL, 0};
-		
+
 		osSsid = PacketGetElement(osPacket, EID_SsId, OUI_SUB_DONT_CARE, OUI_SUBTYPE_DONT_CARE);
 
 		if(CompareSSID(pP2PInfo->GroupTargetSSID, (u2Byte) pP2PInfo->uGroupTargetSSIDLength, osSsid.Octet, osSsid.Length))
@@ -515,7 +515,7 @@ P2PDeviceListUpdate (
 	if(pListEntry == NULL)
 	{
 		bStatus = P2PDeviceListInsertTail(pP2PInfo, pDeviceList, pRfd, pMacAddress, pDeviceAddress, mbPacket);
-		
+
 		if(bStatus == FALSE)
 		{
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: Insert Tail Failure!\n", __FUNCTION__));
@@ -525,7 +525,7 @@ P2PDeviceListUpdate (
 	{
 		// Fill the list entry structure
 		if(pDeviceAddress) cpMacAddr(pListEntry->DeviceAddress, pDeviceAddress);
-		
+
 
 		{// Query for the Correct Channel Information
 			OCTET_STRING osPacket = {mbPacket.Buffer, (u2Byte) mbPacket.Length};
@@ -542,7 +542,7 @@ P2PDeviceListUpdate (
 			}
 		}
 
-		
+
 		pListEntry->RecvSignalPower = pRfd->Status.RecvSignalPower;
 		pListEntry->SignalStrength= pRfd->Status.SignalStrength;
 
@@ -561,7 +561,7 @@ P2PDeviceListUpdate (
 					P2PMemoryBufferFree(&pListEntry->ProbeResponsePacket);
 					pListEntry->ProbeResponsePacket = mbObject;
 				}
-				else 
+				else
 				{
 					RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: Memory Clone Failure!\n", __FUNCTION__));
 				}
@@ -582,7 +582,7 @@ P2PDeviceListUpdate (
 					P2PMemoryBufferFree(&pListEntry->BeaconPacket);
 					pListEntry->BeaconPacket= mbObject;
 				}
-				else 
+				else
 				{
 					RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: Memory Clone Failure!\n", __FUNCTION__));
 				}
@@ -602,43 +602,43 @@ P2PDeviceListCopyWithTimeStamp(
 	IN PP2P_DEVICE_LIST pSource
 )
 {
-	u4Byte i = 0;	//source 
+	u4Byte i = 0;	//source
 	u4Byte j = 0;	//destination
 
 	u4Byte usTimeoutLimit = 3 * 60 * 1000 * 1000;	// 3 minutes
-		
+
 	BOOLEAN bBeaconStatus = FALSE;
 	BOOLEAN bProbeResponseStatus = FALSE;
-	
+
 	MEMORY_BUFFER mbBeacon = {NULL, 0};
 	MEMORY_BUFFER mbProbeResponse = {NULL, 0};
-	
+
 	u8Byte usCurrentTime = PlatformGetCurrentTime();
 	u8Byte usMaxHostTimestamp = 0;
-		
+
 	P2PDeviceListClear(pDestination);
 
 	pDestination->uNumberOfDevices = 0;
 
 	for(i = 0; i < pSource->uNumberOfDevices; i++)
-	{	
+	{
 
 		// Remove the stale device item ----------------------------------------------------------
 		//	+ Find MAX
 		usMaxHostTimestamp = MAX(
-				pSource->DeviceEntry[i].BeaconHostTimestamp, 
+				pSource->DeviceEntry[i].BeaconHostTimestamp,
 				pSource->DeviceEntry[i].ProbeResponseHostTimestamp
 			);
 
 		//	+ Check the timestamp
-		if(usCurrentTime - usMaxHostTimestamp > usTimeoutLimit) 
+		if(usCurrentTime - usMaxHostTimestamp > usTimeoutLimit)
 		{
 			//RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: usCurrentTime: %lld\n", __FUNCTION__, usCurrentTime));
 			//RT_TRACE(COMP_P2P, DBG_LOUD, ("usMaxHostTimestamp: %lld\n", usMaxHostTimestamp));
-			//RT_TRACE(COMP_P2P, DBG_LOUD, ("usCurrentTime - usMaxHostTimestamp: %lld, usTimeoutLimit: %d\n", 
+			//RT_TRACE(COMP_P2P, DBG_LOUD, ("usCurrentTime - usMaxHostTimestamp: %lld, usTimeoutLimit: %d\n",
 			//		usCurrentTime - usMaxHostTimestamp, usTimeoutLimit)
 			//	);
-			
+
 			continue;
 		}
 		// -----------------------------------------------------------------------------------
@@ -650,7 +650,7 @@ P2PDeviceListCopyWithTimeStamp(
 
 		// Beacon Packet
 		PlatformZeroMemory(
-				&pDestination->DeviceEntry[j].BeaconPacket, 
+				&pDestination->DeviceEntry[j].BeaconPacket,
 				sizeof(MEMORY_BUFFER)
 			);
 
@@ -660,13 +660,13 @@ P2PDeviceListCopyWithTimeStamp(
 
 		// Probe Response Packet
 		PlatformZeroMemory(
-				&pDestination->DeviceEntry[j].ProbeResponsePacket, 
+				&pDestination->DeviceEntry[j].ProbeResponsePacket,
 				sizeof(MEMORY_BUFFER)
 			);
 
 		PlatformZeroMemory(&mbProbeResponse , sizeof(MEMORY_BUFFER));
 		bProbeResponseStatus = P2PMemoryBufferClone(pP2PInfo, &mbProbeResponse, &pSource->DeviceEntry[i].ProbeResponsePacket);
-			
+
 
 		// Successful
 		if(bBeaconStatus && bProbeResponseStatus)
@@ -722,11 +722,11 @@ P2PIsN24GSupported(
 {
 	PADAPTER pDefAdapter = pP2PInfo->pAdapter;
 	u2Byte SupportedWirelessMode = pDefAdapter->HalFunc.GetSupportedWirelessModeHandler(pDefAdapter);
-	
-	//RT_TRACE(COMP_P2P, DBG_LOUD, 
-	//		("P2PIsN24GSupported(): SupportedWirelessMode: %u\n", 
+
+	//RT_TRACE(COMP_P2P, DBG_LOUD,
+	//		("P2PIsN24GSupported(): SupportedWirelessMode: %u\n",
 	//		SupportedWirelessMode));
-	
+
 	if(IS_24G_WIRELESS_MODE(SupportedWirelessMode))
 	{
 		return TRUE;
@@ -744,28 +744,28 @@ P2PGOSetBeaconInterval(
 	)
 {
 	// Note that if under Win7, ext port is used and if not,
-	// ADJUST_TO_ADAPTIVE_ADAPTER(pAdapter, FALSE) 
+	// ADJUST_TO_ADAPTIVE_ADAPTER(pAdapter, FALSE)
 	// always return the only one adapter.
 	PADAPTER pAdapter = P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter) ? pP2PInfo->pAdapter : GetFirstGOPort(pP2PInfo->pAdapter);
 
 	PMGNT_INFO pMgntInfo = &(pAdapter->MgntInfo);
 
 	//
-	// Note that if beacon interval is changed, 
+	// Note that if beacon interval is changed,
 	// it is not recovered by only re-enabled P2P mode.
 	//
 	if(u2BeaconPeriod != pMgntInfo->dot11BeaconPeriod)
 	{
-		RT_TRACE(COMP_P2P, DBG_LOUD, 
-			("P2PGOSetBeaconInterval(): set beacon interval from (%u) to (%u)\n", 
+		RT_TRACE(COMP_P2P, DBG_LOUD,
+			("P2PGOSetBeaconInterval(): set beacon interval from (%u) to (%u)\n",
 			pMgntInfo->dot11BeaconPeriod,
 			u2BeaconPeriod));
-		
+
 		pMgntInfo->Regdot11BeaconPeriod = u2BeaconPeriod;
 		pMgntInfo->dot11BeaconPeriod = pMgntInfo->Regdot11BeaconPeriod;
-		
-		pAdapter->HalFunc.SetHwRegHandler(pAdapter, 
-			HW_VAR_BEACON_INTERVAL, 
+
+		pAdapter->HalFunc.SetHwRegHandler(pAdapter,
+			HW_VAR_BEACON_INTERVAL,
 			(pu1Byte)(&pMgntInfo->dot11BeaconPeriod));
 	}
 }
@@ -776,7 +776,7 @@ P2PProvisioning(
 	)
 {
 #if (WPS_SUPPORT == 1)
-	PADAPTER pDefAdapter = GetDefaultAdapter(pP2PInfo->pAdapter);	
+	PADAPTER pDefAdapter = GetDefaultAdapter(pP2PInfo->pAdapter);
 
 	return GET_SIMPLE_CONFIG_ENABLED(&pDefAdapter->MgntInfo);
 #endif
@@ -798,7 +798,7 @@ P2PIsSocialChannel(
 	)
 {
 	u1Byte i;
-	
+
 	for(i = 0; i < sizeof(P2PSocialChannels); i++)
 	{
 		if(P2PSocialChannels[i] == Channel)
@@ -817,7 +817,7 @@ P2PTestU2SingleBitSet(
 	u2Byte i = sizeof(u2Byte) * 8;
 	u2Byte j;
 	BOOLEAN bHasBitSet = 0;
-	
+
 	for(j = 0; j < i; j++)
 	{
 		if(u2Val & 1)
@@ -852,7 +852,7 @@ P2PSetChannel(
 	)
 {
 	PADAPTER pAdapter = pP2PInfo->pAdapter;
-	pAdapter->HalFunc.SwChnlByTimerHandler(pAdapter, Channel);	
+	pAdapter->HalFunc.SwChnlByTimerHandler(pAdapter, Channel);
 }
 
 VOID
@@ -894,10 +894,10 @@ P2PStopResumeGOBeaconning(
 {
 	//
 	// Sometimes beacon cant' resume immediately,
-	// so we don't do beacon stop/resume now or WPS 
+	// so we don't do beacon stop/resume now or WPS
 	// is hare to get succeed.
 	//
-	return; 
+	return;
 }
 VOID
 P2PGetRandomSeries(
@@ -919,7 +919,7 @@ P2PGetRandomSeries(
 		return;
 	}
 
-	if(nRandomSeriesToGen > 20) 
+	if(nRandomSeriesToGen > 20)
 	{
 		RT_ASSERT( FALSE, ("P2PGetRandomSeries(): nRandomSeriesToGen shall be less than 20!\n") );
 		return;
@@ -927,7 +927,7 @@ P2PGetRandomSeries(
 
 	GetRandomBuffer(Hashed);
 
-	for(i = 0; i < nRandomSeriesToGen; i++) 
+	for(i = 0; i < nRandomSeriesToGen; i++)
 	{
 		iRdm = *( (pu1Byte)Hashed + i);		// usd first 1 bytes only
 		iRdm = iRdm % interval;			// Now iRdm is in [0, interval)
@@ -948,16 +948,16 @@ P2PGetRandomChars(
 	// Get random num from upper case letters, lower case letters and numbers.
 	// Total possibility: 26+26+10 = 62 => index from 0 to 61
 	//
-	
+
 	//int i = GetRandomNumber(0, 26 + 26 + 10);
 	u1Byte u1RandomArray[20];
 	u1Byte i, j;
 
-	if(nRandomCharToGen > 20) 
+	if(nRandomCharToGen > 20)
 	{
 		return FALSE;
 	}
-	
+
 	//
 	// i to random char mapping:
 	// i = 0 to 9 => number
@@ -966,11 +966,11 @@ P2PGetRandomChars(
 	//
 	P2PGetRandomSeries(0, 26 + 26 + 10, nRandomCharToGen, u1RandomArray);
 	for(j = 0; j < nRandomCharToGen; j++)
-	{	
+	{
 		char temp;
-		
+
 		i = u1RandomArray[j];
-		
+
 		if(i >= 0 && i <= 9)
 		{// number
 			temp = '0' + (i);
@@ -983,7 +983,7 @@ P2PGetRandomChars(
 		{// upper case
 			temp = 'A' + (i - 36);
 		}
-		else 
+		else
 		{
 			return FALSE;
 		}
@@ -1003,18 +1003,18 @@ P2PDetermineGOSsid(
 {
 	//
 	// Clause 3.2.1:
-	// Each SSID shall begin with the ASCII characters "TBD-", 
-	// where TBD is a short version of the technology name to 
-	// be determined by the Marketing TG. This SSID requirement 
-	// may enable users of Legacy Clients to differentiate between 
-	// a P2P Group and an infrastructure network. 
-	// 
-	// Following "TBD-" the SSID shall contain two ASCII characters 
-	// randomly selected with a unified distribution from the following character set: 
-	// upper case letters, lower case letters and numbers. 
+	// Each SSID shall begin with the ASCII characters "TBD-",
+	// where TBD is a short version of the technology name to
+	// be determined by the Marketing TG. This SSID requirement
+	// may enable users of Legacy Clients to differentiate between
+	// a P2P Group and an infrastructure network.
 	//
-	// This SSID requirement makes the probability low that a Legacy Client 
-	// encounters two P2P Groups with the same SSID and mistakenly 
+	// Following "TBD-" the SSID shall contain two ASCII characters
+	// randomly selected with a unified distribution from the following character set:
+	// upper case letters, lower case letters and numbers.
+	//
+	// This SSID requirement makes the probability low that a Legacy Client
+	// encounters two P2P Groups with the same SSID and mistakenly
 	// attempt to roam between them.
 	//
 	static u1Byte P2PTechName[] = {'D', 'I', 'R','E', 'C', 'T', '-'};
@@ -1061,9 +1061,9 @@ P2PDetermineGOSsid(
 	index += pP2PInfo->SSIDPostfixLen;
 
 	RT_PRINT_STR(COMP_P2P, DBG_LOUD, "P2PDetermineGOSsid(): Random SSID:\n", SsidBuf, *pSsidLen);
-	
+
 	return TRUE;
-	
+
 }
 
 BOOLEAN
@@ -1072,13 +1072,13 @@ P2PIsWildcardSsid(
 	)
 {
 	u1Byte i;
-	if(osSsid.Length != sizeof(P2PWildcardSsid)) 
+	if(osSsid.Length != sizeof(P2PWildcardSsid))
 	{
 		return FALSE;
 	}
 	for(i = 0; i < sizeof(P2PWildcardSsid); i++)
 	{
-		if(osSsid.Octet[i] != P2PWildcardSsid[i]) 
+		if(osSsid.Octet[i] != P2PWildcardSsid[i])
 		{
 			return FALSE;
 		}
@@ -1112,7 +1112,7 @@ P2PIsChnlInChnlEntryList(
 	)
 {
 	u1Byte i = 0, j = 0;
-	
+
 	for(i = 0; i < pChannelEntryList->regClasses; i++)
 	{
 		if(pChannelEntryList->regClass[i].channels> 0)
@@ -1126,7 +1126,7 @@ P2PIsChnlInChnlEntryList(
 			}
 		}
 	}
-	
+
 	return FALSE;
 }
 
@@ -1135,10 +1135,10 @@ P2PIsDoingGroupFormation(
 	IN PP2P_INFO pP2PInfo
 	)
 {
-	RT_TRACE(COMP_P2P, DBG_LOUD, 
+	RT_TRACE(COMP_P2P, DBG_LOUD,
 		("P2PIsDoingGroupFormation(): state: %u, bPreGroupFormation: %u\n",
 		pP2PInfo->State, pP2PInfo->bPreGroupFormation));
-	
+
 	if((pP2PInfo->State >= P2P_STATE_GO_NEGO_REQ_SEND &&
 		pP2PInfo->State <= P2P_STATE_GO_NEGO_COMPLETE) ||
 		pP2PInfo->bPreGroupFormation)
@@ -1148,7 +1148,7 @@ P2PIsDoingGroupFormation(
 	return FALSE;
 }
 
-OCTET_STRING 
+OCTET_STRING
 P2PWpsIEGetAttribute(
 	IN OCTET_STRING osWpsIEAttributes,
 	IN BOOLEAN bWpsAttributesInBE,
@@ -1198,14 +1198,14 @@ P2PWpsIEGetAttribute(
 			CurrentLen = ReadEF2Byte((pu2Byte)(osWpsIEAttributes.Octet + offset));
 			offset += sizeof(CurrentLen);
 		}
-		
+
 		if(CurrentTag == Tag)
 		{
 			bTagMatched = TRUE;
 		}
 
 		if(bTagMatched && (length >= offset + CurrentLen))
-		{ 
+		{
 			FillOctetString(ret, osWpsIEAttributes.Octet + offset, CurrentLen);
 			break;
 		}
@@ -1236,7 +1236,7 @@ P2PDeviceTypeMatches(
 	{// no Requested Device Type to check
 		return TRUE;
 	}
-		
+
 	do
 	{
 #if P2P_WPS_ATTR_TRANSMITTED_USING_BE
@@ -1285,7 +1285,7 @@ P2PDeviceTypeMatches(
 	{// no Requested Device Type to check
 		return TRUE;
 	}
-	
+
 }
 
 BOOLEAN
@@ -1302,7 +1302,7 @@ P2PDeviceIDMatches(
 		}
 		else
 		{
-			RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, 
+			RT_PRINT_ADDR(COMP_P2P, DBG_LOUD,
 				"P2PDeviceIDMatches(): DeviceID specified not match:\n", msg->devIdDevAddr);
 			return FALSE;
 		}
@@ -1358,19 +1358,19 @@ P2P_SetWpsIe(
 		pP2PInfo->WpsDevPasswdId = msg.wpsDevPasswordId;
 
 		w->DevicePasswdId = msg.wpsDevPasswordId;
-		
+
 				//
 		// Notify UI the current device password ID so that it can determine whether provisioning info is available
 		// Note that UI determines which peer config method we shall use for doing WPS
 				//
-		P2PIndicateCurrentDevPasswdId(pP2PInfo, pP2PInfo->WpsDevPasswdId);	
+		P2PIndicateCurrentDevPasswdId(pP2PInfo, pP2PInfo->WpsDevPasswdId);
 			}
 
 	if(msg._wpsPrimaryDevType)
 			{
 		u2Byte 					cat = ReadN2H2BYTE(msg._wpsPrimaryDevType + 0);
 		u2Byte					subCat = ReadN2H2BYTE(msg._wpsPrimaryDevType + 6);
-				
+
 		// We do this check because the WPS module set us a WPS IE with this attribute all 0
 		if(0 != cat && 0 != subCat)
 			{
@@ -1408,7 +1408,7 @@ P2P_SetWpsIe(
 // Sub IE handlers
 //======================================================================
 
-BOOLEAN 
+BOOLEAN
 P2POnP2PNoticeOfAbsence(
 	IN PP2P_INFO pP2PInfo,
 	IN OCTET_STRING osPacket,
@@ -1423,9 +1423,9 @@ P2POnP2PNoticeOfAbsence(
 	PMGNT_INFO			pMgntInfo = &(pP2PInfo->pAdapter->MgntInfo);
 
 	// Win8: NdisTest Trick for WFD_Concurrent_ext: ------------------------------
-	//	+ SUT-Client -> DUT-GO and DUT-Client -> SUT-GO are in the same channel 
+	//	+ SUT-Client -> DUT-GO and DUT-Client -> SUT-GO are in the same channel
 	//	+ Use TxPause in AP_PS_UpdateStationPSState() instead
-	if(pP2PInfo->pAdapter->bInHctTest) 
+	if(pP2PInfo->pAdapter->bInHctTest)
 		return TRUE;
 	// ----------------------------------------------------------------------
 
@@ -1444,7 +1444,7 @@ P2POnP2PNoticeOfAbsence(
 	//
 	if((msg->noaLen - 2) % 13 != 0) // Len of a NoA Desc is 13
 	{
-		RT_TRACE(COMP_P2P, DBG_LOUD, 
+		RT_TRACE(COMP_P2P, DBG_LOUD,
 			("P2POnP2PNoticeOfAbsence(): invalid length: %u\n", msg->noaLen));
 		return FALSE;
 	}
@@ -1453,7 +1453,7 @@ P2POnP2PNoticeOfAbsence(
 		nNoADesc = (msg->noaLen - 2) / 13;
 	}
 
-	// The index hasn't changed.		
+	// The index hasn't changed.
 	if(pP2PInfo->bUpdateFromBeacon && msg->noaIndex == pP2PInfo->NoAIEIndex)
 		return TRUE;
 
@@ -1466,13 +1466,13 @@ P2POnP2PNoticeOfAbsence(
 	p2pPsSet.CTWindow = msg->noaCtWindowAndOppPsParam & (~BIT7);
 
 	Index = 2;
-	
+
 	// NoA Descriptors
 	for(i = 0; i < nNoADesc; i++)
 	{
 		// This NoA is valid.
 		p2pPsSet.NoASet[i].bNoAEn = TRUE;
-	
+
 		// Count/Type
 		p2pPsSet.NoASet[i].NoACnt = ReadEF1Byte(msg->_noa + Index);
 		Index += 1;
@@ -1502,13 +1502,13 @@ P2POnP2PNoticeOfAbsence(
 //======================================================================
 // Dump Routine
 //======================================================================
-VOID 
+VOID
 P2PDumpWpsAttributes(
 	IN PP2P_WPS_ATTRIBUTES pP2PWpsAttributes
 	)
 {
 	u1Byte i;
-	
+
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("WPS Attributes:\n"));
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("Config Method: 0x%X\n", pP2PWpsAttributes->ConfigMethod));
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("Device Passwd ID: 0x%X\n", pP2PWpsAttributes->DevicePasswdId));
@@ -1522,9 +1522,9 @@ P2PDumpWpsAttributes(
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("%u\n", pP2PWpsAttributes->SecondaryDeviceTypeList[i].SubCategoryId));
 		}
 	}
-	if(pP2PWpsAttributes->DeviceNameLength > 0) 
+	if(pP2PWpsAttributes->DeviceNameLength > 0)
 	{
-		RT_PRINT_STR(COMP_P2P, DBG_LOUD, "DeviceName: ", pP2PWpsAttributes->DeviceName, pP2PWpsAttributes->DeviceNameLength);	
+		RT_PRINT_STR(COMP_P2P, DBG_LOUD, "DeviceName: ", pP2PWpsAttributes->DeviceName, pP2PWpsAttributes->DeviceNameLength);
 	}
 	else
 	{
@@ -1532,13 +1532,13 @@ P2PDumpWpsAttributes(
 	}
 }
 
-VOID 
+VOID
 P2PDumpDeviceCapability(
 	IN u1Byte DeviceCapability
 	)
 {
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("=== Device Capability ===\n"));
-	
+
 	if(DeviceCapability & dcServiceDiscovery)
 	{
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("dcServiceDiscovery\n"));
@@ -1563,16 +1563,16 @@ P2PDumpDeviceCapability(
 	{
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("dcP2PInvitationProcedure\n"));
 	}
-	
+
 }
 
-VOID 
+VOID
 P2PDumpGroupCapability(
 	IN u1Byte GroupCapability
 	)
 {
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("=== Group Capability ===\n"));
-	
+
 	if(GroupCapability & gcP2PGroupOwner)
 	{
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("gcP2PGroupOwner\n"));
@@ -1603,7 +1603,7 @@ P2PDumpGroupCapability(
 	}
 }
 
-VOID 
+VOID
 P2PDumpClientInfoDescList(
 	IN PP2P_CLIENT_INFO_DISCRIPTOR P2PClientInfoDescList,
 	IN u1Byte P2PClientInfoDescListSize
@@ -1622,7 +1622,7 @@ P2PDumpClientInfoDescList(
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("Totally %d Clients dumped\n", i));
 }
 
-VOID 
+VOID
 P2PDumpScanList(
 	IN PP2P_DEVICE_DISCRIPTOR pDevDescriptors,
 	IN u4Byte nDevDescriptors
@@ -1690,7 +1690,7 @@ P2PDumpPacketType(
 	u1Byte OUISubType
 	)
 {
-	switch(TypeSubType) 
+	switch(TypeSubType)
 	{
 		case Type_Beacon:
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PDumpPacketType(): Type_Beacon\n"));
@@ -1787,7 +1787,7 @@ P2PClientInfoGetCount(
 	{
 		return 0;
 	}
-	
+
 	for(i = 0; i < ASSOCIATE_ENTRY_NUM; i++)
 	{
 		pEntry = &(pExtMgntInfo->AsocEntry[i]);
@@ -1802,7 +1802,7 @@ P2PClientInfoGetCount(
 	return nP2PClients;
 }
 
-PP2P_CLIENT_INFO_DISCRIPTOR 
+PP2P_CLIENT_INFO_DISCRIPTOR
 P2PClientInfoFindByInterfaceAddress(
 	IN PP2P_INFO pP2PInfo,
 	IN pu1Byte InterfaceAddress
@@ -1820,7 +1820,7 @@ P2PClientInfoFindByInterfaceAddress(
 	{
 		return 0;
 	}
-	
+
 	for(i = 0; i < ASSOCIATE_ENTRY_NUM; i++)
 	{
 		pEntry = &(pExtMgntInfo->AsocEntry[i]);
@@ -1839,7 +1839,7 @@ P2PClientInfoFindByInterfaceAddress(
 	return NULL;
 }
 
-PP2P_CLIENT_INFO_DISCRIPTOR 
+PP2P_CLIENT_INFO_DISCRIPTOR
 P2PClientInfoFindByDeviceAddress(
 	IN PP2P_INFO pP2PInfo,
 	IN pu1Byte DeviceAddress
@@ -1857,7 +1857,7 @@ P2PClientInfoFindByDeviceAddress(
 	{
 		return 0;
 	}
-	
+
 	for(i = 0; i < ASSOCIATE_ENTRY_NUM; i++)
 	{
 		pEntry = &(pExtMgntInfo->AsocEntry[i]);
@@ -1876,7 +1876,7 @@ P2PClientInfoFindByDeviceAddress(
 	return NULL;
 }
 
-PP2P_CLIENT_INFO_DISCRIPTOR 
+PP2P_CLIENT_INFO_DISCRIPTOR
 P2PClientInfoEnumClients(
 	IN PP2P_INFO pP2PInfo,
 	IN u1Byte StartIndex,
@@ -1884,7 +1884,7 @@ P2PClientInfoEnumClients(
 	)
 {
 	BOOLEAN bFound = FALSE;
-	
+
 	PADAPTER pExtAdapter = P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter) ? pP2PInfo->pAdapter : GetFirstGOPort(pP2PInfo->pAdapter);
 
 
@@ -1901,7 +1901,7 @@ P2PClientInfoEnumClients(
 	{
 		return 0;
 	}
-	
+
 	for(i = StartIndex; i < ASSOCIATE_ENTRY_NUM; i++)
 	{
 		pEntry = &(pExtMgntInfo->AsocEntry[i]);
@@ -1917,7 +1917,7 @@ P2PClientInfoEnumClients(
 	}
 
 exit_P2PClientInfoEnumClients:
-	
+
 	if(pIndex) *pIndex = (u1Byte)(-1);
 	return NULL;
 }
@@ -1925,12 +1925,12 @@ exit_P2PClientInfoEnumClients:
 //======================================================================
 // Scan List Hander
 //======================================================================
-PP2P_DEVICE_DISCRIPTOR 
+PP2P_DEVICE_DISCRIPTOR
 P2PScanListFind(
 	IN PP2P_DEVICE_DISCRIPTOR pScanList,
 	IN u4Byte ScanListSize,
-	IN pu1Byte DeviceAddress, 
-	IN pu1Byte InterfaceAddress, 
+	IN pu1Byte DeviceAddress,
+	IN pu1Byte InterfaceAddress,
 	OUT pu4Byte pScanListIndex
 	)
 {
@@ -1944,10 +1944,10 @@ P2PScanListFind(
 		return NULL;
 	}
 
-	for(i = 0; i < ScanListSize; i++) 
+	for(i = 0; i < ScanListSize; i++)
 	{
-		pu1Byte AddrToCompare = (bDevAddressAsKey) ? 
-			((pScanList[i]).DeviceAddress) : 
+		pu1Byte AddrToCompare = (bDevAddressAsKey) ?
+			((pScanList[i]).DeviceAddress) :
 			((pScanList[i]).IntendedP2PInterfaceAddress);
 		if(eqMacAddr(AddrToCompare, KeyAddr))
 		{
@@ -1959,7 +1959,7 @@ P2PScanListFind(
 			return &(pScanList[i]);
 		}
 	}
-	
+
 	return NULL;
 }
 
@@ -1974,14 +1974,14 @@ P2PScanListAllFound(
 
 	if(pP2PInfo->ScanDeviceIDs.uNumOfDeviceIDs == 0 ||pP2PInfo->DeviceListForQuery.uNumberOfDevices ==0)
 		return FALSE;
-	
+
 	for(i=0;i<(pP2PInfo->ScanDeviceIDs.uNumOfDeviceIDs);i++)//
 	{
 		for(j = 0; j < (pP2PInfo->DeviceListForQuery.uNumberOfDevices); j++)
 		{
 			if(pP2PInfo->DeviceListForQuery.DeviceEntry[j].DeviceAddress != NULL)
 			{
-			if(eqMacAddr(pP2PInfo->ScanDeviceIDs.DeviceIDs[i], pP2PInfo->DeviceListForQuery.DeviceEntry[j].DeviceAddress) 
+			if(eqMacAddr(pP2PInfo->ScanDeviceIDs.DeviceIDs[i], pP2PInfo->DeviceListForQuery.DeviceEntry[j].DeviceAddress)
 				&&pP2PInfo->DeviceListForQuery.DeviceEntry[j].ProbeResponseHostTimestamp != 0)
 			{
 				uNumOfDevicesFound ++;
@@ -1991,19 +1991,19 @@ P2PScanListAllFound(
 	}
 
 	if(uNumOfDevicesFound == pP2PInfo->ScanDeviceIDs.uNumOfDeviceIDs)
-	{	
+	{
 		bAllFound =TRUE;
-		RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: All of DeviceID Found : Terminate Device Discovery!! !\n", __FUNCTION__));						
+		RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: All of DeviceID Found : Terminate Device Discovery!! !\n", __FUNCTION__));
 	}
-	
+
 	return bAllFound;
 }
 
-BOOLEAN 
+BOOLEAN
 P2PScanListFindClient(
 	IN PP2P_DEVICE_DISCRIPTOR pScanList,
 	IN u4Byte ScanListSize,
-	IN pu1Byte DeviceAddress, 
+	IN pu1Byte DeviceAddress,
 	IN pu1Byte InterfaceAddress,
 	OUT PP2P_DEVICE_DISCRIPTOR *ppGODeviceDesc,
 	OUT PP2P_CLIENT_INFO_DISCRIPTOR *ppClientInfoDesc
@@ -2018,15 +2018,15 @@ P2PScanListFindClient(
 	*ppGODeviceDesc = NULL;
 	*ppClientInfoDesc = NULL;
 
-	for(i = 0; i < ScanListSize; i++) 
+	for(i = 0; i < ScanListSize; i++)
 	{
 		PP2P_CLIENT_INFO_DISCRIPTOR pClientInfo = pScanList[i].P2PClientDescriptorList;
 		u1Byte P2PClientDescriptorListLength = pScanList[i].P2PClientDescriptorListLength;
 
 		for(j = 0; j < P2PClientDescriptorListLength; j++)
 		{
-			pu1Byte AddrToCompare = (bDevAddressAsKey) ? 
-				((pClientInfo[j]).DeviceAddress) : 
+			pu1Byte AddrToCompare = (bDevAddressAsKey) ?
+				((pClientInfo[j]).DeviceAddress) :
 				((pClientInfo[j]).InterfaceAddress);
 			if(KeyAddr != NULL && eqMacAddr(AddrToCompare, KeyAddr))
 			{
@@ -2036,14 +2036,14 @@ P2PScanListFindClient(
 				goto exit_P2PScanListFindClient;
 			}
 		}
-		
+
 	}
 
-exit_P2PScanListFindClient:	
+exit_P2PScanListFindClient:
 	return bFound;
 }
 
-PP2P_DEVICE_DISCRIPTOR 
+PP2P_DEVICE_DISCRIPTOR
 P2PScanListAdd(
 	IN OUT PP2P_DEVICE_DISCRIPTOR pScanList,
 	IN OUT pu4Byte pScanListSize
@@ -2051,21 +2051,21 @@ P2PScanListAdd(
 {
 	PP2P_DEVICE_DISCRIPTOR pP2PDeviceDesc = NULL;
 
-	
-	if(*pScanListSize == P2P_MAX_SCAN_LIST) 
+
+	if(*pScanListSize == P2P_MAX_SCAN_LIST)
 	{// no more space => return the last one
 		pP2PDeviceDesc = &(pScanList[*pScanListSize - 1]);
 	}
-	else 
+	else
 	{
 		pP2PDeviceDesc = &(pScanList[*pScanListSize]);
 		(*pScanListSize)++;
 	}
-	
+
 	return pP2PDeviceDesc;
 }
 
-VOID 
+VOID
 P2PScanListClear(
 	IN  P2P_INFO				*pP2PInfo
 	)
@@ -2081,7 +2081,7 @@ P2PScanListClear(
 	return;
 }
 
-VOID 
+VOID
 P2PScanListCopy(
 	IN OUT PP2P_DEVICE_DISCRIPTOR pScanListDest,
 	IN OUT pu4Byte pScanListDestSize,
@@ -2090,8 +2090,8 @@ P2PScanListCopy(
 	)
 {
 	*pScanListDestSize = ScanListSrcSize;
-	PlatformMoveMemory(pScanListDest, 
-		pScanListSrc, 
+	PlatformMoveMemory(pScanListDest,
+		pScanListSrc,
 		(ScanListSrcSize * sizeof(P2P_DEVICE_DISCRIPTOR)));
 }
 
@@ -2105,13 +2105,13 @@ P2PScanListDumplicate(
 	//
 	// Test if pDevDesc is a duplicate item in pScanList.
 	//
-	
+
 	PP2P_DEVICE_DISCRIPTOR pTmpDevDesc = NULL;
 
 	pTmpDevDesc = P2PScanListFind(pScanList, ScanListSize, pDevDesc->DeviceAddress, NULL, NULL);
 	if(pTmpDevDesc)
 	{
-		if(PlatformCompareMemory(pTmpDevDesc, 
+		if(PlatformCompareMemory(pTmpDevDesc,
 			pDevDesc, sizeof(P2P_DEVICE_DISCRIPTOR)) == 0)
 		{// desc the same
 			return TRUE;
@@ -2139,7 +2139,7 @@ P2PScanListEqual(
 {
 	u4Byte i;
 
-	//RT_TRACE(COMP_P2P, DBG_LOUD, 
+	//RT_TRACE(COMP_P2P, DBG_LOUD,
 	//		("P2PScanListEqual(): nlist1(%u), nlist2(%u)\n", ScanList1Size, ScanList2Size));
 
 	if(ScanList1Size != ScanList2Size)
@@ -2151,7 +2151,7 @@ P2PScanListEqual(
 	// For each entry in scan list 1, check if the entry is duplicate in scan list 2,
 	// if all entries are duplicate, return TRUE;
 	//
-	for(i = 0; i < ScanList1Size; i++) 
+	for(i = 0; i < ScanList1Size; i++)
 	{
 		if(!P2PScanListDumplicate(pScanList2, ScanList2Size, &(pScanList1[i])))
 		{
@@ -2203,7 +2203,7 @@ P2PScanListEnterScanCompleteImmediately(
 			pChnlInfo = pMgntInfo->pChannelInfo;
 			if(pChnlInfo->ChnlOp == CHNLOP_SCAN)
 				break;
-			else			
+			else
 				pLoopAdapter = GetNextExtAdapter(pLoopAdapter);
 		}
 	}
@@ -2218,7 +2218,7 @@ P2PScanListEnterScanCompleteImmediately(
 	{
 		pMgntInfo->ScanStep = 0;
 	}
-	
+
 	PlatformCancelTimer(pLoopAdapter, &(pMgntInfo->ScanTimer));
 	PlatformSetTimer(pLoopAdapter, &(pMgntInfo->ScanTimer), 0);
 }
@@ -2239,7 +2239,7 @@ P2PScanListCeaseScan(
 	EXTCHNL_OFFSET		hwBW40MOffset = EXTCHNL_OFFSET_NO_EXT;
 	EXTCHNL_OFFSET		hwBW80MOffset = EXTCHNL_OFFSET_NO_EXT;
 
-	// Get current channel. We want to know on what channel we cease the scan. 
+	// Get current channel. We want to know on what channel we cease the scan.
 	CurrentChnl = P2PGetChannel(pP2PInfo);
 	pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_BW40MHZ_EXTCHNL, (pu1Byte)(&hwBW40MOffset));
 	pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_BW80MHZ_EXTCHNL, (pu1Byte)(&hwBW80MOffset));
@@ -2275,10 +2275,10 @@ P2PScanListCeaseScan(
 			{
 				pLoopAdapter->MgntInfo.SettingBeforeScan.ChannelBandwidth = CHANNEL_WIDTH_20;
 			}
-				
+
 			pLoopAdapter->MgntInfo.SettingBeforeScan.ChannelNumber = CurrentChnl;
 			pLoopAdapter->MgntInfo.SettingBeforeScan.CenterFrequencyIndex1 = CurrentChnl;
-			
+
 			pLoopAdapter = GetNextExtAdapter(pLoopAdapter);
 		}
 	}
@@ -2286,7 +2286,7 @@ P2PScanListCeaseScan(
 	{
 		CustomScan_TermReq(GET_CUSTOM_SCAN_INFO(pP2PInfo->pAdapter), FALSE);
 	}
-		
+
 	//Cancel current scan timer, which may be triggered after a long time
 	// and set it again with no delay so that it will enter ScanComplete soon.
 	//P2PScanListEnterScanCompleteImmediately(pP2PInfo);
@@ -2337,7 +2337,7 @@ P2PConstructScanList(
 		scanType = SCAN_PASSIVE;
 
 		if(
-			pP2PInfo->bPreGroupFormation || 
+			pP2PInfo->bPreGroupFormation ||
 			pP2PInfo->ProvisionDiscoveryContext.bDoingProvisionDiscovery ||
 			pP2PInfo->InvitationContext.bToSendInvitationReqOnProbe ||
 			pP2PInfo->SDContext.bDoingServiceDiscovery
@@ -2356,7 +2356,7 @@ P2PConstructScanList(
 		{
 			scanType = SCAN_ACTIVE;
 		}
-		else 
+		else
 		{
 			scanType = SCAN_PASSIVE;
 		}
@@ -2433,14 +2433,14 @@ P2PConstructScanList(
 
 		// Instert the Listen Channel (Listen channel first due to fast discovery of NdisTest-WFD_discover_ext)
 		CustomScan_AddScanChnl(req, pP2PInfo->ListenChannel, 1, scanType, duration, rate, probeReqBuf);
-		
+
 		for(i = 0; i < pChList->ChannelLen; i++)
 		{
 			if(pChList->ChnlListEntry[i].ChannelNum != pP2PInfo->ListenChannel)
 			{
 				CustomScan_AddScanChnl(req, pChList->ChnlListEntry[i].ChannelNum, 1, scanType, duration, rate, probeReqBuf);
 			}
-		}		
+		}
 	}
 	else if(pP2PInfo->State == P2P_STATE_INVITATION_REQ_SEND)
 	{
@@ -2494,7 +2494,7 @@ P2PConstructScanList(
 		{
 			CustomScan_AddScanChnl(req, pP2PInfo->ProvisionDiscoveryContext.Channel, 5, scanType, duration, rate, probeReqBuf);
 		}
-		else if(pP2PInfo->InvitationContext.bToSendInvitationReqOnProbe && 
+		else if(pP2PInfo->InvitationContext.bToSendInvitationReqOnProbe &&
 			pP2PInfo->InvitationContext.InvitedDevice.ListenChannel != 0)
 		{
 			CustomScan_AddScanChnl(req, pP2PInfo->InvitationContext.InvitedDevice.ListenChannel, 5, scanType, duration, rate, probeReqBuf);
@@ -2512,7 +2512,7 @@ P2PConstructScanList(
 			if( GetDefaultMgntInfo(pP2PInfo->pAdapter)->WFDPeerOpChannel > 0 )
 			{
 				CustomScan_AddScanChnl(req, GetDefaultMgntInfo(pP2PInfo->pAdapter)->WFDPeerOpChannel, 2, scanType, duration, rate, probeReqBuf);
-			}		
+			}
 				}
 			}
 
@@ -2544,12 +2544,12 @@ P2PProcessSubElements(
 	)
 {
 	P2P_DEVICE_DISCRIPTOR 		*pDesc = NULL;
-	
-	if(NULL == (pDesc = P2PScanListFind(pP2PInfo->ScanList, pP2PInfo->ScanListSize, DeviceAddress, NULL, NULL))) 
+
+	if(NULL == (pDesc = P2PScanListFind(pP2PInfo->ScanList, pP2PInfo->ScanListSize, DeviceAddress, NULL, NULL)))
 	{
 		if(!bCreateIfNotExist)
 			return NULL;
-		
+
 		if(NULL == (pDesc = P2PScanListAdd(pP2PInfo->ScanList, &pP2PInfo->ScanListSize)))
 			return NULL;
 
@@ -2621,14 +2621,14 @@ P2P_OnBeacon(
 
 	if(P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter) && pP2PInfo->bForceScanLegacyNetworks)
 	{
-		ssidBeacon = PacketGetElement(*posMpdu, EID_SsId, OUI_SUB_DONT_CARE, OUI_SUBTYPE_DONT_CARE);		
+		ssidBeacon = PacketGetElement(*posMpdu, EID_SsId, OUI_SUB_DONT_CARE, OUI_SUBTYPE_DONT_CARE);
 		if(IsSSIDNdisTest(ssidBeacon) || !pAdapter->bInHctTest)
-		{			
+		{
 			MEMORY_BUFFER	mbPacket = {NULL, 0};
 			mbPacket.Buffer = posMpdu->Octet;
 			mbPacket.Length = posMpdu->Length;
 			RT_PRINT_STR(COMP_P2P, DBG_LOUD, "P2P_OnBeacon IsSSIDNdisTest:", ssidBeacon.Octet, ssidBeacon.Length);
-			
+
 			P2PDeviceListUpdate(pP2PInfo, &pP2PInfo->DeviceList, pRfd, Frame_pBssid(*posMpdu), NULL, mbPacket);
 		}
 	}
@@ -2637,8 +2637,8 @@ P2P_OnBeacon(
 
 	do
 	{
-		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList, 
-						P2P_FID_BEACON, pRfd, Frame_pBssid(*posMpdu), 
+		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList,
+						P2P_FID_BEACON, pRfd, Frame_pBssid(*posMpdu),
 						RT_GetChannelNumber(pP2PInfo->pAdapter), &pDev))
 			)
 		{
@@ -2650,7 +2650,7 @@ P2P_OnBeacon(
 		mb.Buffer = (u1Byte *)pDev;
 		mb.Length = sizeof(*pDev);
 		PlatformIndicateP2PEvent(pP2PInfo, P2P_EVENT_DEV_FOUND, &mb);
-		
+
 		if(!p2p_validate_Beacon(msg))
 		{
 			rtStatus = RT_STATUS_MALFORMED_PKT;
@@ -2664,7 +2664,7 @@ P2P_OnBeacon(
 		pP2PDeviceDesc = P2PProcessSubElements(pP2PInfo, pRfd, msg->devAddr, msg, TRUE);
 		if(pP2PDeviceDesc == NULL)
 		{
-			RT_TRACE_F(COMP_P2P, DBG_TRACE, 
+			RT_TRACE_F(COMP_P2P, DBG_TRACE,
 				("reject because of invalid P2P Sub IE or the corresponding entry is not in the scan list\n"));
 			break;
 		}
@@ -2682,7 +2682,7 @@ P2P_OnBeacon(
 		}
 
 		// Wait for join
-		if(pP2PInfo->DeviceDiscoverabilityContext.bWaitingBeaconFromGO && 
+		if(pP2PInfo->DeviceDiscoverabilityContext.bWaitingBeaconFromGO &&
 			pP2PInfo->State == P2P_STATE_DEVICE_DISCOVERABILITY_WAIT_BEACON &&
 			eqMacAddr(pP2PInfo->DeviceDiscoverabilityContext.GoBssid, msg->bssid))
 		{
@@ -2691,10 +2691,10 @@ P2P_OnBeacon(
 				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("going to send DeviceDiscoverabilityReq to the GO\n"));
 
 				pP2PInfo->DeviceDiscoverabilityContext.bWaitingBeaconFromGO = FALSE;
-				
+
 				pP2PInfo->State = P2P_STATE_DEVICE_DISCOVERABILITY_REQ_SEND;
 				PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
-				PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0);	
+				PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 			}
 		}
 	}while(FALSE);
@@ -2716,7 +2716,7 @@ P2PHasNon11BRateAsSupportingRate(
 	//
 	// Note: if no supported rate IE in osPacket, FALSE is returned.
 	//
-	
+
 	// Check Supported rate
 	BratesBeacon = PacketGetElement(osPacket, EID_SupRates, OUI_SUB_DONT_CARE, OUI_SUBTYPE_DONT_CARE );
 	if( BratesBeacon.Length != 0)
@@ -2747,7 +2747,7 @@ P2PHasNon11BRateAsSupportingRate(
 			}
 		}
 	}
-	
+
 	return bHasNon11bRate;
 }
 
@@ -2760,10 +2760,10 @@ P2PAcceptProbeReq(
 {
 	BOOLEAN bRet = FALSE;
 	//OCTET_STRING osSsid = PacketGetElement(osPacket, EID_SsId, OUI_SUB_DONT_CARE, OUI_SUB_DONT_CARE);
-	
+
 	//
 	// Check if we shall respond to the ProbeReq.
-	// Note that when in Op mode acting as GO, 
+	// Note that when in Op mode acting as GO,
 	// ProbeReq is not dealt with here.
 	//
 	do
@@ -2780,7 +2780,7 @@ P2PAcceptProbeReq(
 				}
 			}
 		}
-		
+
 		if(pP2PInfo->State == P2P_STATE_OPERATING)
 		{
 			if(P2P_ACTING_AS_GO(pP2PInfo))
@@ -2791,20 +2791,20 @@ P2PAcceptProbeReq(
 						RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2PDeviceTypeMatches\n"));
 						break;
 					}
-					
+
 					// check Device ID matched
 				if(!P2PDeviceIDMatches(pP2PInfo, msg))
 					{//DbgPrint("j\n");
-						RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2PDeviceIDMatches\n"));					
+						RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2PDeviceIDMatches\n"));
 						break;
 					}
 				}
-			else 
+			else
 			{// operating but not GO => client
 				if(FALSE == P2PSvc_Enabled(pP2PInfo->pP2PSvcInfo))
 				{// client does not reply to a ProbeReq, unless P2PSvc is enabled
 					RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: operating but not GO\n"));
-					break; 
+					break;
 			}
 		}
 		}
@@ -2813,7 +2813,7 @@ P2PAcceptProbeReq(
 			// don't reject
 		}
 #if 0
-		else if(pP2PInfo->State == P2P_STATE_INITIALIZED && 
+		else if(pP2PInfo->State == P2P_STATE_INITIALIZED &&
 			pP2PInfo->bExtendedListening)
 		{// doing extended listen
 			// don't reject
@@ -2825,21 +2825,21 @@ P2PAcceptProbeReq(
 			// Comment out because we hope to reduce extended listen timing while not to degrade the responsiveness
 			//break;
 		}
-		
+
 		//
 		// Clause 3.1.2.1.2
 		//
-		if(pP2PInfo->State == P2P_STATE_SCAN) 
+		if(pP2PInfo->State == P2P_STATE_SCAN)
 		{//DbgPrint("a\n");
-			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2P_STATE_SCAN\n"));								
-		
+			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2P_STATE_SCAN\n"));
+
 			break;
 		}
-		if(pP2PInfo->Role == P2P_CLIENT) 
+		if(pP2PInfo->Role == P2P_CLIENT)
 		{//DbgPrint("b\n");
 			if(FALSE == P2PSvc_Enabled(pP2PInfo->pP2PSvcInfo))
 			{
-			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2P_CLIENT\n"));										
+			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2P_CLIENT\n"));
 			break;
 		}
 		}
@@ -2852,49 +2852,49 @@ P2PAcceptProbeReq(
 		//
 		// Clause 3.1.2.1.3
 		//
-		if( pP2PInfo->State == P2P_STATE_SEARCH) 
+		if( pP2PInfo->State == P2P_STATE_SEARCH)
 		{//DbgPrint("d\n");
-			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2P_STATE_SEARCH\n"));												
+			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2P_STATE_SEARCH\n"));
 			break;
 		}
 
 		//
 		// Clause 3.1.2.1.1
 		//
-		if(pP2PInfo->State == P2P_STATE_LISTEN || pP2PInfo->State == P2P_STATE_INITIALIZED) 
+		if(pP2PInfo->State == P2P_STATE_LISTEN || pP2PInfo->State == P2P_STATE_INITIALIZED)
 		{
 			// This has already been checked.
-			//if(osP2PIE.Length == 0) 
+			//if(osP2PIE.Length == 0)
 			//{// no P2P IE
 			//DbgPrint("e\n");
 			//	break;
 			//}
 			if(!P2P_WILDCARD_MAC_ADDR(msg->bssid))
 			{//DbgPrint("g\n");
-				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2P_WILDCARD_MAC_ADDR pBssid\n"));												
-			
+				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2P_WILDCARD_MAC_ADDR pBssid\n"));
+
 				break;
 			}
 			if(!(P2P_WILDCARD_MAC_ADDR(msg->da) || eqMacAddr(msg->da, pP2PInfo->DeviceAddress)))
 			{//DbgPrint("h\n");
-				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2P_WILDCARD_MAC_ADDR pDaddr\n"));												
-			
+				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2P_WILDCARD_MAC_ADDR pDaddr\n"));
+
 				break;
 			}
 
 			// check requested device type of the WPS IE matched
 			if(!P2PDeviceTypeMatches(pP2PInfo, msg->wpsAttributes.os))
 			{//DbgPrint("i\n");
-				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2PDeviceTypeMatches case 2\n"));												
-			
+				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2PDeviceTypeMatches case 2\n"));
+
 				break;
 			}
-			
+
 			// check Device ID matched
 			if(!P2PDeviceIDMatches(pP2PInfo, msg))
 			{//DbgPrint("j\n");
-				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2PDeviceIDMatches case 2\n"));												
-			
+				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2PDeviceIDMatches case 2\n"));
+
 				break;
 			}
 		}
@@ -2904,8 +2904,8 @@ P2PAcceptProbeReq(
 		//
 		if(!P2PHasNon11BRateAsSupportingRate(*posMpdu))
 		{
-			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2PHasNon11BRateAsSupportingRate \n"));												
-		
+			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Reject Probe Request: P2PHasNon11BRateAsSupportingRate \n"));
+
 			break;
 		}
 
@@ -2926,7 +2926,7 @@ P2PToSendProvisionDiscoveryReq(
 	//
 
 	BOOLEAN bRet = FALSE;
-	
+
 	switch(ConfigMethod)
 	{
 		case P2P_WPS_CONFIG_METHODS_LABEL:
@@ -2985,7 +2985,7 @@ P2PDetermineDevPasswdIdCompatible(
 {
 	WPS_DEVICE_PASSWD_ID selfDpid = (WPS_DEVICE_PASSWD_ID)SelfDevicePasswdID;
 	WPS_DEVICE_PASSWD_ID peerDpid = (WPS_DEVICE_PASSWD_ID)PeerDevicePasswdID;
-	
+
 	switch(selfDpid)
 	{
 		case P2P_WPS_DEV_PASSWD_ID_DEFAULT:
@@ -3040,13 +3040,13 @@ P2PDetermineGONegoDevPasswdIdCompaible(
 	//
 	// Check Device Password ID compatibility
 	//
-	RT_TRACE(COMP_P2P, DBG_LOUD, 
+	RT_TRACE(COMP_P2P, DBG_LOUD,
 			("P2PDetermineGONegoDevPasswdIdCompaible(): recvd Dev Passwd ID (%u), mine (%u)\n",
 			peerDpid, selfDpid));
-	
+
 	if(!P2PDetermineDevPasswdIdCompatible(peerDpid, selfDpid))
 	{// dev passwd id incompatible
-		RT_TRACE(COMP_P2P, DBG_LOUD, 
+		RT_TRACE(COMP_P2P, DBG_LOUD,
 			("P2PDetermineGONegoDevPasswdIdCompaible(): DevPasswdId Incompatible\n"));
 		return FALSE;
 	}
@@ -3102,17 +3102,17 @@ P2P_OnProbeReq(
 
 	if(P2P_DEVICE != pP2PInfo->Role)
 	{
-		RT_TRACE(COMP_P2P, DBG_LOUD, ("Return because Not Device port!\n"));		
-		return RT_STATUS_SUCCESS;		
+		RT_TRACE(COMP_P2P, DBG_LOUD, ("Return because Not Device port!\n"));
+		return RT_STATUS_SUCCESS;
 	}
-		
+
 	p2p_DevList_Lock(&pP2PInfo->devList);
 
 	do
 	{
-		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList, 
-						P2P_FID_PROBE_REQ, 
-						pRfd, Frame_pSaddr(*posMpdu), 
+		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList,
+						P2P_FID_PROBE_REQ,
+						pRfd, Frame_pSaddr(*posMpdu),
 						RT_GetChannelNumber(pP2PInfo->pAdapter), &pDev))
 			)
 		{
@@ -3121,24 +3121,24 @@ P2P_OnProbeReq(
 		}
 
 		msg = pDev->rxFrames[P2P_FID_PROBE_REQ]->msg;
-		
+
 		if(!p2p_validate_ProbeReq(msg))
 		{
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("RT_STATUS_MALFORMED_PKT!\n"));
 			rtStatus = RT_STATUS_MALFORMED_PKT;
 			break;
 		}
-		
+
 		if(!P2PAcceptProbeReq(pP2PInfo, posMpdu, msg))
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("rejected by P2PAcceptProbeReq()\n"));
 			RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, "Transmitter Address: ", Frame_pTaddr(*posMpdu));
-			RT_TRACE(COMP_P2P, DBG_LOUD, ("pP2PInfo->State: %d\n", pP2PInfo->State));		
+			RT_TRACE(COMP_P2P, DBG_LOUD, ("pP2PInfo->State: %d\n", pP2PInfo->State));
 			break;
 		}
 
 		if(P2P_DEVICE == p2pRole
-			&& pP2PInfo->State > P2P_STATE_GO_NEGO_COMPLETE 
+			&& pP2PInfo->State > P2P_STATE_GO_NEGO_COMPLETE
 			&& FALSE == P2PSvc_Enabled(pP2PInfo->pP2PSvcInfo)
 			)
 		{// when operating, ProbeReq is handled in OnProbeReq(), not here.
@@ -3181,13 +3181,13 @@ P2P_OnProbeReq(
 		}
 		else if((s8Byte)(PlatformGetCurrentTime()) - pP2PInfo->TimeStartToStopSendingProbeResponse > 2 * P2P_RESERVED_TIME_FOR_ACTION_FRAME_MS * 1000)
 		{
-			RT_TRACE_F(COMP_P2P, DBG_TRACE, ("Reset pP2PInfo->TimeStartToStopSendingProbeResponse: from %d to 0\n", (u4Byte)pP2PInfo->TimeStartToStopSendingProbeResponse));	
-			pP2PInfo->TimeStartToStopSendingProbeResponse = 0;		
+			RT_TRACE_F(COMP_P2P, DBG_TRACE, ("Reset pP2PInfo->TimeStartToStopSendingProbeResponse: from %d to 0\n", (u4Byte)pP2PInfo->TimeStartToStopSendingProbeResponse));
+			pP2PInfo->TimeStartToStopSendingProbeResponse = 0;
 			rtStatus = RT_STATUS_PKT_DROP;
 		}
 		else
 		{
-			RT_TRACE_F(COMP_P2P, DBG_TRACE, ("No probe rsp\n"));	
+			RT_TRACE_F(COMP_P2P, DBG_TRACE, ("No probe rsp\n"));
 		}
 	}
 
@@ -3236,16 +3236,16 @@ P2P_OnProbeRsp(
 		mbPacket.Buffer = posMpdu->Octet;
 		mbPacket.Length = posMpdu->Length;
 		P2PDeviceListUpdate(pP2PInfo, &pP2PInfo->DeviceList, pRfd, Frame_pBssid(*posMpdu), NULL, mbPacket);
-	}	
+	}
 
 	p2p_DevList_Lock(&pP2PInfo->devList);
 
 	do
 	{
 		// RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, "P2P_OnProbeRsp(): ", Frame_pSaddr(*posMpdu));
-		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList, 
-						P2P_FID_PROBE_RSP, 
-						pRfd, Frame_pBssid(*posMpdu), 
+		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList,
+						P2P_FID_PROBE_RSP,
+						pRfd, Frame_pBssid(*posMpdu),
 						RT_GetChannelNumber(pP2PInfo->pAdapter), &pDev))
 			)
 		{
@@ -3257,7 +3257,7 @@ P2P_OnProbeRsp(
 		mb.Buffer = (u1Byte *)pDev;
 		mb.Length = sizeof(*pDev);
 		PlatformIndicateP2PEvent(pP2PInfo, P2P_EVENT_DEV_FOUND, &mb);
-		
+
 		if(!p2p_validate_ProbeRsp(msg))
 		{
 			rtStatus = RT_STATUS_MALFORMED_PKT;
@@ -3275,7 +3275,7 @@ P2P_OnProbeRsp(
 
 		if(msg->_noa)
 			P2POnP2PNoticeOfAbsence(pP2PInfo, *posMpdu, msg);
-		
+
 		// Update the device lists --------------------------------------------------------------------------
 		if(P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter))
 		{
@@ -3283,8 +3283,8 @@ P2P_OnProbeRsp(
 			mbPacket.Buffer = posMpdu->Octet;
 			mbPacket.Length = posMpdu->Length;
 			P2PDeviceListUpdate(pP2PInfo, &pP2PInfo->DeviceList, pRfd, msg->bssid, msg->devAddr, mbPacket);
-		
-		
+
+
 			if(pP2PInfo->ScanDeviceIDs.uNumOfDeviceIDs > 0)
 			{ // Finding some device now
 				if(eqMacAddr(msg->devAddr, pP2PInfo->ScanDeviceIDs.DeviceIDs[0]))
@@ -3307,7 +3307,7 @@ P2P_OnProbeRsp(
 			//return;
 		}
 
-		if(pP2PInfo->DeviceDiscoverabilityContext.bWaitingBeaconFromGO && 
+		if(pP2PInfo->DeviceDiscoverabilityContext.bWaitingBeaconFromGO &&
 			pP2PInfo->State == P2P_STATE_DEVICE_DISCOVERABILITY_WAIT_BEACON &&
 			eqMacAddr(pP2PInfo->DeviceDiscoverabilityContext.GoBssid, msg->bssid))
 		{
@@ -3316,10 +3316,10 @@ P2P_OnProbeRsp(
 				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("going to send DeviceDiscoverabilityReq to the GO\n"));
 
 				pP2PInfo->DeviceDiscoverabilityContext.bWaitingBeaconFromGO = FALSE;
-				
+
 				pP2PInfo->State = P2P_STATE_DEVICE_DISCOVERABILITY_REQ_SEND;
 				PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
-				PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0);	
+				PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 			}
 		}
 
@@ -3376,7 +3376,7 @@ P2P_OnAssocReqAccept(
 				rtStatus = RT_STATUS_MALFORMED_PKT;
 				break;
 			}
-		
+
 		if(NULL == (pP2PDeviceDesc = P2PProcessSubElements(pP2PInfo, pRfd, msg.devAddr, &msg, TRUE)))
 		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] reject because of invalid P2P Sub IE\n"));
@@ -3442,55 +3442,55 @@ P2P_ClientOnDeauth(
 				rtStatus = RT_STATUS_MALFORMED_PKT;
 				break;
 			}
-		
+
 		// TODO: we may check whether this is from an AP (either WLAN AP or P2P GO) that has manageability attribute
 
 		if(msg._minorReasonCode)
 		{// has valid minor reason code
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("minor rsn code: %u\n", msg.minorReasonCode));
-			
+
 			switch(msg.minorReasonCode)
 			{
 				default: // Reserved
 					break;
-					
+
 				case P2P_MINOR_RESON_CROSS_CONNECTION:
 					pP2PInfo->bWlanApRejection_CrossConnection = TRUE;
-					
+
 					RT_TRACE_F(COMP_P2P, DBG_LOUD, ("disable cross connection\n"));
 					pP2PInfo->GroupCapability &= ~gcCrossConnection; // disable cross connection
 
 					//
-					// After disable cross connection, we shall reconnect to the wlan AP 
+					// After disable cross connection, we shall reconnect to the wlan AP
 					// without corss connection bit set.
 					//
-					
+
 					break;
-					
-				case P2P_MINOR_RESON_MANAGED_BIT: 
+
+				case P2P_MINOR_RESON_MANAGED_BIT:
 					if(!(pP2PInfo->DeviceCapability & dcP2PInfrastructureManaged))
 					{
 						pP2PInfo->bWlanApRejection_Unmanaged = TRUE;
 
-						RT_TRACE_F(COMP_P2P, DBG_LOUD, 
+						RT_TRACE_F(COMP_P2P, DBG_LOUD,
 							("disable P2P mode because of minor reason code 2 => should not send any P2P IE in ProbeReq and (Re)AssocReq\n"));
 						MgntActSet_P2PMode(pP2PInfo->pAdapter, FALSE, FALSE, 1, 1, 1);
 					}
 					else
 					{
-						RT_TRACE_F(COMP_P2P, DBG_LOUD, 
+						RT_TRACE_F(COMP_P2P, DBG_LOUD,
 							("Receive deauth with minor rsn code 2 when managed P2P is enabled => ignore it\n"));
 
 					}
 					break;
-					
+
 				case P2P_MINOR_RESON_CONCURRENT_COEXISTENCE:
 					if(pP2PInfo->DeviceCapability & dcP2PInfrastructureManaged)
 					{
 						pu1Byte			pBssid = Frame_pBssid(*posMpdu);
 						PRT_WLAN_BSS	pBssDesc = NULL;
 						pP2PInfo->bWlanApRejection_IncompatibleCoexistenceParameters = TRUE;
-		
+
 						if(pP2PInfo->Role != P2P_GO)
 							break;
 
@@ -3503,25 +3503,25 @@ P2P_ClientOnDeauth(
 						}
 
 						PlatformReleaseSpinLock(pP2PInfo->pAdapter, RT_SCAN_SPINLOCK);
-						//RT_TRACE_F(COMP_P2P, DBG_LOUD, 
+						//RT_TRACE_F(COMP_P2P, DBG_LOUD,
 						//	("disable P2P mode because of minor reason code 3\n"));
 						//P2PDisconnect(pP2PInfo);
 						//MgntActSet_P2PMode(pP2PInfo->pAdapter, FALSE, FALSE, 1, 1, 1);
 					}
 					break;
-					
-				case P2P_MINOR_RESON_INFRASTRUCTURE_MANAGED_BIT: 
+
+				case P2P_MINOR_RESON_INFRASTRUCTURE_MANAGED_BIT:
 					if(pP2PInfo->DeviceCapability & dcP2PInfrastructureManaged)
 					{
 						pP2PInfo->bWlanApRejection_IncompatibleP2POperation = TRUE;
 
-						RT_TRACE_F(COMP_P2P, DBG_LOUD, 
+						RT_TRACE_F(COMP_P2P, DBG_LOUD,
 							("disable P2P mode because of minor reason code 4 and I'm a managed P2P Device\n"));
 						MgntActSet_P2PMode(pP2PInfo->pAdapter, FALSE, FALSE, 1, 1, 1);
 					}
 					else
 					{
-						RT_TRACE_F(COMP_P2P, DBG_LOUD, 
+						RT_TRACE_F(COMP_P2P, DBG_LOUD,
 							("ignore the deauth with minor reason code 4 bceause I'm NOT a managed P2P Device\n"));
 
 					}
@@ -3579,14 +3579,14 @@ P2P_OnGONReq(
 {
 	RT_STATUS				rtStatus = RT_STATUS_SUCCESS;
 	PP2P_INFO				pP2PInfo = GET_P2P_INFO(pAdapter);
-	PMGNT_INFO				pMgntInfo = &pAdapter->MgntInfo;	
+	PMGNT_INFO				pMgntInfo = &pAdapter->MgntInfo;
 	PP2P_DEVICE_DISCRIPTOR	pP2PDeviceDesc = NULL;
 	int						go;
 	P2P_STATE				CurrentState = pP2PInfo->State;	// For bakcup state when neg failed.
 
 	P2P_DEV_LIST_ENTRY		*pDev = NULL;
 	P2P_MESSAGE				*msg = NULL;
-	
+
 
 	if(!P2P_ENABLED(GET_P2P_INFO(pAdapter)))
 		return RT_STATUS_SUCCESS;
@@ -3599,17 +3599,17 @@ P2P_OnGONReq(
 
 	do
 	{
-		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList, 
-						P2P_FID_GO_NEG_REQ, 
-				pRfd, Frame_pSaddr(*posMpdu), 
+		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList,
+						P2P_FID_GO_NEG_REQ,
+				pRfd, Frame_pSaddr(*posMpdu),
 				pP2PInfo->ListenChannel, &pDev))
 			)
 		{
 			break;
 		}
-				
+
 		msg = pDev->rxFrames[P2P_FID_GO_NEG_REQ]->msg;
-		
+
 		if(!p2p_validate_GoNegReq(msg))
 		{
 			rtStatus = RT_STATUS_MALFORMED_PKT;
@@ -3627,14 +3627,14 @@ P2P_OnGONReq(
 		//
 		// Check state
 		//
-		
+
 		if(pP2PInfo->Role == P2P_CLIENT)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] Receive GoReq when we are client\n"));
 			P2PIndicateDeviceReqClientGoFormation(pP2PInfo, pP2PDeviceDesc);
 			pP2PDeviceDesc->Status = P2P_STATUS_FAIL_REJECTED_BY_USER;
 			pP2PInfo->ConnectionContext.Status = pP2PDeviceDesc->Status;
-			goto exit_P2POnGONReq;			
+			goto exit_P2POnGONReq;
 		}
 		else if(!P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter)
 			&& pP2PInfo->State > P2P_STATE_DEV_DISC_COMPLETE)
@@ -3646,21 +3646,21 @@ P2P_OnGONReq(
 
 		//
 		// v1.07:
-		// If a Status attribute is present in the received GO Negotiation Request frame, 
-		// the request is being used to signal user rejection of an earlier GO Negotiation Request 
+		// If a Status attribute is present in the received GO Negotiation Request frame,
+		// the request is being used to signal user rejection of an earlier GO Negotiation Request
 		// sent by the receiving P2P Device and shall be discarded with no further action.
 		//
 		if(msg->_status)
 		{
-				RT_TRACE_F(COMP_P2P, DBG_WARNING, 
+				RT_TRACE_F(COMP_P2P, DBG_WARNING,
 					("[WARNING] has Status attr in GONegoReq, Status: %u\n", pP2PInfo->State));
 			rtStatus = RT_STATUS_INVALID_DATA;
 			break;
 		}
-		
+
 		// Copy device descriptor
-		PlatformMoveMemory(&pP2PInfo->ConnectionContext.ConnectingDevice, 
-			pP2PDeviceDesc, 
+		PlatformMoveMemory(&pP2PInfo->ConnectionContext.ConnectingDevice,
+			pP2PDeviceDesc,
 			sizeof(P2P_DEVICE_DISCRIPTOR));
 
 		// Reject overllapped GONego Req
@@ -3673,7 +3673,7 @@ P2P_OnGONReq(
 		}
 
 		pP2PInfo->State = P2P_STATE_GO_NEGO_REQ_RECVD;
-		
+
 		if( P2P_DOING_DEVICE_DISCOVERY(pP2PInfo) )
 		{
 			p2p_DevList_Unlock(&pP2PInfo->devList);
@@ -3684,20 +3684,20 @@ P2P_OnGONReq(
 
 		// Determine GO
 		go = p2p_go_det(pP2PInfo->GOIntent, pP2PDeviceDesc->GOIntent);
-		if(go) 
+		if(go)
 		{
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("I'm going to be the GO\n"));
-			
+
 			pP2PInfo->ConnectionContext.bGoingToBeGO = TRUE;
 
 			// Determine GO SSID
-			P2PDetermineGOSsid(pP2PInfo, pP2PInfo->SSIDBuf, &pP2PInfo->SSIDLen);	
+			P2PDetermineGOSsid(pP2PInfo, pP2PInfo->SSIDBuf, &pP2PInfo->SSIDLen);
 		}
 		else if(0 == go)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("the target device is going to be the GO\n"));
 			pP2PInfo->ConnectionContext.bGoingToBeGO = FALSE;
-		} 
+		}
 		else
 		{// shall update the state machine
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] P2P_STATUS_FAIL_BOTH_P2P_DEVICES_INDICATED_GO_INTENT_OF_15\n"));
@@ -3707,7 +3707,7 @@ P2P_OnGONReq(
 		}
 
 		// Check Device Password ID compatibility
-		{	
+		{
 			if(P2P_ADAPTER_RTK_SUPPORT_P2P(pAdapter) &&
 				!P2PDetermineGONegoDevPasswdIdCompaible(pP2PInfo->WpsDevPasswdId, msg->wpsDevPasswordId))
 			{
@@ -3718,7 +3718,7 @@ P2P_OnGONReq(
 				//
 				// Check if peer is waiting for our user input
 				//
-				if(msg->wpsDevPasswordId == P2P_WPS_DEV_PASSWD_ID_PBC || 
+				if(msg->wpsDevPasswordId == P2P_WPS_DEV_PASSWD_ID_PBC ||
 					msg->wpsDevPasswordId == P2P_WPS_DEV_PASSWD_ID_DEFAULT ||
 					msg->wpsDevPasswordId == P2P_WPS_DEV_PASSWD_ID_REG_SPEC)
 				{
@@ -3727,16 +3727,16 @@ P2P_OnGONReq(
 					cpMacAddr(pP2PInfo->DevAddrToReConnect, msg->devAddr);
 					pP2PInfo->TimeStartWaitingForReinitiate = PlatformGetCurrentTime();
 				}
-				
+
 				goto exit_P2POnGONReq;
 			}
 		}
-		
+
 		// Check if channel is compatible
 		if(pP2PInfo->ConnectionContext.bGoingToBeGO)
-		{			
-			p2p_Channel_Intersect(&pP2PInfo->ChannelEntryList, 
-				&pDev->p2p->channels, 
+		{
+			p2p_Channel_Intersect(&pP2PInfo->ChannelEntryList,
+				&pDev->p2p->channels,
 				&pDev->p2p->commonChannels);
 
 			if(pDev->p2p->commonChannels.regClasses)
@@ -3744,12 +3744,12 @@ P2P_OnGONReq(
 				// Check if our op channel is one of channels supported by peer
 				if(!p2p_Channel_InChannelEntryList(pP2PInfo->OperatingChannel, &pDev->p2p->commonChannels))
 				{
-					RT_TRACE_F(COMP_P2P, DBG_LOUD, ("going to be GO, change op ch from: %d to %d\n", 
+					RT_TRACE_F(COMP_P2P, DBG_LOUD, ("going to be GO, change op ch from: %d to %d\n",
 						pP2PInfo->OperatingChannel,
 						pDev->p2p->commonChannels.regClass[0].channel[0]));
 					pP2PInfo->OperatingChannel = pDev->p2p->commonChannels.regClass[0].channel[0]; // alwyas use the first one
 				}
-				
+
 			}
 			// Win8 Go Negotiation Trick -----------------------------------------------------------------------------------------------------------------------
 			else if(MgntLinkStatusQuery(GetDefaultAdapter(pP2PInfo->pAdapter)) == RT_MEDIA_CONNECT)
@@ -3759,15 +3759,15 @@ P2P_OnGONReq(
 				pP2PInfo->OperatingChannel = MultiChannelGetPortConnected20MhzChannel(GetDefaultAdapter(pP2PInfo->pAdapter));
 
 				#endif
-			
-				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("WHCK Test Trick: Going to be GO, change op ch to default port connected channel: %d\n", pP2PInfo->OperatingChannel));				
+
+				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("WHCK Test Trick: Going to be GO, change op ch to default port connected channel: %d\n", pP2PInfo->OperatingChannel));
 			}
 			// ---------------------------------------------------------------------------------------------------------------------------------------------
 			else // No Common Channel
 			{
 				RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] no common channels\n"));
-				RT_PRINT_DATA(COMP_P2P, DBG_WARNING, "[WARNING] peer supported op chnl:\n", 
-					pP2PDeviceDesc->ChannelPlanChannel, 
+				RT_PRINT_DATA(COMP_P2P, DBG_WARNING, "[WARNING] peer supported op chnl:\n",
+					pP2PDeviceDesc->ChannelPlanChannel,
 					pP2PDeviceDesc->ChannelPlanLength);
 
 				pP2PDeviceDesc->Status = P2P_STATUS_FAIL_NO_COMMON_CHANNELS;
@@ -3788,29 +3788,29 @@ P2P_OnGONReq(
 
 		// ========== exit_P2POnGONReq ==========
 exit_P2POnGONReq:
-	
+
 		if(MgntRoamingInProgress(pMgntInfo))
 		{
 			if(MgntResetOrPnPInProgress(pAdapter))
 			{
-				RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress case 1\n"));											
+				RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress case 1\n"));
 				return RT_STATUS_FAILURE;
-			}	
-		
+			}
+
 			MgntRoamComplete(pAdapter, MlmeStatus_refused);
 		}
 		// < Note> If failed, we shall not modify the original state machine state.
 		if(P2P_STATUS_SUCCESS == pP2PDeviceDesc->Status)
 			WFD_OnP2PActionFrame(pAdapter, pRfd, posMpdu);
-		
+
 		// If failed, indicate as early as possible
 		if(pP2PDeviceDesc->Status != P2P_STATUS_SUCCESS &&
 			FrameBuf_Length(&msg->wpsAttributes))
 		{
 			pP2PInfo->PreviousGONegoResult = (P2P_STATUS_CODE)pP2PInfo->ConnectionContext.Status;
-			P2PIndicateGOFormatedInfo(pP2PInfo, 
-				pP2PInfo->ConnectionContext.Status, 
-				pP2PInfo->ConnectionContext.bGoingToBeGO, 
+			P2PIndicateGOFormatedInfo(pP2PInfo,
+				pP2PInfo->ConnectionContext.Status,
+				pP2PInfo->ConnectionContext.bGoingToBeGO,
 				&pP2PInfo->ConnectionContext.ConnectingDevice);
 		}
 		else
@@ -3832,8 +3832,8 @@ exit_P2POnGONReq:
 			pP2PInfo->Status = pP2PInfo->ConnectionContext.Status;
 
 			p2p_Send_GoNegRsp(pP2PInfo, pP2PDeviceDesc->DeviceAddress,pP2PDeviceDesc->DialogToken);
-		
-			RT_TRACE_F(COMP_P2P, DBG_LOUD, 
+
+			RT_TRACE_F(COMP_P2P, DBG_LOUD,
 				("send GORsp with status = %u, intent = %u, tie breaker: %u\n",
 				pP2PInfo->ConnectionContext.Status,
 				pP2PInfo->GOIntent >> 1,
@@ -3867,10 +3867,10 @@ exit_P2POnGONReq:
 
 	if(RT_STATUS_SUCCESS == rtStatus)
 	{
-		p2p_IndicateActionFrameReceived(pP2PInfo, 
-			P2P_EVENT_RECEIVED_GO_NEGOTIATION_REQUEST, 
-			RT_STATUS_SUCCESS, 
-			posMpdu->Octet, 
+		p2p_IndicateActionFrameReceived(pP2PInfo,
+			P2P_EVENT_RECEIVED_GO_NEGOTIATION_REQUEST,
+			RT_STATUS_SUCCESS,
+			posMpdu->Octet,
 			posMpdu->Length);
 	}
 
@@ -3898,7 +3898,7 @@ P2P_OnGONRsp(
 {
 	RT_STATUS				rtStatus = RT_STATUS_SUCCESS;
 	PP2P_INFO				pP2PInfo = GET_P2P_INFO(pAdapter);
-	PP2P_DEVICE_DISCRIPTOR	pP2PDeviceDesc = NULL; 
+	PP2P_DEVICE_DISCRIPTOR	pP2PDeviceDesc = NULL;
 	int						go;
 
 	P2P_DEV_LIST_ENTRY		*pDev = NULL;
@@ -3908,16 +3908,16 @@ P2P_OnGONRsp(
 		return RT_STATUS_SUCCESS;
 
 	FunctionIn(COMP_P2P);
-	
+
 	RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "P2P_OnGONRsp():\n", posMpdu->Octet, posMpdu->Length);
 
 	p2p_DevList_Lock(&pP2PInfo->devList);
 
 	do
 	{
-		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList, 
-						P2P_FID_GO_NEG_RSP, 
-						pRfd, Frame_pSaddr(*posMpdu), 
+		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList,
+						P2P_FID_GO_NEG_RSP,
+						pRfd, Frame_pSaddr(*posMpdu),
 						RT_GetChannelNumber(pP2PInfo->pAdapter), &pDev))
 			)
 		{
@@ -3925,23 +3925,23 @@ P2P_OnGONRsp(
 		}
 
 		msg = pDev->rxFrames[P2P_FID_GO_NEG_RSP]->msg;
-		
+
 		if(!p2p_validate_GoNegRsp(pP2PInfo, msg))
 		{
 			rtStatus = RT_STATUS_MALFORMED_PKT;
 			break;
 		}
-		
+
 		// Store the info in the P2P IE into pP2PDeviceDesc
 		if(!P2PScanListFind(pP2PInfo->ScanList, pP2PInfo->ScanListSize, msg->devAddr, NULL, NULL))
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("peer is not in our scan list\n"));
 			P2PDumpScanList(pP2PInfo->ScanList, pP2PInfo->ScanListSize);
 		}
-		
+
 		pP2PDeviceDesc = P2PProcessSubElements(pP2PInfo, pRfd, msg->devAddr, msg, FALSE);
 		if(pP2PDeviceDesc == NULL)
-		{	
+		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] reject because of invalid P2P Sub IE\n"));
 			rtStatus = RT_STATUS_INVALID_DATA;
 			break;
@@ -3959,16 +3959,16 @@ P2P_OnGONRsp(
 		// Update ConnectionContext.ConnectingDevice since after P2PProcessSubElements,
 		// its ChannelList or other elements may be modified.
 		//
-		PlatformMoveMemory(&pP2PInfo->ConnectionContext.ConnectingDevice, 
-			pP2PDeviceDesc, 
+		PlatformMoveMemory(&pP2PInfo->ConnectionContext.ConnectingDevice,
+			pP2PDeviceDesc,
 			sizeof(P2P_DEVICE_DISCRIPTOR));
 
 		// Compare DialogToken
 		if(!P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter)
 			&& pP2PDeviceDesc->DialogToken != pP2PInfo->ConnectionContext.DialogToken)
 		{// Dialog Token mismatch
-			RT_TRACE_F(COMP_P2P, DBG_WARNING, 
-				("[WARNING] dialog token mismatch, recvd: %u, self: %u\n", 
+			RT_TRACE_F(COMP_P2P, DBG_WARNING,
+				("[WARNING] dialog token mismatch, recvd: %u, self: %u\n",
 					pP2PDeviceDesc->DialogToken,
 					pP2PInfo->ConnectionContext.DialogToken));
 			rtStatus = RT_STATUS_INVALID_DATA;
@@ -3983,7 +3983,7 @@ P2P_OnGONRsp(
 		{// Group Formation ends on reception of a GONRsp with status other than success
 			pP2PInfo->ConnectionContext.Status = pP2PDeviceDesc->Status;
 			pP2PInfo->State = P2P_STATE_GO_NEGO_COMPLETE;
-			RT_TRACE_F(COMP_P2P, DBG_WARNING, 
+			RT_TRACE_F(COMP_P2P, DBG_WARNING,
 				("[WARNING] status (%u) of the GONRsp is not success\n", pP2PDeviceDesc->Status));
 
 			PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
@@ -3991,15 +3991,15 @@ P2P_OnGONRsp(
 
 			if(RUNTIME_OS_WIN_FROM_WIN8(pP2PInfo->pAdapter))
 			{
-				break; // break with status success to indicate go neg rsp 
+				break; // break with status success to indicate go neg rsp
 			}
-				
+
 			pP2PInfo->PreviousGONegoResult = (P2P_STATUS_CODE)pP2PInfo->ConnectionContext.Status;
-			P2PIndicateGOFormatedInfo(pP2PInfo, 
-				pP2PInfo->ConnectionContext.Status, 
-				pP2PInfo->ConnectionContext.bGoingToBeGO, 
+			P2PIndicateGOFormatedInfo(pP2PInfo,
+				pP2PInfo->ConnectionContext.Status,
+				pP2PInfo->ConnectionContext.bGoingToBeGO,
 				&pP2PInfo->ConnectionContext.ConnectingDevice);
-			
+
 			rtStatus = RT_STATUS_INVALID_STATE;
 			break;
 		}
@@ -4017,22 +4017,22 @@ P2P_OnGONRsp(
 
 		// Determine GO
 		go = p2p_go_det(pP2PInfo->GOIntent, pP2PDeviceDesc->GOIntent);
-		if(go) 
+		if(go)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("I'm going to be the GO\n"));
-			
+
 			pP2PInfo->ConnectionContext.bGoingToBeGO = TRUE;
 
 			// Determine GO SSID
-			P2PDetermineGOSsid(pP2PInfo, pP2PInfo->SSIDBuf, &pP2PInfo->SSIDLen);	
+			P2PDetermineGOSsid(pP2PInfo, pP2PInfo->SSIDBuf, &pP2PInfo->SSIDLen);
 		}
 		else if(0 == go)
 		{
-			RT_TRACE_F(COMP_P2P, DBG_LOUD, 
+			RT_TRACE_F(COMP_P2P, DBG_LOUD,
 				("the target device is going to be the GO\n"));
 
 			pP2PInfo->ConnectionContext.bGoingToBeGO = FALSE;
-		} 
+		}
 		else
 		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] P2P_STATUS_FAIL_BOTH_P2P_DEVICES_INDICATED_GO_INTENT_OF_15\n"));
@@ -4051,10 +4051,10 @@ P2P_OnGONRsp(
 
 		// Check if channel is compatible
 
-		p2p_Channel_Intersect(&pP2PInfo->ChannelEntryList, 
-			&pDev->p2p->channels, 
+		p2p_Channel_Intersect(&pP2PInfo->ChannelEntryList,
+			&pDev->p2p->channels,
 			&pDev->p2p->commonChannels);
-		
+
 		if(pP2PInfo->ConnectionContext.bGoingToBeGO)
 		{
 			if(pDev->p2p->commonChannels.regClasses) // use P2PMakeP2PChannelEntryList to test if we have common channels
@@ -4062,19 +4062,19 @@ P2P_OnGONRsp(
 				// Check if our op channel is one of channels supported by peer
 				if(!p2p_Channel_InChannelEntryList(pP2PInfo->OperatingChannel, &pDev->p2p->commonChannels))
 				{
-					RT_TRACE_F(COMP_P2P, DBG_LOUD, ("going to be GO, change op ch from: %d to %d\n", 
+					RT_TRACE_F(COMP_P2P, DBG_LOUD, ("going to be GO, change op ch from: %d to %d\n",
 						pP2PInfo->OperatingChannel,
 						pDev->p2p->commonChannels.regClass[0].channel[0]));
 					// TODO: we may not support the 1st channel supported by peer
 					pP2PInfo->OperatingChannel = pDev->p2p->commonChannels.regClass[0].channel[0]; // alwyas use the first one
 				}
-				
+
 			}
 			else // no common channel
 			{
 				RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] no common channels: %p\n", &pP2PInfo->ConnectionContext.ConnectingDevice));
-				RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "ChnlList Recvd:\n", 
-					pP2PDeviceDesc->ChannelPlanChannel, 
+				RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "ChnlList Recvd:\n",
+					pP2PDeviceDesc->ChannelPlanChannel,
 					pP2PDeviceDesc->ChannelPlanLength);
 				pP2PDeviceDesc->Status = P2P_STATUS_FAIL_NO_COMMON_CHANNELS;
 				pP2PInfo->ConnectionContext.Status = pP2PDeviceDesc->Status;
@@ -4103,7 +4103,7 @@ P2P_OnGONRsp(
 		pP2PInfo->ConnectionContext.DialogToken = pP2PDeviceDesc->DialogToken; // no use
 		pP2PInfo->ConnectionContext.FindPhaseLoopTimes = P2P_SCAN_FIND_PHASE_LOOP_TIMES; // no use
 
-	
+
 exit_P2POnGONRsp:
 
 		if(P2P_STATUS_SUCCESS == pP2PDeviceDesc->Status)
@@ -4114,9 +4114,9 @@ exit_P2POnGONRsp:
 		if(pP2PDeviceDesc->Status != P2P_STATUS_SUCCESS)
 		{
 			pP2PInfo->PreviousGONegoResult = (P2P_STATUS_CODE)pP2PInfo->ConnectionContext.Status;
-			P2PIndicateGOFormatedInfo(pP2PInfo, 
-				pP2PInfo->ConnectionContext.Status, 
-				pP2PInfo->ConnectionContext.bGoingToBeGO, 
+			P2PIndicateGOFormatedInfo(pP2PInfo,
+				pP2PInfo->ConnectionContext.Status,
+				pP2PInfo->ConnectionContext.bGoingToBeGO,
 				&pP2PInfo->ConnectionContext.ConnectingDevice);
 		}
 
@@ -4150,16 +4150,16 @@ exit_P2POnGONRsp:
 				}
 			}
 		}
-	}while(FALSE); 
+	}while(FALSE);
 
 	p2p_DevList_Unlock(&pP2PInfo->devList);
 
 	if(RT_STATUS_SUCCESS == rtStatus)
 	{
-		p2p_IndicateActionFrameReceived(pP2PInfo, 
-				P2P_EVENT_RECEIVED_GO_NEGOTIATION_RESPONSE, 
-				RT_STATUS_SUCCESS, 
-				posMpdu->Octet, 
+		p2p_IndicateActionFrameReceived(pP2PInfo,
+				P2P_EVENT_RECEIVED_GO_NEGOTIATION_RESPONSE,
+				RT_STATUS_SUCCESS,
+				posMpdu->Octet,
 				posMpdu->Length);
 	}
 
@@ -4197,24 +4197,24 @@ P2P_OnGONConfirm(
 		return RT_STATUS_SUCCESS;
 
 	FunctionIn(COMP_P2P);
-	
+
 	RT_PRINT_DATA(COMP_P2P, DBG_TRACE, "P2P_OnGONConfirm():\n", posMpdu->Octet, posMpdu->Length);
 
 	p2p_DevList_Lock(&pP2PInfo->devList);
 
 	do
 	{
-		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList, 
-						P2P_FID_GO_NEG_CONF, 
-						pRfd, Frame_pSaddr(*posMpdu), 
+		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList,
+						P2P_FID_GO_NEG_CONF,
+						pRfd, Frame_pSaddr(*posMpdu),
 						RT_GetChannelNumber(pP2PInfo->pAdapter), &pDev))
 			)
 		{
 			break;
 		}
-		
+
 		msg = pDev->rxFrames[P2P_FID_GO_NEG_CONF]->msg;
-		
+
 		if(!p2p_validate_GoNegConfirm(pP2PInfo->ConnectionContext.bGoingToBeGO, msg))
 		{
 			rtStatus = RT_STATUS_MALFORMED_PKT;
@@ -4242,7 +4242,7 @@ P2P_OnGONConfirm(
 		// Check DialogToken
 		if(pP2PDeviceDesc->DialogToken != pP2PInfo->ConnectionContext.DialogToken)
 		{
-			RT_TRACE_F(COMP_P2P, DBG_WARNING, 
+			RT_TRACE_F(COMP_P2P, DBG_WARNING,
 				("[WARNING] dialog token mismatch: mine(%u), peer(%u)\n",
 				pP2PInfo->ConnectionContext.DialogToken,
 				pP2PDeviceDesc->DialogToken));
@@ -4255,7 +4255,7 @@ P2P_OnGONConfirm(
 		}
 
 		if(pP2PDeviceDesc->Status != P2P_STATUS_SUCCESS)
-		{	
+		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WRNING] status of the GONConfirm is not success\n"));
 			pP2PInfo->ConnectionContext.Status = pP2PDeviceDesc->Status;
 			pP2PInfo->State = P2P_STATE_GO_NEGO_COMPLETE;
@@ -4264,24 +4264,24 @@ P2P_OnGONConfirm(
 			{
 				break; // break with status success to indicate go neg conf
 			}
-				
+
 			rtStatus = RT_STATUS_INVALID_DATA;
 			break;
 		}
 
-		PlatformMoveMemory(&pP2PInfo->ConnectionContext.ConnectingDevice, 
-							pP2PDeviceDesc, 
+		PlatformMoveMemory(&pP2PInfo->ConnectionContext.ConnectingDevice,
+							pP2PDeviceDesc,
 							sizeof(P2P_DEVICE_DISCRIPTOR));
-		
+
 		// Check if channel is compatible
 		if(pP2PInfo->ConnectionContext.bGoingToBeGO)
 		{
 			// Check if our op channel is one of channels supported by peer
-			if(!P2PIsChnlInChnlList(pP2PDeviceDesc->ChannelPlanChannel, 
-				pP2PDeviceDesc->ChannelPlanLength, 
+			if(!P2PIsChnlInChnlList(pP2PDeviceDesc->ChannelPlanChannel,
+				pP2PDeviceDesc->ChannelPlanLength,
 				pP2PInfo->OperatingChannel))
 			{
-				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("going to be GO, change op ch from: %d to %d\n", 
+				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("going to be GO, change op ch from: %d to %d\n",
 					pP2PInfo->OperatingChannel,
 					pP2PDeviceDesc->ChannelPlanChannel[0]));
 				// TODO: we may not support the 1st channel supported by peer
@@ -4290,11 +4290,11 @@ P2P_OnGONConfirm(
 		}
 		else
 		{// Client
-			if(!P2PIsChnlInChnlEntryList(&pP2PInfo->ChannelEntryList, 
+			if(!P2PIsChnlInChnlEntryList(&pP2PInfo->ChannelEntryList,
 				pP2PDeviceDesc->OperatingChannel))
 			{// the intended chnl of the GO is not supported
-				RT_TRACE_F(COMP_P2P, DBG_LOUD, 
-					("the intended channel (%u) of the GO is not supported\n", 
+				RT_TRACE_F(COMP_P2P, DBG_LOUD,
+					("the intended channel (%u) of the GO is not supported\n",
 					pP2PDeviceDesc->OperatingChannel));
 				pP2PDeviceDesc->Status = P2P_STATUS_FAIL_NO_COMMON_CHANNELS;
 				pP2PInfo->ConnectionContext.Status = pP2PDeviceDesc->Status;
@@ -4302,10 +4302,10 @@ P2P_OnGONConfirm(
 			}
 			else
 			{// use the intended op chnl of the GO
-				pP2PInfo->OperatingChannel = pP2PDeviceDesc->OperatingChannel;				
+				pP2PInfo->OperatingChannel = pP2PDeviceDesc->OperatingChannel;
 
 				RT_PRINT_STR(COMP_P2P, DBG_LOUD, "P2P_OnGONConfirm(): I'm client, the target SSID = ", pP2PInfo->ConnectionContext.ConnectingDevice.SsidBuf, pP2PInfo->ConnectionContext.ConnectingDevice.SsidLen);
-			}			
+			}
 		}
 
 		pP2PDeviceDesc->Status = P2P_STATUS_SUCCESS;
@@ -4313,15 +4313,15 @@ P2P_OnGONConfirm(
 exit_P2POnGONConfirm:
 
 		if(P2P_STATUS_SUCCESS == pP2PDeviceDesc->Status)
-		{		
+		{
 			WFD_OnP2PActionFrame(pAdapter, pRfd, posMpdu);
-		}		
+		}
 		else
 		{
 			pP2PInfo->PreviousGONegoResult = (P2P_STATUS_CODE)pP2PInfo->ConnectionContext.Status;
-			P2PIndicateGOFormatedInfo(pP2PInfo, 
-				pP2PInfo->ConnectionContext.Status, 
-				pP2PInfo->ConnectionContext.bGoingToBeGO, 
+			P2PIndicateGOFormatedInfo(pP2PInfo,
+				pP2PInfo->ConnectionContext.Status,
+				pP2PInfo->ConnectionContext.bGoingToBeGO,
 				&pP2PInfo->ConnectionContext.ConnectingDevice);
 		}
 
@@ -4338,13 +4338,13 @@ exit_P2POnGONConfirm:
 
 	if(RT_STATUS_SUCCESS == rtStatus)
 	{
-		p2p_IndicateActionFrameReceived(pP2PInfo, 
-				P2P_EVENT_RECEIVED_GO_NEGOTIATION_CONFIRM, 
-				RT_STATUS_SUCCESS, 
-				posMpdu->Octet, 
+		p2p_IndicateActionFrameReceived(pP2PInfo,
+				P2P_EVENT_RECEIVED_GO_NEGOTIATION_CONFIRM,
+				RT_STATUS_SUCCESS,
+				posMpdu->Octet,
 				posMpdu->Length);
 	}
- 
+
 	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("status: %u\n", pP2PInfo->ConnectionContext.Status));
 	return rtStatus;
 }
@@ -4369,7 +4369,7 @@ P2P_OnInvitationReq(
 	RT_STATUS				rtStatus = RT_STATUS_SUCCESS;
 	PP2P_INFO				pP2PInfo = GET_P2P_INFO(pAdapter);
 	PMGNT_INFO				pMgntInfo = &pAdapter->MgntInfo;
-	PP2P_DEVICE_DISCRIPTOR	pClientInvitationInfo = NULL; 
+	PP2P_DEVICE_DISCRIPTOR	pClientInvitationInfo = NULL;
 	static u8Byte			TimeStamp = 0;
 	static u2Byte			PreviousToken = 0xFFFF;
 	u8Byte					CurrentTime = 0;
@@ -4394,8 +4394,8 @@ P2P_OnInvitationReq(
 	if(CurrentTime - TimeStamp < 2000000 && TimeStamp != 0 &&
 		(0xFFFF != PreviousToken && (u1Byte)PreviousToken == *((pu1Byte)posMpdu->Octet + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN)))
 	{
-		RT_TRACE_F(COMP_P2P, DBG_WARNING, 
-			("[WARNING] recv InvitationReq too often => reject, time diff: %d, token = %d\n", 
+		RT_TRACE_F(COMP_P2P, DBG_WARNING,
+			("[WARNING] recv InvitationReq too often => reject, time diff: %d, token = %d\n",
 			(u4Byte)(CurrentTime - TimeStamp), *((pu1Byte)posMpdu->Octet + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN)));
 		return RT_STATUS_MEDIA_BUSY;
 	}
@@ -4403,16 +4403,16 @@ P2P_OnInvitationReq(
 	// we get here at the first time (since TimeStamp is 0), and we get the correct TimeStamp
 	TimeStamp = CurrentTime;
 	PreviousToken = *((pu1Byte)posMpdu->Octet + FRAME_OFFSET_P2P_PUB_ACT_DIALOG_TOKEN);
-	
+
 	RT_PRINT_DATA(COMP_P2P, DBG_TRACE, "P2P_OnInvitationReq():\n", posMpdu->Octet, posMpdu->Length);
 
 	p2p_DevList_Lock(&pP2PInfo->devList);
 
 	do
 	{
-		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList, 
-						P2P_FID_INV_REQ, 
-						pRfd, Frame_pSaddr(*posMpdu), 
+		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList,
+						P2P_FID_INV_REQ,
+						pRfd, Frame_pSaddr(*posMpdu),
 						RT_GetChannelNumber(pP2PInfo->pAdapter), &pDev))
 			)
 		{
@@ -4420,13 +4420,13 @@ P2P_OnInvitationReq(
 		}
 
 		msg = pDev->rxFrames[P2P_FID_INV_REQ]->msg;
-		
+
 		if(!p2p_validate_InvitationReq(msg))
 		{
 			rtStatus = RT_STATUS_MALFORMED_PKT;
 			break;
 		}
-			
+
 		pGenBufClientInvitationInfo = GetGenTempBuffer (pAdapter, sizeof(P2P_DEVICE_DISCRIPTOR));
 		pClientInvitationInfo = (P2P_DEVICE_DISCRIPTOR *)pGenBufClientInvitationInfo->Buffer.Ptr;
 
@@ -4435,7 +4435,7 @@ P2P_OnInvitationReq(
 		{
 			bBackwardInvite = TRUE;
 		}
-		
+
 		if(!bBackwardInvite) PlatformZeroMemory(&(pP2PInfo->InvitationContext), sizeof(P2P_INVITATION_CONTEXT));
 		PlatformZeroMemory((pClientInvitationInfo), sizeof(P2P_DEVICE_DISCRIPTOR));
 
@@ -4444,8 +4444,8 @@ P2P_OnInvitationReq(
 		// If we are not P2P Device, reject, since the invitor can communicate with us by join our group.
 		if(!P2P_ACTING_AS_DEVICE(pP2PInfo))
 		{
-			RT_TRACE_F(COMP_P2P, DBG_WARNING, 
-				("[WARNING] reject because current role is: %u, state is: %u\n", 
+			RT_TRACE_F(COMP_P2P, DBG_WARNING,
+				("[WARNING] reject because current role is: %u, state is: %u\n",
 				pP2PInfo->Role, pP2PInfo->State));
 			pP2PInfo->InvitationContext.Status = P2P_STATUS_FAIL_INVALID_PARAMETERS;
 			break;
@@ -4458,7 +4458,7 @@ P2P_OnInvitationReq(
 		pP2PInfo->InvitationContext.InvitorRole = eqMacAddr(msg->grpDevAddr, msg->devAddr) ? (P2P_GO) : (P2P_CLIENT);
 		pP2PInfo->InvitationContext.bPersistentInvitation = TEST_FLAG(msg->invitationFlags, BIT0);
 		cpMacAddr(pP2PInfo->InvitationContext.GODeviceAddress, msg->grpDevAddr);
-		CopySsid(pP2PInfo->InvitationContext.SsidBuf, pP2PInfo->InvitationContext.SsidLen, msg->grpSsid, msg->grpSsidLen); 
+		CopySsid(pP2PInfo->InvitationContext.SsidBuf, pP2PInfo->InvitationContext.SsidLen, msg->grpSsid, msg->grpSsidLen);
 		PeerRole = pP2PInfo->InvitationContext.InvitorRole;
 
 		// Parse the subelements and store the info in P2PDeviceDesc
@@ -4565,8 +4565,8 @@ P2P_OnInvitationReq(
 			else // No Common Channel
 			{
 				RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] no common channels\n"));
-				RT_PRINT_DATA(COMP_P2P, DBG_WARNING, "[WARNING] peer supported op chnl:\n", 
-					pClientInvitationInfo->ChannelPlanChannel, 
+				RT_PRINT_DATA(COMP_P2P, DBG_WARNING, "[WARNING] peer supported op chnl:\n",
+					pClientInvitationInfo->ChannelPlanChannel,
 					pClientInvitationInfo->ChannelPlanLength);
 
 				pP2PInfo->InvitationContext.Status = P2P_STATUS_FAIL_NO_COMMON_CHANNELS;
@@ -4576,7 +4576,7 @@ P2P_OnInvitationReq(
 
 		if(MgntRoamingInProgress(pMgntInfo))
 			MgntRoamComplete(pAdapter, MlmeStatus_refused);
-				
+
 
 		//
 		// Copy required info for constructing InvitationRsp
@@ -4601,7 +4601,7 @@ P2P_OnInvitationReq(
 		if(PeerRole == P2P_GO)
 		{
 			PP2P_DEVICE_DISCRIPTOR pP2PDeviceDesc = NULL;
-		
+
 			pP2PDeviceDesc = P2PScanListFind(pP2PInfo->ScanList, pP2PInfo->ScanListSize, msg->devAddr, NULL, NULL);
 			if(NULL != pP2PDeviceDesc)
 			{
@@ -4628,13 +4628,13 @@ P2P_OnInvitationReq(
 			&& FALSE == pP2PInfo->InvitationContext.bPersistentInvitation
 			)
 		{// Invited by a P2P Group member to join the group
-			if(FALSE == P2PIsChnlInChnlEntryList(&pP2PInfo->ChannelEntryList, 
+			if(FALSE == P2PIsChnlInChnlEntryList(&pP2PInfo->ChannelEntryList,
 				pClientInvitationInfo->OperatingChannel))
 			{
 				RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] peer GO op chnl (%u) not supported, reply no common channels\n", pClientInvitationInfo->OperatingChannel));
 
 				pP2PInfo->InvitationContext.Status = P2P_STATUS_FAIL_NO_COMMON_CHANNELS;
-				pP2PInfo->ConnectionContext.Status = pP2PInfo->InvitationContext.Status;	
+				pP2PInfo->ConnectionContext.Status = pP2PInfo->InvitationContext.Status;
 				break;
 			}
 		}
@@ -4646,7 +4646,7 @@ P2P_OnInvitationReq(
 			)
 		{// reinvoked as a GO
 			BOOLEAN bToIndicDevDiscComp = FALSE;
-			
+
 			if(P2P_DOING_DEVICE_DISCOVERY(pP2PInfo))
 			{// Doing P2P Device Discovery
 				RT_TRACE_F(COMP_MLME, DBG_LOUD, ("P2P_DOING_DEVICE_DISCOVERY: P2PScanListCeaseScan\n"));
@@ -4665,7 +4665,7 @@ P2P_OnInvitationReq(
 				// P2PScanListCeaseScan(pP2PInfo);
 				// P2PExtendedListenComplete(pP2PInfo);
 			}
-			else if(MgntScanInProgress(&pP2PInfo->pAdapter->MgntInfo)) 
+			else if(MgntScanInProgress(&pP2PInfo->pAdapter->MgntInfo))
 			{// Doing normal scan
 				RT_TRACE_F(COMP_MLME, DBG_LOUD, ("bScanInProgress: P2PScanListCeaseScan\n"));
 				p2p_DevList_Unlock(&pP2PInfo->devList);
@@ -4699,7 +4699,7 @@ P2P_OnInvitationReq(
 		PlatformMoveMemory(LibInvitationReq.GroupBssid, pP2PInfo->InvitationContext.GroupBssid, 6);
 		PlatformMoveMemory(LibInvitationReq.GroupDeviceAddress, pP2PInfo->InvitationContext.GODeviceAddress, 6);
 		LibInvitationReq.GroupSsidLen = pP2PInfo->InvitationContext.SsidLen;
-		PlatformMoveMemory(LibInvitationReq.GroupSsidBuf, pP2PInfo->InvitationContext.SsidBuf, pP2PInfo->InvitationContext.SsidLen);		
+		PlatformMoveMemory(LibInvitationReq.GroupSsidBuf, pP2PInfo->InvitationContext.SsidBuf, pP2PInfo->InvitationContext.SsidLen);
 
 		//
 		// Send Invitation Rsp
@@ -4710,7 +4710,7 @@ P2P_OnInvitationReq(
 		CustomScan_ExtendDwellTime(GET_CUSTOM_SCAN_INFO(pAdapter), 100);
 		p2p_Send_InvitationRsp(pP2PInfo, msg->devAddr, LibInvitationReq.DialogToken);
 
-		if(P2P_STATUS_SUCCESS == pP2PInfo->InvitationContext.Status 
+		if(P2P_STATUS_SUCCESS == pP2PInfo->InvitationContext.Status
 			|| P2P_STATUS_FAIL_INFORMATION_IS_UNAVAILABLE == pP2PInfo->InvitationContext.Status
 			|| P2P_STATUS_FAIL_UNABLE_TO_ACCOMODATE_REQUEST == pP2PInfo->InvitationContext.Status
 			)
@@ -4720,7 +4720,7 @@ P2P_OnInvitationReq(
 			P2PIndicateOnInvitationReq(pP2PInfo, &LibInvitationReq);
 		}
 
-		RT_TRACE_F(COMP_P2P, DBG_LOUD, 
+		RT_TRACE_F(COMP_P2P, DBG_LOUD,
 			(" send InvitationRsp with status = %u\n",
 			pP2PInfo->InvitationContext.Status));
 
@@ -4736,15 +4736,15 @@ P2P_OnInvitationReq(
 
 	if(RT_STATUS_SUCCESS == rtStatus)
 	{
-		p2p_IndicateActionFrameReceived(pP2PInfo, 
-				P2P_EVENT_RECEIVED_INVITATION_REQUEST, 
-				RT_STATUS_SUCCESS, 
-				posMpdu->Octet, 
+		p2p_IndicateActionFrameReceived(pP2PInfo,
+				P2P_EVENT_RECEIVED_INVITATION_REQUEST,
+				RT_STATUS_SUCCESS,
+				posMpdu->Octet,
 				posMpdu->Length);
 
 	}
-	
-	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("<===	status: %u\n", pP2PInfo->InvitationContext.Status));	
+
+	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("<===	status: %u\n", pP2PInfo->InvitationContext.Status));
 
 	return rtStatus;
 }
@@ -4768,7 +4768,7 @@ P2P_OnInvitationRsp(
 {
 	RT_STATUS				rtStatus = RT_STATUS_SUCCESS;
 	PP2P_INFO				pP2PInfo = GET_P2P_INFO(pAdapter);
-	PP2P_DEVICE_DISCRIPTOR	pP2PDeviceDesc = NULL; 
+	PP2P_DEVICE_DISCRIPTOR	pP2PDeviceDesc = NULL;
 	static u8Byte			TimeStamp = 0;
 	u4Byte					ConfigurationTimeout = 0; // in ms, note that the configuration time out in the P2P IE is defined as units of 10ms
 
@@ -4777,28 +4777,28 @@ P2P_OnInvitationRsp(
 
 	if(!P2P_ENABLED(GET_P2P_INFO(pAdapter)))
 		return RT_STATUS_SUCCESS;
-	
+
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("===> P2POnInvitationRsp(): port number %d state %d\n", pP2PInfo->pAdapter->pNdis62Common->PortNumber, pP2PInfo->State));
 
 	FunctionIn(COMP_P2P);
-	
+
 	RT_PRINT_DATA(COMP_P2P, DBG_TRACE, "P2P_OnInvitationRsp():\n", posMpdu->Octet, posMpdu->Length);
 
 	p2p_DevList_Lock(&pP2PInfo->devList);
 
 	do
 	{
-		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList, 
-						P2P_FID_INV_RSP, 
-						pRfd, Frame_pSaddr(*posMpdu), 
+		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList,
+						P2P_FID_INV_RSP,
+						pRfd, Frame_pSaddr(*posMpdu),
 						RT_GetChannelNumber(pP2PInfo->pAdapter), &pDev))
 			)
 		{
 			break;
 		}
-		
+
 		msg = pDev->rxFrames[P2P_FID_INV_RSP]->msg;
-		
+
 		if(!p2p_validate_InvitationRsp(pP2PInfo->InvitationContext.InvitorRole, msg))
 		{
 			rtStatus = RT_STATUS_MALFORMED_PKT;
@@ -4809,12 +4809,12 @@ P2P_OnInvitationRsp(
 		if(!P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter)
 			&& pP2PInfo->State != P2P_STATE_INVITATION_RSP_WAIT)
 		{
-			RT_TRACE_F(COMP_P2P, DBG_WARNING, 
+			RT_TRACE_F(COMP_P2P, DBG_WARNING,
 				("[WARNING] recv InvitationRsp in an invalid state: %u\n", pP2PInfo->State));
 			rtStatus = RT_STATUS_INVALID_STATE;
 			break;
 		}
-		
+
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("dialog token: %u\n", msg->dialogToken));
 		RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "P2P_OnInvitationRsp():\n", posMpdu->Octet, posMpdu->Length);
 
@@ -4829,8 +4829,8 @@ P2P_OnInvitationRsp(
 
 		// Update ConnectionContext.ConnectingDevice since after P2PProcessSubElements,
 		// its ChannelList or other elements may be modified.
-		PlatformMoveMemory(&pP2PInfo->InvitationContext.InvitedDevice, 
-							pP2PDeviceDesc, 
+		PlatformMoveMemory(&pP2PInfo->InvitationContext.InvitedDevice,
+							pP2PDeviceDesc,
 							sizeof(P2P_DEVICE_DISCRIPTOR));
 
 		// If we'll be the client, we shall wait for AP configuration timeout
@@ -4843,7 +4843,7 @@ P2P_OnInvitationRsp(
 			{// I'm going to be the GO
 				ConfigurationTimeout = 0; //(10 * MAX(pP2PInfo->GOConfigurationTimeout, pP2PInfo->InvitationContext.InvitedDevice.ClientConfigurationTimeout));
 			}
-			else 
+			else
 			{// I'm going to be the Client => wait for peer to be ready for connection
 				ConfigurationTimeout = (10 * MAX(pP2PInfo->ClientConfigurationTimeout, pP2PInfo->InvitationContext.InvitedDevice.GOConfigurationTimeout));
 			}
@@ -4870,7 +4870,7 @@ P2P_OnInvitationRsp(
 		// -----------------------------------------------------------------------------
 
 		P2PScanListEnterScanCompleteImmediately(pP2PInfo);
-		
+
 		pP2PInfo->State = P2P_STATE_INVITATION_COMPLETE;
 		PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
 		PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, ConfigurationTimeout);
@@ -4880,13 +4880,13 @@ P2P_OnInvitationRsp(
 
 	if(RT_STATUS_SUCCESS == rtStatus)
 	{
-		p2p_IndicateActionFrameReceived(pP2PInfo, 
-			P2P_EVENT_RECEIVED_INVITATION_RESPONSE, 
-			RT_STATUS_SUCCESS, 
-			posMpdu->Octet, 
+		p2p_IndicateActionFrameReceived(pP2PInfo,
+			P2P_EVENT_RECEIVED_INVITATION_RESPONSE,
+			RT_STATUS_SUCCESS,
+			posMpdu->Octet,
 			posMpdu->Length);
 	}
- 
+
 	return rtStatus;
 }
 
@@ -4908,7 +4908,7 @@ P2P_OnDeviceDiscoverabilityReq(
 	)
 {
 	RT_STATUS		rtStatus = RT_STATUS_SUCCESS;
-	PP2P_INFO		pP2PInfo = GET_P2P_INFO(pAdapter); 
+	PP2P_INFO		pP2PInfo = GET_P2P_INFO(pAdapter);
 	pu1Byte			StaInterfaceAddress = NULL;
 	u1Byte			i = 0;
 	PRT_WLAN_STA	pEntry = NULL;
@@ -4928,7 +4928,7 @@ P2P_OnDeviceDiscoverabilityReq(
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] Not act as GO!\n"));
 		return RT_STATUS_INVALID_STATE;
 	}
-	
+
 	FunctionIn(COMP_P2P);
 
 	RT_PRINT_DATA(COMP_P2P, DBG_TRACE, "P2P_OnDeviceDiscoverabilityReq():\n", posMpdu->Octet, posMpdu->Length);
@@ -4941,7 +4941,7 @@ P2P_OnDeviceDiscoverabilityReq(
 				rtStatus = RT_STATUS_MALFORMED_PKT;
 				break;
 			}
-		
+
 		// Find STA Interface Address
 		for(i = 0;i < ASSOCIATE_ENTRY_NUM; i++)
 		{
@@ -4974,7 +4974,7 @@ send_DevDiscRsp:
 	}while(FALSE);
 
 	p2p_parse_FreeMessage(&msg);
- 
+
 	FunctionOut(COMP_P2P);
 	return rtStatus;
 }
@@ -4997,7 +4997,7 @@ P2P_OnDeviceDiscoverabilityRsp(
 	)
 {
 	RT_STATUS				rtStatus = RT_STATUS_SUCCESS;
-	PP2P_INFO				pP2PInfo = GET_P2P_INFO(pAdapter); 
+	PP2P_INFO				pP2PInfo = GET_P2P_INFO(pAdapter);
 	PP2P_CLIENT_INFO_DISCRIPTOR		pClient = NULL;
 	PP2P_DEVICE_DISCRIPTOR	pGO = NULL;
 
@@ -5007,7 +5007,7 @@ P2P_OnDeviceDiscoverabilityRsp(
 		return RT_STATUS_SUCCESS;
 
 	FunctionIn(COMP_P2P);
-	
+
 	RT_PRINT_DATA(COMP_P2P, DBG_TRACE, "P2P_OnDeviceDiscoverabilityRsp():\n", posMpdu->Octet, posMpdu->Length);
 
 	do
@@ -5018,7 +5018,7 @@ P2P_OnDeviceDiscoverabilityRsp(
 				rtStatus =RT_STATUS_MALFORMED_PKT;
 				break;
 			}
-	
+
 		// Check state
 		if(pP2PInfo->State != P2P_STATE_DEVICE_DISCOVERABILITY_RSP_WAIT)
 		{
@@ -5042,9 +5042,9 @@ P2P_OnDeviceDiscoverabilityRsp(
 		pP2PInfo->DeviceDiscoverabilityContext.Status = (P2P_STATUS_CODE)msg.status;
 
 		// Find the client and its GO
-		if(!P2PScanListFindClient(pP2PInfo->ScanList, pP2PInfo->ScanListSize, 
-			pP2PInfo->DeviceDiscoverabilityContext.ClientDeviceAddress, 
-			NULL, 
+		if(!P2PScanListFindClient(pP2PInfo->ScanList, pP2PInfo->ScanListSize,
+			pP2PInfo->DeviceDiscoverabilityContext.ClientDeviceAddress,
+			NULL,
 			&pGO, &pClient))
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("client not found\n"));
@@ -5065,7 +5065,7 @@ P2P_OnDeviceDiscoverabilityRsp(
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] dcP2PClientDiscoverability bit in client is not set!\n"));
 			break;
 		}
-		PlatformMoveMemory(&(pP2PInfo->ConnectionContext.ConnectingDevice.DeviceAddress), 
+		PlatformMoveMemory(&(pP2PInfo->ConnectionContext.ConnectingDevice.DeviceAddress),
 			pP2PInfo->DeviceDiscoverabilityContext.ClientDeviceAddress, 6);
 		pP2PInfo->ConnectionContext.Status = P2P_STATUS_SUCCESS;
 		pP2PInfo->ConnectionContext.DialogToken = IncreaseDialogToken(pP2PInfo->DialogToken);
@@ -5080,7 +5080,7 @@ P2P_OnDeviceDiscoverabilityRsp(
 	}while(FALSE);
 
 	p2p_parse_FreeMessage(&msg);
- 
+
 	return rtStatus;
 }
 
@@ -5107,7 +5107,7 @@ P2P_OnGODiscoverabilityReq(
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 
 	FunctionIn(COMP_P2P);
-	RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "P2P_OnGODiscoverabilityReq():\n", 
+	RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "P2P_OnGODiscoverabilityReq():\n",
 		posMpdu->Octet, posMpdu->Length);
 	if(pPSC->bLeisurePs || pMgntInfo->dot11PowerSaveMode != eActive)
 	{
@@ -5136,7 +5136,7 @@ P2P_OnProvisionDiscoveryReq(
 	)
 {
 	RT_STATUS			rtStatus = RT_STATUS_SUCCESS;
-	PP2P_INFO			pP2PInfo = GET_P2P_INFO(pAdapter); 
+	PP2P_INFO			pP2PInfo = GET_P2P_INFO(pAdapter);
 	u8Byte				CurrentTime = PlatformGetCurrentTime();
 	static u8Byte		LastTime = 0;
 	PP2P_DEVICE_DISCRIPTOR	pP2PDeviceDesc = NULL;
@@ -5145,13 +5145,13 @@ P2P_OnProvisionDiscoveryReq(
 
 	P2P_DEV_LIST_ENTRY 		*pDev = NULL;
 	P2P_MESSAGE				*msg = NULL;
-	
+
 
 	if(!P2P_ENABLED(GET_P2P_INFO(pAdapter)))
 		return RT_STATUS_SUCCESS;
 
 	FunctionIn(COMP_P2P);
-	
+
 	RT_PRINT_DATA(COMP_P2P, DBG_TRACE, "P2P_OnDeviceDiscoverabilityRsp():\n", posMpdu->Octet, posMpdu->Length);
 
 	p2p_DevList_Lock(&pP2PInfo->devList);
@@ -5163,24 +5163,24 @@ P2P_OnProvisionDiscoveryReq(
 		bFirstSeen = (NULL == p2p_DevList_Find(&pP2PInfo->devList, Frame_pSaddr(*posMpdu), P2P_DEV_TYPE_DEV));
 
 		p2p_DevList_FlushActionFrames(&pP2PInfo->devList, Frame_pSaddr(*posMpdu), P2P_DEV_TYPE_DEV);
-		
-		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList, 
-						P2P_FID_PD_REQ, 
-						pRfd, Frame_pSaddr(*posMpdu), 
+
+		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList,
+						P2P_FID_PD_REQ,
+						pRfd, Frame_pSaddr(*posMpdu),
 						RT_GetChannelNumber(pP2PInfo->pAdapter), &pDev))
 			)
 		{
 			break;
 		}
-		
+
 		msg = pDev->rxFrames[P2P_FID_PD_REQ]->msg;
-		
+
 		if(!p2p_validate_PDReq(msg))
 		{
 			rtStatus = RT_STATUS_MALFORMED_PKT;
 			break;
 		}
-		
+
 		if(CurrentTime - LastTime < 1000000)
 		{// this is to prevent the device from showing notifications to user too often
 			rtStatus = RT_STATUS_PKT_DROP;
@@ -5206,12 +5206,12 @@ P2P_OnProvisionDiscoveryReq(
 		}
 		else
 		{// config method not compatible
-			RT_TRACE_F(COMP_P2P, DBG_LOUD, 
+			RT_TRACE_F(COMP_P2P, DBG_LOUD,
 				("[WARNING] recvd CM (%u) not compatible with my CM (%u)\n",
 				msg->wpsConfigMethods, pP2PInfo->WpsAttributes.ConfigMethod));
 			rspConfigMethod = 0; // set to NULL to indicate failure
 		}
-		
+
 		// Indicate OnPDReq before P2PSvc processes it
 		if(bFirstSeen)
 		{
@@ -5228,9 +5228,9 @@ P2P_OnProvisionDiscoveryReq(
 			if(msg->_listenChannel)
 				pP2PDeviceDesc->ListenChannel = msg->listenChannel;
 			}
-		
+
 		// Update the latest scan list to upper layer.
-		P2PScanListCopy(pP2PInfo->ScanList4Query, &pP2PInfo->ScanList4QuerySize, 
+		P2PScanListCopy(pP2PInfo->ScanList4Query, &pP2PInfo->ScanList4QuerySize,
 			pP2PInfo->ScanList, pP2PInfo->ScanListSize);
 		P2PIndicateScanList(pP2PInfo);
 
@@ -5241,7 +5241,7 @@ P2P_OnProvisionDiscoveryReq(
 			if(bToSendPDRsp)
 			{
 				BOOLEAN bSupportTxReport = FALSE;
-				
+
 				//
 				// Send ProvisionDiscoveryRsp
 				//
@@ -5263,10 +5263,10 @@ P2P_OnProvisionDiscoveryReq(
 
 	if(rtStatus == RT_STATUS_SUCCESS)
 	{
-		p2p_IndicateActionFrameReceived(pP2PInfo, 
-			P2P_EVENT_RECEIVED_PROVISION_DISCOVERY_REQUEST, 
-			RT_STATUS_SUCCESS, 
-			posMpdu->Octet, 
+		p2p_IndicateActionFrameReceived(pP2PInfo,
+			P2P_EVENT_RECEIVED_PROVISION_DISCOVERY_REQUEST,
+			RT_STATUS_SUCCESS,
+			posMpdu->Octet,
 			posMpdu->Length);
 	}
 
@@ -5293,7 +5293,7 @@ P2P_OnProvisionDiscoveryRsp(
 	)
 {
 	RT_STATUS			rtStatus = RT_STATUS_SUCCESS;
-	PP2P_INFO			pP2PInfo = GET_P2P_INFO(pAdapter); 
+	PP2P_INFO			pP2PInfo = GET_P2P_INFO(pAdapter);
 
 	P2P_DEV_LIST_ENTRY 	*pDev = NULL;
 	P2P_MESSAGE				*msg = NULL;
@@ -5302,39 +5302,39 @@ P2P_OnProvisionDiscoveryRsp(
 		return RT_STATUS_SUCCESS;
 
 	FunctionIn(COMP_P2P);
-	
+
 	RT_PRINT_DATA(COMP_P2P, DBG_TRACE, "P2P_OnDeviceDiscoverabilityRsp():\n", posMpdu->Octet, posMpdu->Length);
 
 	p2p_DevList_Lock(&pP2PInfo->devList);
 
 	do
 	{
-		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList, 
-						P2P_FID_PD_RSP, 
-						pRfd, 
-						pP2PInfo->ProvisionDiscoveryContext.go 
-							? pP2PInfo->ProvisionDiscoveryContext.goBssid 
-							: pP2PInfo->ProvisionDiscoveryContext.devAddr, 
+		if(RT_STATUS_SUCCESS != (rtStatus = p2p_DevList_RxUpdate(&pP2PInfo->devList,
+						P2P_FID_PD_RSP,
+						pRfd,
+						pP2PInfo->ProvisionDiscoveryContext.go
+							? pP2PInfo->ProvisionDiscoveryContext.goBssid
+							: pP2PInfo->ProvisionDiscoveryContext.devAddr,
 						RT_GetChannelNumber(pP2PInfo->pAdapter), &pDev))
 			)
 		{
 			break;
 		}
-		
+
 		msg = pDev->rxFrames[P2P_FID_PD_RSP]->msg;
-		
+
 		if(!p2p_validate_PDRsp(msg))
 		{
 			rtStatus = RT_STATUS_MALFORMED_PKT;
 			break;
 		}
-		
+
 		// Check DialogToken
 		if(!P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter)
 			&& msg->dialogToken != pDev->txFrames[P2P_FID_PD_REQ]->token
 			)
 		{
-			RT_TRACE_F(COMP_P2P, DBG_WARNING, 
+			RT_TRACE_F(COMP_P2P, DBG_WARNING,
 				("[WARNING] dialog token mismatch: peer(%u), mine(%u)\n",
 				msg->dialogToken, pDev->txFrames[P2P_FID_PD_REQ]->token));
 			rtStatus = RT_STATUS_INVALID_DATA;
@@ -5343,8 +5343,8 @@ P2P_OnProvisionDiscoveryRsp(
 
 		p2p_DevList_DialogTokenUpdate(pDev);
 
-		RT_TRACE_F(COMP_P2P, DBG_LOUD, 
-			("CM requested: %u, CM responded: %u\n", 
+		RT_TRACE_F(COMP_P2P, DBG_LOUD,
+			("CM requested: %u, CM responded: %u\n",
 			pDev->p2p->pdConfigMethod, msg->wpsConfigMethods));
 
 		if(!P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter))
@@ -5363,28 +5363,28 @@ P2P_OnProvisionDiscoveryRsp(
 		CustomScan_TermReq(GET_CUSTOM_SCAN_INFO(pAdapter), FALSE);
 		p2p_DevList_Lock(&pP2PInfo->devList);
 
-		P2PSvc_OnPDRsp(pP2PInfo->pP2PSvcInfo, 
+		P2PSvc_OnPDRsp(pP2PInfo->pP2PSvcInfo,
 			pDev->mac,
 			pDev->p2p->pdConfigMethod,
-			msg->wpsConfigMethods, 
+			msg->wpsConfigMethods,
 			&msg->p2pAttributes.os
 			);
 
 		pP2PInfo->State = P2P_STATE_PROVISION_DISCOVERY_COMPLETE;
 		PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
-		PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 1);		
+		PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 1);
 	}while(FALSE);
- 
+
 	RT_TRACE_F(COMP_P2P, DBG_LOUD, (" %u\n", pP2PInfo->ConnectionContext.Status));
 
 	p2p_DevList_Unlock(&pP2PInfo->devList);
 
 	if(rtStatus == RT_STATUS_SUCCESS)
 	{
-		p2p_IndicateActionFrameReceived(pP2PInfo, 
-			P2P_EVENT_RECEIVED_PROVISION_DISCOVERY_RESPONSE, 
-			RT_STATUS_SUCCESS, 
-			posMpdu->Octet, 
+		p2p_IndicateActionFrameReceived(pP2PInfo,
+			P2P_EVENT_RECEIVED_PROVISION_DISCOVERY_RESPONSE,
+			RT_STATUS_SUCCESS,
+			posMpdu->Octet,
 			posMpdu->Length);
 	}
 
@@ -5440,14 +5440,14 @@ P2P_OnSDReq(
 	//
 	if(posMpdu->Length < FRAME_OFFSET_GAS_INIT_REQ_SERVICE_REQ_TLV)
 	{
-		RT_TRACE_F(COMP_P2P, DBG_WARNING, 
+		RT_TRACE_F(COMP_P2P, DBG_WARNING,
 			("[WARNING] frame lengh (%u) < min SDReq lenght (%u)\n",
 			posMpdu->Length, FRAME_OFFSET_GAS_INIT_REQ_SERVICE_REQ_TLV));
 		return RT_STATUS_MALFORMED_PKT;
 	}
-	
-	//RT_PRINT_DATA(COMP_P2P, DBG_LOUD, 
-	//	"The ServiceDiscoveryReq Content : ", 
+
+	//RT_PRINT_DATA(COMP_P2P, DBG_LOUD,
+	//	"The ServiceDiscoveryReq Content : ",
 	//	osPacket.Octet, osPacket.Length);
 
 	//
@@ -5471,10 +5471,10 @@ P2P_OnSDReq(
 	//
 	pSDReqRecvd = pP2PInfo->SDContext.ServiceReqRecvd;
 	pSDReqRecvdSize = &pP2PInfo->SDContext.ServiceReqRecvdSize;
-	
+
 	PlatformZeroMemory(pSDReqRecvd, sizeof(P2P_SERVICE_REQ_TLV) * P2P_SD_MAX_SERVICES);
 	*pSDReqRecvdSize = 0;
-	
+
 	//
 	// Get ALL Service Req TLVs
 	//
@@ -5491,7 +5491,7 @@ P2P_OnSDReq(
 		}
 
 		// Validate the TLV length
-		if((pTLVCurrent + OFFSET_SERVICE_REQ_TLV_QUERY_DATA) > 
+		if((pTLVCurrent + OFFSET_SERVICE_REQ_TLV_QUERY_DATA) >
 			(posMpdu->Octet + posMpdu->Length))
 		{
 			//pP2PInfo->SDContext.Status = P2P_SD_STATUS_BAD_REQUEST;
@@ -5516,9 +5516,9 @@ P2P_OnSDReq(
 			( *((pu1Byte)(pTLVCurrent + OFFSET_SERVICE_REQ_TLV_SERVICE_PROT_TYPE)) );
 
 		// Read Service Transaction ID
-		pSDReqRecvd[*pSDReqRecvdSize].TransactionID = 
+		pSDReqRecvd[*pSDReqRecvdSize].TransactionID =
 			*((pu1Byte)(pTLVCurrent + OFFSET_SERVICE_REQ_TLV_SERVICE_TRANSACTION_ID));
-		
+
 		// Get Query Data length
 		QueryDataLen = TLVLenField - 2; // exclude ServiceProtType(1) and ServiceTransactionID(1)
 
@@ -5530,8 +5530,8 @@ P2P_OnSDReq(
 		}
 
 		// Copy Query Data
-		PlatformMoveMemory(pSDReqRecvd[*pSDReqRecvdSize].ServiceDesc.Buffer, 
-			pTLVCurrent + OFFSET_SERVICE_REQ_TLV_QUERY_DATA, 
+		PlatformMoveMemory(pSDReqRecvd[*pSDReqRecvdSize].ServiceDesc.Buffer,
+			pTLVCurrent + OFFSET_SERVICE_REQ_TLV_QUERY_DATA,
 			QueryDataLen);
 		pSDReqRecvd[*pSDReqRecvdSize].ServiceDesc.BufferLength = QueryDataLen;
 
@@ -5568,14 +5568,14 @@ P2P_OnSDReq(
 	//
 	for(i = 0; i < *pSDReqRecvdSize; i++)
 	{
-		RT_TRACE(COMP_P2P, DBG_LOUD, 
-			("Servicd Req TLV %u: Protocol: %u\n", 
+		RT_TRACE(COMP_P2P, DBG_LOUD,
+			("Servicd Req TLV %u: Protocol: %u\n",
 			i, pSDReqRecvd[i].ServiceDesc.ServiceType));
-		RT_PRINT_DATA(COMP_P2P, DBG_LOUD, 
-			"Query Data", 
+		RT_PRINT_DATA(COMP_P2P, DBG_LOUD,
+			"Query Data",
 			pSDReqRecvd[i].ServiceDesc.Buffer, pSDReqRecvd[i].ServiceDesc.BufferLength);
 	}
-	
+
 Exit_P2POnSDReq:
 
 	if(pP2PInfo->SDContext.Status == P2P_SD_STATUS_SUCCESS)
@@ -5589,12 +5589,12 @@ Exit_P2POnSDReq:
 	}
 
 Exit_P2POnSDReqNoRsp:
-	RT_TRACE_F(COMP_P2P, DBG_LOUD, 
-		(" Status: %u, DialogToken: %u\n", 
+	RT_TRACE_F(COMP_P2P, DBG_LOUD,
+		(" Status: %u, DialogToken: %u\n",
 		pP2PInfo->SDContext.Status,
 		DialogToken));
 
-	return rtStatus;	
+	return rtStatus;
 }
 
 //
@@ -5638,7 +5638,7 @@ P2P_OnSDRsp(
 	//}
 
 	// Check if the SDRsp is from the intended peer
-	if(!eqMacAddr(pSDContext->TargetDeviceAddress, 
+	if(!eqMacAddr(pSDContext->TargetDeviceAddress,
 		Frame_pSaddr(*posMpdu)))
 	{
 		RT_PRINT_ADDR(COMP_P2P, DBG_WARNING, "P2P_OnSDRsp():[WARNING] mismatch addr = ", pSDContext->TargetDeviceAddress);
@@ -5659,7 +5659,7 @@ P2P_OnSDRsp(
 	if(*((pu1Byte)(posMpdu->Octet + FRAME_OFFSET_GAS_INIT_RSP_DIALOG_TOKEN)) != pSDContext->DialogToken)
 
 	{// Dialog Token mismatch
-		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] mismatch token target (%d) and mine (%d)!\n", 
+		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] mismatch token target (%d) and mine (%d)!\n",
 					*((pu1Byte)(posMpdu->Octet + FRAME_OFFSET_GAS_INIT_RSP_DIALOG_TOKEN)), pSDContext->DialogToken));
 		return RT_STATUS_INVALID_DATA;
 	}
@@ -5676,7 +5676,7 @@ P2P_OnSDRsp(
 	{
 		// Status (11u)
 		// Ignore
-		
+
 		// GAS Comeback Delay
 		if(ReadEF2Byte(posMpdu->Octet + FRAME_OFFSET_GAS_INIT_RSP_COMEBACK_DELAY))
 		{
@@ -5695,13 +5695,13 @@ P2P_OnSDRsp(
 
 		// Service update indicator
 		pSDContext->ServiceUpdateIndicator = ReadEF2Byte(posMpdu->Octet + FRAME_OFFSET_GAS_INIT_RSP_SERVICE_UPDATE_INDICATOR); // ignore
-		
+
 		//
 		// Read the TLVs, a valid Rsp shall have at lease 1 TLV
 		//
 		{
 			u1Byte index;
-			
+
 			pTLVCurrent = pTLVStart;
 
 			PlatformZeroMemory(pP2PInfo->SDContext.ServiceRspRecvd, sizeof(P2P_SERVICE_RSP_TLV) * P2P_SD_MAX_SERVICES);
@@ -5718,15 +5718,15 @@ P2P_OnSDRsp(
 				{
 					break;
 				}
-				
+
 				// Make sure we can read until the end of Status Code filed, which is right before RSP_DATA
-				if((pTLVCurrent + OFFSET_SERVICE_RSP_TLV_RSP_DATA) > 
+				if((pTLVCurrent + OFFSET_SERVICE_RSP_TLV_RSP_DATA) >
 					(posMpdu->Octet + posMpdu->Length))
 				{
 					pP2PInfo->SDContext.Status = P2P_SD_STATUS_BAD_RESPONSE_1;
 					break;
 				}
-				
+
 				// Length
 				TLVLen = (ReadEF2Byte(pTLVCurrent + OFFSET_SERVICE_RSP_TLV_LEN));
 				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("TLVLen: %u\n", TLVLen));
@@ -5760,22 +5760,22 @@ P2P_OnSDRsp(
 					ResponseDataLen = TLVLen - 3;
 					if(ResponseDataLen > P2P_MAX_SERVICE_DESCRIPTOR_BUFFER_LEN)
 					{// buffer overflow
-						RT_TRACE(COMP_P2P, DBG_LOUD, 
+						RT_TRACE(COMP_P2P, DBG_LOUD,
 							("Buffer size overflow: (%u) > (%u) \n",
 							ResponseDataLen,
 							P2P_MAX_SERVICE_DESCRIPTOR_BUFFER_LEN));
 						break;
 					}
 
-					PlatformMoveMemory((pP2PInfo->SDContext.ServiceRspRecvd)[index].ServiceDesc.Buffer, 
-						pTLVCurrent + OFFSET_SERVICE_RSP_TLV_RSP_DATA, 
+					PlatformMoveMemory((pP2PInfo->SDContext.ServiceRspRecvd)[index].ServiceDesc.Buffer,
+						pTLVCurrent + OFFSET_SERVICE_RSP_TLV_RSP_DATA,
 						ResponseDataLen);
 
 					(pP2PInfo->SDContext.ServiceRspRecvd)[index].ServiceDesc.BufferLength = ResponseDataLen;
 
-					RT_PRINT_STR(COMP_P2P, DBG_LOUD, 
-						"Recv TLV: ", 
-						(pP2PInfo->SDContext.ServiceRspRecvd)[index].ServiceDesc.Buffer, 
+					RT_PRINT_STR(COMP_P2P, DBG_LOUD,
+						"Recv TLV: ",
+						(pP2PInfo->SDContext.ServiceRspRecvd)[index].ServiceDesc.Buffer,
 						(pP2PInfo->SDContext.ServiceRspRecvd)[index].ServiceDesc.BufferLength);
 				}
 
@@ -5807,7 +5807,7 @@ P2P_OnSDRsp(
 Exit_P2POnSDRsp:
 
 	if(bFragment)
-	{	
+	{
 		// Update SDContext
 		pSDContext->bDoingServiceDiscovery = TRUE;
 		pSDContext->bFragment = TRUE;
@@ -5821,7 +5821,7 @@ Exit_P2POnSDRsp:
 		// Since P2PMgntTimerCallback() checks bScanInProgress before it enters the state machine,
 		// we can't use the state machine to deal with the comeback procedure.
 		//
-		p2p_Send_SDComebackReq(pP2PInfo, 
+		p2p_Send_SDComebackReq(pP2PInfo,
 			pP2PInfo->SDContext.TargetDeviceAddress,
 			pP2PInfo->SDContext.DialogToken);
 
@@ -5843,8 +5843,8 @@ Exit_P2POnSDRsp:
 		PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
 		PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 100);
 	}
-	
-Exit_P2POnSDRsp_SilentExit:	
+
+Exit_P2POnSDRsp_SilentExit:
 	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("status: %u, bFragment: %u\n", pSDContext->Status, bFragment));
 
 	return rtStatus;
@@ -5898,46 +5898,46 @@ P2P_OnSDComebackReq(
 	{
 		RT_PRINT_ADDR(COMP_P2P, DBG_WARNING, "P2P_OnSDComebackReq():[WARNING] mismatch addr = ", SrcAddr);
 		return RT_STATUS_INVALID_DATA;
-	}	
-	
+	}
+
 	//
 	// Check Length
 	//
 	if(posMpdu->Length < FRAME_OFFSET_GAS_COMEBACK_REQ_DIALOG_TOKEN + 1)
 	{
-		RT_TRACE_F(COMP_P2P, DBG_WARNING, 
+		RT_TRACE_F(COMP_P2P, DBG_WARNING,
 			("[WARNING] frame lengh (%u) < min SDReq lenght (%u)\n",
 			posMpdu->Length, FRAME_OFFSET_GAS_COMEBACK_REQ_DIALOG_TOKEN + 1));
 		return RT_STATUS_MALFORMED_PKT;
 	}
-	
+
 	//
 	// Check DialogToken
 	//
 	DialogToken = *((pu1Byte)posMpdu->Octet + FRAME_OFFSET_GAS_COMEBACK_REQ_DIALOG_TOKEN);
 	if(DialogToken != pP2PInfo->SDContext.DialogToken)
 	{
-		RT_TRACE_F(COMP_P2P, DBG_LOUD, 
+		RT_TRACE_F(COMP_P2P, DBG_LOUD,
 			("[WARNING] Target DialogToken (%d) and mine (%d) are mismatch\n", DialogToken, pP2PInfo->SDContext.DialogToken));
 		return RT_STATUS_INVALID_DATA;
 	}
-	
+
 	//
 	// Decide value of bMoreData
 	//
-	if(pP2PInfo->SDContext.ANQPQueryRspFieldToSendOffset >= 
+	if(pP2PInfo->SDContext.ANQPQueryRspFieldToSendOffset >=
 		pP2PInfo->SDContext.ANQPQueryRspFieldToSendSize)
 	{
-		RT_TRACE_F(COMP_P2P, DBG_WARNING, 
+		RT_TRACE_F(COMP_P2P, DBG_WARNING,
 			("[WARNING] no more data to send\n"));
 		return RT_STATUS_INVALID_STATE;
 	}
-	else if(pP2PInfo->SDContext.ANQPQueryRspFieldToSendOffset< 
+	else if(pP2PInfo->SDContext.ANQPQueryRspFieldToSendOffset<
 		pP2PInfo->SDContext.ANQPQueryRspFieldToSendSize)
 	{
 		u2Byte BytesSent = pP2PInfo->SDContext.ANQPQueryRspFieldToSendOffset;
 		u2Byte TotalBytes = pP2PInfo->SDContext.ANQPQueryRspFieldToSendSize;
-		
+
 		RemainingBytes = TotalBytes - BytesSent;
 
 		if(RemainingBytes > pP2PInfo->SDRspFragmtntThreshold)
@@ -5952,30 +5952,30 @@ P2P_OnSDComebackReq(
 		}
 	}
 
-	RT_TRACE_F(COMP_P2P, DBG_LOUD, 
-		("Remaining bytes(%u), Bytes to Copy(%u), bMoreData(%u)\n", 
-			RemainingBytes, 
+	RT_TRACE_F(COMP_P2P, DBG_LOUD,
+		("Remaining bytes(%u), Bytes to Copy(%u), bMoreData(%u)\n",
+			RemainingBytes,
 			BytesToCopy,
 			bMoreData));
 
 	pP2PInfo->SDWaitForComebackReqSlotCount = 0;
-	
-	p2p_Send_SDComebackRsp(pP2PInfo, 
-		SrcAddr, 
-		DialogToken, 
-		BytesToCopy, 
+
+	p2p_Send_SDComebackRsp(pP2PInfo,
+		SrcAddr,
+		DialogToken,
+		BytesToCopy,
 		bMoreData);
-	
+
 	pP2PInfo->SDContext.ANQPQueryRspFieldToSendOffset += BytesToCopy;
 	pP2PInfo->SDContext.FragmentID++;
-	
+
 	if(!bMoreData)
 	{
 		PlatformZeroMemory(&pP2PInfo->SDContext, sizeof(P2P_SD_CONTEXT));
 		CustomScan_ExtendDwellTime(GET_CUSTOM_SCAN_INFO(pAdapter), P2P_SERVICE_DISCOVERY_COMEBACK_TIMEOUT);
 	}
-	
-	RT_TRACE_F(COMP_P2P, DBG_LOUD, 
+
+	RT_TRACE_F(COMP_P2P, DBG_LOUD,
 		("bMoreData: %u\n", bMoreData));
 
 	return rtStatus;
@@ -5996,7 +5996,7 @@ P2POnANQPQueryRspField(
 	//
 	// Note that we can store maximul  P2P_SD_MAX_SERVICES TLVs
 	//
-	 
+
 	pu1Byte pTLVStart = ANQPQueryRspFieldBuf + 2 + 2 + 3 + 1 + 2;
 	pu1Byte pTLVCurrent = pTLVStart;
 	u2Byte TLVLen;
@@ -6017,15 +6017,15 @@ P2POnANQPQueryRspField(
 		{
 			break;
 		}
-		
+
 		// Validate the TLV length
-		if((pTLVCurrent + OFFSET_SERVICE_RSP_TLV_RSP_DATA) > 
+		if((pTLVCurrent + OFFSET_SERVICE_RSP_TLV_RSP_DATA) >
 			(ANQPQueryRspFieldBuf + ANQPQueryRspFieldSize))
 		{
 			Ret = P2P_SD_STATUS_BAD_RESPONSE_1;
 			break;
 		}
-		
+
 		// Length
 		TLVLen = (ReadEF2Byte(pTLVCurrent + OFFSET_SERVICE_RSP_TLV_LEN));
 		if(TLVLen < (u2Byte)(OFFSET_SERVICE_RSP_TLV_RSP_DATA - OFFSET_SERVICE_RSP_TLV_SERVICE_PROT_TYPE))
@@ -6041,11 +6041,11 @@ P2POnANQPQueryRspField(
 		}
 
 		// Service Protocol Type
-		(ServiceRspTLVList)[*pServiceRspTLVListSize].ServiceDesc.ServiceType = 
+		(ServiceRspTLVList)[*pServiceRspTLVListSize].ServiceDesc.ServiceType =
 			(P2P_SD_PROTOCOL) *((pu1Byte)(pTLVCurrent + OFFSET_SERVICE_RSP_TLV_SERVICE_PROT_TYPE));
 
 		// Status Code
-		(ServiceRspTLVList)[*pServiceRspTLVListSize].Status = 
+		(ServiceRspTLVList)[*pServiceRspTLVListSize].Status =
 			(P2P_SD_STATUS_CODE) *((pu1Byte)(pTLVCurrent + OFFSET_SERVICE_RSP_TLV_STATUS));
 		// For the last status (status of the entire SDComebackRsp), we currently get it from the last TLV
 		Ret = (ServiceRspTLVList)[*pServiceRspTLVListSize].Status;
@@ -6057,15 +6057,15 @@ P2POnANQPQueryRspField(
 			ResponseDataLen = TLVLen - 3;
 			if(ResponseDataLen > P2P_MAX_SERVICE_DESCRIPTOR_BUFFER_LEN)
 			{// buffer overflow
-				RT_TRACE(COMP_P2P,DBG_LOUD, 
+				RT_TRACE(COMP_P2P,DBG_LOUD,
 					("Buffer size overflow: (%u) > (%u) \n",
 					ResponseDataLen,
 					P2P_MAX_SERVICE_DESCRIPTOR_BUFFER_LEN));
 				break;
 			}
 
-			PlatformMoveMemory((ServiceRspTLVList)[*pServiceRspTLVListSize].ServiceDesc.Buffer, 
-				pTLVCurrent + OFFSET_SERVICE_RSP_TLV_RSP_DATA, 
+			PlatformMoveMemory((ServiceRspTLVList)[*pServiceRspTLVListSize].ServiceDesc.Buffer,
+				pTLVCurrent + OFFSET_SERVICE_RSP_TLV_RSP_DATA,
 				ResponseDataLen);
 			(ServiceRspTLVList)[*pServiceRspTLVListSize].ServiceDesc.BufferLength = ResponseDataLen;
 			//DbgPrint("ResponseDataLen: %u\n", ResponseDataLen);
@@ -6145,7 +6145,7 @@ P2P_OnSDComebackRsp(
 	//
 	// Check Dialog Token
 	//
-	if(*((pu1Byte)posMpdu->Octet + FRAME_OFFSET_GAS_COMEBACK_RSP_DIALOG_TOKEN) != 
+	if(*((pu1Byte)posMpdu->Octet + FRAME_OFFSET_GAS_COMEBACK_RSP_DIALOG_TOKEN) !=
 		pP2PInfo->SDContext.DialogToken)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] Pkt DialogToken (%d) and mine (%d) are mismatch\n",
@@ -6160,20 +6160,20 @@ P2P_OnSDComebackRsp(
 		u1Byte GASQueryRspFragmentID = *((pu1Byte)posMpdu->Octet + FRAME_OFFSET_GAS_COMEBACK_RSP_FRAG_ID);
 
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("GASQueryRspFragmentID: %u\n", GASQueryRspFragmentID));
-		
+
 		if(GASQueryRspFragmentID & 0x80)
 		{
 			bMoreData = TRUE;
 		}
 		FragmentID = GASQueryRspFragmentID & (0x7F);
 	}
-	
+
 	//
 	// Check FragmentID
 	//
 	if(FragmentID != pP2PInfo->SDContext.FragmentID)
 	{
-		RT_TRACE(COMP_P2P, DBG_WARNING, 
+		RT_TRACE(COMP_P2P, DBG_WARNING,
 			("[WARNING] expected FragmentID mismatch: expected (%u), recvd (%u)\n",
 			pP2PInfo->SDContext.FragmentID, FragmentID));
 		return RT_STATUS_INVALID_DATA;
@@ -6182,7 +6182,7 @@ P2P_OnSDComebackRsp(
 	{
 		pP2PInfo->SDContext.FragmentID++; // indicates that we are expecting the next fragment
 	}
-	
+
 	//
 	// Get SDComebackRsp fields
 	//
@@ -6192,7 +6192,7 @@ P2P_OnSDComebackRsp(
 
 		// GAS Rsp Fragment ID
 		// Already processed
-		
+
 		// GAS Comeback Delay
 		// Ignore
 
@@ -6201,7 +6201,7 @@ P2P_OnSDComebackRsp(
 
 		// Query Rsp Len
 		QueryRspLen = ReadEF2Byte(posMpdu->Octet + FRAME_OFFSET_GAS_COMEBACK_RSP_LEN); // ignore
-		
+
 		//
 		// Defrag ANQP Query Rsp Field
 		//
@@ -6209,8 +6209,8 @@ P2P_OnSDComebackRsp(
 		{
 			if(pP2PInfo->SDContext.ANQPQueryRspFieldToSendSize + QueryRspLen <= P2P_MAX_SERVICE_BUF_SIZE)
 			{
-				PlatformMoveMemory(pP2PInfo->SDContext.ANQPQueryRspFieldToSendBuf + pP2PInfo->SDContext.ANQPQueryRspFieldToSendSize, 
-					posMpdu->Octet + FRAME_OFFSET_GAS_COMEBACK_RSP_QUERY_RSP, 
+				PlatformMoveMemory(pP2PInfo->SDContext.ANQPQueryRspFieldToSendBuf + pP2PInfo->SDContext.ANQPQueryRspFieldToSendSize,
+					posMpdu->Octet + FRAME_OFFSET_GAS_COMEBACK_RSP_QUERY_RSP,
 					QueryRspLen);
 				pP2PInfo->SDContext.ANQPQueryRspFieldToSendSize += QueryRspLen;
 			}
@@ -6218,8 +6218,8 @@ P2P_OnSDComebackRsp(
 			{
 				// Prefast warning C6328: Size mismatch ignore
 #pragma warning (disable: 6328)
-				RT_TRACE_F(COMP_P2P, DBG_SERIOUS, 
-					("[ERROR] no enough buf for the ComebackRsp: buflen(%u) + QueryRspLen(%u) > bufsize(%u)\n", 
+				RT_TRACE_F(COMP_P2P, DBG_SERIOUS,
+					("[ERROR] no enough buf for the ComebackRsp: buflen(%u) + QueryRspLen(%u) > bufsize(%u)\n",
 					pP2PInfo->SDContext.ANQPQueryRspFieldToSendSize,
 					QueryRspLen,
 					P2P_MAX_SERVICE_BUF_SIZE));
@@ -6230,10 +6230,10 @@ P2P_OnSDComebackRsp(
 		// Service update indicator
 		if(FragmentID == 0)
 		{
-			pP2PInfo->SDContext.ServiceUpdateIndicator = 
+			pP2PInfo->SDContext.ServiceUpdateIndicator =
 				ReadEF2Byte(posMpdu->Octet + FRAME_OFFSET_GAS_COMEBACK_RSP_SERVICE_UPDATE_INDICATOR);
 		}
-		
+
 		if(QueryRspLen == 0)
 		{
 			return rtStatus;
@@ -6242,7 +6242,7 @@ P2P_OnSDComebackRsp(
 
 	if(bMoreData)
 	{
-		p2p_Send_SDComebackReq(pP2PInfo, 
+		p2p_Send_SDComebackReq(pP2PInfo,
 			pP2PInfo->SDContext.TargetDeviceAddress,
 			pP2PInfo->SDContext.DialogToken);
 	}
@@ -6250,14 +6250,14 @@ P2P_OnSDComebackRsp(
 	{
 		if(!bBufferOut)
 		{
-			RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "ANQP Defrag result: ", 
-				pP2PInfo->SDContext.ANQPQueryRspFieldToSendBuf, 
+			RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "ANQP Defrag result: ",
+				pP2PInfo->SDContext.ANQPQueryRspFieldToSendBuf,
 				pP2PInfo->SDContext.ANQPQueryRspFieldToSendSize);
-			
-			pP2PInfo->SDContext.Status = P2POnANQPQueryRspField(pP2PInfo, 
-				pP2PInfo->SDContext.ANQPQueryRspFieldToSendBuf, 
-				pP2PInfo->SDContext.ANQPQueryRspFieldToSendSize, 
-				pP2PInfo->SDContext.ServiceRspRecvd, 
+
+			pP2PInfo->SDContext.Status = P2POnANQPQueryRspField(pP2PInfo,
+				pP2PInfo->SDContext.ANQPQueryRspFieldToSendBuf,
+				pP2PInfo->SDContext.ANQPQueryRspFieldToSendSize,
+				pP2PInfo->SDContext.ServiceRspRecvd,
 				&pP2PInfo->SDContext.ServiceRspRecvdSize);
 
 			if(pP2PInfo->SDContext.Status == P2P_SD_STATUS_SUCCESS)
@@ -6270,12 +6270,12 @@ P2P_OnSDComebackRsp(
 		P2PScanListEnterScanCompleteImmediately(pP2PInfo);
 	}
 
-	RT_TRACE_F(COMP_P2P, DBG_LOUD, 
-		("Status: %u, Recvd FragID: %u, nRspTLVs got from defragmented ANQP: %u\n", 
+	RT_TRACE_F(COMP_P2P, DBG_LOUD,
+		("Status: %u, Recvd FragID: %u, nRspTLVs got from defragmented ANQP: %u\n",
 		pP2PInfo->SDContext.Status, FragmentID, pP2PInfo->SDContext.ServiceRspRecvdSize));
 
 	return rtStatus;
-} 
+}
 
 BOOLEAN
 P2PCommonChannelArrived(
@@ -6331,13 +6331,13 @@ P2PCommonChannelArrived(
 				return FALSE;
 			}
 		}
-		
+
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("P2PScanListCeaseScan\n"));
 		p2p_DevList_Unlock(&pP2PInfo->devList);
 		P2PScanListCeaseScan(pP2PInfo);
 		p2p_DevList_Lock(&pP2PInfo->devList);
 
-		RT_TRACE(COMP_P2P, DBG_LOUD, 
+		RT_TRACE(COMP_P2P, DBG_LOUD,
 			("P2PCommonChannelArrived(): Recv ProbeRsp from the target device = > start Group Formation\n"));
 		pP2PInfo->bPreGroupFormation = FALSE;
 
@@ -6359,17 +6359,17 @@ P2PCommonChannelArrived(
 	if(pP2PInfo->ProvisionDiscoveryContext.bDoingProvisionDiscovery)
 	{
 		u1Byte *pdTargetMac = NULL;
-		
+
 		if(pP2PInfo->ProvisionDiscoveryContext.go)
 			pdTargetMac = pP2PInfo->ProvisionDiscoveryContext.goBssid;
 		else
 			pdTargetMac = pP2PInfo->ProvisionDiscoveryContext.devAddr;
-		
+
 		if(eqMacAddr(pDev->mac, pdTargetMac))
 		{// source is the device we are trying to invite
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
-				("P2PCommonChannelArrived(): Recv Probe from the provision discovery request target, state: %u\n", 
-				pP2PInfo->State));			
+			RT_TRACE(COMP_P2P, DBG_LOUD,
+				("P2PCommonChannelArrived(): Recv Probe from the provision discovery request target, state: %u\n",
+				pP2PInfo->State));
 
 			//
 			// <Roger_Notes> Retrieve specific P2P device info. from Win8 Specific Device Information Pool to initiate boost initial gain
@@ -6377,7 +6377,7 @@ P2PCommonChannelArrived(
 			//
 			pP2PDeviceListEntry = P2PDeviceListFind(&pP2PInfo->DeviceList, pDev->mac);
 			if(pP2PDeviceListEntry)
-			{	
+			{
 				if(P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter))
 				{
 					BoostInitGainValue = TRUE;
@@ -6388,7 +6388,7 @@ P2PCommonChannelArrived(
 			}
 
 			pP2PInfo->State = P2P_STATE_PROVISION_DISCOVERY_REQ_SEND;
-			CustomScan_ExtendDwellTime(GET_CUSTOM_SCAN_INFO(pP2PInfo->pAdapter), 
+			CustomScan_ExtendDwellTime(GET_CUSTOM_SCAN_INFO(pP2PInfo->pAdapter),
 				P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter) ? P2P_PROVISION_DISCOVERY_SHORT_TIMEOUT : P2P_PROVISION_DISCOVERY_TIMEOUT
 				);
 
@@ -6396,26 +6396,26 @@ P2PCommonChannelArrived(
 			p2p_Send_PDReq(pP2PInfo, pDev->mac, P2P_DEV_TYPE_GO == pDev->type, pP2PInfo->DialogToken, pDev->p2p->pdConfigMethod);
 
 			pP2PInfo->ProvisionDiscoveryContext.bDoingProvisionDiscovery = FALSE;
-			
+
 			NextState = P2P_STATE_PROVISION_DISCOVERY_RSP_WAIT;
-			
+
 			bCommonChannelArrived = TRUE;
 		}
 	}
 
 	if(pP2PInfo->InvitationContext.bToSendInvitationReqOnProbe)
 	{
-		
+
 		if(eqMacAddr(pDev->mac, pP2PInfo->InvitationContext.InvitedDevice.DeviceAddress))
 		{// source is the device we are trying to invite
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
-				("P2PCommonChannelArrived(): Recv Probe from the invitee device = > to send invitation req, state: %u\n", 
+			RT_TRACE(COMP_P2P, DBG_LOUD,
+				("P2PCommonChannelArrived(): Recv Probe from the invitee device = > to send invitation req, state: %u\n",
 				pP2PInfo->State));
 
 			pP2PInfo->InvitationContext.bToSendInvitationReqOnProbe = FALSE;
 			//pP2PInfo->InvitationContext.Channel = P2PScanListCeaseScan(pP2PInfo);
 
-			pP2PInfo->State = P2P_STATE_INVITATION_REQ_SEND;			
+			pP2PInfo->State = P2P_STATE_INVITATION_REQ_SEND;
 
 			//
 			// <Roger_Notes> Retrieve specific P2P device info. from Win8 Specific Device Information Pool to initiate boost initial gain
@@ -6423,7 +6423,7 @@ P2PCommonChannelArrived(
 			//
 			pP2PDeviceListEntry = P2PDeviceListFind(&pP2PInfo->DeviceList, pDev->mac);
 			if(pP2PDeviceListEntry)
-			{	
+			{
 				if(P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter))
 				{
 					BoostInitGainValue = TRUE;
@@ -6432,7 +6432,7 @@ P2PCommonChannelArrived(
 					RT_TRACE(COMP_P2P, DBG_LOUD, ("[BOOST_INIT_GAIN_OS] P2P_STATE_INVITATION_REQ_SEND: SignalStrength(%#x)\n", pP2PDeviceListEntry->RecvSignalPower));
 				}
 			}
-						
+
 			CustomScan_ExtendDwellTime(GET_CUSTOM_SCAN_INFO(pP2PInfo->pAdapter), P2P_INVITATION_FRAME_TIMEOUT);
 
 			p2p_Send_InvitationReq(pP2PInfo, pDev->mac);
@@ -6446,21 +6446,21 @@ P2PCommonChannelArrived(
 	if(pP2PInfo->SDContext.bDoingServiceDiscovery)
 	{
 		PP2P_SD_CONTEXT pServiceDiscvoery = &(pP2PInfo->SDContext);
-		
+
 		if(eqMacAddr(pServiceDiscvoery->TargetDeviceAddress, pDev->mac))
 		{
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
-				("P2PCommonChannelArrived(): Recv Probe from the service discovery request target, state: %u\n", 
+			RT_TRACE(COMP_P2P, DBG_LOUD,
+				("P2PCommonChannelArrived(): Recv Probe from the service discovery request target, state: %u\n",
 				pP2PInfo->State));
 			pP2PInfo->SDContext.bDoingServiceDiscovery = FALSE;
 
 			//pP2PInfo->SDContext.Channel = P2PScanListCeaseScan(pP2PInfo);
 			pP2PInfo->State = P2P_STATE_SERVICE_DISCOVERY_REQ_SEND;
-			
+
 			CustomScan_ExtendDwellTime(GET_CUSTOM_SCAN_INFO(pP2PInfo->pAdapter), P2P_SERVICE_DISCOVERY_TIMEOUT);
 
 			p2p_Send_SDReq(pP2PInfo, pDev->mac);
-			
+
 			NextState = P2P_STATE_SERVICE_DISCOVERY_RSP_WAIT;
 
 			bCommonChannelArrived = TRUE;
@@ -6469,12 +6469,12 @@ P2PCommonChannelArrived(
 
 	//
 	// Go to the intended state immediately if common channel arrived.
-	// 
+	//
 	if(bCommonChannelArrived)
 	{
 		BOOLEAN bScanInProgress = MgntScanInProgress(&pP2PInfo->pAdapter->MgntInfo);
 		u4Byte msDelayStart = 0;
-		
+
 		// Wait more time for the response packet.
 		if(NextState == P2P_STATE_PROVISION_DISCOVERY_RSP_WAIT ||
 			NextState == P2P_STATE_INVITATION_RSP_WAIT ||
@@ -6482,7 +6482,7 @@ P2PCommonChannelArrived(
 		{
 			msDelayStart += 100; // Wait 100 ms for the rsp packet
 		}
-		
+
 		if(P2P_DOING_DEVICE_DISCOVERY(pP2PInfo))
 		{// Doing P2P Device Discovery
 			msDelayStart += 10; // if scan in progress, we have to wait until ScanComplete() finishes
@@ -6494,7 +6494,7 @@ P2PCommonChannelArrived(
 			//P2PScanListCeaseScan(pP2PInfo);
 			P2PExtendedListenComplete(pP2PInfo);
 		}
-		else if(bScanInProgress) 
+		else if(bScanInProgress)
 		{// Doing normal scan
 			msDelayStart += 10; // if scan in progress, we have to wait until ScanComplete() finishes
 			//P2PScanListCeaseScan(pP2PInfo);
@@ -6502,7 +6502,7 @@ P2PCommonChannelArrived(
 
 		pP2PInfo->State = NextState;
 
-		// PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer); 
+		// PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
 		// PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, msDelayStart);
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Set P2PMgntTimer %d ms!\n", msDelayStart));
 	}
@@ -6523,7 +6523,7 @@ P2PInitializeChannelEntryList(
 	// Channel entry list.
 	// Set to the channels we support by default.
 	//
-	
+
 	PADAPTER pAdapter = pP2PInfo->pAdapter;
 	u1Byte i;
 	u2Byte SupportedWirelessMode = pAdapter->HalFunc.GetSupportedWirelessModeHandler(pAdapter);
@@ -6541,11 +6541,11 @@ P2PInitializeChannelEntryList(
 	// Init channel entry list
 	//
 	pAdapter->MgntInfo.ChannelPlan = GetDefaultAdapter(pAdapter)->MgntInfo.ChannelPlan;
-		
+
 	PlatformZeroMemory(&pP2PInfo->ChannelEntryList, sizeof(pP2PInfo->ChannelEntryList));
 
 	pChannelList = GET_RT_CHANNEL_LIST(&pAdapter->MgntInfo);//MgntActQuery_ChannelList(pP2PInfo->pAdapter);
-		
+
 	for(i = 0; i < pChannelList->ChannelLen; i++)
 	{
 		chList[nChList++] = pChannelList->ChnlListEntry[i].ChannelNum;
@@ -6561,7 +6561,7 @@ P2PInitialize(
 	IN u1Byte ListenChannel,
 	IN u1Byte IntendedOpChannel,
 	IN u1Byte GOIntent
-	) 
+	)
 {
 	BOOLEAN		bBoostIgi = FALSE;
 	BOOLEAN		bSupportHwP2pPs = FALSE;
@@ -6583,7 +6583,7 @@ P2PInitialize(
 	}
 	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("P2P Support Type = %s\n", (P2P_SUPPORT_STATE_RTK_SUPPORT == pAdapter->P2PSupport) ? "RTK_SUPPORT" : "OS_SUPPORT"));
 	// Win8: Point to self adapter
-	pP2PInfo->pAdapter = pAdapter;	
+	pP2PInfo->pAdapter = pAdapter;
 
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("===> P2PInitialize(): port number %d\n", pP2PInfo->pAdapter->pNdis62Common->PortNumber));
 
@@ -6606,7 +6606,7 @@ P2PInitialize(
 		// Win8: Let the interface address be the permanent address
 		cpMacAddr(pP2PInfo->InterfaceAddress, pAdapter->PermanentAddress);
 	}
-	else 
+	else
 	{
 		// In Win7: pAdapter->CurrentAddress == pAdapter->PermanentAddress
 		cpMacAddr(pP2PInfo->InterfaceAddress, pAdapter->CurrentAddress);
@@ -6640,7 +6640,7 @@ P2PInitialize(
 	{
 		pP2PInfo->OperatingChannel = IntendedOpChannel;
 	}
-	
+
 	pP2PInfo->ListenChannel = ListenChannel;
 
 	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("GOIntent = %d, OP Chnl = %d, ListenChnl = %d\n", pP2PInfo->GOIntent, pP2PInfo->OperatingChannel, pP2PInfo->ListenChannel));
@@ -6649,7 +6649,7 @@ P2PInitialize(
 	{
 		MgntActSet_P2PListenChannel(pAdapter, ListenChannel);
 	}
-	
+
 	pP2PInfo->CountryString[0] = 0x55; //US
 	pP2PInfo->CountryString[1] = 0x53;
 	pP2PInfo->CountryString[2] = 0x04;
@@ -6667,12 +6667,12 @@ P2PInitialize(
 		//
 		// Not to clear the WPS IE because we should use the one set by normal UI,
 		// The testing UI does not know the exact WPS IE.
-		// 
+		//
 		//pP2PInfo->WpsInfoLen = 0;
 
-		RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PInitialize(): primary dev type: %u\n", 
+		RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PInitialize(): primary dev type: %u\n",
 			pP2PInfo->WpsAttributes.PrimaryDeviceType.CategoryId));
-		RT_PRINT_STR(COMP_P2P, DBG_LOUD, "P2PInitialize(): Device Name:\n", 
+		RT_PRINT_STR(COMP_P2P, DBG_LOUD, "P2PInitialize(): Device Name:\n",
 			pP2PInfo->WpsAttributes.DeviceName, pP2PInfo->WpsAttributes.DeviceNameLength);
 	}
 
@@ -6701,7 +6701,7 @@ P2PInitialize(
 	pP2PInfo->bReinitiateConnection= FALSE;
 	pP2PInfo->TimeStartWaitingForReinitiate = 0;
 	pP2PInfo->PreviousGONegoResult = (P2P_STATUS_CODE)0;
-	
+
 	PlatformZeroMemory(&pP2PInfo->InvitationContext, sizeof(P2P_INVITATION_CONTEXT));
 	pP2PInfo->bAcceptInvitation = FALSE;
 	PlatformZeroMemory(pP2PInfo->AccpetInvitationDeviceAddress, 6);
@@ -6718,7 +6718,7 @@ P2PInitialize(
 	PlatformZeroMemory(&pP2PInfo->SDContext, sizeof(P2P_SD_CONTEXT));
 	pP2PInfo->SDRspFragmtntThreshold = P2P_SERVICE_MAX_RSP_FRAG_THRESHOLD;
 	pP2PInfo->SDWaitForComebackReqSlotCount = 0;
-		
+
 	//PlatformZeroMemory(&pP2PInfo->PersistentProfile, sizeof(P2P_PERSISTENT_PROFILE));
 
 	// ICS
@@ -6820,7 +6820,7 @@ P2PInitialize(
 	PlatformZeroMemory(pP2PInfo->DiscoverForSpecificChannels, sizeof(pP2PInfo->DiscoverForSpecificChannels));
 	pP2PInfo->uNumberOfDiscoverForSpecificChannels = 0;
 	pP2PInfo->uNumberOfDiscoverRounds = 0;
-	
+
 	// + Win8 Trick to Speed up GO Negotiation Procedure
 	pP2PInfo->LastDeviceDiscoveryOidIssueTime = 0;
 	pP2PInfo->LastDeviceDiscoveryIndicatedTime = 0;
@@ -6830,8 +6830,8 @@ P2PInitialize(
 	PlatformZeroMemory(&pP2PInfo->DeviceList, sizeof(P2P_DEVICE_LIST));
 	PlatformZeroMemory(&pP2PInfo->DeviceListForQuery, sizeof(P2P_DEVICE_LIST));
 	//-----------------------------------------------------------------------------------
-	
-	// For Win 8: OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_REQUEST --------------------------------------	
+
+	// For Win 8: OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_REQUEST --------------------------------------
 	pP2PInfo->ProvisionRequestGroupCapability = 0;
 	pP2PInfo->bProvisionRequestUseGroupID = FALSE;
 	PlatformZeroMemory(pP2PInfo->ProvisionRequestGroupIDDeviceAddress, 6);
@@ -6840,7 +6840,7 @@ P2PInitialize(
 
 	// -------------------------------------------------------------------------------------------------
 
-	// For Win 8: OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_RESPONSE --------------------------------------	
+	// For Win 8: OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_RESPONSE --------------------------------------
 	PlatformZeroMemory(pP2PInfo->ProvisionResponseReceiverDeviceAddress, 6);
 	pP2PInfo->ProvisionResponseDialogToken = 0;
 	// -------------------------------------------------------------------------------------------------
@@ -6921,7 +6921,7 @@ P2PInitialize(
 	// Debug Device Discovery  -------------------
 	pP2PInfo->ProbeRequestSequenceNum = 0;
 	// ----------------------------------------
-	
+
 	// Trick for knowing next channel switch time -----------
 	pP2PInfo->TimeStartToStopSendingProbeResponse = 0;
 	// -----------------------------------------------
@@ -6960,7 +6960,7 @@ P2PResetCommonChannelArrivingProcess(
 	pP2PInfo->SDContext.bDoingServiceDiscovery = FALSE;
 	PlatformZeroMemory(&pP2PInfo->SDContext, sizeof(P2P_SD_CONTEXT));
 
-	FunctionOut(COMP_P2P);	
+	FunctionOut(COMP_P2P);
 }
 
 //
@@ -6977,18 +6977,18 @@ P2PDeviceDiscovery(
 	BOOLEAN bScanInProgress;
 	u4Byte msDelayStart = 0;
 	BOOLEAN bToIndicDevDiscComp = FALSE;
-	
+
 	if(!P2P_ENABLED(pP2PInfo))
 	{
 		return FALSE;
 	}
-	
+
 	//
 	// Stop any existing scan
 	//
 	bScanInProgress = MgntScanInProgress(&pP2PInfo->pAdapter->MgntInfo);
 
-	RT_TRACE(COMP_P2P, DBG_LOUD, 
+	RT_TRACE(COMP_P2P, DBG_LOUD,
 			("P2PDeviceDiscovery(): State: %u, bScanInProgres: %u port number %d\n",
 			pP2PInfo->State, bScanInProgress, pP2PInfo->pAdapter->pNdis62Common->PortNumber));
 
@@ -7004,7 +7004,7 @@ P2PDeviceDiscovery(
 		P2PScanListCeaseScan(pP2PInfo);
 		P2PExtendedListenComplete(pP2PInfo);
 	}
-	else if(bScanInProgress) 
+	else if(bScanInProgress)
 	{// Doing normal scan
 		msDelayStart += 10; // if scan in progress, we have to wait until ScanComplete() finishes
 		P2PScanListCeaseScan(pP2PInfo);
@@ -7024,12 +7024,12 @@ P2PDeviceDiscovery(
 
 	if(pP2PInfo->Role == P2P_GO)
 	{
-		P2PStopResumeGOBeaconning(pP2PInfo, FALSE);	
+		P2PStopResumeGOBeaconning(pP2PInfo, FALSE);
 	}
 
 	//
 	// Clear scan list before scan.
-	// If we are a GO, we shall not clear our scan list since when a client associates, 
+	// If we are a GO, we shall not clear our scan list since when a client associates,
 	// it provides its info to us in AssocReq, and we record the info in our scan list.
 	// If we clear this info, we will lost the info of the associated clients.
 	//
@@ -7038,22 +7038,22 @@ P2PDeviceDiscovery(
 	{
 		P2PScanListClear(pP2PInfo);
 	}
-	
+
 	PlatformAcquireSpinLock(pP2PInfo->pAdapter, RT_P2P_SPIN_LOCK);
 	P2P_INC_REF_CNT(pP2PInfo);
 	PlatformReleaseSpinLock(pP2PInfo->pAdapter, RT_P2P_SPIN_LOCK);
-	
+
 //	pP2PInfo->StateBeforeScan = pP2PInfo->State;
-	
+
 	pP2PInfo->State = P2P_STATE_DEV_DISC_START;
 //	pP2PInfo->bDeviceDiscoveryInProgress = TRUE;
 
 	pP2PInfo->ConnectionContext.FindPhaseLoopTimes = FindPhaseLoopTimes;
 
-	RT_TRACE(COMP_P2P, DBG_LOUD, 
-		("P2PDeviceDiscovery(): delay start after %d (ms), StateBeforeScan: %u\n", 
+	RT_TRACE(COMP_P2P, DBG_LOUD,
+		("P2PDeviceDiscovery(): delay start after %d (ms), StateBeforeScan: %u\n",
 		msDelayStart, pP2PInfo->StateBeforeScan));
-	
+
 	//if(MgntActQuery_802_11_CHANNEL_NUMBER((GetDefaultAdapter(pP2PInfo->pAdapter))) != pP2PInfo->ListenChannel)
 	//{
 	//	// Reset Listen Channel to see if we have chance to switch current channel back to the Listen Channel.
@@ -7097,9 +7097,9 @@ P2PDeviceDiscoverForSpecificChannels(
 	CustomScan_SetupCbCtx(req, p2p_ScanStateCb, pP2PInfo->pAdapter);
 	CustomScan_IssueReq(customScanInfo, req, CUSTOM_SCAN_SRC_TYPE_P2P, "spec chnl disc");
 
-	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("P2PDeviceDiscoverForSpecificChannels issued\n"));	
+	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("P2PDeviceDiscoverForSpecificChannels issued\n"));
 
-	return;		
+	return;
 }
 
 VOID
@@ -7107,11 +7107,11 @@ P2PDeviceDiscoveryComplete(
 	IN PP2P_INFO pP2PInfo,
 	IN BOOLEAN	bRecoverState
 	)
-{	
-	// 
+{
+	//
 	// We do some clean up task here.
 	//
-	
+
 	// For Win8 P2P Indication ------------------------------------------------------------
 	if(P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter) && pP2PInfo->bDeviceDiscoveryIndicateToOS == TRUE)
 	{
@@ -7126,7 +7126,7 @@ P2PDeviceDiscoveryComplete(
 
 		pP2PInfo->bDiscoverForSpecificChannels = FALSE;
 		PlatformZeroMemory(
-				pP2PInfo->DiscoverForSpecificChannels, 
+				pP2PInfo->DiscoverForSpecificChannels,
 				sizeof(pP2PInfo->DiscoverForSpecificChannels)
 			);
 		pP2PInfo->uNumberOfDiscoverForSpecificChannels = 0;
@@ -7139,12 +7139,12 @@ P2PDeviceDiscoveryComplete(
 	{
 		P2PStopResumeGOBeaconning(pP2PInfo, TRUE);
 	}
-	
-	
+
+
 	if(bRecoverState)
 	{
 		// discovery complete, back to original state
-		RT_TRACE(COMP_P2P, DBG_LOUD, 
+		RT_TRACE(COMP_P2P, DBG_LOUD,
 			("P2PDeviceDiscoveryComplete(): P2P_STATE_DEV_DISC_COMPLETE: back to state (%u) from (%u)\n",
 			pP2PInfo->StateBeforeScan, pP2PInfo->State));
 		pP2PInfo->State = pP2PInfo->StateBeforeScan;
@@ -7155,7 +7155,7 @@ P2PDeviceDiscoveryComplete(
 	P2PSvc_OnDevDiscComplete(pP2PInfo->pP2PSvcInfo);
 
 }
-	
+
 
 VOID
 P2PExtendedListenStart(
@@ -7173,7 +7173,7 @@ P2PExtendedListenStart(
 	{
 		return;
 	}
-	
+
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("===> P2PExtendedListenStart()\n"));
 
 #if (MULTICHANNEL_SUPPORT == 1)
@@ -7191,15 +7191,15 @@ P2PExtendedListenStart(
 	if(GetFirstGOPort(pAdapter) || GetFirstClientPort(pAdapter))
 	{
 		ADAPTER *cli = GetFirstClientPort(pAdapter);
-		
+
 		if(cli && GET_P2P_INFO(cli)
 			&& (P2P_CLIETN_JOIN_GROUP_WPS_STATE_SCANNING == (GET_P2P_INFO(cli))->ClientJoinGroupContext.WpsState
 			|| P2P_CLIENT_JOIN_GROUP_WPS_STATE_GO_READY == (GET_P2P_INFO(cli))->ClientJoinGroupContext.WpsState
 			|| P2P_CLIETN_JOIN_GROUP_WPS_STATE_ASSOCIATING == (GET_P2P_INFO(cli))->ClientJoinGroupContext.WpsState
 			))
 		{// don't do scan in this case
-			RT_TRACE_F(COMP_P2P, DBG_LOUD, 
-				("do not use extended listen when cli port is doing WPS join group, state: %u\n", 
+			RT_TRACE_F(COMP_P2P, DBG_LOUD,
+				("do not use extended listen when cli port is doing WPS join group, state: %u\n",
 				(GET_P2P_INFO(cli))->ClientJoinGroupContext.WpsState));
 			FunctionOut(COMP_P2P);
 			return;
@@ -7223,7 +7223,7 @@ P2PExtendedListenStart(
 	}
 	// --------------------------------------------------------------------------------------------------
 
-	RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: listen channel: %d, Current Channel: %d\n", 
+	RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: listen channel: %d, Current Channel: %d\n",
 			__FUNCTION__, pP2PInfo->ListenChannel, RT_GetChannelNumber(pAdapter))
 		);
 
@@ -7245,15 +7245,15 @@ P2PExtendedListenStart(
 
 	p2p_Construct_ProbeReq(probeReqBuf, pP2PInfo);
 
-	CustomScan_AddScanChnl(req, 
-		pP2PInfo->ListenChannel, 1, 
-		(pP2PInfo->bSendProbeReqInExtendedListen) ? SCAN_ACTIVE : SCAN_PASSIVE, 
+	CustomScan_AddScanChnl(req,
+		pP2PInfo->ListenChannel, 1,
+		(pP2PInfo->bSendProbeReqInExtendedListen) ? SCAN_ACTIVE : SCAN_PASSIVE,
 		pP2PInfo->ExtListenTimingDuration, P2P_LOWEST_RATE, probeReqBuf);
 
 	CustomScan_IssueReq(customScanInfo, req, CUSTOM_SCAN_SRC_TYPE_P2P, "ext listen");
-	
+
 	FunctionOut(COMP_P2P);
-	
+
 }
 
 VOID
@@ -7273,7 +7273,7 @@ P2PExtendedListenComplete(
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PExtendedListenComplete()\n"));
 	pP2PInfo->bExtendedListening = FALSE;
 
-	if(MgntActQuery_802_11_CHANNEL_NUMBER((GetDefaultAdapter(pP2PInfo->pAdapter))) != pP2PInfo->ListenChannel && 
+	if(MgntActQuery_802_11_CHANNEL_NUMBER((GetDefaultAdapter(pP2PInfo->pAdapter))) != pP2PInfo->ListenChannel &&
 		!MgntIsLinkInProgress(GetDefaultMgntInfo(pP2PInfo->pAdapter)))
 	{
 		// Reset Listen Channel to see if we have chance to switch current channel back to the Listen Channel.
@@ -7339,11 +7339,11 @@ P2PProvisionDiscovery(
 				}
 			}
 		}
-		
+
 		p2p_DevList_TranslateDev(pDev, &desc);
 
 		devAddr = desc.DeviceAddress;
-	
+
 	//
 	// For Sigma
 	//
@@ -7359,12 +7359,12 @@ P2PProvisionDiscovery(
 		{
 				RT_TRACE(COMP_P2P, DBG_LOUD, ("<=== P2PProvisionDiscovery(): ConfigMethod is 0 and we don't know peer's DPID\n"));
 				break;
-			}	
+			}
 		}
 
 	if(!P2PTestU2SingleBitSet(ConfigMethod))
 	{
-		RT_TRACE(COMP_P2P, DBG_LOUD, 
+		RT_TRACE(COMP_P2P, DBG_LOUD,
 			("<=== P2PProvisionDiscovery(): ConfigMethod has multiple bit set: %u\n", ConfigMethod));
 			p2p_DevList_Unlock(&pP2PInfo->devList);
 		return FALSE;
@@ -7379,7 +7379,7 @@ P2PProvisionDiscovery(
 		if(P2P_DEV_TYPE_GO == pDev->type)
 		{
 			cpMacAddr(pProvisionDiscContext->goBssid, pDev->mac);
-			CopySsid(pProvisionDiscContext->SsidBuf, pProvisionDiscContext->SsidLen, 
+			CopySsid(pProvisionDiscContext->SsidBuf, pProvisionDiscContext->SsidLen,
 				desc.SsidBuf, desc.SsidLen);
 		}
 	pProvisionDiscContext->bDoingProvisionDiscovery = TRUE;
@@ -7390,7 +7390,7 @@ P2PProvisionDiscovery(
 			if(0 != desc.OperatingChannel)
 				pProvisionDiscContext->Channel = desc.OperatingChannel;
 		else
-				pProvisionDiscContext->Channel = desc.ListenChannel; 
+				pProvisionDiscContext->Channel = desc.ListenChannel;
 		}
 	else
 	{
@@ -7421,7 +7421,7 @@ P2PProvisionDiscovery(
 	return TRUE;
 }
 
-VOID 
+VOID
 P2PServiceDiscoveryReq(
 	PP2P_INFO pP2PInfo,
 	PP2P_SD_REQ_CONTEXT pServiceQueryContent
@@ -7434,21 +7434,21 @@ P2PServiceDiscoveryReq(
 
 	if(!P2P_ENABLED(pP2PInfo))
 	{
-		RT_TRACE(COMP_P2P, DBG_LOUD, 
+		RT_TRACE(COMP_P2P, DBG_LOUD,
 			("<=== P2PServiceDiscoveryReq(): P2P NOT enabled\n"));
 		return;
 	}
 
 	if(pP2PInfo->SDContext.bDoingServiceDiscovery)
 	{// note that bDoingServiceDiscovery is cleared when common channel arrived
-		RT_TRACE(COMP_P2P, DBG_LOUD, 
+		RT_TRACE(COMP_P2P, DBG_LOUD,
 			("<=== P2PServiceDiscoveryReq(): SD in progress\n"));
 		return;
 	}
 
 	if(P2P_DOING_SERVICE_DISCOVERY_REQ(pP2PInfo))
 	{
-		RT_TRACE(COMP_P2P, DBG_LOUD, 
+		RT_TRACE(COMP_P2P, DBG_LOUD,
 			("<=== P2PServiceDiscoveryReq(): SD in progress (frame exhange started)\n"));
 		return;
 	}
@@ -7458,30 +7458,30 @@ P2PServiceDiscoveryReq(
 	//
 	if(pServiceQueryContent->ServiceReqTLVSize < 1) // must have at least 1 query TLV
 	{
-		RT_TRACE(COMP_P2P, DBG_LOUD, 
+		RT_TRACE(COMP_P2P, DBG_LOUD,
 			("<=== P2PServiceDiscoveryReq(): error: must have at least 1 query TLV\n"));
 		return;
 	}
 
 	if(pServiceQueryContent->ServiceReqTLVSize > P2P_SD_MAX_SERVICES)
 	{
-		RT_TRACE(COMP_P2P, DBG_LOUD, 
+		RT_TRACE(COMP_P2P, DBG_LOUD,
 			("<=== P2PServiceDiscoveryReq(): error: can have at most %u TLVs\n", P2P_SD_MAX_SERVICES));
 		return;
 	}
 
-	RT_PRINT_ADDRS(COMP_P2P,DBG_LOUD, 
-		("P2PServiceDiscoveryReq(): target DevAddr: "), 
+	RT_PRINT_ADDRS(COMP_P2P,DBG_LOUD,
+		("P2PServiceDiscoveryReq(): target DevAddr: "),
 		pServiceQueryContent->TargetDeviceAddress, 1);
 
 	pDevDesc = P2PScanListFind(pP2PInfo->ScanList,
 		pP2PInfo->ScanListSize,
-		pServiceQueryContent->TargetDeviceAddress, 
-		NULL, 
+		pServiceQueryContent->TargetDeviceAddress,
+		NULL,
 		NULL);
 	if(pDevDesc == NULL)
 	{
-		RT_TRACE(COMP_P2P, DBG_LOUD, 
+		RT_TRACE(COMP_P2P, DBG_LOUD,
 			("<=== P2PServiceDiscoveryReq(): target device not found in the scan list\n"));
 		return;
 	}
@@ -7496,17 +7496,17 @@ P2PServiceDiscoveryReq(
 		//
 		cpMacAddr(pSDContext->UserSDReq.TargetDeviceAddress, pServiceQueryContent->TargetDeviceAddress);
 		pSDContext->UserSDReq.ServiceReqTLVSize = pServiceQueryContent->ServiceReqTLVSize;
-		
-		PlatformMoveMemory(&pSDContext->UserSDReq.ServiceReqTLVList, 
-			pServiceQueryContent->ServiceReqTLVList, 
+
+		PlatformMoveMemory(&pSDContext->UserSDReq.ServiceReqTLVList,
+			pServiceQueryContent->ServiceReqTLVList,
 			sizeof(P2P_SERVICE_REQ_TLV) * pServiceQueryContent->ServiceReqTLVSize);
-	
-		// Store target listen channel, although we will store the channel when 
+
+		// Store target listen channel, although we will store the channel when
 		// ProbeRsp is received, the target listen channel
 		// can still be a hint for where to search for its ProbeRsp
 		pSDContext->Channel = pDevDesc->ListenChannel;
 
-		// Set to Start Service Dicovery 
+		// Set to Start Service Dicovery
 		pSDContext->bDoingServiceDiscovery = TRUE;
 
 		pSDContext->bRequester = TRUE;
@@ -7525,12 +7525,12 @@ P2PServiceDiscoveryReq(
 	// Do device discovery to find out when the target device is in Listen State.
 	//
 	P2PDeviceDiscovery(pP2PInfo, P2P_SCAN_FIND_PHASE_LOOP_TIMES);
-	
+
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("<=== P2PServiceDiscoveryReq()\n"));
 
 }
 
-VOID 
+VOID
 P2PServiceDiscoveryRsp(
 	PP2P_INFO pP2PInfo,
 	PP2P_SD_RSP_CONTEXT pServiceRspContent
@@ -7558,24 +7558,24 @@ P2PServiceDiscoveryRsp(
 	}
 
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("===> P2PServiceDiscoveryRsp()\n"));
-	
+
 	//
 	// Construct Rsp TLV list from pP2PInfo->SDRspContext
 	//
 	p2p_Construct_AnqpQueryRspField(pP2PInfo, pServiceRspContent, pSDContext);
 
-	RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PServiceDiscoveryRsp(): ANQPQueryRsp Size: %u, Frag Threshold: %u\n", 
+	RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PServiceDiscoveryRsp(): ANQPQueryRsp Size: %u, Frag Threshold: %u\n",
 		pSDContext->ANQPQueryRspFieldToSendSize,
 		pP2PInfo->SDRspFragmtntThreshold));
-	//RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "ANQPQueryRsp constructed: ", 
-	//	pP2PInfo->SDContext.ANQPQueryRspFieldToSendBuf, 
+	//RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "ANQPQueryRsp constructed: ",
+	//	pP2PInfo->SDContext.ANQPQueryRspFieldToSendBuf,
 	//	pP2PInfo->SDContext.ANQPQueryRspFieldToSendSize);
 
 	// To send from offset 0
 	pSDContext->ANQPQueryRspFieldToSendOffset = 0;
-	
+
 	if(pSDContext->ANQPQueryRspFieldToSendSize > pP2PInfo->SDRspFragmtntThreshold)
-	{	
+	{
 		bFragmentSDRsp = TRUE;
 
 		//
@@ -7591,10 +7591,10 @@ P2PServiceDiscoveryRsp(
 		cpMacAddr(pSDContext->TargetDeviceAddress, pServiceRspContent->SourceDeviceAddress);
 	}
 
-	p2p_Send_SDRsp(pP2PInfo, 
-		pSDContext->TargetDeviceAddress, 
-		pSDContext->DialogToken, 
-		pSDContext->Status, 
+	p2p_Send_SDRsp(pP2PInfo,
+		pSDContext->TargetDeviceAddress,
+		pSDContext->DialogToken,
+		pSDContext->Status,
 		bFragmentSDRsp);
 
 	if(bFragmentSDRsp)
@@ -7604,7 +7604,7 @@ P2PServiceDiscoveryRsp(
 	else
 	{
 		PlatformZeroMemory(&pP2PInfo->SDContext, sizeof(P2P_SD_CONTEXT));
-		CustomScan_ExtendDwellTime(GET_CUSTOM_SCAN_INFO(pP2PInfo->pAdapter), 
+		CustomScan_ExtendDwellTime(GET_CUSTOM_SCAN_INFO(pP2PInfo->pAdapter),
 			P2P_SERVICE_DISCOVERY_COMEBACK_TIMEOUT);
 	}
 
@@ -7621,11 +7621,11 @@ P2PConnect(
 	PADAPTER pAdapter = pP2PInfo->pAdapter;
 
 	PP2P_DEVICE_DISCRIPTOR pP2PDeviceDesc = NULL;
-	
+
 	// For the case when we are connecting to a P2P Client
 	PP2P_DEVICE_DISCRIPTOR pGODeviceDesc = NULL;
 	PP2P_CLIENT_INFO_DISCRIPTOR pClientInfoDesc = NULL;
-	
+
 	if(!P2P_ENABLED(pP2PInfo))
 	{
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PConnect(): P2P Disabled\n"));
@@ -7642,14 +7642,14 @@ P2PConnect(
 	//
 	if(pP2PDeviceDesc == NULL)
 	{
-		if(!P2PScanListFindClient(pP2PInfo->ScanList, 
-			pP2PInfo->ScanListSize, 
-			DeviceAddress, 
-			NULL, 
-			&pGODeviceDesc, 
+		if(!P2PScanListFindClient(pP2PInfo->ScanList,
+			pP2PInfo->ScanListSize,
+			DeviceAddress,
+			NULL,
+			&pGODeviceDesc,
 			&pClientInfoDesc))
 		{
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
+			RT_TRACE(COMP_P2P, DBG_LOUD,
 				("P2PConnect(): can't find the device in either the scan list or the client info lists\n"));
 			return FALSE;
 		}
@@ -7661,7 +7661,7 @@ P2PConnect(
 	}
 
 	//
-	// Before calling this function, the upper layer shall make sure that 
+	// Before calling this function, the upper layer shall make sure that
 	// 1. Device Name is included in WPS IE
 	// 2. Device Password ID is included in WPS IE (Clause 3.1.2.4.1)
 	//
@@ -7685,8 +7685,8 @@ P2PConnect(
 	{
 		// Fill ConnectionContext
 		P2PResetCommonChannelArrivingProcess(pP2PInfo);
-		PlatformMoveMemory(&pP2PInfo->ConnectionContext.ConnectingDevice, 
-			pP2PDeviceDesc, 
+		PlatformMoveMemory(&pP2PInfo->ConnectionContext.ConnectingDevice,
+			pP2PDeviceDesc,
 			sizeof(P2P_DEVICE_DISCRIPTOR));
 		pP2PInfo->ConnectionContext.Status = P2P_STATUS_SUCCESS;
 		pP2PInfo->ConnectionContext.DialogToken = IncreaseDialogToken(pP2PInfo->DialogToken);
@@ -7721,9 +7721,9 @@ P2PConnect(
 	{// note that in this case, the mac addr is the interface addr of the GO
 		if(pClientInfoDesc)
 		{
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
+			RT_TRACE(COMP_P2P, DBG_LOUD,
 					("P2PConnect(): peer is a P2P Client\n"));
-			RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, 
+			RT_PRINT_ADDR(COMP_P2P, DBG_LOUD,
 				"GO DevAddr:\n", pP2PDeviceDesc->DeviceAddress);
 
 			//
@@ -7733,9 +7733,9 @@ P2PConnect(
 		}
 		else
 		{
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
+			RT_TRACE(COMP_P2P, DBG_LOUD,
 					("P2PConnect(): peer is a GO\n"));
-			
+
 			//
 			// Now we shall have the dev addr and interface addr of the GO
 			//
@@ -7743,13 +7743,13 @@ P2PConnect(
 			// UI send DevAddr as the MacAddress and we shall not use
 			// it as the IntAddr.
 			/*
-			pP2PDeviceDesc = P2PScanListFind(pP2PInfo->ScanList, 
-				pP2PInfo->ScanListSize, 
-				NULL, 
+			pP2PDeviceDesc = P2PScanListFind(pP2PInfo->ScanList,
+				pP2PInfo->ScanListSize,
+				NULL,
 				MacAddress,
 				NULL); // we use intended addr here
 			*/
-			
+
 			if(pP2PDeviceDesc && pP2PDeviceDesc->SsidLen)
 			{
 				//P2PDumpScanList(pP2PInfo->ScanList, pP2PInfo->ScanListSize);
@@ -7766,14 +7766,14 @@ P2PConnect(
 					P2PScanListCeaseScan(pP2PInfo);
 					P2PExtendedListenComplete(pP2PInfo);
 				}
-				else if(bScanInProgress) 
+				else if(bScanInProgress)
 				{// Doing normal scan
 					P2PScanListCeaseScan(pP2PInfo);
 				}
 
 				// Fill ConnectionContext
-				PlatformMoveMemory(&pP2PInfo->ConnectionContext.ConnectingDevice, 
-					pP2PDeviceDesc, 
+				PlatformMoveMemory(&pP2PInfo->ConnectionContext.ConnectingDevice,
+					pP2PDeviceDesc,
 					sizeof(P2P_DEVICE_DISCRIPTOR));
 				pP2PInfo->ConnectionContext.Status = P2P_STATUS_SUCCESS;
 				pP2PInfo->ConnectionContext.DialogToken = 0;
@@ -7788,54 +7788,54 @@ P2PConnect(
 			}
 			else
 			{// failed to scan the GO
-				RT_TRACE(COMP_P2P, DBG_LOUD, 
+				RT_TRACE(COMP_P2P, DBG_LOUD,
 					("P2PConnect(): the target is not in the scan list\n"));
 				//P2PDumpScanList(pP2PInfo->ScanList, pP2PInfo->ScanListSize);
-				
+
 				pP2PInfo->State = P2P_STATE_INITIALIZED;
 			}
 		}
 	}
 	else
 	{
-		RT_TRACE(COMP_P2P, DBG_LOUD, 
+		RT_TRACE(COMP_P2P, DBG_LOUD,
 			("<=== P2PConnect() peer role is incorrect: %u\n", pP2PDeviceDesc->Role));
 		//P2PDumpScanList(pP2PInfo->ScanList, pP2PInfo->ScanListSize);
 		return FALSE;
 	}
-	
+
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("<=== P2PConnect()\n"));
 	return TRUE;
 }
 
-VOID 
+VOID
 P2PGOStartAutomously(
 	IN PP2P_INFO pP2PInfo
 	)
 {
 	P2P_PROFILE P2PProfile;
-	
+
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("===> P2PGOStartAutomously()\n"));
 
 	P2PProfile.OpChannel = pP2PInfo->OperatingChannel;
-	P2PDetermineGOSsid(pP2PInfo, P2PProfile.SsidBuf, &P2PProfile.SsidBufLen);	
+	P2PDetermineGOSsid(pP2PInfo, P2PProfile.SsidBuf, &P2PProfile.SsidBufLen);
 	CopySsid(pP2PInfo->SSIDBuf, pP2PInfo->SSIDLen, P2PProfile.SsidBuf, P2PProfile.SsidBufLen);
-	
+
 	P2PSetRole(pP2PInfo, P2P_GO);
 	P2PSetOperatingState(pP2PInfo);
 	pP2PInfo->bGOStartedAutonomously = TRUE;
 	pP2PInfo->PreviousGONegoResult = (P2P_STATUS_CODE)P2P_STATUS_MAX;
-	
+
 	P2PIndicateStartApRequest(pP2PInfo, &P2PProfile);
 
 	//
-	// For PF #1, if we do this, legacy STA without WPS can't associate with us 
+	// For PF #1, if we do this, legacy STA without WPS can't associate with us
 	// (associated, but the STA keeps sending AssocReq) when we are an autonomous GO.
 	// This may not be necessary to notify the UI that we are an GO now.
 	//
-	/*P2PIndicateGOFormatedInfo(pP2PInfo, 
-		P2P_STATUS_SUCCESS, 
-		TRUE, 
+	/*P2PIndicateGOFormatedInfo(pP2PInfo,
+		P2P_STATUS_SUCCESS,
+		TRUE,
 		NULL);
 	*/
 
@@ -7850,25 +7850,25 @@ P2PDisconnect(
 	)
 {
 	BOOLEAN bScanInProgress;
-	
+
 	if(!P2P_ENABLED(pP2PInfo))
 	{
 		return;
 	}
 
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("===> P2PDisconnect()\n"));
-	
+
 	//
 	// Stop any existing scan
 	//
 	P2PResetCommonChannelArrivingProcess(pP2PInfo);
-	
+
 	bScanInProgress = MgntScanInProgress(&pP2PInfo->pAdapter->MgntInfo);
 
-	RT_TRACE(COMP_P2P, DBG_LOUD, 
+	RT_TRACE(COMP_P2P, DBG_LOUD,
 			("P2PDisconnect(): State: %u, bScanInProgres: %u\n",
 			pP2PInfo->State, bScanInProgress));
-	
+
 	if(P2P_DOING_DEVICE_DISCOVERY(pP2PInfo))
 	{// Doing P2P Device Discovery
 		P2PDeviceDiscoveryComplete(pP2PInfo, FALSE);
@@ -7877,7 +7877,7 @@ P2PDisconnect(
 	{// Doing extended listening
 		P2PExtendedListenComplete(pP2PInfo);
 	}
-	else if(bScanInProgress) 
+	else if(bScanInProgress)
 	{// Doing normal scan
 	}
 
@@ -7904,7 +7904,7 @@ P2PDisconnect(
 //	Send the device discoverability request to ask the client in the group to be discoverable.
 //	The receiver for this packet is the GO which the client belongs to.
 // Arguments:
-//	[in] pP2PInfo - 
+//	[in] pP2PInfo -
 //		The P2P context.
 //	[in] DeviceAddress -
 //		The target address of P2P client that this request sent to.
@@ -7921,7 +7921,7 @@ P2PDeviceDiscoverabilityReq(
 	)
 {
 	//
-	// This function is to send a DevDiscoverabilityReq to a P2P Client 
+	// This function is to send a DevDiscoverabilityReq to a P2P Client
 	// so that it will keep available for a duration of at least 100TU.
 	//
 	PP2P_CLIENT_INFO_DISCRIPTOR pClient = NULL;
@@ -7931,28 +7931,28 @@ P2PDeviceDiscoverabilityReq(
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("===> P2PDeviceDiscoverabilityReqStart()\n"));
 
 	PlatformZeroMemory(&pP2PInfo->DeviceDiscoverabilityContext, sizeof(P2P_DEVICE_DISCOVERABILITY_CONTEXT));
-	
+
 	//
 	// Find the client and its GO
 	//
-	if(!P2PScanListFindClient(pP2PInfo->ScanList, pP2PInfo->ScanListSize, 
-		DeviceAddress, 
-		NULL, 
+	if(!P2PScanListFindClient(pP2PInfo->ScanList, pP2PInfo->ScanListSize,
+		DeviceAddress,
+		NULL,
 		&pGO, &pClient))
 	{
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("<=== P2PDeviceDiscoverabilityReqStart(): client not found\n"));
 		return FALSE;
 	}
 
-	RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, 
-		"P2PDeviceDiscoverabilityReqStart(): to send DeviceDiscoverabilityReq to the GO:\n", 
+	RT_PRINT_ADDR(COMP_P2P, DBG_LOUD,
+		"P2PDeviceDiscoverabilityReqStart(): to send DeviceDiscoverabilityReq to the GO:\n",
 		pGO->DeviceAddress);
 
 	//
 	// Record GO info for constructing P2P GroupID Attribute
 	//
 	cpMacAddr(pP2PInfo->DeviceDiscoverabilityContext.GODeviceAddr, pGO->DeviceAddress);
-	CopySsid(pP2PInfo->DeviceDiscoverabilityContext.GOSsidBuf, pP2PInfo->DeviceDiscoverabilityContext.GOSsidLen, 
+	CopySsid(pP2PInfo->DeviceDiscoverabilityContext.GOSsidBuf, pP2PInfo->DeviceDiscoverabilityContext.GOSsidLen,
 		pGO->SsidBuf, pGO->SsidLen);
 
 	//
@@ -7977,7 +7977,7 @@ P2PDeviceDiscoverabilityReq(
 		P2PScanListCeaseScan(pP2PInfo);
 		P2PExtendedListenComplete(pP2PInfo);
 	}
-	else if(bScanInProgress) 
+	else if(bScanInProgress)
 	{// Doing normal scan
 		P2PScanListCeaseScan(pP2PInfo);
 	}
@@ -7994,12 +7994,12 @@ P2PDeviceDiscoverabilityReq(
 	pP2PInfo->DeviceDiscoverabilityContext.OriginalState = pP2PInfo->State;
 	pP2PInfo->DeviceDiscoverabilityContext.bWaitingBeaconFromGO = TRUE;
 	pP2PInfo->DeviceDiscoverabilityContext.bGoConnect = bConnect;
-	
+
 	//
 	// Send Device Discoverability to the GO of the client when beacon is received
 	//
 	P2PSetChannel(pP2PInfo, pGO->OperatingChannel);
-	
+
 	pP2PInfo->State = P2P_STATE_DEVICE_DISCOVERABILITY_WAIT_BEACON;
 	PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
 	PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, P2P_DEVICE_DISCOVERABILITY_BEACON_TIMEOUT);
@@ -8008,22 +8008,22 @@ P2PDeviceDiscoverabilityReq(
 	return TRUE;
 }
 
-BOOLEAN 
+BOOLEAN
 P2PInvitePeerStart(
 	IN PP2P_INFO pP2PInfo,
 	IN PP2P_LIB_INVITATION_REQ_CONTEXT pLibInvittionContext
 	)
-{	
+{
 	//
-	// At current stage, 
+	// At current stage,
 	//	1. IntAddr
-	//	2. SSID 
+	//	2. SSID
 	// are valid only when bInvokePersistent is TRUE.
 	//
-	
+
 	BOOLEAN bRet = FALSE;
 	PP2P_DEVICE_DISCRIPTOR pDevDesc = NULL;
-	
+
 	// Win8: NdisTest --------------------------------------------------------------------------------
 	//	+ If the peer does not exist, still do the invitation procedure as device
 	PRT_GEN_TEMP_BUFFER pRtBuffer = NULL;
@@ -8045,7 +8045,7 @@ P2PInvitePeerStart(
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("<=== P2PInvitePeerStart(): P2P not enabled\n"));
 		goto exit_P2PInvitePeerStart;
 	}
-	
+
 	//
 	// Clear invitation context
 	//
@@ -8081,17 +8081,17 @@ P2PInvitePeerStart(
 
 
 // Win8: Mark for passing the NdisTest: WFD_Group_ext-Invitation ------------------------------------------
-#if 0	
+#if 0
 	//
 	// Check peer device capability
-	// 
+	//
 	if(!(pDevDesc->DeviceCapability & dcP2PInvitationProcedure))
 	{// peer device does not support invitation procedure
-		RT_TRACE(COMP_P2P, DBG_LOUD, ("error: peer DeviceCapability is %u, does not support invitation\n", 
+		RT_TRACE(COMP_P2P, DBG_LOUD, ("error: peer DeviceCapability is %u, does not support invitation\n",
 			pDevDesc->DeviceCapability));
 		goto exit_P2PInvitePeerStart;
 	}
-#endif  
+#endif
 // ------------------------------------------------------------------------------------------------
 
 
@@ -8103,11 +8103,11 @@ P2PInvitePeerStart(
 	/* group cap is valid only when the device is a GO
 		if(!(pDevDesc->GroupCapability & gcPersistentP2PGroup))
 		{// peer device does not support persistent group
-			RT_TRACE(COMP_P2P, DBG_LOUD, ("error: peer GroupCapability is %u, does not support persistent\n", 
+			RT_TRACE(COMP_P2P, DBG_LOUD, ("error: peer GroupCapability is %u, does not support persistent\n",
 				pDevDesc->DeviceCapability));
 			goto exit_P2PInvitePeerStart;
 		}
-	*/	
+	*/
 	}
 
 	//
@@ -8121,7 +8121,7 @@ P2PInvitePeerStart(
 	pP2PInfo->InvitationContext.bToSendInvitationReqOnProbe = FALSE;
 	pP2PInfo->InvitationContext.bInvitor = TRUE;
 	pP2PInfo->InvitationContext.OpChannel = pLibInvittionContext->OpChannel;
-	RT_TRACE(COMP_P2P, DBG_LOUD, ("DialogToken: %u, state: %u\n", 
+	RT_TRACE(COMP_P2P, DBG_LOUD, ("DialogToken: %u, state: %u\n",
 		pP2PInfo->InvitationContext.DialogToken, pP2PInfo->State));
 
 	//
@@ -8151,8 +8151,8 @@ P2PInvitePeerStart(
 	//
 	cpMacAddr(pP2PInfo->InvitationContext.GroupBssid, pLibInvittionContext->GroupBssid);
 	cpMacAddr(pP2PInfo->InvitationContext.GODeviceAddress, pLibInvittionContext->GroupDeviceAddress);
-	CopySsid(pP2PInfo->InvitationContext.SsidBuf, pP2PInfo->InvitationContext.SsidLen, 
-		pLibInvittionContext->GroupSsidBuf, pLibInvittionContext->GroupSsidLen); 
+	CopySsid(pP2PInfo->InvitationContext.SsidBuf, pP2PInfo->InvitationContext.SsidLen,
+		pLibInvittionContext->GroupSsidBuf, pLibInvittionContext->GroupSsidLen);
 
 	//
 	// Decide when to send the InvitationReq
@@ -8182,11 +8182,11 @@ P2PInvitePeerStart(
 		PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
 		PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 	}
-	
+
 exit_P2PInvitePeerStart:
 
 	ReturnGenTempBuffer(GetDefaultAdapter(pP2PInfo->pAdapter), pRtBuffer);
-	
+
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("<=== P2PInvitePeerStart()\n"));
 	return bRet;
 }
@@ -8206,7 +8206,7 @@ P2PInvitePeerComplete(
 	}
 	else
 	{// P2P Device
-		
+
 	}
 }
 
@@ -8292,7 +8292,7 @@ P2PIndicateOnProvisionDiscoveryReq(
 	PlatformMoveMemory(pBuf, &ConfigMethod, sizeof(u2Byte));
 	PlatformMoveMemory(pBuf + sizeof(u2Byte), DeviceAddress, 6);
 	PlatformMoveMemory(pBuf + sizeof(u2Byte) + 6, pWpsAttributes, sizeof(P2P_WPS_ATTRIBUTES));
-	RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "P2PIndicateOnProvisionDiscoveryReq", pBuf, BufSize);	
+	RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "P2PIndicateOnProvisionDiscoveryReq", pBuf, BufSize);
 	PlatformIndicateCustomStatus(
 		pP2PInfo->pAdapter,
 		RT_CUSTOM_EVENT_P2P_INDICATE_ON_PROVISION_DISC_REQ,
@@ -8316,14 +8316,14 @@ P2PIndicateStartApRequest(
 	P2PProfile.OpChannel = pP2PProfile->OpChannel;
 	P2PProfile.SsidBufLen = pP2PProfile->SsidBufLen;
 	PlatformMoveMemory(P2PProfile.SsidBuf, pP2PProfile->SsidBuf, pP2PProfile->SsidBufLen);
-	
-	RT_TRACE(COMP_P2P, DBG_LOUD, 
+
+	RT_TRACE(COMP_P2P, DBG_LOUD,
 		("P2PIndicateStartApRequest(): Indicate NDIS_STATUS_P2P_START_AP_REQ, OpChannel: %u\n",
 		pP2PProfile->OpChannel));
-	RT_PRINT_STR(COMP_P2P, DBG_LOUD, "SSID:\n", 
+	RT_PRINT_STR(COMP_P2P, DBG_LOUD, "SSID:\n",
 		pP2PProfile->SsidBuf, pP2PProfile->SsidBufLen);
 
-	RT_TRACE(COMP_P2P, DBG_LOUD, 
+	RT_TRACE(COMP_P2P, DBG_LOUD,
 		("P2PIndicateStartApRequest(): bDefPortConnected: %u, bCrossConnectionEnabled: %u\n",
 		bDefPortConnected, bCrossConnectionEnabled));
 
@@ -8338,14 +8338,14 @@ P2PIndicateStartApRequest(
 		RT_CUSTOM_INDI_TARGET_IHV,
 		&bToEnableICS,
 		sizeof(BOOLEAN));
-	
+
 	PlatformIndicateCustomStatus(
 		pP2PInfo->pAdapter,
 		RT_CUSTOM_EVENT_P2P_START_AP_REQ,
 		RT_CUSTOM_INDI_TARGET_IHV,
 		&P2PProfile,
 		sizeof(P2P_PROFILE));
-	
+
 }
 
 VOID
@@ -8391,12 +8391,12 @@ P2PIndicateGOFormatedInfo(
 
 	pGenBufP2PGOFormatedInfo = GetGenTempBuffer (Adapter, sizeof(P2P_GO_FORMATED_INFO));
 	pP2PGOFormatedInfo = (P2P_GO_FORMATED_INFO *)pGenBufP2PGOFormatedInfo->Buffer.Ptr;
-	
+
 	pP2PGOFormatedInfo->p2pRole = (Status != P2P_STATUS_SUCCESS) ? (P2P_DEVICE) : ((bGoingToBeGO) ? (P2P_GO) : (P2P_CLIENT));
 	if(pDevDesc)
 	{
-		PlatformMoveMemory(&(pP2PGOFormatedInfo->targetDesc), 
-			pDevDesc, 
+		PlatformMoveMemory(&(pP2PGOFormatedInfo->targetDesc),
+			pDevDesc,
 			sizeof(P2P_DEVICE_DISCRIPTOR));
 		pP2PGOFormatedInfo->targetDesc.Status = Status;
 
@@ -8406,7 +8406,7 @@ P2PIndicateGOFormatedInfo(
 			PlatformMoveMemory(pP2PGOFormatedInfo->targetDesc.SsidBuf, pP2PInfo->SSIDBuf, pP2PInfo->SSIDLen);
 			pP2PGOFormatedInfo->targetDesc.OperatingChannel = pP2PInfo->OperatingChannel;
 		}
-		
+
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PIndicateGOFormatedInfo(): Status: %u, Role: %u\n",
 			Status,
 			pP2PGOFormatedInfo->p2pRole));
@@ -8416,7 +8416,7 @@ P2PIndicateGOFormatedInfo(
 	{
 		PlatformZeroMemory(&(pP2PGOFormatedInfo->targetDesc), sizeof(P2P_DEVICE_DISCRIPTOR));
 	}
-	
+
 	PlatformIndicateCustomStatus(
 		pP2PInfo->pAdapter,
 		RT_CUSTOM_EVENT_P2P_INDICATE_GO_FORMATED,
@@ -8448,7 +8448,7 @@ P2PIndicateCurrentState(
 
 	if(bToIndicate)
 	{
-		RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PIndicateCurrentState(): State: %u, Role: %u, nScanList: %u, nScanList4Q: %u, IntfIndex: %u portnumber %d\n", 
+		RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PIndicateCurrentState(): State: %u, Role: %u, nScanList: %u, nScanList4Q: %u, IntfIndex: %u portnumber %d\n",
 			CurrentState,
 			pP2PInfo->Role,
 			pP2PInfo->ScanListSize,
@@ -8501,7 +8501,7 @@ P2PIndicateCurrentDevPasswdId(
 // Description:
 //	Indicate that one device wants to do GO formation when we are the P2P client.
 // Arguments:
-//	[in] pP2PInfo - 
+//	[in] pP2PInfo -
 //		The P2P context.
 //	[in] pDevDesc -
 //		The descriptor info for this request of device.
@@ -8531,10 +8531,10 @@ P2PIndicateClientConnected(
 	IN	PP2P_INFO				pP2PInfo,
 	IN	pu1Byte					ClientInterfaceAddr
 	)
-{	
+{
 	if(ClientInterfaceAddr == NULL)
 		return;
-	
+
 	RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, "P2PIndicateClientConnected(): ", ClientInterfaceAddr);
 
 	PlatformIndicateCustomStatus(
@@ -8555,7 +8555,7 @@ P2PIndicateClientDisconnected(
 		return;
 
 	RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, "P2PIndicateClientDisconnected(): ", ClientInterfaceAddr);
-	
+
 	PlatformIndicateCustomStatus(
 		pP2PInfo->pAdapter,
 		RT_CUSTOM_EVENT_P2P_INDICATE_CLIENT_DISCONNECTED,
@@ -8586,7 +8586,7 @@ P2PIndicateOnSDRsp(
 	)
 {
 	u1Byte i = 0;
-	u4Byte BufSize = FIELD_OFFSET(P2P_SD_RSP_CONTEXT, ServiceRspTLVList) + 
+	u4Byte BufSize = FIELD_OFFSET(P2P_SD_RSP_CONTEXT, ServiceRspTLVList) +
 		pSDContext->ServiceRspRecvdSize * sizeof(P2P_SERVICE_RSP_TLV);
 	PP2P_SD_RSP_CONTEXT pSDRspContext = NULL;
 
@@ -8604,14 +8604,14 @@ P2PIndicateOnSDRsp(
 	pSDRspContext->ServiceRspTLVSize = pSDContext->ServiceRspRecvdSize;
 	for(i = 0; i < pSDContext->ServiceRspRecvdSize; i++)
 	{// copy each Rsp TLV
-		RT_TRACE(COMP_P2P, DBG_LOUD, ("TLV %u, Protocol ID: %u\n", 
+		RT_TRACE(COMP_P2P, DBG_LOUD, ("TLV %u, Protocol ID: %u\n",
 			i, pSDContext->ServiceRspRecvd[i].ServiceDesc.ServiceType));
-		RT_PRINT_STR(COMP_P2P, DBG_LOUD, "Recv Service Rsp TLV:", 
-			pSDContext->ServiceRspRecvd[i].ServiceDesc.Buffer, 
+		RT_PRINT_STR(COMP_P2P, DBG_LOUD, "Recv Service Rsp TLV:",
+			pSDContext->ServiceRspRecvd[i].ServiceDesc.Buffer,
 			pSDContext->ServiceRspRecvd[i].ServiceDesc.BufferLength);
-		
-		PlatformMoveMemory(&(pSDRspContext->ServiceRspTLVList[i]), 
-			&(pSDContext->ServiceRspRecvd[i]), 
+
+		PlatformMoveMemory(&(pSDRspContext->ServiceRspTLVList[i]),
+			&(pSDContext->ServiceRspRecvd[i]),
 			sizeof(P2P_SERVICE_RSP_TLV));
 	}
 
@@ -8632,7 +8632,7 @@ P2PIndicateOnSDReq(
 	)
 {
 	u1Byte i = 0;
-	u4Byte BufSize = FIELD_OFFSET(P2P_SD_REQ_CONTEXT, ServiceReqTLVList) + 
+	u4Byte BufSize = FIELD_OFFSET(P2P_SD_REQ_CONTEXT, ServiceReqTLVList) +
 		pSDContext->ServiceReqRecvdSize * sizeof(P2P_SERVICE_REQ_TLV);
 	PP2P_SD_REQ_CONTEXT pSDReqContext = NULL;
 
@@ -8649,14 +8649,14 @@ P2PIndicateOnSDReq(
 	pSDReqContext->ServiceReqTLVSize = pSDContext->ServiceReqRecvdSize;
 	for(i = 0; i < pSDContext->ServiceReqRecvdSize; i++)
 	{// copy each Rsp TLV
-		RT_TRACE(COMP_P2P, DBG_LOUD, ("TLV %u, Protocol ID: %u\n", 
+		RT_TRACE(COMP_P2P, DBG_LOUD, ("TLV %u, Protocol ID: %u\n",
 			i, pSDContext->ServiceRspRecvd[i].ServiceDesc.ServiceType));
-		RT_PRINT_STR(COMP_P2P, DBG_LOUD, "Recv Service Req TLV:", 
-			pSDContext->ServiceRspRecvd[i].ServiceDesc.Buffer, 
+		RT_PRINT_STR(COMP_P2P, DBG_LOUD, "Recv Service Req TLV:",
+			pSDContext->ServiceRspRecvd[i].ServiceDesc.Buffer,
 			pSDContext->ServiceRspRecvd[i].ServiceDesc.BufferLength);
-		
-		PlatformMoveMemory(&(pSDReqContext->ServiceReqTLVList[i]), 
-			&(pSDContext->ServiceReqRecvd[i]), 
+
+		PlatformMoveMemory(&(pSDReqContext->ServiceReqTLVList[i]),
+			&(pSDContext->ServiceReqRecvd[i]),
 			sizeof(P2P_SERVICE_REQ_TLV));
 	}
 
@@ -8683,16 +8683,16 @@ P2PIndicateScanList(
 	do
 	{
 		//p2p_DevList_Translate(&pP2PInfo->devList, P2P_MAX_SCAN_LIST, &pP2PInfo->ScanList4QuerySize, pP2PInfo->ScanList4Query);
-		
+
 		if(0 == pP2PInfo->ScanList4QuerySize)
 		{
 			break;
 		}
-		
+
 		if(0x00000000 == pP2PInfo->P2PVersion)
 		{// v0
 			PP2P_DEVICE_DESCRIPTOR_V0 pDesc = NULL;
-			
+
 			BufSize = sizeof(P2P_DEVICE_DESCRIPTOR_V0) * pP2PInfo->ScanList4QuerySize;
 			if(0 == BufSize) break;
 			PlatformAllocateMemory(pP2PInfo->pAdapter, &pBuf, BufSize);
@@ -8708,7 +8708,7 @@ P2PIndicateScanList(
 		else if(0x00000001 == pP2PInfo->P2PVersion)
 		{// v1
 			PP2P_DEVICE_DESCRIPTOR_V1 pDesc = NULL;
-			
+
 			BufSize = sizeof(P2P_DEVICE_DESCRIPTOR_V1) * pP2PInfo->ScanList4QuerySize;
 			if(0 == BufSize) break;
 			PlatformAllocateMemory(pP2PInfo->pAdapter, &pBuf, BufSize);
@@ -8719,7 +8719,7 @@ P2PIndicateScanList(
 			for(idxScanList = 0; idxScanList < pP2PInfo->ScanList4QuerySize; idxScanList++)
 			{
 				memcpy(pDesc + idxScanList, &pP2PInfo->ScanList4Query[idxScanList], sizeof(P2P_DEVICE_DESCRIPTOR_V1));
-			}		
+			}
 		}
 		else
 		{// v2/v3
@@ -8749,7 +8749,7 @@ P2PIndicateChangingApChnl(
 	)
 {
 	u1Byte				buf[2];
-	
+
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PIndicateChangingApChnl(): %u -> %u\n", oldChnl, newChnl));
 
 	buf[0] = oldChnl;
@@ -8785,7 +8785,7 @@ P2PMgntTimerCallback(
 	VOID						*customScanInfo = GET_CUSTOM_SCAN_INFO(pAdapter);
 	VOID 						*req = NULL;
 	FRAME_BUF					*probeReqBuf = NULL;
-	
+
 	pP2PInfo->LastTimerFired = PlatformGetCurrentTime();
 
 	if(!P2P_ENABLED(pP2PInfo))
@@ -8817,7 +8817,7 @@ P2PMgntTimerCallback(
 		PADAPTER pDefaultPort = GetDefaultAdapter(pP2PInfo->pAdapter);
 
 		if(pClientPort == NULL) pClientPort = pDefaultPort;
-		
+
 		if(MgntIsLinkInProgress(&pDefaultPort->MgntInfo) || MgntIsLinkInProgress(&pClientPort->MgntInfo))
 		{
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("MgntIsLinkInProgress(): default/client port link in progress\n"));
@@ -8844,7 +8844,7 @@ P2PMgntTimerCallback(
 		//
 		pP2PInfo->ForceScanListIndicateSlotCount++;
 		if(pP2PInfo->ForceScanListIndicateSlotCount == P2P_FORCE_SCAN_LIST_INDICATE_PERIOD_SC)
-		{	
+		{
 			//RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): Forced scan list indication\n"));
 			pP2PInfo->ForceScanListIndicateSlotCount = 0;
 			PlatformIndicateCustomStatus(
@@ -8860,7 +8860,7 @@ P2PMgntTimerCallback(
 	// Notify UI the current device password ID so that it can determine whether provisioning info is available
 	// Note that UI determines which peer config method we shall use for doing WPS
 	//// TODO: this may be too regular, but note that UI may counting on this indication for determine provision info  timeout
-	//P2PIndicateCurrentDevPasswdId(pP2PInfo, pP2PInfo->WpsDevPasswdId);	
+	//P2PIndicateCurrentDevPasswdId(pP2PInfo, pP2PInfo->WpsDevPasswdId);
 
 	if(pP2PInfo->State == P2P_STATE_INITIALIZED)
 	{
@@ -8892,30 +8892,30 @@ P2PMgntTimerCallback(
 		}
 	}
 
-	/*RT_TRACE(COMP_P2P, DBG_LOUD, 
-		("P2PMgntTimerCallback(): dc: %u, gc: %u, ExtSlot: %u, bExtListen: %u, bPreGroupFormation: %u\n", 
-		pP2PInfo->DeviceCapability, 
-		pP2PInfo->GroupCapability, 
+	/*RT_TRACE(COMP_P2P, DBG_LOUD,
+		("P2PMgntTimerCallback(): dc: %u, gc: %u, ExtSlot: %u, bExtListen: %u, bPreGroupFormation: %u\n",
+		pP2PInfo->DeviceCapability,
+		pP2PInfo->GroupCapability,
 		pP2PInfo->ExtListenTimingPeriodSlotCount,
 		pP2PInfo->bExtendedListening,
 		pP2PInfo->bPreGroupFormation));
 	*/
-	
+
 	// Add "pHalData->SwChnlInProgress" to protect the 92D IQK process.
 	if(pHalData->SwChnlInProgress)
 	{
 		PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, P2P_SWITCH_CHNL_PERIOD);
-		goto exit_P2PMgntTimerCallback;	
-	}	
-	
+		goto exit_P2PMgntTimerCallback;
+	}
+
 	bScanInProgress = MgntScanInProgress(pMgntInfo);
 
 	//RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): state: %u\n", pP2PInfo->State));
-	
-	if(bScanInProgress) 
+
+	if(bScanInProgress)
 	{
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): scan in progress\n"));
-		
+
 		if(pP2PInfo->State == P2P_STATE_GO_NEGO_REQ_SEND ||
 			pP2PInfo->State == P2P_STATE_PROVISION_DISCOVERY_REQ_SEND ||
 			pP2PInfo->State == P2P_STATE_INVITATION_REQ_SEND ||
@@ -8924,7 +8924,7 @@ P2PMgntTimerCallback(
 			//
 			// For these state, we shall enter them ASAP so that when the packet is sent,
 			// the peer is still on the listen channel.
-			// However, we can't arbitrarily change the timer because that will make extended listen 
+			// However, we can't arbitrarily change the timer because that will make extended listen
 			// timing incorrect.
 			//
 			PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, P2P_SWITCH_CHNL_PERIOD);
@@ -8935,8 +8935,8 @@ P2PMgntTimerCallback(
 			PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, P2P_SCAN_PERIOD_SCAN);
 			goto exit_P2PMgntTimerCallback;
 		}
-		
-		
+
+
 	}
 	else
 	{// this is by referencing InactivePsTimerCallback()
@@ -8947,7 +8947,7 @@ P2PMgntTimerCallback(
 		//
 		// If processing, we may have issued a customized scan and InactivePsWorkItemCallback
 		// is still processing. In this case, bScanInProgress is false (but we expect it to be true).
-		// If we let it go down, the P2P state machine will go to next state immediately, 
+		// If we let it go down, the P2P state machine will go to next state immediately,
 		// and the action should be taken in the previous state will not be done.
 		//
 		if (pPSC->bSwRfProcessing)
@@ -8958,23 +8958,23 @@ P2PMgntTimerCallback(
 		}
 	}
 
-	switch(pP2PInfo->State) 
+	switch(pP2PInfo->State)
 	{
 		case P2P_STATE_INITIALIZED:
 			{
 				u8Byte curTime = PlatformGetCurrentTime();
-				
+
 				if(!P2PIsN24GSupported(pP2PInfo))
 				{// don't do extended listening if 2.4G is not supported
 					 break;
 				}
-				
+
 				if(pP2PInfo->bExtendedListening)
 				{
 					P2PExtendedListenComplete(pP2PInfo);
 				}
 
-	
+
 				if(pP2PInfo->ExtListenTimingPeriodSlotCount >= (u4Byte)P2P_EXT_LISTEN_TIMING_PERIOD_SC
 					&& MultiportGetLastConnectionActionTime(pAdapter) + P2P_BLOCK_NORMAL_SCAN_PERIOD <= curTime
 					)
@@ -8985,15 +8985,15 @@ P2PMgntTimerCallback(
 					{
 						P2PExtendedListenStart(pP2PInfo);
 
-						RT_TRACE(COMP_P2P, DBG_LOUD, 
-							("P2PMgntTimerCallback(): Wait for ExtListen: P2P_EXT_LISTEN_TIMING_PERIOD_SC = %d\n", 
+						RT_TRACE(COMP_P2P, DBG_LOUD,
+							("P2PMgntTimerCallback(): Wait for ExtListen: P2P_EXT_LISTEN_TIMING_PERIOD_SC = %d\n",
 							P2P_EXT_LISTEN_TIMING_PERIOD_SC));
-						
+
 						//
 						// Next time we get in P2P_STATE_INITIALIZED is when Extended Listen complete.
 						//
 					}
-	
+
 					break;
 				}
 			}
@@ -9003,7 +9003,7 @@ P2PMgntTimerCallback(
 		// Device Discovery
 		//======================================================================
 		case P2P_STATE_DEV_DISC_START:
-			{	
+			{
 				if(!P2PIsN24GSupported(pP2PInfo))
 				{// don't do find and listen phase on 5G
 					pP2PInfo->State = P2P_STATE_SCAN;
@@ -9014,14 +9014,14 @@ P2PMgntTimerCallback(
 					p2p_Construct_ProbeReq(probeReqBuf, pP2PInfo);
 					P2PConstructScanList(pP2PInfo, req, P2P_LOWEST_RATE, probeReqBuf);
 					CustomScan_IssueReq(customScanInfo, req, CUSTOM_SCAN_SRC_TYPE_P2P, "dev disc start");
-					
+
 					pP2PInfo->State = P2P_STATE_DEV_DISC_COMPLETE;
 					break;
 				}
-				
-				RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): Start Device Discovery: loop times: %u\n", 
+
+				RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): Start Device Discovery: loop times: %u\n",
 					pP2PInfo->ConnectionContext.FindPhaseLoopTimes));
-	
+
 				pP2PInfo->State = P2P_STATE_SCAN; // enter Scan Phase
 
 				if(pP2PInfo->bPreGroupFormation||
@@ -9029,9 +9029,9 @@ P2PMgntTimerCallback(
 					pP2PInfo->ProvisionDiscoveryContext.bDoingProvisionDiscovery ||
 					pP2PInfo->SDContext.bDoingServiceDiscovery ||
 					pP2PInfo->ConnectionContext.FindPhaseLoopTimes == 0xFC)
-				{// this is a discovery issued by invitation procedure => 
+				{// this is a discovery issued by invitation procedure =>
 					//don't need the scan phase, enter listen state directly
-					pP2PInfo->State = P2P_STATE_SEARCH; 
+					pP2PInfo->State = P2P_STATE_SEARCH;
 					PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 					bToFireTimer = FALSE;
 					break;
@@ -9043,11 +9043,11 @@ P2PMgntTimerCallback(
 					if(pP2PInfo->bDiscoverForSpecificChannels)
 					{
 						P2PDeviceDiscoverForSpecificChannels(
-								pP2PInfo, 
-								pP2PInfo->DiscoverForSpecificChannels, 
+								pP2PInfo,
+								pP2PInfo->DiscoverForSpecificChannels,
 								pP2PInfo->uNumberOfDiscoverForSpecificChannels
 							);
-					
+
 						pP2PInfo->State = P2P_STATE_SPECIAL_PEER_SEARCH;
 						PlatformSetTimer(pAdapter, &pP2PInfo->P2PMgntTimer, 50);
 						bToFireTimer = FALSE;
@@ -9062,17 +9062,17 @@ P2PMgntTimerCallback(
 					{
 						RT_TRACE(COMP_P2P,DBG_LOUD, ("DiscoverSequence & P2PDiscovery_scan_phase\n"));
 					}
-					else 
+					else
 					{
 						//Jump to the search state directly since the scan is not needed
-						pP2PInfo->State = P2P_STATE_SEARCH; 
+						pP2PInfo->State = P2P_STATE_SEARCH;
 						PlatformSetTimer(pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 						bToFireTimer = FALSE;
 						break;
 					}
 					// ------------------------------------------------------------------------------------
 				}
-//Sinda: temporarily mark. Because OS does not care bForceScanLegacyNetworks and it is always 0. 
+//Sinda: temporarily mark. Because OS does not care bForceScanLegacyNetworks and it is always 0.
 //So at this condition, we do not check bForceScanLegacyNetworks and always do legacy scan.
 #if 0
 				if(P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter))
@@ -9082,13 +9082,13 @@ P2PMgntTimerCallback(
 						RT_TRACE(COMP_P2P,DBG_LOUD, ("pP2PInfo->bForceScanLegacyNetworks is FALSE and goto search state to scan social channel\n"));
 
 						//Jump to the search state directly since the scan is not needed
-						pP2PInfo->State = P2P_STATE_SEARCH; 
+						pP2PInfo->State = P2P_STATE_SEARCH;
 						PlatformSetTimer(pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 						bToFireTimer = FALSE;
 						break;
 					}
 				}
-#endif			
+#endif
 			}
 			/*FALL THROUGH*/
 		case P2P_STATE_SCAN:
@@ -9101,7 +9101,7 @@ P2PMgntTimerCallback(
 				p2p_Construct_ProbeReq(probeReqBuf, pP2PInfo);
 				P2PConstructScanList(pP2PInfo, req, MGN_1M, probeReqBuf);
 				CustomScan_IssueReq(customScanInfo, req, CUSTOM_SCAN_SRC_TYPE_P2P, "scan phase");
-					
+
 				pP2PInfo->State = P2P_STATE_LISTEN; // enter Listen State
 			}
 			break;
@@ -9111,12 +9111,12 @@ P2PMgntTimerCallback(
 				{
 					u1Byte i = 0;
 					BOOLEAN bFound = FALSE;
-			
+
 					for(i = 0; i < pP2PInfo->DeviceListForQuery.uNumberOfDevices; i++)
 					{
 						if(pP2PInfo->DeviceListForQuery.DeviceEntry[i].DeviceAddress != NULL)
 						{
-							if( // Make sure the probe response is received 
+							if( // Make sure the probe response is received
 								eqMacAddr(pP2PInfo->ScanDeviceIDs.DeviceIDs[0], pP2PInfo->DeviceListForQuery.DeviceEntry[i].DeviceAddress) &&
 								pP2PInfo->DeviceListForQuery.DeviceEntry[i].ProbeResponseHostTimestamp != 0
 							)
@@ -9129,7 +9129,7 @@ P2PMgntTimerCallback(
 					if(bFound == TRUE)
 					{
 					RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: DeviceID Found : Terminate Search State !\n", __FUNCTION__));
-						pP2PInfo->State = P2P_STATE_DEV_DISC_COMPLETE; 
+						pP2PInfo->State = P2P_STATE_DEV_DISC_COMPLETE;
 						PlatformSetTimer(pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 						bToFireTimer = FALSE;
 						break;
@@ -9139,19 +9139,19 @@ P2PMgntTimerCallback(
 				// For Win 8: OID_DOT11_WFD_DISCOVER_REQUEST ------------------------------------------
 				if(!(pP2PInfo->DiscoverSequence & P2P_DISCOVERY_FIND_PHASE) && P2PScanListAllFound(pP2PInfo))
 				{
-					//Bypass the find phase 
+					//Bypass the find phase
 					RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): Find device\n"));
-					pP2PInfo->State = P2P_STATE_DEV_DISC_COMPLETE; 
+					pP2PInfo->State = P2P_STATE_DEV_DISC_COMPLETE;
 					PlatformSetTimer(pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 					bToFireTimer = FALSE;
 					break;
 				}
 				// ------------------------------------------------------------------------------------
-			
-				if(pP2PInfo->ConnectionContext.FindPhaseLoopTimes != 0) 
+
+				if(pP2PInfo->ConnectionContext.FindPhaseLoopTimes != 0)
 				{
 					RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): Listen State\n"));
-					
+
 
 					if(P2P_SKIP_SCAN_LOOP_CNT > 0)
 					{
@@ -9163,9 +9163,9 @@ P2PMgntTimerCallback(
 						{
 							if(pLoopAdapter->MgntInfo.mAssoc)
 							{
-								portConnected = TRUE;								
+								portConnected = TRUE;
 								break;
-							}							
+							}
 							pLoopAdapter = GetNextExtAdapter(pLoopAdapter);
 						}
 						if(portConnected && P2P_SKIP_SCAN_LOOP_CNT == pP2PInfo->findPhaseSkipCnt)
@@ -9183,7 +9183,7 @@ P2PMgntTimerCallback(
 					p2p_Construct_ProbeReq(probeReqBuf, pP2PInfo);
 					P2PConstructScanList(pP2PInfo, req, P2P_LOWEST_RATE, probeReqBuf);
 					CustomScan_IssueReq(customScanInfo, req, CUSTOM_SCAN_SRC_TYPE_P2P, "listen state");
-					
+
 					pP2PInfo->State = P2P_STATE_SEARCH; // enter Search State
 					break;
 				}
@@ -9197,7 +9197,7 @@ P2PMgntTimerCallback(
 			{
 				P2P_STATE NextState = pP2PInfo->StateBeforeScan;
 				BOOLEAN bFailedToArriveCommonChannel = FALSE;
-				
+
 				RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): Device Discovery Complete\n"));
 				if(pP2PInfo->bPreGroupFormation)
 				{
@@ -9212,16 +9212,16 @@ P2PMgntTimerCallback(
 					// GO Nego failed, indicate to UI
 					//
 					pP2PInfo->PreviousGONegoResult = (P2P_STATUS_CODE)pP2PInfo->ConnectionContext.Status;
-					P2PIndicateGOFormatedInfo(pP2PInfo, 
-						pP2PInfo->ConnectionContext.Status, 
-						pP2PInfo->ConnectionContext.bGoingToBeGO, 
+					P2PIndicateGOFormatedInfo(pP2PInfo,
+						pP2PInfo->ConnectionContext.Status,
+						pP2PInfo->ConnectionContext.bGoingToBeGO,
 						&pP2PInfo->ConnectionContext.ConnectingDevice);
-					
+
 					PlatformZeroMemory(&pP2PInfo->ConnectionContext, sizeof(pP2PInfo->ConnectionContext));
-					
-					p2p_IndicateActionFrameSendComplete(pP2PInfo, 
-						P2P_EVENT_GO_NEGOTIATION_REQUEST_SEND_COMPLETE, 
-						RT_STATUS_FAILURE, 
+
+					p2p_IndicateActionFrameSendComplete(pP2PInfo,
+						P2P_EVENT_GO_NEGOTIATION_REQUEST_SEND_COMPLETE,
+						RT_STATUS_FAILURE,
 						NULL, 0);
 				}
 				else if(pP2PInfo->InvitationContext.bToSendInvitationReqOnProbe)
@@ -9236,10 +9236,10 @@ P2PMgntTimerCallback(
 				{
 					MEMORY_BUFFER mbObject = {NULL, 0};
 					P2P_EVENT_DATA	eventData;
-	
+
 					PlatformZeroMemory(&eventData, sizeof(P2P_EVENT_DATA));
 					eventData.rtStatus = RT_STATUS_FAILURE;
-	
+
 					mbObject.Buffer = (pu1Byte) &eventData;
 					mbObject.Length = sizeof(P2P_EVENT_DATA);
 
@@ -9261,21 +9261,21 @@ P2PMgntTimerCallback(
 					else
 					{
 						if(NULL == (pDev = p2p_DevList_GetGo(&pP2PInfo->devList, pP2PInfo->ProvisionDiscoveryContext.devAddr)))
-							pDev = p2p_DevList_Get(&pP2PInfo->devList, pP2PInfo->ProvisionDiscoveryContext.devAddr, P2P_DEV_TYPE_DEV);						
+							pDev = p2p_DevList_Get(&pP2PInfo->devList, pP2PInfo->ProvisionDiscoveryContext.devAddr, P2P_DEV_TYPE_DEV);
 					}
 
 					if(pDev){
 						pDev->p2p->pdStatus = P2P_SC_FAIL_COMMON_CHANNEL_NOT_ARRIVED;
 					}
-				
+
 					RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): Failed to send ProvisionDiscReq to peer\n"));
-					
+
 					bFailedToArriveCommonChannel = TRUE;
 					NextState = P2P_STATE_PROVISION_DISCOVERY_COMPLETE;
 
-					p2p_IndicateActionFrameSendComplete(pP2PInfo, 
-						P2P_EVENT_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE, 
-						RT_STATUS_FAILURE, 
+					p2p_IndicateActionFrameSendComplete(pP2PInfo,
+						P2P_EVENT_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE,
+						RT_STATUS_FAILURE,
 						NULL, 0);
 				}
 				else if (pP2PInfo->SDContext.bDoingServiceDiscovery)
@@ -9286,9 +9286,9 @@ P2PMgntTimerCallback(
 					NextState = P2P_STATE_SERVICE_DISCOVERY_COMPLETE;
 				}
 				else
-				{// the loop between listen and find phase has been completed 
+				{// the loop between listen and find phase has been completed
 					//P2PDumpScanList(pP2PInfo->ScanList, pP2PInfo->ScanListSize);
-					
+
 				}
 
 				if(P2P_DOING_PURE_DEVICE_DISCOVERY(pP2PInfo))
@@ -9315,12 +9315,12 @@ P2PMgntTimerCallback(
 				{
 					u1Byte i = 0;
 					BOOLEAN bFound = FALSE;
-			
+
 					for(i = 0; i < pP2PInfo->DeviceListForQuery.uNumberOfDevices; i++)
 					{
 						if(pP2PInfo->DeviceListForQuery.DeviceEntry[i].DeviceAddress != NULL)
 						{
-					if( // Make sure the probe response is received 
+					if( // Make sure the probe response is received
 						eqMacAddr(pP2PInfo->ScanDeviceIDs.DeviceIDs[0], pP2PInfo->DeviceListForQuery.DeviceEntry[i].DeviceAddress) &&
 						pP2PInfo->DeviceListForQuery.DeviceEntry[i].ProbeResponseHostTimestamp != 0
 					)
@@ -9333,7 +9333,7 @@ P2PMgntTimerCallback(
 					if(bFound == TRUE)
 					{
 					RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: DeviceID Found : Terminate Search State !\n", __FUNCTION__));
-						pP2PInfo->State = P2P_STATE_DEV_DISC_COMPLETE; 
+						pP2PInfo->State = P2P_STATE_DEV_DISC_COMPLETE;
 						PlatformSetTimer(pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 						bToFireTimer = FALSE;
 						break;
@@ -9343,7 +9343,7 @@ P2PMgntTimerCallback(
 				if(pP2PInfo->uNumberOfDiscoverRounds == 0)
 				{
 					RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: pP2PInfo->uNumberOfDiscoverRounds == 0: Terminate Search State!\n", __FUNCTION__));
-				
+
 					pP2PInfo->State = P2P_STATE_DEV_DISC_COMPLETE;
 					PlatformSetTimer(pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 					bToFireTimer = FALSE;
@@ -9352,10 +9352,10 @@ P2PMgntTimerCallback(
 				else
 				{
 					pP2PInfo->uNumberOfDiscoverRounds--;
-					
+
 					P2PDeviceDiscoverForSpecificChannels(
-							pP2PInfo, 
-							pP2PInfo->DiscoverForSpecificChannels, 
+							pP2PInfo,
+							pP2PInfo->DiscoverForSpecificChannels,
 							pP2PInfo->uNumberOfDiscoverForSpecificChannels
 						);
 
@@ -9369,14 +9369,14 @@ P2PMgntTimerCallback(
 
 
 		case P2P_STATE_SEARCH:
-			{	
+			{
 				RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): Search State\n"));
 				// For Win 8: OID_DOT11_WFD_DISCOVER_REQUEST ------------------------------------------
 				if(!(pP2PInfo->DiscoverSequence & P2P_DISCOVERY_FIND_PHASE)&& P2PScanListAllFound(pP2PInfo))
 				{
 					//Bypass the find phase
 					RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): Find device\n"));
-					pP2PInfo->State = P2P_STATE_DEV_DISC_COMPLETE; 
+					pP2PInfo->State = P2P_STATE_DEV_DISC_COMPLETE;
 					PlatformSetTimer(pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 					bToFireTimer = FALSE;
 					break;
@@ -9389,10 +9389,10 @@ P2PMgntTimerCallback(
 				p2p_Construct_ProbeReq(probeReqBuf, pP2PInfo);
 				P2PConstructScanList(pP2PInfo, req, P2P_LOWEST_RATE, probeReqBuf);
 				CustomScan_IssueReq(customScanInfo, req, CUSTOM_SCAN_SRC_TYPE_P2P, "search state");
-			
+
 				pP2PInfo->State = P2P_STATE_LISTEN; // enter Listen State
 
-				if(pP2PInfo->ConnectionContext.FindPhaseLoopTimes > 0) 
+				if(pP2PInfo->ConnectionContext.FindPhaseLoopTimes > 0)
 				{
 					if(pP2PInfo->ConnectionContext.FindPhaseLoopTimes == 0xFF ||
 						pP2PInfo->ConnectionContext.FindPhaseLoopTimes == 0xFC)  // i can't set it to 0xff in d.exe
@@ -9413,20 +9413,20 @@ P2PMgntTimerCallback(
 			{
 				P2P_DEV_LIST_ENTRY *pDev = NULL;
 
-				RT_TRACE(COMP_P2P, DBG_LOUD, 
+				RT_TRACE(COMP_P2P, DBG_LOUD,
 					("P2PMgntTimerCallback(): Sending Provision Discovery Req\n"));
 
-				pDev = p2p_DevList_Get(&pP2PInfo->devList, 
-						pP2PInfo->ProvisionDiscoveryContext.go ? pP2PInfo->ProvisionDiscoveryContext.goBssid : pP2PInfo->ProvisionDiscoveryContext.devAddr, 
+				pDev = p2p_DevList_Get(&pP2PInfo->devList,
+						pP2PInfo->ProvisionDiscoveryContext.go ? pP2PInfo->ProvisionDiscoveryContext.goBssid : pP2PInfo->ProvisionDiscoveryContext.devAddr,
 						pP2PInfo->ProvisionDiscoveryContext.go ? P2P_DEV_TYPE_GO : P2P_DEV_TYPE_DEV);
-				
+
 				if(NULL == (req = CustomScan_AllocReq(customScanInfo, NULL, NULL)))
 						break;
 				probeReqBuf = CustomScan_GetProbeReqBuf(req);
 				p2p_Construct_PDReq(pP2PInfo, probeReqBuf, pDev->mac, pDev->p2p->dialogToken, pDev->p2p->pdConfigMethod);
 				P2PConstructScanList(pP2PInfo, req, P2P_LOWEST_RATE, probeReqBuf);
 				CustomScan_IssueReq(customScanInfo, req, CUSTOM_SCAN_SRC_TYPE_P2P, "to send pd req");
-				
+
 				pP2PInfo->State = P2P_STATE_PROVISION_DISCOVERY_RSP_WAIT;
 				PlatformSetTimer(
 					pAdapter,
@@ -9441,11 +9441,11 @@ P2PMgntTimerCallback(
 			{
 				P2P_DEV_LIST_ENTRY *pDev = NULL;
 
-				pDev = p2p_DevList_Get(&pP2PInfo->devList, 
-						pP2PInfo->ProvisionDiscoveryContext.go ? pP2PInfo->ProvisionDiscoveryContext.goBssid : pP2PInfo->ProvisionDiscoveryContext.devAddr, 
+				pDev = p2p_DevList_Get(&pP2PInfo->devList,
+						pP2PInfo->ProvisionDiscoveryContext.go ? pP2PInfo->ProvisionDiscoveryContext.goBssid : pP2PInfo->ProvisionDiscoveryContext.devAddr,
 						pP2PInfo->ProvisionDiscoveryContext.go ? P2P_DEV_TYPE_GO : P2P_DEV_TYPE_DEV);
-				
-				RT_TRACE(COMP_P2P, DBG_LOUD, 
+
+				RT_TRACE(COMP_P2P, DBG_LOUD,
 					("P2PMgntTimerCallback(): Timeout waiting for Provision Discovery Rsp\n"));
 
 				// Comment out because we use off chnl tx to do pd retry if OS support P2P natively
@@ -9458,8 +9458,8 @@ P2PMgntTimerCallback(
 						pP2PInfo->State = P2P_STATE_INITIALIZED;
 						p2p_DevList_Unlock(&pP2PInfo->devList);
 						if(P2PProvisionDiscovery(
-								pP2PInfo, 
-								pP2PInfo->ProvisionDiscoveryContext.devAddr, 
+								pP2PInfo,
+								pP2PInfo->ProvisionDiscoveryContext.devAddr,
 								pDev->p2p->pdConfigMethod)
 								)
 						{
@@ -9471,7 +9471,7 @@ P2PMgntTimerCallback(
 							p2p_DevList_Unlock(&pP2PInfo->devList);
 							break;
 						}
-					}					
+					}
 				}
 				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("P2P_STATUS_FAIL_TIMEOUT_WAITING_FOR_PROVISION_DISCOVERY_RSP!, retry = 0\n"));
 				pP2PInfo->ProvisionReqRetryCnt = 0;
@@ -9484,20 +9484,20 @@ P2PMgntTimerCallback(
 		case P2P_STATE_PROVISION_DISCOVERY_COMPLETE:
 			{
 				BOOLEAN bExtLsn = FALSE;
-				
+
 				p2p_DevList_Lock(&pP2PInfo->devList);
 				{
 					BOOLEAN bSucceed = FALSE;
 					P2P_DEV_LIST_ENTRY *pDev = NULL;
 
-					pDev = p2p_DevList_Get(&pP2PInfo->devList, 
-							pP2PInfo->ProvisionDiscoveryContext.go ? pP2PInfo->ProvisionDiscoveryContext.goBssid : pP2PInfo->ProvisionDiscoveryContext.devAddr, 
+					pDev = p2p_DevList_Get(&pP2PInfo->devList,
+							pP2PInfo->ProvisionDiscoveryContext.go ? pP2PInfo->ProvisionDiscoveryContext.goBssid : pP2PInfo->ProvisionDiscoveryContext.devAddr,
 							pP2PInfo->ProvisionDiscoveryContext.go ? P2P_DEV_TYPE_GO : P2P_DEV_TYPE_DEV);
 
 					if(NULL == pDev)
 					{
 						RT_TRACE_F(COMP_P2P, DBG_SERIOUS, ("pDev = NULL\n"));
-						RT_ASSERT(FALSE, ("pDev = NULL"));					
+						RT_ASSERT(FALSE, ("pDev = NULL"));
 						PlatformZeroMemory(&pP2PInfo->ProvisionDiscoveryContext, sizeof(pP2PInfo->ProvisionDiscoveryContext));
 						PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 						bToFireTimer = FALSE;
@@ -9508,7 +9508,7 @@ P2PMgntTimerCallback(
 					if(NULL == pDev->p2p)
 					{
 						RT_TRACE_F(COMP_P2P, DBG_SERIOUS, ("pDev->p2p = NULL\n"));
-						RT_ASSERT(FALSE, ("pDev->p2p = NULL"));					
+						RT_ASSERT(FALSE, ("pDev->p2p = NULL"));
 						PlatformZeroMemory(&pP2PInfo->ProvisionDiscoveryContext, sizeof(pP2PInfo->ProvisionDiscoveryContext));
 						PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 						bToFireTimer = FALSE;
@@ -9526,18 +9526,18 @@ P2PMgntTimerCallback(
 					if(P2P_ADAPTER_OS_SUPPORT_P2P(pAdapter))
 					{
 						u2Byte	boostDelaySec = WPS_HANDSHAKE_TIMEOUT_SEC;
-					
+
 						McDynamicMachanismSet(pAdapter, MC_DM_INIT_GAIN_BOOST_END_DELAY_SEC, &boostDelaySec, sizeof(u2Byte));
-						RT_TRACE(COMP_P2P, DBG_LOUD, ("[BOOST_INIT_GAIN_OS] P2P_STATE_PROVISION_DISCOVERY_COMPLETE:\n"));						
+						RT_TRACE(COMP_P2P, DBG_LOUD, ("[BOOST_INIT_GAIN_OS] P2P_STATE_PROVISION_DISCOVERY_COMPLETE:\n"));
 					}
-					
+
 					if(bSucceed)
 					{
-						RT_TRACE(COMP_P2P, DBG_LOUD, 
-							("P2PMgntTimerCallback(): Provision Discovery succeed: %u\n", 
+						RT_TRACE(COMP_P2P, DBG_LOUD,
+							("P2PMgntTimerCallback(): Provision Discovery succeed: %u\n",
 							pDev->p2p->pdStatus));
 
-						P2PIndicateOnProvisionDiscoveryRsp(pP2PInfo, 
+						P2PIndicateOnProvisionDiscoveryRsp(pP2PInfo,
 							pDev->p2p->pdConfigMethod,
 							pDev->mac); // Set the ConfigMethod parameter to FFFF to indicate timeout
 
@@ -9570,7 +9570,7 @@ P2PMgntTimerCallback(
 								0
 								);
 						}
-						RT_TRACE(COMP_P2P, DBG_LOUD, 
+						RT_TRACE(COMP_P2P, DBG_LOUD,
 							("P2PMgntTimerCallback(): Provision Discovery failed: %u\n", pDev->p2p->pdStatus));
 
 						if(pDev->p2p->pdStatus == P2P_SC_FAIL_COMMON_CHANNEL_NOT_ARRIVED)
@@ -9581,13 +9581,13 @@ P2PMgntTimerCallback(
 						{
 							pDev->p2p->pdConfigMethod = 0xFF;
 						}
-						
-						P2PSvc_OnSendPDReqFailure(pP2PInfo->pP2PSvcInfo, 
+
+						P2PSvc_OnSendPDReqFailure(pP2PInfo->pP2PSvcInfo,
 							pDev->mac,
 							pDev->p2p->pdStatus
 							);
-						
-						P2PIndicateOnProvisionDiscoveryRsp(pP2PInfo, 
+
+						P2PIndicateOnProvisionDiscoveryRsp(pP2PInfo,
 							pDev->p2p->pdConfigMethod,
 							pDev->mac); // Set the ConfigMethod parameter to FFFF to indicate timeout
 
@@ -9612,7 +9612,7 @@ P2PMgntTimerCallback(
 					P2PExtendedListenStart(pP2PInfo);
 				}
 			}
-			
+
 			break;
 
 		//======================================================================
@@ -9623,10 +9623,10 @@ P2PMgntTimerCallback(
 			{
 				P2P_DEV_LIST_ENTRY *pDev = NULL;
 
-				pDev = p2p_DevList_Get(&pP2PInfo->devList, 
-								pP2PInfo->ConnectionContext.ConnectingDevice.DeviceAddress, 
+				pDev = p2p_DevList_Get(&pP2PInfo->devList,
+								pP2PInfo->ConnectionContext.ConnectingDevice.DeviceAddress,
 								P2P_DEV_TYPE_DEV);
-				
+
 				RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): Group Formating\n"));
 				// Pause default adapter's traffic if group formating
 				MultichannelHandlePacketDuringScan(GetDefaultAdapter(pAdapter), TRUE);
@@ -9636,10 +9636,10 @@ P2PMgntTimerCallback(
 				// 2014.04.03.
 				//
 				pP2PDeviceListEntry = P2PDeviceListFind(&pP2PInfo->DeviceList, pDev->mac);
-				if(pP2PDeviceListEntry)				
-				{						
+				if(pP2PDeviceListEntry)
+				{
 					if(P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter))
-					{						
+					{
 						BoostInitGainValue = TRUE;
 						BoostInitGainValue = (BoostInitGainValue | ((pP2PDeviceListEntry->RecvSignalPower+110) << 8));
 						pP2PInfo->pAdapter->HalFunc.SetHwRegHandler(pP2PInfo->pAdapter, HW_VAR_BOOST_INIT_GAIN_OS, (pu1Byte)&BoostInitGainValue);
@@ -9649,7 +9649,7 @@ P2PMgntTimerCallback(
 
 				if(FALSE == P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter))
 					pP2PInfo->GOIntent = ((pP2PInfo->GOIntent & 0xFE) | !(pP2PInfo->GOIntent & 0x01));
-				
+
 				p2p_Send_GoNegReq(pP2PInfo, pDev->mac, TRUE);
 
 				pP2PInfo->State = P2P_STATE_GO_NEGO_RSP_WAIT;
@@ -9693,25 +9693,25 @@ P2PMgntTimerCallback(
 				bToFireTimer = FALSE;
 
 				pP2PInfo->PreviousGONegoResult = (P2P_STATUS_CODE)pP2PInfo->ConnectionContext.Status;
-				P2PIndicateGOFormatedInfo(pP2PInfo, 
-					pP2PInfo->ConnectionContext.Status, 
-					pP2PInfo->ConnectionContext.bGoingToBeGO, 
+				P2PIndicateGOFormatedInfo(pP2PInfo,
+					pP2PInfo->ConnectionContext.Status,
+					pP2PInfo->ConnectionContext.bGoingToBeGO,
 					&pP2PInfo->ConnectionContext.ConnectingDevice);
 			}
 			break;
 		case P2P_STATE_GO_NEGO_CONFIRM_WAIT:
 			{
 				RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): Timeout waiting for GO Nego Confirm\n"));
-				
+
 				pP2PInfo->State = P2P_STATE_GO_NEGO_COMPLETE;
 				pP2PInfo->ConnectionContext.Status = P2P_STATUS_FAIL_TIMEOUT_WAITING_FOR_GON_CONFIRM;
 					PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 					bToFireTimer = FALSE;
 
 					pP2PInfo->PreviousGONegoResult = (P2P_STATUS_CODE)pP2PInfo->ConnectionContext.Status;
-					P2PIndicateGOFormatedInfo(pP2PInfo, 
-						pP2PInfo->ConnectionContext.Status, 
-						pP2PInfo->ConnectionContext.bGoingToBeGO, 
+					P2PIndicateGOFormatedInfo(pP2PInfo,
+						pP2PInfo->ConnectionContext.Status,
+						pP2PInfo->ConnectionContext.bGoingToBeGO,
 						&pP2PInfo->ConnectionContext.ConnectingDevice);
 				}
 			break;
@@ -9727,7 +9727,7 @@ P2PMgntTimerCallback(
 				if(P2P_ADAPTER_OS_SUPPORT_P2P(pAdapter))
 				{
 					u2Byte	boostDelaySec = WPS_HANDSHAKE_TIMEOUT_SEC;
-					
+
 					McDynamicMachanismSet(pAdapter, MC_DM_INIT_GAIN_BOOST_END_DELAY_SEC, &boostDelaySec, sizeof(u2Byte));
 					RT_TRACE(COMP_P2P, DBG_LOUD, ("[BOOST_INIT_GAIN_OS] P2P_STATE_GO_NEGO_COMPLETE:\n"));
 				}
@@ -9739,7 +9739,7 @@ P2PMgntTimerCallback(
 				}
 
 				pP2PInfo->PreviousGONegoResult = (P2P_STATUS_CODE)pP2PInfo->ConnectionContext.Status;
-				
+
 				if(pP2PInfo->ConnectionContext.Status == P2P_STATUS_SUCCESS)
 				{
 					//
@@ -9748,13 +9748,13 @@ P2PMgntTimerCallback(
 					if(pP2PInfo->ConnectionContext.bGoingToBeGO)
 					{ // Only copy the infomration in GO from our P2P info because these info shall be from ours but not the target (client).
 						pP2PInfo->ConnectionContext.ConnectingDevice.OperatingChannel = pP2PInfo->OperatingChannel;
-						CopySsid(pP2PInfo->ConnectionContext.ConnectingDevice.SsidBuf, pP2PInfo->ConnectionContext.ConnectingDevice.SsidLen, pP2PInfo->SSIDBuf, pP2PInfo->SSIDLen); 
+						CopySsid(pP2PInfo->ConnectionContext.ConnectingDevice.SsidBuf, pP2PInfo->ConnectionContext.ConnectingDevice.SsidLen, pP2PInfo->SSIDBuf, pP2PInfo->SSIDLen);
 					}
 					//P2PDumpScanList(pP2PInfo->ScanList, pP2PInfo->ScanListSize);
 					P2PDumpGroupFormationResult(pP2PInfo);
-					P2PIndicateGOFormatedInfo(pP2PInfo, 
-						pP2PInfo->ConnectionContext.Status, 
-						pP2PInfo->ConnectionContext.bGoingToBeGO, 
+					P2PIndicateGOFormatedInfo(pP2PInfo,
+						pP2PInfo->ConnectionContext.Status,
+						pP2PInfo->ConnectionContext.bGoingToBeGO,
 						&pP2PInfo->ConnectionContext.ConnectingDevice);
 
 					if(pP2PInfo->ConnectionContext.bGoingToBeGO)
@@ -9767,7 +9767,7 @@ P2PMgntTimerCallback(
 						// GO SSID is determined when GONegoReq or GONegoRsp is received
 						// and it is stored in pP2PInfo->SSIDBuf
 						//
-						CopySsid(P2PProfile.SsidBuf, P2PProfile.SsidBufLen, pP2PInfo->SSIDBuf, pP2PInfo->SSIDLen); 
+						CopySsid(P2PProfile.SsidBuf, P2PProfile.SsidBufLen, pP2PInfo->SSIDBuf, pP2PInfo->SSIDLen);
 
 						//
 						// We use this to modify the SSID of the SoftAP
@@ -9783,20 +9783,20 @@ P2PMgntTimerCallback(
 					// GO Nego failed, indicate to UI
 					// For the failure case, indicate earlier when we determine the negotiation is failed.
 					//
-					//P2PIndicateGOFormatedInfo(pP2PInfo, 
-					//	pP2PInfo->ConnectionContext.Status, 
-					//	pP2PInfo->ConnectionContext.bGoingToBeGO, 
+					//P2PIndicateGOFormatedInfo(pP2PInfo,
+					//	pP2PInfo->ConnectionContext.Status,
+					//	pP2PInfo->ConnectionContext.bGoingToBeGO,
 					//	&pP2PInfo->ConnectionContext.ConnectingDevice);
-					
+
 					PlatformZeroMemory(&pP2PInfo->ConnectionContext, sizeof(pP2PInfo->ConnectionContext));
 					pP2PInfo->State = P2P_STATE_INITIALIZED;
 				}
-				
+
 				PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, 0);
-				bToFireTimer = FALSE;		
+				bToFireTimer = FALSE;
 			}
 			break;
-			
+
 		//======================================================================
 		// WPS
 		//======================================================================
@@ -9809,13 +9809,13 @@ P2PMgntTimerCallback(
 				// Reset WPS related flags
 				pP2PInfo->ConnectionContext.bDoingProvisioning = FALSE;
 
-				// 
+				//
 				// Clause 3.1.4.3:
-				// Group Formation bit in the P2P Group Cap shall be set to 1 until Provisioning succeeds. 
+				// Group Formation bit in the P2P Group Cap shall be set to 1 until Provisioning succeeds.
 				//
 				pP2PInfo->GroupCapability |= gcGroupFormation; // set the bit
 
-				if(pP2PInfo->ConnectionContext.bGoingToBeGO && 
+				if(pP2PInfo->ConnectionContext.bGoingToBeGO &&
 					!P2P_ACTING_AS_GO(pP2PInfo)) // for the case that we invite a Dev to join our group, we shall not change SSID or restart AP
 				{// start AP mode
 					P2PSetRole(pP2PInfo, P2P_GO);
@@ -9832,16 +9832,16 @@ P2PMgntTimerCallback(
 					pP2PInfo->ConnectionContext.ProvisioningResult = P2P_PROVISIONING_RESULT_UNKNOWN;
 				}
 
-				// 
+				//
 				// Clause 3.1.3.4:
 				// To allow for P2P Device configuration, P2P Devices may delay starting the Provisioning phase
 				// until the expiration of the max of the P2P GO's GO Config Time and the Client's Client Config Time.
 				//
 				if(pP2PInfo->ConnectionContext.bGoingToBeGO)
-				{// I'm going to be the GO => just enter provisioning state without waiting for configuration timeout 
+				{// I'm going to be the GO => just enter provisioning state without waiting for configuration timeout
 					ConfigurationTimeout = 0; //(10 * MAX(pP2PInfo->GOConfigurationTimeout, pP2PInfo->ConnectionContext.ConnectingDevice.ClientConfigurationTimeout));
 				}
-				else 
+				else
 				{// I'm going to be the Client
 					ConfigurationTimeout = (10 * MAX(pP2PInfo->ClientConfigurationTimeout, pP2PInfo->ConnectionContext.ConnectingDevice.GOConfigurationTimeout));
 				}
@@ -9854,7 +9854,7 @@ P2PMgntTimerCallback(
 				pP2PInfo->Role = P2P_DEVICE;
 				pP2PInfo->State = P2P_STATE_INITIALIZED;
 				PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, 0);
-				bToFireTimer = FALSE;	
+				bToFireTimer = FALSE;
 				// ----------------------------------------------------------------------------------
 			}
 			else
@@ -9864,14 +9864,14 @@ P2PMgntTimerCallback(
 				//
 				pP2PInfo->State = P2P_STATE_PROVISIONING;
 				PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, ConfigurationTimeout); // wait for configuration
-				bToFireTimer = FALSE;	
+				bToFireTimer = FALSE;
 			}
 		}
 			break;
 		case P2P_STATE_PROVISIONING:
-			{	
+			{
 				//RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): P2P_STATE_PROVISIONING\n"));
-			
+
 				//if(pP2PInfo->ConnectionContext.bDoingProvisioning)
 				{// doing provisioning
 					//
@@ -9883,16 +9883,16 @@ P2PMgntTimerCallback(
 					{// Provisioning succeed
 						P2PSetOperatingState(pP2PInfo);
 						if(pP2PInfo->ConnectionContext.bGoingToBeGO)
-						{	
+						{
 						}
 						else
 						{// set client role
 							P2PSetRole(pP2PInfo, P2P_CLIENT);
 							RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): provisioning succeed\n"));
 						}
-						
+
 						PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, 0);
-						bToFireTimer = FALSE;	
+						bToFireTimer = FALSE;
 					}
 					else if(pP2PInfo->ConnectionContext.ProvisioningResult == P2P_PROVISIONING_RESULT_FAILED)
 					{// Provisioning failed => indicate Group Formation failed
@@ -9900,10 +9900,10 @@ P2PMgntTimerCallback(
 						// Clause 3.1.4.3: End the P2P Group session as described in Clause 3.2.9
 						//
 						SendDeauthentication(pP2PInfo->pAdapter, BroadcastAddress, deauth_lv_ss);
-						
+
 						pP2PInfo->State = P2P_STATE_INITIALIZED;
 						PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, P2P_DEFAULT_MGNT_PERIOD);
-						bToFireTimer = FALSE;	
+						bToFireTimer = FALSE;
 
 						RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): provisioning failed\n"));
 					}
@@ -9917,9 +9917,9 @@ P2PMgntTimerCallback(
 
 					if(pP2PInfo->ConnectionContext.ProvisioningResult != P2P_PROVISIONING_RESULT_UNKNOWN)
 					{// Provisioning has been done, either failed or succeed
-						// 
+						//
 						// Clause 3.1.4.3:
-						// Group Formation bit in the P2P Group Cap shall be set to 1 until Provisioning succeeds. 
+						// Group Formation bit in the P2P Group Cap shall be set to 1 until Provisioning succeeds.
 						//
 						pP2PInfo->GroupCapability &= ~gcGroupFormation; // clear the bit
 						RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): provisioning done\n"));
@@ -9932,7 +9932,7 @@ P2PMgntTimerCallback(
 				}
 			}
 			break;
-			
+
 		//======================================================================
 		// Group Operation
 		//======================================================================
@@ -9949,31 +9949,31 @@ P2PMgntTimerCallback(
 				if(P2P_ACTING_AS_GO(pP2PInfo))
 				{
 
-					if(P2PClientInfoGetCount(pP2PInfo) == 0 && 
+					if(P2PClientInfoGetCount(pP2PInfo) == 0 &&
 							!pP2PInfo->bGOStartedAutonomously) // not to check this if GO started autonomously
 					{// no client
 						pP2PInfo->P2PGONoClientSlotCount++;
-						RT_TRACE(COMP_P2P, DBG_LOUD, 
-							("P2PMgntTimerCallback(): no client slot count: %d\n", 
+						RT_TRACE(COMP_P2P, DBG_LOUD,
+							("P2PMgntTimerCallback(): no client slot count: %d\n",
 							pP2PInfo->P2PGONoClientSlotCount));
 					}
 					else
 					{
 						pP2PInfo->ExtListenTimingPeriodSlotCount = 0;
 					}
-					
+
 					if(pP2PInfo->P2PGONoClientSlotCount == P2P_NO_CLIENT_PERIOD_SC)
-					{			
+					{
 						P2PDisconnect(pP2PInfo); // to stop the SoftAP and back to init state
 						pP2PInfo->P2PGONoClientSlotCount = 0;
 
 						// Comment out because these are handled in P2PDisconnect.
 						//pP2PInfo->State = P2P_STATE_INITIALIZED;
 						//pP2PInfo->Role = P2P_DEVICE;
-						
+
 						bToFireTimer = FALSE;
-						
-						RT_TRACE(COMP_P2P, DBG_LOUD, 
+
+						RT_TRACE(COMP_P2P, DBG_LOUD,
 							("P2PMgntTimerCallback(): Stop GO and back to P2P_STATE_INITIALIZED\n"));
 					}
 				}
@@ -9982,31 +9982,31 @@ P2PMgntTimerCallback(
 					if(!P2PDefaultPortConnected(pP2PInfo) && !P2PProvisioning(pP2PInfo))
 					{
 						pP2PInfo->P2PClientDisconnectedSlotCount++;
-						RT_TRACE(COMP_P2P, DBG_LOUD, 
-							("P2PMgntTimerCallback(): P2P Client disconnected slot count: %d\n", 
+						RT_TRACE(COMP_P2P, DBG_LOUD,
+							("P2PMgntTimerCallback(): P2P Client disconnected slot count: %d\n",
 							pP2PInfo->P2PClientDisconnectedSlotCount));
 					}
 					else
 					{// def port connected or doing provisioning
 						pP2PInfo->P2PClientDisconnectedSlotCount = 0;
 					}
-					
+
 					if(pP2PInfo->P2PClientDisconnectedSlotCount == P2P_CLIENT_DISCONNECTED_PERIOD_SC)
 					{
 						P2PDisconnect(pP2PInfo); // will back to init state
 						pP2PInfo->P2PClientDisconnectedSlotCount = 0;
 						pP2PInfo->State = P2P_STATE_INITIALIZED;
 						P2PSetRole(pP2PInfo, P2P_DEVICE);
-						RT_TRACE(COMP_P2P, DBG_LOUD, 
+						RT_TRACE(COMP_P2P, DBG_LOUD,
 							("P2PMgntTimerCallback(): back to P2P_STATE_INITIALIZED because we are acting as Client but default port is disconnected\n"));
 
 					}
 				}
 			}
 
-				
+
 				PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, P2P_DEFAULT_MGNT_PERIOD);
-				bToFireTimer = FALSE;	
+				bToFireTimer = FALSE;
 			}
 			break;
 		//======================================================================
@@ -10019,8 +10019,8 @@ P2PMgntTimerCallback(
 				if(NULL == (req = CustomScan_AllocReq(customScanInfo, NULL, NULL)))
 						break;
 				probeReqBuf = CustomScan_GetProbeReqBuf(req);
-				p2p_Construct_InvitationReq(pP2PInfo, probeReqBuf, 
-					pP2PInfo->InvitationContext.InvitedDevice.DeviceAddress, 
+				p2p_Construct_InvitationReq(pP2PInfo, probeReqBuf,
+					pP2PInfo->InvitationContext.InvitedDevice.DeviceAddress,
 					pP2PInfo->InvitationContext.DialogToken);
 				P2PConstructScanList(pP2PInfo, req, P2P_LOWEST_RATE, probeReqBuf);
 				CustomScan_IssueReq(customScanInfo, req, CUSTOM_SCAN_SRC_TYPE_P2P, "to send inv req");
@@ -10048,7 +10048,7 @@ P2PMgntTimerCallback(
 			//break;
 		case P2P_STATE_INVITATION_COMPLETE:
 			{
-				RT_TRACE(COMP_P2P, DBG_LOUD, 
+				RT_TRACE(COMP_P2P, DBG_LOUD,
 					("P2PMgntTimerCallback(): P2P_STATE_INVITATION_COMPLETE, status: %u, persistent: %u, ch: %u\n",
 					pP2PInfo->InvitationContext.Status, pP2PInfo->InvitationContext.bPersistentInvitation, pP2PInfo->InvitationContext.OpChannel));
 
@@ -10059,7 +10059,7 @@ P2PMgntTimerCallback(
 				if(P2P_ADAPTER_OS_SUPPORT_P2P(pAdapter))
 				{
 					u2Byte	boostDelaySec = ASSOC_HANDSHAKE_DHCP_DELAY_SEC;
-					
+
 					McDynamicMachanismSet(pAdapter, MC_DM_INIT_GAIN_BOOST_END_DELAY_SEC, &boostDelaySec, sizeof(u2Byte));
 					RT_TRACE(COMP_P2P, DBG_LOUD, ("[BOOST_INIT_GAIN_OS] P2P_STATE_INVITATION_COMPLETE:\n"));
 				}
@@ -10068,7 +10068,7 @@ P2PMgntTimerCallback(
 				// We use P2PDeviceDiscovery() to arrive common chnll before sendding InvitationReq,
 				// In P2PDeviceDiscovery(), beacon is stopped, so we have to resume beaconning here.
 				//
-			 	// If P2P_STATUS_FAIL_COMMON_CHANNEL_NOT_ARRIVED, 
+			 	// If P2P_STATUS_FAIL_COMMON_CHANNEL_NOT_ARRIVED,
 			 	// P2PDeviceDiscoveryComplete() is called in P2P_STATE_DEV_DISC_COMPLETE case,
 			 	// so we don' t have to call it again
 			 	//
@@ -10080,22 +10080,22 @@ P2PMgntTimerCallback(
 				{
 					pP2PInfo->State = pP2PInfo->StateBeforeScan;
 				}
-				
+
 				P2PInvitePeerComplete(pP2PInfo);
 
-				P2PIndicateOnInvitationRsp(pP2PInfo, 
-					pP2PInfo->InvitationContext.Status, 
+				P2PIndicateOnInvitationRsp(pP2PInfo,
+					pP2PInfo->InvitationContext.Status,
 					pP2PInfo->InvitationContext.bPersistentInvitation,
 					pP2PInfo->InvitationContext.OpChannel,
-					pP2PInfo->InvitationContext.InvitorRole, 
-					pP2PInfo->InvitationContext.SsidLen, 
+					pP2PInfo->InvitationContext.InvitorRole,
+					pP2PInfo->InvitationContext.SsidLen,
 					pP2PInfo->InvitationContext.SsidBuf);
 
 				// Indicating InvitationRsp may trigger a connect request which may further triger a reset request,
 				// and reset request resets all timers including the P2P mgnt timer.
 				// Indicate current state immediately so that upper layers will not show "inviting" for a long time.
 				//P2PIndicateCurrentState(pP2PInfo, pP2PInfo->State);
-				
+
 				if(!pP2PInfo->InvitationContext.bWaitingBackwardInvite)
 				{
 					PlatformZeroMemory(&(pP2PInfo->InvitationContext), sizeof(P2P_INVITATION_CONTEXT));
@@ -10112,14 +10112,14 @@ P2PMgntTimerCallback(
 		case P2P_STATE_DEVICE_DISCOVERABILITY_WAIT_BEACON:
 			{// timeout waiting for beacon from the GO
 				pP2PInfo->DeviceDiscoverabilityContext.Status = P2P_STATUS_FAIL_TIMEOUT_WAITING_FOR_GO_BEACON;
-				RT_TRACE(COMP_P2P, DBG_LOUD, 
+				RT_TRACE(COMP_P2P, DBG_LOUD,
 					("P2PMgntTimerCallback(): P2P_STATE_DEVICE_DISCOVERABILITY_WAIT_BEACON: Timeout waiting for GO Beacon\n"));
 				pP2PInfo->State = P2P_STATE_DEVICE_DISCOVERABILITY_COMPLETE;
 				PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 				bToFireTimer = FALSE;
 			}
 			break;
-			
+
 		case P2P_STATE_DEVICE_DISCOVERABILITY_REQ_SEND:
 			{
 				RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): P2P_STATE_INVITATION_REQ_SEND\n"));
@@ -10127,25 +10127,25 @@ P2PMgntTimerCallback(
 				p2p_Send_DevDiscReq(pP2PInfo, pP2PInfo->DeviceDiscoverabilityContext.GoBssid,
 									pP2PInfo->DeviceDiscoverabilityContext.ClientDeviceAddress,
 									pP2PInfo->DeviceDiscoverabilityContext.DialogToken);
-									
+
 
 				pP2PInfo->State = P2P_STATE_DEVICE_DISCOVERABILITY_RSP_WAIT;
 				PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, P2P_DEVICE_DISCOVERABILITY_FRAME_TIMEOUT);
 				bToFireTimer = FALSE;
 			}
 			break;
-			
+
 		case P2P_STATE_DEVICE_DISCOVERABILITY_RSP_WAIT:
 			{// timeout waithing for DeviceDiscoverabilityRsp
 				pP2PInfo->DeviceDiscoverabilityContext.Status = P2P_STATUS_FAIL_TIMEOUT_WAITING_FOR_DEVICE_DISCOVERABILITY_RSP;
-				RT_TRACE(COMP_P2P, DBG_LOUD, 
+				RT_TRACE(COMP_P2P, DBG_LOUD,
 					("P2PMgntTimerCallback(): P2P_STATE_DEVICE_DISCOVERABILITY_RSP_WAIT: Timeout waiting for DeviceDiscoverabilityRsp\n"));
 			}
 			/*FALL THROUGH*/
-			
+
 		case P2P_STATE_DEVICE_DISCOVERABILITY_COMPLETE:
 			{
-				RT_TRACE(COMP_P2P, DBG_LOUD, 
+				RT_TRACE(COMP_P2P, DBG_LOUD,
 					("P2PMgntTimerCallback(): P2P_STATE_DEVICE_DISCOVERABILITY_COMPLETE: Status(%u)\n",
 					pP2PInfo->DeviceDiscoverabilityContext.Status));
 
@@ -10170,14 +10170,14 @@ P2PMgntTimerCallback(
 		//======================================================================
 		case P2P_STATE_SERVICE_DISCOVERY_REQ_SEND:
 			{
-				RT_TRACE(COMP_P2P, DBG_LOUD, 
+				RT_TRACE(COMP_P2P, DBG_LOUD,
 					("P2PMgntTimerCallback(): P2P_STATE_SERVICE_DISCOVERY_REQ_SEND\n"));
 
 				/* we will never reach here, see P2PCommonChannelArrived */
 			}
 			break;
-			
-		case P2P_STATE_SERVICE_DISCOVERY_COMEBACK_RSP_WAIT:	
+
+		case P2P_STATE_SERVICE_DISCOVERY_COMEBACK_RSP_WAIT:
 			{
 				RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): Timeout waiting for ComebackRsp\n"));
 
@@ -10188,7 +10188,7 @@ P2PMgntTimerCallback(
 				bToFireTimer = FALSE;
 			}
 			break;
-			
+
 		case P2P_STATE_SERVICE_DISCOVERY_RSP_WAIT:
 			{
 				RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PMgntTimerCallback(): Timeout waiting for SDRsp\n"));
@@ -10200,10 +10200,10 @@ P2PMgntTimerCallback(
 				bToFireTimer = FALSE;
 			}
 			break;
-			
+
 		case P2P_STATE_SERVICE_DISCOVERY_COMPLETE:
 			{
-				RT_TRACE(COMP_P2P, DBG_LOUD, 
+				RT_TRACE(COMP_P2P, DBG_LOUD,
 					("P2PMgntTimerCallback(): SD Complete: Status (%u)\n",
 					pP2PInfo->SDContext.Status));
 
@@ -10224,7 +10224,7 @@ P2PMgntTimerCallback(
 
 				// Clear SDContext
 				PlatformZeroMemory(&pP2PInfo->SDContext, sizeof(P2P_SD_CONTEXT));
-				
+
 				PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 				bToFireTimer = FALSE;
 			}
@@ -10243,10 +10243,10 @@ P2PMgntTimerCallback(
 	{
 		PlatformSetTimer( pAdapter, &pP2PInfo->P2PMgntTimer, P2P_DEFAULT_MGNT_PERIOD);
 	}
-	
+
 exit_P2PMgntTimerCallback:
 	return;
-	
+
 }
 
 VOID
@@ -10256,12 +10256,12 @@ P2PMlmeAssociateRequest(
 	u4Byte			asocTmot,
 	u2Byte			asCap,
 	u2Byte			asListenInterval,
-	BOOLEAN			Reassociate	
+	BOOLEAN			Reassociate
 	)
 {
 	PP2P_INFO pP2PInfo = GET_P2P_INFO(Adapter);
 	PRT_WLAN_BSS pBssDesc ;
-	
+
 	if(!P2P_ENABLED(GET_P2P_INFO(Adapter)))
 	{
 		return;
@@ -10274,7 +10274,7 @@ P2PMlmeAssociateRequest(
 		if(!(pBssDesc->P2PManagedInfo & maP2PCrossConnectionPermitted) &&
 			(pP2PInfo->GroupCapability & gcCrossConnection))
 		{// we support cross conn but the connecting ap does not allow that
-			RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, 
+			RT_PRINT_ADDR(COMP_P2P, DBG_LOUD,
 				"P2PMlmeAssociateRequest(): Cross connection is not allowed by the AP => disable cross connection\n", asocStaAddr);
 			pP2PInfo->GroupCapability &= ~gcCrossConnection;
 		}
@@ -10293,7 +10293,7 @@ P2PMlmeAssociateRequest(
 //		The packet container including the information of packet.
 //	[in] posMpdu -
 //		The location address of full 802.11 frame.
-//		
+//
 // Return:
 //	Return RT_STATUS_SUCCESS if the parsing succeeds.
 // Remark:
@@ -10307,23 +10307,23 @@ P2P_OnAssocOK(
 	IN	POCTET_STRING	posMpdu
 	)
 {
-	RT_STATUS				rtStatus = RT_STATUS_SUCCESS;	
+	RT_STATUS				rtStatus = RT_STATUS_SUCCESS;
 	PP2P_INFO				pP2PInfo = GET_P2P_INFO(pAdapter);
 	PMGNT_INFO				pMgntInfo = &(pAdapter->MgntInfo);
 	pu1Byte					DeviceAddress = NULL;
 	pu1Byte					InterfaceAddress = Frame_pSaddr(*posMpdu);
-	PP2P_DEVICE_DISCRIPTOR	pP2PDeviceDesc = NULL;  
+	PP2P_DEVICE_DISCRIPTOR	pP2PDeviceDesc = NULL;
 	PADAPTER 				pLoopAdapter = NULL;
 	PP2P_INFO				pLoopP2PInfo = NULL;
 
-	P2P_MESSAGE				msg;	
-			
-	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("connected with Legacy AP\n"));		
+	P2P_MESSAGE				msg;
+
+	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("connected with Legacy AP\n"));
 
 	FunctionIn(COMP_P2P);
 
 	PlatformZeroMemory(&msg, sizeof(P2P_MESSAGE));
-	
+
 	do
 	{
 		BOOLEAN				bGo = FALSE;
@@ -10335,7 +10335,7 @@ P2P_OnAssocOK(
 		{
 			if(!P2P_ENABLED(pLoopP2PInfo))
 				continue;
-			
+
 			if(P2P_CLIENT != pLoopP2PInfo->Role && P2P_GO != pLoopP2PInfo->Role)
 			{
 				pLoopP2PInfo->OperatingChannel = pMgntInfo->dot11CurrentChannelNumber;
@@ -10352,7 +10352,7 @@ P2P_OnAssocOK(
 			rtStatus = RT_STATUS_SUCCESS;
 			break;
 		}
-		
+
 		if(RT_STATUS_SUCCESS == (rtStatus = p2p_parse_Ies(posMpdu, DBG_LOUD, &msg)))
 			if(!p2p_validate_AssocRsp(&msg))
 			{
@@ -10365,7 +10365,7 @@ P2P_OnAssocOK(
 		//
 		// osP2PIE = PacketGetElement(asocpdu, EID_Vendor, OUI_SUB_WIFI_DIRECT, OUI_SUB_DONT_CARE);
 		bGo = (NULL != FrameBuf_Head(&msg.p2pAttributes));
-		
+
 		// Update scan list for query so that upper layers can query the most up to date scan list to determine
 		// whether the connecting AP is a GO.
 		P2P_UpdateScanList(pAdapter);
@@ -10393,7 +10393,7 @@ P2P_OnAssocOK(
 			{
 				pP2PInfo->OperatingChannel = MgntActQuery_802_11_CHANNEL_NUMBER(pP2PInfo->pAdapter);
 				pP2PInfo->ListenChannel = MgntActQuery_802_11_CHANNEL_NUMBER(pP2PInfo->pAdapter);
-	
+
 				// Also adjust GO intent to 15 so that we won't become a P2P Client after negotiation.
 				{
 					pP2PInfo->GOIntent = ((15 << 1) | (pP2PInfo->GOIntent & 0x01));
@@ -10410,16 +10410,16 @@ P2P_OnAssocOK(
 					PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 
 				}
-	
+
 				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("P2P listen chnl changed to %u\n", pMgntInfo->dot11CurrentChannelNumber));
-			}	
+			}
 		}
-	
-		PlatformSetTimer(pAdapter, &(pP2PInfo->P2PMgntTimer), 0);	
+
+		PlatformSetTimer(pAdapter, &(pP2PInfo->P2PMgntTimer), 0);
 	}while(FALSE);
 
 	p2p_parse_FreeMessage(&msg);
- 
+
 	return rtStatus;
 }
 
@@ -10427,7 +10427,7 @@ P2P_OnAssocOK(
 // Description:
 //	Set P2P Power Save mode for GO.
 // Arguments:
-//	[in] pP2PInfo - 
+//	[in] pP2PInfo -
 //		The P2P context.
 //	[in] pP2pPs -
 //		The address of P2P power save setting.
@@ -10467,9 +10467,9 @@ P2PSetPowerSaveMode(
 	if((pP2PInfo->Role != P2P_GO) && (pP2PInfo->Role != P2P_CLIENT))
 		return RT_STATUS_FAILURE;
 
-	P2PSetPsState(pP2PInfo, P2P_PS_CANCEL_ALL_PS, P2P_PS_AWAKE, 0);	
+	P2PSetPsState(pP2PInfo, P2P_PS_CANCEL_ALL_PS, P2P_PS_AWAKE, 0);
 
-	RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PSetPowerSaveMode(): Reason = %d\n", psReason));		
+	RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PSetPowerSaveMode(): Reason = %d\n", psReason));
 
 	PlatformMoveMemory(&pP2PInfo->P2pPsConfgSet, pP2pPs, sizeof(P2P_POWERSAVE_SET));
 
@@ -10498,7 +10498,7 @@ P2PSetPowerSaveMode(
 		P2PPsTimeout(pAdapter);
 	}
 	else if(pP2PInfo->psExeType == RT_P2P_PS_EXE_BY_HW && pAdapter->MgntInfo.bWiFiConfg)
-	{ // HW caculate			
+	{ // HW caculate
 		P2PSetPsState(pP2PInfo, P2P_PS_CANCEL_ALL_PS, P2P_PS_AWAKE, 0);
 	}
 	else
@@ -10514,7 +10514,7 @@ P2PSetPowerSaveMode(
 // Description:
 //	Update the P2P power save setting from the configuration.
 // Arguments:
-//	[in] pP2PInfo - 
+//	[in] pP2PInfo -
 //		The P2P context.
 // Return:
 //	If success, return RT_STATUS_SUCCESS; Otherwise, return an error code.
@@ -10537,7 +10537,7 @@ P2PUpdatePowerSavePara(
 
 	if(!pP2PInfo->bUpdatePsParameter)
 		return RT_STATUS_FAILURE;
-	
+
 	usBeaconInterval = pP2PInfo->pAdapter->MgntInfo.dot11BeaconPeriod * sTU;
 
 	pP2PInfo->bOppPS = pP2PInfo->P2pPsConfgSet.bOppPs;
@@ -10570,24 +10570,24 @@ P2PUpdatePowerSavePara(
 	for(i = 0; i < P2P_MAX_NUM_NOA_DESC; i ++)
 	{
 		pP2PInfo->NoADescriptors[i].bValid = pP2PInfo->P2pPsConfgSet.NoASet[i].bNoAEn;
-		
+
 		// If the interval is not long enough to get into awake state, mark it as no NoA.
 		if((pP2PInfo->P2pPsConfgSet.NoASet[i].NoADur < 4 * P2P_PS_TIMEOUT_TOLERANCE) ||
 			((pP2PInfo->P2pPsConfgSet.NoASet[i].NoADur + 10000) > pP2PInfo->P2pPsConfgSet.NoASet[i].NoAInt && pP2PInfo->P2pPsConfgSet.NoASet[i].NoACnt != 1 && pP2PInfo->NoADescriptors[i].bValid))
 		{
 			pP2PInfo->NoADescriptors[i].bValid = FALSE;
-			RT_TRACE(COMP_P2P, DBG_WARNING, (" Setting Values are invalid: Duration (0x%08X), Interval (0x%08X) and count = %d\n", 
+			RT_TRACE(COMP_P2P, DBG_WARNING, (" Setting Values are invalid: Duration (0x%08X), Interval (0x%08X) and count = %d\n",
 					pP2PInfo->P2pPsConfgSet.NoASet[i].NoADur, pP2PInfo->P2pPsConfgSet.NoASet[i].NoAInt, pP2PInfo->P2pPsConfgSet.NoASet[i].NoACnt));
 		}
-		
+
 		pP2PInfo->NoADescriptors[i].CountOrType = (pP2PInfo->NoADescriptors[i].bValid) ? pP2PInfo->P2pPsConfgSet.NoASet[i].NoACnt : 0;
 		pP2PInfo->NoADescriptors[i].Duration = (pP2PInfo->NoADescriptors[i].bValid) ? pP2PInfo->P2pPsConfgSet.NoASet[i].NoADur : 0;
 		pP2PInfo->NoADescriptors[i].Interval = (pP2PInfo->NoADescriptors[i].bValid) ? pP2PInfo->P2pPsConfgSet.NoASet[i].NoAInt : 0;
 		if(pP2PInfo->NoADescriptors[i].bValid)
-		{			
+		{
 			// Modify the start time to be the mod of beacon interval.
 			// If the user didn't specify the shift time, using the defualt value 500 ms.
-			u8StartTime = (pP2PInfo->P2pPsConfgSet.NoASet[i].bUseStartTime) ? 
+			u8StartTime = (pP2PInfo->P2pPsConfgSet.NoASet[i].bUseStartTime) ?
 							((curTsf & UINT64_C(0xFFFFFFFF00000000)) | pP2PInfo->P2pPsConfgSet.NoASet[i].u4StartTime) : PlatformDivision64(curTsf, usBeaconInterval) * usBeaconInterval + 5 * usBeaconInterval;
 
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("bUseStartTime = %d, u8StartTime = 0x%08X %08X, div = 0x%08X\n", pP2PInfo->P2pPsConfgSet.NoASet[i].bUseStartTime, (u4Byte)(u8StartTime >> 32), (u4Byte)u8StartTime, (u4Byte)PlatformDivision64(curTsf, usBeaconInterval)));
@@ -10595,7 +10595,7 @@ P2PUpdatePowerSavePara(
 			// Store the exact TSF timer for timeout reference.
 			pP2PInfo->NoADescriptors[i].u8StartTime = u8StartTime;
 
-			// Extract the low 4 bytes.			
+			// Extract the low 4 bytes.
 			pP2PInfo->NoADescriptors[i].StartTime = (u4Byte)(u8StartTime & 0xFFFFFFFF);
 
 			nextAdvancedTsf = (pP2PInfo->NoADescriptors[i].u8StartTime & UINT64_C(0xFFFFFFFF00000000)) + UINT64_C(0x0000000100000000);
@@ -10610,8 +10610,8 @@ P2PUpdatePowerSavePara(
 			}
 			else
 			{
-				pP2PInfo->NoADescriptors[i].u8EndTime = (u8Byte)(pP2PInfo->NoADescriptors[i].u8StartTime + 
-									(pP2PInfo->NoADescriptors[i].CountOrType * pP2PInfo->NoADescriptors[i].Interval) - 
+				pP2PInfo->NoADescriptors[i].u8EndTime = (u8Byte)(pP2PInfo->NoADescriptors[i].u8StartTime +
+									(pP2PInfo->NoADescriptors[i].CountOrType * pP2PInfo->NoADescriptors[i].Interval) -
 									(pP2PInfo->NoADescriptors[i].Interval - pP2PInfo->NoADescriptors[i].Duration));
 			}
 
@@ -10643,7 +10643,7 @@ P2PUpdatePowerSavePara(
 	{
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("-----NoA[%d]-----\nbValid = %d, Count = %X, Duration = 0x%08X (Dec = %d), Interval = 0x%08X (Dec = %d)\nu8StartTime = 0x%08X %08X (Low Dec = %d), \nu8EndTime = 0x%08X %08X (Low Dec = %d)\n------------\n",
 				i,
-				pP2PInfo->NoADescriptors[i].bValid, 
+				pP2PInfo->NoADescriptors[i].bValid,
 				pP2PInfo->NoADescriptors[i].CountOrType,
 				pP2PInfo->NoADescriptors[i].Duration,
 				pP2PInfo->NoADescriptors[i].Duration,
@@ -10712,7 +10712,7 @@ P2PPsWorkItemCallback(
 	{
 		if(RT_CANNOT_IO(pP2PInfo->pAdapter))
 			break;
-		
+
 		pP2PInfo->usSleepTime = 0;
 		if(pP2PInfo->bUpdatePsParameter)
 		{
@@ -10724,7 +10724,7 @@ P2PPsWorkItemCallback(
 			P2PPsTimeout(pP2PInfo->pAdapter);
 		}
 		else if(pP2PInfo->psExeType == RT_P2P_PS_EXE_BY_HW)
-		{ // HW caculate			
+		{ // HW caculate
 			P2PSetPsState(pP2PInfo, 0, 0, 0);
 			break;
 		}
@@ -10746,7 +10746,7 @@ P2PPsWorkItemCallback(
 // Description:
 //	On receiving a P2P PS timeout event, review the TSF timer and check all the condition whether the state is going into.
 // Arguemtns:
-//	[in] pP2PInfo - 
+//	[in] pP2PInfo -
 //		The P2P context.
 // Return:
 //	None.
@@ -10756,7 +10756,7 @@ VOID
 P2PPsTimeout(
 	IN	PADAPTER			pAdapter
 	)
-{	
+{
 	PMGNT_INFO			pMgntInfo = &(pAdapter->MgntInfo); // should be the default mgnt info
 	PP2P_INFO			pP2PInfo = pMgntInfo->pP2PInfo;
 	PADAPTER			pExtAdapter = P2P_ADAPTER_OS_SUPPORT_P2P(pAdapter) ? pAdapter : GetFirstExtAdapter(pAdapter);
@@ -10773,14 +10773,14 @@ P2PPsTimeout(
 	u4Byte				psStateToSet = P2P_PS_AWAKE;
 	u4Byte				psSourceToSet = P2P_PS_CANCEL_ALL_PS;
 	u8Byte				psTimeoutToSet = 0;
-	
+
 
 	FunctionIn(COMP_P2P);
 
 	// The role is incorrect
 	if(pP2PInfo->Role != P2P_GO && pP2PInfo->Role != P2P_CLIENT)
 		return;
-		
+
 
 	if(P2P_CLIENT == pP2PInfo->Role && !pMgntInfo->mAssoc)
 	{
@@ -10789,7 +10789,7 @@ P2PPsTimeout(
 	}
 
 	// No P2P PS mode and the power state is awake.
-	if(pP2PInfo->PsFlag == P2P_PS_CANCEL_ALL_PS && pP2PInfo->P2pPsState == P2P_PS_AWAKE && pP2PInfo->CTWindow == 0 && 
+	if(pP2PInfo->PsFlag == P2P_PS_CANCEL_ALL_PS && pP2PInfo->P2pPsState == P2P_PS_AWAKE && pP2PInfo->CTWindow == 0 &&
 		pP2PInfo->NoADescriptors[0].u8StartTime == 0 && pP2PInfo->NoADescriptors[1].u8StartTime == 0)
 	{
 		return;
@@ -10819,7 +10819,7 @@ P2PPsTimeout(
 
 	//
 	// Cleint is in the awake state, the CTWindow doen't apply now.
-	// if(pP2PInfo->Role == P2P_CLIENT && 
+	// if(pP2PInfo->Role == P2P_CLIENT &&
 	//	(pP2PInfo->pAdapter->MgntInfo.dot11PowerSaveMode == eActive))
 	//{
 	//		usCTWindow = 0;
@@ -10864,7 +10864,7 @@ P2PPsTimeout(
 		P2pPsSet.NoASet[i].NoACnt = pP2PInfo->NoADescriptors[i].CountOrType;
 		P2pPsSet.NoASet[i].bUseStartTime = TRUE;
 		P2pPsSet.NoASet[i].u4StartTime = pP2PInfo->NoADescriptors[i].StartTime;
-		
+
 		if(pP2PInfo->NoADescriptors[i].bValid)
 		{
 			// Time 's up
@@ -10899,13 +10899,13 @@ P2PPsTimeout(
 
 	//3 //==============Evaluate the Current Time State===============//
 	//4 // (1) NoA count == 1
-	if(pP2PInfo->NoADescriptors[0].bValid && 
+	if(pP2PInfo->NoADescriptors[0].bValid &&
 		(pP2PInfo->NoADescriptors[0].u8StartTime <= (curTsf + P2P_PS_TIMEOUT_TOLERANCE)))
 	{
 		bNoA0Valid = TRUE;
 	}
 
-	if(pP2PInfo->NoADescriptors[1].bValid && 
+	if(pP2PInfo->NoADescriptors[1].bValid &&
 		(pP2PInfo->NoADescriptors[1].u8StartTime <= (curTsf + P2P_PS_TIMEOUT_TOLERANCE)))
 	{
 		bNoA1Valid = TRUE;
@@ -10952,13 +10952,13 @@ P2PPsTimeout(
 			(PlatformModular64(curTsf, usBeaconInterval) > (usBeaconInterval - P2P_PS_TIMEOUT_TOLERANCE)))
 		{
 			P2pPsTimeState |= P2P_PS_TIME_STATE_IN_CTWIN;
-		}		
+		}
 		else
 		{
 			// We are out of CTWin
 			P2pPsTimeState |= P2P_PS_TIME_STATE_OUT_CTWIN;
 
-			// <Note> We need to check if any client is in active mode (including ourself if we are client mode).			
+			// <Note> We need to check if any client is in active mode (including ourself if we are client mode).
 			if(pP2PInfo->Role == P2P_GO)
 			{ // Check if the GO shall keep awake.
 				PRT_WLAN_STA	pEntry = NULL;
@@ -10978,7 +10978,7 @@ P2PPsTimeout(
 					}
 				}
 			}
-			else if(pP2PInfo->Role == P2P_CLIENT && 
+			else if(pP2PInfo->Role == P2P_CLIENT &&
 				(pP2PInfo->pAdapter->MgntInfo.dot11PowerSaveMode == eActive))
 			{ // Cleint is in the awake state, the CTWindow doen't apply now.
 				// <Note> If there exists periodic NoA, we shall follow the rule of NoA.
@@ -10993,9 +10993,9 @@ P2PPsTimeout(
 		tmpNoAStartTime = pP2PInfo->NoADescriptors[0].u8StartTime;
 		tmpNoAIntvl = pP2PInfo->NoADescriptors[0].Interval;
 		tmpNoADur = pP2PInfo->NoADescriptors[0].Duration;
-		
+
 		timeDiff = (curTsf < tmpNoAStartTime) ? 0: (curTsf - tmpNoAStartTime);
-			
+
 		if(PlatformModular64(timeDiff, tmpNoAIntvl) < (tmpNoADur - P2P_PS_TIMEOUT_TOLERANCE))
 		{
 			P2pPsTimeState |= P2P_PS_TIME_STATE_IN_NOA0;
@@ -11017,9 +11017,9 @@ P2PPsTimeout(
 		tmpNoAStartTime = pP2PInfo->NoADescriptors[1].u8StartTime;
 		tmpNoAIntvl = pP2PInfo->NoADescriptors[1].Interval;
 		tmpNoADur = pP2PInfo->NoADescriptors[1].Duration;
-		
+
 		timeDiff = (curTsf < tmpNoAStartTime) ? 0: (curTsf - tmpNoAStartTime);
-			
+
 		if(PlatformModular64(timeDiff, tmpNoAIntvl) < (tmpNoADur - P2P_PS_TIMEOUT_TOLERANCE))
 		{
 			P2pPsTimeState |= P2P_PS_TIME_STATE_IN_NOA1;
@@ -11073,7 +11073,7 @@ P2PPsTimeout(
 	else if(P2pPsTimeState & P2P_PS_TIME_STATE_OUT_CTWIN)
 	{
 		if(!(P2pPsTimeState & P2P_PS_TIME_STATE_OUT_CTWIN_CLIENT_AWAKE))
-		{ // Out of CTWin (the priority is higher than periodic NoA), Next TBTT must wake up.				
+		{ // Out of CTWin (the priority is higher than periodic NoA), Next TBTT must wake up.
 			psTimeoutToSet = nextTbtt;
 			psSourceToSet = P2P_PS_ENTER_PS_BY_CTWIN;
 			psStateToSet = P2P_PS_DOZE;
@@ -11133,14 +11133,14 @@ P2PPsTimeout(
 					AC = 3;
 				else if(GET_BK_UAPSD(pMgntInfo->pStaQos->Curr4acUapsd))
 					AC = 2;
-					
+
 				SendQoSNullFunctionData(pP2PInfo->pAdapter, pMgntInfo->Bssid, AC, TRUE);
 				pMgntInfo->pStaQos->bInServicePeriod = TRUE;
 				RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PPSTimeout(): Re-trigger the SP!\n"));
 			}
 		}
 		pP2PInfo->bEospByNoA = FALSE;
-		
+
 		tmpNextDozeTime = nextNoA0Start;
 		// Find the earliet NoA start time
 		if(nextNoA1Start > 0 && tmpNextDozeTime > nextNoA1Start)
@@ -11159,7 +11159,7 @@ P2PPsTimeout(
 	{ // No one Periodic NoA is valid, and this state shall be kept awake until next CTWin comes, or all clients enter dozed, or one NoA becomes valid.
 		// If next CTWin exists, set the next doze time as next CTWin because we will keep awake cross the next TBTT until the end of CTWin.
 		tmpNextDozeTime = (usCTWindow > 0 && pP2PInfo->bOppPS) ? (nextTbtt + usCTWindow) : 0;
-		
+
 		// Next NoA0 start time.
 		if(pP2PInfo->NoADescriptors[0].bValid && pP2PInfo->NoADescriptors[0].u8StartTime > curTsf)
 		{
@@ -11249,7 +11249,7 @@ setPs:
 			}
 		}
 	}
-		
+
 	P2PSetPsState(pP2PInfo, psSourceToSet, (P2P_PS_STATE)psStateToSet, psTimeoutToSet);
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PPsTimeout(): <=====\n"));
 	return;
@@ -11266,10 +11266,10 @@ P2PInitializeTimer(
 
 	PlatformInitializeTimer(pAdapter, &(pP2PInfo->P2PMgntTimer), (RT_TIMER_CALL_BACK)P2PMgntTimerCallback, NULL, "P2PMgntTimer");
 	PlatformInitializeTimer(pAdapter, &(pP2PInfo->ClientJoinGroupContext.P2PWaitForWpsReadyTimer), (RT_TIMER_CALL_BACK)P2PWaitForWpsReadyTimerCallback, NULL, "P2PWaitForWpsReadyTimer");
-	PlatformInitializeTimer(pAdapter, &(pP2PInfo->P2POidPostProcessTimer), (RT_TIMER_CALL_BACK)P2POidPostProcessTimerCallback, NULL, "P2POidPostProcessTimer");	
+	PlatformInitializeTimer(pAdapter, &(pP2PInfo->P2POidPostProcessTimer), (RT_TIMER_CALL_BACK)P2POidPostProcessTimerCallback, NULL, "P2POidPostProcessTimer");
 
 	pP2PInfo->P2PActionTimer = ActionTimerAllocate(
-						pAdapter, 
+						pAdapter,
 						"P2PActionTimer",
 						HW_TSF_CLOCK,
 						HW_TSF_CLOCK_PS_TIMER
@@ -11284,10 +11284,10 @@ P2PCancelTimer(
 
 	PMGNT_INFO				pMgntInfo = &pAdapter->MgntInfo;
 	PP2P_INFO				pP2PInfo = (PP2P_INFO)pMgntInfo->pP2PInfo;
-	
-	PlatformCancelTimer(pAdapter, &(pP2PInfo->P2PMgntTimer));	
+
+	PlatformCancelTimer(pAdapter, &(pP2PInfo->P2PMgntTimer));
 	PlatformCancelTimer(pAdapter, &(pP2PInfo->ClientJoinGroupContext.P2PWaitForWpsReadyTimer));
-	PlatformCancelTimer(pAdapter, &(pP2PInfo->P2POidPostProcessTimer));		
+	PlatformCancelTimer(pAdapter, &(pP2PInfo->P2POidPostProcessTimer));
 }
 
 VOID
@@ -11298,7 +11298,7 @@ P2PReleaseTimer(
 
 	PMGNT_INFO				pMgntInfo = &pAdapter->MgntInfo;
 	PP2P_INFO				pP2PInfo = (PP2P_INFO)pMgntInfo->pP2PInfo;
-	
+
 	PlatformReleaseTimer(pAdapter, &(pP2PInfo->P2PMgntTimer));
 	PlatformReleaseTimer(pAdapter, &(pP2PInfo->ClientJoinGroupContext.P2PWaitForWpsReadyTimer));
 	PlatformReleaseTimer(pAdapter, &(pP2PInfo->P2POidPostProcessTimer));
@@ -11312,11 +11312,11 @@ P2PActionTimerCallback(
 )
 {
 	PADAPTER pAdapter = (PADAPTER) pOneShotActionItem->pContext;
-	
+
 	P2PPsTimeout(pAdapter);
 }
 
-// 
+//
 // Description:
 //	Save the P2P PS state and time value and configure the HW setting.
 // Arguments:
@@ -11336,13 +11336,13 @@ P2PSetPsState(
 	IN	PP2P_INFO		pP2PInfo,
 	IN	u4Byte			Source,
 	IN	P2P_PS_STATE	P2pState,
-	IN	u8Byte			Timeout	
+	IN	u8Byte			Timeout
 	)
 {
 	PADAPTER			pAdapter = NULL;
 	ACTION_TIMER_ITEM	ActionItem;
 	PMGNT_INFO			pMgntInfo = NULL;
-	
+
 	if(!P2P_ENABLED(pP2PInfo))
 		return;
 
@@ -11350,7 +11350,7 @@ P2PSetPsState(
 	pMgntInfo = &pAdapter->MgntInfo;
 
 	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Source = 0x%X, P2pState = 0x%X, Timeout = 0x%08X %08X (Low Dec = %d)\n", Source, P2pState, (u4Byte)(Timeout >> 32), (u4Byte)Timeout, (u4Byte)Timeout));
-	
+
 	pP2PInfo->P2pPsState = P2pState;
 	pP2PInfo->PsFlag = Source;
 	pP2PInfo->NextTimeout = Timeout;
@@ -11369,17 +11369,17 @@ P2PSetPsState(
 	{
 		// + Flush the previous Action Item
 		ActionTimerFlushActionItem(pAdapter, pP2PInfo->P2PActionTimer, ACTION_TYPE_P2P_POWERSAVE);
-		
+
 		PlatformZeroMemory(&ActionItem, sizeof(ActionItem));
 
 		ActionItem.ActionType = ACTION_TYPE_P2P_POWERSAVE;
 		ActionItem.CallbackFunc = P2PActionTimerCallback;
 		ActionItem.pContext = pP2PInfo->pAdapter;
 		ActionItem.usTimeout = pP2PInfo->NextTimeout;
-	
+
 		ActionTimerRegisterActionItem(pAdapter, &ActionItem, pP2PInfo->P2PActionTimer);
 	}
-	
+
 }
 
 //
@@ -11404,7 +11404,7 @@ P2PPsTsf_Bit32_Toggle(
 
 	if(!P2P_ENABLED(pP2PInfo))
 		return;
-	
+
 	if((P2P_GO != pP2PInfo->Role) && (P2P_CLIENT != pP2PInfo->Role))
 		return;
 
@@ -11449,7 +11449,7 @@ P2PPsTsf_Bit32_Toggle(
 				P2pPsSet.NoASet[i].u4StartTime = pP2PInfo->NoADescriptors[i].StartTime;
 			}
 		}
-		
+
 		if(pP2PInfo->NoADescriptors[i].bValid)
 		{
 			bUpdatePsMode = TRUE;
@@ -11493,7 +11493,7 @@ P2PNotifyClientPSChange(
 
 	pExtAdapter = P2P_ADAPTER_OS_SUPPORT_P2P(pAdapter) ? pP2PInfo->pAdapter : GetFirstExtAdapter(pP2PInfo->pAdapter);
 
-	
+
 	if(pP2PInfo->Role != P2P_GO)
 		return;
 
@@ -11559,18 +11559,18 @@ P2POnLinkStatusWatchdog(
 		PP2P_INFO	pP2PDevInfo = GET_P2P_INFO(pDevAadpter);
 		bFirstDevicePortEnabled = (pP2PDevInfo->uListenStateDiscoverability == 0)?FALSE:TRUE;
 	}
-		
+
 	if(P2P_ADAPTER_OS_SUPPORT_P2P(Adapter) && GetFirstGOPort(Adapter) == NULL && GetFirstClientPort(Adapter) == NULL && bFirstDevicePortEnabled == FALSE)
 	{
 		return;
 	}
-	
+
 	if(pP2PInfo->Role == P2P_GO && pP2PInfo->pAdapter->MgntInfo.mAssoc)
 	{
 		//if(pP2PInfo->ManagedUpdateCnt == 0)
 		{ // Update the P2P managed info
 			PRT_WLAN_BSS	pBssDesc = NULL;
-			
+
 			PlatformAcquireSpinLock(pP2PInfo->pAdapter, RT_SCAN_SPINLOCK);
 			pBssDesc = BssDescDupByBssid(pP2PInfo->pAdapter, pP2PInfo->pAdapter->MgntInfo.Bssid);
 
@@ -11578,7 +11578,7 @@ P2POnLinkStatusWatchdog(
 			{
 				if(pBssDesc->P2PManagedInfo & maP2PDeviceManagement)
 					P2PUpdateWlanApManagedInfo(pP2PInfo, pBssDesc);
-			}			
+			}
 
 			PlatformReleaseSpinLock(pP2PInfo->pAdapter, RT_SCAN_SPINLOCK);
 			pP2PInfo->ManagedUpdateCnt = P2P_UPDATE_MANAGED_INFO_PERIOD;
@@ -11588,7 +11588,7 @@ P2POnLinkStatusWatchdog(
 	}
 
 	CurrentTime = PlatformGetCurrentTime();
-	
+
 	if(CurrentTime - pP2PInfo->LastTimerFired > 2000000) // 2sec
 	{// the timer callback has not been executed for more than 2 sec
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("P2POnLinkStatusWatchdog(): re-fire timer\n"));
@@ -11606,7 +11606,7 @@ P2POnLinkStatusWatchdog(
 // Description:
 //	Issue a client's presence request to the AP for the specified NoA.
 // Arguments:
-//	[in] pP2PInfo - 
+//	[in] pP2PInfo -
 //		The P2P context.
 //	[in] pP2pPs -
 //		The address of P2P power save setting.
@@ -11628,7 +11628,7 @@ P2PPresenceReq(
 		return RT_STATUS_FAILURE;
 
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PPresenceReq()=====>\n"));
-	
+
 	p2p_Send_PresenceReq(pP2PInfo, pP2pPs, pP2PInfo->pAdapter->MgntInfo.Bssid, 1);
 	return RT_STATUS_SUCCESS;
 }
@@ -11652,7 +11652,7 @@ P2P_OnPresenceReq(
 	)
 {
 	RT_STATUS			rtStatus = RT_STATUS_SUCCESS;
-	PP2P_INFO			pP2PInfo = GET_P2P_INFO(pAdapter); 
+	PP2P_INFO			pP2PInfo = GET_P2P_INFO(pAdapter);
 	P2P_POWERSAVE_SET	tmpP2PPsSet;
 	u1Byte				Status = P2P_STATUS_SUCCESS;
 	u1Byte				NoADesc = 0, PreType, DiagToken, i;
@@ -11672,7 +11672,7 @@ P2P_OnPresenceReq(
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] The role is not Go!\n"));
 		return RT_STATUS_INVALID_STATE;
 	}
-	
+
 	RT_PRINT_DATA(COMP_P2P, DBG_TRACE, "P2P_OnDeviceDiscoverabilityRsp():\n", posMpdu->Octet, posMpdu->Length);
 
 	do
@@ -11683,7 +11683,7 @@ P2P_OnPresenceReq(
 				rtStatus = RT_STATUS_MALFORMED_PKT;
 				break;
 			}
-		
+
 		// Check if this is our client's request.
 		if(P2PClientInfoFindByInterfaceAddress(pP2PInfo, pSaAddr) == NULL)
 		{
@@ -11697,9 +11697,9 @@ P2P_OnPresenceReq(
 		// Fill the CTWin. The Presence request does not apply in this field.
 		tmpP2PPsSet.bOppPs = pP2PInfo->bOppPS;
 		tmpP2PPsSet.CTWindow = pP2PInfo->CTWindow;
-		
+
 		NoADesc = (msg.noaLen == (13 + 2)) ? 1 : (msg.noaLen == (2 * 13 + 2)) ? 2 : 0;
-		
+
 		// Invalid Length
 		if(msg.noaLen != 2 && NoADesc == 0)
 		{
@@ -11707,7 +11707,7 @@ P2P_OnPresenceReq(
 			rtStatus = RT_STATUS_INVALID_DATA;
 			break;
 		}
-	
+
 		DiagToken = GET_P2P_VENDOR_ACT_FRAME_DIALOG_TOKEN(posMpdu->Octet);
 
 		for(i = 0; i < NoADesc; i ++)
@@ -11715,7 +11715,7 @@ P2P_OnPresenceReq(
 			PreType = ReadEF1Byte(msg._noa + (13 * i) + 2);
 			PreNoADuration = ReadEF4Byte(msg._noa + (13 * i) + 3);
 			PreNoAInterval = ReadEF4Byte(msg._noa + (13 * i) + 7);
-			
+
 			if(PreType < 1 || PreType > 2)
 			{ // NoA Type is invalid.
 				Status = P2P_STATUS_FAIL_INVALID_PARAMETERS;
@@ -11746,7 +11746,7 @@ P2P_OnPresenceReq(
 	}while(FALSE);
 
 	p2p_parse_FreeMessage(&msg);
- 
+
 	return rtStatus;
 }
 
@@ -11754,7 +11754,7 @@ P2P_OnPresenceReq(
 // Description:
 //	Update the managed information from the AP which supports P2P managed device.
 // Arguments:
-//	[in] pP2PInfo - 
+//	[in] pP2PInfo -
 //		The P2P context.
 //	[in] pBssDesc -
 //		The BSS descriptor from the scan list.
@@ -11769,7 +11769,7 @@ P2PUpdateWlanApManagedInfo(
 	)
 {
 	PRT_AP_INFO 	pApInfo = NULL;
-	
+
 	// We need check if the BSS support P2P device management, but now the WLAN AP may not have this info in Beacon,
 	// and it just disassociates us with the P2P deauth reason. Check this bit if the test plan has modified. By Bruce, 2010-05-14.
 	// if(!(pBssDesc->P2PManagedInfo & maP2PDeviceManagement))
@@ -11789,9 +11789,9 @@ P2PUpdateWlanApManagedInfo(
 		if(pAdapter == NULL)
 			return;
 	}
-	
+
 	pApInfo = (PRT_AP_INFO)(pAdapter->MgntInfo.pApModeInfo);
-	
+
 	if(pBssDesc->osWmmAcParaIE.Length == WMM_PARAM_ELEMENT_SIZE)
 	{
 		CopyMemOS(&pApInfo->osWmmAcParaIE, pBssDesc->osWmmAcParaIE, WMM_PARAM_ELEMENT_SIZE)
@@ -11811,7 +11811,7 @@ P2PUpdateWlanApManagedInfo(
 		RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "P2PUpdateWlanApManagedInfo() osCountryIe:\n", pApInfo->osPowerConstraintIe.Octet, pApInfo->osPowerConstraintIe.Length);
 	}
 
-	
+
 }
 
 //
@@ -11831,7 +11831,7 @@ P2PDisable(
 	PP2P_INFO 	pP2PInfo = GET_P2P_INFO(Adapter);
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("======>P2PDisable()\n"));
 
-	P2PSetRole(pP2PInfo, P2P_NONE);	
+	P2PSetRole(pP2PInfo, P2P_NONE);
 		p2p_DevList_Free(&pP2PInfo->devList);
 
 	PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
@@ -11876,7 +11876,7 @@ P2PDisable(
 		bBoostIgi = FALSE;
 		Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_BOOST_INIT_GAIN, &bBoostIgi);
 	}
-	
+
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("<======P2PDisable()\n"));
 }
 
@@ -11889,7 +11889,7 @@ P2PTranslateP2PInfoToDevDescV0(
 	u1Byte i = 0, j = 0;
 
 	PlatformFillMemory(pDevDesc, sizeof(PP2P_DEVICE_DESCRIPTOR_V0), 0);
-		
+
 	pDevDesc->Role = pP2PInfo->Role;
 	pDevDesc->DeviceCapability = pP2PInfo->DeviceCapability;
 	pDevDesc->GroupCapability = pP2PInfo->GroupCapability;
@@ -11910,17 +11910,17 @@ P2PTranslateP2PInfoToDevDescV0(
 		PP2P_CLIENT_INFO_DISCRIPTOR pClientInfoDesc = NULL;
 
 		pDevDesc->P2PClientDescriptorListLength = 0;
-		
+
 		while((pClientInfoDesc = P2PClientInfoEnumClients(pP2PInfo, StartIndex, &CurrentIndex)) != NULL)
 		{
-			PlatformMoveMemory(&(pDevDesc->P2PClientDescriptorList[pDevDesc->P2PClientDescriptorListLength]), 
-				pClientInfoDesc, 
+			PlatformMoveMemory(&(pDevDesc->P2PClientDescriptorList[pDevDesc->P2PClientDescriptorListLength]),
+				pClientInfoDesc,
 				sizeof(P2P_CLIENT_INFO_DISCRIPTOR));
 			pDevDesc->P2PClientDescriptorListLength++;
 
 			StartIndex = CurrentIndex + 1;
 			pClientInfoDesc = NULL;
-		}	
+		}
 
 		RT_TRACE(COMP_P2P, DBG_LOUD, ("P2PTranslateP2PInfoToDevDesc(): %u clients enumerated\n", pDevDesc->P2PClientDescriptorListLength));
 	}
@@ -11956,7 +11956,7 @@ P2PTranslateP2PInfoToDevDesc(
 	)
 {
 	u4Byte BytesWritten = 0;
-	
+
 	if(0x00000000 == pP2PInfo->P2PVersion)
 	{// v0
 		P2PTranslateP2PInfoToDevDescV0(pP2PInfo, (PP2P_DEVICE_DESCRIPTOR_V0)pvDevDesc);
@@ -12011,7 +12011,7 @@ P2P_APRemoveKey(
 VOID
 P2P_APSetkey(
 	IN	PADAPTER		Adapter,
-	IN	u1Byte 			*pucMacAddr, 
+	IN	u1Byte 			*pucMacAddr,
 	IN	u4Byte 			ulEncAlg
 	)
 {
@@ -12045,7 +12045,7 @@ P2P_ConstructAssociateReqFilterCck(
 	IN		OCTET_STRING	AsocReq,
 	IN	OUT	BOOLEAN			*pbFilterCck
 	)
-{	
+{
 	if(P2P_ENABLED(GET_P2P_INFO(Adapter)))
 	{
 		if(P2PScanListIsGo(GET_P2P_INFO(Adapter), Frame_pDaddr(AsocReq)))
@@ -12057,7 +12057,7 @@ P2P_ConstructAssociateReqFilterCck(
 			*pbFilterCck = FALSE;
 		}
 	}
-	
+
 }
 
 //
@@ -12071,7 +12071,7 @@ P2P_ConstructAssociateReqFilterCck(
 //	[in] posSsidToScan -
 //		The SSID in this probe request.
 // Return:
-//	Return TRUE if 
+//	Return TRUE if
 //		a. we shall send probe response for this probe reqeust in P2P GO mode, or
 //		b. this action is ignored if P2P is not enabled.
 //	Return FALSE if the P2P inforamtion in this packet is mismatch and we shall not send probe response.
@@ -12089,9 +12089,9 @@ P2P_IsGoAcceptProbeReq(
 	)
 {
 	BOOLEAN		bAccept = TRUE;
-	if(P2P_ENABLED(GET_P2P_INFO(pAdapter))) 
+	if(P2P_ENABLED(GET_P2P_INFO(pAdapter)))
 	{
-		RT_STATUS		rtStatus = RT_STATUS_SUCCESS;		
+		RT_STATUS		rtStatus = RT_STATUS_SUCCESS;
 		P2P_MESSAGE		msg;
 
 		if((GetDefaultAdapter(pAdapter)->MgntInfo.RegMultiChannelFcsMode >= MULTICHANNEL_FCS_SUPPORT_GO) &&
@@ -12115,13 +12115,13 @@ P2P_IsGoAcceptProbeReq(
 			{// Clause 3.2.2: P2P Wildcard SSID shall be treated the same as the Wildcard SSID
 				posSsidToScan->Length = 0; // so that it does not return false when SSID is neither any nor our SSID
 			}
-			
+
 			if(!P2PAcceptProbeReq(GET_P2P_INFO(pAdapter), posMpdu, &msg))
 			{
 				bAccept = FALSE;
 			}
 		}
-		
+
 		p2p_parse_FreeMessage(&msg);
 	}
 	return	bAccept;
@@ -12141,38 +12141,38 @@ P2P_UpdateScanList(
 
 			// Update the device list for the OS query ------------------
 			P2PDeviceListActionInterface(
-					pP2PInfo, 
+					pP2PInfo,
 					P2P_DEVICE_LIST_ACTION_COPY_TO_QUERY_LIST,
 					NULL, NULL, NULL
 				);
 
 			//P2PDeviceListActionInterface(
-			//		pP2PInfo, 
+			//		pP2PInfo,
 			//		P2P_DEVICE_LIST_ACTION_DUMP,
-			//		&pP2PInfo->DeviceList, 
+			//		&pP2PInfo->DeviceList,
 			//		NULL, NULL
 			//	);
-			
+
 			P2PDeviceListActionInterface(
-					pP2PInfo, 
+					pP2PInfo,
 					P2P_DEVICE_LIST_ACTION_DUMP,
-					&pP2PInfo->DeviceListForQuery, 
+					&pP2PInfo->DeviceListForQuery,
 					NULL, NULL
 				);
 			//----------------------------------------------------
 		}
 
-		if(P2PScanListEqual(pP2PInfo->ScanList, pP2PInfo->ScanListSize, 
+		if(P2PScanListEqual(pP2PInfo->ScanList, pP2PInfo->ScanListSize,
 			pP2PInfo->ScanList4Query, pP2PInfo->ScanList4QuerySize))
 		{
-			//RT_TRACE(COMP_P2P, DBG_LOUD, 
+			//RT_TRACE(COMP_P2P, DBG_LOUD,
 			//	("ScanComplete(): scan list the same, not to update ScanList4Query\n"));
 		}
 		else
 		{
-			P2PScanListCopy(pP2PInfo->ScanList4Query, 
-				&pP2PInfo->ScanList4QuerySize, 
-				pP2PInfo->ScanList, 
+			P2PScanListCopy(pP2PInfo->ScanList4Query,
+				&pP2PInfo->ScanList4QuerySize,
+				pP2PInfo->ScanList,
 				pP2PInfo->ScanListSize);
 
 			P2PIndicateScanList(pP2PInfo);
@@ -12180,7 +12180,7 @@ P2P_UpdateScanList(
 
 		P2PSvc_OnP2PScanComplete(pP2PInfo->pP2PSvcInfo);
 	}
-	
+
 }
 
 
@@ -12195,8 +12195,8 @@ P2P_ScanCallback(
 
 		//
 		// Send 2 ProbeReq only when we are in Search State or Scan Phase.
-		// This is to prevent the case, for example, when  we are using customized 
-		// scan to send a ProvisionDiscReq to a  P2P Device, we don't send two 
+		// This is to prevent the case, for example, when  we are using customized
+		// scan to send a ProvisionDiscReq to a  P2P Device, we don't send two
 		// ProvisionDiscReq.
 		//
 		if(pP2PInfo->State != P2P_STATE_SEARCH &&
@@ -12225,17 +12225,17 @@ P2P_InactivePsCallback(
 		//
 		PP2P_INFO pP2PInfo = GET_P2P_INFO(pAdapter);
 
-		// TODO: Should not set timer in workitem 
+		// TODO: Should not set timer in workitem
 		if(!GetDefaultAdapter(pAdapter)->bDriverIsGoingToUnload)
 		{
 			//if(pPSC->eInactivePowerState == eRfOff)
 			if(InactievPsState == eRfOff)
-				PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0);	
+				PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0);
 		}
-	}	
+	}
 }
 
-// 
+//
 // Description:
 //	Set the service response fragment threshold.
 // Arguments:
@@ -12254,7 +12254,7 @@ P2PSetServiceFragThreshold(
 	)
 {
 	PP2P_INFO 	pP2PInfo = GET_P2P_INFO(pAdapter);
-	
+
 	if(!pP2PInfo)
 		return RT_STATUS_INVALID_CONTEXT;
 
@@ -12276,7 +12276,7 @@ P2PSetProfileList(
 	RT_STATUS	rtStatus = RT_STATUS_SUCCESS;
 	PP2P_INFO 	pP2PInfo = GET_P2P_INFO(pAdapter);
 	u4Byte		allocSize = FIELD_OFFSET(P2P_PROFILE_LIST, profileList) + pProfileList->nProfiles * sizeof(P2P_PROFILE_LIST_ENTRY);
-	
+
 	if(!pP2PInfo)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("RT_STATUS_INVALID_CONTEXT\n"));
@@ -12294,25 +12294,25 @@ P2PSetProfileList(
 			pP2PInfo->profileListLen = 0;
 			pP2PInfo->pProfileList = NULL;
 		}
-		
+
 		if(RT_STATUS_SUCCESS != (rtStatus = PlatformAllocateMemory(pAdapter, &pP2PInfo->pProfileList, allocSize)))
 		{
 			break;
 		}
-		
+
 		pP2PInfo->profileListLen = allocSize;
 		PlatformMoveMemory(pP2PInfo->pProfileList, pProfileList, allocSize);
-		
+
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Set profile list: %u profiles\n", pP2PInfo->pProfileList->nProfiles));
 
 	}while(FALSE);
 
 	PlatformReleaseSpinLock(pP2PInfo->pAdapter, RT_P2P_SPIN_LOCK);
-	
+
 	return rtStatus;
 }
 
-// 
+//
 // Description:
 //	Get the service response fragment threshold.
 // Arguments:
@@ -12331,7 +12331,7 @@ P2PGetServiceFragThreshold(
 	)
 {
 	PP2P_INFO 	pP2PInfo = GET_P2P_INFO(pAdapter);
-	
+
 	if(!pP2PInfo || !pServiceThreshold)
 		return RT_STATUS_INVALID_CONTEXT;
 
@@ -12353,9 +12353,9 @@ P2POidPostProcessTimerCallback(
 	PMGNT_INFO pMgntInfo = &(pAdapter->MgntInfo);
 	PP2P_INFO pP2PInfo = GET_P2P_INFO(pAdapter);
 	u1Byte i = 0;
-	
+
 	// For IRQL Maintaince ------------------------------
-//	BOOLEAN bIrqlRestoreRequired = FALSE; 
+//	BOOLEAN bIrqlRestoreRequired = FALSE;
 //	KIRQL BackupIrql = PASSIVE_LEVEL;
 	// -----------------------------------------------
 
@@ -12375,10 +12375,10 @@ P2POidPostProcessTimerCallback(
 	{
 		case OID_OPERATION_INDICATE_DISCOVERY_COMPLETE:
 		{
-#if 0			
+#if 0
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Delay 10 ms to avoid too fast indication for WlanSvc!\n"));
 			delay_ms(10);
-#endif			
+#endif
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: P2P_EVENT_DEVICE_DISCOVERY_COMPLETE\n", __FUNCTION__));
 			PlatformIndicateP2PEvent(pP2PInfo, P2P_EVENT_DEVICE_DISCOVERY_COMPLETE, NULL);
 		} break;
@@ -12386,7 +12386,7 @@ P2POidPostProcessTimerCallback(
 		case OID_OPERATION_SEND_PACKET:
 		{
 				p2p_DevList_Lock(&pP2PInfo->devList);
-				
+
 				if(pP2PInfo->PacketSentInWorkItemCallback == P2P_PUB_ACT_PROVISION_DISCOVERY_RSP)
 				{
 					// Start sending provision discovery response ---------------------------------------------------
@@ -12399,32 +12399,32 @@ P2POidPostProcessTimerCallback(
 							0, 			// It is no use in Win8 since WPS IEs are generated by the OS
 							NULL
 						);
-					
+
 					delay_ms(10);
 				}
 				else if(pP2PInfo->PacketSentInWorkItemCallback == P2P_PUB_ACT_INVITATION_RSP)
 				{
 					P2P_STATE  StateBackup = pP2PInfo->State;
-					
+
 					pP2PInfo->State = P2P_STATE_INVITATION_REQ_RECVD;
-					
+
 					// Start sending invitation response -----------------------------------------------------------
 					//CustomScan_ExtendDwellTime(GET_CUSTOM_SCAN_INFO(pAdapter), 100);	// In order not to switch channel
 					p2p_Send_InvitationRsp(
-							pP2PInfo, 
+							pP2PInfo,
 							pP2PInfo->InvitationResponseReceiverDeviceAddress,
 							pP2PInfo->InvitationResponseDialogToken
 						);
 
 					pP2PInfo->State = StateBackup;
-					
+
 					// Postpone the extended listening
 					P2PExtendedListenResetCounter(pP2PInfo);
-						
-					// Update the state machine immediately 
+
+					// Update the state machine immediately
 					PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
-					PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0); 
-					
+					PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0);
+
 				}
 				else if(pP2PInfo->PacketSentInWorkItemCallback == P2P_PUB_ACT_GO_NEGO_RSP)
 				{
@@ -12438,7 +12438,7 @@ P2POidPostProcessTimerCallback(
 
 					// Sync the status between Win8 and Win7
 					pP2PInfo->ConnectionContext.Status = pP2PInfo->NegotiationResponseStatus;
-					
+
 					// + Update the state machine
 					if(pP2PInfo->ConnectionContext.Status == P2P_STATUS_SUCCESS)
 					{
@@ -12451,10 +12451,10 @@ P2POidPostProcessTimerCallback(
 
 					RT_TRACE_F(COMP_P2P, DBG_LOUD, ("P2P state 0x%x\n", pP2PInfo->State));
 
-					// Update the state machine immediately 
+					// Update the state machine immediately
 					PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
-					PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0); 
-					
+					PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0);
+
 				}
 				else if(pP2PInfo->PacketSentInWorkItemCallback == P2P_PUB_ACT_GO_NEGO_CONFIRM)
 				{
@@ -12470,8 +12470,8 @@ P2POidPostProcessTimerCallback(
 
 					// + Update the state machine
 					pP2PInfo->State = P2P_STATE_GO_NEGO_COMPLETE;
-					
-					// Update the state machine immediately 
+
+					// Update the state machine immediately
 					PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
 					PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 100); // In order not to switch channel
 
@@ -12488,7 +12488,7 @@ P2POidPostProcessTimerCallback(
 
 				p2p_DevList_Unlock(&pP2PInfo->devList);
 		} break;
-			
+
 		default:
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: Wrong Operation Mode in WorkItem!\n", __FUNCTION__));
 			break;
@@ -12517,24 +12517,24 @@ P2POidPostProcessWorkItemCallback(
 	u1Byte i = 0;
 
 	// For IRQL Maintaince ------------------------------
-	BOOLEAN bIrqlRestoreRequired = FALSE; 
+	BOOLEAN bIrqlRestoreRequired = FALSE;
 	KIRQL BackupIrql = PASSIVE_LEVEL;
 	// -----------------------------------------------
 
 	FunctionIn(COMP_P2P);
-	
+
 	for(i = 0; i < 10; i++)
 	{
 
 		if(pP2PInfo->bPostoneP2POidPostProcessWorkItem)
 		{
-			RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: delay_ms(5) for other PASSIVE_LEVEL thread running~\n", __FUNCTION__));			
+			RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: delay_ms(5) for other PASSIVE_LEVEL thread running~\n", __FUNCTION__));
 			delay_ms(5);
-		}	
+		}
 		else
 			break;
 	}
-	
+
 	// Let this OID routine run faster than the P2POidPostProcessWorkItemCallback ------
 	if(KeGetCurrentIrql() == PASSIVE_LEVEL)
 	{
@@ -12552,7 +12552,7 @@ P2POidPostProcessWorkItemCallback(
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Delay 10 ms to avoid too fast indication for WlanSvc!\n"));
 			delay_ms(10);
-			
+
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: P2P_EVENT_DEVICE_DISCOVERY_COMPLETE\n", __FUNCTION__));
 			if(P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter))
 				PlatformIndicateP2PEvent(pP2PInfo, P2P_EVENT_DEVICE_DISCOVERY_COMPLETE, NULL);
@@ -12574,26 +12574,26 @@ P2POidPostProcessWorkItemCallback(
 				else if(pP2PInfo->PacketSentInWorkItemCallback == P2P_PUB_ACT_INVITATION_RSP)
 				{
 					P2P_STATE  StateBackup = pP2PInfo->State;
-					
+
 					pP2PInfo->State = P2P_STATE_INVITATION_REQ_RECVD;
-					
+
 					// Start sending invitation response -----------------------------------------------------------
 					//CustomScan_ExtendDwellTime(GET_CUSTOM_SCAN_INFO(pAdapter), 100);	// In order not to switch channel
 					p2p_Send_InvitationReq(
-							pP2PInfo, 
+							pP2PInfo,
 							pP2PInfo->InvitationResponseReceiverDeviceAddress,
 							pP2PInfo->InvitationResponseDialogToken
 						);
 
 					pP2PInfo->State = StateBackup;
-					
+
 					// Postpone the extended listening
 					P2PExtendedListenResetCounter(pP2PInfo);
-						
-					// Update the state machine immediately 
+
+					// Update the state machine immediately
 					PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
-					PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0); 
-					
+					PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0);
+
 				}
 				else if(pP2PInfo->PacketSentInWorkItemCallback == P2P_PUB_ACT_GO_NEGO_RSP)
 				{
@@ -12607,7 +12607,7 @@ P2POidPostProcessWorkItemCallback(
 
 					// Sync the status between Win8 and Win7
 					pP2PInfo->ConnectionContext.Status = pP2PInfo->NegotiationResponseStatus;
-					
+
 					// + Update the state machine
 					if(pP2PInfo->ConnectionContext.Status == P2P_STATUS_SUCCESS)
 					{
@@ -12618,10 +12618,10 @@ P2POidPostProcessWorkItemCallback(
 						pP2PInfo->State = P2P_STATE_GO_NEGO_COMPLETE;
 					}
 
-					// Update the state machine immediately 
+					// Update the state machine immediately
 					PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
-					PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0); 
-					
+					PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 0);
+
 				}
 				else if(pP2PInfo->PacketSentInWorkItemCallback == P2P_PUB_ACT_GO_NEGO_CONFIRM)
 				{
@@ -12637,8 +12637,8 @@ P2POidPostProcessWorkItemCallback(
 
 					// + Update the state machine
 					pP2PInfo->State = P2P_STATE_GO_NEGO_COMPLETE;
-					
-					// Update the state machine immediately 
+
+					// Update the state machine immediately
 					PlatformCancelTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer);
 					PlatformSetTimer(pP2PInfo->pAdapter, &pP2PInfo->P2PMgntTimer, 100); // In order not to switch channel
 				}
@@ -12651,7 +12651,7 @@ P2POidPostProcessWorkItemCallback(
 				pP2PInfo->PacketSentInWorkItemCallback = (P2P_PUBLIC_ACTION_TYPE) 0xFF;
 				// --------------------------------------------------------------------
 		} break;
-			
+
 		default:
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: Wrong Operation Mode in WorkItem!\n", __FUNCTION__));
 			break;
@@ -12661,7 +12661,7 @@ P2POidPostProcessWorkItemCallback(
 	// Restore the IRQL Back ---------------------
 	if(bIrqlRestoreRequired) KeLowerIrql(BackupIrql);
 	// ----------------------------------------
-	
+
 	FunctionOut(COMP_P2P);
 }
 #endif
@@ -12679,7 +12679,7 @@ P2PResetClientJoinGroupContext(
 	pP2PInfo->ClientJoinGroupContext.uWaitForWpsSlotCount = 0;			// 100 ms per slot
 
 	PlatformCancelTimer(
-			pP2PInfo->pAdapter, 
+			pP2PInfo->pAdapter,
 			&pP2PInfo->ClientJoinGroupContext.P2PWaitForWpsReadyTimer
 		);
 }
@@ -12687,7 +12687,7 @@ P2PResetClientJoinGroupContext(
 //-------------------------------------------------------------------------------
 // For delaying connection to wait for GO WPS ready
 //-------------------------------------------------------------------------------
-static 
+static
 VOID
 p2pWaitForWpsReady_CustomScanCb(
 	IN  CUSTOM_SCAN_STATE		state,
@@ -12700,11 +12700,11 @@ p2pWaitForWpsReady_CustomScanCb(
 
 	if(!P2P_ENABLED(info))
 		return;
-	
+
 	if(CUSTOM_SCAN_STATE_COMPLETED == state)
 	{
 		if(P2P_CLIETN_JOIN_GROUP_WPS_STATE_NONE != info->ClientJoinGroupContext.WpsState)
-		{	
+		{
 			PlatformSetTimer(info->pAdapter, &info->ClientJoinGroupContext.P2PWaitForWpsReadyTimer, 1);
 		}
 
@@ -12727,7 +12727,7 @@ P2PWaitForWpsReadyTimerCallback(
 	PMGNT_INFO pMgntInfo = &(pAdapter->MgntInfo);
 	PP2P_INFO pP2PInfo = GET_P2P_INFO(pAdapter);
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
-	
+
 	VOID						*customScanInfo = GET_CUSTOM_SCAN_INFO(pAdapter);
 	VOID 						*req = NULL;
 	FRAME_BUF					*probeReqBuf = NULL;
@@ -12749,7 +12749,7 @@ P2PWaitForWpsReadyTimerCallback(
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] Unknown wps state = %d\n", pP2PInfo->ClientJoinGroupContext.WpsState));
 			P2PResetClientJoinGroupContext(pP2PInfo);
 			break;
-			
+
 		case P2P_CLIETN_JOIN_GROUP_WPS_STATE_SCANNING:
 			{
 				if(0 == pP2PInfo->ClientJoinGroupContext.uWaitForWpsSlotCount)
@@ -12766,21 +12766,21 @@ P2PWaitForWpsReadyTimerCallback(
 				if(NULL == (req = CustomScan_AllocReq(customScanInfo, NULL, NULL)))
 					return;
 
-				// Call customized scan to scan the WPS group.												
+				// Call customized scan to scan the WPS group.
 				if(pP2PInfo->uGroupTargetSSIDLength > 0 && pP2PInfo->uGroupTargetSSIDLength <= 32)
 				{
 					u4Byte	bufLen = 0;
-					
+
 					PlatformMoveMemory(pMgntInfo->Ssid.Octet, pP2PInfo->GroupTargetSSID, pP2PInfo->uGroupTargetSSIDLength);
 					pMgntInfo->Ssid.Length = (u2Byte)(pP2PInfo->uGroupTargetSSIDLength);
-					
+
 					// Send probe req with the interface address as the SA and we shall append P2P IE in this case,
 					// otherwise the ProbeRsp would be regarded as from a legacy device and would not be processed.
 					probeReqBuf = CustomScan_GetProbeReqBuf(req);
 					ConstructProbeRequest(pAdapter, FrameBuf_MHead(probeReqBuf), &bufLen, TRUE, FALSE, FALSE);
 					FrameBuf_Add(probeReqBuf, (u2Byte)bufLen);
 				}
-				
+
 				CustomScan_AddScanChnl(req, pP2PInfo->OperatingChannel, 1, SCAN_ACTIVE, P2P_SCAN_WPS_GROUP_PERIOD, MGN_6M, probeReqBuf);
 				CustomScan_AddScanChnl(req, pP2PInfo->ListenChannel, 1, SCAN_ACTIVE, 100, MGN_6M, probeReqBuf);
 				CustomScan_SetRepeatCount(req, 16);
@@ -12788,7 +12788,7 @@ P2PWaitForWpsReadyTimerCallback(
 				CustomScan_IssueReq(customScanInfo, req, CUSTOM_SCAN_SRC_TYPE_P2P, "cli join grp wps scanning");
 			}
 			break;
-			
+
 		case P2P_CLIENT_JOIN_GROUP_WPS_STATE_GO_READY:
 			{
 				OCTET_STRING	ssidStr = {NULL, 0};
@@ -12796,12 +12796,12 @@ P2PWaitForWpsReadyTimerCallback(
 				RT_JOIN_ACTION	joinAction = RT_NO_ACTION;
 				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("P2P_CLIENT_JOIN_GROUP_WPS_STATE_GO_READY\n"));
 
-//Sinda: temporarily mark. If OS care bForceScanLegacyNetworks flag 
+//Sinda: temporarily mark. If OS care bForceScanLegacyNetworks flag
 //and un-mark the flag checking at case P2P_STATE_DEV_DISC_START of P2PMgntTimerCallback function.
 //We need to do legacy scan to update scan list to avoid to get out-of-date information of GO.
 #if 0
 				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Target WPS info is ready but the BSS maybe out-of-date in the scan list, try to customized scan...\n"));
-				// Call customized scan to scan the WPS group.												
+				// Call customized scan to scan the WPS group.
 				if(pP2PInfo->uGroupTargetSSIDLength > 0 && pP2PInfo->uGroupTargetSSIDLength <= 32)
 				{
 					u4Byte	bufLen = 0;
@@ -12810,21 +12810,21 @@ P2PWaitForWpsReadyTimerCallback(
 					ConstructProbeRequest(pAdapter, &(pScanReq->ProbeReqBuf[0]), (pu4Byte)&bufLen, TRUE, FALSE, FALSE);
 
 					pScanReq->ProbeReqLen = (u2Byte)bufLen;
-				}			
+				}
 				RT_TRACE_F(COMP_MLME, DBG_LOUD, ("P2P_CLIENT_JOIN_GROUP_WPS_STATE_GO_READY: MgntActSet_802_11_CustomizedScanRequest\n"));
-				MgntActSet_802_11_CustomizedScanRequest(pAdapter, pScanReq);	
+				MgntActSet_802_11_CustomizedScanRequest(pAdapter, pScanReq);
 #endif
 
 				if(PlatformAllocateMemory(pAdapter, (PVOID*)&pRtBss, sizeof(RT_WLAN_BSS)) != RT_STATUS_SUCCESS)
-					return;	
+					return;
 
 				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("P2P_CLIENT_JOIN_GROUP_WPS_STATE_GO_READY: try to connect selected network by SSID(%s)\n", pP2PInfo->GroupTargetSSID));
-				
-				FillOctetString(ssidStr, pP2PInfo->GroupTargetSSID, (u2Byte)(pP2PInfo->uGroupTargetSSIDLength));		
+
+				FillOctetString(ssidStr, pP2PInfo->GroupTargetSSID, (u2Byte)(pP2PInfo->uGroupTargetSSIDLength));
 				joinAction = SelectNetworkBySSID(pAdapter, &ssidStr, FALSE, pRtBss);
 				if(pRtBss)
 					PlatformFreeMemory(pRtBss, sizeof(RT_WLAN_BSS));
-				
+
 				if(RT_JOIN_INFRA == joinAction)
 				{ // The target is in the scan list, try to join it.
 					pP2PInfo->ClientJoinGroupContext.WpsState = P2P_CLIETN_JOIN_GROUP_WPS_STATE_ASSOCIATING;
@@ -12836,7 +12836,7 @@ P2PWaitForWpsReadyTimerCallback(
 					return;
 
 				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Target WPS info is ready but the BSS is not in the scan list, try to customized scan...\n"));
-				// Call customized scan to scan the WPS group.												
+				// Call customized scan to scan the WPS group.
 				if(pP2PInfo->uGroupTargetSSIDLength > 0 && pP2PInfo->uGroupTargetSSIDLength <= 32)
 				{
 					u4Byte	bufLen = 0;
@@ -12846,9 +12846,9 @@ P2PWaitForWpsReadyTimerCallback(
 					probeReqBuf = CustomScan_GetProbeReqBuf(req);
 					ConstructProbeRequest(pAdapter, FrameBuf_MHead(probeReqBuf), &bufLen, TRUE, FALSE, FALSE);
 					FrameBuf_Add(probeReqBuf, (u2Byte)bufLen);
-				}			
+				}
 				RT_TRACE_F(COMP_MLME, DBG_LOUD, ("P2P_CLIENT_JOIN_GROUP_WPS_STATE_GO_READY: CustomScan_IssueReq\n"));
-				
+
 				CustomScan_AddScanChnl(req, pP2PInfo->OperatingChannel, 2, SCAN_ACTIVE, P2P_SCAN_WPS_GROUP_PERIOD, MGN_6M, probeReqBuf);
 				CustomScan_AddScanChnl(req, pP2PInfo->ListenChannel, 2, SCAN_ACTIVE, P2P_SCAN_WPS_GROUP_PERIOD, MGN_6M, probeReqBuf);
 				CustomScan_SetupCbCtx(req, p2pWaitForWpsReady_CustomScanCb, pP2PInfo);
@@ -12894,7 +12894,7 @@ P2PDeviceListActionInterface(
 )
 {
 	BOOLEAN bStatus = FALSE;
-	
+
 	switch(uAction)
 	{
 		case P2P_DEVICE_LIST_ACTION_COPY_TO_QUERY_LIST:
@@ -12907,7 +12907,7 @@ P2PDeviceListActionInterface(
 				);
 
 			PlatformReleaseSpinLock(pP2PInfo->pAdapter,	RT_P2P_SPIN_LOCK);
-			
+
 			bStatus = TRUE;
 		} break;
 
@@ -12917,14 +12917,14 @@ P2PDeviceListActionInterface(
 			P2PDeviceListClear(pDeviceList);
 			PlatformReleaseSpinLock(pP2PInfo->pAdapter,	RT_P2P_SPIN_LOCK);
 			bStatus = TRUE;
-		} break;	
+		} break;
 
 		case P2P_DEVICE_LIST_ACTION_DUMP:
 		{
 			P2PDeviceListDump(pDeviceList);
 			bStatus = TRUE;
 		} break;
-	
+
 		default:
 		{
 			RT_TRACE(COMP_P2P, DBG_LOUD, ("%s: Illegal Action Failure!\n", __FUNCTION__));
@@ -12950,10 +12950,10 @@ P2PAddScanDeviceID(
 			break;
 
 		bDuplicate = FALSE;
-	
+
 		for(i = 0; i < pScanDeviceIDs->uNumOfDeviceIDs; i++)
 		{
-			if(eqMacAddr(pDeviceID, pScanDeviceIDs->DeviceIDs[i])) 
+			if(eqMacAddr(pDeviceID, pScanDeviceIDs->DeviceIDs[i]))
 			{
 				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Found the MAC. Index: %d\n", i));
 				bDuplicate = TRUE;
@@ -12973,7 +12973,7 @@ P2PAddScanDeviceID(
 		}
 
 		bStatus = TRUE;
-	
+
 	}while (FALSE);
 
 	return bStatus;
@@ -12996,7 +12996,7 @@ P2PFreeAllocatedMemory(
 )
 {
 	PP2P_INFO 	pP2PInfo = pAdapter->MgntInfo.pP2PInfo;
-	
+
 	P2P_AddIe_Free(&pP2PInfo->AdditionalIEs);
 
 	// Free the allocated memory of the device list -----------------------------------------------------------------
@@ -13023,7 +13023,7 @@ P2P_FreeP2PInfo(
 	PP2P_INFO	pP2PInfo = NULL;
 
 	FunctionIn(COMP_P2P);
-	
+
 	if(NULL == pMgntInfo->pP2PInfo)
 		return;
 
@@ -13078,14 +13078,14 @@ P2P_AllocP2PInfo(
 		PlatformZeroMemory(pMgntInfo->pP2PInfo, sizeof(P2P_INFO));
 		pAdapter->P2PSupport = P2P_SUPPORT_STATE_UNINITIALIZED;
 		pP2pInfo = (PP2P_INFO)(pMgntInfo->pP2PInfo);
-		// Pointer to the default adapter, then after OS/RTL initialized the info, the adapter pointer will be 
+		// Pointer to the default adapter, then after OS/RTL initialized the info, the adapter pointer will be
 		// asigned to the corresponding context.
 		pP2pInfo->pAdapter = GetDefaultAdapter(pAdapter);
 
 		pP2pInfo->pP2PSvcInfo = NULL;
 		if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_AllocP2PSvcInfo(pMgntInfo->pP2PInfo)))
 			break;
-		
+
 	}while(FALSE);
 
 	if(RT_STATUS_SUCCESS != rtStatus)
@@ -13206,15 +13206,15 @@ IsP2PDeviceExisting(
 {
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pDevicePort = NULL;
-	
+
 	pDevicePort = pDefaultAdapter;
-	
+
 	while(pDevicePort != NULL)
 	{
 		if(P2P_ENABLED(GET_P2P_INFO(pDevicePort)))
-		{			
+		{
 			return TRUE;
-		}	
+		}
 		pDevicePort = GetNextExtAdapter(pDevicePort);
 	}
 
@@ -13238,14 +13238,14 @@ IsRTKP2PDeviceExisting(
 {
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pDevicePort = NULL;
-	
+
 	pDevicePort = pDefaultAdapter;
-	
+
 	while(pDevicePort != NULL)
 	{
 		// If any RTK P2P exists, return FALSE.
 		if(P2P_ENABLED(GET_P2P_INFO(pDevicePort)) && P2P_ADAPTER_RTK_SUPPORT_P2P(pDevicePort))
-		{			
+		{
 			return TRUE;
 		}
 
@@ -13324,8 +13324,8 @@ P2P_CorrectDeviceCategory(
 	WFD_DEV_TYPE		devType = WFD_DEV_TYPE_SOURCE;
 	const FRAME_BUF		*pAddIeBuf = NULL;
 	u4Byte				wfdInfoLen = 0;
-	u2Byte				priCategory = WPS_PRI_DEV_TYPE_CATEGORY_PC;		
-	
+	u2Byte				priCategory = WPS_PRI_DEV_TYPE_CATEGORY_PC;
+
 	if(!P2P_ENABLED(pP2PInfo))
 		return RT_STATUS_INVALID_STATE;
 
@@ -13345,7 +13345,7 @@ P2P_CorrectDeviceCategory(
 		if(NULL != (pAddIeBuf = P2P_AddIe_Get(&pP2PInfo->AdditionalIEs, P2P_ADD_IE_PROBE_RESPONSE)))
 		{
 			OCTET_STRING	osTemp = pAddIeBuf->os;
-			
+
 			wfdInfoLen = sizeof(WFD_DEV_TYPE);
 			if(RT_STATUS_SUCCESS == (rtStatus = WFD_GetInfoOnIEs(pAdapter, WFD_INFO_DEVICE_TYPE, &osTemp, (pu1Byte)&devType, &wfdInfoLen)))
 			{

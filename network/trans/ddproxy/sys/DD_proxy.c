@@ -10,10 +10,10 @@ Abstract:
    is also implemented here along with the eventing mechanisms shared between
    the classify function and the worker thread.
 
-   Packet modification is done out-of-band by a system worker thread using 
-   the reference-drop-clone-modify-reinject mechanism. Therefore the sample 
-   can serve as a base in scenarios where filtering/modification decision 
-   cannot be made within the classifyFn() callout and instead must be made, 
+   Packet modification is done out-of-band by a system worker thread using
+   the reference-drop-clone-modify-reinject mechanism. Therefore the sample
+   can serve as a base in scenarios where filtering/modification decision
+   cannot be made within the classifyFn() callout and instead must be made,
    for example, by an user-mode application.
 
 Environment:
@@ -81,10 +81,10 @@ DDProxyFlowEstablishedClassify(
 
 /* ++
 
-   This is the classifyFn function of the flow-established callout. It 
-   allocates flow context for the original and the proxy flow and associates 
-   them with the indicated flow-id. This function also stores information 
-   common to both flows in the context. The flow context is inserted into the 
+   This is the classifyFn function of the flow-established callout. It
+   allocates flow context for the original and the proxy flow and associates
+   them with the indicated flow-id. This function also stores information
+   common to both flows in the context. The flow context is inserted into the
    global flow list.
 
 -- */
@@ -117,10 +117,10 @@ DDProxyFlowEstablishedClassify(
 
    flowContextLocal->refCount = 1;
    flowContextLocal->flowType = (DD_PROXY_FLOW_TYPE)(filter->context);
-   flowContextLocal->addressFamily = 
-      (inFixedValues->layerId == FWPS_LAYER_ALE_FLOW_ESTABLISHED_V4) ? 
+   flowContextLocal->addressFamily =
+      (inFixedValues->layerId == FWPS_LAYER_ALE_FLOW_ESTABLISHED_V4) ?
          AF_INET : AF_INET6;
-   NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(inMetaValues, 
+   NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(inMetaValues,
                                          FWPS_METADATA_FIELD_FLOW_HANDLE));
    flowContextLocal->flowId = inMetaValues->flowHandle;
 
@@ -129,11 +129,11 @@ DDProxyFlowEstablishedClassify(
    // layer classifyFn, layerId and calloutId are set to those of DD and not
    // flow-established.
    //
-   flowContextLocal->layerId = 
-      (flowContextLocal->addressFamily == AF_INET) ? 
+   flowContextLocal->layerId =
+      (flowContextLocal->addressFamily == AF_INET) ?
          FWPS_LAYER_DATAGRAM_DATA_V4 : FWPS_LAYER_DATAGRAM_DATA_V6;
-   flowContextLocal->calloutId = 
-      (flowContextLocal->addressFamily == AF_INET) ? 
+   flowContextLocal->calloutId =
+      (flowContextLocal->addressFamily == AF_INET) ?
          gCalloutIdV4 : gCalloutIdV6;
 
    if (flowContextLocal->addressFamily == AF_INET)
@@ -142,7 +142,7 @@ DDProxyFlowEstablishedClassify(
       // If driver is unloading, we give up and ignore it on purpose.
       // Otherwise, we put the pointer onto the list, but we make it opaque
       // by casting it as a UINT64, and this tricks Prefast.
-      flowContextLocal->ipv4LocalAddr = 
+      flowContextLocal->ipv4LocalAddr =
          RtlUlongByteSwap(
             inFixedValues->incomingValue\
             [FWPS_FIELD_ALE_FLOW_ESTABLISHED_V4_IP_LOCAL_ADDRESS].value.uint32
@@ -159,15 +159,15 @@ DDProxyFlowEstablishedClassify(
          [FWPS_FIELD_ALE_FLOW_ESTABLISHED_V6_IP_LOCAL_ADDRESS].value.byteArray16,
          sizeof(FWP_BYTE_ARRAY16)
          );
-      flowContextLocal->protocol = 
+      flowContextLocal->protocol =
          inFixedValues->incomingValue\
          [FWPS_FIELD_ALE_FLOW_ESTABLISHED_V6_IP_PROTOCOL].value.uint8;
    }
 
    if (flowContextLocal->flowType == DD_PROXY_FLOW_ORIGINAL)
    {
-      flowContextLocal->toRemoteAddr = 
-         (flowContextLocal->addressFamily == AF_INET) ? 
+      flowContextLocal->toRemoteAddr =
+         (flowContextLocal->addressFamily == AF_INET) ?
             configNewDestAddrV4 : configNewDestAddrV6;
       // host-order -> network-order conversion for port.
       flowContextLocal->toRemotePort = RtlUshortByteSwap(configNewDestPort);
@@ -175,8 +175,8 @@ DDProxyFlowEstablishedClassify(
    else
    {
       NT_ASSERT(flowContextLocal->flowType == DD_PROXY_FLOW_PROXY);
-      flowContextLocal->toRemoteAddr = 
-         (flowContextLocal->addressFamily == AF_INET) ? 
+      flowContextLocal->toRemoteAddr =
+         (flowContextLocal->addressFamily == AF_INET) ?
             configInspectDestAddrV4 : configInspectDestAddrV6;
       // host-order -> network-order conversion for port.
       // See PREfast comments above.  Opaque pointer tricks PREfast.
@@ -187,9 +187,9 @@ DDProxyFlowEstablishedClassify(
    {
       // host-order -> network-order conversion for Ipv4 address.
       // See PREfast comments above.  Opaque pointer tricks PREfast.
-      flowContextLocal->ipv4NetworkOrderStorage = 
+      flowContextLocal->ipv4NetworkOrderStorage =
          RtlUlongByteSwap(*(ULONG*)(flowContextLocal->toRemoteAddr));
-      flowContextLocal->toRemoteAddr = 
+      flowContextLocal->toRemoteAddr =
          (UINT8*)&flowContextLocal->ipv4NetworkOrderStorage;
    }
 
@@ -203,8 +203,8 @@ DDProxyFlowEstablishedClassify(
    if (!gDriverUnloading)
    {
       //
-      // Associate DD_PROXY_FLOW_CONTEXT with the indicated flow-id to be 
-      // accessible by the Datagram-Data classifyFn. (i.e. when a packet 
+      // Associate DD_PROXY_FLOW_CONTEXT with the indicated flow-id to be
+      // accessible by the Datagram-Data classifyFn. (i.e. when a packet
       // belongs to the same flow being classified at Datagram-Data layer,
       // DD_PROXY_FLOW_CONTEXT will be passed onto the classifyFn as the
       // "flowContext" parameter.
@@ -281,12 +281,12 @@ DDProxyClassify(
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
 /* ++
 
-   This is the classifyFn function of the datagram-data callout. It 
-   allocates a packet structure to store the classify and meta data and 
-   it references the net buffer list for out-of-band modification and 
-   re-injection. The packet structure will be queued to the global packet 
-   queue. The worker thread will then be signaled, if idle, to process 
-   the queue. 
+   This is the classifyFn function of the datagram-data callout. It
+   allocates a packet structure to store the classify and meta data and
+   it references the net buffer list for out-of-band modification and
+   re-injection. The packet structure will be queued to the global packet
+   queue. The worker thread will then be signaled, if idle, to process
+   the queue.
 
 -- */
 {
@@ -353,40 +353,40 @@ DDProxyClassify(
    if (flowContextLocal->addressFamily == AF_INET)
    {
       NT_ASSERT(inFixedValues->layerId == FWPS_LAYER_DATAGRAM_DATA_V4);
-      packet->direction = 
+      packet->direction =
          inFixedValues->incomingValue[FWPS_FIELD_DATAGRAM_DATA_V4_DIRECTION].\
             value.uint32;
    }
    else
    {
       NT_ASSERT(inFixedValues->layerId == FWPS_LAYER_DATAGRAM_DATA_V6);
-      packet->direction = 
+      packet->direction =
          inFixedValues->incomingValue[FWPS_FIELD_DATAGRAM_DATA_V6_DIRECTION].\
          value.uint32;
    }
    packet->netBufferList = layerData;
 
    //
-   // Reference the net buffer list to make it accessible outside of 
+   // Reference the net buffer list to make it accessible outside of
    // classifyFn.
    //
    FwpsReferenceNetBufferList(packet->netBufferList, TRUE);
 
-   NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(inMetaValues, 
+   NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(inMetaValues,
                                          FWPS_METADATA_FIELD_COMPARTMENT_ID));
    packet->compartmentId = inMetaValues->compartmentId;
 
    if (packet->direction == FWP_DIRECTION_OUTBOUND)
    {
       NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(
-                  inMetaValues, 
+                  inMetaValues,
                   FWPS_METADATA_FIELD_TRANSPORT_ENDPOINT_HANDLE));
       packet->endpointHandle = inMetaValues->transportEndpointHandle;
 
       if (flowContextLocal->addressFamily == AF_INET)
       {
          // See PREfast comments above.  Opaque pointer tricks PREfast.
-         packet->ipv4RemoteAddr = 
+         packet->ipv4RemoteAddr =
             RtlUlongByteSwap( /* host-order -> network-order conversion */
                inFixedValues->incomingValue\
                [FWPS_FIELD_DATAGRAM_DATA_V4_IP_REMOTE_ADDRESS].value.uint32
@@ -405,7 +405,7 @@ DDProxyClassify(
       packet->remoteScopeId = inMetaValues->remoteScopeId;
 
       if (FWPS_IS_METADATA_FIELD_PRESENT(
-            inMetaValues, 
+            inMetaValues,
             FWPS_METADATA_FIELD_TRANSPORT_CONTROL_DATA))
       {
          NT_ASSERT(inMetaValues->controlDataLength > 0);
@@ -438,34 +438,34 @@ DDProxyClassify(
       if (flowContextLocal->addressFamily == AF_INET)
       {
          NT_ASSERT(inFixedValues->layerId == FWPS_LAYER_DATAGRAM_DATA_V4);
-         packet->interfaceIndex = 
+         packet->interfaceIndex =
             inFixedValues->incomingValue\
             [FWPS_FIELD_DATAGRAM_DATA_V4_INTERFACE_INDEX].value.uint32;
-         packet->subInterfaceIndex = 
+         packet->subInterfaceIndex =
             inFixedValues->incomingValue\
             [FWPS_FIELD_DATAGRAM_DATA_V4_SUB_INTERFACE_INDEX].value.uint32;
       }
       else
       {
          NT_ASSERT(inFixedValues->layerId == FWPS_LAYER_DATAGRAM_DATA_V6);
-         packet->interfaceIndex = 
+         packet->interfaceIndex =
             inFixedValues->incomingValue\
             [FWPS_FIELD_DATAGRAM_DATA_V6_INTERFACE_INDEX].value.uint32;
-         packet->subInterfaceIndex = 
+         packet->subInterfaceIndex =
             inFixedValues->incomingValue\
             [FWPS_FIELD_DATAGRAM_DATA_V6_SUB_INTERFACE_INDEX].value.uint32;
       }
-      
+
       NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(
-               inMetaValues, 
+               inMetaValues,
                FWPS_METADATA_FIELD_IP_HEADER_SIZE));
       NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(
-               inMetaValues, 
+               inMetaValues,
                FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE));
       packet->ipHeaderSize = inMetaValues->ipHeaderSize;
       packet->transportHeaderSize = inMetaValues->transportHeaderSize;
 
-      packet->nblOffset = 
+      packet->nblOffset =
          NET_BUFFER_DATA_OFFSET(NET_BUFFER_LIST_FIRST_NB(packet->netBufferList));
    }
 
@@ -502,8 +502,8 @@ DDProxyClassify(
    if (signalWorkerThread)
    {
       KeSetEvent(
-         &gPacketQueueEvent, 
-         0, 
+         &gPacketQueueEvent,
+         0,
          FALSE
          );
    }
@@ -511,7 +511,7 @@ DDProxyClassify(
    KeReleaseInStackQueuedSpinLock(&packetQueueLockHandle);
 
 Exit:
-   
+
    if (packet != NULL)
    {
       DDProxyFreePendedPacket(packet, packet->controlData);
@@ -556,8 +556,8 @@ DDProxyFlowDelete(
    )
 /* ++
 
-   This is the flowDeleteFn function of the datagram-data callout. It 
-   removes the flow context from the global flow list and dereference the 
+   This is the flowDeleteFn function of the datagram-data callout. It
+   removes the flow context from the global flow list and dereference the
    context.
 
 -- */
@@ -611,8 +611,8 @@ DDProxyCloneModifyReinjectOutbound(
    )
 /* ++
 
-   This function clones the outbound net buffer list and, if needed, 
-   modifies the destination port of all indicated packets (i.e. NET_BUFFER) 
+   This function clones the outbound net buffer list and, if needed,
+   modifies the destination port of all indicated packets (i.e. NET_BUFFER)
    and/or send-injects the clone to a new destination address.
 
 -- */
@@ -638,13 +638,13 @@ DDProxyCloneModifyReinjectOutbound(
    //
    // Check to see if port modification is required.
    //
-   if ((packet->belongingFlow->protocol == IPPROTO_UDP) && 
+   if ((packet->belongingFlow->protocol == IPPROTO_UDP) &&
        (packet->belongingFlow->toRemotePort != 0))
    {
       NET_BUFFER* netBuffer;
 
       //
-      // The data offset of outbound transport packets is the beginning of 
+      // The data offset of outbound transport packets is the beginning of
       // transport header (e.g. UDP header). The IP header has not yet been
       // constructed at Datagram-Data (or outbound Transport) layer.
       //
@@ -652,7 +652,7 @@ DDProxyCloneModifyReinjectOutbound(
       //
 
       //
-      // Outbound net buffer list can contain more than one net buffer (e.g. 
+      // Outbound net buffer list can contain more than one net buffer (e.g.
       // one UDP packet).
       //
 
@@ -670,18 +670,18 @@ DDProxyCloneModifyReinjectOutbound(
          NT_ASSERT(udpHeader != NULL); // We can assume UDP header in a net buffer
                                        // is contiguous and 2-byte aligned.
          _Analysis_assume_(udpHeader != NULL);
-         
+
          udpHeader->destPort = packet->belongingFlow->toRemotePort;
          udpHeader->checksum = 0;
       }
    }
 
    //
-   // Determine whehter we need to proxy the destination address. If not, 
-   // we set the remoteAddress to the same address that was initially 
+   // Determine whehter we need to proxy the destination address. If not,
+   // we set the remoteAddress to the same address that was initially
    // classified.
    //
-   sendArgs.remoteAddress = 
+   sendArgs.remoteAddress =
       (packet->belongingFlow->toRemoteAddr ? packet->belongingFlow->toRemoteAddr
                                            : (UINT8*)&packet->remoteAddr);
    sendArgs.remoteScopeId = packet->remoteScopeId;
@@ -710,7 +710,7 @@ DDProxyCloneModifyReinjectOutbound(
       goto Exit;
    }
 
-   clonedNetBufferList = NULL; // ownership transferred to the 
+   clonedNetBufferList = NULL; // ownership transferred to the
                                // completion function.
 
 Exit:
@@ -729,8 +729,8 @@ DDProxyCloneModifyReinjectInbound(
    )
 /* ++
 
-   This function clones the inbound net buffer list and, if needed, 
-   modifies the source port and/or source address and receive-injects 
+   This function clones the inbound net buffer list and, if needed,
+   modifies the source port and/or source address and receive-injects
    the clone back to the tcpip stack.
 
 -- */
@@ -744,15 +744,15 @@ DDProxyCloneModifyReinjectInbound(
    NDIS_STATUS ndisStatus;
 
    //
-   // For inbound net buffer list, we can assume it contains only one 
+   // For inbound net buffer list, we can assume it contains only one
    // net buffer.
    //
    netBuffer = NET_BUFFER_LIST_FIRST_NB(packet->netBufferList);
-   
+
    nblOffset = NET_BUFFER_DATA_OFFSET(netBuffer);
 
    //
-   // The TCP/IP stack could have retreated the net buffer list by the 
+   // The TCP/IP stack could have retreated the net buffer list by the
    // transportHeaderSize amount; detect the condition here to avoid
    // retreating twice.
    //
@@ -804,7 +804,7 @@ DDProxyCloneModifyReinjectInbound(
    //
    // Check to see if port modification is required.
    //
-   if ((packet->belongingFlow->protocol == IPPROTO_UDP) && 
+   if ((packet->belongingFlow->protocol == IPPROTO_UDP) &&
        (packet->belongingFlow->toRemotePort != 0))
    {
       netBuffer = NET_BUFFER_LIST_FIRST_NB(clonedNetBufferList);
@@ -829,16 +829,16 @@ DDProxyCloneModifyReinjectInbound(
       NT_ASSERT(udpHeader != NULL); // We can assume UDP header in a net buffer
                                     // is contiguous and 2-byte aligned.
       _Analysis_assume_(udpHeader != NULL);
-      
-      udpHeader->srcPort = 
-         packet->belongingFlow->toRemotePort; 
+
+      udpHeader->srcPort =
+         packet->belongingFlow->toRemotePort;
                                     // This is our new source port -- or
                                     // the destination port of the original
                                     // outbound traffic.
       udpHeader->checksum = 0;
 
       //
-      // Undo the advance. Net buffer list needs to be positioned at the 
+      // Undo the advance. Net buffer list needs to be positioned at the
       // beginning of IP header for address modification and/or receive-
       // injection.
       //
@@ -858,11 +858,11 @@ DDProxyCloneModifyReinjectInbound(
                   clonedNetBufferList,
                   packet->ipHeaderSize,
                   packet->belongingFlow->addressFamily,
-                  packet->belongingFlow->toRemoteAddr,  
+                  packet->belongingFlow->toRemoteAddr,
                                        // This is our new source address --
                                        // or the destination address of the
                                        // original outbound traffic.
-                  (UINT8*)&packet->belongingFlow->localAddr, 
+                  (UINT8*)&packet->belongingFlow->localAddr,
                                        // This is the destination address of
                                        // the clone -- or the source of the
                                        // original outbound traffic.
@@ -901,7 +901,7 @@ DDProxyCloneModifyReinjectInbound(
       goto Exit;
    }
 
-   clonedNetBufferList = NULL; // ownership transferred to the 
+   clonedNetBufferList = NULL; // ownership transferred to the
                                // completion function.
 
 Exit:
@@ -921,9 +921,9 @@ DDProxyWorker(
 /* ++
 
    This worker thread waits for the packet queue event when the queue is
-   empty; and it will be woken up when there are packets queued needing to 
-   be proxied to or from the new destination address/port. Once awaking, 
-   It will run in a loop to clone-modify-reinject packets until the packet 
+   empty; and it will be woken up when there are packets queued needing to
+   be proxied to or from the new destination address/port. Once awaking,
+   It will run in a loop to clone-modify-reinject packets until the packet
    queue is exhausted (and it will go to sleep waiting for more work).
 
    The worker thread will end once it detected the driver is unloading.
@@ -940,9 +940,9 @@ DDProxyWorker(
    {
       KeWaitForSingleObject(
          &gPacketQueueEvent,
-         Executive, 
-         KernelMode, 
-         FALSE, 
+         Executive,
+         KernelMode,
+         FALSE,
          NULL
          );
 

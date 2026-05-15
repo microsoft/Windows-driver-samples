@@ -28,7 +28,7 @@
 #ifndef __RPCNDR_H_VERSION__
 #error this stub requires an updated version of <rpcndr.h>
 #endif /* __RPCNDR_H_VERSION__ */
-#endif 
+#endif
 
 #ifndef __MbbMessages_h__
 #define __MbbMessages_h__
@@ -45,18 +45,18 @@
 #endif
 #endif
 
-/* Forward Declarations */ 
+/* Forward Declarations */
 
 /* header files for imported files */
 // #include "wtypes.h"
 
 #ifdef __cplusplus
 extern "C"{
-#endif 
+#endif
 
 
 /* interface __MIDL_itf_MbbMessages_0000_0000 */
-/* [local] */ 
+/* [local] */
 
 //
 //    Copyright (C) Microsoft.  All rights reserved.
@@ -310,13 +310,13 @@ DEFINE_GUID(GUID_USB_CAPABILITY_DEVICE_TYPE, 0x146FED19, 0xEB71, 0x42A7, 0xB3, 0
 
 typedef unsigned short MBB_TLV_TYPE;
 
-typedef 
+typedef
 enum _USB_CAP_DEVICE_TYPE
     {
         USB_CAP_DEVICE_TYPE_USB = 0,
         USB_CAP_DEVICE_TYPE_UDE_MBIM = 1,
         USB_CAP_DEVICE_TYPE_UDE_MBIM_FASTIO = 2,
-        USB_CAP_DEVICE_TYPE_MAXIMUM = ( USB_CAP_DEVICE_TYPE_UDE_MBIM_FASTIO + 1 ) 
+        USB_CAP_DEVICE_TYPE_MAXIMUM = ( USB_CAP_DEVICE_TYPE_UDE_MBIM_FASTIO + 1 )
     } USB_CAP_DEVICE_TYPE;
 
 typedef struct _USB_CAP_DEVICE_INFO_HEADER
@@ -336,15 +336,15 @@ typedef struct _USB_CAP_DEVICE_INFO
 
 typedef struct _USB_CAP_DEVICE_INFO *PUSB_CAP_DEVICE_INFO;
 
-typedef 
+typedef
 enum _MBB_NBL_TYPE
     {
         MBB_NBL_TYPE_IP = 0,
         MBB_NBL_TYPE_DSS = 1,
-        MBB_NBL_TYPE_MAXIMUM = ( MBB_NBL_TYPE_DSS + 1 ) 
+        MBB_NBL_TYPE_MAXIMUM = ( MBB_NBL_TYPE_DSS + 1 )
     } MBB_NBL_TYPE;
 
-typedef 
+typedef
 enum _MBB_STATUS
     {
         MBB_STATUS_SUCCESS = 0,
@@ -404,10 +404,10 @@ enum _MBB_STATUS
         MBB_STATUS_UICC_START = 0x87430001,
         MBB_STATUS_UICC_SELECT_FAILED = 0x87430002,
         MBB_STATUS_UICC_INVALID_LOGICAL_CHANNEL = 0x87430003,
-        MBB_STATUS_UICC_END = ( MBB_STATUS_UICC_INVALID_LOGICAL_CHANNEL + 1 ) 
+        MBB_STATUS_UICC_END = ( MBB_STATUS_UICC_INVALID_LOGICAL_CHANNEL + 1 )
     } MBB_STATUS;
 
-typedef 
+typedef
 enum _MBB_ERROR
     {
         MBB_ERROR_NONE = 0,
@@ -421,7 +421,7 @@ enum _MBB_ERROR
         MBB_ERROR_MAX_TRANSFER = 8
     } MBB_ERROR;
 
-typedef 
+typedef
 enum _MBB_MESSAGE_TYPE
     {
         MBB_MESSAGE_TYPE_NONE = 0,
@@ -436,7 +436,7 @@ enum _MBB_MESSAGE_TYPE
         MBB_MESSAGE_TYPE_INDICATE_STATUS = 0x80000007
     } MBB_MESSAGE_TYPE;
 
-typedef 
+typedef
 enum _MBB_COMMAND_TYPE
     {
         MBB_COMMAND_TYPE_QUERY = 0,
@@ -575,7 +575,7 @@ typedef struct _MBB_ERROR_MESSAGE
 
 typedef struct _MBB_ERROR_MESSAGE *PMBB_ERROR_MESSAGE;
 
-typedef 
+typedef
 enum _MBB_BASIC_CID
     {
         MBB_BASIC_CID_DEVICE_CAPS = 1,
@@ -600,10 +600,10 @@ enum _MBB_BASIC_CID
         MBB_BASIC_CID_EMERGENCY_MODE = 22,
         MBB_BASIC_CID_PACKET_FILTERS = 23,
         MBB_BASIC_CID_MULTICARRIER_PROVIDERS = 24,
-        MBB_BASIC_CID_MAXIMUM = ( MBB_BASIC_CID_MULTICARRIER_PROVIDERS + 1 ) 
+        MBB_BASIC_CID_MAXIMUM = ( MBB_BASIC_CID_MULTICARRIER_PROVIDERS + 1 )
     } MBB_BASIC_CID;
 
-typedef 
+typedef
 enum _MBB_SMS_CID
     {
         MBB_SMS_CID_CONFIGURATION = 1,
@@ -611,76 +611,76 @@ enum _MBB_SMS_CID
         MBB_SMS_CID_SEND = 3,
         MBB_SMS_CID_DELETE = 4,
         MBB_SMS_CID_STATUS = 5,
-        MBB_SMS_CID_MAXIMUM = ( MBB_SMS_CID_STATUS + 1 ) 
+        MBB_SMS_CID_MAXIMUM = ( MBB_SMS_CID_STATUS + 1 )
     } MBB_SMS_CID;
 
-typedef 
+typedef
 enum _MBB_VENDOR_CID
     {
         MBB_VENDOR_CID_MS_VENDOR_SPECIFIC = 1,
-        MBB_VENDOR_CID_MAXIMUM = ( MBB_VENDOR_CID_MS_VENDOR_SPECIFIC + 1 ) 
+        MBB_VENDOR_CID_MAXIMUM = ( MBB_VENDOR_CID_MS_VENDOR_SPECIFIC + 1 )
     } MBB_VENDOR_CID;
 
-typedef 
+typedef
 enum _MBB_USSD_CID
     {
         MBB_USSD_CID_USSD = 1,
-        MBB_USSD_CID_MAXIMUM = ( MBB_USSD_CID_USSD + 1 ) 
+        MBB_USSD_CID_MAXIMUM = ( MBB_USSD_CID_USSD + 1 )
     } MBB_USSD_CID;
 
-typedef 
+typedef
 enum _MBB_PHONEBOOK_CID
     {
         MBB_PHONEBOOK_CID_CONFIGURATION = 1,
         MBB_PHONEBOOK_CID_READ = 2,
         MBB_PHONEBOOK_CID_DELETE = 3,
         MBB_PHONEBOOK_CID_SAVE = 4,
-        MBB_PHONEBOOK_CID_MAXIMUM = ( MBB_PHONEBOOK_CID_SAVE + 1 ) 
+        MBB_PHONEBOOK_CID_MAXIMUM = ( MBB_PHONEBOOK_CID_SAVE + 1 )
     } MBB_PHONEBOOK_CID;
 
-typedef 
+typedef
 enum _MBB_SAT_CID
     {
         MBB_SAT_CID_PAC = 1,
         MBB_SAT_CID_TERMINAL_RESPONSE = 2,
         MBB_SAT_CID_ENVELOPE = 3,
-        MBB_SAT_CID_MAXIMUM = ( MBB_SAT_CID_ENVELOPE + 1 ) 
+        MBB_SAT_CID_MAXIMUM = ( MBB_SAT_CID_ENVELOPE + 1 )
     } MBB_SAT_CID;
 
-typedef 
+typedef
 enum _MBB_AUTH_CID
     {
         MBB_AUTH_CID_AKA = 1,
         MBB_AUTH_CID_AKAP = 2,
         MBB_AUTH_CID_SIM = 3,
-        MBB_AUTH_CID_MAXIUM = ( MBB_AUTH_CID_SIM + 1 ) 
+        MBB_AUTH_CID_MAXIUM = ( MBB_AUTH_CID_SIM + 1 )
     } MBB_AUTH_CID;
 
-typedef 
+typedef
 enum _MBB_DSS_CID
     {
         MBB_DSS_CID_CONNECT = 1,
-        MBB_DSS_CID_MAXIUM = ( MBB_DSS_CID_CONNECT + 1 ) 
+        MBB_DSS_CID_MAXIUM = ( MBB_DSS_CID_CONNECT + 1 )
     } MBB_DSS_CID;
 
-typedef 
+typedef
 enum _MBB_MULTICARRIER_CID
     {
         MBB_MULTICARRIER_CID_CAPABILITIES = 1,
         MBB_MULTICARRIER_CID_LOCATION_INFO = 2,
         MBB_MULTICARRIER_CID_CURRENT_CID_LIST = 3,
-        MBB_MULTICARRIER_CID_MAXIMUM = ( MBB_MULTICARRIER_CID_CURRENT_CID_LIST + 1 ) 
+        MBB_MULTICARRIER_CID_MAXIMUM = ( MBB_MULTICARRIER_CID_CURRENT_CID_LIST + 1 )
     } MBB_MULTICARRIER_CID;
 
-typedef 
+typedef
 enum _MBB_HOSTSHUTDOWN_CID
     {
         MBB_HOSTSHUTDOWN_CID_ONE = 1,
         MBB_HOSTSHUTDOWN_CID_PRESHUTDOWN = 2,
-        MBB_HOSTSHUTDOWN_CID_MAX = ( MBB_HOSTSHUTDOWN_CID_PRESHUTDOWN + 1 ) 
+        MBB_HOSTSHUTDOWN_CID_MAX = ( MBB_HOSTSHUTDOWN_CID_PRESHUTDOWN + 1 )
     } MBB_HOSTSHUTDOWN_CID;
 
-typedef 
+typedef
 enum _MBB_VOICEEXTENSIONS_CID
     {
         MBB_VOICEEXTENSIONS_CID_SYS_CAPS = 1,
@@ -693,10 +693,10 @@ enum _MBB_VOICEEXTENSIONS_CID
         MBB_VOICEEXTENSIONS_CID_SIGNAL_STATE_V2 = 8,
         MBB_VOICEEXTENSIONS_CID_LOCATION_STATE = 9,
         MBB_VOICEEXTENSIONS_CID_NITZ = 10,
-        MBB_VOICEEXTENSIONS_CID_MAX = ( MBB_VOICEEXTENSIONS_CID_NITZ + 1 ) 
+        MBB_VOICEEXTENSIONS_CID_MAX = ( MBB_VOICEEXTENSIONS_CID_NITZ + 1 )
     } MBB_VOICEEXTENSIONS_CID;
 
-typedef 
+typedef
 enum _MBB_UICC_CID
     {
         MBB_UICC_CID_ATR = 1,
@@ -709,18 +709,18 @@ enum _MBB_UICC_CID
         MBB_UICC_CID_FILE_STATUS = 8,
         MBB_UICC_CID_ACCESS_BINARY = 9,
         MBB_UICC_CID_ACCESS_RECORD = 10,
-        MBB_UICC_CID_MAXIMUM = ( MBB_UICC_CID_ACCESS_RECORD + 1 ) 
+        MBB_UICC_CID_MAXIMUM = ( MBB_UICC_CID_ACCESS_RECORD + 1 )
     } MBB_UICC_CID;
 
-typedef 
+typedef
 enum _MBB_SAR_CID
     {
         MBB_SAR_CID_CONFIG = 1,
         MBB_SAR_CID_TRANSMISSION_STATUS = 2,
-        MBB_SAR_CID_MAXIMUM = ( MBB_SAR_CID_TRANSMISSION_STATUS + 1 ) 
+        MBB_SAR_CID_MAXIMUM = ( MBB_SAR_CID_TRANSMISSION_STATUS + 1 )
     } MBB_SAR_CID;
 
-typedef 
+typedef
 enum _MBB_BASICCONNECTEXT_CID
     {
         MBB_BASICCONNECTEXT_CID_PROVISIONED_CONTEXT_V2 = 1,
@@ -742,48 +742,48 @@ enum _MBB_BASICCONNECTEXT_CID
         MBB_BASICCONNECTEXT_CID_REGISTRATION_PARAMS = 17,
         MBB_BASICCONNECTEXT_CID_NETWORK_PARAMS = 18,
         MBB_BASICCONNECTEXT_CID_WAKE_REASON = 19,
-        MBB_BASICCONNECTEXT_CID_MAXIMUM = ( MBB_BASICCONNECTEXT_CID_WAKE_REASON + 1 ) 
+        MBB_BASICCONNECTEXT_CID_MAXIMUM = ( MBB_BASICCONNECTEXT_CID_WAKE_REASON + 1 )
     } MBB_BASICCONNECTEXT_CID;
 
-typedef 
+typedef
 enum _MBB_DEVICE_TYPE
     {
         MbbDeviceTypeUnknown = 0,
         MbbDeviceTypeEmbedded = 1,
         MbbDeviceTypeRemovable = 2,
         MbbDeviceTypeRemote = 3,
-        MbbDeviceTypeMaximum = ( MbbDeviceTypeRemote + 1 ) 
+        MbbDeviceTypeMaximum = ( MbbDeviceTypeRemote + 1 )
     } MBB_DEVICE_TYPE;
 
-typedef 
+typedef
 enum _MBB_CELLULAR_CLASS
     {
         MbbCellularClassInvalid = 0,
         MbbCellularClassGsm = 1,
         MbbCellularClassCdma = 2,
-        MbbCellularClassMaximum = ( MbbCellularClassCdma + 1 ) 
+        MbbCellularClassMaximum = ( MbbCellularClassCdma + 1 )
     } MBB_CELLULAR_CLASS;
 
-typedef 
+typedef
 enum _MBB_VOICE_CLASS
     {
         MbbVoiceClassInvalid = 0,
         MbbVoiceClassNoVoice = 1,
         MbbVoiceClassSeparateVoiceData = 2,
         MbbVoiceClassSimultaneousVoiceData = 3,
-        MbbVoiceClassMaximum = ( MbbVoiceClassSimultaneousVoiceData + 1 ) 
+        MbbVoiceClassMaximum = ( MbbVoiceClassSimultaneousVoiceData + 1 )
     } MBB_VOICE_CLASS;
 
-typedef 
+typedef
 enum _MBB_SIM_CLASS
     {
         MbbSimClassInvalid = 0,
         MbbSimClassSimLogical = 1,
         MbbSimClassSimRemovable = 2,
-        MbbSimClassMaximum = ( MbbSimClassSimRemovable + 1 ) 
+        MbbSimClassMaximum = ( MbbSimClassSimRemovable + 1 )
     } MBB_SIM_CLASS;
 
-typedef 
+typedef
 enum _MBB_DATA_CLASS_VALUE
     {
         MbbDataClassNone = 0,
@@ -806,7 +806,7 @@ enum _MBB_DATA_CLASS_VALUE
         MbbDataClassCustom = 0x80000000
     } MBB_DATA_CLASS_VALUE;
 
-typedef 
+typedef
 enum _MBB_DATA_SUBCLASS_VALUE
     {
         MbbDataSubClassNone = 0,
@@ -817,17 +817,17 @@ enum _MBB_DATA_SUBCLASS_VALUE
         MbbDataSubClassNGENDC = 0x10
     } MBB_DATA_SUBCLASS_VALUE;
 
-typedef 
+typedef
 enum _MBB_FREQUENCY_RANGE
     {
         MbbFrequencyRangeUnknown = 0,
         MbbFrequencyRange1 = 1,
         MbbFrequencyRange2 = 2,
         MbbFrequencyRange1AndRange2 = 3,
-        MbbFrequencyRangeMaximum = ( MbbFrequencyRange1AndRange2 + 1 ) 
+        MbbFrequencyRangeMaximum = ( MbbFrequencyRange1AndRange2 + 1 )
     } MBB_FREQUENCY_RANGE;
 
-typedef 
+typedef
 enum _MBB_BAND_CLASS_VALUE
     {
         MbbBandClassUnknown = 0,
@@ -852,7 +852,7 @@ enum _MBB_BAND_CLASS_VALUE
         MbbBandClassCustom = 0x80000000
     } MBB_BAND_CLASS_VALUE;
 
-typedef 
+typedef
 enum _MBB_SMS_CAPS_VALUE
     {
         MbbSmsCapsNone = 0,
@@ -862,7 +862,7 @@ enum _MBB_SMS_CAPS_VALUE
         MbbSmsCapsTextSend = 0x8
     } MBB_SMS_CAPS_VALUE;
 
-typedef 
+typedef
 enum _MBB_CONTROL_CAPS_VALUE
     {
         MbbControlCapsNone = 0,
@@ -876,7 +876,7 @@ enum _MBB_CONTROL_CAPS_VALUE
         MbbControlCapsSIMHotSwapCapable = 0x80
     } MBB_CONTROL_CAPS_VALUE;
 
-typedef 
+typedef
 enum _MBB_READY_STATE
     {
         MbbReadyStateOff = 0,
@@ -887,33 +887,33 @@ enum _MBB_READY_STATE
         MbbReadyStateNotActivated = 5,
         MbbReadyStateDeviceLocked = 6,
         MbbReadyStateNoEsimProfile = 7,
-        MbbReadyStateMaximum = ( MbbReadyStateNoEsimProfile + 1 ) 
+        MbbReadyStateMaximum = ( MbbReadyStateNoEsimProfile + 1 )
     } MBB_READY_STATE;
 
-typedef 
+typedef
 enum _MBB_READY_INFO_FLAGS
     {
         MbbReadyInfoFlagsNone = 0,
         MbbReadyInfoFlagsUniqueId = 1
     } MBB_READY_INFO_FLAGS;
 
-typedef 
+typedef
 enum _MBB_EMERGENCY_MODE
     {
         MbbEmergencyModeOff = 0,
         MbbEmergencyModeOn = 1,
-        MbbEmergencyModeMaximum = ( MbbEmergencyModeOn + 1 ) 
+        MbbEmergencyModeMaximum = ( MbbEmergencyModeOn + 1 )
     } MBB_EMERGENCY_MODE;
 
-typedef 
+typedef
 enum _MBB_RADIO_STATE
     {
         MbbRadioStateOff = 0,
         MbbRadioStateOn = 1,
-        MbbRadioStateMaximum = ( MbbRadioStateOn + 1 ) 
+        MbbRadioStateMaximum = ( MbbRadioStateOn + 1 )
     } MBB_RADIO_STATE;
 
-typedef 
+typedef
 enum _MBB_PIN_TYPE
     {
         MbbPinTypeNone = 0,
@@ -936,46 +936,46 @@ enum _MBB_PIN_TYPE
         MbbPinTypeCorporatePuk = 17,
         MbbPinTypeNev = 18,
         MbbPinTypeAdm = 19,
-        MbbPinTypeMaximum = ( MbbPinTypeAdm + 1 ) 
+        MbbPinTypeMaximum = ( MbbPinTypeAdm + 1 )
     } MBB_PIN_TYPE;
 
-typedef 
+typedef
 enum _MBB_PIN_STATE
     {
         MbbPinStateUnlocked = 0,
         MbbPinStateLocked = 1,
-        MbbPinStateMaximum = ( MbbPinStateLocked + 1 ) 
+        MbbPinStateMaximum = ( MbbPinStateLocked + 1 )
     } MBB_PIN_STATE;
 
-typedef 
+typedef
 enum _MBB_PIN_OPERATION
     {
         MbbPinOperationEnter = 0,
         MbbPinOperationEnable = 1,
         MbbPinOperationDisable = 2,
         MbbPinOperationChange = 3,
-        MbbPinOperationMaximum = ( MbbPinOperationChange + 1 ) 
+        MbbPinOperationMaximum = ( MbbPinOperationChange + 1 )
     } MBB_PIN_OPERATION;
 
-typedef 
+typedef
 enum _MBB_PIN_MODE
     {
         MbbPinModeNotSupported = 0,
         MbbPinModeEnabled = 1,
         MbbPinModeDisabled = 2,
-        MbbPinModeMaximum = ( MbbPinModeDisabled + 1 ) 
+        MbbPinModeMaximum = ( MbbPinModeDisabled + 1 )
     } MBB_PIN_MODE;
 
-typedef 
+typedef
 enum _MBB_PIN_FORMAT
     {
         MbbPinFormatUnknown = 0,
         MbbPinFormatNumeric = 1,
         MbbPinFormatAlphaNumeric = 2,
-        MbbPinFormatMaximum = ( MbbPinFormatAlphaNumeric + 1 ) 
+        MbbPinFormatMaximum = ( MbbPinFormatAlphaNumeric + 1 )
     } MBB_PIN_FORMAT;
 
-typedef 
+typedef
 enum _MBB_PROVIDER_STATE_VALUE
     {
         MbbProviderStateHome = 0x1,
@@ -986,15 +986,15 @@ enum _MBB_PROVIDER_STATE_VALUE
         MbbProviderStatePreferredMulticarrier = 0x20
     } MBB_PROVIDER_STATE_VALUE;
 
-typedef 
+typedef
 enum _MBB_REGISTER_ACTION
     {
         MbbRegisterActionAutomatic = 0,
         MbbRegisterActionManual = 1,
-        MbbRegisterActionMaximum = ( MbbRegisterActionManual + 1 ) 
+        MbbRegisterActionMaximum = ( MbbRegisterActionManual + 1 )
     } MBB_REGISTER_ACTION;
 
-typedef 
+typedef
 enum _MBB_REGISTER_STATE
     {
         MbbRegisterStateUnknown = 0,
@@ -1004,27 +1004,27 @@ enum _MBB_REGISTER_STATE
         MbbRegisterStateRoaming = 4,
         MbbRegisterStatePartner = 5,
         MbbRegisterStateDenied = 6,
-        MbbRegisterStateMaximum = ( MbbRegisterStateDenied + 1 ) 
+        MbbRegisterStateMaximum = ( MbbRegisterStateDenied + 1 )
     } MBB_REGISTER_STATE;
 
-typedef 
+typedef
 enum _MBB_REGISTER_MODE
     {
         MbbRegisterModeUnknown = 0,
         MbbRegisterModeAutomatic = 1,
         MbbRegisterModeManual = 2,
-        MbbRegisterModeMaximum = ( MbbRegisterModeManual + 1 ) 
+        MbbRegisterModeMaximum = ( MbbRegisterModeManual + 1 )
     } MBB_REGISTER_MODE;
 
-typedef 
+typedef
 enum _MBB_PACKET_SERVICE_ACTION
     {
         MbbPacketServiceActionAttach = 0,
         MbbPacketServiceActionDetach = 1,
-        MbbPacketServiceActionMaximum = ( MbbPacketServiceActionDetach + 1 ) 
+        MbbPacketServiceActionMaximum = ( MbbPacketServiceActionDetach + 1 )
     } MBB_PACKET_SERVICE_ACTION;
 
-typedef 
+typedef
 enum _MBB_PACKET_SERVICE_STATE
     {
         MbbPacketServiceStateUnknown = 0,
@@ -1032,10 +1032,10 @@ enum _MBB_PACKET_SERVICE_STATE
         MbbPacketServiceStateAttached = 2,
         MbbPacketServiceStateDetaching = 3,
         MbbPacketServiceStateDetached = 4,
-        MbbPacketServiceStateMaximum = ( MbbPacketServiceStateDetached + 1 ) 
+        MbbPacketServiceStateMaximum = ( MbbPacketServiceStateDetached + 1 )
     } MBB_PACKET_SERVICE_STATE;
 
-typedef 
+typedef
 enum _MBB_CONTEXT_IP_TYPE
     {
         MbbContextIPTypeDefault = 0,
@@ -1043,37 +1043,37 @@ enum _MBB_CONTEXT_IP_TYPE
         MbbContextIPTypeIPv6 = 2,
         MbbContextIPTypeIPv4v6 = 3,
         MbbContextIPTypeIPv4AndIPv6 = 4,
-        MbbContextIPTypeMaximum = ( MbbContextIPTypeIPv4AndIPv6 + 1 ) 
+        MbbContextIPTypeMaximum = ( MbbContextIPTypeIPv4AndIPv6 + 1 )
     } MBB_CONTEXT_IP_TYPE;
 
-typedef 
+typedef
 enum _MBB_ACTIVATION_COMMAND
     {
         MbbActivationCommandDeactivate = 0,
         MbbActivationCommandActivate = 1,
         MbbActivationCommandCancel = 2,
-        MbbActivationCommandMaximum = ( MbbActivationCommandCancel + 1 ) 
+        MbbActivationCommandMaximum = ( MbbActivationCommandCancel + 1 )
     } MBB_ACTIVATION_COMMAND;
 
-typedef 
+typedef
 enum _MBB_COMPRESSION
     {
         MbbCompressionNone = 0,
         MbbCompressionEnable = 1,
-        MbbCompressionMaximum = ( MbbCompressionEnable + 1 ) 
+        MbbCompressionMaximum = ( MbbCompressionEnable + 1 )
     } MBB_COMPRESSION;
 
-typedef 
+typedef
 enum _MBB_AUTH_PROTOCOL
     {
         MbbAuthProtocolNone = 0,
         MbbAuthProtocolPap = 1,
         MbbAuthProtocolChap = 2,
         MbbAuthProtocolMsChapV2 = 3,
-        MbbAuthProtocolMaximum = ( MbbAuthProtocolMsChapV2 + 1 ) 
+        MbbAuthProtocolMaximum = ( MbbAuthProtocolMsChapV2 + 1 )
     } MBB_AUTH_PROTOCOL;
 
-typedef 
+typedef
 enum _MBB_ACTIVATION_STATE
     {
         MbbActivationStateUnknown = 0,
@@ -1081,27 +1081,27 @@ enum _MBB_ACTIVATION_STATE
         MbbActivationStateActivating = 2,
         MbbActivationStateDeactivated = 3,
         MbbActivationStateDeactivating = 4,
-        MbbActivationStateMaximum = ( MbbActivationStateDeactivating + 1 ) 
+        MbbActivationStateMaximum = ( MbbActivationStateDeactivating + 1 )
     } MBB_ACTIVATION_STATE;
 
-typedef 
+typedef
 enum _MBB_VOICE_CALL_STATE
     {
         MbbVoiceCallStateNone = 0,
         MbbVoiceCallStateInProgress = 1,
         MbbVoiceCallStateHangUp = 2,
-        MbbVoiceCallStateMaximum = ( MbbVoiceCallStateHangUp + 1 ) 
+        MbbVoiceCallStateMaximum = ( MbbVoiceCallStateHangUp + 1 )
     } MBB_VOICE_CALL_STATE;
 
-typedef 
+typedef
 enum _MBB_SMS_FORMAT
     {
         MbbSmsFormatPdu = 0,
         MbbSmsFormatCdma = 1,
-        MbbSmsFormatMaximum = ( MbbSmsFormatCdma + 1 ) 
+        MbbSmsFormatMaximum = ( MbbSmsFormatCdma + 1 )
     } MBB_SMS_FORMAT;
 
-typedef 
+typedef
 enum _MBB_SMS_FLAG
     {
         MbbSmsFlagAll = 0,
@@ -1110,10 +1110,10 @@ enum _MBB_SMS_FLAG
         MbbSmsFlagOld = 3,
         MbbSmsFlagSent = 4,
         MbbSmsFlagDraft = 5,
-        MbbSmsFlagMaximum = ( MbbSmsFlagDraft + 1 ) 
+        MbbSmsFlagMaximum = ( MbbSmsFlagDraft + 1 )
     } MBB_SMS_FLAG;
 
-typedef 
+typedef
 enum _MBB_SMS_CDMA_LANGUAGE
     {
         MbbSmsCdmaLanguageUnknown = 0,
@@ -1124,10 +1124,10 @@ enum _MBB_SMS_CDMA_LANGUAGE
         MbbSmsCdmaLanguageKorean = 5,
         MbbSmsCdmaLanguageChinese = 6,
         MbbSmsCdmaLanguageHebrew = 7,
-        MbbSmsCdmaLanguageMaximum = ( MbbSmsCdmaLanguageHebrew + 1 ) 
+        MbbSmsCdmaLanguageMaximum = ( MbbSmsCdmaLanguageHebrew + 1 )
     } MBB_SMS_CDMA_LANGUAGE;
 
-typedef 
+typedef
 enum _MBB_SMS_CDMA_ENCODING
     {
         MbbSmsCdmaEncodingOctet = 0,
@@ -1140,20 +1140,20 @@ enum _MBB_SMS_CDMA_ENCODING
         MbbSmsCdmaEncodingLatinHebrew = 7,
         MbbSmsCdmaEncodingLatin = 8,
         MbbSmsCdmaEncodingGsm7Bit = 9,
-        MbbSmsCdmaEncodingMaximum = ( MbbSmsCdmaEncodingGsm7Bit + 1 ) 
+        MbbSmsCdmaEncodingMaximum = ( MbbSmsCdmaEncodingGsm7Bit + 1 )
     } MBB_SMS_CDMA_ENCODING;
 
-typedef 
+typedef
 enum _MBB_SMS_MESSAGE_STATUS
     {
         MbbSmsMessageStatusNew = 0,
         MbbSmsMessageStatusOld = 1,
         MbbSmsMessageStatusDraft = 2,
         MbbSmsMessageStatusSent = 3,
-        MbbSmsMessageStatusMaximum = ( MbbSmsMessageStatusSent + 1 ) 
+        MbbSmsMessageStatusMaximum = ( MbbSmsMessageStatusSent + 1 )
     } MBB_SMS_MESSAGE_STATUS;
 
-typedef 
+typedef
 enum _MBB_REG_FLAGS_VALUE
     {
         MbbRegFlagsNone = 0,
@@ -1161,7 +1161,7 @@ enum _MBB_REG_FLAGS_VALUE
         MbbRegFlagsPSAutoAttach = 0x2
     } MBB_REG_FLAGS_VALUE;
 
-typedef 
+typedef
 enum _MBB_SMS_STATUS_FLAGS_VALUE
     {
         MbbSmsFlagNone = 0,
@@ -1193,7 +1193,7 @@ typedef struct _MBB_ARRAY_ELEMENT2
 
 typedef struct _MBB_ARRAY_ELEMENT2 *PMBB_ARRAY_ELEMENT2;
 
-typedef 
+typedef
 enum _MBB_DSS_PAYLOAD_SUPPORT
     {
         MbbDssPayloadNone = 0,
@@ -1201,14 +1201,14 @@ enum _MBB_DSS_PAYLOAD_SUPPORT
         MbbDssPayloadDeviceToHost = 0x2
     } MBB_DSS_PAYLOAD_SUPPORT;
 
-typedef 
+typedef
 enum _MBB_DSS_LINK_STATE
     {
         MbbDssLinkDeactivate = 0,
         MbbDssLinkActivate = 0x1
     } MBB_DSS_LINK_STATE;
 
-typedef 
+typedef
 enum _MBB_IP_CONFIGURATION_FLAGS_VALUE
     {
         MbbIpFlagsNone = 0,
@@ -1218,54 +1218,54 @@ enum _MBB_IP_CONFIGURATION_FLAGS_VALUE
         MbbIpFlagsMTUAvailable = 0x8
     } MBB_IP_CONFIGURATION_FLAGS_VALUE;
 
-typedef 
+typedef
 enum _MBB_NETWORK_IDLE_HINT_STATE
     {
         MbbNetworkIdleHintDisabled = 0,
         MbbNetworkIdleHintEnabled = 1
     } MBB_NETWORK_IDLE_HINT_STATE;
 
-typedef 
+typedef
 enum _MBB_SAR_BACKOFF_STATE
     {
         MbbSarBackoffStatusDisabled = 0,
         MbbSarBackoffStatusEnabled = 1,
-        MbbSarBackoffStatusMaximum = ( MbbSarBackoffStatusEnabled + 1 ) 
+        MbbSarBackoffStatusMaximum = ( MbbSarBackoffStatusEnabled + 1 )
     } MBB_SAR_BACKOFF_STATE;
 
-typedef 
+typedef
 enum _MBB_SAR_CONTROL_MODE
     {
         MbbSarControlModeDevice = 0,
         MbbSarControlModeOS = 1,
-        MbbSarControlModeMaximum = ( MbbSarControlModeOS + 1 ) 
+        MbbSarControlModeMaximum = ( MbbSarControlModeOS + 1 )
     } MBB_SAR_CONTROL_MODE;
 
-typedef 
+typedef
 enum _MBB_SAR_WIFI_HARDWARE_INTEGRATION
     {
         MbbSarWifiHardwareNotIntegrated = 0,
         MbbSarWifiHardwareIntegrated = 1,
-        MbbSarWifiHardwareIntegrationMaximum = ( MbbSarWifiHardwareIntegrated + 1 ) 
+        MbbSarWifiHardwareIntegrationMaximum = ( MbbSarWifiHardwareIntegrated + 1 )
     } MBB_SAR_WIFI_HARDWARE_INTEGRATION;
 
-typedef 
+typedef
 enum _MBB_SAR_TRANSMISSION_STATUS_NOTIFICATION_STATE
     {
         MbbTransmissionNotificationDisabled = 0,
         MbbTransmissionNotificationEnabled = 1,
-        MbbTransmissionNotificationMaximum = ( MbbTransmissionNotificationEnabled + 1 ) 
+        MbbTransmissionNotificationMaximum = ( MbbTransmissionNotificationEnabled + 1 )
     } MBB_SAR_TRANSMISSION_STATUS_NOTIFICATION_STATE;
 
-typedef 
+typedef
 enum _MBB_SAR_TRANSMISSION_STATUS
     {
         MbbTransmissionStateInactive = 0,
         MbbTransmissionStateActive = 1,
-        MbbTransmissionStateMaximum = ( MbbTransmissionStateActive + 1 ) 
+        MbbTransmissionStateMaximum = ( MbbTransmissionStateActive + 1 )
     } MBB_SAR_TRANSMISSION_STATUS;
 
-typedef 
+typedef
 enum _MBB_BASICCONNECTEXT_CONTEXT_ROAMING_CONTROL
     {
         MbbMsContextRoamingControlHomeOnly = 0,
@@ -1275,27 +1275,27 @@ enum _MBB_BASICCONNECTEXT_CONTEXT_ROAMING_CONTROL
         MbbMsContextRoamingControlHomeAndNonPartner = 4,
         MbbMsContextRoamingControlPartnerAndNonPartner = 5,
         MbbMsContextRoamingControlAllowAll = 6,
-        MbbMsContextRoamingControlMaximum = ( MbbMsContextRoamingControlAllowAll + 1 ) 
+        MbbMsContextRoamingControlMaximum = ( MbbMsContextRoamingControlAllowAll + 1 )
     } MBB_BASICCONNECTEXT_CONTEXT_ROAMING_CONTROL;
 
-typedef 
+typedef
 enum _MBB_BASICCONNECTEXT_CONTEXT_MEDIA_TYPE
     {
         MbbMsContextMediaTypeCellularOnly = 0,
         MbbMsContextMediaTypeWifiOnly = 1,
         MbbMsContextMediaTypeAll = 2,
-        MbbMsContextMediaTypeMaximum = ( MbbMsContextMediaTypeAll + 1 ) 
+        MbbMsContextMediaTypeMaximum = ( MbbMsContextMediaTypeAll + 1 )
     } MBB_BASICCONNECTEXT_CONTEXT_MEDIA_TYPE;
 
-typedef 
+typedef
 enum _MBB_BASICCONNECTEXT_CONTEXT_ENABLE
     {
         MbbMsContextDisabled = 0,
         MbbMsContextEnabled = 1,
-        MbbMsContextEnableMaximum = ( MbbMsContextEnabled + 1 ) 
+        MbbMsContextEnableMaximum = ( MbbMsContextEnabled + 1 )
     } MBB_BASICCONNECTEXT_CONTEXT_ENABLE;
 
-typedef 
+typedef
 enum _MBB_BASICCONNECTEXT_CONTEXT_SOURCE
     {
         MbbMsContextSourceAdmin = 0,
@@ -1303,61 +1303,61 @@ enum _MBB_BASICCONNECTEXT_CONTEXT_SOURCE
         MbbMsContextSourceOperator = 2,
         MbbMsContextSourceModem = 3,
         MbbMsContextSourceDevice = 4,
-        MbbMsContextSourceMaximum = ( MbbMsContextSourceDevice + 1 ) 
+        MbbMsContextSourceMaximum = ( MbbMsContextSourceDevice + 1 )
     } MBB_BASICCONNECTEXT_CONTEXT_SOURCE;
 
-typedef 
+typedef
 enum _MBB_BASICCONNECTEXT_CONTEXT_OPERATIONS
     {
         MbbMsContextOperationDefault = 0,
         MbbMsContextOperationDelete = 1,
         MbbMsContextOperationRestoreFactory = 2,
-        MbbMsContextOperationMaximum = ( MbbMsContextOperationRestoreFactory + 1 ) 
+        MbbMsContextOperationMaximum = ( MbbMsContextOperationRestoreFactory + 1 )
     } MBB_BASICCONNECTEXT_CONTEXT_OPERATIONS;
 
-typedef 
+typedef
 enum _MBB_BASICCONNECTEXT_NETWORK_BLACKLIST_STATE
     {
         MbbMsNetworkBlacklistStateNotActuated = 0,
         MbbMsNetworkBlacklistSIMProviderActuated = 1,
         MbbMsNetworkBlacklistNetworkProviderActuated = 2,
-        MbbMsNetworkBlacklistStateMaximum = ( MbbMsNetworkBlacklistNetworkProviderActuated + 1 ) 
+        MbbMsNetworkBlacklistStateMaximum = ( MbbMsNetworkBlacklistNetworkProviderActuated + 1 )
     } MBB_BASICCONNECTEXT_NETWORK_BLACKLIST_STATE;
 
-typedef 
+typedef
 enum _MBB_BASICCONNECTEXT_NETWORK_BLACKLIST_TYPE
     {
         MbbMsNetworkBlacklistTypeSIM = 0,
         MbbMsNetworkBlacklistTypeNetwork = 1,
-        MbbMsNetworkBlacklistTypeMaximum = ( MbbMsNetworkBlacklistTypeNetwork + 1 ) 
+        MbbMsNetworkBlacklistTypeMaximum = ( MbbMsNetworkBlacklistTypeNetwork + 1 )
     } MBB_BASICCONNECTEXT_NETWORK_BLACKLIST_TYPE;
 
-typedef 
+typedef
 enum _MBB_BASICCONNECTEXT_LTEATTACH_ROAMING_CONTROL
     {
         MbbMsLteAttachContextRoamingControlHome = 0,
         MbbMsLteAttachContextRoamingControlPartner = 1,
         MbbMsLteAttachContextRoamingControlNonPartner = 2,
-        MbbMsLteAttachContextRoamingControlMaximum = ( MbbMsLteAttachContextRoamingControlNonPartner + 1 ) 
+        MbbMsLteAttachContextRoamingControlMaximum = ( MbbMsLteAttachContextRoamingControlNonPartner + 1 )
     } MBB_BASICCONNECTEXT_LTEATTACH_ROAMING_CONTROL;
 
-typedef 
+typedef
 enum _MBB_BASICCONNECTEXT_LTEATTACH_CONTEXT_OPERATIONS
     {
         MbbMsLteAttachContextOperationDefault = 0,
         MbbMsLteAttachContextOperationRestoreFactory = 1,
-        MbbMsLteAttachContextOperationMaximum = ( MbbMsLteAttachContextOperationRestoreFactory + 1 ) 
+        MbbMsLteAttachContextOperationMaximum = ( MbbMsLteAttachContextOperationRestoreFactory + 1 )
     } MBB_BASICCONNECTEXT_LTEATTACH_CONTEXT_OPERATIONS;
 
-typedef 
+typedef
 enum _MBB_BASICCONNECTEXT_LTEATTACH_STATE
     {
         MbbMsLteAttachStateDetached = 0,
         MbbMsLteAttachStateAttached = 1,
-        MbbMsLteAttachStateMaximum = ( MbbMsLteAttachStateAttached + 1 ) 
+        MbbMsLteAttachStateMaximum = ( MbbMsLteAttachStateAttached + 1 )
     } MBB_BASICCONNECTEXT_LTEATTACH_STATE;
 
-typedef 
+typedef
 enum _MBB_BASICCONNECTEXT_UICCSLOT_STATE
     {
         MbbMsUiccSlotStateUnknown = 0,
@@ -1371,7 +1371,7 @@ enum _MBB_BASICCONNECTEXT_UICCSLOT_STATE
         MbbMsUiccSlotStateActiveEsimNoProfiles = 8
     } MBB_BASICCONNECTEXT_UICCSLOT_STATE;
 
-typedef 
+typedef
 enum _MBB_BASICCONNECTEXT_MODEM_LOGGING_LEVEL_CONFIG
     {
         MbbMsModemLoggingLevelProd = 0,
@@ -1379,15 +1379,15 @@ enum _MBB_BASICCONNECTEXT_MODEM_LOGGING_LEVEL_CONFIG
         MbbMsModemLoggingLevelLabMedium = 2,
         MbbMsModemLoggingLevelLabLow = 3,
         MbbMsModemLoggingLevelOem = 4,
-        MbbMsModemLoggingLevelMaximum = ( MbbMsModemLoggingLevelOem + 1 ) 
+        MbbMsModemLoggingLevelMaximum = ( MbbMsModemLoggingLevelOem + 1 )
     } MBB_BASICCONNECTEXT_MODEM_LOGGING_LEVEL_CONFIG;
 
-typedef 
+typedef
 enum _MBB_PCO_TYPE
     {
         MbbPcoTypeComplete = 0,
         MbbPcoTypePartial = 1,
-        MbbPcoTypeMaximum = ( MbbPcoTypePartial + 1 ) 
+        MbbPcoTypeMaximum = ( MbbPcoTypePartial + 1 )
     } MBB_PCO_TYPE;
 
 typedef struct _MBB_DEVICE_CAPS
@@ -1421,7 +1421,7 @@ typedef struct _MBB_SUBSCRIBER_READY_INFO
 
 typedef struct _MBB_SUBSCRIBER_READY_INFO *PMBB_SUBSCRIBER_READY_INFO;
 
-typedef 
+typedef
 enum _MBB_SUBSCRIBER_READY_STATUS_FLAGS
     {
         MbbSubscriberReadyStatusFlagNone = 0,
@@ -1639,13 +1639,13 @@ typedef struct _MBB_SET_CONTEXT_STATE
 
 typedef struct _MBB_SET_CONTEXT_STATE *PMBB_SET_CONTEXT_STATE;
 
-typedef 
+typedef
 enum _MBB_ACCESS_MEDIA_PREF
     {
         MbbAccessMediaPrefNone = 0,
         MbbAccessMediaPref3GPP = 1,
         MbbAccessMediaPref3GPPPreferred = 2,
-        MbbAccessMediaPrefMaximum = ( MbbAccessMediaPref3GPPPreferred + 1 ) 
+        MbbAccessMediaPrefMaximum = ( MbbAccessMediaPref3GPPPreferred + 1 )
     } MBB_ACCESS_MEDIA_PREF;
 
 typedef struct _MBB_SET_CONTEXT_STATE_EX3
@@ -1796,12 +1796,12 @@ typedef struct _MBB_PACKET_STATISTICS
 
 typedef struct _MBB_PACKET_STATISTICS *PMBB_PACKET_STATISTICS;
 
-typedef 
+typedef
 enum _MBB_VISIBLE_PROVIDERS_ACTION_VALUE
     {
         MbbVisibleProvidersActionFull = 0,
         MbbVisibleProvidersActionMulticarrier = 0x1,
-        MbbVisibleProvidersActionMax = ( MbbVisibleProvidersActionMulticarrier + 1 ) 
+        MbbVisibleProvidersActionMax = ( MbbVisibleProvidersActionMulticarrier + 1 )
     } MBB_VISIBLE_PROVIDERS_ACTION_VALUE;
 
 typedef struct _MBB_GET_VISIBLE_PROVIDERS
@@ -1811,7 +1811,7 @@ typedef struct _MBB_GET_VISIBLE_PROVIDERS
 
 typedef struct _MBB_GET_VISIBLE_PROVIDERS *PMBB_GET_VISIBLE_PROVIDERS;
 
-typedef 
+typedef
 enum _MBB_SMS_STORAGE_STATE
     {
         MbbSmsStorageNotInitialized = 0,
@@ -1937,7 +1937,7 @@ typedef struct _MBB_SMS_STATUS
 
 typedef struct _MBB_SMS_STATUS *PMBB_SMS_STATUS;
 
-typedef 
+typedef
 enum _MBB_USSD_ACTION
     {
         MbbUSSDInitiate = 0,
@@ -1945,7 +1945,7 @@ enum _MBB_USSD_ACTION
         MbbUSSDCancel = 2
     } MBB_USSD_ACTION;
 
-typedef 
+typedef
 enum _MBB_USSD_RESPONSE
     {
         MbbUSSDNoActionRequired = 0,
@@ -1956,7 +1956,7 @@ enum _MBB_USSD_RESPONSE
         MbbUSSDNetworkTimeOut = 5
     } MBB_USSD_RESPONSE;
 
-typedef 
+typedef
 enum _MBB_USSD_SESSION_STATE
     {
         MbbUSSDNewSession = 0,
@@ -2145,7 +2145,7 @@ typedef struct _MBB_MULTICARRIER_CURRENT_CID_LIST
 
 typedef struct _MBB_MULTICARRIER_CURRENT_CID_LIST *PMBB_MULTICARRIER_CURRENT_CID_LIST;
 
-typedef 
+typedef
 enum _MBB_UICC_APP_TYPE
     {
         MbbUiccAppTypeUnknown = 0,
@@ -2155,7 +2155,7 @@ enum _MBB_UICC_APP_TYPE
         MbbUiccAppTypeUSIM = 4,
         MbbUiccAppTypeCSIM = 5,
         MbbUiccAppTypeISIM = 6,
-        MbbUiccAppTypeMax = ( MbbUiccAppTypeISIM + 1 ) 
+        MbbUiccAppTypeMax = ( MbbUiccAppTypeISIM + 1 )
     } MBB_UICC_APP_TYPE;
 
 typedef struct _MBB_UICC_APP_INFO
@@ -2181,26 +2181,26 @@ typedef struct _MBB_UICC_APP_LIST
 
 typedef struct _MBB_UICC_APP_LIST *PMBB_UICC_APP_LIST;
 
-typedef 
+typedef
 enum _MBB_UICC_FILE_ACCESSIBILITY
     {
         MbbUiccFileAccessibilityUnknown = 0,
         MbbUiccFileAccessibilityNotShareable = 1,
         MbbUiccFileAccessibilityShareable = 2,
-        MbbUiccFileAccessibilityMax = ( MbbUiccFileAccessibilityShareable + 1 ) 
+        MbbUiccFileAccessibilityMax = ( MbbUiccFileAccessibilityShareable + 1 )
     } MBB_UICC_FILE_ACCESSIBILITY;
 
-typedef 
+typedef
 enum _MBB_UICC_FILE_TYPE
     {
         MbbUiccFileTypeUnknown = 0,
         MbbUiccFileTypeWorkingEf = 1,
         MbbUiccFileTypeInternalEf = 2,
         MbbUiccFileTypeDfOrAdf = 3,
-        MbbUiccFileTypeMax = ( MbbUiccFileTypeDfOrAdf + 1 ) 
+        MbbUiccFileTypeMax = ( MbbUiccFileTypeDfOrAdf + 1 )
     } MBB_UICC_FILE_TYPE;
 
-typedef 
+typedef
 enum _MBB_UICC_FILE_STRUCTURE
     {
         MbbUiccFileStructureUnknown = 0,
@@ -2208,7 +2208,7 @@ enum _MBB_UICC_FILE_STRUCTURE
         MbbUiccFileStructureCyclic = 2,
         MbbUiccFileStructureLinear = 3,
         MbbUiccFileStructureBertlv = 4,
-        MbbUiccFileStructureMax = ( MbbUiccFileStructureBertlv + 1 ) 
+        MbbUiccFileStructureMax = ( MbbUiccFileStructureBertlv + 1 )
     } MBB_UICC_FILE_STRUCTURE;
 
 typedef struct _MBB_UICC_FILE_PATH
@@ -2332,7 +2332,7 @@ typedef struct _MBB_DEVICE_SLOT_MAPPING_INFO
 
 typedef struct _MBB_DEVICE_SLOT_MAPPING_INFO *PMBB_DEVICE_SLOT_MAPPING_INFO;
 
-typedef 
+typedef
 enum _MBB_UICCSLOT_STATE
     {
         MbbUiccSlotStateOffEmpty = 0,
@@ -2366,14 +2366,14 @@ typedef struct _MBB_DEVICE_BINDINGS_INFO
 
 typedef struct _MBB_DEVICE_BINDINGS_INFO *PMBB_DEVICE_BINDINGS_INFO;
 
-typedef 
+typedef
 enum _MBB_REGISTRATION_VOICE_CLASS
     {
         MbbRegistrationVoiceClassVoiceCentric = 0,
         MbbRegistrationVoiceClassDataCentric = 1
     } MBB_REGISTRATION_VOICE_CLASS;
 
-typedef 
+typedef
 enum _MBB_REGISTRATION_VOICE_DOMAIN_PREFERENCE
     {
         MbbRegistrationVoiceDomainPreferenceCsOnly = 0,
@@ -2382,7 +2382,7 @@ enum _MBB_REGISTRATION_VOICE_DOMAIN_PREFERENCE
         MbbRegistrationVoiceDomainPreferenceImsOnly = 3
     } MBB_REGISTRATION_VOICE_DOMAIN_PREFERENCE;
 
-typedef 
+typedef
 enum _MBB_REGISTRATION_VOICE_SUPPORT
     {
         MbbRegistrationVoiceSupportNone = 0,
@@ -2394,7 +2394,7 @@ enum _MBB_REGISTRATION_VOICE_SUPPORT
         MbbRegistrationVoiceSupportCsEmergency = 0x20
     } MBB_REGISTRATION_VOICE_SUPPORT;
 
-typedef 
+typedef
 enum _MBB_REGISTRATION_CDMA_ROAM_MODE
     {
         MbbRegistrationCdmaRoamModeAutomatic = 0,
@@ -2457,7 +2457,7 @@ typedef struct _MBB_REGISTRATION_STATE_INFO_V2
 
 typedef struct _MBB_REGISTRATION_STATE_INFO_V2 *PMBB_REGISTRATION_STATE_INFO_V2;
 
-typedef 
+typedef
 enum _MBB_IMS_VOICE_STATUS
     {
         MbbImsVoiceStatusUnknown = 0,
@@ -2544,7 +2544,7 @@ typedef struct _MBB_SIGNAL_STATE_INFOS_V2
 
 typedef struct _MBB_SIGNAL_STATE_INFOS_V2 *PMBB_SIGNAL_STATE_INFOS_V2;
 
-typedef 
+typedef
 enum _MBB_LOCATION_TRIGGER_MODE
     {
         MbbLocationTriggerNone = 0,
@@ -2628,14 +2628,14 @@ typedef struct _MBB_UICC_CLOSE_CHANNEL_INFO
 
 typedef struct _MBB_UICC_CLOSE_CHANNEL_INFO *PMBB_UICC_CLOSE_CHANNEL_INFO;
 
-typedef 
+typedef
 enum _MBB_UICC_SECURE_MESSAGING
     {
         MbbUiccSecureMessagingNone = 0,
         MbbUiccSecureMessagingNoHdrAuth = 1
     } MBB_UICC_SECURE_MESSAGING;
 
-typedef 
+typedef
 enum _MBB_UICC_CLASS_BYTE_TYPE
     {
         MbbUiccClassByteTypeInterindustry = 0,
@@ -2685,14 +2685,14 @@ typedef struct _MBB_UICC_TERMINAL_CAPABILITY_INFO
 
 typedef struct _MBB_UICC_TERMINAL_CAPABILITY_INFO *PMBB_UICC_TERMINAL_CAPABILITY_INFO;
 
-typedef 
+typedef
 enum _MBB_UICC_PASSTHROUGH_ACTION
     {
         MbbUiccPassThroughDisable = 0,
         MbbUiccPassThroughEnable = 1
     } MBB_UICC_PASSTHROUGH_ACTION;
 
-typedef 
+typedef
 enum _MBB_UICC_PASSTHROUGH_STATUS
     {
         MbbUiccPassThroughDisabled = 0,
@@ -3061,13 +3061,13 @@ typedef struct _MBB_TLV_IE
 
 typedef struct _MBB_TLV_IE *PMBB_TLV_IE;
 
-typedef 
+typedef
 enum _MBB_ACCESS_TYPE
     {
         MbbAccessUnknown = 0,
         MbbAccess3GPP = 1,
         MbbAccessNon3GPP = 2,
-        MbbAccessMaximum = ( MbbAccessNon3GPP + 1 ) 
+        MbbAccessMaximum = ( MbbAccessNon3GPP + 1 )
     } MBB_ACCESS_TYPE;
 
 typedef struct _MBB_PRE_DFLT_NSSAI_INFO
@@ -3129,13 +3129,13 @@ typedef struct _MBB_LADN
 
 typedef struct _MBB_LADN *PMBB_LADN;
 
-typedef 
+typedef
 enum _MBB_MODEM_CONFIG_STATUS
     {
         ModemConfigStatusUnknown = 0,
         ModemConfigStatusStarted = 1,
         ModemConfigStatusCompleted = 2,
-        ModemConfigStatusMaximum = ( ModemConfigStatusCompleted + 1 ) 
+        ModemConfigStatusMaximum = ( ModemConfigStatusCompleted + 1 )
     } MBB_MODEM_CONFIG_STATUS;
 
 typedef struct _MBB_MODEM_CONFIG_INFO
@@ -3146,17 +3146,17 @@ typedef struct _MBB_MODEM_CONFIG_INFO
 
 typedef struct _MBB_MODEM_CONFIG_INFO *PMBB_MODEM_CONFIG_INFO;
 
-typedef 
+typedef
 enum _MBB_MICO_MODE
     {
         MicoModeDisabled = 0,
         MicoModeEnabled = 1,
         MicoModeUnsupported = 2,
         MBIMMicoModeDefault = 3,
-        MicoModeMaximum = ( MBIMMicoModeDefault + 1 ) 
+        MicoModeMaximum = ( MBIMMicoModeDefault + 1 )
     } MBB_MICO_MODE;
 
-typedef 
+typedef
 enum _MBB_DRX_PARAMS
     {
         DRXNotSpecified = 0,
@@ -3165,23 +3165,23 @@ enum _MBB_DRX_PARAMS
         DRXCycle64 = 3,
         DRXCycle128 = 4,
         DRXCycle256 = 5,
-        DRXCycleMaximum = ( DRXCycle256 + 1 ) 
+        DRXCycleMaximum = ( DRXCycle256 + 1 )
     } MBB_DRX_PARAMS;
 
-typedef 
+typedef
 enum _MBB_DEFAULT_PDU_HINT
     {
         MBIMDefaultPDUSessionActivationUnlikely = 0,
         MBIMDefaultPDUSessionActivationLikely = 1,
-        DefaultPDUMaximum = ( MBIMDefaultPDUSessionActivationLikely + 1 ) 
+        DefaultPDUMaximum = ( MBIMDefaultPDUSessionActivationLikely + 1 )
     } MBB_DEFAULT_PDU_HINT;
 
-typedef 
+typedef
 enum _MBB_MS_LADN_IND
     {
         LADNInfoNotNeeded = 0,
         LADNInfoRequested = 1,
-        LADNInfoMaximum = ( LADNInfoRequested + 1 ) 
+        LADNInfoMaximum = ( LADNInfoRequested + 1 )
     } MBB_MS_LADN_IND;
 
 typedef struct _MBB_REGISTRATION_PARAMS_INFO
@@ -3195,7 +3195,7 @@ typedef struct _MBB_REGISTRATION_PARAMS_INFO
 
 typedef struct _MBB_REGISTRATION_PARAMS_INFO *PMBB_REGISTRATION_PARAMS_INFO;
 
-typedef 
+typedef
 enum _MBB_MICO_IND
     {
         RaaiTypeRaNotAllocated = 0,
@@ -3219,7 +3219,7 @@ typedef struct _MBB_NW_PARAMS_INFO
 
 typedef struct _MBB_NW_PARAMS_INFO *PMBB_NW_PARAMS_INFO;
 
-typedef 
+typedef
 enum _MBB_WAKE_TYPE
     {
         WakeTypeCIDResponse = 0,

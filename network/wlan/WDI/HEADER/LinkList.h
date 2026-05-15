@@ -168,7 +168,7 @@ typedef struct _RT_LIST_ENTRY {
 	RTNextEntryList(RTForeEntryList(orgListHead)) = newListHead;	\
 	RTForeEntryList(newListHead) = RTForeEntryList(orgListHead);	\
 	RTInitializeListHead(orgListHead);						\
-}	
+}
 
 #define RtEntryListForEach(__pListHead, __itEntry) \
 	for((__itEntry) = RTGetHeadList((__pListHead)); \
@@ -184,7 +184,7 @@ typedef struct _RT_LIST_ENTRY {
 		)
 
 //
-//  Singly linked list structure. 
+//  Singly linked list structure.
 //  Only used as link words.
 //
 typedef struct _RT_SINGLE_LIST_ENTRY {
@@ -192,7 +192,7 @@ typedef struct _RT_SINGLE_LIST_ENTRY {
 } RT_SINGLE_LIST_ENTRY, *PRT_SINGLE_LIST_ENTRY;
 
 //
-//  Singly linked list structure. 
+//  Singly linked list structure.
 //  Only used as link head.
 //
 typedef struct _RT_SINGLE_LIST_HEAD {

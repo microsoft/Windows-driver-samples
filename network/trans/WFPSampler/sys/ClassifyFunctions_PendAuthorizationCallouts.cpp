@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //
 //       ClassifyPendAuthorization
@@ -41,7 +41,7 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, enhance 
+//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, enhance
 //                                              traces, and add support for controlData.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@
 
 /**
  @private_function="PrvCloneAuthorizedNBLAndInject"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -67,13 +67,13 @@ NTSTATUS PrvCloneAuthorizedNBLAndInject(_Inout_ CLASSIFY_DATA** ppClassifyData,
                                         _Inout_ INJECTION_DATA** ppInjectionData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PrvCloneAuthorizedNBLAndInject()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppClassifyData);
    NT_ASSERT(ppInjectionData);
    NT_ASSERT(*ppClassifyData);
@@ -324,14 +324,14 @@ NTSTATUS PrvCloneAuthorizedNBLAndInject(_Inout_ CLASSIFY_DATA** ppClassifyData,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PrvCloneAuthorizedNBLAndInject() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
@@ -340,7 +340,7 @@ NTSTATUS PrvCloneAuthorizedNBLAndInject(_Inout_ CLASSIFY_DATA** ppClassifyData,
 
 /**
  @private_function="PerformPendAuthorization"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -356,13 +356,13 @@ NTSTATUS PerformPendAuthorization(_Inout_ CLASSIFY_DATA** ppClassifyData,
                                   _Inout_ INJECTION_DATA** ppInjectionData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PerformPendAuthorization()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppClassifyData);
    NT_ASSERT(ppPendData);
    NT_ASSERT(ppInjectionData);
@@ -421,14 +421,14 @@ NTSTATUS PerformPendAuthorization(_Inout_ CLASSIFY_DATA** ppClassifyData,
 #pragma warning(pop)
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PerformPendAuthorization() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 };
 
@@ -436,8 +436,8 @@ NTSTATUS PerformPendAuthorization(_Inout_ CLASSIFY_DATA** ppClassifyData,
 
 /**
  @private_function="PendAuthorizationDeferredProcedureCall"
- 
-   Purpose:  Invokes the appropriate private injection routine to perform the injection at 
+
+   Purpose:  Invokes the appropriate private injection routine to perform the injection at
              DISPATCH_LEVEL.                                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -453,13 +453,13 @@ VOID PendAuthorizationDeferredProcedureCall(_In_ KDPC* pDPC,
                                             _In_opt_ PVOID pArg2)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PendAuthorizationDeferredProcedureCall()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(pDPC);
    UNREFERENCED_PARAMETER(pContext);
    UNREFERENCED_PARAMETER(pArg2);
@@ -496,19 +496,19 @@ VOID PendAuthorizationDeferredProcedureCall(_In_ KDPC* pDPC,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PendAuthorizationDeferredProcedureCall()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @private_function="PendAuthorizationWorkItemRoutine"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -522,13 +522,13 @@ VOID PendAuthorizationWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
                                       _In_opt_ PVOID pContext)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PendAuthorizationWorkItemRoutine()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(pDeviceObject);
 
    NT_ASSERT(pContext);
@@ -562,19 +562,19 @@ VOID PendAuthorizationWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PendAuthorizationWorkItemRoutine()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @private_function="TriggerPendAuthorizationOutOfBand"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -597,20 +597,20 @@ NTSTATUS TriggerPendAuthorizationOutOfBand(_In_ const FWPS_INCOMING_VALUES* pCla
                                            _In_ PC_PEND_AUTHORIZATION_DATA* pPCData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> TriggerPendAuthorizationOutOfBand()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pClassifyValues);
    NT_ASSERT(pMetadata);
    NT_ASSERT(pFilter);
    NT_ASSERT(pClassifyOut);
    NT_ASSERT(pPendData);
    NT_ASSERT(pPCData);
- 
+
    NTSTATUS       status        = STATUS_SUCCESS;
    CLASSIFY_DATA* pClassifyData = 0;
 
@@ -666,14 +666,14 @@ NTSTATUS TriggerPendAuthorizationOutOfBand(_In_ const FWPS_INCOMING_VALUES* pCla
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- TriggerPendAuthorizationOutOfBand() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
@@ -681,9 +681,9 @@ NTSTATUS TriggerPendAuthorizationOutOfBand(_In_ const FWPS_INCOMING_VALUES* pCla
 
 /**
  @classify_function="ClassifyPendAuthorization"
- 
-   Purpose:  Classify Function which will pend an authorization request, and send the request 
-             for further processing to a worker thread.  On a reauthorization the final decided 
+
+   Purpose:  Classify Function which will pend an authorization request, and send the request
+             for further processing to a worker thread.  On a reauthorization the final decided
              action is returned as the actionType.                                              <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>
@@ -849,9 +849,9 @@ VOID NTAPI ClassifyPendAuthorization(_In_ const FWPS_INCOMING_VALUES* pClassifyV
 
 /**
  @classify_function="ClassifyPendAuthorization"
- 
-   Purpose:  Classify Function which will pend an authorization request, and send the request 
-             for further processing to a worker thread.  On a reauthorization the final decided 
+
+   Purpose:  Classify Function which will pend an authorization request, and send the request
+             for further processing to a worker thread.  On a reauthorization the final decided
              action is returned as the actionType.                                              <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>

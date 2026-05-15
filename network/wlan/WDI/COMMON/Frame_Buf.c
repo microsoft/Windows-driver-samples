@@ -36,7 +36,7 @@ framebuf_Init(
 	pBuf->os.Octet = buf;
 	pBuf->flags = flags;
 	pBuf->dbgLevel = dbgLevel;
-	
+
 	return;
 }
 
@@ -50,14 +50,14 @@ framebuf_Add(
 	u1Byte						*pData = FrameBuf_MTail(pBuf);
 
 	RT_ASSERT(framebuf_Initialized(pBuf), ("%s(): accessing uninitialized frame buffer\n", __FUNCTION__));
-	
+
 	if(pBuf->cap < pBuf->os.Length + size)
 	{// overflow
 		return NULL;
 	}
 
 	pBuf->os.Length += size;
-	
+
 	return pData;
 }
 
@@ -189,7 +189,7 @@ FrameBuf_Free(
 	{// we are not responsible for external buf
 		return;
 	}
-	
+
 	PlatformFreeMemory(pBuf, sizeof(FRAME_BUF) + pBuf->cap);
 
 	return;
@@ -257,7 +257,7 @@ FrameBuf_Add_u1(
 	if(!pData) return FALSE;
 
 	WriteEF1Byte(pData, data);
-	
+
 	return TRUE;
 }
 
@@ -270,9 +270,9 @@ FrameBuf_Add_le_u2(
 	pu1Byte						pData = framebuf_Add(pBuf, 2);
 
 	if(!pData) return FALSE;
-	
+
 	WriteEF2Byte(pData, data);
-	
+
 	return TRUE;
 }
 
@@ -285,9 +285,9 @@ FrameBuf_Add_le_u4(
 	pu1Byte						pData = framebuf_Add(pBuf, 4);
 
 	if(!pData) return FALSE;
-	
+
 	WriteEF4Byte(pData, data);
-	
+
 	return TRUE;
 }
 
@@ -300,7 +300,7 @@ FrameBuf_Add_be_u2(
 	pu1Byte						pData = framebuf_Add(pBuf, 2);
 
 	if(!pData) return FALSE;
-	
+
 	WriteH2N2BYTE(pData, data);
 
 	return TRUE;
@@ -315,9 +315,9 @@ FrameBuf_Add_be_u4(
 	pu1Byte						pData = framebuf_Add(pBuf, 4);
 
 	if(!pData) return FALSE;
-	
+
 	WriteH2N4BYTE(pData, data);
-	
+
 	return TRUE;
 }
 
@@ -335,7 +335,7 @@ FrameBuf_Add_Data(
 
 	// Not to use PlatformMoveMemory because it dosen't declare src as const
 	for(it = 0; it < len; it++) pData[it] = ((u1Byte *)data)[it];
-		
+
 	return TRUE;
 }
 

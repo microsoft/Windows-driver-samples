@@ -13,14 +13,14 @@ Abstract:
       o  Inline Editing where all modification is carried out within the
          WFP ClassifyFn callout function.
 
-      o  Out-of-band (OOB) Editing where all modification is done by a 
+      o  Out-of-band (OOB) Editing where all modification is done by a
          worker thread. (this is the default)
 
    The mode setting, along with other inspection parameters are configurable
    via the following registry values
 
   HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\StmEdit\Parameters
-      
+
       o  StringToFind	 (REG_SZ, default = "rainy")
       o  StringX		 (REG_SZ, default = "cloudy")
       o  StringToReplace (REG_SZ, default = "sunny")
@@ -43,7 +43,7 @@ Abstract:
    on both IPv4 and IPv6 data streams
 
    Before experimenting with the sample, please be sure to add an exception for
-   the InspectionPort configured to the firewall. 
+   the InspectionPort configured to the firewall.
 
 Environment:
     Kernel mode
@@ -98,7 +98,7 @@ StmEditDeReferenceFlow(
         //
         KeAcquireInStackQueuedSpinLock(&Globals.FlowContextListLock, &LockHandle);
 
-        if (!FlowContext->bEntryRemoved) 
+        if (!FlowContext->bEntryRemoved)
 		{
             RemoveEntryList(&FlowContext->Link);
             FlowContext->bEntryRemoved = TRUE;
@@ -114,12 +114,12 @@ StmEditDeReferenceFlow(
         }
         KeReleaseInStackQueuedSpinLock(&LockHandle);
 
-        if (!FlowContext->bEditInline) 
+        if (!FlowContext->bEditInline)
 		{
             NT_ASSERT(IsListEmpty(&FlowContext->OobInfo.OutgoingDataQueue));
         }
 
-        if (FlowContext->ScratchBuffer) 
+        if (FlowContext->ScratchBuffer)
 		{
             ExFreePoolWithTag(FlowContext->ScratchBuffer, STMEDIT_TAG_FLAT_BUFFER);
         }
@@ -178,8 +178,8 @@ StreamEditInjectCompletionFn(
     // Rationale : mdl is not guaranteed to be non-NULL here.
 #pragma prefast(push)
 #pragma prefast(disable:28922)
- 
-    if (mdl != NULL) 
+
+    if (mdl != NULL)
 	{
         //
         // The MDL mapped over a pool alloc which we need to free here.
@@ -204,7 +204,7 @@ StreamEditRemoveFlowCtx(
     This will cause flowDelete function to be invoked (either synchronously or asynchronously).
 
     Remarks @ http://msdn.microsoft.com/en-us/library/windows/hardware/ff551169.aspx
-    
+
     If the FwpsFlowRemoveContext0 function returns STATUS_SUCCESS, FwpsFlowRemoveContext0
     calls the flowDeleteFn callout function synchronously.If FwpsFlowRemoveContext0 returns
     STATUS_PENDING, FwpsFlowRemoveContext0 calls flowDeleteFn asynchronously because an
@@ -221,7 +221,7 @@ StreamEditRemoveFlowCtx(
 
     NT_ASSERT(Context);
 
-    if (Context->bEditInline) 
+    if (Context->bEditInline)
 	{
         (VOID) InlineEditFlushData(Context, 0, Context->PartialSFlags);
     }
@@ -229,7 +229,7 @@ StreamEditRemoveFlowCtx(
         (VOID) StreamOobFlushOutgoingData(Context);
     }
 
-    if (Context->bFlowActive) 
+    if (Context->bFlowActive)
 	{
 
         Status = FwpsFlowRemoveContext(
@@ -339,7 +339,7 @@ StreamEditCommonStreamClassify(
     //
     StmEditReferenceFlow(FlowContext, _MODULE_ID, __LINE__);
 
-    if (FlowContext->bEditInline) 
+    if (FlowContext->bEditInline)
     {
         InlineEditClassify(
             InFixedValues,
@@ -365,14 +365,14 @@ StreamEditCommonStreamClassify(
     StmEditDeReferenceFlow(FlowContext, _MODULE_ID, __LINE__);
 }
 
-VOID 
+VOID
 StreamEditFlowEstablishedClassify(
     _In_ const FWPS_INCOMING_VALUES* InFixedValues,
     _In_ const FWPS_INCOMING_METADATA_VALUES* InMetaValues,
     _In_ PVOID Packet,
 #if(NTDDI_VERSION >= NTDDI_WIN7)
     _In_ const void* ClassifyContext,
-#endif  
+#endif
     _In_ const FWPS_FILTER* Filter,
     _In_ UINT64 InFlowContext,
     _Inout_ FWPS_CLASSIFY_OUT* ClassifyOut
@@ -393,19 +393,19 @@ StreamEditFlowEstablishedClassify(
 
 #if(NTDDI_VERSION >= NTDDI_WIN7)
     UNREFERENCED_PARAMETER(ClassifyContext);
-#endif  
+#endif
     UNREFERENCED_PARAMETER(InFlowContext);
     UNREFERENCED_PARAMETER(Packet);
 
 
     if ((Filter->action.calloutId == Globals.FlowEstablishedV4Callout1) ||
-        (Filter->action.calloutId == Globals.FlowEstablishedV6Callout1)) 
+        (Filter->action.calloutId == Globals.FlowEstablishedV6Callout1))
 	{
         CalloutSet = 1;
     }
     else
     if ((Filter->action.calloutId == Globals.FlowEstablishedV4Callout2) ||
-        (Filter->action.calloutId == Globals.FlowEstablishedV6Callout2)) 
+        (Filter->action.calloutId == Globals.FlowEstablishedV6Callout2))
 	{
         CalloutSet = 2;
         NT_ASSERT(TRUE == Globals.MultipleCallouts);
@@ -422,7 +422,7 @@ StreamEditFlowEstablishedClassify(
 
     // Lets not entertain any new flows if the driver is unloading!
     //
-    if (Globals.DriverUnloading) 
+    if (Globals.DriverUnloading)
 	{
         DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_ENTER_EXIT,"<-- %!FUNC!: -- Driver unloading, flow not being associated with");
         return;
@@ -431,7 +431,7 @@ StreamEditFlowEstablishedClassify(
     //
     // Setup the flow context for IPV4 Flows
     //
-    if (FWPS_LAYER_ALE_FLOW_ESTABLISHED_V4 == InFixedValues->layerId) 
+    if (FWPS_LAYER_ALE_FLOW_ESTABLISHED_V4 == InFixedValues->layerId)
 	{
         ipProtIndex = FWPS_FIELD_ALE_FLOW_ESTABLISHED_V4_IP_PROTOCOL;
         StreamLayerId = FWPS_LAYER_STREAM_V4;
@@ -441,7 +441,7 @@ StreamEditFlowEstablishedClassify(
     //
     // Setup the flow context for IPV6 Flows
     //
-    else if (FWPS_LAYER_ALE_FLOW_ESTABLISHED_V6 == InFixedValues->layerId) 
+    else if (FWPS_LAYER_ALE_FLOW_ESTABLISHED_V6 == InFixedValues->layerId)
 	{
         ipProtIndex = FWPS_FIELD_ALE_FLOW_ESTABLISHED_V6_IP_PROTOCOL;
         StreamLayerId = FWPS_LAYER_STREAM_V6;
@@ -466,7 +466,7 @@ StreamEditFlowEstablishedClassify(
     {
         StreamFlowContext = ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(STREAM_FLOW_CONTEXT), STMEDIT_TAG_FLOWCTX);
 
-        if (StreamFlowContext == NULL) 
+        if (StreamFlowContext == NULL)
 		{
             DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_GENERAL, "Unable to allocate flow context");
             Status = STATUS_INSUFFICIENT_RESOURCES;
@@ -491,7 +491,7 @@ StreamEditFlowEstablishedClassify(
         if (CalloutSet == 1)
         {
             // Initialize OOB editing specific flow context structure fields
-            // this includes, creating a worker thread to handle 
+            // this includes, creating a worker thread to handle
 
             KeInitializeSpinLock(&StreamFlowContext->OobInfo.EditLock);
             InitializeListHead(&StreamFlowContext->OobInfo.OutgoingDataQueue);
@@ -518,7 +518,7 @@ StreamEditFlowEstablishedClassify(
         DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_GENERAL, "FlowCtx %p, ++ Link inserted into global list", StreamFlowContext);
 
         ++Globals.FlowContextCount;
-        if (Globals.FlowContextCount == 1) 
+        if (Globals.FlowContextCount == 1)
 		{
             // Reset the shut-down event in case it was set due to no active flows
             //
@@ -538,21 +538,21 @@ StreamEditFlowEstablishedClassify(
         //
         // If not able to associate a flow context, free the memory and return.
         //
-        if (!NT_SUCCESS(Status)) 
+        if (!NT_SUCCESS(Status))
 		{
-            DoTraceLevelMessage(TRACE_LEVEL_ERROR, CO_GENERAL, "FlowContext association to FlowId %I64u failed with %!STATUS!", 
+            DoTraceLevelMessage(TRACE_LEVEL_ERROR, CO_GENERAL, "FlowContext association to FlowId %I64u failed with %!STATUS!",
 				InMetaValues->flowHandle, Status);
             break;
         }
 
     } while (FALSE);
 
-    if (!NT_SUCCESS(Status) && StreamFlowContext) 
+    if (!NT_SUCCESS(Status) && StreamFlowContext)
 	{
         StmEditDeReferenceFlow(StreamFlowContext, _MODULE_ID, __LINE__);
     }
 
-    DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_ENTER_EXIT, "<-- %!FUNC!%d: FlowCtx %p, cOut->Action %#x, %!STATUS!", 
+    DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_ENTER_EXIT, "<-- %!FUNC!%d: FlowCtx %p, cOut->Action %#x, %!STATUS!",
 		CalloutSet, StreamFlowContext, ClassifyOut->actionType, Status);
     return;
 }
@@ -632,7 +632,7 @@ StreamEditRegisterFlowEstablishedCallouts(
             //
             // For example, when a local application initiates the connection, an
             // inbound packet has FWPM_CONDITION_DIRECTION set to FWP_DIRECTION_OUTBOUND.
-            // 
+            //
 
             if (Globals.InspectionDirection != FWP_DIRECTION_MAX)
             {
@@ -677,7 +677,7 @@ StreamEditRegisterFlowEstablishedCallouts(
 
     if (!NT_SUCCESS(Status))
     {
-        if (calloutRegistered) 
+        if (calloutRegistered)
 		{
             FwpsCalloutUnregisterById(*CalloutId);
         }
@@ -712,7 +712,7 @@ StreamEditRegisterStreamLayerCallouts(
     sCallout.classifyFn     = StreamEditCommonStreamClassify;
     sCallout.notifyFn       = StreamEditNotifyFunction;
     sCallout.flowDeleteFn   = StreamEditFlowDeleteFunction;
-    
+
     // http://msdn.microsoft.com/en-us/library/windows/hardware/ff551224.aspx
     //
     // FWPS_CALLOUT0 structure
@@ -773,9 +773,9 @@ StreamEditRegisterStreamLayerCallouts(
         }
     }
 
-    if (!NT_SUCCESS(Status)) 
+    if (!NT_SUCCESS(Status))
 	{
-        if (calloutRegistered)  
+        if (calloutRegistered)
 		{
             FwpsCalloutUnregisterById(*CalloutId);
         }
@@ -790,9 +790,9 @@ NTSTATUS
 StreamEditRegisterCallouts(
 _In_  PVOID DeviceObject
     )
-/* 
+/*
     This function registers dynamic callouts and filters that intercept
-    TCP traffic at WFP FWPM_LAYER_STREAM_V4 and FWPM_LAYER_STREAM_V6 
+    TCP traffic at WFP FWPM_LAYER_STREAM_V4 and FWPM_LAYER_STREAM_V6
     layer.
 
     Callouts and filters will be removed during DriverUnload.
@@ -889,11 +889,11 @@ _In_  PVOID DeviceObject
                                 &Globals.StreamLayerV6Callout1,
                                 1);
 
-                    if (!(NT_SUCCESS(Status) || NT_SUCCESS(StatusV6))) 
+                    if (!(NT_SUCCESS(Status) || NT_SUCCESS(StatusV6)))
 					{
                         NT_ASSERT(FALSE);
                     }
-                } // RegisterStreamLayerCallouts 
+                } // RegisterStreamLayerCallouts
             }//FwpmSubLayerAdd
 
 
@@ -963,7 +963,7 @@ _In_  PVOID DeviceObject
                             &Globals.StreamLayerV6Callout2,
                             2);
 
-                        if (!(NT_SUCCESS(Status) || NT_SUCCESS(StatusV6))) 
+                        if (!(NT_SUCCESS(Status) || NT_SUCCESS(StatusV6)))
 						{
                             NT_ASSERT(FALSE);
                         }
@@ -973,7 +973,7 @@ _In_  PVOID DeviceObject
 
             Status = FwpmTransactionCommit(Globals.EngineHandle);
 
-            if (NT_SUCCESS(Status)) 
+            if (NT_SUCCESS(Status))
 			{
                 InTransaction = FALSE;
             }
@@ -982,14 +982,14 @@ _In_  PVOID DeviceObject
 
     if (!NT_SUCCESS(Status))
     {
-        if (InTransaction) 
+        if (InTransaction)
 		{
             NTSTATUS AbortStatus;
             AbortStatus = FwpmTransactionAbort(Globals.EngineHandle);
             _Analysis_assume_(NT_SUCCESS(AbortStatus));
         }
 
-        if (EngineOpened) 
+        if (EngineOpened)
 		{
             FwpmEngineClose(Globals.EngineHandle);
             Globals.EngineHandle = NULL;
@@ -1156,7 +1156,7 @@ StreamEditInitConfig(
 		//
 		stringValue.Buffer = buffer;
 		stringValue.Length = 0;
-		stringValue.MaximumLength = sizeof(buffer);			
+		stringValue.MaximumLength = sizeof(buffer);
 
 		Status = WdfRegistryQueryUnicodeString(hKey, &stringToFindKey, &requiredSize, &stringValue);
 		if (NT_SUCCESS(Status))
@@ -1171,7 +1171,7 @@ StreamEditInitConfig(
 		                    stringValue.Buffer,
 		                    (ULONG)requiredSize);
 
-		    if (NT_SUCCESS(Status)) 
+		    if (NT_SUCCESS(Status))
 			{
 		        valueSize -= sizeof(char);
 		        Globals.StringToFindLength = valueSize;
@@ -1181,7 +1181,7 @@ StreamEditInitConfig(
 
 		stringValue.MaximumLength = sizeof(buffer);
 		//Attempt to read StringX value from registry
-		// 
+		//
 		Status = WdfRegistryQueryUnicodeString(hKey, &stringInMiddleKey, &requiredSize, &stringValue);
 		if (NT_SUCCESS(Status))
 		{
@@ -1193,7 +1193,7 @@ StreamEditInitConfig(
 		                    stringValue.Buffer,
 		                    (ULONG)requiredSize);
 
-		    if (NT_SUCCESS(Status)) 
+		    if (NT_SUCCESS(Status))
 			{
 		        valueSize -= sizeof(char); // NULL terminator.
 		        Globals.StringXLength = valueSize;
@@ -1215,7 +1215,7 @@ StreamEditInitConfig(
                             stringValue.Buffer,
                             (ULONG)requiredSize);
 
-            if (NT_SUCCESS(Status)) 
+            if (NT_SUCCESS(Status))
 			{
                 valueSize -= sizeof(char);
                 Globals.StringToReplaceLength = valueSize;
@@ -1223,7 +1223,7 @@ StreamEditInitConfig(
             }
         }
 
-        if (NT_SUCCESS(WdfRegistryQueryULong(hKey, &thresholdKey, &ulongValue))) 
+        if (NT_SUCCESS(WdfRegistryQueryULong(hKey, &thresholdKey, &ulongValue)))
 		{
             Globals.BusyThreshold = (size_t)ulongValue << 10;
             NT_ASSERT(Globals.BusyThreshold != 0);
@@ -1255,7 +1255,7 @@ StreamEditInitConfig(
 
         RtlStringCchCopyA(Globals.StringX, STR_MAX_SIZE, "cloudy");
         Status = RtlStringCchLengthA(Globals.StringX, STR_MAX_SIZE, &Globals.StringXLength);
-	
+
 		//Handle Error.
 		NT_ASSERT(NT_SUCCESS(Status));
 	}
@@ -1277,7 +1277,7 @@ StreamEditInitConfig(
 
     // In this sample, we want to make sure that at least one port (either local or remote) is non-zero.
     //
-    if ((Globals.InspectionLocalPort == 0) && (Globals.InspectionRemotePort == 0)) 
+    if ((Globals.InspectionLocalPort == 0) && (Globals.InspectionRemotePort == 0))
 	{
         Globals.InspectionLocalPort = CFG_LOCAL_PORT;
     }
@@ -1333,7 +1333,7 @@ StreamEditInitDriverObjects(
            //WdfDeviceInitSetDeviceType(pInit, FILE_DEVICE_NETWORK);
 		   WdfDeviceInitSetDeviceClass(pInit, &WFP_DRIVER_CLASS_GUID);
            WdfDeviceInitSetCharacteristics(pInit, FILE_DEVICE_SECURE_OPEN, TRUE);
-           
+
 		   Status = WdfDeviceCreate(&pInit, WDF_NO_OBJECT_ATTRIBUTES, pDevice);
 
            if (NT_SUCCESS(Status))
@@ -1392,7 +1392,7 @@ DriverEntry(
                         &WdfDriver,
                         &WdfDevice);
 
-        if (!NT_SUCCESS(Status)) 
+        if (!NT_SUCCESS(Status))
 		{
             DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_GENERAL, "StreamEditInitDriverObjects failed with 0x%X", Status);
             break;
@@ -1410,8 +1410,8 @@ DriverEntry(
                                             FALSE,
                                             FALSE,
                                             NULL);
-        
-		if (Globals.StringToReplaceMdl == NULL) 
+
+		if (Globals.StringToReplaceMdl == NULL)
 		{
             DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_GENERAL, "Unable to allocate StringToReplace Mdl");
             Status = STATUS_INSUFFICIENT_RESOURCES;
@@ -1427,7 +1427,7 @@ DriverEntry(
                                             FALSE,
                                             NULL);
 
-        if (Globals.StringXMdl == NULL) 
+        if (Globals.StringXMdl == NULL)
 		{
             DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_GENERAL, "Unable to allocate Mdl#2");
             Status = STATUS_INSUFFICIENT_RESOURCES;
@@ -1474,7 +1474,7 @@ DriverEntry(
                         STMEDIT_TAG_TASK_ENTRY,
                         0);
 
-        if (!NT_SUCCESS(Status)) 
+        if (!NT_SUCCESS(Status))
 		{
             DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_GENERAL, "Task LookasideList Creation failed with %!STATUS!", Status);
             break;
@@ -1484,7 +1484,7 @@ DriverEntry(
 
         Status = StreamEditInitializeWorkitemPool();
 
-        if (!NT_SUCCESS(Status)) 
+        if (!NT_SUCCESS(Status))
 		{
             DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_GENERAL, "InitializeWorkerPool failed with %!STATUS!", Status);
             break;
@@ -1493,7 +1493,7 @@ DriverEntry(
        // Create WFP Injection handle
        //
        Status = FwpsInjectionHandleCreate(AF_UNSPEC, FWPS_INJECTION_TYPE_STREAM, &Globals.InjectionHandle);
-       if (!NT_SUCCESS(Status)) 
+       if (!NT_SUCCESS(Status))
 	   {
            DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_GENERAL, "FwpsInjectionHandleCreate failed with %!STATUS!", Status);
            break;
@@ -1503,7 +1503,7 @@ DriverEntry(
        // Finally, register the sublayer(s) and callouts with WFP
        //
        Status = StreamEditRegisterCallouts(Globals.WdmDevice);
-       if (!NT_SUCCESS(Status)) 
+       if (!NT_SUCCESS(Status))
 	   {
            DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_GENERAL, "StreamEditRegisterCallouts failed with %!STATUS!", Status);
            break;
@@ -1513,7 +1513,7 @@ DriverEntry(
 
    DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_ENTER_EXIT, "<-- %!FUNC!, %!STATUS!", Status);
 
-   if (!NT_SUCCESS(Status)) 
+   if (!NT_SUCCESS(Status))
    {
 	   StreamEditEvtDriverUnload(WdfDriver);
    }
@@ -1571,12 +1571,12 @@ _In_ SIZE_T BytesToCopy
             NewBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED, NewBufferSize, STMEDIT_TAG_FLAT_BUFFER);
         }
 
-        if (NewBuffer != NULL) 
+        if (NewBuffer != NULL)
 		{
 
             // Move the existing contents of scratch buffer over to newly allocated buffer
             //
-            if (ExistingDataLength > 0) 
+            if (ExistingDataLength > 0)
 			{
 
                 NT_ASSERT(FlowContext->ScratchBuffer != NULL);
@@ -1586,7 +1586,7 @@ _In_ SIZE_T BytesToCopy
 
         // Free the old scratch buffer...
         //
-        if (FlowContext->ScratchBuffer) 
+        if (FlowContext->ScratchBuffer)
 		{
 
             ExFreePoolWithTag(FlowContext->ScratchBuffer, STMEDIT_TAG_FLAT_BUFFER);
@@ -1596,14 +1596,14 @@ _In_ SIZE_T BytesToCopy
             FlowContext->ScratchDataLength = 0;
         }
 
-        if (NewBuffer) 
+        if (NewBuffer)
 		{
 
             FlowContext->ScratchBuffer = NewBuffer;
             FlowContext->ScratchBufferSize = NewBufferSize;
             FlowContext->ScratchDataLength = ExistingDataLength;
         }
-        else 
+        else
 		{
 
             DoTraceLevelMessage(TRACE_LEVEL_ERROR, CO_ENTER_EXIT,

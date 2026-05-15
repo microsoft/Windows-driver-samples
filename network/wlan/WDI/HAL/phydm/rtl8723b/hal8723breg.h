@@ -5,15 +5,15 @@
  *
  *
  * Note:	1. Define Mac register address and corresponding bit mask map
- *			
+ *
  *
  * Export:	Constants, macro, functions(API), global variables(None).
  *
- * Abbrev:	
+ * Abbrev:
  *
  * History:
- *		Data		Who		Remark 
- * 
+ *		Data		Who		Remark
+ *
  *****************************************************************************/
 #ifndef __INC_HAL8723BREG_H
 #define __INC_HAL8723BREG_H
@@ -159,7 +159,7 @@
 #define REG_RXDMA_AGG_PG_TH_8723B		0x0280
 #define REG_FW_UPD_RDPTR_8723B		0x0284 // FW shall update this register before FW write RXPKT_RELEASE_POLL to 1
 #define REG_RXDMA_CONTROL_8723B		0x0286 // Control the RX DMA.
-#define REG_RXPKT_NUM_8723B			0x0287 // The number of packets in RXPKTBUF.	
+#define REG_RXPKT_NUM_8723B			0x0287 // The number of packets in RXPKTBUF.
 #define REG_RXDMA_STATUS_8723B			0x0288
 #define REG_RXDMA_PRO_8723B			0x0290
 #define REG_EARLY_MODE_CONTROL_8723B	0x02BC
@@ -173,7 +173,7 @@
 //
 //-----------------------------------------------------
 #define	REG_PCIE_CTRL_REG_8723B		0x0300
-#define	REG_INT_MIG_8723B				0x0304	// Interrupt Migration 
+#define	REG_INT_MIG_8723B				0x0304	// Interrupt Migration
 #define	REG_BCNQ_DESA_8723B			0x0308	// TX Beacon Descriptor Address
 #define	REG_HQ_DESA_8723B				0x0310	// TX High Queue Descriptor Address
 #define	REG_MGQ_DESA_8723B			0x0318	// TX Manage Queue Descriptor Address
@@ -298,7 +298,7 @@
 #define REG_USTIME_TSF_8723B			0x055C
 #define REG_BCN_MAX_ERR_8723B			0x055D
 #define REG_RXTSF_OFFSET_CCK_8723B		0x055E
-#define REG_RXTSF_OFFSET_OFDM_8723B	0x055F	
+#define REG_RXTSF_OFFSET_OFDM_8723B	0x055F
 #define REG_TSFTR_8723B					0x0560
 #define REG_CTWND_8723B					0x0572
 #define REG_SECONDARY_CCA_CTRL_8723B	0x0577
@@ -381,7 +381,7 @@
 #define	MSR_8723B							(REG_CR_8723B + 2)		// Media Status register
 #define	ISR_8723B							REG_HISR0_8723B
 #define	TSFR_8723B							REG_TSFTR_8723B			// Timing Sync Function Timer Register.
-					
+
 #define 	PBP_8723B							REG_PBP_8723B
 
 // Redifine MACID register, to compatible prior ICs.
@@ -405,28 +405,28 @@
 #define	IMR_DISABLED_8723B					0
 // IMR DW0(0x00B0-00B3) Bit 0-31
 #define	IMR_TIMER2_8723B					BIT31		// Timeout interrupt 2
-#define	IMR_TIMER1_8723B					BIT30		// Timeout interrupt 1	
+#define	IMR_TIMER1_8723B					BIT30		// Timeout interrupt 1
 #define	IMR_PSTIMEOUT_8723B				BIT29		// Power Save Time Out Interrupt
-#define	IMR_GTINT4_8723B					BIT28		// When GTIMER4 expires, this bit is set to 1	
-#define	IMR_GTINT3_8723B					BIT27		// When GTIMER3 expires, this bit is set to 1	
-#define	IMR_TXBCN0ERR_8723B				BIT26		// Transmit Beacon0 Error			
-#define	IMR_TXBCN0OK_8723B				BIT25		// Transmit Beacon0 OK			
-#define	IMR_TSF_BIT32_TOGGLE_8723B		BIT24		// TSF Timer BIT32 toggle indication interrupt			
-#define	IMR_BCNDMAINT0_8723B				BIT20		// Beacon DMA Interrupt 0			
-#define	IMR_BCNDERR0_8723B				BIT16		// Beacon Queue DMA OK0			
+#define	IMR_GTINT4_8723B					BIT28		// When GTIMER4 expires, this bit is set to 1
+#define	IMR_GTINT3_8723B					BIT27		// When GTIMER3 expires, this bit is set to 1
+#define	IMR_TXBCN0ERR_8723B				BIT26		// Transmit Beacon0 Error
+#define	IMR_TXBCN0OK_8723B				BIT25		// Transmit Beacon0 OK
+#define	IMR_TSF_BIT32_TOGGLE_8723B		BIT24		// TSF Timer BIT32 toggle indication interrupt
+#define	IMR_BCNDMAINT0_8723B				BIT20		// Beacon DMA Interrupt 0
+#define	IMR_BCNDERR0_8723B				BIT16		// Beacon Queue DMA OK0
 #define	IMR_HSISR_IND_ON_INT_8723B		BIT15		// HSISR Indicator (HSIMR & HSISR is true, this bit is set to 1)
-#define	IMR_BCNDMAINT_E_8723B			BIT14		// Beacon DMA Interrupt Extension for Win7			
+#define	IMR_BCNDMAINT_E_8723B			BIT14		// Beacon DMA Interrupt Extension for Win7
 #define	IMR_ATIMEND_8723B				BIT12		// CTWidnow End or ATIM Window End
-#define	IMR_C2HCMD_8723B					BIT10		// CPU to Host Command INT Status, Write 1 clear	
-#define	IMR_CPWM2_8723B					BIT9			// CPU power Mode exchange INT Status, Write 1 clear	
-#define	IMR_CPWM_8723B					BIT8			// CPU power Mode exchange INT Status, Write 1 clear	
-#define	IMR_HIGHDOK_8723B				BIT7			// High Queue DMA OK	
-#define	IMR_MGNTDOK_8723B				BIT6			// Management Queue DMA OK	
-#define	IMR_BKDOK_8723B					BIT5			// AC_BK DMA OK		
-#define	IMR_BEDOK_8723B					BIT4			// AC_BE DMA OK	
-#define	IMR_VIDOK_8723B					BIT3			// AC_VI DMA OK		
-#define	IMR_VODOK_8723B					BIT2			// AC_VO DMA OK	
-#define	IMR_RDU_8723B					BIT1			// Rx Descriptor Unavailable	
+#define	IMR_C2HCMD_8723B					BIT10		// CPU to Host Command INT Status, Write 1 clear
+#define	IMR_CPWM2_8723B					BIT9			// CPU power Mode exchange INT Status, Write 1 clear
+#define	IMR_CPWM_8723B					BIT8			// CPU power Mode exchange INT Status, Write 1 clear
+#define	IMR_HIGHDOK_8723B				BIT7			// High Queue DMA OK
+#define	IMR_MGNTDOK_8723B				BIT6			// Management Queue DMA OK
+#define	IMR_BKDOK_8723B					BIT5			// AC_BK DMA OK
+#define	IMR_BEDOK_8723B					BIT4			// AC_BE DMA OK
+#define	IMR_VIDOK_8723B					BIT3			// AC_VI DMA OK
+#define	IMR_VODOK_8723B					BIT2			// AC_VO DMA OK
+#define	IMR_RDU_8723B					BIT1			// Rx Descriptor Unavailable
 #define	IMR_ROK_8723B					BIT0			// Receive DMA OK
 
 // IMR DW1(0x00B4-00B7) Bit 0-31
@@ -456,7 +456,7 @@
 
 /*===================================================================
 =====================================================================
-Here the register defines are for 92C. When the define is as same with 92C, 
+Here the register defines are for 92C. When the define is as same with 92C,
 we will use the 92C's define for the consistency
 So the following defines for 92C is not entire!!!!!!
 =====================================================================
@@ -490,7 +490,7 @@ Current IOREG MAP
 
 
 //============================================================================
-//       8192C Regsiter Bit and Content definition 
+//       8192C Regsiter Bit and Content definition
 //============================================================================
 //-----------------------------------------------------
 //
@@ -705,7 +705,7 @@ Current IOREG MAP
 // For normal driver, 0x10C
 #define _TXDMA_HIQ_MAP(x) 	 		(((x)&0x3) << 14)
 #define _TXDMA_MGQ_MAP(x) 	 		(((x)&0x3) << 12)
-#define _TXDMA_BKQ_MAP(x) 	 		(((x)&0x3) << 10)		
+#define _TXDMA_BKQ_MAP(x) 	 		(((x)&0x3) << 10)
 #define _TXDMA_BEQ_MAP(x) 	 		(((x)&0x3) << 8 )
 #define _TXDMA_VIQ_MAP(x) 	 		(((x)&0x3) << 6 )
 #define _TXDMA_VOQ_MAP(x) 	 		(((x)&0x3) << 4 )
@@ -715,7 +715,7 @@ Current IOREG MAP
 #define QUEUE_HIGH					3
 
 
-//2 REG_C2HEVT_CLEAR 0x01AF 
+//2 REG_C2HEVT_CLEAR 0x01AF
 #define	C2H_EVT_HOST_CLOSE			0x00	// Set by driver and notify FW that the driver has read the C2H command message
 #define	C2H_EVT_FW_CLOSE			0xFF		// Set by FW indicating that FW had set the C2H command message and it's not yet read by driver.
 
@@ -757,10 +757,10 @@ Current IOREG MAP
 // Write only. When this bit is set, RXDMA will decrease RX PKT counter by one. Before
 // this bit is polled, FW shall update RXFF_RD_PTR first. This register is write pulse and auto clear.
 #define	RXPKT_RELEASE_POLL			BIT(0)
-// Read only. When RXMA finishes on-going DMA operation, RXMDA will report idle state in 
+// Read only. When RXMA finishes on-going DMA operation, RXMDA will report idle state in
 // this bit. FW can start releasing packets after RXDMA entering idle mode.
-#define	RXDMA_IDLE					BIT(1)	
-// When this bit is set, RXDMA will enter this mode after on-going RXDMA packet to host 
+#define	RXDMA_IDLE					BIT(1)
+// When this bit is set, RXDMA will enter this mode after on-going RXDMA packet to host
 // completed, and stop DMA packet to host. RXDMA will then report Default: 0;
 #define	RW_RELEASE_EN				BIT(2)
 */
@@ -783,7 +783,7 @@ Current IOREG MAP
 #define	HAL92C_MSDU_LIFE_TIME_UNIT		128		// in us, said by Tim.
 
 
-//2 SPEC SIFS 0x0428 
+//2 SPEC SIFS 0x0428
 #define _SPEC_SIFS_CCK(x)				((x) & 0xFF)
 #define _SPEC_SIFS_OFDM(x)				(((x) & 0xFF) << 8)
 
@@ -850,7 +850,7 @@ Current IOREG MAP
 //----------------------------------------------------------------------------
 /*
 #define	RCR_APPFCS					BIT31		// WMAC append FCS after pauload
-#define	RCR_APP_MIC					BIT30		// MACRX will retain the MIC at the bottom of the packet. 
+#define	RCR_APP_MIC					BIT30		// MACRX will retain the MIC at the bottom of the packet.
 #define	RCR_APP_ICV					BIT29       // MACRX will retain the ICV at the bottom of the packet.
 #define	RCR_APP_PHYST_RXFF			BIT28       // HY Status is appended before RX packet in RXFF
 #define	RCR_APP_BA_SSN				BIT27		// SSN of previous TXBA is appended as after original RXDESC as the 4-th DW of RXDESC.

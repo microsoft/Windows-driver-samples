@@ -14,14 +14,14 @@
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //       ClassifyFastStreamInjection
 //
 //       <Module>
 //          Classify             - Function is an FWPS_CALLOUT_CLASSIFY_FN
 //       <Scenario>
-//          FastStreamInjection  - Function demonstrates the clone / block / inject model in the 
+//          FastStreamInjection  - Function demonstrates the clone / block / inject model in the
 //                                    fastest form available (inline, no validation, etc.).
 //
 //   Private Functions:
@@ -36,7 +36,7 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, enhance 
+//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, enhance
 //                                              traces, and add support for multiple injectors.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,8 +48,8 @@
 
 /**
  @classify_function="ClassifyFastStreamInjection"
- 
-   Purpose:  Blocks the current stream data and injects a clone back to the stack without 
+
+   Purpose:  Blocks the current stream data and injects a clone back to the stack without
              modification.                                                                      <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>
@@ -76,8 +76,8 @@ VOID NTAPI ClassifyFastStreamInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
    UNREFERENCED_PARAMETER(pClassifyContext);
    UNREFERENCED_PARAMETER(flowContext);
 
-   /// Stream has no concept of Veto. Due to its "waterfall" nature where a block will 
-   /// remove the data and others will not be able to see it.  
+   /// Stream has no concept of Veto. Due to its "waterfall" nature where a block will
+   /// remove the data and others will not be able to see it.
    /// This means that if we got classified, regardless of the rights, we can do whatever we need to.
 
    if(pStreamCalloutIOPacket)
@@ -140,7 +140,7 @@ VOID NTAPI ClassifyFastStreamInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
 
       /// Do not touch the rights in case other callouts use them (which they shouldn't).
       pClassifyOut->actionType = FWP_ACTION_BLOCK;
-      
+
       status = FwpsStreamInjectAsync(injectionHandle,
                                      0,
                                      0,
@@ -173,8 +173,8 @@ VOID NTAPI ClassifyFastStreamInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
 
 /**
  @classify_function="ClassifyFastStreamInjection"
- 
-   Purpose:  Blocks the current stream data and injects a clone back to the stack without 
+
+   Purpose:  Blocks the current stream data and injects a clone back to the stack without
              modification.                                                                      <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>
@@ -199,10 +199,10 @@ VOID NTAPI ClassifyFastStreamInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
 {
    UNREFERENCED_PARAMETER(flowContext);
 
-   /// Stream has no concept of Veto. Due to its "waterfall" nature where a block will 
-   /// remove the data and others will not be able to see it.  
+   /// Stream has no concept of Veto. Due to its "waterfall" nature where a block will
+   /// remove the data and others will not be able to see it.
    /// This means that if we got classified, regardless of the rights, we can do whatever we need to.
-   
+
    if(pStreamCalloutIOPacket)
    {
       NTSTATUS                       status              = STATUS_SUCCESS;
@@ -237,15 +237,15 @@ VOID NTAPI ClassifyFastStreamInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
       }
       else
          HLPR_BAIL;
-   
+
       if(!(streamFlags & FWPS_STREAM_FLAG_RECEIVE) &&
          !(streamFlags & FWPS_STREAM_FLAG_SEND))
          streamFlags |= direction ? FWPS_STREAM_FLAG_RECEIVE : FWPS_STREAM_FLAG_SEND;
-   
+
       pStreamPacket->countBytesRequired = 0;
       pStreamPacket->countBytesEnforced = pStreamPacket->streamData->dataLength;
       pStreamPacket->streamAction       = FWPS_STREAM_ACTION_NONE;
-   
+
       status = FwpsCloneStreamData(pStreamPacket->streamData,
                                    g_pNDISPoolData->nblPoolHandle,
                                    g_pNDISPoolData->nbPoolHandle,
@@ -257,7 +257,7 @@ VOID NTAPI ClassifyFastStreamInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
                     DPFLTR_ERROR_LEVEL,
                     " !!!! PerformBasicStreamInjection : FwpsCloneStreamData() [status: %#x]\n",
                     status);
-   
+
          HLPR_BAIL;
       }
 
@@ -275,20 +275,20 @@ VOID NTAPI ClassifyFastStreamInjection(_In_ const FWPS_INCOMING_VALUES* pClassif
                                      pStreamPacket->streamData->dataLength,
                                      CompleteFastStreamInjection,
                                      0);
-   
+
       HLPR_BAIL_LABEL:
-   
+
       if(status != STATUS_SUCCESS &&
          pNetBufferListChain)
       {
          KIRQL irql = KeGetCurrentIrql();
-   
+
          FwpsDiscardClonedStreamData(pNetBufferListChain,
                                      0,
                                      irql == DISPATCH_LEVEL ? TRUE : FALSE);
       }
    }
-   
+
    return;
 }
 

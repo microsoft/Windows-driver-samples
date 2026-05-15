@@ -12,7 +12,7 @@
 //   Naming Convention:
 //
 //      <Scope><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -26,15 +26,15 @@
 //          }
 //       <Action>
 //          {
-//            Execute                      - Function packages data and invokes RPC to the 
+//            Execute                      - Function packages data and invokes RPC to the
 //                                              WFPSampler service
 //            Log                          - Function writes to the console.
-//            Parse                        - Function pulls data into the required format from the 
+//            Parse                        - Function pulls data into the required format from the
 //                                              provided data.
 //          }
 //       <Modifier>
 //          {
-//            Help                         - Function provides context sensitive help for the 
+//            Help                         - Function provides context sensitive help for the
 //                                              scenario.
 //            InjectionData                - Function acts on the PC_BASIC_PACKET_INJECTION_DATA.
 //          }
@@ -61,7 +61,7 @@
 
 /**
  @private_function="PrvBasicPacketInjectionScenarioParseInjectionData"
- 
+
    Purpose:  Parse the command line parameters for implementing packet injection such as:       <br>
                 Perform the injection inline (from within the classify)    (-in)                <br>
                 Use threaded DPCs for out of band (asynchronous)           (-tdpc)              <br>
@@ -105,9 +105,9 @@ UINT32 PrvBasicPacketInjectionScenarioParseInjectionData(_In_reads_(stringCount)
                              ppCLPStrings[stringIndex]))
       {
          pPCBasicPacketInjectionData->useThreadedDPC = TRUE;
-      
+
          found++;
-      
+
          continue;
       }
 
@@ -129,7 +129,7 @@ UINT32 PrvBasicPacketInjectionScenarioParseInjectionData(_In_reads_(stringCount)
 /**
  @scenario_function="BasicPacketInjectionScenarioExecute"
 
-   Purpose:  Gather and package data neccessary to setup the BASIC_PACKET_INJECTION scenario, 
+   Purpose:  Gather and package data neccessary to setup the BASIC_PACKET_INJECTION scenario,
              then invoke RPC to implement the scenario in the WFPSampler service.               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -169,7 +169,7 @@ UINT32 BasicPacketInjectionScenarioExecute(_In_reads_(stringCount) PCWSTR* ppCLP
                PC_BASIC_PACKET_INJECTION_DATA);
       HLPR_BAIL_ON_ALLOC_FAILURE(pPCBasicPacketInjectionData,
                                  status);
-      
+
       status = PrvBasicPacketInjectionScenarioParseInjectionData(ppCLPStrings,
                                                                  stringCount,
                                                                  pPCBasicPacketInjectionData);
@@ -200,7 +200,7 @@ UINT32 BasicPacketInjectionScenarioExecute(_In_reads_(stringCount) PCWSTR* ppCLP
 
 /**
  @public_function="BasicPacketInjectionScenarioLogHelp"
- 
+
    Purpose:  Log usage information for the BASIC_PACKET_INJECTION scenario to the console.      <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

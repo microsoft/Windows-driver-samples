@@ -24,13 +24,13 @@ typedef struct _DRV_LOG_DATA_IMP_T
 	unsigned int	Id; // Key to associated with DRV_LOG_ATTRIBUTE_T.
 	unsigned int	TimeStampLow;
 	unsigned int	TimeStampHigh;
-	unsigned int	BufferLenUsed; 
+	unsigned int	BufferLenUsed;
 	unsigned char	Buffer[MAX_LOG_BUFFER_LEN];
 }DRV_LOG_DATA_IMP_T, *PDRV_LOG_DATA_IMP_T;
 
 //
 //	Description:
-//		ID for each catagory of log. 
+//		ID for each catagory of log.
 //		To add new type, one must also update g_LogTypes[].
 //		We will allocate an DRV_LOG_POOL_T object for each type.
 //
@@ -86,7 +86,7 @@ typedef struct _DRV_LOG_POOL_T
 #define SET_DRV_LOG_POOL(__pAdapter, __idx, __pTmp) GET_DRV_LOG_POOL(__pAdapter, __idx) = (PDRV_LOG_POOL_T)(__pTmp)
 
 //
-// Get current number of log of specified type. 
+// Get current number of log of specified type.
 //
 #define GetDrvLogCnt(__pAdapter, __eLogType) GET_DRV_LOG_POOL(pAdapter, eLogType)->LogCountUsed
 
@@ -106,24 +106,24 @@ AddDrvLog(
 	IN	PADAPTER		pAdapter,
 	IN	DRV_LOG_ID_E	eLogId,
 	IN	pu1Byte			pBuffer,
-	IN	u4Byte			BufferLen	
+	IN	u4Byte			BufferLen
 	);
 
 BOOLEAN
 RemoveDrvLog(
 	IN	PADAPTER		pAdapter,
-	IN	DRV_LOG_TYPE_E	eLogType,	
+	IN	DRV_LOG_TYPE_E	eLogType,
 	OUT	PDRV_LOG_DATA_T	pDstLogData
 	);
 
 
 #else
 
-#define AllocDrvLogMemory(pAdapter) TRUE 
-#define FreeDrvLogMemory(pAdapter) 
-#define AddDrvLog(pAdapter, eLogId, pBuffer, BufferLen)  
-#define RemoveDrvLog(pAdapter, eLogType, pDstLogData) FALSE 
-#define GetDrvLogCnt(__pAdapter, __eLogType) 0 
+#define AllocDrvLogMemory(pAdapter) TRUE
+#define FreeDrvLogMemory(pAdapter)
+#define AddDrvLog(pAdapter, eLogId, pBuffer, BufferLen)
+#define RemoveDrvLog(pAdapter, eLogType, pDstLogData) FALSE
+#define GetDrvLogCnt(__pAdapter, __eLogType) 0
 
 #endif // #if DRV_LOG
 

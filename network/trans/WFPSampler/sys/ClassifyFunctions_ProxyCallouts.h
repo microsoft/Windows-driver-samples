@@ -6,7 +6,7 @@
 //      ClassifyFunctions_ProxyCallouts.cpp
 //
 //   Abstract:
-//      This module contains prototypes for WFP Classify functions for proxying connections and 
+//      This module contains prototypes for WFP Classify functions for proxying connections and
 //         sockets.
 //
 //   Author:

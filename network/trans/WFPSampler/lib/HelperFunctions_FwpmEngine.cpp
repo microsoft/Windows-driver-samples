@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -55,7 +55,7 @@
 
 /**
  @helper_function="HlprFwpmEngineOpen"
- 
+
    Purpose:  Wrapper for the FwpmEngineClose API.                                               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -91,7 +91,7 @@ UINT32 HlprFwpmEngineClose(_Inout_ HANDLE* pEngineHandle)
 
 /**
  @helper_function="HlprFwpmEngineOpen"
- 
+
    Purpose:  Wrapper for the FwpmEngineOpen API.                                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

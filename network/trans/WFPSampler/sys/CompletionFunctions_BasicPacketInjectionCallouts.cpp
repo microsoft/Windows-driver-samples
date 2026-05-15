@@ -6,20 +6,20 @@
 //      CompletionFunctions_BasicPacketInjectionCallouts.cpp
 //
 //   Abstract:
-//      This module contains WFP Completion functions for injecting packets back into the data path 
+//      This module contains WFP Completion functions for injecting packets back into the data path
 //         using the clone / block / inject method.
 //
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //       CompleteBasicPacketInjection
 //
 //       <Module>
 //          Complete                           - Function is an FWPS_INJECT_COMPLETE function.
 //       <Scenario>
-//          BasicPacketInjection               - Function demonstrates the clone / block / inject 
+//          BasicPacketInjection               - Function demonstrates the clone / block / inject
 //                                               model.
 //
 //      <Object><Action>
@@ -47,7 +47,7 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, add 
+//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, add
 //                                              support for multiple injectors, and enhance traces.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ INJECTION_COUNTERS g_bpiTotalCompletions = {0};
 
 /**
  @function="BasicPacketInjectionCountersDecrement"
- 
+
    Purpose:  Deccrement the appropriate counters based on the injection handle.                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -156,7 +156,7 @@ VOID BasicPacketInjectionCountersDecrement(_In_ HANDLE injectionHandle,
 
 /**
  @private_function="BasicPacketInjectionCompletionDataDestroy"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -173,13 +173,13 @@ VOID BasicPacketInjectionCompletionDataDestroy(_Inout_ BASIC_PACKET_INJECTION_CO
                                                _In_ BOOLEAN override)                                             /* FALSE */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> BasicPacketInjectionCompletionDataDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppCompletionData);
    NT_ASSERT(*ppCompletionData);
 
@@ -239,7 +239,7 @@ VOID BasicPacketInjectionCompletionDataDestroy(_Inout_ BASIC_PACKET_INJECTION_CO
 
 /**
  @completion_function="CompleteBasicPacketInjection"
- 
+
    Purpose: Cleanup injection objects and memory.                                               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

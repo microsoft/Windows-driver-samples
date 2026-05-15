@@ -15,7 +15,7 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Add support for pending at 
+//      December  13,   2013  -     1.1   -  Add support for pending at
 //                                              FWPM_LAYER_ALE_ENDPOINT_CLOSURE
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////

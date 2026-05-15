@@ -97,7 +97,7 @@ typedef struct __RT_TLV_PARSER
 {
 	// dbg info
 	size_t					nonCleanedup;
-	
+
 	// buffer
 	u1Byte					*buf;
 	size_t					bufSize;
@@ -110,7 +110,7 @@ typedef struct _RT_OID_HANDLER
 {
 	// Associate which NdisRequest to process
 	PNDIS_OID_REQUEST		pNdisRequest;
-	
+
 	// For task command, NdisRequest is returned with NDIS_STATUS_SUCCESS
 	// So copy the content of NdisRequest
 	NDIS_OID_REQUEST		PendedRequest;
@@ -145,7 +145,7 @@ typedef struct _RT_OID_HANDLER
 
 	// Parsed TLV structure
 	RT_TLV_PARSER			tlvParser;
-	
+
 	// Oid returned status
 	NDIS_STATUS				OidStatus;
 
@@ -184,14 +184,14 @@ typedef struct __RT_TASK_ENTRY
 		IN  PADAPTER		pAdapter,
 		IN  PVOID			pContext
 		);
-		
+
 }RT_TASK_ENTRY, *PRT_TASK_ENTRY;
 
 
 typedef struct __RT_PROPERTY_ENTRY
 {
 	RT_COMMAND_ENTRY			super;
-	
+
 	NDIS_STATUS (*Func)(											// The command handler function
 		IN  PADAPTER 			pAdapter,
 		IN  PRT_OID_HANDLER		pOidHandle

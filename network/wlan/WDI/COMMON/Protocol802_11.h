@@ -54,31 +54,31 @@ typedef	u4Byte	CONTENT_PKT_TYPE, *PCONTENT_PKT_TYPE;
 #define Frame_FrameBody(f)				( Frame_Addr4(f)+6*Frame_ValidAddr4(f) )	// return pu1Byte
 #define Frame_FrameHdrLng(f)			( sMacHdrLng + 6*Frame_ValidAddr4(f) +2*IsQoSDataFrame((f).Octet) )	// return lenght of 802.11 data frame header.
 
-#define Frame_GAS_QueryReq(f)			( Frame_FrameBody(f) + 1 + 1 + 1 + 4 + 2 ) 
+#define Frame_GAS_QueryReq(f)			( Frame_FrameBody(f) + 1 + 1 + 1 + 4 + 2 )
 //Category(1 byte), Action(1 byte), DialogToken(1 byte), Advertisement protocol IE(4 bytes), Query Request Length(2 bytes)
 
-#define Frame_GAS_QueryReq_OUI(f)		( Frame_GAS_QueryReq(f) + 2 + 2 ) 
+#define Frame_GAS_QueryReq_OUI(f)		( Frame_GAS_QueryReq(f) + 2 + 2 )
 //Info ID(2 bytes), Length(2 bytes)
 
-#define Frame_GAS_QueryReq_Type(f)		( Frame_GAS_QueryReq_OUI(f) + 3 ) 
+#define Frame_GAS_QueryReq_Type(f)		( Frame_GAS_QueryReq_OUI(f) + 3 )
 //OUI(3 bytes)
 
-#define Frame_GAS_QueryRsp(f)			( Frame_FrameBody(f) + 1 + 1 + 1 + 2 + 2 + 4 + 2 ) 
+#define Frame_GAS_QueryRsp(f)			( Frame_FrameBody(f) + 1 + 1 + 1 + 2 + 2 + 4 + 2 )
 //Category(1 byte), Action(1 byte), DialogToken(1 byte), Status code(2 bytes), GAS Comeback Delay(2 bytes), Advertisement protocol IE(4 bytes), Query Response Length(2 bytes)
 
-#define Frame_GAS_QueryRsp_OUI(f)		( Frame_GAS_QueryRsp(f) + 2 + 2 ) 
+#define Frame_GAS_QueryRsp_OUI(f)		( Frame_GAS_QueryRsp(f) + 2 + 2 )
 //Info ID(2 bytes), Length(2 bytes)
 
-#define Frame_GAS_QueryRsp_Type(f)		( Frame_GAS_QueryRsp_OUI(f) + 3 ) 
+#define Frame_GAS_QueryRsp_Type(f)		( Frame_GAS_QueryRsp_OUI(f) + 3 )
 //OUI(3 bytes)
 
-#define Frame_GAS_ComebackRsp(f)		( Frame_FrameBody(f) + 1 + 1 + 1 + 2 + 1 + 2 + 4 + 2 ) 
+#define Frame_GAS_ComebackRsp(f)		( Frame_FrameBody(f) + 1 + 1 + 1 + 2 + 1 + 2 + 4 + 2 )
 //Category(1 byte), Action(1 byte), DialogToken(1 byte), Status code(2 bytes), GAS Query Response Fragment ID(1 byte), GAS Comeback Delay(2 bytes), Advertisement protocol IE(4 bytes), Query Response Length(2 bytes)
 
-#define Frame_GAS_ComebackRsp_OUI(f)	( Frame_GAS_ComebackRsp(f) + 2 + 2 ) 
+#define Frame_GAS_ComebackRsp_OUI(f)	( Frame_GAS_ComebackRsp(f) + 2 + 2 )
 //Info ID(2 bytes), Length(2 bytes)
 
-#define Frame_GAS_ComebackRsp_Type(f)	( Frame_GAS_ComebackRsp_OUI(f) + 3 ) 
+#define Frame_GAS_ComebackRsp_Type(f)	( Frame_GAS_ComebackRsp_OUI(f) + 3 )
 //OUI(3 bytes)
 
 #define Frame_QoSTID(f, offset)				(EF1Byte( *((f).Octet +offset )) & 0x0f)
@@ -215,7 +215,7 @@ typedef	enum _ELEMENT_ID{
 	EID_TClass			= 14,
 	EID_Schedule		= 15,
 	//
-	
+
 	EID_Ctext			= 16,	/* challenge text*/
 	EID_POWER_CONSTRAINT = 32,	/* Power Constraint*/
 
@@ -227,7 +227,7 @@ typedef	enum _ELEMENT_ID{
 
 	EID_MeasureRequest		= 38, // Measurement Request
 	EID_MeasureReport		= 39, // Measurement Report
-	
+
 	EID_ERPInfo 			= 42,
 
 	// Form 7.3.2: Information elements in 802.11E/D13.0, page 46.
@@ -236,28 +236,28 @@ typedef	enum _ELEMENT_ID{
 	EID_HTCapability		= 45,
 	EID_QoSCap				= 46,
 	//
-	
+
 	EID_WPA2				= 48,
 	EID_ExtSupRates		= 50,
 
 	EID_FTIE				= 55,	// Defined in 802.11r
 	EID_Timeout			= 56,	// Defined in 802.11r
-	
+
 	EID_SupRegulatory		= 59,	// Supported Requlatory Classes 802.11y
 	EID_HTInfo 				= 61,
 	EID_SecondaryChnlOffset	= 62,
 	EID_WAPI				= 68,
-	
+
 	EID_BSSCoexistence		= 72, 	// 20/40 BSS Coexistence
 	EID_BSSIntolerantChlReport = 73,
 	EID_OBSS				= 74,	// Overlapping BSS Scan Parameters
-	
+
 	EID_LinkIdentifier		= 101,	// Defined in 802.11z
 	EID_WakeupSchedule	= 102,	// Defined in 802.11z
 	EID_ChnlSwitchTimeing	= 104,	// Defined in 802.11z
 	EID_PTIControl			= 105,	// Defined in 802.11z
 	EID_PUBufferStatus		= 106,	// Defined in 802.11z
-	
+
 	EID_EXTCapability		= 127,	// Extended Capabilities
 	// From S19:Aironet IE and S21:AP IP address IE in CCX v1.13, p16 and p18.
 	EID_Aironet				= 133,	// 0x85: Aironet Element for Cisco CCX
@@ -265,7 +265,7 @@ typedef	enum _ELEMENT_ID{
 
 	EID_CellPwr				= 150,	// 0x96: Cell Power Limit IE. Ref. 0x96.
 
-	EID_CCKM				= 156, 
+	EID_CCKM				= 156,
 
 	EID_VHTCapability 		= 191,	// Based on 802.11ac D2.0
 	EID_VHTOperation 		= 192,	// Based on 802.11ac D2.0
@@ -341,7 +341,7 @@ typedef	enum _OUI_SUBTYPE{
 	OUI_SUB_BROADCOM_IE_3,
 	OUI_SUB_BROADCOM_LINKSYSE4200_IE_1,	// 2012/04/28 zhiyuan to make sure Linksys E4200 AP 5G only
 	OUI_SUB_BROADCOM_LINKSYSE4200_IE_2,
-	OUI_SUB_BROADCOM_LINKSYSE4200_IE_3,	
+	OUI_SUB_BROADCOM_LINKSYSE4200_IE_3,
 	OUI_SUB_CISCO_IE,					// 2008/05/12 Emily. Recognize Cisco AP
 	OUI_SUB_MERU_IE,
 	OUI_SUB_RALINK_IE,
@@ -350,7 +350,7 @@ typedef	enum _OUI_SUBTYPE{
 	OUI_SUB_WPA2GTK,
 	OUI_SUB_MARVELL,
 	OUI_SUB_AIRGO,
-	OUI_SUB_SSIDL,						// For CCX v4 s53 SSIDL,070702 by CCW  
+	OUI_SUB_SSIDL,						// For CCX v4 s53 SSIDL,070702 by CCW
 	OUI_SUB_CCX_TSM,					// For CCX4 S56, Traffic Stream Metrics, 070615, by rcnjko.
 	OUI_SUB_CCX_SFA,					// For CCX5, CCX Support Features Advertisement
 	OUI_SUB_CCX_DIAG_REQ_REASON,		// For CCX5, CCX Diagnostic Channel Request Reason
@@ -410,7 +410,7 @@ typedef	enum	_TYPE_SUBTYPE{
 	Type_Deauth		= 0xc0,
 	Type_Action			= 0xd0,
 	Type_Action_No_Ack	= 0xe0,
-	
+
 	// Control Frame
 	Type_Beamforming_Report_Poll = 0x44, //= MkString(S8(0,0,1,0,0,0,1,0));
 	Type_NDPA			= 0x54,//= MkString(S8(0,0,1,0,1,0,1,0));
@@ -565,7 +565,7 @@ typedef enum _VHT_ACTION{
 typedef enum _ACT_PKT_TYPE
 {
 	ACT_PKT_TYPE_UNKNOWN,	// Invalid or unrecognized frame
-		
+
 	// Qos (0x1)
 	ACT_PKT_QOS_ADDTSREQ,
 	ACT_PKT_QOS_ADDTSRSP,
@@ -672,7 +672,7 @@ typedef enum _ENCAP_DATA_PKT_TYPE
 typedef struct	_PKT_PATTERN_MAP
 {
 	u4Byte			PktType;	// Packet Type
-	u2Byte			PatternLen;	// The length in byte of the Pattern 
+	u2Byte			PatternLen;	// The length in byte of the Pattern
 	pu1Byte			Pattern;	// Point to the pattern array
 }PKT_PATTERN_MAP, *PPKT_PATTERN_MAP;
 
@@ -716,7 +716,7 @@ typedef struct _PKT_IE_OFFSET_MAP
 #define SET_80211_HDR_TYPE_AND_SUBTYPE(_hdr, _val)			WriteEF1Byte(_hdr, _val)
 
 
-// Byte[0] BIT7 in Frame Control is reserved for QoS. Added by Annie, 2005-12-02. 
+// Byte[0] BIT7 in Frame Control is reserved for QoS. Added by Annie, 2005-12-02.
 #define	FC_QOS_BIT				BIT7
 
 // Byte[0] BIT6 in Frame Control seems to be reserved for "No Data". Added by Annie, 2006-01-06.
@@ -800,7 +800,7 @@ typedef struct _PKT_IE_OFFSET_MAP
 
 //
 // Authentication frame.
-// 
+//
 #define GET_AUTH_FRAME_AUTH_ALG_NUM(__pHeader) 				ReadEF2Byte(((pu1Byte)(__pHeader)) + 24)
 #define SET_AUTH_FRAME_AUTH_ALG_NUM(__pHeader, __Value) 		WriteEF2Byte(((pu1Byte)(__pHeader)) + 24, __Value)
 
@@ -814,7 +814,7 @@ typedef struct _PKT_IE_OFFSET_MAP
 
 //
 // Associate Request frame.
-// 
+//
 #define GET_ASOC_REQ_CAPABILITY_INFO(__pHeader) 			ReadEF2Byte(((pu1Byte)(__pHeader)) + 24)
 #define SET_ASOC_REQ_CAPABILITY_INFO(__pHeader, __Value) 		WriteEF2Byte(((pu1Byte)(__pHeader)) + 24, __Value)
 
@@ -823,7 +823,7 @@ typedef struct _PKT_IE_OFFSET_MAP
 
 //
 // Associate Reponse frame.
-// 
+//
 #define GET_ASOC_RSP_CAPABILITY_INFO(__pHeader) 			ReadEF2Byte(((pu1Byte)(__pHeader)) + 24)
 #define SET_ASOC_RSP_CAPABILITY_INFO(__pHeader, __Value) 		WriteEF2Byte(((pu1Byte)(__pHeader)) + 24, __Value)
 
@@ -974,13 +974,13 @@ TimGetBcMcBit(
 	IN	OCTET_STRING	Tim
 	);
 
-BOOLEAN	
-TimGetAIDBit( 
-	IN	OCTET_STRING	Tim, 
+BOOLEAN
+TimGetAIDBit(
+	IN	OCTET_STRING	Tim,
 	IN	u2Byte			AID
 	);
 
-u2Byte 
+u2Byte
 ComputeTxTime(
 	IN	u2Byte			FrameLength,
 	IN	u4Byte			DataRate,
@@ -1015,10 +1015,10 @@ CompareSSID(
 
 #define CopySsid(__pDstBuf, __DstLen, __pSrcBuf, __SrcLen) \
 	{(__DstLen) = ( ((__SrcLen) > MAX_SSID_LEN) ? MAX_SSID_LEN : (__SrcLen) ); \
-	CopyMem((__pDstBuf), (__pSrcBuf), (__DstLen));}	
+	CopyMem((__pDstBuf), (__pSrcBuf), (__DstLen));}
 
 #define CopySsidOS(__osDst, __osSrc) \
-	CopySsid((__osDst).Octet, (__osDst).Length, (__osSrc).Octet, (__osSrc).Length)	
+	CopySsid((__osDst).Octet, (__osDst).Length, (__osSrc).Octet, (__osSrc).Length)
 
 u1Byte
 ComputeAckRate(
@@ -1046,7 +1046,7 @@ IEGetElementNum(
 	IN	u1Byte			OUISubType
 	);
 
-OCTET_STRING 
+OCTET_STRING
 IEGetElement(
 	IN	OCTET_STRING	IEs,
 	IN	ELEMENT_ID		ID,

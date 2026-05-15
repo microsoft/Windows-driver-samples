@@ -7,7 +7,7 @@ PRECOMPILED_PCH=precomp.pch
 PRECOMPILED_OBJ=precomp.obj
 
 #
-# IC dependent directories are defined in 
+# IC dependent directories are defined in
 # the environment variable HAL_INC_DIRS.
 #
 INCLUDES=\

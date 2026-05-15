@@ -140,9 +140,9 @@
 // Use one of the following value to define the flag, HAL_CODE_BASE.
 //-----------------------------------------------------------------------------------------
 #define RTL818X					BIT0	// For 8185/8187.
-#define RTL818X_B				BIT1	// For 8185B/8187B. 
+#define RTL818X_B				BIT1	// For 8185B/8187B.
 #define RTL818X_S				(BIT1 | BIT2)     	// For RTL8187S (PCIe & USB)
-#define RTL819X					BIT3			// For 819x series, 8190, 8192E, 8192U, 8192SP, 8192SU, 8193SP, 8193SU 
+#define RTL819X					BIT3			// For 819x series, 8190, 8192E, 8192U, 8192SP, 8192SU, 8193SP, 8193SU
 #define RTL8190					(BIT3 | BIT4)	// For 8190 PCI
 #define RTL8192					(BIT3 | BIT5)	// For 8192 (PCI-E & USB)
 #define RTL8192_S				(BIT3 | BIT6)	// For 8192_s (PCI-E & USB)

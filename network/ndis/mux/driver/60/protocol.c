@@ -67,11 +67,11 @@ Return Value:
 
     UNREFERENCED_PARAMETER(ProtocolDriverContext);
     UNREFERENCED_PARAMETER(BindContext);
-    
+
     pConfigString = (PNDIS_STRING)BindParameters->ProtocolSection;
-    
+
     DBGPRINT(MUX_LOUD, ("==> Protocol BindAdapter: %ws\n", pConfigString->Buffer));
-   
+
     do
     {
         if (BindParameters->Header.Type != NDIS_OBJECT_TYPE_BIND_PARAMETERS ||
@@ -80,12 +80,12 @@ Return Value:
             Status = NDIS_STATUS_INVALID_PARAMETER;
             break;
         }
-        
+
         //
         // Allocate memory for Adapter struct plus the config
         // string with two extra WCHARs for NULL termination.
         //
-        Length = sizeof(ADAPT) + 
+        Length = sizeof(ADAPT) +
                     pConfigString->MaximumLength + sizeof(WCHAR);
         pAdapt = NdisAllocateMemoryWithTagPriority(ProtHandle, Length , MUX_TAG, LowPoolPriority);
 
@@ -94,14 +94,14 @@ Return Value:
              Status = NDIS_STATUS_RESOURCES;
              break;
         }
-        
+
         //
         // Initialize the adapter structure
         //
-        NdisZeroMemory(pAdapt, sizeof(ADAPT));        
+        NdisZeroMemory(pAdapt, sizeof(ADAPT));
 
-        (VOID)PtReferenceAdapter(pAdapt, (PUCHAR)"openadapter");        
-        
+        (VOID)PtReferenceAdapter(pAdapt, (PUCHAR)"openadapter");
+
 
         //
         //  Copy in the Config string - we will use this to open the
@@ -109,13 +109,13 @@ Return Value:
         //
         pAdapt->ConfigString.MaximumLength = pConfigString->MaximumLength;
         pAdapt->ConfigString.Length = pConfigString->Length;
-        pAdapt->ConfigString.Buffer = (PWCHAR)((PUCHAR)pAdapt + 
+        pAdapt->ConfigString.Buffer = (PWCHAR)((PUCHAR)pAdapt +
                             sizeof(ADAPT));
 
         NdisMoveMemory(pAdapt->ConfigString.Buffer,
                        pConfigString->Buffer,
                        pConfigString->Length);
-        pAdapt->ConfigString.Buffer[pConfigString->Length/sizeof(WCHAR)] = 
+        pAdapt->ConfigString.Buffer[pConfigString->Length/sizeof(WCHAR)] =
                                     ((WCHAR)0);
 
         NdisInitializeEvent(&pAdapt->Event);
@@ -173,9 +173,9 @@ Return Value:
               break;
         }
         pAdapt->Flags |= MUX_BINDING_ACTIVE;
-        
+
         pAdapt->BindingState = MuxAdapterBindingPaused;
-        
+
         pAdapt->Medium = MediumArray[MediumIndex];
 
         //
@@ -188,20 +188,20 @@ Return Value:
         MUX_RELEASE_MUTEX(&GlobalMutex);
 
         //
-        // Copy all the relevant information about the Adapter into 
+        // Copy all the relevant information about the Adapter into
         // the local structure
         //
         pAdapt->BindParameters = *BindParameters;
-        
+
         if (BindParameters->RcvScaleCapabilities)
         {
             pAdapt->RcvScaleCapabilities = (*BindParameters->RcvScaleCapabilities);
             pAdapt->BindParameters.RcvScaleCapabilities = &pAdapt->RcvScaleCapabilities;
         }
-        
-        pAdapt->PowerManagementCapabilities = (*BindParameters->PowerManagementCapabilities); 
 
-        
+        pAdapt->PowerManagementCapabilities = (*BindParameters->PowerManagementCapabilities);
+
+
         PtPostProcessPnPCapabilities(&pAdapt->PowerManagementCapabilities,
                                      sizeof(pAdapt->PowerManagementCapabilities));
 
@@ -211,7 +211,7 @@ Return Value:
         pAdapt->BindParameters.ProtocolSection= NULL;
         pAdapt->BindParameters.AdapterName = NULL;
         pAdapt->BindParameters.PhysicalDeviceObject = NULL;
-        
+
         //
         // Start all VELANS configured on this adapter.
         //
@@ -222,12 +222,12 @@ Return Value:
             break;
         }
 
-        
+
     } while(FALSE);
 
     if (Status != NDIS_STATUS_SUCCESS)
     {
-        
+
         if (pAdapt != NULL)
         {
             //
@@ -237,7 +237,7 @@ Return Value:
             {
                 //
                 // Close the binding the driver opened above
-                // 
+                //
                 PtCloseAdapter(pAdapt);
 
                 MUX_ACQUIRE_MUTEX(&GlobalMutex);
@@ -250,7 +250,7 @@ Return Value:
             pAdapt = NULL;
         }
     }
-    
+
 
 
     DBGPRINT(MUX_INFO, ("<== PtBindAdapter: pAdapt %p, Status %x\n", pAdapt, Status));
@@ -268,7 +268,7 @@ PtOpenAdapterComplete(
 
 Routine Description:
 
-    Completion routine for NdisOpenAdapter issued from within the 
+    Completion routine for NdisOpenAdapter issued from within the
     PtBindAdapter. Simply unblock the caller.
 
 Arguments:
@@ -318,7 +318,7 @@ Return Value:
     // Insert code here to query Adapter info if needed
     //
     UNREFERENCED_PARAMETER(pAdapt);
-    
+
 }
 
 
@@ -370,7 +370,7 @@ Return Value:
         //
         pMuxNdisRequest->pCallback = PtCompleteBlockingRequest;
         NdisInitializeEvent(&pMuxNdisRequest->Event);
-        
+
         pMuxNdisRequest->Request.Header.Type = NDIS_OBJECT_TYPE_OID_REQUEST;
         pMuxNdisRequest->Request.Header.Revision = NDIS_OID_REQUEST_REVISION_1;
         pMuxNdisRequest->Request.Header.Size = sizeof(NDIS_OID_REQUEST);
@@ -381,29 +381,29 @@ Return Value:
                             InformationBuffer;
         pMuxNdisRequest->Request.DATA.QUERY_INFORMATION.InformationBufferLength =
                                                 InformationBufferLength;
-        
+
         NdisAcquireSpinLock(&pAdapt->Lock);
 
         pAdapt->OutstandingRequests ++;
-        
+
         if ((pAdapt->Flags & MUX_BINDING_CLOSING)== MUX_BINDING_CLOSING)
         {
             Status = NDIS_STATUS_CLOSING;
 
-            NdisReleaseSpinLock(&pAdapt->Lock);            
+            NdisReleaseSpinLock(&pAdapt->Lock);
         }
         else
         {
             NdisReleaseSpinLock(&pAdapt->Lock);
             Status = NdisOidRequest(pAdapt->BindingHandle,
-                                &pMuxNdisRequest->Request);            
+                                &pMuxNdisRequest->Request);
         }
 
         if (Status != NDIS_STATUS_PENDING)
         {
             NdisAcquireSpinLock(&pAdapt->Lock);
             pAdapt->OutstandingRequests --;
-                    
+
             if ((pAdapt->OutstandingRequests == 0) && (pAdapt->CloseEvent != NULL))
             {
                 NdisSetEvent(pAdapt->CloseEvent);
@@ -411,11 +411,11 @@ Return Value:
             }
             NdisReleaseSpinLock(&pAdapt->Lock);
         }
-        else        
+        else
         {
             NdisWaitEvent(&pMuxNdisRequest->Event, 0);
             Status = pMuxNdisRequest->Status;
-        }        
+        }
     }
     while (FALSE);
 
@@ -496,7 +496,7 @@ Return Value:
                                     InformationBuffer;
                 pNdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength =
                                     InformationBufferLength;
-        
+
                 break;
 
             case NdisRequestSetInformation:
@@ -505,31 +505,31 @@ Return Value:
                                     InformationBuffer;
                 pNdisRequest->DATA.SET_INFORMATION.InformationBufferLength =
                                     InformationBufferLength;
-        
+
                 break;
-            
+
             default:
                 ASSERT(FALSE);
                 break;
         }
-         
+
         NdisAcquireSpinLock(&pAdapt->Lock);
 
         pAdapt->OutstandingRequests ++;
-        
+
         if ((pAdapt->Flags & MUX_BINDING_CLOSING)== MUX_BINDING_CLOSING)
         {
-            NdisReleaseSpinLock(&pAdapt->Lock);        
-            Status = NDIS_STATUS_CLOSING;           
+            NdisReleaseSpinLock(&pAdapt->Lock);
+            Status = NDIS_STATUS_CLOSING;
         }
         else
         {
-            NdisReleaseSpinLock(&pAdapt->Lock);        
+            NdisReleaseSpinLock(&pAdapt->Lock);
             Status = NdisOidRequest(
                         pAdapt->BindingHandle,
                         pNdisRequest);
         }
-        
+
         if (Status != NDIS_STATUS_PENDING)
         {
             PtRequestComplete(
@@ -553,13 +553,13 @@ PtCloseAdapter(
 
 Routine Description:
 
-    Call either when the protocol is unbinding or the miniport is halting to set 
+    Call either when the protocol is unbinding or the miniport is halting to set
     the packet filters back to zero and multicast filter back to zero
 
 Arguments:
 
      pAdapter            Pointer to a virtual adapter
-     
+
 Return Value:
     None
 
@@ -573,7 +573,7 @@ Return Value:
     NDIS_EVENT              CloseEvent;
 
     DBGPRINT(MUX_LOUD, ("==> PtCloseAdapter: Adapt %p\n", pAdapt));
-    
+
     ASSERT (KeGetCurrentIrql() == PASSIVE_LEVEL);
 
     //
@@ -581,15 +581,15 @@ Return Value:
     // from the adapter below is required for NDIS 6.0 protocols
     //
     PtRequestAdapterSync(pAdapt,
-                            NdisRequestSetInformation, 
+                            NdisRequestSetInformation,
                             OID_GEN_CURRENT_PACKET_FILTER,
-                            &PacketFilter, 
+                            &PacketFilter,
                             sizeof(PacketFilter));
 
     PtRequestAdapterSync(pAdapt,
-                            NdisRequestSetInformation, 
+                            NdisRequestSetInformation,
                             OID_802_3_MULTICAST_LIST,
-                            MCastBuf, 
+                            MCastBuf,
                             MCastBufSize);
     //
     // Stop sending requests and wait for outstanding requests to complete
@@ -602,16 +602,16 @@ Return Value:
     if (pAdapt->OutstandingRequests != 0)
     {
          NdisInitializeEvent(&CloseEvent);
-         pAdapt->CloseEvent = &CloseEvent;                
+         pAdapt->CloseEvent = &CloseEvent;
          NdisReleaseSpinLock(&pAdapt->Lock);
-         NdisWaitEvent(&CloseEvent, 0);                
+         NdisWaitEvent(&CloseEvent, 0);
          NdisAcquireSpinLock(&pAdapt->Lock);
     }
     NdisReleaseSpinLock(&pAdapt->Lock);
     //
     // Now Close the binding with the adapter below
     //
-    
+
     NdisResetEvent(&pAdapt->Event);
 
     Status = NdisCloseAdapterEx(pAdapt->BindingHandle);
@@ -625,7 +625,7 @@ Return Value:
     }
 
     pAdapt->BindingHandle = NULL;
-    
+
     DBGPRINT(MUX_LOUD, ("<== PtCloseAdapter: Adapt %p\n", pAdapt));
 }
 
@@ -660,7 +660,7 @@ Return Value:
     NDIS_STATUS     Status = NDIS_STATUS_SUCCESS;
 
 	UNREFERENCED_PARAMETER(UnbindContext);
-	
+
     DBGPRINT(MUX_LOUD, ("==> PtUnbindAdapter: Adapt %p\n", pAdapt));
 
     //
@@ -700,9 +700,9 @@ Return Value:
             // run StopVElan at passive IRQL.
             //
             MUX_RELEASE_ADAPT_READ_LOCK(pAdapt, &LockState);
-    
+
             PtStopVElan(pVElan);
-    
+
             PtDereferenceVElan(pVElan, (PUCHAR)"UnbindTemp");
 
             MUX_ACQUIRE_ADAPT_READ_LOCK(pAdapt, &LockState);
@@ -755,7 +755,7 @@ Return Value:
     //
     // Remove the adapter from the global AdapterList
     //
-    
+
     MUX_ACQUIRE_MUTEX(&GlobalMutex);
 
     RemoveEntryList(&pAdapt->Link);
@@ -763,16 +763,16 @@ Return Value:
     MUX_RELEASE_MUTEX(&GlobalMutex);
 
     NdisFreeSpinLock(&pAdapt->Lock);
-    
+
     //
     // Free all the resources associated with this Adapter except the
-    // ADAPT struct itself, because that will be freed by 
-    // PtDereferenceAdapter call when the reference drops to zero. 
+    // ADAPT struct itself, because that will be freed by
+    // PtDereferenceAdapter call when the reference drops to zero.
     // Note: Every VELAN associated with this Adapter takes a ref count
     // on it. So the adapter memory wouldn't be freed until all the VELANs
-    // are shutdown. 
+    // are shutdown.
     //
-    
+
     PtDereferenceAdapter(pAdapt, (PUCHAR)"Unbind");
 
     DBGPRINT(MUX_LOUD, ("<== PtUnbindAdapter: Adapt %p, Status=%08lx\n", pAdapt, Status));
@@ -795,7 +795,7 @@ Routine Description:
 Arguments:
 
     ProtocolBindingContext    Pointer to the adapter structure
-   
+
 Return Value:
 
     None.
@@ -804,12 +804,12 @@ Return Value:
 {
     PADAPT      pAdapt =(PADAPT)ProtocolBindingContext;
 
-    DBGPRINT(MUX_LOUD, ("==> PtCloseAdapterComplete: Adapt %p\n", 
+    DBGPRINT(MUX_LOUD, ("==> PtCloseAdapterComplete: Adapt %p\n",
                                 pAdapt));
 
     NdisSetEvent(&pAdapt->Event);
 
-    DBGPRINT(MUX_LOUD, ("<== PtCloseAdapterComplete: Adapt %p\n", 
+    DBGPRINT(MUX_LOUD, ("<== PtCloseAdapterComplete: Adapt %p\n",
                                 pAdapt));
 }
 
@@ -843,27 +843,27 @@ Return Value:
     PMUX_NDIS_REQUEST   pMuxNdisRequest;
 
 
-    DBGPRINT(MUX_LOUD, ("==> PtRequestComplete: Adapt %p, Request %p, Status %8x\n", 
+    DBGPRINT(MUX_LOUD, ("==> PtRequestComplete: Adapt %p, Request %p, Status %8x\n",
                                 pAdapt, NdisRequest, Status));
 
     //get the Super-structure for NDIS_REQUEST before getting the callback functions
     //so make sure NdisRequest is a filled into a MUX_NDIS_REQUEST before using this function
     pMuxNdisRequest = CONTAINING_RECORD(NdisRequest, MUX_NDIS_REQUEST, Request);
-   
+
     ASSERT(pMuxNdisRequest->pCallback != NULL);
-    
+
 
     //
     // Completion is handled by the callback routine:
     //
-    (*pMuxNdisRequest->pCallback)(pAdapt, 
+    (*pMuxNdisRequest->pCallback)(pAdapt,
                                   pMuxNdisRequest,
                                   Status);
 
     NdisAcquireSpinLock(&pAdapt->Lock);
-    
+
     pAdapt->OutstandingRequests --;
-            
+
     if ((pAdapt->OutstandingRequests == 0) && (pAdapt->CloseEvent != NULL))
     {
         NdisSetEvent(pAdapt->CloseEvent);
@@ -872,7 +872,7 @@ Return Value:
 
     NdisReleaseSpinLock(&pAdapt->Lock);
 
-    DBGPRINT(MUX_LOUD, ("<== PtRequestComplete: Adapt %p, Request %p, Status %8x\n", 
+    DBGPRINT(MUX_LOUD, ("<== PtRequestComplete: Adapt %p, Request %p, Status %8x\n",
                                 pAdapt, NdisRequest, Status));
 
 }
@@ -914,9 +914,9 @@ Return Value:
     BOOLEAN             fCompleteRequest = FALSE;
 
     UNREFERENCED_PARAMETER(pAdapt);
-   
 
-    DBGPRINT(MUX_LOUD, ("==> PtCompleteForwardedRequest: Adapt %p, MuxRequest %p, Status %8x\n", 
+
+    DBGPRINT(MUX_LOUD, ("==> PtCompleteForwardedRequest: Adapt %p, MuxRequest %p, Status %8x\n",
                                 pAdapt, pMuxNdisRequest, Status));
     //
     // Get the originating VELAN. The VELAN will not be dereferenced
@@ -926,10 +926,10 @@ Return Value:
 
     ASSERT(pVElan != NULL);
     ASSERT(pMuxNdisRequest == &pVElan->Request);
-    
+
     if (Status != NDIS_STATUS_SUCCESS)
     {
-        DBGPRINT(MUX_WARN, ("PtCompleteForwardedRequest: pVElan %p, OID %x, Status %x\n", 
+        DBGPRINT(MUX_WARN, ("PtCompleteForwardedRequest: pVElan %p, OID %x, Status %x\n",
                     pVElan,
                     pMuxNdisRequest->Request.DATA.QUERY_INFORMATION.Oid,
                     Status));
@@ -944,9 +944,9 @@ Return Value:
         OrigRequest = pMuxNdisRequest->OrigRequest;
         pMuxNdisRequest->OrigRequest = NULL;
     }
-    
 
-    NdisReleaseSpinLock(&pVElan->Lock);    
+
+    NdisReleaseSpinLock(&pVElan->Lock);
 
     if (fCompleteRequest == FALSE)
     {
@@ -961,9 +961,9 @@ Return Value:
         case NdisRequestQueryInformation:
         case NdisRequestQueryStatistics:
 
-            OrigRequest->DATA.QUERY_INFORMATION.BytesWritten = 
+            OrigRequest->DATA.QUERY_INFORMATION.BytesWritten =
                     pNdisRequest->DATA.QUERY_INFORMATION.BytesWritten;
-            OrigRequest->DATA.QUERY_INFORMATION.BytesNeeded = 
+            OrigRequest->DATA.QUERY_INFORMATION.BytesNeeded =
                     pNdisRequest->DATA.QUERY_INFORMATION.BytesNeeded;
 
             //
@@ -995,8 +995,8 @@ Return Value:
             OrigRequest->DATA.QUERY_INFORMATION.BytesNeeded=
                     pNdisRequest->DATA.SET_INFORMATION.BytesNeeded;
 
-#if IEEE_VELAN_SUPPORT            
-            if ((pNdisRequest->DATA.SET_INFORMATION.Oid == OID_GEN_CURRENT_LOOKAHEAD) 
+#if IEEE_VELAN_SUPPORT
+            if ((pNdisRequest->DATA.SET_INFORMATION.Oid == OID_GEN_CURRENT_LOOKAHEAD)
                     && (pVElan->RestoreLookaheadSize == TRUE))
             {
                 pVElan->RestoreLookaheadSize = FALSE;
@@ -1013,8 +1013,8 @@ Return Value:
                 switch (Oid)
                 {
                     case OID_GEN_CURRENT_LOOKAHEAD:
-                        
-                        
+
+
                         NdisMoveMemory(&pVElan->LookAhead,
                                  pNdisRequest->DATA.SET_INFORMATION.InformationBuffer,
                                  sizeof(ULONG));
@@ -1036,7 +1036,7 @@ Return Value:
 
     MUX_DECR_PENDING_SENDS(pVElan);
 
-    DBGPRINT(MUX_LOUD, ("<== PtCompleteForwardedRequest: Adapt %p, MuxRequest %p, Status %8x\n", 
+    DBGPRINT(MUX_LOUD, ("<== PtCompleteForwardedRequest: Adapt %p, MuxRequest %p, Status %8x\n",
                                 pAdapt, pMuxNdisRequest, Status));
 }
 
@@ -1070,7 +1070,7 @@ Return Value:
     PNDIS_PM_WAKE_UP_CAPABILITIES   pPMstruct;
 
     DBGPRINT(MUX_LOUD, ("==> PtPostProcessPnPCapabilities\n"));
-    
+
     if (InformationBufferLength >= sizeof(NDIS_PNP_CAPABILITIES))
     {
         pPNPCapabilities = (PNDIS_PNP_CAPABILITIES)InformationBuffer;
@@ -1114,9 +1114,9 @@ Return Value:
 {
 	UNREFERENCED_PARAMETER(pAdapt);
 
-    DBGPRINT(MUX_LOUD, ("==> PtCompleteBlockingRequest: Adapt %p, MuxRequest %p, Status %8x\n", 
+    DBGPRINT(MUX_LOUD, ("==> PtCompleteBlockingRequest: Adapt %p, MuxRequest %p, Status %8x\n",
                                 pAdapt, pMuxNdisRequest, Status));
-    
+
     //
     // The request was originated from this driver. Wake up the
     // thread blocked for its completion.
@@ -1124,7 +1124,7 @@ Return Value:
     pMuxNdisRequest->Status = Status;
     NdisSetEvent(&pMuxNdisRequest->Event);
 
-    DBGPRINT(MUX_LOUD, ("<== PtCompleteBlockingRequest: Adapt %p, MuxRequest %p, Status %8x\n", 
+    DBGPRINT(MUX_LOUD, ("<== PtCompleteBlockingRequest: Adapt %p, MuxRequest %p, Status %8x\n",
                                 pAdapt, pMuxNdisRequest, Status));
 }
 
@@ -1208,7 +1208,7 @@ Return Value:
         {
             break;
         }
-        
+
         MUX_ACQUIRE_ADAPT_READ_LOCK(pAdapt, &LockState);
 
         if (GeneralStatus == NDIS_STATUS_LINK_STATE)
@@ -1219,7 +1219,7 @@ Return Value:
              p != &pAdapt->VElanList;
              p = p->Flink)
         {
-            
+
             pVElan = CONTAINING_RECORD(p, VELAN, Link);
 
             MUX_INCR_PENDING_RECEIVES(pVElan);
@@ -1229,7 +1229,7 @@ Return Value:
             //
             if ((pVElan->MiniportInitPending) ||
                 (pVElan->MiniportHalting) ||
-                (pVElan->MiniportAdapterHandle == NULL) ||   
+                (pVElan->MiniportAdapterHandle == NULL) ||
                 MUX_IS_LOW_POWER_STATE(pVElan->MPDevicePowerState))
             {
                 MUX_DECR_PENDING_RECEIVES(pVElan);
@@ -1237,7 +1237,7 @@ Return Value:
                 {
                     //
                     // Keep track of the lastest status to indicated when VELAN power is on
-                    // 
+                    //
                     ASSERT(GeneralStatus == NDIS_STATUS_LINK_STATE);
 
                     pVElan->LatestUnIndicateStatus = GeneralStatus;
@@ -1247,12 +1247,12 @@ Return Value:
                         pVElan->LatestUnIndicateLinkState = *(PNDIS_LINK_STATE)StatusIndication->StatusBuffer;
                     }
                 }
-                
+
                 continue;
             }
 
             //
-            // Save the last indicated status when 
+            // Save the last indicated status when
             pVElan->LastIndicatedStatus = GeneralStatus;
             if (GeneralStatus == NDIS_STATUS_LINK_STATE)
             {
@@ -1260,27 +1260,27 @@ Return Value:
             }
             //
             // Allocate a new status indication and set the destination handle to null to ensure that the status
-            // is indicated to protocols bound to mux velans. Copy only the fields that makes sense to pass up. For 
-            // instance, do not copy PortNumber, RequestId, Flags, Guid, NdisReserved. Port Number is really not   
-            // necessary to copy and pass up for the scenario because the port number is an entity that makes sense  
+            // is indicated to protocols bound to mux velans. Copy only the fields that makes sense to pass up. For
+            // instance, do not copy PortNumber, RequestId, Flags, Guid, NdisReserved. Port Number is really not
+            // necessary to copy and pass up for the scenario because the port number is an entity that makes sense
             // between the protocol and the underlying miniport pair.
-            //         
-        
+            //
+
             NdisZeroMemory(&NewStatusIndication, sizeof(NDIS_STATUS_INDICATION));
-            
+
             NewStatusIndication.Header.Type = NDIS_OBJECT_TYPE_STATUS_INDICATION;
             NewStatusIndication.Header.Revision = NDIS_STATUS_INDICATION_REVISION_1;
             NewStatusIndication.Header.Size = sizeof(NDIS_STATUS_INDICATION);
-            
+
             NewStatusIndication.StatusCode = StatusIndication->StatusCode;
             NewStatusIndication.SourceHandle = pVElan->MiniportAdapterHandle;
             NewStatusIndication.DestinationHandle = NULL;
-            
+
             NewStatusIndication.StatusBuffer = StatusIndication->StatusBuffer;
             NewStatusIndication.StatusBufferSize = StatusIndication->StatusBufferSize;
 
             NdisMIndicateStatusEx(pVElan->MiniportAdapterHandle, &NewStatusIndication);
-            
+
             //
             // Mark this so that we forward a status complete
             // indication as well.
@@ -1293,7 +1293,7 @@ Return Value:
         MUX_RELEASE_ADAPT_READ_LOCK(pAdapt, &LockState);
     }
     while (FALSE);
-    
+
     DBGPRINT(MUX_LOUD, ("<== PtStatus: Adapt %p, Status %x\n", pAdapt, GeneralStatus));
 }
 
@@ -1333,7 +1333,7 @@ Return Value:
         ETH_COMPARE_NETWORK_ADDRESSES_EQ(pVElan->McastAddrs[i],
                                          pDstMac,
                                          &AddrCompareResult);
-        
+
         if (AddrCompareResult == 0)
         {
             break;
@@ -1451,9 +1451,9 @@ Return Value:
             bPacketMatch = FALSE;
         }
     }
-     
+
     DBGPRINT(MUX_VERY_LOUD, ("<== PtMatchPacketToVElan: VElan %p, PacketMatch %x\n", pVElan, bPacketMatch));
-    
+
     return (bPacketMatch);
 }
 
@@ -1489,7 +1489,7 @@ Return Value:
     //
     // Store the new power state.
     //
-    
+
     pAdapt->PtDevicePowerState = *(PNDIS_DEVICE_POWER_STATE)pNetPnPEventNotification->NetPnPEvent.Buffer;
 
     DBGPRINT(MUX_LOUD, ("==> PnPNetEventSetPower: Adapt %p, SetPower to %d\n",
@@ -1531,7 +1531,7 @@ Return Value:
                 //
                 break;
             }
-            
+
             DBGPRINT(MUX_INFO, ("SetPower: Adapt %p, waiting for pending IO to complete\n",
                                 pAdapt));
 
@@ -1563,23 +1563,23 @@ Return Value:
                 pVElan->QueuedRequest = FALSE;
                 NdisReleaseSpinLock(&pVElan->Lock);
 
-                
+
                 NdisAcquireSpinLock(&pAdapt->Lock);
-                
+
                 pAdapt->OutstandingRequests ++;
-                
+
                 if ((pAdapt->Flags & MUX_BINDING_CLOSING)== MUX_BINDING_CLOSING)
                 {
-                    NdisReleaseSpinLock(&pAdapt->Lock);        
-                    Status = NDIS_STATUS_CLOSING;           
+                    NdisReleaseSpinLock(&pAdapt->Lock);
+                    Status = NDIS_STATUS_CLOSING;
                 }
                 else
                 {
-                    NdisReleaseSpinLock(&pAdapt->Lock);        
+                    NdisReleaseSpinLock(&pAdapt->Lock);
                     Status = NdisOidRequest(
                                 pAdapt->BindingHandle,
                                 &pVElan->Request.Request);
-                }                
+                }
                 if (Status != NDIS_STATUS_PENDING)
                 {
                     PtRequestComplete(pAdapt,
@@ -1598,7 +1598,7 @@ Return Value:
 
     DBGPRINT(MUX_LOUD, ("<== PnPNetEventSetPower: Adapt %p, SetPower to %d\n",
             pAdapt, pAdapt->PtDevicePowerState));
-    
+
     return (NDIS_STATUS_SUCCESS);
 }
 
@@ -1633,7 +1633,7 @@ Return Value:
     PLIST_ENTRY         p;
     NDIS_EVENT          PauseEvent;
 
-    DBGPRINT(MUX_LOUD, ("==> PtPnPHandler: Adapt %p, NetPnPEvent %d\n", pAdapt, 
+    DBGPRINT(MUX_LOUD, ("==> PtPnPHandler: Adapt %p, NetPnPEvent %d\n", pAdapt,
                             pNetPnPEventNotification->NetPnPEvent.NetEvent));
 
     switch (pNetPnPEventNotification->NetPnPEvent.NetEvent)
@@ -1661,7 +1661,7 @@ Return Value:
             }
 
             MUX_RELEASE_MUTEX(&GlobalMutex);
-                
+
             Status = NDIS_STATUS_SUCCESS;
             break;
         case NetEventIMReEnableDevice:
@@ -1675,8 +1675,8 @@ Return Value:
 
                 PtBootStrapVElans(pAdapt, pNetPnPEventNotification->NetPnPEvent.Buffer);
             }
-            
-            
+
+
             MUX_RELEASE_MUTEX(&GlobalMutex);
 
             Status = NDIS_STATUS_SUCCESS;
@@ -1688,23 +1688,23 @@ Return Value:
             pAdapt->BindingState = MuxAdapterBindingPausing;
 
             ASSERT(pAdapt->PauseEvent == NULL);
-            
+
             if (pAdapt->OutstandingSends != 0)
             {
                 NdisInitializeEvent(&PauseEvent);
-                
+
                 pAdapt->PauseEvent = &PauseEvent;
-                
+
                 NdisReleaseSpinLock(&pAdapt->Lock);
 
                 NdisWaitEvent(&PauseEvent, 0);
-                
+
                 NdisAcquireSpinLock(&pAdapt->Lock);
             }
-            
+
             pAdapt->BindingState = MuxAdapterBindingPaused;
             NdisReleaseSpinLock(&pAdapt->Lock);
-            
+
             Status = NDIS_STATUS_SUCCESS;
             break;
 
@@ -1712,15 +1712,15 @@ Return Value:
             pAdapt->BindingState = MuxAdapterBindingRunning;
             Status = NDIS_STATUS_SUCCESS;
             break;
-          
- 
+
+
         default:
             Status = NDIS_STATUS_SUCCESS;
 
             break;
     }
 
-    DBGPRINT(MUX_LOUD, ("<== PtPnPHandler: Adapt %p, NetPnPEvent %d, Status %8x\n", pAdapt, 
+    DBGPRINT(MUX_LOUD, ("<== PtPnPHandler: Adapt %p, NetPnPEvent %d, Status %8x\n", pAdapt,
                             pNetPnPEventNotification->NetPnPEvent.NetEvent, Status));
     return Status;
 }
@@ -1742,12 +1742,12 @@ Routine Description:
     routines are protected by NDIS against pre-emption by UnbindAdapter.
     If this routine will be called from any other context, it should
     be protected against a simultaneous call to our UnbindAdapter handler.
-    
+
 Arguments:
 
     pAdapt        - Pointer to Adapter structure
-    pVElanKey     - Points to a Unicode string naming the VELAN to create. 
-    
+    pVElanKey     - Points to a Unicode string naming the VELAN to create.
+
 Return Value:
 
     NDIS_STATUS_SUCCESS if we either found a duplicate VELAN or
@@ -1759,11 +1759,11 @@ Return Value:
 {
     NDIS_STATUS             Status;
     PVELAN                  pVElan;
-    
+
     Status = NDIS_STATUS_SUCCESS;
     pVElan = NULL;
 
-    DBGPRINT(MUX_LOUD, ("=> PtCreateAndStartVElan: Adapter %p, ElanKey %ws\n", 
+    DBGPRINT(MUX_LOUD, ("=> PtCreateAndStartVElan: Adapter %p, ElanKey %ws\n",
                             pAdapt, pVElanKey->Buffer));
 
     do
@@ -1788,9 +1788,9 @@ Return Value:
                 break;
             }
         }
-        
+
         pVElan = NULL;
-        
+
         if (pVElanKey != NULL)
         {
             pVElan = PtAllocateAndInitializeVElan(pAdapt, pVElanKey);
@@ -1824,9 +1824,9 @@ Return Value:
             pVElan = NULL;
             break;
         }
-        
+
         PtDereferenceVElan(pVElan,(UCHAR*) "CreatVelan");
-    
+
     }
     while (FALSE);
 
@@ -1871,7 +1871,7 @@ Return Value:
     do
     {
         Length = sizeof(VELAN) + pVElanKey->Length + sizeof(WCHAR);
-        
+
         //
         // Allocate a VELAN data structure.
         //
@@ -1890,27 +1890,27 @@ Return Value:
         NdisZeroMemory(pVElan, Length);
         NdisInitializeListHead(&pVElan->Link);
         NdisInitializeListHead(&pVElan->GlobalLink);
-        
+
         //
         // Initialize the built-in request structure to signify
         // that it is used to forward NDIS requests.
         //
         pVElan->Request.pVElan = pVElan;
         NdisInitializeEvent(&pVElan->Request.Event);
-       
+
         //
         // Store in the key name.
         //
         pVElan->CfgDeviceName.Length = 0;
-        pVElan->CfgDeviceName.Buffer = (PWCHAR)((PUCHAR)pVElan + 
-                    sizeof(VELAN));       
-        pVElan->CfgDeviceName.MaximumLength = 
+        pVElan->CfgDeviceName.Buffer = (PWCHAR)((PUCHAR)pVElan +
+                    sizeof(VELAN));
+        pVElan->CfgDeviceName.MaximumLength =
                 pVElanKey->Length + sizeof(WCHAR);
         (VOID)NdisUpcaseUnicodeString(&pVElan->CfgDeviceName, pVElanKey);
         pVElan->CfgDeviceName.Buffer[pVElanKey->Length/sizeof(WCHAR)] =
                         ((WCHAR)0);
 
-        // 
+        //
         // Initialize LastIndicatedStatus to media connect
         //
         pVElan->LastIndicatedStatus = NDIS_STATUS_LINK_STATE;
@@ -1962,7 +1962,7 @@ Return Value:
 #ifdef IEEE_VLAN_SUPPORT
         //
         // Allocate lookaside list for tag headers.
-        // 
+        //
         NdisInitializeNPagedLookasideList (
                 &pVElan->TagLookaside,
                 NULL,
@@ -1974,9 +1974,9 @@ Return Value:
 
 #endif
         //
-        // Finally link this VELAN to the Adapter's VELAN list. 
+        // Finally link this VELAN to the Adapter's VELAN list.
         //
-        PtReferenceVElan(pVElan, (PUCHAR)"adapter");        
+        PtReferenceVElan(pVElan, (PUCHAR)"adapter");
 
         MUX_ACQUIRE_ADAPT_WRITE_LOCK(pAdapt, &LockState);
 
@@ -1989,7 +1989,7 @@ Return Value:
         MUX_RELEASE_ADAPT_WRITE_LOCK(pAdapt, &LockState);
 
         NdisAcquireSpinLock(&GlobalLock);
-        InsertTailList(&VElanList, &pVElan->GlobalLink);   
+        InsertTailList(&VElanList, &pVElan->GlobalLink);
         NdisReleaseSpinLock(&GlobalLock);;
     }
     while (FALSE);
@@ -2034,7 +2034,7 @@ Return Value:
     NdisFreeSpinLock(&pVElan->PauseLock);
 
 #ifdef IEEE_VLAN_SUPPORT
-    NdisDeleteNPagedLookasideList(&pVElan->TagLookaside);    
+    NdisDeleteNPagedLookasideList(&pVElan->TagLookaside);
 #endif
 
     NdisFreeMemory(pVElan, 0, 0);
@@ -2056,11 +2056,11 @@ Routine Description:
     ASSUMPTION: this is only called in the context of unbinding
     from the underlying miniport. If it may be called from elsewhere,
     this should protect itself from re-entrancy.
-    
+
 Arguments:
 
     pVElan      - Pointer to VELAN to be stopped.
-    
+
 Return Value:
 
     None
@@ -2151,16 +2151,16 @@ Return Value:
     }
     else
     {
-        if (bMiniportInitCancelled || 
+        if (bMiniportInitCancelled ||
             ((MiniportAdapterHandle == NULL) && !pVElan->MiniportHalting))
         {
-            
+
             //
             // No NDIS events can come to this VELAN since it
             // was never initialized as a miniport. We need to unlink
             // it explicitly here.
             //
-            PtUnlinkVElanFromAdapter(pVElan);            
+            PtUnlinkVElanFromAdapter(pVElan);
         }
     }
 
@@ -2177,18 +2177,18 @@ PtUnlinkVElanFromAdapter(
 Routine Description:
 
     Utility routine to unlink a VELAN from its parent ADAPT structure.
-    
+
 Arguments:
 
     pVElan      - Pointer to VELAN to be unlinked.
-    
+
 Return Value:
 
     None
 
 --*/
 {
-    PADAPT          pAdapt = pVElan->pAdapt;    
+    PADAPT          pAdapt = pVElan->pAdapt;
     LOCK_STATE      LockState;
 
     DBGPRINT(MUX_LOUD, ("==> PtUnlinkVElanFromAdapter: VELAN %p, Adapt %p\n", pVElan, pAdapt));
@@ -2198,7 +2198,7 @@ Return Value:
     //
     // Remove this VELAN from the global list
     //
-    
+
     NdisAcquireSpinLock(&GlobalLock);
     RemoveEntryList(&pVElan->GlobalLink);
     NdisReleaseSpinLock(&GlobalLock);
@@ -2210,7 +2210,7 @@ Return Value:
 
     RemoveEntryList(&pVElan->Link);
     pAdapt->VElanCount--;
-        
+
     MUX_RELEASE_ADAPT_WRITE_LOCK(pAdapt, &LockState);
     pVElan->pAdapt = NULL;
     PtDereferenceVElan(pVElan, (PUCHAR)"adapter");
@@ -2239,7 +2239,7 @@ Arguments:
 Return Value:
 
     Pointer to matching VELAN or NULL if not found.
-    
+
 --*/
 {
     PLIST_ENTRY         p;
@@ -2250,7 +2250,7 @@ Return Value:
 
     ASSERT_AT_PASSIVE();
 
-    DBGPRINT(MUX_LOUD, ("==> PtFindElan: Adapter %p, ElanKey %ws\n", pAdapt, 
+    DBGPRINT(MUX_LOUD, ("==> PtFindElan: Adapter %p, ElanKey %ws\n", pAdapt,
                                         pVElanKey->Buffer));
 
     pVElan = NULL;
@@ -2262,8 +2262,8 @@ Return Value:
         //
         // Make an up-cased copy of the given string.
         //
-        VElanKeyName.Buffer = NdisAllocateMemoryWithTagPriority(pAdapt->BindingHandle, 
-                                                        pVElanKey->MaximumLength, 
+        VElanKeyName.Buffer = NdisAllocateMemoryWithTagPriority(pAdapt->BindingHandle,
+                                                        pVElanKey->MaximumLength,
                                                         MUX_TAG,
                                                         LowPoolPriority);
         if (VElanKeyName.Buffer == NULL)
@@ -2288,13 +2288,13 @@ Return Value:
             pVElan = CONTAINING_RECORD(p, VELAN, Link);
 
             if ((VElanKeyName.Length == pVElan->CfgDeviceName.Length) &&
-                (memcmp(VElanKeyName.Buffer, pVElan->CfgDeviceName.Buffer, 
+                (memcmp(VElanKeyName.Buffer, pVElan->CfgDeviceName.Buffer,
                 VElanKeyName.Length) == 0))
             {
                 Found = TRUE;
                 break;
             }
-        
+
             p = p->Flink;
         }
 
@@ -2314,7 +2314,7 @@ Return Value:
         NdisFreeMemory(VElanKeyName.Buffer, VElanKeyName.Length, 0);
     }
 
-    DBGPRINT(MUX_LOUD, ("<== PtFindElan: Adapter %p, ElanKey %ws, VElan %p\n", pAdapt, 
+    DBGPRINT(MUX_LOUD, ("<== PtFindElan: Adapter %p, ElanKey %ws, VElan %p\n", pAdapt,
                                         pVElanKey->Buffer, pVElan));
     return pVElan;
 }
@@ -2324,7 +2324,7 @@ NDIS_STATUS
 PtBootStrapVElans(
     IN  PADAPT            pAdapt,
     IN  PNDIS_STRING      InstanceName OPTIONAL
-    
+
 )
 /*++
 
@@ -2348,7 +2348,7 @@ Return Value:
     NDIS_STRING                     DeviceStr = NDIS_STRING_CONST("UpperBindings");
     PWSTR                           buffer;
     LOCK_STATE                      LockState;
-    NDIS_CONFIGURATION_OBJECT       ConfigObject;    
+    NDIS_CONFIGURATION_OBJECT       ConfigObject;
 
     DBGPRINT(MUX_LOUD, ("==> PtBootStrapElans:  adapter %p\n", pAdapt));
     //
@@ -2356,7 +2356,7 @@ Return Value:
     //
     Status = NDIS_STATUS_SUCCESS;
     AdapterConfigHandle = NULL;
-    
+
     do
     {
         DBGPRINT(MUX_LOUD, ("PtBootStrapElans: Starting ELANs on adapter %p\n", pAdapt));
@@ -2380,12 +2380,12 @@ Return Value:
             DBGPRINT(MUX_ERROR, ("PtBootStrapElans: OpenProtocolConfiguration failed\n"));
             Status = NDIS_STATUS_OPEN_FAILED;
             break;
-        }        
+        }
 
         //
         // Read the "UpperBindings" reserved key that contains a list
         // of device names representing our miniport instances corresponding
-        // to this lower binding. The UpperBindings is a 
+        // to this lower binding. The UpperBindings is a
         // MULTI_SZ containing a list of device names. We will loop through
         // this list and initialize the virtual miniports.
         //
@@ -2408,7 +2408,7 @@ Return Value:
         while(*buffer != L'\0')
         {
             NDIS_STRING     DeviceName;
-            
+
             NdisInitUnicodeString(&DeviceName, buffer);
 
             if (InstanceName != NULL)
@@ -2422,7 +2422,7 @@ Return Value:
             else
             {
 
-            Status = PtCreateAndStartVElan(pAdapt, &DeviceName); 
+            Status = PtCreateAndStartVElan(pAdapt, &DeviceName);
             }
             if (NDIS_STATUS_SUCCESS != Status)
             {
@@ -2431,19 +2431,19 @@ Return Value:
             }
             buffer = (PWSTR)((PUCHAR)buffer + DeviceName.Length + sizeof(WCHAR));
         };
-          
+
     } while (FALSE);
 
     //
     //    Close config handles
-    //        
+    //
     if (NULL != AdapterConfigHandle)
     {
         NdisCloseConfiguration(AdapterConfigHandle);
     }
     //
     // If the driver cannot create any velan for the adapter
-    // 
+    //
     if (Status != NDIS_STATUS_SUCCESS)
     {
         MUX_ACQUIRE_ADAPT_WRITE_LOCK(pAdapt, &LockState);
@@ -2455,10 +2455,10 @@ Return Value:
             Status = NDIS_STATUS_SUCCESS;
         }
         MUX_RELEASE_ADAPT_WRITE_LOCK(pAdapt, &LockState);
-    }  
-    
+    }
+
     DBGPRINT(MUX_LOUD, ("<== PtBootStrapElans:  adapter %p, Status %8x\n", pAdapt, Status));
-    
+
     return Status;
 }
 
@@ -2484,7 +2484,7 @@ Return Value:
 
 --*/
 {
-    
+
     NdisInterlockedIncrement((PLONG)&pVElan->RefCount);
 
 #if !DBG
@@ -2506,7 +2506,7 @@ PtDereferenceVElan(
 
 Routine Description:
 
-    Subtract a reference from an VElan structure. 
+    Subtract a reference from an VElan structure.
     If the reference count becomes zero, deallocate it.
 
 Arguments:
@@ -2534,13 +2534,13 @@ Return Value:
     {
         //
         // Free memory if there is no outstanding reference.
-        // Note: Length field is not required if the memory 
+        // Note: Length field is not required if the memory
         // is allocated with NdisAllocateMemoryWithTagPriority.
         //
         PtDeallocateVElan(pVElan);
     }
-    
-    DBGPRINT(MUX_LOUD, ("DereferenceElan: VElan %p (%s) new count %d\n", 
+
+    DBGPRINT(MUX_LOUD, ("DereferenceElan: VElan %p (%s) new count %d\n",
                                     pVElan, String, rc));
     return (rc);
 }
@@ -2567,13 +2567,13 @@ Return Value:
 
 --*/
 {
-    
+
 #if !DBG
     UNREFERENCED_PARAMETER(String);
 #endif
 
     NdisInterlockedIncrement((PLONG)&pAdapt->RefCount);
-    
+
     DBGPRINT(MUX_LOUD, ("ReferenceAdapter: Adapter %p (%s) new count %d\n",
                     pAdapt, String, pAdapt->RefCount));
 
@@ -2589,7 +2589,7 @@ PtDereferenceAdapter(
 
 Routine Description:
 
-    Subtract a reference from an Adapter structure. 
+    Subtract a reference from an Adapter structure.
     If the reference count becomes zero, deallocate it.
 
 Arguments:
@@ -2618,20 +2618,20 @@ Return Value:
     {
         //
         // Free memory if there is no outstanding reference.
-        // Note: Length field is not required if the memory 
+        // Note: Length field is not required if the memory
         // is allocated with NdisAllocateMemoryWithTagPriority.
         //
         NdisFreeMemory(pAdapt, 0, 0);
     }
 
-    DBGPRINT(MUX_LOUD, ("DereferenceAdapter: Adapter %p (%s) new count %d\n", 
+    DBGPRINT(MUX_LOUD, ("DereferenceAdapter: Adapter %p (%s) new count %d\n",
                         pAdapt, String, rc));
 
     return (rc);
 }
 
 
-VOID 
+VOID
 PtReceiveNBL(
     IN NDIS_HANDLE       ProtocolBindingContext,
     IN PNET_BUFFER_LIST  NetBufferLists,
@@ -2642,7 +2642,7 @@ PtReceiveNBL(
 /*++
 
 Routine Description:
-    ReceiveNetBufferList handler. 
+    ReceiveNetBufferList handler.
 
 Arguments:
     ProtocolBindingContext                  Pointer to our PADAPT structure
@@ -2673,12 +2673,12 @@ NOTE: This receive code path is not efficient, we will optimize it later.
     UCHAR                   Data[6]={0,0,0,0,0,0};
     //BOOLEAN                 DispatchLevel;
     BOOLEAN                 bReturnNbl;
-    
+
 #ifdef IEEE_VLAN_SUPPORT
     NDIS_STATUS             NdisStatus;
     NDIS_NET_BUFFER_LIST_8021Q_INFO  NdisPacket8021qInfo;
     BOOLEAN                 bAllocatedContext;
-    PRECV_NBL_ENTRY         RecvContext;    
+    PRECV_NBL_ENTRY         RecvContext;
 #endif
 
     UNREFERENCED_PARAMETER(NumberOfNetBufferLists);
@@ -2702,20 +2702,20 @@ NOTE: This receive code path is not efficient, we will optimize it later.
     // Return immediately
 
     if (pAdapt->PacketFilter == 0)
-    {  
+    {
         if (NDIS_TEST_RECEIVE_CAN_PEND(ReceiveFlags) == TRUE)
         {
             NdisReturnNetBufferLists(pAdapt->BindingHandle,
                                      NetBufferLists,
                                      ReturnFlags);
-        }        
+        }
         return;
     }
 
     while (NetBufferLists != NULL)
     {
         CurrentNetBufferList = NetBufferLists;
-        
+
         NetBufferLists = NET_BUFFER_LIST_NEXT_NBL(NetBufferLists);
 
         NET_BUFFER_LIST_NEXT_NBL(CurrentNetBufferList) = NULL;
@@ -2729,7 +2729,7 @@ NOTE: This receive code path is not efficient, we will optimize it later.
         do
         {
             // Collect some information about the packet
-            pDstMac = NdisGetDataBuffer(NET_BUFFER_LIST_FIRST_NB(CurrentNetBufferList), 
+            pDstMac = NdisGetDataBuffer(NET_BUFFER_LIST_FIRST_NB(CurrentNetBufferList),
                                         6,
                                         (PVOID)Data,
                                         1,
@@ -2747,7 +2747,7 @@ NOTE: This receive code path is not efficient, we will optimize it later.
             bIsBroadcast = ETH_IS_BROADCAST(pDstMac);
 
 #ifdef IEEE_VLAN_SUPPORT
-            // 
+            //
             // Create Receive context to save information about tag
             //
             NdisStatus = NdisAllocateNetBufferListContext(CurrentNetBufferList,
@@ -2761,8 +2761,8 @@ NOTE: This receive code path is not efficient, we will optimize it later.
 
             bAllocatedContext = TRUE;
 
-            RecvContext = (PRECV_NBL_ENTRY) NET_BUFFER_LIST_CONTEXT_DATA_START(CurrentNetBufferList);        
-            NdisZeroMemory(RecvContext, sizeof(RECV_NBL_ENTRY));                   
+            RecvContext = (PRECV_NBL_ENTRY) NET_BUFFER_LIST_CONTEXT_DATA_START(CurrentNetBufferList);
+            NdisZeroMemory(RecvContext, sizeof(RECV_NBL_ENTRY));
 
             //
             // Strip off the VLAN Tag if present
@@ -2772,7 +2772,7 @@ NOTE: This receive code path is not efficient, we will optimize it later.
                 //
                 // If the VLAN tag is not present in the buffer, ignore this NBL
                 //
-                DBGPRINT(MUX_LOUD,("PtReceiveNBL: NBL %p size < VLAN_TAG_HEADER_SIZE\n",CurrentNetBufferList));            
+                DBGPRINT(MUX_LOUD,("PtReceiveNBL: NBL %p size < VLAN_TAG_HEADER_SIZE\n",CurrentNetBufferList));
                 break;
             }
 
@@ -2780,21 +2780,21 @@ NOTE: This receive code path is not efficient, we will optimize it later.
             {
                 //
                 // If the VLAN info is already in the NBL, take this information it
-                //            
-                DBGPRINT(MUX_LOUD,("PtReceiveNBL: NBL %p already has Ieee8021QNetBufferListInfo\n",CurrentNetBufferList));    
-                
-                RtlCopyMemory((PVOID UNALIGNED) &NdisPacket8021qInfo, &NET_BUFFER_LIST_INFO(CurrentNetBufferList, Ieee8021QNetBufferListInfo),sizeof(NdisPacket8021qInfo));				
+                //
+                DBGPRINT(MUX_LOUD,("PtReceiveNBL: NBL %p already has Ieee8021QNetBufferListInfo\n",CurrentNetBufferList));
+
+                RtlCopyMemory((PVOID UNALIGNED) &NdisPacket8021qInfo, &NET_BUFFER_LIST_INFO(CurrentNetBufferList, Ieee8021QNetBufferListInfo),sizeof(NdisPacket8021qInfo));
             }
             else
             {
-                NdisStatus = PtStripVlanTagNB(CurrentNetBufferList, &NdisPacket8021qInfo, RecvContext);        
+                NdisStatus = PtStripVlanTagNB(CurrentNetBufferList, &NdisPacket8021qInfo, RecvContext);
 
                 if (NdisStatus != NDIS_STATUS_SUCCESS)
                 {
                      break;
                 }
             }
-#endif        
+#endif
 
             // Lock down the VLAN list on the adapter so that no insertions
             // deletions to this list happen while we loop through it. The packet
@@ -2833,7 +2833,7 @@ NOTE: This receive code path is not efficient, we will optimize it later.
                     MUX_DECR_PENDING_RECEIVES(pVElan);
                     continue;
                 }
-                
+
                 NdisAcquireSpinLock(&pVElan->PauseLock);
 
                 if (!pVElan->Paused)
@@ -2894,7 +2894,7 @@ NOTE: This receive code path is not efficient, we will optimize it later.
                 }
                 else
                 {
-                    NdisReleaseSpinLock(&pVElan->PauseLock);            
+                    NdisReleaseSpinLock(&pVElan->PauseLock);
                     MUX_DECR_PENDING_RECEIVES(pVElan);
                 }
 
@@ -2906,7 +2906,7 @@ NOTE: This receive code path is not efficient, we will optimize it later.
 
         if (bReturnNbl == TRUE)
         {
-#ifdef IEEE_VLAN_SUPPORT       
+#ifdef IEEE_VLAN_SUPPORT
             //
             // Free the context only if we are returning the NBL here.
             // Otherwise MPReturnNetBufferLists will free it.
@@ -2914,9 +2914,9 @@ NOTE: This receive code path is not efficient, we will optimize it later.
             if (bAllocatedContext)
             {
                 NdisFreeNetBufferListContext(CurrentNetBufferList,
-                                             sizeof(RECV_NBL_ENTRY));            
+                                             sizeof(RECV_NBL_ENTRY));
             }
-#endif           
+#endif
 
             //
             // The NetBufferList is not pending with any upper protocol.
@@ -2933,7 +2933,7 @@ NOTE: This receive code path is not efficient, we will optimize it later.
                 {
                     NET_BUFFER_LIST_NEXT_NBL(LastReturnNetBufferList) = CurrentNetBufferList;
                 }
-                
+
                 LastReturnNetBufferList = CurrentNetBufferList;
                 NET_BUFFER_LIST_NEXT_NBL(LastReturnNetBufferList) = NULL;
             }
@@ -2958,7 +2958,7 @@ NOTE: This receive code path is not efficient, we will optimize it later.
 }
 
 
-VOID 
+VOID
 PtSendNBLComplete(
     IN NDIS_HANDLE      ProtocolBindingContext,
     IN PNET_BUFFER_LIST NetBufferLists,
@@ -2996,7 +2996,7 @@ Return Value:
                 ProtocolBindingContext,NetBufferLists));
 
     DispatchLevel = NDIS_TEST_SEND_COMPLETE_AT_DISPATCH_LEVEL(SendCompleteFlags);
-   
+
     while(NetBufferLists)
     {
         CurrentNetBufferList = NetBufferLists;
@@ -3019,12 +3019,12 @@ Return Value:
                                       sizeof(IM_NBL_ENTRY));
 
 #ifdef IEEE_VLAN_SUPPORT
-    
+
         if ((Flags & MUX_RETREAT_DATA)  != 0)
         {
-            MPRestoreSendNBL(pVElan, 
-                             CurrentNetBufferList, 
-                             NULL, 
+            MPRestoreSendNBL(pVElan,
+                             CurrentNetBufferList,
+                             NULL,
                              MdlAllocatedNetBuffers);
         }
 
@@ -3043,7 +3043,7 @@ Return Value:
                                         CurrentNetBufferList,
                                         SendCompleteFlags);
 
-        
+
         MUX_DECR_PENDING_SENDS(pVElan);
 
         MUX_ACQUIRE_SPIN_LOCK(&pAdapt->Lock, DispatchLevel);
@@ -3056,14 +3056,14 @@ Return Value:
         }
         MUX_RELEASE_SPIN_LOCK(&pAdapt->Lock, DispatchLevel);
 
-        
+
     }
 
     DBGPRINT(MUX_VERY_LOUD,("<== PtSendNBLComplete: ProtocolBindingContext %p, NetBufferLists %p\n",ProtocolBindingContext,NetBufferLists));
 }
 
 #ifdef IEEE_VLAN_SUPPORT
-NDIS_STATUS 
+NDIS_STATUS
 PtHandleReceiveTaggingNB(
     IN PVELAN                   pVElan,
     IN PNET_BUFFER_LIST         NetBufferList,
@@ -3081,7 +3081,7 @@ Routine Description:
 Arguments:
     pVElan              Pointer to the VELAN structure
     NetBufferList       Pointer to the indicated packet from the lower miniport
-    NdisPacket8021qInfo 802.1Q tag information 
+    NdisPacket8021qInfo 802.1Q tag information
 
 Return Value:
     NDIS_STATUS_SUCCESS
@@ -3101,9 +3101,9 @@ Return Value:
     DBGPRINT(MUX_VERY_LOUD,("==> PtHandleReceiveTaggingNB: VElan %p, NetBufferList %p, NdisPacket8021qInfo %p\n",pVElan,NetBufferList, NdisPacket8021qInfo));
     do
     {
-        RecvContext = (PRECV_NBL_ENTRY) NET_BUFFER_LIST_CONTEXT_DATA_START(NetBufferList);  
-        RecvContext->Flags = 0;        
-    
+        RecvContext = (PRECV_NBL_ENTRY) NET_BUFFER_LIST_CONTEXT_DATA_START(NetBufferList);
+        RecvContext->Flags = 0;
+
         //
         // If the vlan ID of the virtual miniport is 0, the miniport should
         // act like it doesn't support VELAN tag processing
@@ -3144,7 +3144,7 @@ Return Value:
 
             MUX_INCR_STATISTICS(&pVElan->RcvVlanIdErrors);
             break;
-        }      
+        }
         Storage=NULL;
         pFrame = NdisGetDataBuffer(NET_BUFFER_LIST_FIRST_NB(NetBufferList),
                                    2 * ETH_LENGTH_OF_ADDRESS + VLAN_TAG_HEADER_SIZE,
@@ -3158,9 +3158,9 @@ Return Value:
             Status = NDIS_STATUS_INVALID_PACKET;
             break;
         }
-        
+
         pTpid = (USHORT UNALIGNED *)((PUCHAR)pFrame + 2 * ETH_LENGTH_OF_ADDRESS);
-        
+
         //
         //Strip header only if it's present in the packet
         //
@@ -3175,8 +3175,8 @@ Return Value:
 
              RtlMoveMemory(pDst, pFrame, 2 * ETH_LENGTH_OF_ADDRESS);
 
-             NET_BUFFER_LIST_INFO(NetBufferList, Ieee8021QNetBufferListInfo) = NdisPacket8021qInfo->Value; 
-        
+             NET_BUFFER_LIST_INFO(NetBufferList, Ieee8021QNetBufferListInfo) = NdisPacket8021qInfo->Value;
+
              NdisAdvanceNetBufferDataStart(NET_BUFFER_LIST_FIRST_NB(NetBufferList),
                                            VLAN_TAG_HEADER_SIZE,
                                            FALSE,
@@ -3189,7 +3189,7 @@ Return Value:
     return Status;
 }
 
-NDIS_STATUS 
+NDIS_STATUS
 PtStripVlanTagNB(
     IN PNET_BUFFER_LIST         NetBufferList,
     OUT PNDIS_NET_BUFFER_LIST_8021Q_INFO NdisPacket8021qInfo,
@@ -3218,7 +3218,7 @@ Return Value:
     PVOID                           pFrame = NULL;
     NDIS_STATUS                     Status = NDIS_STATUS_SUCCESS;
     PVOID                           Storage;
-    
+
 
     DBGPRINT(MUX_VERY_LOUD,("==> PtStripVlanTagNB: NetBufferList %p, NdisPacket8021qInfo %p\n",NetBufferList, NdisPacket8021qInfo));
     do
@@ -3254,14 +3254,14 @@ Return Value:
         COPY_TAG_INFO_FROM_HEADER_TO_PACKET_INFO(*NdisPacket8021qInfo, pTagHeader);
 
         RtlCopyMemory((PVOID UNALIGNED) &RecvContext->TagHeader, pTagHeader, 2);
-        
+
     } while(FALSE);
 
     DBGPRINT(MUX_VERY_LOUD,("<== PtStripVlanTagNB: NetBufferList %p, NdisPacket8021qInfo %p, Status %8x\n",NetBufferList, NdisPacket8021qInfo, Status));
     return Status;
 }
 
-NDIS_STATUS 
+NDIS_STATUS
 PtRestoreReceiveNBL(
     IN PNET_BUFFER_LIST         NetBufferList
     )
@@ -3288,7 +3288,7 @@ Return Value:
 
     do
     {
-        ReceiveNblEntry = (PRECV_NBL_ENTRY) NET_BUFFER_LIST_CONTEXT_DATA_START(NetBufferList);        
+        ReceiveNblEntry = (PRECV_NBL_ENTRY) NET_BUFFER_LIST_CONTEXT_DATA_START(NetBufferList);
 
         //
         // Check ifthe NBL was modified
@@ -3297,7 +3297,7 @@ Return Value:
         {
             break;
         }
-    
+
         //
         // Retreat the net buffer list
         //
@@ -3310,10 +3310,10 @@ Return Value:
         {
             break;
         }
-        
+
         //
         // Find the start address of the frame
-        // 
+        //
         Storage=NULL;
         pFrame = NdisGetDataBuffer(NET_BUFFER_LIST_FIRST_NB(NetBufferList),
                                    2 * ETH_LENGTH_OF_ADDRESS + VLAN_TAG_HEADER_SIZE,
@@ -3325,7 +3325,7 @@ Return Value:
         {
             ASSERT(0);
             Status = NDIS_STATUS_INVALID_PACKET;
-            break;            
+            break;
         }
 
         //
@@ -3333,13 +3333,13 @@ Return Value:
         // original state
         //
         Tpid = TPID;
-        
+
         NdisMoveMemory(pFrame, pFrame + VLAN_TAG_HEADER_SIZE, (2 * ETH_LENGTH_OF_ADDRESS));
-        
+
         NdisMoveMemory(pFrame + (2 * ETH_LENGTH_OF_ADDRESS), &Tpid, 2);
-        
+
         NdisMoveMemory(pFrame + (2 * ETH_LENGTH_OF_ADDRESS) + sizeof(Tpid), &ReceiveNblEntry->TagHeader, 2);
-        
+
         NET_BUFFER_LIST_INFO(NetBufferList, Ieee8021QNetBufferListInfo) = 0;
     }
     while (FALSE);

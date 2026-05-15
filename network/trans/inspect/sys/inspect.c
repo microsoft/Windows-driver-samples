@@ -5,15 +5,15 @@ Copyright (c) Microsoft Corporation. All rights reserved
 Abstract:
 
    This file implements the classifyFn callout functions for the ALE connect,
-   recv-accept, and transport callouts. In addition the system worker thread 
-   that performs the actual packet inspection is also implemented here along 
+   recv-accept, and transport callouts. In addition the system worker thread
+   that performs the actual packet inspection is also implemented here along
    with the eventing mechanisms shared between the classify function and the
    worker thread.
 
-   connect/Packet inspection is done out-of-band by a system worker thread 
-   using the reference-drop-clone-reinject as well as ALE pend/complete 
-   mechanism. Therefore the sample can serve as a base in scenarios where 
-   filtering decision cannot be made within the classifyFn() callout and 
+   connect/Packet inspection is done out-of-band by a system worker thread
+   using the reference-drop-clone-reinject as well as ALE pend/complete
+   mechanism. Therefore the sample can serve as a base in scenarios where
+   filtering decision cannot be made within the classifyFn() callout and
    instead must be made, for example, by an user-mode application.
 
 Environment:
@@ -71,9 +71,9 @@ TLInspectALEConnectClassify(
    is not set), it is queued to the connection list for inspection by the
    worker thread. For re-auth, we first check if it is triggered by an ealier
    FwpsCompleteOperation call by looking for an pended connect that has been
-   inspected. If found, we remove it from the connect list and return the 
-   inspection result; otherwise we can conclude that the re-auth is triggered 
-   by policy change so we queue it to the packet queue to be process by the 
+   inspected. If found, we remove it from the connect list and return the
+   inspection result; otherwise we can conclude that the re-auth is triggered
+   by policy change so we queue it to the packet queue to be process by the
    worker thread like any other regular packets.
 
 -- */
@@ -134,7 +134,7 @@ TLInspectALEConnectClassify(
    if (!IsAleReauthorize(inFixedValues))
    {
       //
-      // If the classify is the initial authorization for a connection, we 
+      // If the classify is the initial authorization for a connection, we
       // queue it to the pended connection list and notify the worker thread
       // for out-of-band processing.
       //
@@ -154,7 +154,7 @@ TLInspectALEConnectClassify(
          goto Exit;
       }
 
-      NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(inMetaValues, 
+      NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(inMetaValues,
                                             FWPS_METADATA_FIELD_COMPLETION_HANDLE));
 
       //
@@ -181,7 +181,7 @@ TLInspectALEConnectClassify(
          &packetQueueLockHandle
          );
 
-      signalWorkerThread = IsListEmpty(&gConnList) && 
+      signalWorkerThread = IsListEmpty(&gConnList) &&
                            IsListEmpty(&gPacketQueue);
 
       InsertTailList(&gConnList, &pendedConnect->listEntry);
@@ -197,8 +197,8 @@ TLInspectALEConnectClassify(
       if (signalWorkerThread)
       {
          KeSetEvent(
-            &gWorkerEvent, 
-            0, 
+            &gWorkerEvent,
+            0,
             FALSE
             );
       }
@@ -207,18 +207,18 @@ TLInspectALEConnectClassify(
    {
       FWP_DIRECTION packetDirection;
       //
-      // The classify is the re-authorization for an existing connection, it 
+      // The classify is the re-authorization for an existing connection, it
       // could have been triggered for one of the three cases --
       //
       //    1) The re-auth is triggered by a FwpsCompleteOperation call to
-      //       complete a ALE_AUTH_CONNECT classify pended earlier. 
+      //       complete a ALE_AUTH_CONNECT classify pended earlier.
       //    2) The re-auth is triggered by an outbound packet sent immediately
       //       after a policy change at ALE_AUTH_CONNECT layer.
-      //    3) The re-auth is triggered by an inbound packet received 
+      //    3) The re-auth is triggered by an inbound packet received
       //       immediately after a policy change at ALE_AUTH_CONNECT layer.
       //
 
-      NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(inMetaValues, 
+      NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(inMetaValues,
                                             FWPS_METADATA_FIELD_PACKET_DIRECTION));
       packetDirection = inMetaValues->packetDirection;
 
@@ -261,16 +261,16 @@ TLInspectALEConnectClassify(
 
                NT_ASSERT((pendedConnect->authConnectDecision == FWP_ACTION_PERMIT) ||
                       (pendedConnect->authConnectDecision == FWP_ACTION_BLOCK));
-               
+
                classifyOut->actionType = pendedConnect->authConnectDecision;
-               if (classifyOut->actionType == FWP_ACTION_BLOCK || 
+               if (classifyOut->actionType == FWP_ACTION_BLOCK ||
                      filter->flags & FWPS_FILTER_FLAG_CLEAR_ACTION_RIGHT)
                {
                   classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
                }
 
                RemoveEntryList(&pendedConnect->listEntry);
-               
+
                if (!gDriverUnloading &&
                    (pendedConnect->netBufferList != NULL) &&
                    (pendedConnect->authConnectDecision == FWP_ACTION_PERMIT))
@@ -295,12 +295,12 @@ TLInspectALEConnectClassify(
                   pendedConnect = NULL; // ownership transferred
 
                   KeReleaseInStackQueuedSpinLock(&packetQueueLockHandle);
-                  
+
                   if (signalWorkerThread)
                   {
                      KeSetEvent(
-                        &gWorkerEvent, 
-                        0, 
+                        &gWorkerEvent,
+                        0,
                         FALSE
                         );
                   }
@@ -321,7 +321,7 @@ TLInspectALEConnectClassify(
 
       //
       // If we reach here it means this is a policy change triggered re-auth
-      // for an pre-existing connection. For such a packet (inbound or 
+      // for an pre-existing connection. For such a packet (inbound or
       // outbound) we queue it to the packet queue and inspect it just like
       // other regular data packets from TRANSPORT layers.
       //
@@ -390,8 +390,8 @@ TLInspectALEConnectClassify(
       if (signalWorkerThread)
       {
          KeSetEvent(
-            &gWorkerEvent, 
-            0, 
+            &gWorkerEvent,
+            0,
             FALSE
             );
       }
@@ -443,7 +443,7 @@ TLInspectALERecvAcceptClassify(
    This is the classifyFn function for the ALE Recv-Accept (v4 and v6) callout.
    For an initial classify (where the FWP_CONDITION_FLAG_IS_REAUTHORIZE flag
    is not set), it is queued to the connection list for inspection by the
-   worker thread. For re-auth, it is queued to the packet queue to be process 
+   worker thread. For re-auth, it is queued to the packet queue to be process
    by the worker thread like any other regular packets.
 
 -- */
@@ -503,7 +503,7 @@ TLInspectALERecvAcceptClassify(
    if (!IsAleReauthorize(inFixedValues))
    {
       //
-      // If the classify is the initial authorization for a connection, we 
+      // If the classify is the initial authorization for a connection, we
       // queue it to the pended connection list and notify the worker thread
       // for out-of-band processing.
       //
@@ -523,7 +523,7 @@ TLInspectALERecvAcceptClassify(
          goto Exit;
       }
 
-      NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(inMetaValues, 
+      NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(inMetaValues,
                                             FWPS_METADATA_FIELD_COMPLETION_HANDLE));
 
       //
@@ -550,7 +550,7 @@ TLInspectALERecvAcceptClassify(
          &packetQueueLockHandle
          );
 
-      signalWorkerThread = IsListEmpty(&gConnList) && 
+      signalWorkerThread = IsListEmpty(&gConnList) &&
                            IsListEmpty(&gPacketQueue);
 
       InsertTailList(&gConnList, &pendedRecvAccept->listEntry);
@@ -566,8 +566,8 @@ TLInspectALERecvAcceptClassify(
       if (signalWorkerThread)
       {
          KeSetEvent(
-            &gWorkerEvent, 
-            0, 
+            &gWorkerEvent,
+            0,
             FALSE
             );
       }
@@ -577,16 +577,16 @@ TLInspectALERecvAcceptClassify(
    {
       FWP_DIRECTION packetDirection;
       //
-      // The classify is the re-authorization for a existing connection, it 
+      // The classify is the re-authorization for a existing connection, it
       // could have been triggered for one of the two cases --
       //
       //    1) The re-auth is triggered by an outbound packet sent immediately
       //       after a policy change at ALE_AUTH_RECV_ACCEPT layer.
-      //    2) The re-auth is triggered by an inbound packet received 
+      //    2) The re-auth is triggered by an inbound packet received
       //       immediately after a policy change at ALE_AUTH_RECV_ACCEPT layer.
       //
 
-      NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(inMetaValues, 
+      NT_ASSERT(FWPS_IS_METADATA_FIELD_PRESENT(inMetaValues,
                                             FWPS_METADATA_FIELD_PACKET_DIRECTION));
       packetDirection = inMetaValues->packetDirection;
 
@@ -652,8 +652,8 @@ TLInspectALERecvAcceptClassify(
       if (signalWorkerThread)
       {
          KeSetEvent(
-            &gWorkerEvent, 
-            0, 
+            &gWorkerEvent,
+            0,
             FALSE
             );
       }
@@ -702,7 +702,7 @@ TLInspectTransportClassify(
 /* ++
 
    This is the classifyFn function for the Transport (v4 and v6) callout.
-   packets (inbound or outbound) are ueued to the packet queue to be processed 
+   packets (inbound or outbound) are ueued to the packet queue to be processed
    by the worker thread.
 
 -- */
@@ -758,7 +758,7 @@ TLInspectTransportClassify(
 
    addressFamily = GetAddressFamilyForLayer(inFixedValues->layerId);
 
-   packetDirection = 
+   packetDirection =
       GetPacketDirectionForLayer(inFixedValues->layerId);
 
    if (packetDirection == FWP_DIRECTION_INBOUND)
@@ -766,8 +766,8 @@ TLInspectTransportClassify(
       if (IsAleClassifyRequired(inFixedValues, inMetaValues))
       {
          //
-         // Inbound transport packets that are destined to ALE Recv-Accept 
-         // layers, for initial authorization or reauth, should be inspected 
+         // Inbound transport packets that are destined to ALE Recv-Accept
+         // layers, for initial authorization or reauth, should be inspected
          // at the ALE layer. We permit it from Tranport here.
          //
          classifyOut->actionType = FWP_ACTION_PERMIT;
@@ -861,8 +861,8 @@ TLInspectTransportClassify(
    if (signalWorkerThread)
    {
       KeSetEvent(
-         &gWorkerEvent, 
-         0, 
+         &gWorkerEvent,
+         0,
          FALSE
          );
    }
@@ -927,7 +927,7 @@ void TLInspectInjectComplete(
 {
    TL_INSPECT_PENDED_PACKET* packet = context;
 
-   UNREFERENCED_PARAMETER(dispatchLevel);   
+   UNREFERENCED_PARAMETER(dispatchLevel);
 
    FwpsFreeCloneNetBufferList(netBufferList, 0);
 
@@ -988,7 +988,7 @@ TLInspectCloneReinjectOutbound(
       goto Exit;
    }
 
-   clonedNetBufferList = NULL; // ownership transferred to the 
+   clonedNetBufferList = NULL; // ownership transferred to the
                                // completion function.
 
 Exit:
@@ -1007,8 +1007,8 @@ TLInspectCloneReinjectInbound(
    )
 /* ++
 
-   This function clones the inbound net buffer list and, if needed, 
-   rebuild the IP header to remove the IpSec headers and receive-injects 
+   This function clones the inbound net buffer list and, if needed,
+   rebuild the IP header to remove the IpSec headers and receive-injects
    the clone back to the tcpip stack.
 
 -- */
@@ -1021,15 +1021,15 @@ TLInspectCloneReinjectInbound(
    NDIS_STATUS ndisStatus;
 
    //
-   // For inbound net buffer list, we can assume it contains only one 
+   // For inbound net buffer list, we can assume it contains only one
    // net buffer.
    //
    netBuffer = NET_BUFFER_LIST_FIRST_NB(packet->netBufferList);
-   
+
    nblOffset = NET_BUFFER_DATA_OFFSET(netBuffer);
 
    //
-   // The TCP/IP stack could have retreated the net buffer list by the 
+   // The TCP/IP stack could have retreated the net buffer list by the
    // transportHeaderSize amount; detect the condition here to avoid
    // retreating twice.
    //
@@ -1081,19 +1081,19 @@ TLInspectCloneReinjectInbound(
    if (packet->ipSecProtected)
    {
       //
-      // When an IpSec protected packet is indicated to AUTH_RECV_ACCEPT or 
+      // When an IpSec protected packet is indicated to AUTH_RECV_ACCEPT or
       // INBOUND_TRANSPORT layers, for performance reasons the tcpip stack
-      // does not remove the AH/ESP header from the packet. And such 
+      // does not remove the AH/ESP header from the packet. And such
       // packets cannot be recv-injected back to the stack w/o removing the
       // AH/ESP header. Therefore before re-injection we need to "re-build"
       // the cloned packet.
-      // 
+      //
       status = FwpsConstructIpHeaderForTransportPacket(
                   clonedNetBufferList,
                   packet->ipHeaderSize,
                   packet->addressFamily,
-                  (UINT8*)&packet->remoteAddr, 
-                  (UINT8*)&packet->localAddr,  
+                  (UINT8*)&packet->remoteAddr,
+                  (UINT8*)&packet->localAddr,
                   packet->protocol,
                   0,
                   NULL,
@@ -1141,7 +1141,7 @@ TLInspectCloneReinjectInbound(
       goto Exit;
    }
 
-   clonedNetBufferList = NULL; // ownership transferred to the 
+   clonedNetBufferList = NULL; // ownership transferred to the
                                // completion function.
 
 Exit:
@@ -1173,7 +1173,7 @@ TlInspectCompletePendedConnection(
    {
       HANDLE completionContext = pendedConnectLocal->completionContext;
 
-      pendedConnectLocal->authConnectDecision = 
+      pendedConnectLocal->authConnectDecision =
          permitTraffic ? FWP_ACTION_PERMIT : FWP_ACTION_BLOCK;
 
       //
@@ -1214,11 +1214,11 @@ TLInspectWorker(
    )
 /* ++
 
-   This worker thread waits for the connect and packet queue event when the 
-   queues are empty; and it will be woken up when there are connects/packets 
-   queued needing to be inspected. Once awaking, It will run in a loop to 
-   complete the pended ALE classifies and/or clone-reinject packets back 
-   until both queues are exhausted (and it will go to sleep waiting for more 
+   This worker thread waits for the connect and packet queue event when the
+   queues are empty; and it will be woken up when there are connects/packets
+   queued needing to be inspected. Once awaking, It will run in a loop to
+   complete the pended ALE classifies and/or clone-reinject packets back
+   until both queues are exhausted (and it will go to sleep waiting for more
    work).
 
    The worker thread will end once it detected the driver is unloading.
@@ -1241,9 +1241,9 @@ TLInspectWorker(
    {
       KeWaitForSingleObject(
          &gWorkerEvent,
-         Executive, 
-         KernelMode, 
-         FALSE, 
+         Executive,
+         KernelMode,
+         FALSE,
          NULL
          );
 
@@ -1267,7 +1267,7 @@ TLInspectWorker(
          // Skip pended connections in the list, for which the auth decision is already taken.
          // They should not be for inbound connections.
          //
-         _Analysis_assume_(gConnList.Flink != NULL);         
+         _Analysis_assume_(gConnList.Flink != NULL);
          for (listEntry = gConnList.Flink;
               listEntry != &gConnList;
               listEntry = listEntry->Flink)
@@ -1280,7 +1280,7 @@ TLInspectWorker(
 
             NT_ASSERT((packet->direction != FWP_DIRECTION_INBOUND) ||
                       (packet->authConnectDecision == 0));
-        
+
             if (packet->authConnectDecision == 0)
             {
                found = TRUE;
@@ -1298,8 +1298,8 @@ TLInspectWorker(
          }
 
          //
-         // Completing a pended recv_accept auth does not trigger reauth. 
-         // So the pended entries for AUTH_RECV_ACCEPT are removed here. 
+         // Completing a pended recv_accept auth does not trigger reauth.
+         // So the pended entries for AUTH_RECV_ACCEPT are removed here.
          //
          if (packet != NULL && packet->direction == FWP_DIRECTION_INBOUND)
          {
@@ -1438,7 +1438,7 @@ TLInspectWorker(
       }
 
       KeReleaseInStackQueuedSpinLock(&packetQueueLockHandle);
-      
+
       if (packet != NULL)
       {
          FreePendedPacket(packet);

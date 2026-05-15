@@ -5,15 +5,15 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	HalSdio.h
-	
+
 Abstract:
 	Prototype of HalsdioXXX() and related data structure.
-	    
+
 Major Change History:
 	When       Who               What
 	---------- ---------------   -------------------------------
-	2010-12-12 Roger            Create.	
-	
+	2010-12-12 Roger            Create.
+
 --*/
 
 #define		SUPPORT_HW_RADIO_DETECT(_Adapter)	TRUE
@@ -26,16 +26,16 @@ Major Change History:
 #define MAX_NUM_SDIO_TX_QUEUE			3
 
 //
-// <Roger_Notes> The number of OutPipe request must larger than or equal to the number of 
+// <Roger_Notes> The number of OutPipe request must larger than or equal to the number of
 // pending request for each pipe. 2009. 01. 12.
 //
 #define MAX_NUM_REQUEST_PER_OUT_PIPE	8
-#define MAX_NUM_REQUEST_PER_IN_PIPE		128	
+#define MAX_NUM_REQUEST_PER_IN_PIPE		128
 
 #define MAX_NUM_REQUEST_PER_TX_QUEUE	3
-#define MAX_NUM_REQUEST_PER_RX_QUEUE	1	
+#define MAX_NUM_REQUEST_PER_RX_QUEUE	1
 
-#define HAL_SDIO_COMPLETED_OK				BIT1	
+#define HAL_SDIO_COMPLETED_OK				BIT1
 #define HAL_SDIO_COMPLETED_ERROR			BIT2
 #define HAL_SDIO_COMPLETED_CANCELED		BIT3
 
@@ -66,7 +66,7 @@ Major Change History:
 			((__pAdapter)->bDriverStopped || \
 			 (__pAdapter)->bSurpriseRemoved || \
 			 RT_IS_FUNC_DISABLED((__pAdapter), DF_RX_BIT))
-			 
+
 #define RT_GetInterfaceSelection(_Adapter) 	((u1Byte)GET_HAL_DATA(_Adapter)->InterfaceSel)
 
 #define IS_NEED_OFFSET_ON_AMPDU(_Adapter)	FALSE
@@ -91,12 +91,12 @@ typedef struct _SDIO_OUT_RESOURCE
 	//
 	RT_LIST_ENTRY		TxFreeContextList;	// An link list of SDIO_OUT_CONTEXT. Note that, every out pipe shall get and return SDIO_OUT_CONTEXT from and to here.
 	u4Byte				TxFreeContextCount;	// Number of conext available to use.
-	s4Byte				TxContextCount;		// Total number of SDIO_OUT_CONTEXT allocated. 
+	s4Byte				TxContextCount;		// Total number of SDIO_OUT_CONTEXT allocated.
 } SDIO_OUT_RESOURCE, *PSDIO_OUT_RESOURCE;
 
-typedef struct _SDIO_OUT_CONTEXT 
+typedef struct _SDIO_OUT_CONTEXT
 {
-	RT_LIST_ENTRY		List;			
+	RT_LIST_ENTRY		List;
 
 	//
 	// TODO: Replace pTcb as HalReserved[0].
@@ -111,12 +111,12 @@ typedef struct _SDIO_OUT_CONTEXT
 	u1Byte				AggrNum;		// SDIO Tx aggregation number.
 
 	//
-	// RT_PLATFORM reserved.  
-	// For example, 
+	// RT_PLATFORM reserved.
+	// For example,
 	// - on Windows NDIS5/WDM: [0]: PADAPTER, [1]: NULL, [2]: NULL.
 	// - On Windows NDIS6/WDF: [0]: PADAPTER, [1]: NULL, [2]: WDFREQUEST.
 	//
-	PVOID				PlatformReserved[4];	
+	PVOID				PlatformReserved[4];
 } SDIO_OUT_CONTEXT, *PSDIO_OUT_CONTEXT;
 
 
@@ -136,22 +136,22 @@ typedef struct _SDIO_IN_RESOURCE
 	//
 	RT_LIST_ENTRY		FreeContextList;	// An link list of USB_IN_CONTEXT. Note that, every out pipe shall get and return USB_IN_CONTEXT from and to here.
 	u4Byte				FreeContextCount;	// Current number of conext available to use.
-	s4Byte				ContextCounAlloc;	// Total number of USB_IN_CONTEXT allocated. 
+	s4Byte				ContextCounAlloc;	// Total number of USB_IN_CONTEXT allocated.
 } SDIO_IN_RESOURCE, *PSDIO_IN_RESOURCE;
 
-typedef struct _SDIO_IN_CONTEXT 
+typedef struct _SDIO_IN_CONTEXT
 {
-	RT_LIST_ENTRY		List;			
+	RT_LIST_ENTRY		List;
 
 	pu1Byte				Buffer;			// Pointer to the buffer to IN from USBD.
 	u4Byte				BufferLen;		// Length of Buffer allowed USBD to use.
-	u4Byte				BufLenUsed;		// Length of Buffer used for the bulk IN transfer. 
+	u4Byte				BufLenUsed;		// Length of Buffer used for the bulk IN transfer.
 	BOOLEAN				bRxPending;		// TRUE if this context is pending in USBD.
 	u1Byte				RxPipeIndex;	// An index to the IN pipe.
 
 	//
-	// RT_PLATFORM reserved.  
-	// For example, 
+	// RT_PLATFORM reserved.
+	// For example,
 	// - on Windows NDIS5/WDM: [0]:PADAPTER, [1]: NULL, [2]: NULL.
 	// - On Windows NDIS6/WDF:
 	//
@@ -163,7 +163,7 @@ typedef struct _SDIO_IN_CONTEXT
 	PVOID				HalReserved[1];
 
 #if VISTA_USB_RX_REVISE
-	u4Byte				RetStatus;				
+	u4Byte				RetStatus;
 #endif
 } SDIO_IN_CONTEXT, *PSDIO_IN_CONTEXT;
 
@@ -220,14 +220,14 @@ typedef struct _HAL_DATA_SDIO
 	PlatformMutex			mxCCKControl;
 	PlatformMutex			mxChnlBwControl;
 
-	// add for 92D Phy mode/mac/Band mode 
+	// add for 92D Phy mode/mac/Band mode
 	//MACPHY_MODE_8192D		MacPhyMode92D;
 	//u1Byte			BandType92D;	//0: 2.4G,        1:  5G
 	BAND_TYPE			CurrentBandType;	//0:2.4G, 1:5G
-	BAND_TYPE			LastBandType;	//0:2.4G, 1:5G		
+	BAND_TYPE			LastBandType;	//0:2.4G, 1:5G
 	BAND_TYPE			BandSet;
 	BOOLEAN				bIsVS;
-	
+
 	//
 	// Add For EEPROM Efuse switch and  Efuse Shadow map Setting
 	//
@@ -291,10 +291,10 @@ typedef struct _HAL_DATA_SDIO
 	u2Byte				EEPROMSVID;
 	u2Byte				EEPROMSDID;
 	u1Byte				EEPROMCustomerID;
-	u1Byte				EEPROMSubCustomerID;	
+	u1Byte				EEPROMSubCustomerID;
 	u1Byte				EEPROMRegulatory;
-	u1Byte				EEPROMThermalMeter;			// ThermalMeter value.	
-	u1Byte				EEPROMBluetoothCoexist;	
+	u1Byte				EEPROMThermalMeter;			// ThermalMeter value.
+	u1Byte				EEPROMBluetoothCoexist;
 	u1Byte				EEPROMBluetoothType;
 	u1Byte				EEPROMBluetoothAntNum;
 	u1Byte				EEPROMBluetoothSingleAntPath;
@@ -303,7 +303,7 @@ typedef struct _HAL_DATA_SDIO
 	u1Byte				USBDummyOffset;
 	u1Byte				USBALLDummyLength;
 	u1Byte				EFUSECloudKey_EX[EEPROM_CLOUD_KEY_LENGTH_EX];
-	
+
 	//
 	// SDIO ISR Related
 	//
@@ -326,9 +326,9 @@ typedef struct _HAL_DATA_SDIO
 	u1Byte				ThermalValue;
 	u1Byte				ThermalValue_LCK;
 	u1Byte				ThermalValue_IQK;
-	u1Byte				ThermalValue_DPK;		
+	u1Byte				ThermalValue_DPK;
 	u1Byte				ThermalValue_AVG[AVG_THERMAL_NUM];
-	u1Byte				ThermalValue_AVG_index;		
+	u1Byte				ThermalValue_AVG_index;
 	u1Byte				ThermalValue_RxGain;
 	u1Byte				ThermalValue_Crystal;
 	u1Byte				ThermalValue_DPKstore;
@@ -336,20 +336,20 @@ typedef struct _HAL_DATA_SDIO
 	BOOLEAN				TxPowerTrackingInProgress;
 
 	//s2Byte				index_mapping_DPK_current[4][index_mapping_DPK_NUM];
-	
+
 	BOOLEAN				bRfPiEnable;
-	BOOLEAN				bReloadtxpowerindex;	
-	BOOLEAN				bDoneTxpower;		
-	u1Byte				CrystalCap;						
+	BOOLEAN				bReloadtxpowerindex;
+	BOOLEAN				bDoneTxpower;
+	u1Byte				CrystalCap;
 	u1Byte				CrystalFreq;
 	u1Byte				CrystalSrc;
-	
+
 	s1Byte				OFDM_index_HP[2];
-	s1Byte				CCK_index_HP;		
+	s1Byte				CCK_index_HP;
 	u1Byte				ThermalValue_HP[HP_THERMAL_NUM];
 	u1Byte				ThermalValue_HP_index;
 
-	BOOLEAN				bAPKdone;	
+	BOOLEAN				bAPKdone;
 	BOOLEAN				bDPKdone[2];
 
 	//for TxPwrTracking
@@ -357,26 +357,26 @@ typedef struct _HAL_DATA_SDIO
 	s4Byte 				RegE9C;
 	s4Byte				RegEB4;
 	s4Byte				RegEBC;
-	//for IQK	
+	//for IQK
 	BOOLEAN				bIQKInitialized;
 	BOOLEAN				bAntennaDetected;
 	u4Byte				ADDA_backup[IQK_ADDA_REG_NUM];
 	u4Byte				IQK_MAC_backup[IQK_MAC_REG_NUM];
 	u4Byte				IQK_BB_backup_recover[9];
-	u4Byte				IQK_BB_backup[IQK_BB_REG_NUM];	
+	u4Byte				IQK_BB_backup[IQK_BB_REG_NUM];
 
 	//---------------------------------------------------------------------------------//
 	//3 [2.4G]
 	u1Byte				Index24G_CCK_Base[MAX_RF_PATH][CHANNEL_MAX_NUMBER_2G];
 	u1Byte				Index24G_BW40_Base[MAX_RF_PATH][CHANNEL_MAX_NUMBER_2G];
 	//If only one tx, only BW20 and OFDM are used.
-	s1Byte				CCK_24G_Diff[MAX_RF_PATH][MAX_TX_COUNT];	
+	s1Byte				CCK_24G_Diff[MAX_RF_PATH][MAX_TX_COUNT];
 	s1Byte				OFDM_24G_Diff[MAX_RF_PATH][MAX_TX_COUNT];
 	s1Byte				BW20_24G_Diff[MAX_RF_PATH][MAX_TX_COUNT];
 	s1Byte				BW40_24G_Diff[MAX_RF_PATH][MAX_TX_COUNT];
 	//3 [5G]
 	u1Byte				Index5G_BW40_Base[MAX_RF_PATH][CHANNEL_MAX_NUMBER_5G];
-	u1Byte				Index5G_BW80_Base[MAX_RF_PATH][CHANNEL_MAX_NUMBER_5G_80M];		
+	u1Byte				Index5G_BW80_Base[MAX_RF_PATH][CHANNEL_MAX_NUMBER_5G_80M];
 	s1Byte				OFDM_5G_Diff[MAX_RF_PATH][MAX_TX_COUNT];
 	s1Byte				BW20_5G_Diff[MAX_RF_PATH][MAX_TX_COUNT];
 	s1Byte				BW40_5G_Diff[MAX_RF_PATH][MAX_TX_COUNT];
@@ -384,26 +384,26 @@ typedef struct _HAL_DATA_SDIO
 
 	//
 	// TX power by rate table at most 4RF path.
-	// The register is 
+	// The register is
 	//
-	// VHT TX power by rate off setArray = 
+	// VHT TX power by rate off setArray =
 	// Band:-2G&5G = 0 / 1
 	// RF: at most 4*4 = ABCD=0/1/2/3
-	// CCK=0 OFDM=1/2 HT-MCS 0-15=3/4/56 VHT=7/8/9/10/11			
+	// CCK=0 OFDM=1/2 HT-MCS 0-15=3/4/56 VHT=7/8/9/10/11
 	//
 	u1Byte				TxPwrByRateTable;
 	u1Byte				TxPwrByRateBand;
 	s1Byte				TxPwrByRateOffset[TX_PWR_BY_RATE_NUM_BAND]
 										 [TX_PWR_BY_RATE_NUM_RF]
 										 [TX_PWR_BY_RATE_NUM_RF]
-										 [TX_PWR_BY_RATE_NUM_RATE];	
+										 [TX_PWR_BY_RATE_NUM_RATE];
     //---------------------------------------------------------------------------------//
 
-	
+
 	u1Byte				PowerIndex_backup[6];
 	u1Byte				TxPwrLevelCck[RF_PATH_MAX_92C_88E][CHANNEL_MAX_NUMBER];
 	u1Byte				TxPwrLevelHT40_1S[RF_PATH_MAX_92C_88E][CHANNEL_MAX_NUMBER];		// For HT 40MHZ pwr
-	u1Byte				TxPwrLevelHT40_2S[RF_PATH_MAX_92C_88E][CHANNEL_MAX_NUMBER];		// For HT 40MHZ pwr	
+	u1Byte				TxPwrLevelHT40_2S[RF_PATH_MAX_92C_88E][CHANNEL_MAX_NUMBER];		// For HT 40MHZ pwr
 	s1Byte				TxPwrHt20Diff[RF_PATH_MAX_92C_88E][CHANNEL_MAX_NUMBER];			// HT 20<->40 Pwr diff
 	u1Byte				TxPwrLegacyHtDiff[RF_PATH_MAX_92C_88E][CHANNEL_MAX_NUMBER];		// For HT<->legacy pwr diff
 
@@ -434,11 +434,11 @@ typedef struct _HAL_DATA_SDIO
 
 	// Used for TX power setting shadow map.
 	u1Byte				TxPwrShadow[MAX_RF_PATH][DESC_RATEMAX];
-	
+
 	// For power group
 	u1Byte				PwrGroupHT20[RF_PATH_MAX_92C_88E][CHANNEL_MAX_NUMBER];
 	u1Byte				PwrGroupHT40[RF_PATH_MAX_92C_88E][CHANNEL_MAX_NUMBER];
-	
+
 	u1Byte				LegacyHTTxPowerDiff;			// Legacy to HT rate power diff
 
 	// Read/write are allow for following hardware information variables
@@ -457,7 +457,7 @@ typedef struct _HAL_DATA_SDIO
 	u4Byte					ValidRxPath;					// Valid Antenna path Tx (Used in Normal driver)
 	u1Byte 					CCKRxPath;  //Back CCX Rx Path
 	u1Byte 					CCKTxPath;  //Back CCX Tx Path
-	
+
 	u4Byte				LedControlNum;
 	u4Byte				LedControlMode;
 
@@ -465,7 +465,7 @@ typedef struct _HAL_DATA_SDIO
 	u1Byte				CurrentCckTxPwrIdx;
 	u1Byte				CurrentOfdm24GTxPwrIdx;
 	u1Byte				CurrentBW2024GTxPwrIdx;
-	u1Byte				CurrentBW4024GTxPwrIdx;	
+	u1Byte				CurrentBW4024GTxPwrIdx;
 	u1Byte				OriginalCckTxPwrIdx;
 	u1Byte				OriginalOfdm24GTxPwrIdx;
 
@@ -481,9 +481,9 @@ typedef struct _HAL_DATA_SDIO
 	u4Byte				RegA24;
 	u1Byte				RegC04;
 	u4Byte				RegD04;
-	u4Byte				RegRF3C[2];	//pathA / pathB	
+	u4Byte				RegRF3C[2];	//pathA / pathB
 	u4Byte				RegRF36;
-	
+
 	HAL92C_P2P_PS_OFFLOAD		p2pFwPsOffload;
 
 	//
@@ -538,7 +538,7 @@ typedef struct _HAL_DATA_SDIO
 
         //2 QoS Related variable
 	u1Byte				AcmControl;
-		
+
 	u4Byte				FWChannelSwitchComplete;
 	BOOLEAN				bSwChnlAndSetBWInProgress;
 	u1Byte				CurrentCenterFrequencyIndex1;
@@ -547,7 +547,7 @@ typedef struct _HAL_DATA_SDIO
 	RT_WORK_ITEM			SwChnlAndSetBWModeWorkItem;
 
 	//2 Led Related variable
-	LED_STRATEGY_SDIO	LedStrategy; 
+	LED_STRATEGY_SDIO	LedStrategy;
 	LED_SDIO			SwLed0;
 	LED_SDIO			SwLed1;
 	LED_SDIO			SwLed2;
@@ -578,14 +578,14 @@ typedef struct _HAL_DATA_SDIO
 	u4Byte				ClmDurAcc;
 	u4Byte				NhmAcc[8];
 	u4Byte				NhmDurAcc;
-	
+
 
 	//
 	// Default setting (initialized from registry).
 	//
 	BOOLEAN				bRegUseLed; // 0: disable LED, 1: eanble LED.
 
-	
+
 	//
 	// High Power Mechanism.
 	//
@@ -607,7 +607,7 @@ typedef struct _HAL_DATA_SDIO
 
 	// Interface selection. Added by Annie, 2005-11-18.
 	u1Byte				InterfaceSel;
-	u1Byte				PackageType;	
+	u1Byte				PackageType;
 	u1Byte				RFEType;
 	BOOLEAN				bIsMPChip;
 
@@ -617,31 +617,31 @@ typedef struct _HAL_DATA_SDIO
 	BOOLEAN				bSendingBeacon; // TRUE if we are sending beacon to host control and not yet completed.
 
         // Sw Antenna Diversity
-	//20070103 porting by David 
+	//20070103 porting by David
 	BOOLEAN				bRegSwAntennaDiversityMechanism; // TRUE if S/W antenna diversity mechanism is allowed, see also EEPROMSwAntennaDiversity and bSwAntennaDiverity.
 	BOOLEAN				bAntennaDiversityTimerIssued;
 	RT_WORK_ITEM	        	SwAntennaWorkItem;
 	u1Byte				CurrAntennaIndex;			// Index to current Antenna (both Tx and Rx).
 	u1Byte				AdTickCount;				// Times of SwAntennaDiversityTimer happened.
-	u1Byte				AdCheckPeriod;				// # of period SwAntennaDiversityTimer to check Rx signal strength for SW Antenna Diversity. 
-	u1Byte				AdMinCheckPeriod;			// Min value of AdCheckPeriod. 
-	u1Byte				AdMaxCheckPeriod;			// Max value of AdCheckPeriod.  
+	u1Byte				AdCheckPeriod;				// # of period SwAntennaDiversityTimer to check Rx signal strength for SW Antenna Diversity.
+	u1Byte				AdMinCheckPeriod;			// Min value of AdCheckPeriod.
+	u1Byte				AdMaxCheckPeriod;			// Max value of AdCheckPeriod.
 	BOOLEAN				bSwAntennaDiverity;			// TRUE if we want to enable SW Antenna Diversity mechanism.
 	RT_TIMER			SwAntennaDiversityTimer;	// Timer object for SW Antenna Diversity mechanism.
 	u4Byte				AdRxOkCnt;					// ROK packet count from current BSS in ANTENNA_DIVERSITY_TIMER_PERIOD.
-	s4Byte				AdRxSignalStrength;			// Rx signal strength for Antenna Diversity, which had been smoothing, its valid range is [0,100].	
+	s4Byte				AdRxSignalStrength;			// Rx signal strength for Antenna Diversity, which had been smoothing, its valid range is [0,100].
 	s4Byte				AdRxSsThreshold;			// Signal strength threshold to switch antenna.
 	s4Byte				AdMaxRxSsThreshold;			// Max value of AdRxSsThreshold.
 	BOOLEAN				bAdSwitchedChecking;		// TRUE if we shall shall check Rx signal strength for last time switching antenna.
 	s4Byte				AdRxSsBeforeSwitched;		// Rx signal strength before we swithed antenna.
 	//
 	//1 The following was added for 8192sUsb
-	
-	/* Firmware related */	
+
+	/* Firmware related */
 	PRT_FIRMWARE			pFirmware;
 	u1Byte				RegFWOffload;
 	u4Byte					RsvdBitMap;
-	
+
 	// Beamforming RF path number
 	u1Byte					RegBeamformerCapRfNum;
 	u1Byte					RegBeamformeeCapRfNum;
@@ -654,18 +654,18 @@ typedef struct _HAL_DATA_SDIO
 	/*Last RxDesc TSF value*/
 	u4Byte				LastRxDescTSFHigh;
 	u4Byte				LastRxDescTSFLow;
-	
+
 
 	//
 	// 8190 40MHz mode
 	//
 	u1Byte				nCur40MhzPrimeSC;	// Control channel sub-carrier
 	u1Byte				nCur80MhzPrimeSC;   //used for primary 40MHz of 80MHz mode
-	
+
 	/* Rx Descriptor Debug message for aggregation related histogram */
 	u1Byte				nRxAMPDU_AggrNum;
 	u2Byte				nRxAMPDU_Size;
-		
+
 
 	//
 	// Joseph test for Silent Reset
@@ -699,19 +699,19 @@ typedef struct _HAL_DATA_SDIO
 	s4Byte				nLinesBufRadioB;
 	s4Byte				nLinesBufRadioC;
 	s4Byte				nLinesBufRadioD;
-	
+
 	BOOLEAN				bCCKinCH14;
 	s1Byte				CCK_index;
 	s1Byte				OFDM_index[2];
 	u4Byte				TXPowerTrackingCallbackCnt;		//debug only
 
-	
+
 	//cosa add for 2T4R/1T2R software control 10/24/2007
 	u1Byte				RF_Type;// 1 means 2T4R, 0 means 1T2R
 
 		// For EDCA Turbo mode
 	BOOLEAN				bIsAnyNonBEPkts;
-	
+
         u8Byte				SystemStartTime;
         u8Byte				SystemCurrTime;
 
@@ -740,8 +740,8 @@ typedef struct _HAL_DATA_SDIO
 	u1Byte				AntDivCfg;
 	u1Byte				AntDetection;
 	u1Byte				PathDivCfg;
-        u1Byte                          TRxAntDivType;       // RF type, Read from 88E EFUSE 0xC9 
-	u1Byte					ReverseDPDT;		
+        u1Byte                          TRxAntDivType;       // RF type, Read from 88E EFUSE 0xC9
+	u1Byte					ReverseDPDT;
 	u4Byte				OFDM_Pkt_Cnt;
 	u4Byte				CCK_Pkt_Cnt;
 
@@ -753,24 +753,24 @@ typedef struct _HAL_DATA_SDIO
  	u1Byte				RSSI_BT;
 	RT_TIMER			PSDTriggerTimer;
     //---------------2011.08.24 ------------------
-	
-	// 2008/01/10 MH HW Trun on/off RF according to GPIO1 
+
+	// 2008/01/10 MH HW Trun on/off RF according to GPIO1
 	RT_WORK_ITEM			GPIOChangeRFWorkItem;
 	// TRUE if RF is turned to OFF by HW (e.g. GPIO1), FALSE otherwise.
-	BOOLEAN				bHwRadioOff; 
+	BOOLEAN				bHwRadioOff;
 
 	// 2010/11/25 Check PBC GPIO
 	RT_WORK_ITEM			GPIOCheckPBCWorkItem;
-	
+
 	// Ratr table used bitmap
 	u1Byte				RATRTableBitmap;
 
-	BOOLEAN				bInMonitorMode; // Indicate if underlying h/w is configured in monitor mode. 
-	
+	BOOLEAN				bInMonitorMode; // Indicate if underlying h/w is configured in monitor mode.
+
 	//Add by Jacken Tx Power Control for Near/Far Range 2008/03/06
 	u1Byte				DynamicTxHighPowerLvl;  //Tx High power level
 	u1Byte				LastDTPLvl;
-	
+
 	SCAN_OPERATION_BACKUP_OPT	ScanOperationBackupOtpType;
 	RT_WORK_ITEM			ScanOperationBackupWorkItem;
 
@@ -788,7 +788,7 @@ typedef struct _HAL_DATA_SDIO
 	u1Byte				TxQueueToOutPipeMap[MAX_TX_QUEUE];
 
 	u1Byte				DMFlag; // Indicate if each dynamic mechanism's status.
- 
+
 	u1Byte				PreRpwmVal; // by tynli. For recording the previous RPWM value.
 	u1Byte				LastHCPWM1Val;
 
@@ -815,7 +815,7 @@ typedef struct _HAL_DATA_SDIO
 
 	u2Byte				HwRxPageSize;				// Hardware setting
 	u4Byte				MaxRxAggBlock;
-	
+
 	RX_AGG_MODE		RxAggMode;
 	u1Byte				RegRxAggBlockCount;
 	u1Byte				RxAggBlockCount;			// USB Block count. Block size is 512-byte in hight speed and 64-byte in full speed
@@ -837,7 +837,7 @@ typedef struct _HAL_DATA_SDIO
 	u4Byte				lastFwCmdElementId;
 
 	RT_WORK_ITEM		FillH2CCmdWorkItem;
-	BOOLEAN				bH2CSetInProgress;	
+	BOOLEAN				bH2CSetInProgress;
 	RT_TIMER				FillH2CCmdTimer;
 	BOOLEAN				H2CStopInsertQueue; //by tynli. 2010.10.07.
 #if(FW_QUEME_MECHANISM_NEW != 1)
@@ -891,11 +891,11 @@ typedef struct _HAL_DATA_SDIO
 
 	// 2010/08/09 MH Add CU power down mode.
 	BOOLEAN				pwrdown;
-	BOOLEAN				bRfOnOffInt;// HW RF on/off interrupt 
+	BOOLEAN				bRfOnOffInt;// HW RF on/off interrupt
 
 	// Add Tx Feedback for SDIO, by Hana, 2015.02.10
 	// TxFeedback Context Place Holder for Private Data: ---------------------------
-	//	+ Only access this private data inside the module by TxFeedbackGetContext()	
+	//	+ Only access this private data inside the module by TxFeedbackGetContext()
 	PRIVATE_DATA_ZONE 	TxFeedback[TX_FEEDBACK_SIZE_OF_CONTEXT];
 	// ----------------------------------------------------------------------
 
@@ -914,10 +914,10 @@ typedef struct _HAL_DATA_SDIO
 	u1Byte				AMPDUBurstNum;
 	BOOLEAN				bAutoAMPDUBurstMode;
 	u2Byte				AutoAMPDUBurstModeThreshold;
-	
+
 	u2Byte				TxHignTPThreshold;
 	u2Byte				RxHignTPThreshold;
-	
+
 	u1Byte				SwBeaconType;	// The Beacon type defined by BACON_SEND_XX.
 
 	BOOLEAN				bMACFuncEnable;
@@ -926,16 +926,16 @@ typedef struct _HAL_DATA_SDIO
 
 	RT_WORK_ITEM			IQKTriggerWorkItem;
 	RT_WORK_ITEM			LCKTriggerWorkItem;
-	RT_WORK_ITEM			DPKTriggerWorkItem;	
-	
+	RT_WORK_ITEM			DPKTriggerWorkItem;
+
 	s4Byte				MinUndecoratedPWDBForDM;
 	s4Byte				LastMinUndecoratedPWDBForDM;
-	
+
 	s1Byte				BufOfLinesAGC2_4G[MAX_LINES_HWCONFIG_TXT][MAX_BYTES_LINE_HWCONFIG_TXT];
 	s1Byte				BufOfLinesAGC5G[MAX_LINES_HWCONFIG_TXT][MAX_BYTES_LINE_HWCONFIG_TXT];
 
 	s4Byte				nLinesReadAGC2_4G;
-	s4Byte				nLinesReadAGC5G;	
+	s4Byte				nLinesReadAGC5G;
 
 //To reduce stack in phy_SwChnlStepByStep, 20110719 by sherry
 	SwChnlCmd			PreCommonCmd[MAX_PRECMD_CNT];
@@ -956,7 +956,7 @@ typedef struct _HAL_DATA_SDIO
 	BOOLEAN					bLinked;
 
 	u1Byte			CurrentRARate;
-	
+
 	u1Byte			u1RsvdPageLoc[MAX_H2C_CMD_DATA_SIZE];
 	u1Byte			u1RsvdPageLoc2[MAX_H2C_CMD_DATA_SIZE];
 	u1Byte			u1RsvdPageLoc3[MAX_H2C_CMD_DATA_SIZE];
@@ -970,11 +970,11 @@ typedef struct _HAL_DATA_SDIO
 	u1Byte			SdioTxSequence;
 	BOOLEAN				bSpurCalComplete;	// <20130515, VincentLan> To make sure spur calibration be execute only once
 
-	BOOLEAN				bPhyValueInitReady; 
+	BOOLEAN				bPhyValueInitReady;
 
 	BOOLEAN				bNeedIQK;
-	BOOLEAN				bNeedQueuePacketInIQKProgress; 
-          
+	BOOLEAN				bNeedQueuePacketInIQKProgress;
+
 	u1Byte				ExternalPA_2G;
 	u1Byte				ExternalLNA_2G;
 	u1Byte				ExternalPA_5G;
@@ -983,12 +983,12 @@ typedef struct _HAL_DATA_SDIO
 	u2Byte				TypeGPA;
 	u2Byte				TypeALNA;
 	u2Byte				TypeAPA;
-	
+
 	s1Byte 				TxBBSwing_2G;
-	s1Byte 				TxBBSwing_5G;	
-	
+	s1Byte 				TxBBSwing_5G;
+
 	u1Byte				RTSEN;
-	
+
 	u1Byte				CurrScanOffloadType; //Current scan offload type
 
 	// <VincentL, 130102> add for RfBbGain
@@ -998,11 +998,11 @@ typedef struct _HAL_DATA_SDIO
 
 	// <VincentL, 131231> Add to determine IQK ON/OFF in certain case, Suggested by Cheng.
 	u1Byte				IQK_MP_Switch;
-	
-	// <VincentL> for FW IQK time measurement 
+
+	// <VincentL> for FW IQK time measurement
 	u8Byte				IQK_StartTimer;
 	u8Byte				IQK_EndTimer;
-	
+
 	// Rate Adaptive Mask control
 	BOOLEAN				bUseRAMask;
 
@@ -1029,7 +1029,7 @@ typedef struct _HAL_DATA_SDIO
 	BOOLEAN				bSWToBW40M;
 
 	//8723D LPS 32K Close Power of IO
-	LPS_DEEP_SLEEP_CONTEXT	LPSDeepSleepContext;	
+	LPS_DEEP_SLEEP_CONTEXT	LPSDeepSleepContext;
 }HAL_DATA_SDIO, *PHAL_DATA_SDIO;
 
 
@@ -1066,12 +1066,12 @@ MapTxQueueToOutPipe(
 //
 //	SDIO Rx Transfer
 //
-PSDIO_IN_CONTEXT 
-HalSdioGetInContext( 
+PSDIO_IN_CONTEXT
+HalSdioGetInContext(
 	IN	PADAPTER	pAdapter
 	);
 
-VOID 
+VOID
 HalSdioReturnInContext(
 	IN	PADAPTER				pAdapter,
 	IN	PSDIO_IN_CONTEXT			pContext
@@ -1081,12 +1081,12 @@ HalSdioReturnInContext(
 //
 //	SDIO Tx Transfer
 //
-PSDIO_OUT_CONTEXT 
-HalSdioGetTxContext( 
+PSDIO_OUT_CONTEXT
+HalSdioGetTxContext(
 	IN	PADAPTER	pAdapter
 	);
 
-VOID 
+VOID
 HalSdioReturnTxContext(
 	IN	PADAPTER				pAdapter,
 	IN	PSDIO_OUT_CONTEXT		pContext

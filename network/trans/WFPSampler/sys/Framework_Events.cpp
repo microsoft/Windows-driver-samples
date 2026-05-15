@@ -24,7 +24,7 @@
 
 /**
  @framework_function="EventDriverUnload"
- 
+
    Purpose:  Callback function responding to Driver Unload Events.                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -37,23 +37,23 @@ _Function_class_(EVT_WDF_DRIVER_UNLOAD)
 VOID EventDriverUnload(_In_ WDFDRIVER wdfDriver)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> EventDriverUnload()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(wdfDriver);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- EventDriverUnload()\n");
 
 #endif /// DBG
-   
+
    WPP_CLEANUP(wdfDriver);
 
    return;
@@ -61,7 +61,7 @@ VOID EventDriverUnload(_In_ WDFDRIVER wdfDriver)
 
 /**
  @framework_function="EventCleanupDriverObject"
- 
+
    Purpose:  Callback function responding to Driver Cleanup Events.                             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -75,30 +75,30 @@ _Function_class_(EVT_WDF_OBJECT_CONTEXT_CLEANUP)
 VOID EventCleanupDriverObject(_In_ WDFOBJECT driverObject)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> EventCleanupDriverObject()\n");
 
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(driverObject);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- EventCleanupDriverObject()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @framework_function="EventCleanupDeviceObject"
- 
+
    Purpose:  Callback function responding to Object Cleanup Events.                             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -113,13 +113,13 @@ _Function_class_(EVT_WDF_OBJECT_CONTEXT_CLEANUP)
 VOID EventCleanupDeviceObject(_In_ WDFOBJECT deviceObject)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> EventCleanupDeviceObject()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(deviceObject);
 
    KrnlHlprExposedCalloutsUnregister();
@@ -180,19 +180,19 @@ VOID EventCleanupDeviceObject(_In_ WDFOBJECT deviceObject)
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- EventCleanupDeviceObject()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @framework_function="EventIODeviceControl"
- 
+
    Purpose:  Callback function responding to IO Control Events.                                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -210,13 +210,13 @@ VOID EventIODeviceControl(_In_ WDFQUEUE wdfQueue,
                           _In_ ULONG ioControlCode)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> EventIODeviceControl()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(wdfQueue);
    UNREFERENCED_PARAMETER(wdfRequest);
    UNREFERENCED_PARAMETER(outputBufferLength);
@@ -224,19 +224,19 @@ VOID EventIODeviceControl(_In_ WDFQUEUE wdfQueue,
    UNREFERENCED_PARAMETER(ioControlCode);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- EventIODeviceControl()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @framework_function="EventIORead"
- 
+
    Purpose:  Callback function responding to IO Read Events.                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -252,31 +252,31 @@ VOID EventIORead(_In_ WDFQUEUE wdfQueue,
                  _In_ size_t length)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> EventIORead()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(wdfQueue);
    UNREFERENCED_PARAMETER(wdfRequest);
    UNREFERENCED_PARAMETER(length);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- EventIORead()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @framework_function="EventIOWrite"
- 
+
    Purpose:  Callback function responding to IO Write Events.                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -292,24 +292,24 @@ VOID EventIOWrite(_In_ WDFQUEUE wdfQueue,
                   _In_ size_t length)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> EventIOWrite()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(wdfQueue);
    UNREFERENCED_PARAMETER(wdfRequest);
    UNREFERENCED_PARAMETER(length);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- EventIOWrite()\n");
 
 #endif /// DBG
-   
+
    return;
 }

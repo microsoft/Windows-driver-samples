@@ -37,7 +37,7 @@ DrvIFAssociateRFD(
 				&(pRfd->Buffer),
 				Adapter->MAX_RECEIVE_BUFFER_SIZE
 			);
-		
+
 		pRfd->Buffer.Length = Adapter->MAX_RECEIVE_BUFFER_SIZE;
 	}
 
@@ -106,7 +106,7 @@ FillN6NBLInfo(
 			sizeof(DOT11_EXTSTA_RECV_CONTEXT));
 		pRecvContext->uReceiveFlags = 0;  // set to zero if in ExtSta mode.
 		pRecvContext->uPhyId = N6CQuery_DOT11_OPERATING_PHYID(Adapter);
-		pRecvContext->uChCenterFrequency = 
+		pRecvContext->uChCenterFrequency =
 		MgntGetChannelFrequency(RT_GetChannelNumber(Adapter));
 		pRecvContext->usNumberOfMPDUsReceived = pRfd->nTotalFrag;
 		//pRecvContext->lRSSI = Adapter->RxStats.SignalStrength; // Report the smoothed signal strength.
@@ -115,7 +115,7 @@ FillN6NBLInfo(
 		pRecvContext->uSizeMediaSpecificInfo = 0;
 		pRecvContext->pvMediaSpecificInfo = NULL;
 		pRecvContext->ullTimestamp = ((u8Byte)pRfd->Status.TimeStampHigh << 32) + pRfd->Status.TimeStampLow;
-	
+
 		NET_BUFFER_LIST_INFO(pNBL, MediaSpecificInformation) = pRecvContext;
 	}
 
@@ -125,7 +125,7 @@ FillN6NBLInfo(
 		NBL8021qInfo.WLanTagHeader.WMMInfo = pRfd->Status.UserPriority;
 		NET_BUFFER_LIST_INFO(pNBL, Ieee8021QNetBufferListInfo) = NBL8021qInfo.Value;
 	}
-	
+
 	return TRUE;
 }
 
@@ -143,9 +143,9 @@ FreeN6NBLInfo(
 	else
 	{
 		PDOT11_EXTSTA_RECV_CONTEXT				pRecvContext = NULL;
-		
+
 		pRecvContext = (PDOT11_EXTSTA_RECV_CONTEXT)NET_BUFFER_LIST_INFO(pNBL, MediaSpecificInformation);
-	
+
 		if( pRecvContext != NULL )
 			PlatformFreeMemory(pRecvContext, sizeof(DOT11_EXTSTA_RECV_CONTEXT));
 	}
@@ -178,10 +178,10 @@ DrvIFIndicatePackets(
 
 
 	// Indicate if the RFD is returned or will be indicated to OS ---
-	pu1Byte pRfdReturnOK = NULL;		
+	pu1Byte pRfdReturnOK = NULL;
 	PRT_GEN_TEMP_BUFFER pGenTempBuffer = NULL;
 	// --------------------------------------------------
-	
+
 	// Resource Management --------------------
 	u4Byte 			ResourceMointor = 0;
 	const u4Byte		RESOURCE_MDL = BIT1;
@@ -194,7 +194,7 @@ DrvIFIndicatePackets(
 	BOOLEAN			bDataInQueue[MAX_PEER_NUM] = {0};
 	u2Byte			index = 0;
 	// ---------------------------------------
-	
+
 	if(Num==0 || pRfd_array==NULL)
 		return;
 
@@ -203,7 +203,7 @@ DrvIFIndicatePackets(
 	pRfdReturnOK = pGenTempBuffer->Buffer.Ptr;
 	PlatformZeroMemory(pRfdReturnOK, Num);
 	// -------------------------------------------------
-	
+
 	usbdevice = &Adapter->NdisSdioDev;
 	NBLPoolHandle = usbdevice->RxNetBufferListPool;
 
@@ -236,41 +236,41 @@ DrvIFIndicatePackets(
 			// Check if the resource is clear -----------------------------------
 			RT_ASSERT(ResourceMointor == 0, ("Error: Resource is Not Clear!\n"));
 			// ------------------------------------------------------------
-			
-			// By Lanhsin. Copy subframe of AMSDU into one contineous buffer before 
+
+			// By Lanhsin. Copy subframe of AMSDU into one contineous buffer before
 			// indication. Otherwise, F-Secure anti-virus program cannot accept a
 			// packet with more than one buffer. 2008.07.10 (Vista only)
 
 			for(subframe_index = 0; subframe_index < pCurRfd->nTotalSubframe; subframe_index++, packet_index++,subframe_hdr_idx++)
 			{
-				
+
 
 				Adapter->AmsduIndex = Adapter->AmsduIndex % Adapter->MAX_SUBFRAME_TOTAL_COUNT;
 
-				PlatformMoveMemory(Adapter->pAMSDU[Adapter->AmsduIndex].VirtualAddress, 
-									pCurRfd->Buffer.VirtualAddress + pCurRfd->FragOffset, 
-									sMacHdrLng);		
+				PlatformMoveMemory(Adapter->pAMSDU[Adapter->AmsduIndex].VirtualAddress,
+									pCurRfd->Buffer.VirtualAddress + pCurRfd->FragOffset,
+									sMacHdrLng);
 
-				PlatformMoveMemory((Adapter->pAMSDU[Adapter->AmsduIndex].VirtualAddress + 24), pCurRfd->SubframeArray[subframe_index], 
+				PlatformMoveMemory((Adapter->pAMSDU[Adapter->AmsduIndex].VirtualAddress + 24), pCurRfd->SubframeArray[subframe_index],
 									pCurRfd->SubframeLenArray[subframe_index]);
 
 
-				// Allocate MDL of 802.11 header. We use the same header for all AMSDU 
+				// Allocate MDL of 802.11 header. We use the same header for all AMSDU
 				// subframe. Sequence number are the same for all sub packet.
 				// The first MDL must contain 802.11 header and LLC.
-				pMdl = NdisAllocateMdl(	N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)), (PVOID)Adapter->pAMSDU[Adapter->AmsduIndex].VirtualAddress, 
+				pMdl = NdisAllocateMdl(	N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)), (PVOID)Adapter->pAMSDU[Adapter->AmsduIndex].VirtualAddress,
 											sMacHdrLng+pCurRfd->SubframeLenArray[subframe_index]);
 
 				if (pMdl == NULL)
 				{
-					RT_TRACE(COMP_RECV, DBG_SERIOUS, ("Failed to allocate MDL\n"));			
+					RT_TRACE(COMP_RECV, DBG_SERIOUS, ("Failed to allocate MDL\n"));
 					goto POST_PROCESS;
 				}
 				else
 				{
 					ResourceMointor |= RESOURCE_MDL;
 				}
-				
+
 				//
 				// Allocate NetBufferList for receive indication, 2006.10.04, by shien chang.
 				//
@@ -295,7 +295,7 @@ DrvIFIndicatePackets(
 				//
 				// Now prepare necessary information such as SourceHandle, OOB data for indication.
 				//
-				pNetBufferList->SourceHandle = N6SDIO_GET_MINIPORT_HANDLE(Adapter); 
+				pNetBufferList->SourceHandle = N6SDIO_GET_MINIPORT_HANDLE(Adapter);
 
 				// Filling information in NetBufferList.
 				if(FillN6NBLInfo(Adapter, pNetBufferList, pCurRfd) == FALSE)
@@ -344,10 +344,10 @@ DrvIFIndicatePackets(
 			// Check if the resource is clear -----------------------------------
 			RT_ASSERT(ResourceMointor == 0, ("Error: Resource is Not Clear!\n"));
 			// ------------------------------------------------------------
-			
+
 			pMdl = NULL;
 			pTmpRfd = pCurRfd;
-		
+
 			//
 			// Allocate MDLChain. 2006.10.04, by shien chang.
 			//
@@ -355,7 +355,7 @@ DrvIFIndicatePackets(
 				if (pMdl == NULL)
 				{
 					pMdl = NdisAllocateMdl(
-							N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)), 
+							N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)),
 							(PVOID)(pCurRfd->Buffer.VirtualAddress+pCurRfd->FragOffset),
 							pCurRfd->FragLength);
 					pCurrMdl = pMdl;
@@ -363,11 +363,11 @@ DrvIFIndicatePackets(
 				else
 				{
 					NDIS_MDL_LINKAGE(pCurrMdl) = NdisAllocateMdl(
-							N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)), 
+							N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)),
 							(PVOID)(pTmpRfd->Buffer.VirtualAddress+pTmpRfd->FragOffset),
 							pTmpRfd->FragLength);
 					pCurrMdl = NDIS_MDL_LINKAGE(pCurrMdl);
-						
+
 				}
 
 				if (pCurrMdl == NULL)
@@ -433,14 +433,14 @@ DrvIFIndicatePackets(
 			MP_SET_PACKET_RFD(pNetBufferList, pCurRfd);
 			pRfdReturnOK[rfd_index] = TRUE;
 			// ------------------------------------------------
-			
+
 			packet_index++;
 
 			// Clean the Resource Mointor ---------
 			ResourceMointor = 0;
 			// ---------------------------------
 		}
-		
+
 		if( OS_SUPPORT_WDI(Adapter) )
 		{
 		// PeerId is 1-based, 0 use to represent failure
@@ -511,7 +511,7 @@ POST_PROCESS:
 
 		PlatformReleaseSpinLock(Adapter, RT_RX_SPINLOCK);
 		if( OS_SUPPORT_WDI(Adapter) )
-		{			
+		{
 		for(index = 0; index < MAX_PEER_NUM; index++)
 		{
 			if( bDataInQueue[index] == TRUE )
@@ -559,7 +559,7 @@ DrvIFIndicateMultiplePackets(
 	PADAPTER				Adapter,
 	PRT_RFD					pRfd
 	)
-{	
+{
 	NDIS_STATUS			status = NDIS_STATUS_SUCCESS;
 	PMGNT_INFO			pMgntInfo = &(Adapter->MgntInfo);
 	PADAPTER			pDefaultAdapter = GetDefaultAdapter(Adapter);
@@ -569,7 +569,7 @@ DrvIFIndicateMultiplePackets(
 	PNET_BUFFER_LIST	pNetBufferList = NULL;
 	PNET_BUFFER_LIST	pLastNetBufferList = NULL;
 	PNET_BUFFER_LIST	pFirstNetBufferList = NULL;
-	u1Byte				index;		
+	u1Byte				index;
 	pu1Byte				pHeader;
 	// For WDI architecture ---------------------
 	u4Byte				PeerId = 0;
@@ -594,16 +594,16 @@ DrvIFIndicateMultiplePackets(
 	{
 		/*if (index > N6_MAX_AMSDU_SUBF_NUM)
 		{
-			RT_TRACE(COMP_RECV, DBG_SERIOUS, (">AMSDU Max Subframe\n\r"));	
+			RT_TRACE(COMP_RECV, DBG_SERIOUS, (">AMSDU Max Subframe\n\r"));
 			index = N6_MAX_AMSDU_SUBF_NUM;
 			break;
 		}*/
-		
+
 		pHeader = &pMgntInfo->header[index][0];
-		PlatformMoveMemory(pHeader, 
-							pRfd->Buffer.VirtualAddress + pRfd->FragOffset, 
-							sMacHdrLng);		
-		PlatformMoveMemory((pHeader + sMacHdrLng), pRfd->SubframeArray[index], 
+		PlatformMoveMemory(pHeader,
+							pRfd->Buffer.VirtualAddress + pRfd->FragOffset,
+							sMacHdrLng);
+		PlatformMoveMemory((pHeader + sMacHdrLng), pRfd->SubframeArray[index],
 						N6_LLC_SIZE);
 		#if (N6_PSDUDO_SEQ_NUM == 1)
 			// Increase 802.11 header sequence number of every AMSDU sub frame
@@ -612,9 +612,9 @@ DrvIFIndicateMultiplePackets(
 			if (Pseudo_Seq_Num == (16*4000))
 				Pseudo_Seq_Num = 0;
 		#endif
-		
+
 		//
-		// Prevent unexpected MDL length requirement, which might cause system 
+		// Prevent unexpected MDL length requirement, which might cause system
 		// using improper addresses, added by Roger, 2010.05.26.
 		//
 		if(pRfd->SubframeLenArray[index] <= N6_LLC_SIZE)
@@ -624,27 +624,27 @@ DrvIFIndicateMultiplePackets(
 			break;
 		}
 
-		// Allocate MDL of 802.11 header. We use the same header for all AMSDU 
+		// Allocate MDL of 802.11 header. We use the same header for all AMSDU
 		// subframe. Sequence number are the same for all sub packet.
 		// The first MDL must contain 802.11 header and LLC.
-		pMdl = NdisAllocateMdl(	N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)), (PVOID)(pHeader), 
+		pMdl = NdisAllocateMdl(	N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)), (PVOID)(pHeader),
 								sMacHdrLng+N6_LLC_SIZE);
-		
+
 		//
 		// Allocate MDLChain. We must filter the header of AMSDU subframe
 		//
-		NDIS_MDL_LINKAGE(pMdl) 
-		= NdisAllocateMdl(	N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)), 
+		NDIS_MDL_LINKAGE(pMdl)
+		= NdisAllocateMdl(	N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)),
 							(PVOID)(pRfd->SubframeArray[index]+N6_LLC_SIZE),
 							pRfd->SubframeLenArray[index]-N6_LLC_SIZE);
 
 		// AMSDU debug log 24 bytes header and sub-frame data info
 		//PlatformMoveMemory(&nheader[index][0], pHeader, sMacHdrLng);
 		//PlatformMoveMemory(&llcheader[index][0], pRfd->SubframeArray[index], sMacHdrLng);
-		
+
 		if (pMdl == NULL || NDIS_MDL_LINKAGE(pMdl) == NULL)
 		{
-			RT_TRACE(COMP_RECV, DBG_SERIOUS, ("Failed to allocate MDL\n"));			
+			RT_TRACE(COMP_RECV, DBG_SERIOUS, ("Failed to allocate MDL\n"));
 			status = NDIS_STATUS_FAILURE;
 			break;
 		}
@@ -676,11 +676,11 @@ DrvIFIndicateMultiplePackets(
 		if(FillN6NBLInfo(Adapter, pNetBufferList, pRfd) == FALSE)
 		{
 			RT_TRACE(COMP_RECV, DBG_SERIOUS, ("Failed to set information to NetBufferList\n"));
-			
+
 			status = NDIS_STATUS_FAILURE;
 			break;
 		}
-		
+
 		if(index == 0)
 		{
 			pFirstNetBufferList = pLastNetBufferList = pNetBufferList;
@@ -703,14 +703,14 @@ DrvIFIndicateMultiplePackets(
 		PlatformAcquireSpinLock(Adapter, RT_RX_REF_CNT_SPINLOCK);
 		RT_INC_N_RCV_REF(GetDefaultAdapter(Adapter), index);
 		PlatformReleaseSpinLock(Adapter, RT_RX_REF_CNT_SPINLOCK);
-		
+
 		if( OS_SUPPORT_WDI(Adapter) )
 		{
 		// PeerId is 1-based, 0 use to represent failure
 		PeerId = WDI_InsertDataInQueue(Adapter, pRfd, pFirstNetBufferList);
 
 		PlatformReleaseSpinLock(Adapter, RT_RX_SPINLOCK);
-		
+
 		if( PeerId != 0 )
 		{
 			PlatformReleaseSemaphore(&(pDefaultAdapter->pNdisCommon->RxNotifySemaphore));
@@ -721,7 +721,7 @@ DrvIFIndicateMultiplePackets(
 		}
 		}
 		else
-		{			
+		{
 			PlatformReleaseSpinLock(Adapter, RT_RX_SPINLOCK);
 
 			NdisMIndicateReceiveNetBufferLists(
@@ -737,13 +737,13 @@ DrvIFIndicateMultiplePackets(
 	{
 		ReturnRFDList(Adapter, pRfd);
 	}
-	
+
 	if (status != NDIS_STATUS_SUCCESS)
 	{
 		RT_TRACE(COMP_RECV, DBG_SERIOUS, ("DrvIFIndicateMultiplePackets(): failed to allocate resource! status: %d\n", status));
 
 		FreeN6NBLInfo(Adapter, pNetBufferList);
-		
+
 		if(pMdl != NULL && NDIS_MDL_LINKAGE(pMdl) != NULL)
 			NdisFreeMdl(NDIS_MDL_LINKAGE(pMdl));
 
@@ -753,7 +753,7 @@ DrvIFIndicateMultiplePackets(
 		if(pNetBufferList != NULL)
 			NdisFreeNetBufferList(pNetBufferList);
 	}
-	
+
 }
 
 VOID
@@ -808,7 +808,7 @@ DrvIFIndicatePacket(
 #if RX_TCP_SEQ_CHECK
 	RxTcpSeqCheck(Adapter, pRfd);
 #endif
-	
+
 	do{
 		//
 		// Allocate MDLChain. 2006.10.04, by shien chang.
@@ -817,7 +817,7 @@ DrvIFIndicatePacket(
 			if (pMdl == NULL)
 			{
 				pMdl = NdisAllocateMdl(
-						N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)), 
+						N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)),
 						(PVOID)(pTmpRfd->Buffer.VirtualAddress+pTmpRfd->FragOffset),
 						pTmpRfd->FragLength);
 				pCurrMdl = pMdl;
@@ -825,7 +825,7 @@ DrvIFIndicatePacket(
 			else
 			{
 				NDIS_MDL_LINKAGE(pCurrMdl) = NdisAllocateMdl(
-						N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)), 
+						N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)),
 						(PVOID)(pTmpRfd->Buffer.VirtualAddress+pTmpRfd->FragOffset),
 						pTmpRfd->FragLength);
 				pCurrMdl = NDIS_MDL_LINKAGE(pCurrMdl);
@@ -834,12 +834,12 @@ DrvIFIndicatePacket(
 			if (pCurrMdl == NULL)
 			{
 				RT_TRACE(COMP_RECV, DBG_SERIOUS, ("Failed to allocate MDL\n"));
-				
+
 				status = NDIS_STATUS_FAILURE;
 				break;
 			}
 
-			pTmpRfd=pTmpRfd->NextRfd;			
+			pTmpRfd=pTmpRfd->NextRfd;
 		}while(pTmpRfd);
 
 		if (status != NDIS_STATUS_SUCCESS)
@@ -878,7 +878,7 @@ DrvIFIndicatePacket(
 				pNextMdl = NDIS_MDL_LINKAGE(pCurrMdl);
 				NdisFreeMdl(pCurrMdl);
 			}
-			
+
 			status = NDIS_STATUS_FAILURE;
 			break;
 		}
@@ -900,9 +900,9 @@ DrvIFIndicatePacket(
 				pNextMdl = NDIS_MDL_LINKAGE(pCurrMdl);
 				NdisFreeMdl(pCurrMdl);
 			}
-				
+
 			NdisFreeNetBufferList(pNetBufferList);
-			
+
 			status = NDIS_STATUS_FAILURE;
 			break;
 		}
@@ -910,19 +910,19 @@ DrvIFIndicatePacket(
 		MP_SET_PACKET_RFD(pNetBufferList, pRfd);
 	}while(FALSE);
 
-	
+
 	if(status==NDIS_STATUS_SUCCESS)
 	{
 		RT_ASSERT(IS_RX_LOCKED(Adapter)  == TRUE, ("DrvIFIndicatePacket(): bRxLocked should be TRUE\n"));
 
 		//
 		// Set the status on the packet, either resources or success.
-		// <NOTE> We must do tell OS if we are out of Rx resource, 
-		// otherwise, in some condition: 
+		// <NOTE> We must do tell OS if we are out of Rx resource,
+		// otherwise, in some condition:
 		//		example 1: HCT 12.1 2c_PerformanceBlast).
 		//		example 2: too many fragments received.
-		// we might stop to receive packets. 2005.12.09, by rcnjko. 
-		// 
+		// we might stop to receive packets. 2005.12.09, by rcnjko.
+		//
 		if((*GET_NUM_IDLE_RFD(Adapter)  + *GET_NUM_BUSY_RFD(Adapter,RX_MPDU_QUEUE)) > 0)
 		{
 			ReceiveFlags = 0;
@@ -936,14 +936,14 @@ DrvIFIndicatePacket(
 		PlatformAcquireSpinLock(Adapter, RT_RX_REF_CNT_SPINLOCK);
 		RT_INC_RCV_REF(GetDefaultAdapter(Adapter));
 		PlatformReleaseSpinLock(Adapter, RT_RX_REF_CNT_SPINLOCK);
-		
+
 		if( OS_SUPPORT_WDI(Adapter) )
 		{
 		// PeerId is 1-based, 0 use to represent failure
 		PeerId = WDI_InsertDataInQueue(Adapter, pRfd, pNetBufferList);
-		
+
 		PlatformReleaseSpinLock(Adapter, RT_RX_SPINLOCK);
-		
+
 		if( PeerId != 0 )
 		{
 			PlatformReleaseSemaphore(&(pDefaultAdapter->pNdisCommon->RxNotifySemaphore));
@@ -952,7 +952,7 @@ DrvIFIndicatePacket(
 			pNetBufferListToFree = pNetBufferList;
 		}
 		else
-		{			
+		{
 			PlatformReleaseSpinLock(Adapter, RT_RX_SPINLOCK);
 
 			// Prefast warning C6011: Dereferencing NULL pointer 'Adapter->pNdis62Common'.
@@ -969,11 +969,11 @@ DrvIFIndicatePacket(
 		PlatformAcquireSpinLock(Adapter, RT_RX_SPINLOCK);
 		//
 		// <NOTE> 2005.12.09, by rcnjko.
-		// If we had claimed pPacketToFree is NDIS_STATUS_RESOURCES, 
+		// If we had claimed pPacketToFree is NDIS_STATUS_RESOURCES,
 		// we are free to access the it after NdisMIndicateReceivePacket() and
 		// MiniportReturnPacket() won't be called.
-		// So, we shall release the NDIS_PACKET pPacketToFree and associated NDIS_BUFFER and 
-		// then reuse the RFD if we had claimed pPacketToFree is NDIS_STATUS_RESOURCES. 
+		// So, we shall release the NDIS_PACKET pPacketToFree and associated NDIS_BUFFER and
+		// then reuse the RFD if we had claimed pPacketToFree is NDIS_STATUS_RESOURCES.
 		//
 		// <RJ_TODO> It is time consuming to allocate NDIS_PACKEAT and NDIS_BUFFER dynamically.
 		//
@@ -982,7 +982,7 @@ DrvIFIndicatePacket(
 			pTmpRfd = MP_GET_PACKET_RFD(pNetBufferListToFree);
 
 			FreeN6NBLInfo(Adapter, pNetBufferListToFree);
-			
+
 			for (pCurrMdl = NET_BUFFER_FIRST_MDL( NET_BUFFER_LIST_FIRST_NB(pNetBufferListToFree) );
 				pCurrMdl != NULL;
 				pCurrMdl = pNextMdl)
@@ -990,9 +990,9 @@ DrvIFIndicatePacket(
 				pNextMdl = NDIS_MDL_LINKAGE(pCurrMdl);
 				NdisFreeMdl(pCurrMdl);
 			}
-		
+
 			NdisFreeNetBufferList(pNetBufferListToFree);
-		
+
 			ReturnRFDList(Adapter, pTmpRfd);
 
 			PlatformAcquireSpinLock(Adapter, RT_RX_REF_CNT_SPINLOCK);
@@ -1031,10 +1031,10 @@ DrvIFD0RxIndicatePackets(
 
 
 	// Indicate if the RFD is returned or will be indicated to OS ---
-	pu1Byte pRfdReturnOK = NULL;		
+	pu1Byte pRfdReturnOK = NULL;
 	PRT_GEN_TEMP_BUFFER pGenTempBuffer = NULL;
 	// --------------------------------------------------
-	
+
 	// Resource Management --------------------
 	u4Byte 			ResourceMointor = 0;
 	const u4Byte		RESOURCE_MDL = BIT1;
@@ -1047,7 +1047,7 @@ DrvIFD0RxIndicatePackets(
 	BOOLEAN			bDataInQueue[MAX_PEER_NUM] = {0};
 	u2Byte			index = 0;
 	// ---------------------------------------
-	
+
 	if(Num==0 || pRfd_array==NULL)
 		return;
 
@@ -1056,7 +1056,7 @@ DrvIFD0RxIndicatePackets(
 	pRfdReturnOK = pGenTempBuffer->Buffer.Ptr;
 	PlatformZeroMemory(pRfdReturnOK, Num);
 	// -------------------------------------------------
-	
+
 	usbdevice = &Adapter->NdisSdioDev;
 	NBLPoolHandle = usbdevice->RxNetBufferListPool;
 
@@ -1064,14 +1064,14 @@ DrvIFD0RxIndicatePackets(
 	{
 		pCurRfd = pRfd_array[rfd_index];
 
- 
+
 		// Check if the resource is clear -----------------------------------
 		RT_ASSERT(ResourceMointor == 0, ("Error: Resource is Not Clear!\n"));
 		// ------------------------------------------------------------
-		
+
 		pMdl = NULL;
 		pTmpRfd = pCurRfd;
-	
+
 		//
 		// Allocate MDLChain. 2006.10.04, by shien chang.
 		//
@@ -1079,7 +1079,7 @@ DrvIFD0RxIndicatePackets(
 			if (pMdl == NULL)
 			{
 				pMdl = NdisAllocateMdl(
-						N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)), 
+						N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)),
 						(PVOID)(pCurRfd->Buffer.VirtualAddress+pCurRfd->FragOffset),
 						pCurRfd->FragLength);
 				pCurrMdl = pMdl;
@@ -1087,11 +1087,11 @@ DrvIFD0RxIndicatePackets(
 			else
 			{
 				NDIS_MDL_LINKAGE(pCurrMdl) = NdisAllocateMdl(
-						N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)), 
+						N6SDIO_GET_MINIPORT_HANDLE(GetDefaultAdapter(Adapter)),
 						(PVOID)(pTmpRfd->Buffer.VirtualAddress+pTmpRfd->FragOffset),
 						pTmpRfd->FragLength);
 				pCurrMdl = NDIS_MDL_LINKAGE(pCurrMdl);
-					
+
 			}
 
 			if (pCurrMdl == NULL)
@@ -1157,7 +1157,7 @@ DrvIFD0RxIndicatePackets(
 		MP_SET_PACKET_RFD(pNetBufferList, pCurRfd);
 		pRfdReturnOK[rfd_index] = TRUE;
 		// ------------------------------------------------
-		
+
 		packet_index++;
 
 		// Clean the Resource Mointor ---------
@@ -1211,9 +1211,9 @@ POST_PROCESS:
 		PlatformReleaseSpinLock(Adapter, RT_RX_REF_CNT_SPINLOCK);
 
 		PlatformReleaseSpinLock(Adapter, RT_RX_SPINLOCK);
-				
+
 		if( OS_SUPPORT_WDI(Adapter) )
-		{			
+		{
 		for(index = 0; index < MAX_PEER_NUM; index++)
 		{
 			if( bDataInQueue[index] == TRUE )
@@ -1256,7 +1256,7 @@ POST_PROCESS:
 	// Return the allocated memory ----------------------
 	ReturnGenTempBuffer(Adapter, pGenTempBuffer);
 	// ----------------------------------------------
-	
+
 	FunctionOut(COMP_RECV);
 	return;
 }
@@ -1274,12 +1274,12 @@ DrvIFCompletePacket(
 
         if(!OS_SUPPORT_WDI(Adapter))
         {
-		PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);	
-		
+		PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
+
 		//
 		// For pending NBL issue.
 		//
-		RT_ASSERT(GetDefaultAdapter(Adapter)->MgntInfo.OutstandingNdisPackets > 0, 
+		RT_ASSERT(GetDefaultAdapter(Adapter)->MgntInfo.OutstandingNdisPackets > 0,
 			("DrvIFCompletePacket(): OutstandingNdisPackets not greater than 0.\n"));
 
 		if (pNBL != NULL && RT_NBL_GET_REF_CNT(pNBL) != 0)
@@ -1289,14 +1289,14 @@ DrvIFCompletePacket(
 			if (RT_NBL_GET_REF_CNT(pNBL) == 0)
 			{
 				GetDefaultAdapter(Adapter)->MgntInfo.OutstandingNdisPackets--;
-				GetDefaultAdapter(Adapter)->MgntInfo.CompleteFlag = 0;	
+				GetDefaultAdapter(Adapter)->MgntInfo.CompleteFlag = 0;
 				for(pCurrNetBufferList = pNBL;
 					pCurrNetBufferList != NULL;
 					pCurrNetBufferList = pNextNetBufferList)
 				{
 					pNextNetBufferList = NET_BUFFER_LIST_NEXT_NBL(pCurrNetBufferList);
 					NET_BUFFER_LIST_STATUS(pCurrNetBufferList) = NDIS_STATUS_SUCCESS;
-				}			
+				}
 				PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 				NdisMSendNetBufferListsComplete(
 					device->hNdisAdapter,
@@ -1334,14 +1334,14 @@ DrvIFIndicateScanStart(
 	)
 {
 	PRT_NDIS6_COMMON	pNdisCommon = Adapter->pNdisCommon;
-	
+
 	RT_TRACE(COMP_SCAN, DBG_LOUD, ("==> DrvIFIndicateScanStart()\n"));
 
 	if (pNdisCommon->bToIndicateScanComplete == FALSE)
 	{
 		pNdisCommon->bToIndicateScanComplete = TRUE;
 	}
-	
+
 	RT_TRACE(COMP_SCAN, DBG_LOUD, ("<== DrvIFIndicateScanStart()\n"));
 }
 
@@ -1353,7 +1353,7 @@ DrvIFIndicateScanComplete(
 {
 	PRT_NDIS6_COMMON	pNdisCommon = Adapter->pNdisCommon;
 	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);
-	
+
 	RT_TRACE(COMP_SCAN, DBG_LOUD, ("==> DrvIFIndicateScanComplete(): status = 0x%x\n", status));
 
 	//
@@ -1368,7 +1368,7 @@ DrvIFIndicateScanComplete(
 		if( pMgntInfo->bCheckScanTime == TRUE )
 			pMgntInfo->bCheckScanTime = FALSE;
 
-		pNdisCommon->bToIndicateScanComplete = FALSE;		
+		pNdisCommon->bToIndicateScanComplete = FALSE;
 	}
 
 	RT_TRACE(COMP_SCAN, DBG_LOUD, ("<== DrvIFIndicateScanComplete()\n"));
@@ -1380,14 +1380,14 @@ DrvIFIndicateConnectionStart(
 	)
 {
 	PRT_NDIS6_COMMON	pNdisCommon = Adapter->pNdisCommon;
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("==> DrvIFIndicateConnectionStart()\n"));
 
 	//
 	// In NDIS6, we need to indicate the upper layer driver in starting connection.
 	//
 	N6PushIndicateStateMachine(Adapter, N6_STATE_CONNECT_START, 0);
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<== DrvIFIndicateConnectionStart()\n"));
 }
 
@@ -1399,7 +1399,7 @@ DrvIFIndicateConnectionComplete(
 {
 	PRT_NDIS6_COMMON	pNdisCommon = Adapter->pNdisCommon;
 	PMGNT_INFO			pMgntInfo = &(Adapter->MgntInfo);
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("==> DrvIFIndicateConnectionComplete(): status = %d\n", status));
 
 	if(OS_SUPPORT_WDI(Adapter))
@@ -1409,7 +1409,7 @@ DrvIFIndicateConnectionComplete(
 
 	// In NDIS6, we need to indicate the upper layer driver when a connection request completed.
 	N6PushIndicateStateMachine(Adapter, N6_STATE_CONNECT_COMPLETE, status);
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<== DrvIFIndicateConnectionComplete()\n"));
 }
 
@@ -1419,12 +1419,12 @@ DrvIFIndicateAssociationStart(
 	)
 {
 	PRT_NDIS6_COMMON	pNdisCommon = Adapter->pNdisCommon;
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("==> DrvIFIndicateAssociationStart()\n"));
 
 	// In NDIS6, we need indicate the upper layer driver when association is starting.
 	N6PushIndicateStateMachine(Adapter, N6_STATE_ASOC_START, 0);
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<== DrvIFIndicateAssociationStart()\n"));
 }
 
@@ -1436,7 +1436,7 @@ DrvIFIndicateAssociationComplete(
 {
 	PRT_NDIS6_COMMON	pNdisCommon = Adapter->pNdisCommon;
 	PMGNT_INFO			pMgntInfo = &(Adapter->MgntInfo);
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("==> DrvIFIndicateAssociationComplete()\n"));
 
 	if(OS_SUPPORT_WDI(Adapter))
@@ -1446,7 +1446,7 @@ DrvIFIndicateAssociationComplete(
 
 	// In NDIS6, we need indicate the upper layer driver when association request is completed.
 	N6PushIndicateStateMachine(Adapter, N6_STATE_ASOC_COMPLETE, status);
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<== DrvIFIndicateAssociationComplete()\n"));
 }
 
@@ -1465,7 +1465,7 @@ DrvIFIndicateDisassociation(
 	{
 	WDI_IndicateDisassociation(Adapter, reason, pAddr);
 	}
-    
+
 	pMgntInfo->DisconnectCount++;
 	N6PushIndicateStateMachine(Adapter, N6_STATE_DISASOC, reason);
 
@@ -1479,11 +1479,11 @@ DrvIFIndicateRoamingStart(
 {
 	PMGNT_INFO pMgntInfo = &(Adapter->MgntInfo);
 	PRT_NDIS6_COMMON	pNdisCommon = Adapter->pNdisCommon;
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("==> DrvIFIndicateRoamingStart()\n"));
 
 	N6PushIndicateStateMachine(Adapter, N6_STATE_ROAM_START, 0);
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<== DrvIFIndicateRoamingStart()\n"));
 }
 
@@ -1495,7 +1495,7 @@ DrvIFIndicateRoamingComplete(
 {
 	PRT_NDIS6_COMMON	pNdisCommon = Adapter->pNdisCommon;
 	PMGNT_INFO	pMgntInfo=&Adapter->MgntInfo;
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("==> DrvIFIndicateRoamingComplete()\n"));
 	if(OS_SUPPORT_WDI(Adapter))
 	{
@@ -1506,7 +1506,7 @@ DrvIFIndicateRoamingComplete(
 	//pMgntInfo->LinkRetryforRoaming=0;
 	pMgntInfo->RoamingCount++;
 	N6PushIndicateStateMachine(Adapter, N6_STATE_ROAM_COMPLETE, status);
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<== DrvIFIndicateRoamingComplete()\n"));
 }
 
@@ -1521,7 +1521,7 @@ DrvIFIndicateCurrentPhyStatus(
 	PMGNT_INFO			pExtMgntInfo;
 	PRT_NDIS6_COMMON	pDefaultNdisCommon = pAdapter->pNdisCommon;
 	u1Byte				i;
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("==> DrvIFIndicateCurrentPhyStatus()\n"));
 
 	if(OS_SUPPORT_WDI(Adapter))
@@ -1540,16 +1540,16 @@ DrvIFIndicateCurrentPhyStatus(
 		pExtMgntInfo->eSwRfPowerState = pDefaultMgntInfo->eSwRfPowerState;
 		pExtMgntInfo->RfOffReason = pDefaultMgntInfo->RfOffReason;
 
-		pExtNdisCommon->eRfPowerStateToSet = pDefaultNdisCommon->eRfPowerStateToSet;		
+		pExtNdisCommon->eRfPowerStateToSet = pDefaultNdisCommon->eRfPowerStateToSet;
 
-		// If the uPhyId member is set to DOT11_PHY_ID_ANY, the NDIS_STATUS_DOT11_PHY_STATE_CHANGED 
+		// If the uPhyId member is set to DOT11_PHY_ID_ANY, the NDIS_STATUS_DOT11_PHY_STATE_CHANGED
 		// indication applies to all PHYs in the msDot11SupportedPhyTypes MIB object.
 		N6IndicateCurrentPhyPowerState(pAdapter, DOT11_PHY_ID_ANY);
 
 		pAdapter = GetNextExtAdapter(pAdapter);
 	}
 
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<== DrvIFIndicateCurrentPhyStatus()\n"));
 
 }
@@ -1581,7 +1581,7 @@ DrvIFIndicateIncommingAssociationComplete(
 	{
 	RT_TRACE_F(COMP_OID_SET, DBG_LOUD, ("Indicate association rsp sent with status = 0x%X, association rsp len: %u\n", status, Adapter->MgntInfo.pCurrentSta->AP_SendAsocRespLength));
 	if(Adapter->MgntInfo.pCurrentSta->AP_SendAsocRespLength)
-	{// Indicate task completion event only if we have sent an association response			
+	{// Indicate task completion event only if we have sent an association response
 		WdiExt_IndicateApAssocRspSent(Adapter, status);
 	}
 }
@@ -1602,9 +1602,9 @@ DrvIFIndicateIncommingAssocReqRecv(
 	if(OS_SUPPORT_WDI(Adapter))
 	{
 	RT_WLAN_STA		*sta = Adapter->MgntInfo.pCurrentSta;
-			
+
 	WdiExt_IndicateApAssocReqReceived(
-		Adapter, 
+		Adapter,
 		sta->AP_RecvAsocReqLength,
 		sta->AP_RecvAsocReq);
 }
@@ -1657,7 +1657,7 @@ DrvIFIndicateRoamingNeeded(
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("==> DrvIFIndicateRoamingNeeded()\n"));
 
 	WDI_IndicateRoamingNeeded(pAdapter, IndicationReason);
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<== DrvIFIndicateRoamingNeeded()\n"));
 }
 
@@ -1671,7 +1671,7 @@ DrvIFIndicateLinkStateChanged(
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("==> DrvIFIndicateLinkStateChanged()\n"));
 
 	WDI_IndicateLinkStateChanged(pAdapter, bForceLinkQuality, ucLinkQuality);
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<== DrvIFIndicateLinkStateChanged()\n"));
 }
 

@@ -3,7 +3,7 @@
 //		//: Comment at the beginning
 //		OS: * Ebd6 Ebd7 WinXP Vista Win7 Win8 WinBlue
 //		+: Add for OS
-//		-: Remove for OS 
+//		-: Remove for OS
 //
 
 +(*) [NdisComm.c]

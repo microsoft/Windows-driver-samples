@@ -12,7 +12,7 @@
 //   Naming Convention:
 //
 //      <Scope><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -26,15 +26,15 @@
 //          }
 //       <Action>
 //          {
-//            Execute                      - Function packages data and invokes RPC to the 
+//            Execute                      - Function packages data and invokes RPC to the
 //                                              WFPSampler service
 //            Log                          - Function writes to the console.
-//            Parse                        - Function pulls data into the required format from the 
+//            Parse                        - Function pulls data into the required format from the
 //                                              provided data.
 //          }
 //       <Modifier>
 //          {
-//            Help                         - Function provides context sensitive help for the 
+//            Help                         - Function provides context sensitive help for the
 //                                              scenario.
 //          }
 //
@@ -58,7 +58,7 @@
 
 /**
  @private_function="PrvFlowAssociationScenarioParseFlowAsociationData"
- 
+
    Purpose:  Parse the command line parameters for implementing flow association such as:       <br>
                 Associate context with the scenario callout for the layer (-aws)                <br>
                                                                                                 <br>
@@ -144,7 +144,7 @@ UINT32 PrvFlowAssociationScenarioParseFlowAsociationData(_In_reads_(stringCount)
                 index++)
             {
                stringIndex++;
-                
+
                if(stringIndex < stringCount)
                {
                   PCWSTR pString = ppCLPStrings[stringIndex];
@@ -214,7 +214,7 @@ UINT32 PrvFlowAssociationScenarioParseFlowAsociationData(_In_reads_(stringCount)
 /**
  @scenario_function="FlowAssociationScenarioExecute"
 
-   Purpose:  Gather and package data neccessary to setup the FLOW_ASSOCIATION scenario, 
+   Purpose:  Gather and package data neccessary to setup the FLOW_ASSOCIATION scenario,
              then invoke RPC to implement the scenario in the WFPSampler service.               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -285,7 +285,7 @@ UINT32 FlowAssociationScenarioExecute(_In_reads_(stringCount) PCWSTR* ppCLPStrin
 
 /**
  @public_function="FlowAssociationScenarioLogHelp"
- 
+
    Purpose:  Log usage information for the FLOW_ASSOCIATION scenario to the console.            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

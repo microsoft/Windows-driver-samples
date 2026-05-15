@@ -82,14 +82,14 @@ typedef enum _PWRSEQ_CMD_DELAY_UNIT_
 typedef struct _WL_PWR_CFG_
 {
 	u2Byte 	offset;
-	u1Byte 	cut_msk; 		
-	u1Byte 	fab_msk:4; 		
-	u1Byte 	interface_msk:4; 		
-	u1Byte 	base:4; 	
-	u1Byte 	cmd:4; 	
+	u1Byte 	cut_msk;
+	u1Byte 	fab_msk:4;
+	u1Byte 	interface_msk:4;
+	u1Byte 	base:4;
+	u1Byte 	cmd:4;
 	u1Byte 	msk;
 	u1Byte 	value;
-	
+
 } WLAN_PWR_CFG, *PWLAN_PWR_CFG;
 
 
@@ -109,7 +109,7 @@ typedef struct _WL_PWR_CFG_
 BOOLEAN
 HalPwrSeqCmdParsing(
 	IN	PADAPTER				pAdapter,
-	IN	u1Byte					CutVersion, 
+	IN	u1Byte					CutVersion,
 	IN	u1Byte					FabVersion,
 	IN	u1Byte					InterfaceType,
 	IN	WLAN_PWR_CFG			PwrCfgCmd[]

@@ -25,7 +25,7 @@ p2psvc_AttachObjToObjList(
 
 	ULONG 							bytesWritten = 0;
 	PRT_OBJECT_HEADER				pObjToFill = NULL;
-	
+
 	if(0 == pObjList->nObjs)
 	{
 		pObjList->ObjTab[0] = 0;
@@ -41,17 +41,17 @@ p2psvc_AttachObjToObjList(
 	}
 
 	// Fill the obj
-	RT_ASSIGN_OBJECT_HEADER(pObjToFill, 
-		type, 
-		id, 
-		ver, 
+	RT_ASSIGN_OBJECT_HEADER(pObjToFill,
+		type,
+		id,
+		ver,
 		len);
 
 	if(0 < len)
 	{
 		PlatformMoveMemory(pObjToFill->Value, buf, len);
 	}
-	
+
 	bytesWritten = RT_OBJECT_HEADER_SIZE + len;
 
 	// Update obj list header
@@ -77,16 +77,16 @@ P2PSvc_MakeObj(
 	u4Byte							bytesWritten = 0;
 
 	do
-	{	
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+	{
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					id, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					bufLEn, 
+					id,
+					P2PSVC_MIN_SUPPORT_VER,
+					bufLEn,
 					pBuf);
 	}while(FALSE);
-	
-	return bytesWritten;	
+
+	return bytesWritten;
 }
 
 u4Byte
@@ -97,22 +97,22 @@ P2PSvc_MakeSvcDescObjList(
 {
 	u4Byte							bytesWritten = 0;
 	P2PSVC_OBJ_LIST					objList;
-	
+
 	do
 	{
 		PlatformZeroMemory(&objList, sizeof(objList));
-		P2PSVC_OBJ_LIST_INIT(&objList, 
-			RT_OB_HDR_TYPE_DATA, 
-			P2PSVC_OBJ_HDR_ID_DATA_SVC_DESC_LIST, 
+		P2PSVC_OBJ_LIST_INIT(&objList,
+			RT_OB_HDR_TYPE_DATA,
+			P2PSVC_OBJ_HDR_ID_DATA_SVC_DESC_LIST,
 			P2PSVC_MIN_SUPPORT_VER);
 
 		// p2psvc_AttachObjToObjList will make obj hdr for us,
 		// so we copy from the fild right after the obj hdr.
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_SVC_DESC_LIST, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					FIELD_OFFSET(P2PSVC_OBJ_LIST, varStart) - FIELD_OFFSET(RT_OBJECT_HEADER, Value), 
+					P2PSVC_OBJ_HDR_ID_DATA_SVC_DESC_LIST,
+					P2PSVC_MIN_SUPPORT_VER,
+					FIELD_OFFSET(P2PSVC_OBJ_LIST, varStart) - FIELD_OFFSET(RT_OBJECT_HEADER, Value),
 					(pu1Byte)(&objList) + FIELD_OFFSET(RT_OBJECT_HEADER, Value));
 
 		if(ppSvcDescObjList)
@@ -120,7 +120,7 @@ P2PSvc_MakeSvcDescObjList(
 			*ppSvcDescObjList = (PP2PSVC_OBJ_LIST)(pObjList->varStart + pObjList->ObjTab[pObjList->nObjs - 1]);
 		}
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -138,15 +138,15 @@ P2PSvc_MakeTimeObj(
 	u4Byte							bytesWritten = 0;
 
 	do
-	{	
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+	{
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					paramId, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					sizeof(time), 
+					paramId,
+					P2PSVC_MIN_SUPPORT_VER,
+					sizeof(time),
 					&time);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -174,15 +174,15 @@ P2PSvc_MakeSearchIdObj(
 		}
 
 		if(pSearchId) *pSearchId = *((pu1Byte)pSearchIdObj->Value);
-		
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_SEARCH_ID, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					pSearchIdObj->Length, 
+					P2PSVC_OBJ_HDR_ID_DATA_SEARCH_ID,
+					P2PSVC_MIN_SUPPORT_VER,
+					pSearchIdObj->Length,
 					pSearchIdObj->Value);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -198,10 +198,10 @@ P2PSvc_MakeDevAddrObj(
 	bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 						RT_OB_HDR_TYPE_DATA,
 						P2PSVC_OBJ_HDR_ID_DATA_DEV_ADDR,
-						P2PSVC_MIN_SUPPORT_VER, 
-						6, 
+						P2PSVC_MIN_SUPPORT_VER,
+						6,
 						(NULL == pDevAddr) ? (bcstAddr) : (pDevAddr));
-	
+
 	return bytesWritten;
 }
 
@@ -220,11 +220,11 @@ P2PSvc_MakeDevNameObj_FromP2PAttrs(
 		{
 			break;
 		}
-		
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 							RT_OB_HDR_TYPE_DATA,
 							P2PSVC_OBJ_HDR_ID_DATA_DEV_NAME,
-							P2PSVC_MIN_SUPPORT_VER, 
+							P2PSVC_MIN_SUPPORT_VER,
 							osDevName.Length,
 							osDevName.Octet);
 
@@ -243,11 +243,11 @@ P2PSvc_MakeDevNameObj_FromDevNameOctet(
 	u4Byte							bytesWritten = 0;
 
 	do
-	{		
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+	{
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 							RT_OB_HDR_TYPE_DATA,
 							P2PSVC_OBJ_HDR_ID_DATA_DEV_NAME,
-							P2PSVC_MIN_SUPPORT_VER, 
+							P2PSVC_MIN_SUPPORT_VER,
 							osDevName.Length,
 							osDevName.Octet);
 	}while(FALSE);
@@ -267,10 +267,10 @@ P2PSvc_MakeAdvIdObj(
 	bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 						RT_OB_HDR_TYPE_DATA,
 						P2PSVC_OBJ_HDR_ID_DATA_ADV_ID,
-						P2PSVC_MIN_SUPPORT_VER, 
-						sizeof(advId), 
+						P2PSVC_MIN_SUPPORT_VER,
+						sizeof(advId),
 						&advId);
-	
+
 	return bytesWritten;
 }
 
@@ -285,10 +285,10 @@ P2PSvc_MakeSessionIdObj(
 	bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 						RT_OB_HDR_TYPE_DATA,
 						P2PSVC_OBJ_HDR_ID_DATA_SESSION_ID,
-						P2PSVC_MIN_SUPPORT_VER, 
-						sizeof(sessionId), 
+						P2PSVC_MIN_SUPPORT_VER,
+						sizeof(sessionId),
 						&sessionId);
-	
+
 	return bytesWritten;
 }
 
@@ -307,14 +307,14 @@ P2PSvc_MakeSvcNameObj(
 		// it is upper's responsibility to translate
 		// it to other format (e.g., UTF-16).
 
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_SVC_NAME, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					svcNameBufLen, 
+					P2PSVC_OBJ_HDR_ID_DATA_SVC_NAME,
+					P2PSVC_MIN_SUPPORT_VER,
+					svcNameBufLen,
 					pSvcNameBuf);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -329,14 +329,14 @@ P2PSvc_MakeSvcInfoObj(
 
 	do
 	{
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_SVC_INFO, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					svcInfoBufLen, 
+					P2PSVC_OBJ_HDR_ID_DATA_SVC_INFO,
+					P2PSVC_MIN_SUPPORT_VER,
+					svcInfoBufLen,
 					pSvcInfoBuf);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -350,14 +350,14 @@ P2PSvc_MakeAutoAcceptObj(
 
 	do
 	{
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_SVC_AUTO_ACCEPT, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					sizeof(bAutoAccept), 
+					P2PSVC_OBJ_HDR_ID_DATA_SVC_AUTO_ACCEPT,
+					P2PSVC_MIN_SUPPORT_VER,
+					sizeof(bAutoAccept),
 					&bAutoAccept);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -371,14 +371,14 @@ P2PSvc_MakeSvcStatusObj(
 
 	do
 	{
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_SVC_STATUS, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					1, 
+					P2PSVC_OBJ_HDR_ID_DATA_SVC_STATUS,
+					P2PSVC_MIN_SUPPORT_VER,
+					1,
 					&svcStatus);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -392,14 +392,14 @@ P2PSvc_MakeUserAcceptedObj(
 
 	do
 	{
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_USER_ACCEPTED, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					sizeof(bUserAccepted), 
+					P2PSVC_OBJ_HDR_ID_DATA_USER_ACCEPTED,
+					P2PSVC_MIN_SUPPORT_VER,
+					sizeof(bUserAccepted),
 					&bUserAccepted);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -413,14 +413,14 @@ P2PSvc_MakeSvcCountObj(
 
 	do
 	{
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_SVC_COUNT, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					sizeof(svcCount), 
+					P2PSVC_OBJ_HDR_ID_DATA_SVC_COUNT,
+					P2PSVC_MIN_SUPPORT_VER,
+					sizeof(svcCount),
 					&svcCount);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -434,14 +434,14 @@ P2PSvc_MakeP2PStatusObj(
 
 	do
 	{
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_P2P_STATUS, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					sizeof(P2PStatus), 
+					P2PSVC_OBJ_HDR_ID_DATA_P2P_STATUS,
+					P2PSVC_MIN_SUPPORT_VER,
+					sizeof(P2PStatus),
 					&P2PStatus);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -456,14 +456,14 @@ P2PSvc_MakeSsidObj(
 
 	do
 	{
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_SSID, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					ssidLen, 
+					P2PSVC_OBJ_HDR_ID_DATA_SSID,
+					P2PSVC_MIN_SUPPORT_VER,
+					ssidLen,
 					ssidBuf);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -477,14 +477,14 @@ P2PSvc_MakeIntfAddrObj(
 
 	do
 	{
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_INTF_ADDR, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					6, 
+					P2PSVC_OBJ_HDR_ID_DATA_INTF_ADDR,
+					P2PSVC_MIN_SUPPORT_VER,
+					6,
 					intfAddr);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -498,14 +498,14 @@ P2PSvc_MakeOpChannelObj(
 
 	do
 	{
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_OP_CHNL, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					sizeof(opChannel), 
+					P2PSVC_OBJ_HDR_ID_DATA_OP_CHNL,
+					P2PSVC_MIN_SUPPORT_VER,
+					sizeof(opChannel),
 					&opChannel);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -519,14 +519,14 @@ P2PSvc_MakeConfigMethodObj(
 
 	do
 	{
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_CONFIG_METHOD, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					sizeof(configMethod), 
+					P2PSVC_OBJ_HDR_ID_DATA_CONFIG_METHOD,
+					P2PSVC_MIN_SUPPORT_VER,
+					sizeof(configMethod),
 					&configMethod);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -541,14 +541,14 @@ P2PSvc_MakeP2PAttrsObj(
 
 	do
 	{
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_P2P_ATTRIBUTES, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					attrLen, 
+					P2PSVC_OBJ_HDR_ID_DATA_P2P_ATTRIBUTES,
+					P2PSVC_MIN_SUPPORT_VER,
+					attrLen,
 					pAttrs);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -563,10 +563,10 @@ P2PSvc_MakeDeferredObj(
 	bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 						RT_OB_HDR_TYPE_DATA,
 						P2PSVC_OBJ_HDR_ID_DATA_DEFERRED,
-						P2PSVC_MIN_SUPPORT_VER, 
-						sizeof(bDeferred), 
+						P2PSVC_MIN_SUPPORT_VER,
+						sizeof(bDeferred),
 						&bDeferred);
-	
+
 	return bytesWritten;
 }
 
@@ -581,10 +581,10 @@ P2PSvc_MakeIsSDDoneObj(
 	bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 						RT_OB_HDR_TYPE_DATA,
 						P2PSVC_OBJ_HDR_ID_DATA_IS_SD_DONE,
-						P2PSVC_MIN_SUPPORT_VER, 
-						sizeof(bSDDone), 
+						P2PSVC_MIN_SUPPORT_VER,
+						sizeof(bSDDone),
 						&bSDDone);
-	
+
 	return bytesWritten;
 }
 
@@ -599,10 +599,10 @@ P2PSvc_MakeIsPersistentObj(
 	bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 						RT_OB_HDR_TYPE_DATA,
 						P2PSVC_OBJ_HDR_ID_DATA_IS_PERSISTENT,
-						P2PSVC_MIN_SUPPORT_VER, 
-						sizeof(bPersistent), 
+						P2PSVC_MIN_SUPPORT_VER,
+						sizeof(bPersistent),
 						&bPersistent);
-	
+
 	return bytesWritten;
 }
 
@@ -616,35 +616,35 @@ P2PSvc_MakeConnActionObj(
 
 	do
 	{
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_CONN_ACTION, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					sizeof(connAction), 
+					P2PSVC_OBJ_HDR_ID_DATA_CONN_ACTION,
+					P2PSVC_MIN_SUPPORT_VER,
+					sizeof(connAction),
 					&connAction);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
 u4Byte
 P2PSvc_MakeReasonObj(
 	IN  PP2PSVC_OBJ_LIST			pObjList,
-	IN  P2PSVC_REASON 				reason	
+	IN  P2PSVC_REASON 				reason
 	)
 {
 	u4Byte							bytesWritten = 0;
 
 	do
 	{
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_REASON, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					sizeof(reason), 
+					P2PSVC_OBJ_HDR_ID_DATA_REASON,
+					P2PSVC_MIN_SUPPORT_VER,
+					sizeof(reason),
 					&reason);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -658,14 +658,14 @@ P2PSvc_MakeSessionInfoDataInfoObj(
 
 	do
 	{
-		bytesWritten = p2psvc_AttachObjToObjList(pObjList, 
+		bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 					RT_OB_HDR_TYPE_DATA,
-					P2PSVC_OBJ_HDR_ID_DATA_SESSION_INFO, 
-					P2PSVC_MIN_SUPPORT_VER, 
-					osSessionInfoDataInfo.Length, 
+					P2PSVC_OBJ_HDR_ID_DATA_SESSION_INFO,
+					P2PSVC_MIN_SUPPORT_VER,
+					osSessionInfoDataInfo.Length,
 					osSessionInfoDataInfo.Octet);
 	}while(FALSE);
-	
+
 	return bytesWritten;
 }
 
@@ -680,10 +680,10 @@ P2PSvc_MakeGrpDevAddrObj(
 	bytesWritten = p2psvc_AttachObjToObjList(pObjList,
 						RT_OB_HDR_TYPE_DATA,
 						P2PSVC_OBJ_HDR_ID_DATA_GRP_DEV_ADDR,
-						P2PSVC_MIN_SUPPORT_VER, 
-						6, 
+						P2PSVC_MIN_SUPPORT_VER,
+						6,
 						pGrpDevAddr);
-	
+
 	return bytesWritten;
 }
 

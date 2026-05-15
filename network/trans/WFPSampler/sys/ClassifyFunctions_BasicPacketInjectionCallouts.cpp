@@ -6,13 +6,13 @@
 //      ClassifyFunctions_BasicPacketInjectionCallouts.cpp
 //
 //   Abstract:
-//      This module contains WFP Classify functions for injecting packets back into the data path 
+//      This module contains WFP Classify functions for injecting packets back into the data path
 //         using the clone / block / inject method.
 //
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //       ClassifyBasicPacketInjection
 //
@@ -35,15 +35,15 @@
 //       <Scenario>
 //          BasicPacketInjection      - Function demonstrates the clone / block / inject model.
 //       <Modifier>
-//          DeferredProcedureCall     - DPC routine for Out of Band injection which dispatches the 
+//          DeferredProcedureCall     - DPC routine for Out of Band injection which dispatches the
 //                                         proper Perform Function.
 //          WorkItemRoutine           - WorkItem Routine for Out of Band Injection which dispatches
 //                                         the proper Perform Function.
 //          AtInboundMACFrame         - Function operates on:
-//                                         FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET, and 
+//                                         FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET, and
 //                                         FWPM_LAYER_INBOUND_MAC_NATIVE.
 //          AtOutboundMACFrame        - Function operates on:
-//                                         FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET, and 
+//                                         FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET, and
 //                                         FWPM_LAYER_OUTBOUND_MAC_NATIVE.
 //          AtEgressVSwitchEthernet   - Function operates on:
 //                                         FWPM_LAYER_EGRESS_VSWITCH_ETHERNET.
@@ -55,18 +55,18 @@
 //                                         FWPM_LAYER_OUTBOUND_IPPACKET_V{4/6}
 //          AtForward                 - Function operates on:
 //                                         FWPM_LAYER_IPFORWARD_V{4/6}
-//          AtInboundTransport        - Function operates on: 
+//          AtInboundTransport        - Function operates on:
 //                                         FWPM_LAYER_INBOUND_TRANSPORT_V{4/6},
 //                                         FWPM_LAYER_INBOUND_ICMP_ERROR_V{4/6},
 //                                         FWPM_LAYER_DATAGRAM_DATA_V{4/6},
-//                                         FWPM_LAYER_STREAM_PACKET_V{4/6}, and 
+//                                         FWPM_LAYER_STREAM_PACKET_V{4/6}, and
 //                                         FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V{4/6}
 //                                         FWPM_LAYER_ALE_FLOW_ESTABLISHED_V{4/6}
 //          AtOutboundTransport       - Function operates on:
 //                                         FWPM_LAYER_OUTBOUND_TRANSPORT_V{4/6},
 //                                         FWPM_LAYER_OUTBOUND_ICMP_ERROR_V{4/6},
 //                                         FWPM_LAYER_DATAGRAM_DATA_V{4/6},
-//                                         FWPM_LAYER_STREAM_PACKET_V{4/6}, and 
+//                                         FWPM_LAYER_STREAM_PACKET_V{4/6}, and
 //                                         FWPM_LAYER_ALE_AUTH_CONNECT_V{4/6}
 //                                         FWPM_LAYER_ALE_FLOW_ESTABLISHED_V{4/6}
 //
@@ -95,9 +95,9 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, enhance 
-//                                              traces, fix weakhost injection, fix expected 
-//                                              offsets, and add support for multiple injectors and 
+//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, enhance
+//                                              traces, fix weakhost injection, fix expected
+//                                              offsets, and add support for multiple injectors and
 //                                              controlData.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -116,7 +116,7 @@ INJECTION_COUNTERS g_bpiOutstandingNBLClones          = {0};
 
 /**
  @function="PrvBasicPacketInjectionCountersIncrement"
- 
+
    Purpose:  Increment the appropriate counters based on the layerId and direction.             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -398,7 +398,7 @@ VOID PrvBasicPacketInjectionCountersIncrement(_In_ const FWPS_INCOMING_VALUES* p
 
 /**
  @private_function="PrvBasicPacketInjectionCountersIncrementTotalActionResults"
- 
+
    Purpose:  Increment the appropriate counters based on the layerId, direction, and action.    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -429,7 +429,7 @@ VOID PrvBasicPacketInjectionCountersIncrementTotalActionResults(_In_ const FWPS_
 
 /**
  @function="BasicPacketInjectionCountersIncrement"
- 
+
    Purpose:  Increment the appropriate counters based on the injection handle.                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -526,8 +526,8 @@ VOID BasicPacketInjectionCountersIncrement(_In_ HANDLE injectionHandle,
 
 /**
  @private_function="PerformBasicPacketInjectionAtInboundMACFrame"
- 
-   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack from the 
+
+   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack from the
              incoming MAC Layers using FwpsInjectMacReceiveAsync().                             <br>
                                                                                                 <br>
    Notes:    Applies to the following inbound layers:                                           <br>
@@ -747,8 +747,8 @@ NTSTATUS PerformBasicPacketInjectionAtInboundMACFrame(_In_ CLASSIFY_DATA** ppCla
 
 /**
  @private_function="PerformBasicPacketInjectionAtOutboundMACFrame"
- 
-   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack from the 
+
+   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack from the
              outgoing MAC Layers using FwpsInjectMacSendAsync().                                <br>
                                                                                                 <br>
    Notes:    Applies to the following outbound layers:                                          <br>
@@ -846,10 +846,10 @@ NTSTATUS PerformBasicPacketInjectionAtOutboundMACFrame(_In_ CLASSIFY_DATA** ppCl
    }
 
 #if DBG
-   
+
       BasicPacketInjectionCountersIncrement(injectionHandle,
                                             &g_bpiOutstandingNBLClones);
-   
+
 #endif /// DBG
 
    pCompletionData->refCount = KrnlHlprNBLGetRequiredRefCount(pNetBufferList,
@@ -933,9 +933,9 @@ NTSTATUS PerformBasicPacketInjectionAtOutboundMACFrame(_In_ CLASSIFY_DATA** ppCl
 
 /**
  @private_function="PerformBasicPacketInjectionAtIngressVSwitchEthernet"
- 
-   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the virtual switch's 
-             ingress path from the ingress VSwitch Layers using 
+
+   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the virtual switch's
+             ingress path from the ingress VSwitch Layers using
              FwpsInjectvSwitchEthernetIngressAsync0().                                          <br>
                                                                                                 <br>
    Notes:    Applies to the following ingress layers:                                           <br>
@@ -1047,10 +1047,10 @@ NTSTATUS PerformBasicPacketInjectionAtIngressVSwitchEthernet(_In_ CLASSIFY_DATA*
    }
 
 #if DBG
-   
+
       BasicPacketInjectionCountersIncrement(injectionHandle,
                                             &g_bpiOutstandingNBLClones);
-   
+
 #endif /// DBG
 
    pCompletionData->refCount = KrnlHlprNBLGetRequiredRefCount(pNetBufferList,
@@ -1134,9 +1134,9 @@ NTSTATUS PerformBasicPacketInjectionAtIngressVSwitchEthernet(_In_ CLASSIFY_DATA*
 
 /**
  @private_function="PerformBasicPacketInjectionAtEgressVSwitchEthernet"
- 
-   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the virtual switch's 
-             ingress path from the egress VSwitch Layers using 
+
+   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the virtual switch's
+             ingress path from the egress VSwitch Layers using
              FwpsInjectvSwitchEthernetIngressAsync0().                                          <br>
                                                                                                 <br>
    Notes:    Applies to the following egress layers:                                            <br>
@@ -1248,10 +1248,10 @@ NTSTATUS PerformBasicPacketInjectionAtEgressVSwitchEthernet(_In_ CLASSIFY_DATA**
    }
 
 #if DBG
-   
+
       BasicPacketInjectionCountersIncrement(injectionHandle,
                                             &g_bpiOutstandingNBLClones);
-   
+
 #endif /// DBG
 
    pCompletionData->refCount = KrnlHlprNBLGetRequiredRefCount(pNetBufferList,
@@ -1337,8 +1337,8 @@ NTSTATUS PerformBasicPacketInjectionAtEgressVSwitchEthernet(_In_ CLASSIFY_DATA**
 
 /**
  @private_function="PerformBasicPacketInjectionAtInboundNetwork"
- 
-   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack's inbound path 
+
+   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack's inbound path
              from the incoming Network Layers using FwpsInjectNetworkReceiveAsync().            <br>
                                                                                                 <br>
    Notes:    Applies to the following inbound layers:                                           <br>
@@ -1550,10 +1550,10 @@ NTSTATUS PerformBasicPacketInjectionAtInboundNetwork(_In_ CLASSIFY_DATA** ppClas
    }
 
 #if DBG
-   
+
       BasicPacketInjectionCountersIncrement(injectionHandle,
                                             &g_bpiOutstandingNBLClones);
-   
+
 #endif /// DBG
 
    pCompletionData->refCount = KrnlHlprNBLGetRequiredRefCount(pNetBufferList);
@@ -1691,8 +1691,8 @@ NTSTATUS PerformBasicPacketInjectionAtInboundNetwork(_In_ CLASSIFY_DATA** ppClas
 
 /**
  @private_function="PerformBasicPacketInjectionAtOutboundNetwork"
- 
-   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack's outbound path 
+
+   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack's outbound path
              from the outgoing Network Layers using FwpsInjectNetworkSendAsync().               <br>
                                                                                                 <br>
    Notes:    Applies to the following outbound layers:                                          <br>
@@ -1778,10 +1778,10 @@ NTSTATUS PerformBasicPacketInjectionAtOutboundNetwork(_In_ CLASSIFY_DATA** ppCla
    }
 
 #if DBG
-   
+
       BasicPacketInjectionCountersIncrement(injectionHandle,
                                             &g_bpiOutstandingNBLClones);
-   
+
 #endif /// DBG
 
    pCompletionData->refCount = KrnlHlprNBLGetRequiredRefCount(pNetBufferList);
@@ -1861,8 +1861,8 @@ NTSTATUS PerformBasicPacketInjectionAtOutboundNetwork(_In_ CLASSIFY_DATA** ppCla
 
 /**
  @private_function="PerformBasicPacketInjectionAtForward"
- 
-   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack's forward path 
+
+   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack's forward path
              using FwpsInjectForwardAsync().                                                    <br>
                                                                                                 <br>
    Notes:    Applies to the following forwarding layers:                                        <br>
@@ -1986,10 +1986,10 @@ NTSTATUS PerformBasicPacketInjectionAtForward(_In_ CLASSIFY_DATA** ppClassifyDat
    }
 
 #if DBG
-   
+
       BasicPacketInjectionCountersIncrement(injectionHandle,
                                             &g_bpiOutstandingNBLClones);
-   
+
 #endif /// DBG
 
    checksumInfo.Value = (ULONG)(ULONG_PTR)NET_BUFFER_LIST_INFO((NET_BUFFER_LIST*)pCompletionData->pClassifyData->pPacket,
@@ -2065,8 +2065,8 @@ NTSTATUS PerformBasicPacketInjectionAtForward(_In_ CLASSIFY_DATA** ppClassifyDat
 
    pCompletionData->refCount = KrnlHlprNBLGetRequiredRefCount(pNetBufferList);
 
-   /// If the Forwarded NBL is destined locally, inject using FwpsInjectNetworkReceiveAsync rather 
-   /// than the traditional FwpsInjectForwardAsync otherwise STATUS_INVALID_PARAMETER will be 
+   /// If the Forwarded NBL is destined locally, inject using FwpsInjectNetworkReceiveAsync rather
+   /// than the traditional FwpsInjectForwardAsync otherwise STATUS_INVALID_PARAMETER will be
    /// returned in the NBL.status and the injection fails.
    if(isWeakHostReceive)
    {
@@ -2116,8 +2116,8 @@ NTSTATUS PerformBasicPacketInjectionAtForward(_In_ CLASSIFY_DATA** ppClassifyDat
                                              CompleteBasicPacketInjection,
                                              pCompletionData);
    }
-   /// If the Forwarded NBL is sourced locally, but another interface, inject using 
-   /// FwpsInjectNetworkSendAsync rather than the traditional FwpsInjectForwardAsync otherwise 
+   /// If the Forwarded NBL is sourced locally, but another interface, inject using
+   /// FwpsInjectNetworkSendAsync rather than the traditional FwpsInjectForwardAsync otherwise
    /// STATUS_INVALID_PARAMETER will be returned in the NBL.status and the injection fails
    else if(isWeakHostSend)
    {
@@ -2236,8 +2236,8 @@ NTSTATUS PerformBasicPacketInjectionAtForward(_In_ CLASSIFY_DATA** ppClassifyDat
 
 /**
  @private_function="PerformBasicPacketInjectionAtInboundTransport"
- 
-   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack's inbound path 
+
+   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack's inbound path
              from the incoming Transport Layers using FwpsInjectTransportRecveiveAsync().       <br>
                                                                                                 <br>
    Notes:    Applies to the following inbound layers:                                           <br>
@@ -2376,7 +2376,7 @@ NTSTATUS PerformBasicPacketInjectionAtInboundTransport(_In_ CLASSIFY_DATA** ppCl
    if(pClassifyValues->layerId == FWPS_LAYER_ALE_FLOW_ESTABLISHED_V4)
    {
       ipHeaderSize = IPV4_HEADER_MIN_SIZE;
-   
+
       if(protocol == IPPROTO_ICMP)
          transportHeaderSize = ICMP_HEADER_MIN_SIZE;
       else if(protocol == IPPROTO_TCP)
@@ -2422,7 +2422,7 @@ NTSTATUS PerformBasicPacketInjectionAtInboundTransport(_In_ CLASSIFY_DATA** ppCl
          (pClassifyValues->layerId == FWPS_LAYER_ALE_AUTH_RECV_ACCEPT_V4 ||
          pClassifyValues->layerId == FWPS_LAYER_ALE_AUTH_RECV_ACCEPT_V6))
       {
-         /// For asynchronous execution, the drop will cause the stack to continue processing on the 
+         /// For asynchronous execution, the drop will cause the stack to continue processing on the
          /// NBL for auditing purposes.  This processing retreats the NBL Offset to the Transport header.
          /// We need to take this into account because we only took a reference on the NBL.
       }
@@ -2506,10 +2506,10 @@ NTSTATUS PerformBasicPacketInjectionAtInboundTransport(_In_ CLASSIFY_DATA** ppCl
    }
 
 #if DBG
-   
+
       BasicPacketInjectionCountersIncrement(injectionHandle,
                                             &g_bpiOutstandingNBLClones);
-   
+
 #endif /// DBG
 
    checksumInfo.Value = (ULONG)(ULONG_PTR)NET_BUFFER_LIST_INFO((NET_BUFFER_LIST*)pCompletionData->pClassifyData->pPacket,
@@ -2534,7 +2534,7 @@ NTSTATUS PerformBasicPacketInjectionAtInboundTransport(_In_ CLASSIFY_DATA** ppCl
          if(pRemoteAddressValue->type == FWP_BYTE_ARRAY16_TYPE)
             addressSize = IPV6_ADDRESS_SIZE;
          else
-            addressSize = IPV4_ADDRESS_SIZE;               
+            addressSize = IPV4_ADDRESS_SIZE;
 
          HLPR_NEW_ARRAY(pSourceAddress,
                         BYTE,
@@ -2584,7 +2584,7 @@ NTSTATUS PerformBasicPacketInjectionAtInboundTransport(_In_ CLASSIFY_DATA** ppCl
             RtlCopyMemory(pDestinationAddress,
                           &ipv4Address,
                           addressSize);
-         }            
+         }
       }
 
       pProtocolValue = KrnlHlprFwpValueGetFromFwpsIncomingValues(pClassifyValues,
@@ -2809,8 +2809,8 @@ NTSTATUS PerformBasicPacketInjectionAtInboundTransport(_In_ CLASSIFY_DATA** ppCl
 
 /**
  @private_function="PerformBasicPacketInjectionAtOutboundTransport"
- 
-   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack's outbound path 
+
+   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack's outbound path
              from the outgoing Transport Layers using FwpsInjectTransportSendAsync().           <br>
                                                                                                 <br>
    Notes:    Applies to the following outbound layers:                                          <br>
@@ -2969,10 +2969,10 @@ NTSTATUS PerformBasicPacketInjectionAtOutboundTransport(_In_ CLASSIFY_DATA** ppC
    }
 
 #if DBG
-   
+
       BasicPacketInjectionCountersIncrement(injectionHandle,
                                             &g_bpiOutstandingNBLClones);
-   
+
 #endif /// DBG
 
    pCompletionData->refCount = KrnlHlprNBLGetRequiredRefCount(pNetBufferList);
@@ -3055,8 +3055,8 @@ NTSTATUS PerformBasicPacketInjectionAtOutboundTransport(_In_ CLASSIFY_DATA** ppC
 
 /**
  @private_function="BasicPacketInjectionDeferredProcedureCall"
- 
-   Purpose:  Invokes the appropriate private injection routine to perform the injection at 
+
+   Purpose:  Invokes the appropriate private injection routine to perform the injection at
              DISPATCH_LEVEL.                                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -3218,8 +3218,8 @@ VOID BasicPacketInjectionDeferredProcedureCall(_In_ KDPC* pDPC,
 
 /**
  @private_function="BasicPacketInjectionWorkItemRoutine"
- 
-   Purpose:  Invokes the appropriate private injection routine to perform the injection at 
+
+   Purpose:  Invokes the appropriate private injection routine to perform the injection at
              PASSIVE_LEVEL.                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -3376,8 +3376,8 @@ VOID BasicPacketInjectionWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
 
 /**
  @private_function="TriggerBasicPacketInjectionInline"
- 
-   Purpose:  Makes a reference to all the classification data structures and invokes the 
+
+   Purpose:  Makes a reference to all the classification data structures and invokes the
              appropriate private injection routine to perform the injection.                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -3551,8 +3551,8 @@ NTSTATUS TriggerBasicPacketInjectionInline(_In_ const FWPS_INCOMING_VALUES* pCla
 
 /**
  @private_function="TriggerBasicPacketInjectionOutOfBand"
- 
-   Purpose:  Creates a local copy of the classification data structures and queues a WorkItem 
+
+   Purpose:  Creates a local copy of the classification data structures and queues a WorkItem
              to perform the injection at PASSIVE_LEVEL.                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -3620,7 +3620,7 @@ NTSTATUS TriggerBasicPacketInjectionOutOfBand(_In_ const FWPS_INCOMING_VALUES* p
       status = KrnlHlprThreadedDPCQueue(BasicPacketInjectionDeferredProcedureCall,
                                         pClassifyData,
                                         pInjectionData,
-                                        0);      
+                                        0);
    else
       status = KrnlHlprDPCQueue(BasicPacketInjectionDeferredProcedureCall,
                                 pClassifyData,
@@ -3653,8 +3653,8 @@ NTSTATUS TriggerBasicPacketInjectionOutOfBand(_In_ const FWPS_INCOMING_VALUES* p
 
 /**
  @classify_function="ClassifyBasicPacketInjection"
- 
-   Purpose:  Blocks the current NET_BUFFER_LIST and injects a clone back to the stack without 
+
+   Purpose:  Blocks the current NET_BUFFER_LIST and injects a clone back to the stack without
              modification.                                                                      <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>
@@ -3868,7 +3868,7 @@ VOID NTAPI ClassifyBasicPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassi
                                                                                     &FWPM_CONDITION_IP_LOCAL_ADDRESS);
                FWP_VALUE* pRemoteAddress = KrnlHlprFwpValueGetFromFwpsIncomingValues(pClassifyValues,
                                                                                      &FWPM_CONDITION_IP_REMOTE_ADDRESS);
-               
+
                if((pLocalAddress &&
                   ((pLocalAddress->type == FWP_UINT32 &&
                   RtlCompareMemory(&(pLocalAddress->uint32),
@@ -3973,8 +3973,8 @@ VOID NTAPI ClassifyBasicPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassi
 
 /**
  @classify_function="ClassifyBasicPacketInjection"
- 
-   Purpose:  Blocks the current NET_BUFFER_LIST and injects a clone back to the stack without 
+
+   Purpose:  Blocks the current NET_BUFFER_LIST and injects a clone back to the stack without
              modification.                                                                      <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>
@@ -4137,7 +4137,7 @@ VOID NTAPI ClassifyBasicPacketInjection(_In_ const FWPS_INCOMING_VALUES* pClassi
                                                                                     &FWPM_CONDITION_IP_LOCAL_ADDRESS);
                FWP_VALUE* pRemoteAddress = KrnlHlprFwpValueGetFromFwpsIncomingValues(pClassifyValues,
                                                                                      &FWPM_CONDITION_IP_REMOTE_ADDRESS);
-               
+
                if((pLocalAddress &&
                   (pLocalAddress->type == FWP_UINT32 &&
                   RtlCompareMemory(&(pLocalAddress->uint32),

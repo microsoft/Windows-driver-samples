@@ -6,17 +6,17 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	PlatformSdio.h
-	
+
 Abstract:
-	Prototype of PlatformSdioXXX(). 
-	Each platform shall implement the functions exported in 
+	Prototype of PlatformSdioXXX().
+	Each platform shall implement the functions exported in
 	this file.
-	    
+
 Major Change History:
 	When       Who               What
-	---------- ---------------   -------------------------------	
+	---------- ---------------   -------------------------------
 	2010-12-20 Roger			Create.
-	
+
 --*/
 
 //================================================================================
@@ -30,13 +30,13 @@ Major Change History:
 //
 //	Bulk IN.
 //
-BOOLEAN 
+BOOLEAN
 PlatformSdioInitInContext(
 	IN	PADAPTER				pAdapter,
 	IN	PSDIO_IN_CONTEXT			pContext
 	);
 
-VOID 
+VOID
 PlatformSdioDeInitInContext(
 	IN	PADAPTER				pAdapter,
 	IN	PSDIO_IN_CONTEXT			pContext
@@ -46,13 +46,13 @@ PlatformSdioDeInitInContext(
 //
 //	SDIO Tx Transfer
 //
-BOOLEAN 
+BOOLEAN
 PlatformSdioInitTxContext(
 	IN	PADAPTER				pAdapter,
 	IN	PSDIO_OUT_CONTEXT		pContext
 	);
 
-VOID 
+VOID
 PlatformSdioDeInitTxContext(
 	IN	PADAPTER				pAdapter,
 	IN	PSDIO_OUT_CONTEXT		pContext

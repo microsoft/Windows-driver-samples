@@ -6,7 +6,7 @@
 //      Scenarios_AppContainers.h
 //
 //   Abstract:
-//      This module contains prototypes for functions which prepares and sends data for the 
+//      This module contains prototypes for functions which prepares and sends data for the
 //      APPLICATION_CONTAINER scenario implementation.
 //
 //   Author:

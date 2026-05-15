@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       KrnlHlprNBLGetRequiredRefCount
@@ -48,13 +48,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "HelperFunctions_Include.h"     /// . 
+#include "HelperFunctions_Include.h"     /// .
 #include "HelperFunctions_NetBuffer.tmh" /// $(OBJ_PATH)\$(O)\
 
 
 /**
  @kernel_helper_function="KrnlHlprNBLCreateFromBuffer"
- 
+
    Purpose:  Creates a new NBL from the data contained in the supplied buffer.                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -142,7 +142,7 @@ NET_BUFFER_LIST* KrnlHlprNBLCreateFromBuffer(_In_ NDIS_HANDLE nblPoolHandle,
 
 /**
  @kernel_helper_function="KrnlHlprNBLCopyToBuffer"
- 
+
    Purpose:  Copies the NBL to a buffer.                                                        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -255,7 +255,7 @@ BYTE* KrnlHlprNBLCopyToBuffer(_In_opt_ NET_BUFFER_LIST* pTemplateNBL,
 
 /**
  @kernel_helper_function="KrnlHlprNBLDestroyNew"
- 
+
    Purpose:  Destroys a new NBL.                                                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -308,7 +308,7 @@ VOID KrnlHlprNBLDestroyNew(_Inout_opt_ NET_BUFFER_LIST** ppNetBufferList,
 
 /**
  @kernel_helper_function="KrnlHlprNBLCreateNew"
- 
+
    Purpose:  Creates a new NBL.                                                                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -323,7 +323,7 @@ NET_BUFFER_LIST* KrnlHlprNBLCreateNew(_In_ NDIS_HANDLE nblPoolHandle,
                                       _In_opt_ NET_BUFFER_LIST* pTemplateNBL,
                                       _Outptr_opt_result_buffer_maybenull_(*pSize) BYTE** ppAllocatedBuffer,
                                       _Out_ UINT32* pSize,
-                                      _Outptr_opt_result_maybenull_ PMDL* ppMDL, 
+                                      _Outptr_opt_result_maybenull_ PMDL* ppMDL,
                                       _In_ UINT32 additionalSpace,                                 /* 0 */
                                       _In_ BOOLEAN isOutbound)                                     /* FALSE */
 {
@@ -387,7 +387,7 @@ NET_BUFFER_LIST* KrnlHlprNBLCreateNew(_In_ NDIS_HANDLE nblPoolHandle,
 
 /**
  @kernel_helper_function="KrnlHlprNBLGetRequiredRefCount"
- 
+
    Purpose:  Return a count of how many NBLs are within the NBL chain.                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -401,7 +401,7 @@ UINT32 KrnlHlprNBLGetRequiredRefCount(_In_ const NET_BUFFER_LIST* pNBL,
                                       _In_ BOOLEAN isChained)           /* FALSE */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprNBLGetRequiredRefCount()\n");
@@ -425,13 +425,13 @@ UINT32 KrnlHlprNBLGetRequiredRefCount(_In_ const NET_BUFFER_LIST* pNBL,
       requiredRefCount = 1;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprNBLGetRequiredRefCount() [refCount: %#d]\n",
               requiredRefCount);
 
 #endif /// DBG
-   
+
    return requiredRefCount;
 }

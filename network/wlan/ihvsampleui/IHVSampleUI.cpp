@@ -58,10 +58,10 @@ STDAPI DllCanUnloadNow(void)
 
 
 
-STDAPI 
+STDAPI
 DllGetClassObject(
-   _In_ REFCLSID rclsid, 
-   _In_ REFIID riid, 
+   _In_ REFCLSID rclsid,
+   _In_ REFIID riid,
    _Outptr_ LPVOID *ppv)
 {
    HRESULT hr = E_NOINTERFACE;
@@ -75,7 +75,7 @@ DllGetClassObject(
        }
    }
 
-   if(NULL != g_pIHVClassFactory && 
+   if(NULL != g_pIHVClassFactory &&
         (rclsid == GUID_SAMPLE_IHVUI_CLSID || rclsid == IID_IWizardExtension))
    {
         hr = g_pIHVClassFactory->QueryInterface(riid, ppv);
@@ -97,13 +97,13 @@ DllGetClassObject(
 // Returns:   BOOL WINAPI - TRUE - always
 //
 //+----------------------------------------------------------------------------
-extern "C" 
-BOOL WINAPI 
+extern "C"
+BOOL WINAPI
 DllMain(
-    HINSTANCE  hInstDLL, 
-    DWORD  fdwReason, 
+    HINSTANCE  hInstDLL,
+    DWORD  fdwReason,
     LPVOID  lpvReserved
-    ) 
+    )
 {
     UNREFERENCED_PARAMETER(lpvReserved);
 

@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       KrnlHlprClassifyDataCreateLocalCopy
@@ -56,7 +56,7 @@ INT64 g_OutstandingNBLReferences = 0;
 
 /**
  @kernel_helper_function="KrnlHlprClassifyDataReleaseLocalCopy"
- 
+
    Purpose:  Release reference on NBLs and cleanup a local copy of a CLASSIFY_DATA.             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -76,7 +76,7 @@ VOID KrnlHlprClassifyDataReleaseLocalCopy(_Inout_ CLASSIFY_DATA* pClassifyData)
               " ---> KrnlHlprClassifyDataReleaseLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pClassifyData);
 
    KrnlHlprFwpsClassifyOutDestroyLocalCopy((FWPS_CLASSIFY_OUT**)&(pClassifyData->pClassifyOut));
@@ -86,10 +86,10 @@ VOID KrnlHlprClassifyDataReleaseLocalCopy(_Inout_ CLASSIFY_DATA* pClassifyData)
    KrnlHlprFwpsFilterDestroyLocalCopy((FWPS_FILTER**)&(pClassifyData->pFilter));
 
 #if(NTDDI_VERSION >= NTDDI_WIN7)
-   
+
       if(pClassifyData->classifyContextHandle)
          FwpsReleaseClassifyHandle(pClassifyData->classifyContextHandle);
-   
+
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
 
    if(pClassifyData->pPacket)
@@ -154,19 +154,19 @@ VOID KrnlHlprClassifyDataReleaseLocalCopy(_Inout_ CLASSIFY_DATA* pClassifyData)
                  sizeof(CLASSIFY_DATA));
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprClassifyDataReleaseLocalCopy()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprClassifyDataDestroyLocalCopy"
- 
+
    Purpose:  Release reference on packet and cleanup and free a local copy of CLASSIFY_DATA.    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -182,13 +182,13 @@ _Success_(*ppClassifyData == 0)
 VOID KrnlHlprClassifyDataDestroyLocalCopy(_Inout_ CLASSIFY_DATA** ppClassifyData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprClassifyDataDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppClassifyData);
 
    if(*ppClassifyData)
@@ -200,21 +200,21 @@ VOID KrnlHlprClassifyDataDestroyLocalCopy(_Inout_ CLASSIFY_DATA** ppClassifyData
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprClassifyDataDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprClassifyDataAcquireLocalCopy"
- 
-   Purpose:  Ppopulate a CLASSIFY_DATA with a local copy of data obtained from a 
-             callout's classification. This local copy requiires taking a reference 
+
+   Purpose:  Ppopulate a CLASSIFY_DATA with a local copy of data obtained from a
+             callout's classification. This local copy requiires taking a reference
              on pPacket.                                                                        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -236,13 +236,13 @@ NTSTATUS KrnlHlprClassifyDataAcquireLocalCopy(_Inout_ CLASSIFY_DATA* pClassifyDa
                                               _In_ FWPS_CLASSIFY_OUT* pClassifyOut)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprClassifyDataAcquireLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pClassifyData);
    NT_ASSERT(pClassifyValues);
    NT_ASSERT(pMetadata);
@@ -347,9 +347,9 @@ NTSTATUS KrnlHlprClassifyDataAcquireLocalCopy(_Inout_ CLASSIFY_DATA* pClassifyDa
             pClassifyData->pPacket = pPacket;
 
 #if DBG
-         
+
             InterlockedIncrement64((LONG64*)&(g_OutstandingNBLReferences));
-         
+
 #endif /// DBG
 
          }
@@ -357,7 +357,7 @@ NTSTATUS KrnlHlprClassifyDataAcquireLocalCopy(_Inout_ CLASSIFY_DATA* pClassifyDa
    }
 
 #if(NTDDI_VERSION >= NTDDI_WIN7)
-   
+
       if(pClassifyContext)
       {
          /// ClassifyHandle for these layers is obtained in REDIRECT_DATA
@@ -373,9 +373,9 @@ NTSTATUS KrnlHlprClassifyDataAcquireLocalCopy(_Inout_ CLASSIFY_DATA* pClassifyDa
          }
       }
 #else
-   
+
       UNREFERENCED_PARAMETER(pClassifyContext);
-   
+
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
 
    if(pFilter)
@@ -400,21 +400,21 @@ NTSTATUS KrnlHlprClassifyDataAcquireLocalCopy(_Inout_ CLASSIFY_DATA* pClassifyDa
       KrnlHlprClassifyDataReleaseLocalCopy(pClassifyData);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprClassifyDataAcquireLocalCopy() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprClassifyDataCreateLocalCopy"
- 
-   Purpose:  Allocate and populate a CLASSIFY_DATA with a local copy of data obtained from a 
+
+   Purpose:  Allocate and populate a CLASSIFY_DATA with a local copy of data obtained from a
              callout's classifyFn. This local copy requiires taking a reference on pPacket.     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -439,13 +439,13 @@ NTSTATUS KrnlHlprClassifyDataCreateLocalCopy(_Outptr_ CLASSIFY_DATA** ppClassify
                                              _In_ FWPS_CLASSIFY_OUT* pClassifyOut)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprClassifyDataCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppClassifyData);
    NT_ASSERT(pClassifyValues);
    NT_ASSERT(pMetadata);
@@ -472,7 +472,7 @@ NTSTATUS KrnlHlprClassifyDataCreateLocalCopy(_Outptr_ CLASSIFY_DATA** ppClassify
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// *ppClassifyData initialized with call to HLPR_NEW & KrnlHlprClassifyDataAcquireLocalCopy 
+#pragma warning(disable: 6001) /// *ppClassifyData initialized with call to HLPR_NEW & KrnlHlprClassifyDataAcquireLocalCopy
 
    if(status != STATUS_SUCCESS &&
       *ppClassifyData)
@@ -481,7 +481,7 @@ NTSTATUS KrnlHlprClassifyDataCreateLocalCopy(_Outptr_ CLASSIFY_DATA** ppClassify
 #pragma warning(pop)
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprClassifyDataCreateLocalCopy() [status: %#x]\n",

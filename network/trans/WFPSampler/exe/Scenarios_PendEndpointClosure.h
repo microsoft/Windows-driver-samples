@@ -6,7 +6,7 @@
 //      Scenarios_PendEndpointClosure.h
 //
 //   Abstract:
-//      This module contains prototypes for functions which run the specified PEND_ENDPOINT_CLOSURE 
+//      This module contains prototypes for functions which run the specified PEND_ENDPOINT_CLOSURE
 //         scenario.
 //
 //   Author:

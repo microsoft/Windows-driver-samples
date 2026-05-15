@@ -24,7 +24,7 @@ typedef enum _ACTION_TIMER_HW_TIMER
 	HW_TIMER_NO_USE = 0,
 	HW_TSF_CLOCK_PS_TIMER,
 	HW_TIMER_MAX
-	
+
 } ACTION_TIMER_HW_TIMER, *PACTION_TIMER_HW_TIMER;
 
 
@@ -43,13 +43,13 @@ typedef	struct _ACTION_TIMER_ITEM ACTION_TIMER_ITEM, *PACTION_TIMER_ITEM;
 
 typedef enum _ACTION_TYPE
 {
-	ACTION_TYPE_INVALID = 0, 
+	ACTION_TYPE_INVALID = 0,
 	ACTION_TYPE_MULTICHANNEL_SWITCH,
 	ACTION_TYPE_CUSTOMIZED_SCAN,
 	ACTION_TYPE_P2P_POWERSAVE,
 	ACTION_TYPE_ALL,
 	ACTION_TYPE_MAX
-	
+
 } ACTION_TYPE, *PACTION_TYPE;
 
 
@@ -71,14 +71,14 @@ typedef	struct _ACTION_TIMER_ITEM
 	PVOID						pContext;			// User-specified data context
 	ACTION_TIMER_ITEM_CALLBACK	CallbackFunc;		// Timeout callback function
 	// ---------------------------------------------------------------------------------------------------
-	
+
 } ACTION_TIMER_ITEM, *PACTION_TIMER_ITEM;
 
 
-typedef struct _ACTION_TIMER 
+typedef struct _ACTION_TIMER
 {
 	RT_LIST_ENTRY			List;
-	
+
 	ACTION_TIMER_HANDLE		TimerHandle;
 
 	ACTION_TIMER_REFERENCED_CLOCK	ClockType;
@@ -86,25 +86,25 @@ typedef struct _ACTION_TIMER
 	// For Tsf Shared Hardware Timer -------------
 	ACTION_TIMER_HW_TIMER	HwTimer;
 	// ---------------------------------------
-	
+
 	// For SW_OS_SYSTEM_CLOCK ---------------
 	RT_TIMER				SoftTimer;
 	// ---------------------------------------
 
 	RT_LIST_ENTRY			TimeOrderedActionItemQueue;	// Protected by ACTION_TIMER_COMMON_CONTEXT.ActionTimerLock
 	u4Byte					uNumberOfActionItems;			// Protected by ACTION_TIMER_COMMON_CONTEXT.ActionTimerLock
-	
+
 } ACTION_TIMER, *PACTION_TIMER;
 
 
 typedef struct _ACTION_TIMER_COMMON_CONTEXT {
 
-	RT_SPIN_LOCK	ActionTimerLock;	
+	RT_SPIN_LOCK	ActionTimerLock;
 
 	// Preallocated Hw Action Timer (Indexed by ACTION_TIMER_HW_TIMER) -------------------------
 	ACTION_TIMER	HwActionTimer[HW_TIMER_MAX];
 	// ------------------------------------------------------------------------------------
-	
+
 	RT_LIST_ENTRY	ActionTimerQueue;				// Protected by ACTION_TIMER_COMMON_CONTEXT.ActionTimerLock
 	u4Byte			uNumberOfActionTimers;			// Protected by ACTION_TIMER_COMMON_CONTEXT.ActionTimerLock
 	u1Byte			LastAssignedTimerHandle;		// Protected by ACTION_TIMER_COMMON_CONTEXT.ActionTimerLock
@@ -114,7 +114,7 @@ typedef struct _ACTION_TIMER_COMMON_CONTEXT {
 	u4Byte 			uAllocatedMemory;
 	u4Byte			uReleasedMemory;
 	// --------------------------------------------------
-		
+
 } ACTION_TIMER_COMMON_CONTEXT, *PACTION_TIMER_COMMON_CONTEXT;
 
 #define  ACTION_TIMER_SIZE_OF_COMMON_CONTEXT 		sizeof(ACTION_TIMER_COMMON_CONTEXT)

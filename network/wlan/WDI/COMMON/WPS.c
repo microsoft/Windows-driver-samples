@@ -5,20 +5,20 @@
  Module:	WPS.c	(RTL8190  Source C File)
 
  Note:		Declare some variable which will be used by any debug command.
- 
- Function:	
- 		 
- Export:	
 
- Abbrev:	
+ Function:
+
+ Export:
+
+ Abbrev:
 
  History:
 	Data		Who		Remark
-	
+
 	06/15/2011	MH_Chen	Create initial version.
 						Move WPS relative functio to the files.
-	
-		
+
+
 ******************************************************************************/
 /* Header Files. */
 #include "Mp_Precomp.h"
@@ -71,7 +71,7 @@ WPS_Init(
 	)
 {
 	PSIMPLE_CONFIG_T	pSimpleConfig = GET_SIMPLE_CONFIG(&(GetDefaultAdapter(Adapter)->MgntInfo));
-	
+
 	Adapter->WPSSupport = TRUE;
 	pSimpleConfig->WpsIeVersion = SUPPORT_WPS_INFO_VERSION;
 }
@@ -98,7 +98,7 @@ WPS_OnAsocReq(
 		return FALSE;
 	}
 	return	TRUE;
-	
+
 }
 
 
@@ -109,15 +109,15 @@ WPS_MgntActSet_802_11_SSID(
 {
 	PMGNT_INFO			pMgntInfo = &(Adapter->MgntInfo);
 	PSIMPLE_CONFIG_T	pSimpleConfig = GET_SIMPLE_CONFIG(&(Adapter->MgntInfo));
-	
+
 	if( MgntIsLinkInProgress(pMgntInfo) && pSimpleConfig->bEnabled)
 	{
 		RT_TRACE(COMP_WPS, DBG_LOUD, ("MgntActSet_802_11_SSID(): In WPS process, do not connect to the same AP\n"));
 		return TRUE;
-	}	
+	}
 
 	return	FALSE;
-	
+
 }
 
 
@@ -139,11 +139,11 @@ WPS_ConstructBeaconFrame(
 
 	if(!ACTING_AS_AP(Adapter))
 		return;
-	
+
 	pDefaultMgntInfo = &(GetDefaultAdapter(Adapter)->MgntInfo);
 
 	pSimpleConfig = GET_SIMPLE_CONFIG(pDefaultMgntInfo);
-	
+
 	if( ((pSimpleConfig->WpsIeVersion < SUPPORT_WPS_INFO_VERSION) || (wps_IsWPSIEReady(Adapter) == FALSE)) && pSimpleConfig->IELen > 0)
 	{	// Original method carrying WPS IE
 		RT_TRACE(COMP_WPS, DBG_TRACE, ("AP Construct Beacon \n"));
@@ -156,7 +156,7 @@ WPS_ConstructBeaconFrame(
 		if(pSimpleConfig->ieBeaconLen > 0)
 			PacketAppendData(&pMgntInfo->beaconframe, SimpleConfigInfo);
 	}
-		
+
 }
 
 
@@ -169,7 +169,7 @@ WPS_AppendElement(
 	)
 {
 	PSIMPLE_CONFIG_T	pSimpleConfig = GET_SIMPLE_CONFIG(&(GetDefaultAdapter(Adapter)->MgntInfo));
-	OCTET_STRING		SimpleConfigInfo;	
+	OCTET_STRING		SimpleConfigInfo;
 
 	FunctionIn(COMP_WPS);
 	#if 0
@@ -187,7 +187,7 @@ WPS_AppendElement(
 			currPtr = pSimpleConfig->IEBuf;
 			//Tesplan to copy the first octet in the first fragment
 			PlatformMoveMemory(tempBuf, currPtr, SIZE_OUI + SIZE_OUI_TYPE);
-			currPtr += (SIZE_OUI + SIZE_OUI_TYPE); 
+			currPtr += (SIZE_OUI + SIZE_OUI_TYPE);
 			currPtrAftOui = &tempBuf[SIZE_OUI + SIZE_OUI_TYPE];
 
 			// the first octet
@@ -195,8 +195,8 @@ WPS_AppendElement(
 			currPtr += 1;
 			FillOctetString(SimpleConfigInfo,tempBuf,(SIZE_OUI + SIZE_OUI_TYPE +1));
 			PacketMakeElement( posFrame, EID_Vendor, SimpleConfigInfo);
-						
-			// the rest octet			
+
+			// the rest octet
 			PlatformZeroMemory(currPtrAftOui, 1);
 			PlatformMoveMemory(currPtrAftOui, currPtr, (pSimpleConfig->IELen-(SIZE_OUI + SIZE_OUI_TYPE)-1) );
 
@@ -214,7 +214,7 @@ WPS_AppendElement(
 			currPtr = pSimpleConfig->IEBuf;
 			//Tesplan to copy the first octet in the first fragment
 			PlatformMoveMemory(tempBuf, currPtr, SIZE_OUI + SIZE_OUI_TYPE);
-			currPtr += (SIZE_OUI + SIZE_OUI_TYPE); 
+			currPtr += (SIZE_OUI + SIZE_OUI_TYPE);
 			currPtrAftOui = &tempBuf[SIZE_OUI + SIZE_OUI_TYPE];
 
 			// the first fragment
@@ -222,14 +222,14 @@ WPS_AppendElement(
 			currPtr += (MAX_SIMPLE_CONFIG_IE_LEN - (SIZE_OUI + SIZE_OUI_TYPE));
 			FillOctetString(SimpleConfigInfo,tempBuf,(MAX_SIMPLE_CONFIG_IE_LEN - (SIZE_OUI + SIZE_OUI_TYPE)));
 			PacketMakeElement( posFrame, EID_Vendor, SimpleConfigInfo);
-						
-			// the rest octet			
+
+			// the rest octet
 			PlatformZeroMemory(currPtrAftOui, (MAX_SIMPLE_CONFIG_IE_LEN - (SIZE_OUI + SIZE_OUI_TYPE)));
 			PlatformMoveMemory(currPtrAftOui, currPtr, (pSimpleConfig->IELen-MAX_SIMPLE_CONFIG_IE_LEN) );
 
 			FillOctetString(SimpleConfigInfo,tempBuf,(pSimpleConfig->IELen-MAX_SIMPLE_CONFIG_IE_LEN));
 			PacketMakeElement( posFrame, EID_Vendor, SimpleConfigInfo);
-			
+
 		}
 		else
 		{
@@ -264,7 +264,7 @@ WPS_AppendElement(
 						PacketAppendData(posFrame, SimpleConfigInfo);
 				}
 				break;
-				
+
 				case WPS_INFO_PROBEREQ_IE:
 				{
 					FillOctetString(SimpleConfigInfo, pSimpleConfig->ieProbeReqBuf, pSimpleConfig->ieProbeReqLen);
@@ -299,7 +299,7 @@ WPS_CopyRxEAPPacket(
 {
 	PSIMPLE_CONFIG_T	pSimpleConfig = GET_SIMPLE_CONFIG(&(GetDefaultAdapter(Adapter)->MgntInfo));
 	pu1Byte 				RecieveBufPtrt,RfdBufferPtr;
-	
+
 	pu1Byte BufferPtr = (pu1Byte)&(pRfd->PacketLength );
 	RT_TRACE(COMP_WPS, DBG_LOUD, ("In WPS Copy EAP Packet\n"));
 	pRfd->PacketLength -= 18;//18 is the length we don't want
@@ -316,13 +316,13 @@ WPS_CopyRxEAPPacket(
 		RT_TRACE(COMP_WPS, DBG_LOUD, ("The Data is %x and QoS is Set\n",RfdBufferPtr[0]));
 		pRfd->PacketLength -= 2;//18 is the length we don't want
 		PlatformMoveMemory(pSimpleConfig->RecieveBuf,BufferPtr, 2);
-		
+
 	}
 	PlatformMoveMemory(RecieveBufPtrt,RfdBufferPtr,(pRfd->PacketLength -(ETHERNET_ADDRESS_LENGTH*2)) );
 	pSimpleConfig->bRecievePacket = TRUE;
 	pSimpleConfig->RecieveLength = (pRfd->PacketLength+2);// 2 is the packet length we reserved for report to lib
 	RT_PRINT_DATA(COMP_WPS, DBG_LOUD, "EAP Packet Content:", pSimpleConfig->RecieveBuf, pRfd->PacketLength);
-			
+
 }
 
 
@@ -337,7 +337,7 @@ WPS_QueryRxEAPPacket(
 {
 	PSIMPLE_CONFIG_T 	pSimpleConfig = GET_SIMPLE_CONFIG(&(Adapter->MgntInfo));
 	RT_STATUS			status = RT_STATUS_SUCCESS;
-	
+
 	RT_TRACE(COMP_WPS, DBG_LOUD, ("WPS Check Recieve Buffer:\n"));
 	if( InformationBufferLength < pSimpleConfig->RecieveLength)
 	{
@@ -345,7 +345,7 @@ WPS_QueryRxEAPPacket(
 		*BytesWritten = 0;
 		return RT_STATUS_INVALID_CONTEXT;
 	}
-	
+
 	if(!pSimpleConfig->bRecievePacket)
 	{
 		*BytesNeeded =0;

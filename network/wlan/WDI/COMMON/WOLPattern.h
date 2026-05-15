@@ -45,7 +45,7 @@ CRC16_CCITT(
 
 VOID
 ResetWoLPara(
-	IN		PADAPTER		Adapter 
+	IN		PADAPTER		Adapter
 	);
 
 VOID

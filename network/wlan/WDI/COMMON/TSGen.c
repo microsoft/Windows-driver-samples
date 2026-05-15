@@ -53,9 +53,9 @@ ResetRxTsEntry(
 	pTS->RxIndicateState = 0; // Reset indicate state!!
 	ResetBaEntry(&pTS->RxAdmittedBARecord);	  // For BA Recepient
 
-	//Init it for avoid drop first packet. 
+	//Init it for avoid drop first packet.
 	pTS->RxLastFragNum = 0xff;
-	pTS->RxLastSeqNum = 0xffff;	
+	pTS->RxLastSeqNum = 0xffff;
 }
 
 VOID
@@ -82,26 +82,26 @@ TSInitialize(
 		// DLS related timer will be add here in the future!!
 		//
 		PlatformInitializeTimer(
-			Adapter, 
-			&pTxTS->TsAddBaTimer, 
-			(RT_TIMER_CALL_BACK)TsAddBaProcess, 
-			(PVOID)pTxTS, 
+			Adapter,
+			&pTxTS->TsAddBaTimer,
+			(RT_TIMER_CALL_BACK)TsAddBaProcess,
+			(PVOID)pTxTS,
 			"TxTsAddBaTimer" );
 
 		PlatformInitializeTimer(
 			Adapter,
 			&pTxTS->TxPendingBARecord.Timer,
-			(RT_TIMER_CALL_BACK)BaSetupTimeOut, 
-			(PVOID)pTxTS, 
+			(RT_TIMER_CALL_BACK)BaSetupTimeOut,
+			(PVOID)pTxTS,
 			"TxPendingBARecordTimer");
 
 		PlatformInitializeTimer(
 			Adapter,
 			&pTxTS->TxAdmittedBARecord.Timer,
-			(RT_TIMER_CALL_BACK)TxBaInactTimeout, 
-			(PVOID) pTxTS, 
+			(RT_TIMER_CALL_BACK)TxBaInactTimeout,
+			(PVOID) pTxTS,
 			"TxAdmittedBARecordTimer" );
-		
+
 		ResetTxTsEntry(pTxTS);
 		RTInsertTailList(&pMgntInfo->Tx_TS_Unused_List, &pTxTS->TsCommonInfo.List);
 		pTxTS++;
@@ -118,15 +118,15 @@ TSInitialize(
 		PlatformInitializeTimer(
 			Adapter,
 			&pRxTS->RxAdmittedBARecord.Timer,
-			(RT_TIMER_CALL_BACK)RxBaInactTimeout, 
-			(PVOID)pRxTS, 
+			(RT_TIMER_CALL_BACK)RxBaInactTimeout,
+			(PVOID)pRxTS,
 			"RxAdmittedBARecordTimer");
-	
+
 		PlatformInitializeTimer(
 			Adapter,
 			&pRxTS->RxPktPendingTimer,
-			(RT_TIMER_CALL_BACK)RxPktPendingTimeout, 
-			(PVOID)pRxTS, 
+			(RT_TIMER_CALL_BACK)RxPktPendingTimeout,
+			(PVOID)pRxTS,
 			"RxPktPendingTimer");
 
 		ResetRxTsEntry(pRxTS);
@@ -208,7 +208,7 @@ SearchAdmitTRStream(
 	BOOLEAN				search_dir[4] = {0, 0, 0, 0};
 	PRT_LIST_ENTRY		psearch_list = NULL;
 	PTS_COMMON_INFO		pRet=NULL;
-		
+
 	if(pMgntInfo->ApType > 0)
 	{
 		if(TxRxSelect == TX_DIR)
@@ -249,7 +249,7 @@ SearchAdmitTRStream(
 		psearch_list = &pMgntInfo->Tx_TS_Admit_List;
 	else
 		psearch_list = &pMgntInfo->Rx_TS_Admit_List;
-	
+
 	//for(dir = DIR_UP; dir <= DIR_BI_DIR; dir++)
 	for(dir = 0; dir <= DIR_BI_DIR; dir++)
 	{
@@ -264,7 +264,7 @@ SearchAdmitTRStream(
 
 	if(pRet  != NULL)
 		return pRet ;
-	else 
+	else
 		return NULL;
 }
 
@@ -282,7 +282,7 @@ MakeTSEntry(
 
 	if(pTsCommonInfo == NULL)
 		return;
-	
+
 	PlatformMoveMemory(pTsCommonInfo->Addr, Addr, 6);
 
 	if(pTSPEC != NULL)
@@ -320,27 +320,27 @@ GetTs(
 	}
 
 	if(pMgntInfo->pStaQos->CurrentQosMode == QOS_DISABLE)
-	{//only use one TS	
-		UP = 0; 
-	} 
+	{//only use one TS
+		UP = 0;
+	}
 	else if(pMgntInfo->pStaQos->CurrentQosMode & QOS_WMM)
 	{
 		// In WMM case: we use 4 TID only
-	
+
 		//
-		// <Roger_Notes> We use 7 TIDs to fit differentiated service from IP layer 
+		// <Roger_Notes> We use 7 TIDs to fit differentiated service from IP layer
 		// to meet different implementation of APs.
 		// 2008.12.18.
 		//
-		UP = TID;		
+		UP = TID;
 	}
 
 	*ppTS = SearchAdmitTRStream(
-			pMgntInfo, 
+			pMgntInfo,
 			Addr,
-			UP, 
+			UP,
 			TxRxSelect);
-	
+
 	if(*ppTS != NULL)
 	{
 		RT_TRACE(COMP_QOS, DBG_TRACE, ("SearchAdmitTRStream get ppTS\r\n"));
@@ -355,25 +355,25 @@ GetTs(
 		}
 		else
 		{
-			// 
+			//
 			// Create a new Traffic stream for current Tx/Rx
 			// This is for EDCA and WMM to add a new TS.
 			// For HCCA or WMMSA, TS cannot be addmit without negotiation.
 			//
 			u1Byte			TSpec[WMM_TSPEC_BODY_LENGTH]={0};
-			
+
 			pu1Byte			pTSInfo= TSpec;
-			PRT_LIST_ENTRY	pUnusedList = 
+			PRT_LIST_ENTRY	pUnusedList =
 								(TxRxSelect == TX_DIR)?
 								(&pMgntInfo->Tx_TS_Unused_List):
 								(&pMgntInfo->Rx_TS_Unused_List);
-								
-			PRT_LIST_ENTRY	pAddmitList = 
+
+			PRT_LIST_ENTRY	pAddmitList =
 								(TxRxSelect == TX_DIR)?
 								(&pMgntInfo->Tx_TS_Admit_List):
 								(&pMgntInfo->Rx_TS_Admit_List);
 
-			DIRECTION_VALUE		Dir = 
+			DIRECTION_VALUE		Dir =
 								(ACTING_AS_AP(Adapter))?
 								((TxRxSelect==TX_DIR)?DIR_DOWN:DIR_UP):
 								((TxRxSelect==TX_DIR)?DIR_UP:DIR_DOWN);
@@ -399,7 +399,7 @@ GetTs(
 				SET_TSPEC_BODY_TSINFO_UP(pTSInfo, UP);		// User priority
 				SET_TSPEC_BODY_TSINFO_ACK_POLICY(pTSInfo, 0);	 // Ack policy
 				SET_TSPEC_BODY_TSINFO_SCHEDULE(pTSInfo, 0);		 // Schedule
-					
+
 				MakeTSEntry(*ppTS, Addr, TSpec, NULL, 0, 0);
 				AdmitTS(Adapter, *ppTS, 0);
 				RTInsertTailList(pAddmitList, &((*ppTS)->List));
@@ -413,8 +413,8 @@ GetTs(
 			{
 				RT_ASSERT(FALSE, ("ManageTSInformation(): There is not enough TS record to be used!!"));
 				return FALSE;
-			}		
-		}		
+			}
+		}
 	}
 
 }
@@ -448,9 +448,9 @@ RemoveTsEntry(
 			PlatformAcquireSpinLock(Adapter, RT_RX_SPINLOCK);
 		else
 			bInRxProgress = TRUE;
-			
+
 		while(!RTIsListEmpty(&pRxTS->RxPendingPktList))
-		{					
+		{
 			pRxReorderEntry = (PRX_REORDER_ENTRY)RTRemoveHeadList(&pRxTS->RxPendingPktList);
 			pRxTS->RxBatchCount--;
 			ReturnRFDList(Adapter, pRxReorderEntry->pRfd);
@@ -546,7 +546,7 @@ RemovePeerTS(
 		{
 			pTS = (PTS_COMMON_INFO)RTNextEntryList(&pTS->List);
 		}
-	}		
+	}
 }
 
 VOID
@@ -557,7 +557,7 @@ ReleaseAllTSTimer(
 	PTX_TS_RECORD		pTxTS = pMgntInfo->TxTsRecord;
 	PRX_TS_RECORD		pRxTS = pMgntInfo->RxTsRecord;
 	u1Byte					count = 0;
-	
+
 	for(count = 0; count < TOTAL_TS_NUM; count++)
 		{
 			//
@@ -565,7 +565,7 @@ ReleaseAllTSTimer(
 			// DLS related timer will be add here in the future!!
 			//
 			PlatformReleaseTimer(
-				Adapter, 
+				Adapter,
 				&pTxTS->TsAddBaTimer);
 
 			PlatformReleaseTimer(
@@ -575,7 +575,7 @@ ReleaseAllTSTimer(
 			PlatformReleaseTimer(
 				Adapter,
 				&pTxTS->TxAdmittedBARecord.Timer);
-		
+
 		pTxTS++;
 	}
 
@@ -584,11 +584,11 @@ ReleaseAllTSTimer(
 			PlatformReleaseTimer(
 				Adapter,
 				&pRxTS->RxAdmittedBARecord.Timer);
-		
+
 			PlatformReleaseTimer(
 				Adapter,
 				&pRxTS->RxPktPendingTimer);
-			
+
 			pRxTS++;
 		}
 }
@@ -602,7 +602,7 @@ RemoveAllTS(
 {
 	PMGNT_INFO pMgntInfo = &Adapter->MgntInfo;
 	PTS_COMMON_INFO 	pTS;
-	
+
 	while(!RTIsListEmpty(&pMgntInfo->Tx_TS_Pending_List))
 	{
 		pTS = (PTS_COMMON_INFO)RTRemoveHeadList(&pMgntInfo->Tx_TS_Pending_List);
@@ -633,7 +633,7 @@ RemoveAllTS(
 		RemoveTsEntry(Adapter, pTS, RX_DIR);
 //		RemoveMAEntry(Adapter, &pTS->Ts_MAInfo);
 		RTInsertTailList(&pMgntInfo->Rx_TS_Unused_List, &pTS->List);
-	}		
+	}
 }
 
 VOID
@@ -647,7 +647,7 @@ TsStartAddBaProcess(
 		RT_TRACE(COMP_MLME, DBG_LOUD, ("TsStartAddBaProcess ABORT becuase SafeModeEnable\n"));
 		return;
 	}
-	
+
 	if(pTxTS->bAddBaReqInProgress == FALSE)
 	{
 		pTxTS->bAddBaReqInProgress = TRUE;
@@ -681,7 +681,7 @@ RxTSIndicate(
 	SeqNum = Frame_SeqNum(frame);
 
 	if(GetTs(
-		Adapter, 
+		Adapter,
 		(PTS_COMMON_INFO*) &(pRfd->Status.pRxTS),
 		Frame_Addr2(frame),
 		tid,
@@ -702,9 +702,9 @@ RxTSIndicate(
 		// When tested in win7 OS, every 45-50s, AP will send a TID=6 packet to
 		// NIC for 3 times(6 sec). Then RTWLANU will disable EDCA turbo mode temporarily
 		// So the throughput will downgrade. We need to ignore the special case.
-		{			
+		{
 			if(tid!=0 && tid!=3)
-			{				
+			{
 				HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(Adapter);
 				if (Adapter->MgntInfo.bWiFiConfg)
 				{

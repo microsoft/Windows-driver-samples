@@ -11,13 +11,13 @@ extern HINSTANCE g_hInst;
 CIhvSecurityProfile* pIhvKeyProfile;
 
 
-CDot11SampleExtUIKeyProperty::CDot11SampleExtUIKeyProperty(): 
-    m_crefCount(0), m_fInitialized(false), 
+CDot11SampleExtUIKeyProperty::CDot11SampleExtUIKeyProperty():
+    m_crefCount(0), m_fInitialized(false),
     m_ExtType(DOT11_EXT_UI_KEYEXTENSION), m_fModified(FALSE)
 {
     InterlockedIncrement(&g_objRefCount);
     memset(
-        &m_IHVAuthCiphers, 
+        &m_IHVAuthCiphers,
         0,
         sizeof(IHV_AUTH_CIPHERS)
         );
@@ -29,15 +29,15 @@ CDot11SampleExtUIKeyProperty::~CDot11SampleExtUIKeyProperty()
     if(m_bstrFN != NULL) {
         SysFreeString(m_bstrFN);
     }
-    
-    InterlockedDecrement(&g_objRefCount);        
+
+    InterlockedDecrement(&g_objRefCount);
 }
 
 
-STDMETHODIMP 
+STDMETHODIMP
 CDot11SampleExtUIKeyProperty::GetDot11ExtUIPropertyFriendlyName(BSTR* bstrPropertyName)
 {
-    HRESULT hr = E_INVALIDARG; 
+    HRESULT hr = E_INVALIDARG;
     if (false == m_fInitialized)
     {
         return hr;
@@ -53,18 +53,18 @@ CDot11SampleExtUIKeyProperty::GetDot11ExtUIPropertyFriendlyName(BSTR* bstrProper
 }
 
 //Used to extend property
-STDMETHODIMP 
+STDMETHODIMP
 CDot11SampleExtUIKeyProperty::DisplayDot11ExtUIProperty(
-    HWND hParent, // Parent Window Handle 
-    BSTR bstrIHVProfile, // IHV data from the profile 
+    HWND hParent, // Parent Window Handle
+    BSTR bstrIHVProfile, // IHV data from the profile
     PDOT11EXT_IHV_PARAMS pIHVParams, // Select profile MS security settings
     BSTR* bstrModifiedIHVProfile, // modified IHV data to be stored in the profile
     BOOL* pbIsModified // flag to denote if profile was modified
     )
 {
-    HRESULT hr = S_OK; 
+    HRESULT hr = S_OK;
     UNREFERENCED_PARAMETER(pIHVParams);
-    
+
     if (!m_fInitialized)
     {
         hr = E_INVALIDARG;
@@ -84,9 +84,9 @@ CDot11SampleExtUIKeyProperty::DisplayDot11ExtUIProperty(
 
     // Dialog will store the string in a member variable
     DialogBoxParam(
-        g_hInst, 
-        MAKEINTRESOURCE(IDD_PROPPAGE_SMALL), 
-        hParent, 
+        g_hInst,
+        MAKEINTRESOURCE(IDD_PROPPAGE_SMALL),
+        hParent,
         SimpleDialogProcKey,
         (LPARAM)pIhvKeyProfile
         );
@@ -97,7 +97,7 @@ CDot11SampleExtUIKeyProperty::DisplayDot11ExtUIProperty(
     {
         if (m_fModified)
         {
-            pIhvKeyProfile->EmitXml(bstrModifiedIHVProfile); 
+            pIhvKeyProfile->EmitXml(bstrModifiedIHVProfile);
         }
     }
 
@@ -118,9 +118,9 @@ error:
 
 
 //Used to get the currently chosen entry to display as selected in the dropdown list
-STDMETHODIMP 
+STDMETHODIMP
 CDot11SampleExtUIKeyProperty::Dot11ExtUIPropertyGetSelected(
-    BSTR bstrIHVProfile, // IHV data from the profile 
+    BSTR bstrIHVProfile, // IHV data from the profile
     PDOT11EXT_IHV_PARAMS pIHVParams, // Select profile MS security settings
     BOOL* pfIsSelected // flag denoting if this is the selected profile
     )
@@ -143,7 +143,7 @@ CDot11SampleExtUIKeyProperty::Dot11ExtUIPropertyGetSelected(
         hr = E_OUTOFMEMORY;
         goto error;
     }
-    
+
     pIhvKeyProfile->LoadXml(bstrIHVProfile);
 
     hr = pIhvKeyProfile->GetAuthType(&currentAuthType);
@@ -160,20 +160,20 @@ CDot11SampleExtUIKeyProperty::Dot11ExtUIPropertyGetSelected(
     {
         *pfIsSelected = TRUE;
     }
-    
+
 error:
     if(pIhvKeyProfile != NULL)
     {
         delete pIhvKeyProfile;
         pIhvKeyProfile = NULL;
-    }    
+    }
     return hr;
 }
 
 //Used to set the current entry as chosen from the dropdown list
-STDMETHODIMP 
+STDMETHODIMP
 CDot11SampleExtUIKeyProperty::Dot11ExtUIPropertySetSelected(
-    BSTR bstrIHVProfile, // IHV data from the profile 
+    BSTR bstrIHVProfile, // IHV data from the profile
     PDOT11EXT_IHV_PARAMS pIHVParams, // Select profile MS security settings
     BSTR* bstrModifiedIHVProfile, // modified IHV data to be stored in the profile
     BOOL* pbIsModified // flag to denote if profile was modified
@@ -194,7 +194,7 @@ CDot11SampleExtUIKeyProperty::Dot11ExtUIPropertySetSelected(
         hr = E_OUTOFMEMORY;
         goto error;
     }
-        
+
     pIhvKeyProfile->LoadXml(bstrIHVProfile);
 
     pIhvKeyProfile->SetAuthType(m_IHVAuthCiphers.IHVAuth);
@@ -202,18 +202,18 @@ CDot11SampleExtUIKeyProperty::Dot11ExtUIPropertySetSelected(
 
     pIhvKeyProfile->EmitXml(bstrModifiedIHVProfile);
     *pbIsModified = pIhvKeyProfile->GetModified();
-    
+
 error:
     if(pIhvKeyProfile != NULL)
     {
         delete pIhvKeyProfile;
         pIhvKeyProfile = NULL;
     }
-    return hr;    
+    return hr;
 }
 
 
-STDMETHODIMP 
+STDMETHODIMP
 CDot11SampleExtUIKeyProperty::Dot11ExtUIPropertyHasConfigurationUI(
     BOOL *fHasConfigurationUI)
 {
@@ -223,10 +223,10 @@ CDot11SampleExtUIKeyProperty::Dot11ExtUIPropertyHasConfigurationUI(
 }
 
 //Used to get additional display data (ciphers for auth types)
-STDMETHODIMP 
+STDMETHODIMP
 CDot11SampleExtUIKeyProperty::Dot11ExtUIPropertyGetDisplayInfo(
     DOT11_EXT_UI_DISPLAY_INFO_TYPE dot11ExtUIDisplayInfoType, // the diapaly type to be described
-    BSTR bstrIHVProfile, // IHV data from the profile 
+    BSTR bstrIHVProfile, // IHV data from the profile
     PDOT11EXT_IHV_PARAMS pIHVParams, // Select profile MS security settings
     ULONG *pcEntries, // number of dependent strings
     ULONG *puDefaultSelection, // the entry in the array to be selected by default
@@ -265,7 +265,7 @@ CDot11SampleExtUIKeyProperty::Dot11ExtUIPropertyGetDisplayInfo(
             dwDefaultSelection = i;
         }
     }
-    
+
     // for the given auth type we want to return the list of compatible ciphers
     *ppDot11ExtUIProperty = ciphersInfoArray[m_IHVAuthCiphers.IHVAuth];
     *pcEntries = m_IHVAuthCiphers.dwCipherCount;
@@ -276,10 +276,10 @@ error:
 }
 
 
-STDMETHODIMP 
+STDMETHODIMP
 CDot11SampleExtUIKeyProperty::Dot11ExtUIPropertySetDisplayInfo(
     DOT11_EXT_UI_DISPLAY_INFO_TYPE dot11ExtUIDisplayInfoType, // the diapaly type to be modified
-    BSTR bstrIHVProfile, // IHV data from the profile 
+    BSTR bstrIHVProfile, // IHV data from the profile
     PDOT11EXT_IHV_PARAMS pIHVParams, // Select profile MS security settings
     DOT11_EXT_UI_PROPERTY_DISPLAY_INFO *pDot11ExtUIProperty, // selected info structure
     BSTR* bstrModifiedIHVProfile, // modified IHV data to be stored in the profile
@@ -317,7 +317,7 @@ CDot11SampleExtUIKeyProperty::Dot11ExtUIPropertySetDisplayInfo(
 
     hr = IhvSecurityProfile.EmitXml(bstrModifiedIHVProfile);
     *pbIsModified = IhvSecurityProfile.GetModified();
-    
+
 error:
     return hr;
 }
@@ -344,10 +344,10 @@ CDot11SampleExtUIKeyProperty::Dot11ExtUIPropertyIsStandardSecurity(
 STDMETHODIMP
 CDot11SampleExtUIKeyProperty::Initialize(BYTE* pbData)
 {
-    HRESULT hr = E_INVALIDARG; 
+    HRESULT hr = E_INVALIDARG;
     PIHV_AUTH_CIPHERS pIhvAuthCiphers = NULL;
     pIhvAuthCiphers = (PIHV_AUTH_CIPHERS) pbData;
-    
+
     if (false == m_fInitialized)
     {
         // Set the FriendlyName
@@ -362,7 +362,7 @@ CDot11SampleExtUIKeyProperty::Initialize(BYTE* pbData)
     return hr;
 }
 
-INT_PTR CALLBACK 
+INT_PTR CALLBACK
 SimpleDialogProcKey(
     HWND hwndDlg,
     UINT uMsg,
@@ -381,7 +381,7 @@ SimpleDialogProcKey(
     {
         goto error;
     }
-    
+
     switch(uMsg)
     {
     case WM_INITDIALOG:
@@ -394,19 +394,19 @@ SimpleDialogProcKey(
                 strDialogTitle,
                 MAX_PATH
                 );
-                    
+
             SetWindowText(hwndDlg, strDialogTitle);
         }
-        
+
         // check the checkbox if needed
         if(FAILED(pIhvKeyProfile->GetParamDWORD(&dwValue)))
         {
             dwValue = 0;
         }
         ::SendMessage(
-            GetDlgItem(hwndDlg, IDC_USE_FASTHANDOFF), 
-            BM_SETCHECK, 
-            (WPARAM)(int)dwValue, 
+            GetDlgItem(hwndDlg, IDC_USE_FASTHANDOFF),
+            BM_SETCHECK,
+            (WPARAM)(int)dwValue,
             0L
             );
 
@@ -416,14 +416,14 @@ SimpleDialogProcKey(
             bstrText = NULL;
         }
         SetWindowText(GetDlgItem(hwndDlg, IDC_PARAM_BOX), bstrText);
-        
+
         fRetVal = TRUE;
         break;
-        
-    case WM_COMMAND: 
-        switch (LOWORD(wParam)) 
-        { 
-            case ID_OK: 
+
+    case WM_COMMAND:
+        switch (LOWORD(wParam))
+        {
+            case ID_OK:
                 GetWindowText(GetDlgItem(hwndDlg, IDC_PARAM_BOX), szBuf, 255);
                 if(szBuf)
                 {
@@ -431,23 +431,23 @@ SimpleDialogProcKey(
 
                     // get the button state and record it
                     dwNewValue = (int)::SendMessage(
-                                            GetDlgItem(hwndDlg, IDC_USE_FASTHANDOFF), 
-                                            BM_GETCHECK, 
-                                            0L, 
+                                            GetDlgItem(hwndDlg, IDC_USE_FASTHANDOFF),
+                                            BM_GETCHECK,
+                                            0L,
                                             0L
                                             );
 
-                    pIhvKeyProfile->SetParamDWORD(dwNewValue);                    
+                    pIhvKeyProfile->SetParamDWORD(dwNewValue);
                     pIhvKeyProfile->SetParamBSTR(szBuf);
                     pIhvKeyProfile->SetFullSecurityFlag(FALSE);
 
-                    // Notify the owner window to carry out the task. 
+                    // Notify the owner window to carry out the task.
                     EndDialog(hwndDlg, 1);
-                    fRetVal = TRUE; 
+                    fRetVal = TRUE;
                 }
                 break;
 
-            case ID_CANCEL: 
+            case ID_CANCEL:
                 EndDialog(hwndDlg, 0);
                 fRetVal = TRUE;
                 break;

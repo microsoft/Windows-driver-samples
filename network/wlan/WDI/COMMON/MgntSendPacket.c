@@ -5,14 +5,14 @@
 #endif
 
 //
-// Description: 
+// Description:
 //	Send SW Beacon:
 //   1. SW auto beacon whose TBTT maintained by HW and beacon update timing maintained by driver (-> TbttPollingWorkItemCallback() )
-//       ex. USB & SDIO Beacon (SwBeaconType == BEACON_SEND_AUTO_SW, send to Beacon Queue) 
+//       ex. USB & SDIO Beacon (SwBeaconType == BEACON_SEND_AUTO_SW, send to Beacon Queue)
 //
 //	2. Manual Beacon whose TBTT and beacon update timing maintained by driver (-> TbttPollingWorkItemCallback() )
 //       ex. Driver SW Beacon (SwBeaconType == BEACON_SEND_MANUAL, send to AC/Mgnt/High Queue)
-//		
+//
 // Arguments:
 //	[in] pAdapter -
 //		The adapter context.
@@ -22,7 +22,7 @@
 //		Beacon Length
 //	[in] TxRate -
 //		Beacon Tx Rate
-// Remark: 
+// Remark:
 //	Please do not use this function outside of this module
 // by Hana, 2015-08-05
 //
@@ -49,11 +49,11 @@ SendSWBeacon(
 		PlatformAcquireSpinLock(pAdapter, RT_TX_SPINLOCK);
 
 		// Set up beacon content.
-		PlatformMoveMemory(pBuf->Buffer.VirtualAddress, virtualaddr, bcnlen); 
+		PlatformMoveMemory(pBuf->Buffer.VirtualAddress, virtualaddr, bcnlen);
 
 		// Set up TCB
 		pTcb->BufferList[0] = pBuf->Buffer;
-		pTcb->BufferList[0].Length = bcnlen; 
+		pTcb->BufferList[0].Length = bcnlen;
 		pTcb->BufferCount = 1;
 		pTcb->PacketLength = pMgntInfo->beaconframe.Length;
 		pTcb->Tailer.Length = 0;
@@ -61,7 +61,7 @@ SendSWBeacon(
 		pTcb->ProtocolType = RT_PROTOCOL_802_11;
 		pTcb->BufferType = RT_TCB_BUFFER_TYPE_LOCAL;
 		pTcb->SpecifiedQueueID = QueueIndex;
-		pTcb->DataRate = TxRate; 
+		pTcb->DataRate = TxRate;
 		pTcb->bFromUpperLayer = FALSE;
 		pTcb->Reserved = pBuf;
 		pTcb->FragCount = 1;
@@ -89,7 +89,7 @@ SendSWBeacon(
 			RT_TRACE(COMP_SEND, DBG_TRACE, ("SendBeaconFrame(): Insert to wait queue of QueueIndex: %d\n", QueueIndex));
 			RTInsertTailListWithCnt(Get_WAIT_QUEUE(pAdapter, pTcb->SpecifiedQueueID), &pTcb->List, GET_WAIT_QUEUE_CNT(pAdapter,pTcb->SpecifiedQueueID));
 		}
-		
+
 		PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 	}
 	else
@@ -101,9 +101,9 @@ SendSWBeacon(
 }
 
 //
-// Description: 
+// Description:
 //	Send HW Beacon whose TBTT maintained by HW and beacon update timing are handled by Beacon Early interrupt.
-//   ex.	PCIE Beacon (SwBeaconType == BEACON_SEND_AUTO_HW, send to Beacon Queue) 
+//   ex.	PCIE Beacon (SwBeaconType == BEACON_SEND_AUTO_HW, send to Beacon Queue)
 //
 // Arguments:
 //	[in] pAdapter -
@@ -114,7 +114,7 @@ SendSWBeacon(
 //		Beacon Length
 //	[in] TxRate -
 //		Beacon Tx Rate
-// Remark: 
+// Remark:
 //	Please do not use this function outside of this module
 // by Hana, 2015-08-05
 //
@@ -176,7 +176,7 @@ SendHWBeacon(
 
 	// A-MPDU Aggregation
 	pTcb->bAMPDUEnable = FALSE;
-	
+
 	pTcb->FragBufCount[0]		= 1;
 	pTcb->FragLength[0]		= (u2Byte)bcnlen;
 	pTcb->BufferList[0].Length	= bcnlen;
@@ -190,7 +190,7 @@ SendHWBeacon(
 
 	PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 
-	
+
 }
 
 
@@ -222,11 +222,11 @@ SendBeaconFrame(
 	bcnlen = pMgntInfo->beaconframe.Length;
 
 	bcnlen += Adapter->TXPacketShiftBytes;
-	
+
 	if(bcnlen > pMgntInfo->MaxBeaconSize)
 		pMgntInfo->MaxBeaconSize = bcnlen;
 
-	if(	IS_WIRELESS_MODE_5G(Adapter) || 
+	if(	IS_WIRELESS_MODE_5G(Adapter) ||
 		(IS_WIRELESS_MODE_HT_24G(Adapter) && !pMgntInfo->pHTInfo->bCurSuppCCK))
 	{
 		TxRate = MGN_6M;		// 6M
@@ -243,7 +243,7 @@ SendBeaconFrame(
 		TxRate = MGN_6M;
 	}
 
-#if (P2P_SUPPORT == 1)	
+#if (P2P_SUPPORT == 1)
 	if(P2P_ENABLED(GET_P2P_INFO(Adapter)))
 	{
 		PP2P_INFO		pP2PInfo = (GET_P2P_INFO(Adapter));
@@ -265,7 +265,7 @@ SendProbeReq(
 	PADAPTER	Adapter,
 	BOOLEAN		bAnySsid,
 	u2Byte		DataRate,
-	BOOLEAN		bForcePowerSave 
+	BOOLEAN		bForcePowerSave
 	)
 {
 	PRT_TCB					pTcb;
@@ -274,14 +274,14 @@ SendProbeReq(
 #if DBG_CMD
 	if (DBG_Var.DBG_ProbeReq_Send == 0)
 		return;
-#endif	
+#endif
 	PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
 
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 	{
 		ConstructProbeRequest(
-				Adapter, 
-				pBuf->Buffer.VirtualAddress, 
+				Adapter,
+				pBuf->Buffer.VirtualAddress,
 				&pTcb->PacketLength,
 				TRUE,
 				bAnySsid,
@@ -291,12 +291,12 @@ SendProbeReq(
 		MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
 
-	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);	
+	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 }
 
 //
 //	Description:
-//		Advanced version of SendProbeReq. Calling this function will send dedicate 
+//		Advanced version of SendProbeReq. Calling this function will send dedicate
 //		probe request with SSID in pMgntInfo->SsidsToScan one by one, and send
 //		an probe request with broadcast SSID at the last.
 //	2006.12.20, by shien chang.
@@ -317,7 +317,7 @@ SendProbeReqEx(
 #if DBG_CMD
 	if (DBG_Var.DBG_ProbeReq_Send == 0)
 		return;
-#endif	
+#endif
 	PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
 
 	// Send probe request with SSID in pMgntInfo.SsidsToScan.
@@ -326,8 +326,8 @@ SendProbeReqEx(
 		if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 		{
 			ConstructProbeRequestEx(
-				Adapter, 
-				pBuf->Buffer.VirtualAddress, 
+				Adapter,
+				pBuf->Buffer.VirtualAddress,
 				&pTcb->PacketLength,
 				pSsidsToScan->Ssid[index],
 				bForcePowerSave);
@@ -337,7 +337,7 @@ SendProbeReqEx(
 		}
 	}
 
-	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);	
+	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 }
 
 VOID
@@ -357,7 +357,7 @@ SendAuthenticatePacket(
 	u2Byte	DataRate;
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("===> SendAuthenticatePacket()\n"));
-	
+
 	PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
 
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
@@ -383,7 +383,7 @@ SendAuthenticatePacket(
 		MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
 
-	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);	
+	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<=== SendAuthenticatePacket()\n"));
 }
@@ -406,7 +406,7 @@ SendAssociateReq(
 	PMGNT_INFO	pMgntInfo = &(Adapter->MgntInfo);
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("===> SendAssociateReq()\n"));
-	
+
 	PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
 
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
@@ -425,12 +425,12 @@ SendAssociateReq(
 		MgntUpdateAsocInfo(Adapter, UpdateAsocPeerAddr, pMgntInfo->Bssid, 6);
 		MgntUpdateAsocInfo(Adapter, UpdateAsocReq, pBuf->Buffer.VirtualAddress, pTcb->PacketLength);
 		MgntUpdateAsocInfo(Adapter, UpdateFlagReAsocReq, (UCHAR*)&FlagReAsoc, sizeof(BOOLEAN));
-		
+
 		DataRate = (u2Byte)MgntQuery_MgntFrameTxRate( Adapter, asocStaAddr );
 		MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
 
-	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);	
+	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<=== SendAssociateReq()\n"));
 }
@@ -442,7 +442,7 @@ SendReassociateReq(
 	PADAPTER	Adapter,
 	pu1Byte		ReasocStaAddr,
 	u2Byte		ReasocCap,
-	u2Byte		asocListenInterval,	
+	u2Byte		asocListenInterval,
 	pu1Byte		CurrentasocStaAddr
 	)
 {
@@ -453,7 +453,7 @@ SendReassociateReq(
 	PMGNT_INFO	pMgntInfo = &(Adapter->MgntInfo);
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("===> SendReassociateReq()\n"));
-	
+
 	PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
 
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
@@ -474,12 +474,12 @@ SendReassociateReq(
 		MgntUpdateAsocInfo(Adapter, UpdateAsocPeerAddr, pMgntInfo->Bssid, 6);
 		MgntUpdateAsocInfo(Adapter, UpdateAsocReq, pBuf->Buffer.VirtualAddress, pTcb->PacketLength);
 		MgntUpdateAsocInfo(Adapter, UpdateFlagReAsocReq, (UCHAR*)&FlagReAsoc, sizeof(BOOLEAN));
-		
+
 		DataRate = (u2Byte)MgntQuery_MgntFrameTxRate( Adapter, ReasocStaAddr );
 		MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
 
-	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);	
+	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<=== SendReassociateReq()\n"));
 }
@@ -518,17 +518,17 @@ SendAssociateRsp(
 							);
 
 		DataRate = (u2Byte)MgntQuery_MgntFrameTxRate( Adapter, asocStaAddr );
-		
-		AsocEntry_UpdateAsocInfo(Adapter, 
-			asocStaAddr, 
-			NULL, 
-			pTcb->PacketLength, 
+
+		AsocEntry_UpdateAsocInfo(Adapter,
+			asocStaAddr,
+			NULL,
+			pTcb->PacketLength,
 			ALLOCATE_ASOC_RSP);
 
 		//vivi add this for vitrual ap.as pcie add 8 byte before mac header as early mode, 20101130
 		if(pTcb->bInsert8BytesForEarlyMode)
-		{	
-			AsocEntry_UpdateAsocInfo(Adapter, 
+		{
+			AsocEntry_UpdateAsocInfo(Adapter,
 				asocStaAddr,
 				pBuf->Buffer.VirtualAddress+8,
 				pTcb->PacketLength-8,
@@ -536,16 +536,16 @@ SendAssociateRsp(
 		}
 		else
 		{
-			AsocEntry_UpdateAsocInfo(Adapter, 
+			AsocEntry_UpdateAsocInfo(Adapter,
 				asocStaAddr,
 				pBuf->Buffer.VirtualAddress,
 				pTcb->PacketLength,
-				UPDATE_ASOC_RSP);		
+				UPDATE_ASOC_RSP);
 		}
 		MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
 
-	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);	
+	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<=== SendAssociateRsp()\n"));
 }
 
@@ -568,30 +568,30 @@ SendDeauthentication(
 	if(Adapter == GetFirstClientPort(Adapter) && MultiChannelGetPortConnected20MhzChannel(Adapter) != 0)
 	{
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("ChangeWirelessModeHandler\n"));
-	
+
 		HalChangeWirelessMode(Adapter, MultiChannelGetPortConnected20MhzChannel(Adapter));
-	
+
 		MgntActSet_802_11_CHANNEL_AND_BANDWIDTH(
-				Adapter, 
-				MultiChannelGetPortConnected20MhzChannel(Adapter), 
-				CHANNEL_WIDTH_20, 
-				EXTCHNL_OFFSET_NO_EXT, 
-				EXTCHNL_OFFSET_NO_EXT, 
+				Adapter,
+				MultiChannelGetPortConnected20MhzChannel(Adapter),
+				CHANNEL_WIDTH_20,
+				EXTCHNL_OFFSET_NO_EXT,
+				EXTCHNL_OFFSET_NO_EXT,
 				0
-			);	
+			);
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Channel %d\n", MultiChannelGetPortConnected20MhzChannel(Adapter)));
 	}
 #endif
 
 	PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
-	
+
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 	{
-		ConstructDeauthenticatePacket( 
-			Adapter, 
-			pBuf->Buffer.VirtualAddress, 
+		ConstructDeauthenticatePacket(
+			Adapter,
+			pBuf->Buffer.VirtualAddress,
 			&pTcb->PacketLength,
-			auSta, 
+			auSta,
 			asRsn );
 
 		DataRate = (u2Byte)MgntQuery_MgntFrameTxRate( Adapter, auSta );
@@ -608,12 +608,12 @@ SendDeauthentication(
 		}
 	}
 
-	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);	
+	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 
 	// Win8: For sending packets in the correct channel ----
 	delay_ms(50);
 	// ----------------------------------------------
-	
+
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<=== SendDeauthentication()\n"));
 }
 
@@ -638,31 +638,31 @@ SendDisassociation(
 #if (MULTICHANNEL_SUPPORT == 1)
 	if(GetDefaultMgntInfo(Adapter)->RegMultiChannelFcsMode == 0)
 	{
-		if(Adapter == GetFirstClientPort(Adapter) && MultiChannelGetPortConnected20MhzChannel(Adapter) !=0  
-			&& (GET_HAL_DATA(Adapter)->CurrentChannel != MultiChannelGetPortConnected20MhzChannel(Adapter))) //ylb 20121029 add "&& (GET_HAL_DATA(Adapter)->CurrentChannel != MultiChannelGetPortConnected20MhzChannel(Adapter))"		
+		if(Adapter == GetFirstClientPort(Adapter) && MultiChannelGetPortConnected20MhzChannel(Adapter) !=0
+			&& (GET_HAL_DATA(Adapter)->CurrentChannel != MultiChannelGetPortConnected20MhzChannel(Adapter))) //ylb 20121029 add "&& (GET_HAL_DATA(Adapter)->CurrentChannel != MultiChannelGetPortConnected20MhzChannel(Adapter))"
 		{
 			RT_TRACE_F(COMP_MLME, DBG_LOUD, ("ChangeWirelessModeHandler\n"));
-		
-			HalChangeWirelessMode(Adapter, MultiChannelGetPortConnected20MhzChannel(Adapter));		
+
+			HalChangeWirelessMode(Adapter, MultiChannelGetPortConnected20MhzChannel(Adapter));
 			MgntActSet_802_11_CHANNEL_AND_BANDWIDTH(
-					Adapter, 
-					MultiChannelGetPortConnected20MhzChannel(Adapter), 
-					CHANNEL_WIDTH_20, 
-					EXTCHNL_OFFSET_NO_EXT, 
-					EXTCHNL_OFFSET_NO_EXT, 
+					Adapter,
+					MultiChannelGetPortConnected20MhzChannel(Adapter),
+					CHANNEL_WIDTH_20,
+					EXTCHNL_OFFSET_NO_EXT,
+					EXTCHNL_OFFSET_NO_EXT,
 					0
 				);
-			
+
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Channel %d\n", MultiChannelGetPortConnected20MhzChannel(Adapter)));
-			{	
+			{
 				int i = 0;
 				for( i = 0; i < 100; i++)  //add by ylb 20121029: Win8 WFD Test: Fix GO Cannot Receive Disassociation send by Client, Because Client send it at Wrong Channel
-				{			
+				{
 					if((GET_HAL_DATA(Adapter)->SwChnlInProgress == FALSE)
 						&&(GET_HAL_DATA(Adapter)->CurrentChannel == MultiChannelGetPortConnected20MhzChannel(Adapter)))
 						break;
-					RT_TRACE(COMP_P2P, DBG_LOUD, ("SendDisassociation: Delay 100 us, Waiting for Switch Channel Complete(%d vs %d)!\n", 
-						GET_HAL_DATA(Adapter)->CurrentChannel, MultiChannelGetPortConnected20MhzChannel(Adapter)));	
+					RT_TRACE(COMP_P2P, DBG_LOUD, ("SendDisassociation: Delay 100 us, Waiting for Switch Channel Complete(%d vs %d)!\n",
+						GET_HAL_DATA(Adapter)->CurrentChannel, MultiChannelGetPortConnected20MhzChannel(Adapter)));
 					delay_us(100);
 				}
 			}
@@ -676,7 +676,7 @@ SendDisassociation(
 //by sherry 20130117
 	{
 		int i;
-		
+
 		if((Adapter == GetFirstGOPort(Adapter)))
 		{
 			for(i=0;i<20;i++)
@@ -686,21 +686,21 @@ SendDisassociation(
 					RT_TRACE(COMP_MLME,DBG_TRACE,("STA is active send immediately \n"));
 					break;
 				}
-				else 
+				else
 				{
 
 
-					RT_TRACE(COMP_MLME,DBG_LOUD,("STA is active send wait for sta in active: i= %d	\n",i));	
+					RT_TRACE(COMP_MLME,DBG_LOUD,("STA is active send wait for sta in active: i= %d	\n",i));
 					PlatformStallExecution(10000);
 				}
-			}	
+			}
 		}
 	}
 
 	//Enable BE Queue and VI Queue
 	//by sherry 20130117
 	if(GetDefaultMgntInfo(Adapter)->RegMultiChannelFcsMode == 0)
-		Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_TX_PAUSE, (pu1Byte)(&TxPauseCommand));		
+		Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_TX_PAUSE, (pu1Byte)(&TxPauseCommand));
 	else
 		Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_MACID_PKT_SLEEP, (pu1Byte)(&MacIdPause));
 
@@ -709,24 +709,24 @@ SendDisassociation(
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 	{
 		ConstructDisassociatePacket(
-			Adapter, 
-			pBuf->Buffer.VirtualAddress, 
+			Adapter,
+			pBuf->Buffer.VirtualAddress,
 			&pTcb->PacketLength,
-			asSta, 
+			asSta,
 			asRsn );
 
 		DataRate = (u2Byte)MgntQuery_MgntFrameTxRate( Adapter, asSta );
 		MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
 
-	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);	
+	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 	Adapter->LastConnectionActionTime = PlatformGetCurrentTime();
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<=== SendDisassociation()\n"));
 }
 
 //
-// Description: 
+// Description:
 //	Send ProbeRsp.
 // Arguments:
 //	[in] Adapter -
@@ -761,7 +761,7 @@ SendProbeRsp(
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 	{
 		ConstructProbeRsp(
-			Adapter, 
+			Adapter,
 			pBuf->Buffer.VirtualAddress,
 			&pTcb->PacketLength,
 			StaAddr,
@@ -770,33 +770,33 @@ SendProbeRsp(
 			posProbeReq);
 
 		if( !(ACTING_AS_AP(Adapter)) )
-		{ 
+		{
 			// For IBSS mode, we want to use the lowest basic rate.
 			if(	IS_WIRELESS_MODE_5G(Adapter) ||
-				(IS_WIRELESS_MODE_HT_24G(Adapter) &&!pMgntInfo->pHTInfo->bCurSuppCCK))			
+				(IS_WIRELESS_MODE_HT_24G(Adapter) &&!pMgntInfo->pHTInfo->bCurSuppCCK))
 				DataRate = MGN_6M;
 			else
 				DataRate = pMgntInfo->LowestBasicRate;
-			
+
 		}
 		else
 		{
 			DataRate = (u2Byte)MgntQuery_MgntFrameTxRate(Adapter, StaAddr);
-#if (P2P_SUPPORT == 1)			
+#if (P2P_SUPPORT == 1)
 			if(P2P_ENABLED(GET_P2P_INFO(Adapter)))
 			{
 				PP2P_INFO	    pP2PInfo = GET_P2P_INFO(Adapter);
 				if(pP2PInfo->Role == P2P_GO)
 					DataRate = P2P_LOWEST_RATE;
 			}
-#endif			
+#endif
 		}
-		
+
 		RT_TRACE(COMP_SEND, DBG_TRACE, ("==SendProbeRsp(): Tx rate = %d\n", DataRate));
 		MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
 
-	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);	
+	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 }
 
 //
@@ -820,33 +820,33 @@ SendCustomizedData(
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 	{
 		ConstructCustomizedData(
-			Adapter, 
+			Adapter,
 			pBuf->Buffer.VirtualAddress,
 			&pTcb->PacketLength,
 			pktLength
 			);
 
-		// by Owen on 05/01/10 to fix the following issue: 
-		//	The AP Netgear WGT634U do not respond to RTL8187 hereafter after scanning. 
+		// by Owen on 05/01/10 to fix the following issue:
+		//	The AP Netgear WGT634U do not respond to RTL8187 hereafter after scanning.
 		//	ps: WGT634U only acks to RTL8187.
 		/*
 		// If payload is zero-legth, some AP may not handle the packet
 		// with WEP correctly, Netgear 11b/g WGT634U.
 		// 2004.12.05, by rcnjko.
-		pTcb->PacketLength += 50; 
+		pTcb->PacketLength += 50;
 		*/
 		//((pu1Byte)pBuf->Buffer.VirtualAddress)[pTcb->PacketLength] = 0xaa;
 		//((pu1Byte)pBuf->Buffer.VirtualAddress)[pTcb->PacketLength+1] = 0xaa;
 		//pTcb->PacketLength += 2;
 		//
 
-		//DataRate = pMgntInfo->CurrentOperaRate; 
+		//DataRate = pMgntInfo->CurrentOperaRate;
 		pTcb->bTxUseDriverAssingedRate = TRUE;
 		DataRate = txRate;
 		MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, BE_QUEUE, DataRate);
 	}
 
-	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);	
+	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 }
 
 
@@ -873,7 +873,7 @@ SendNullFunctionData(
 
 		//Add bQoS parameter for QoS Null by Isaiah 2006-07-31
 		ConstructNullFunctionData(
-			Adapter, 
+			Adapter,
 			pBuf->Buffer.VirtualAddress,
 			&pTcb->PacketLength,
 			StaAddr,
@@ -882,7 +882,7 @@ SendNullFunctionData(
 			0,
 			bForcePowerSave);
 
-		DataRate = pMgntInfo->LowestBasicRate;			// Annie, 2005-03-31		
+		DataRate = pMgntInfo->LowestBasicRate;			// Annie, 2005-03-31
 		pTcb->bTxUseDriverAssingedRate = TRUE;
 		MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
@@ -911,11 +911,11 @@ SendPSPoll(
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 	{
 		ConstructPSPoll(
-			Adapter, 
+			Adapter,
 			pBuf->Buffer.VirtualAddress,
 			&pTcb->PacketLength);
 
-		DataRate = pMgntInfo->LowestBasicRate;			// Annie, 2005-03-31		
+		DataRate = pMgntInfo->LowestBasicRate;			// Annie, 2005-03-31
 
 		pTcb->bTxCalculatedSwDur = TRUE;
 		pTcb->bTxEnableSwCalcDur = TRUE;
@@ -924,7 +924,7 @@ SendPSPoll(
 		MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, MGNT_QUEUE, DataRate);
 	}
 
-	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);	
+	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 }
 
 //
@@ -942,7 +942,7 @@ SendMagicPacket(
 	PRT_TX_LOCAL_BUFFER 	pBuf;
 	u2Byte					DataRate;
 
-	RT_TRACE(COMP_SEND, DBG_LOUD, ("SendMagicPacket(): StaAddr: %02X-%02X-%02X-%02X-%02X-%02X\n", 
+	RT_TRACE(COMP_SEND, DBG_LOUD, ("SendMagicPacket(): StaAddr: %02X-%02X-%02X-%02X-%02X-%02X\n",
 			StaAddr[0], StaAddr[1], StaAddr[2], StaAddr[3], StaAddr[4], StaAddr[5] ));
 
 	PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
@@ -950,7 +950,7 @@ SendMagicPacket(
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 	{
 		ConstructMagicPacket(
-			Adapter, 
+			Adapter,
 			pBuf->Buffer.VirtualAddress,
 			&pTcb->PacketLength,
 			StaAddr);
@@ -978,16 +978,16 @@ SendEapolKeyPacket(
 	KeyType			eKeyType, // EAPOL-Key Information field: Key Type bit: type_Group or type_Pairwise.
 	BOOLEAN			bInstall, // EAPOL-Key Information field: Install Flag.
 	BOOLEAN			bKeyAck, // EAPOL-Key Information field: Key Ack bit.
-	BOOLEAN			bKeyMIC, // EAPOL-Key Information field: Key MIC bit. If true, we will calculate EAPOL MIC and fill it into Key MIC field. 
+	BOOLEAN			bKeyMIC, // EAPOL-Key Information field: Key MIC bit. If true, we will calculate EAPOL MIC and fill it into Key MIC field.
 	BOOLEAN			bSecure, // EAPOL-Key Information field: Secure bit.
 	BOOLEAN			bError, // EAPOL-Key Information field: Error bit. True for MIC failure report.
 	BOOLEAN			bRequest, // EAPOL-Key Information field: Requst bit.
-	
+
 	u8Byte			u8bKeyReplayCounter, // EAPOL-KEY Replay Counter field.
 	pu1Byte			pKeyNonce, // EAPOL-Key Key Nonce field (32-byte).
 	u8Byte			u8bKeyRSC, // EAPOL-Key Key RSC field (8-byte).
 
-	POCTET_STRING	posRSNIE, // Key Data field: Pointer to RSN IE, NULL if 
+	POCTET_STRING	posRSNIE, // Key Data field: Pointer to RSN IE, NULL if
 	pu1Byte			pGTK // Key Data field: Pointer to GTK, NULL if Key Data Length = 0.
 )
 {
@@ -1008,7 +1008,7 @@ SendEapolKeyPacket(
 
 		if(pEntry == NULL)
 			return;
-			
+
 		if(pEntry->perSTAKeyInfo.TxMICKey != NULL)
 			bEncrypt = TRUE;
 
@@ -1046,14 +1046,14 @@ SendEapolKeyPacket(
 			eKeyType, // EAPOL-Key Information field: Key Type bit: type_Group or type_Pairwise.
 			bInstall, // EAPOL-Key Information field: Install Flag.
 			bKeyAck, // EAPOL-Key Information field: Key Ack bit.
-			bKeyMIC, // EAPOL-Key Information field: Key MIC bit. If true, we will calculate EAPOL MIC and fill it into Key MIC field. 
+			bKeyMIC, // EAPOL-Key Information field: Key MIC bit. If true, we will calculate EAPOL MIC and fill it into Key MIC field.
 			bSecure, // EAPOL-Key Information field: Secure bit.
 			bError, // EAPOL-Key Information field: Error bit. True for MIC failure report.
 			bRequest, // EAPOL-Key Information field: Requst bit.
 			u8bKeyReplayCounter, // EAPOL-KEY Replay Counter field.
 			pKeyNonce, // EAPOL-Key Key Nonce field (32-byte).
 			u8bKeyRSC, // EAPOL-Key Key RSC field (8-byte).
-			posRSNIE, // Key Data field: Pointer to RSN IE, NULL if 
+			posRSNIE, // Key Data field: Pointer to RSN IE, NULL if
 			pGTK, // Key Data field: Pointer to GTK, NULL if Key Data Length = 0.
 			bEncrypt	// encrypt the packet or not.
 			);
@@ -1071,7 +1071,7 @@ SendEapolKeyPacket(
 		// Check if this is a MIC failure report packet. 2005.09.06, by rcnjko.
 		if(bRequest && bError)
 		{
-			pTcb->EncInfo.SecProtInfo |= RT_SEC_MIC_FAILURE_REPORT;	
+			pTcb->EncInfo.SecProtInfo |= RT_SEC_MIC_FAILURE_REPORT;
 		}
 
 		DataRate = pMgntInfo->LowestBasicRate;
@@ -1108,16 +1108,16 @@ MgntSendRawPacket(
 	IN	u1Byte			u1bTxRate
 	)
 {
-	BOOLEAN					bResult = FALSE;	
+	BOOLEAN					bResult = FALSE;
 	PRT_TCB					pTcb;
 	PRT_TX_LOCAL_BUFFER 	pBuf;
 	u2Byte					DataRate;
 	u4Byte					Crc32 = 0;
 	pu1Byte					pHeader = NULL;
-	
-	if(	pocPacketToSend == NULL || 
+
+	if(	pocPacketToSend == NULL ||
 		pocPacketToSend->Length > 1600 )
-	{		
+	{
 		return bResult;
 	}
 
@@ -1128,9 +1128,9 @@ MgntSendRawPacket(
 		if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 		{
 			pHeader = pBuf->Buffer.VirtualAddress;
-			
-			PlatformMoveMemory(pHeader, pocPacketToSend->Octet, pocPacketToSend->Length);		
-			pTcb->PacketLength = pocPacketToSend->Length;			
+
+			PlatformMoveMemory(pHeader, pocPacketToSend->Octet, pocPacketToSend->Length);
+			pTcb->PacketLength = pocPacketToSend->Length;
 
 			// Caculate CRC
 			// The 8192C HW would not append the CRC for this packet when the RAW Packet bit is set in the Tx Desc.
@@ -1170,16 +1170,16 @@ MgntSendSpecificPacket(
 	PRT_TCB					pTcb;
 	PRT_TX_LOCAL_BUFFER 	pBuf;
 	u2Byte					DataRate;
-	BOOLEAN					bResult = FALSE;	
+	BOOLEAN					bResult = FALSE;
 	PRT_SECURITY_T			pSecInfo = NULL;
 	PADAPTER				pSendAdapter = GetDefaultAdapter(Adapter);
 	PMGNT_INFO 				pDefaultMgntInfo = GetDefaultMgntInfo(Adapter);
 
 	//RT_TRACE(COMP_P2P, DBG_LOUD, ("MgntSendSpecificPacket(): send pkt with rate: %u\n", u1bTxRate));
 
-	if(	pocPacketToSend == NULL || 
+	if(	pocPacketToSend == NULL ||
 		pocPacketToSend->Length > 1600 )
-	{		
+	{
 		return bResult;
 	}
 
@@ -1194,7 +1194,7 @@ MgntSendSpecificPacket(
 	// If no adapter matches this packet, use default adapter.
 	if(pSendAdapter == NULL)
 		pSendAdapter = GetDefaultAdapter(Adapter);
-	
+
 	// Adopt the variables from sender adapter.
 	pMgntInfo = &(pSendAdapter->MgntInfo);
 	pStaQos = pMgntInfo->pStaQos;
@@ -1211,7 +1211,7 @@ MgntSendSpecificPacket(
 			offset = sMacHdrLng;
 
 			pTcb->PacketLength = 0;
-			
+
 			PlatformMoveMemory(pBuf->Buffer.VirtualAddress, pocPacketToSend->Octet, offset);
 			pTcb->PacketLength += sMacHdrLng;
 
@@ -1265,7 +1265,7 @@ MgntSendSpecificPacket(
 VOID
 SendEAPOLStarPacket(
 	IN	PADAPTER			Adapter,
-	IN	BOOLEAN				bEncrypt 
+	IN	BOOLEAN				bEncrypt
 	)
 {
 	PMGNT_INFO				pMgntInfo = &(Adapter->MgntInfo);
@@ -1297,7 +1297,7 @@ SendEAPOLStarPacket(
 		}
 
 		RT_PRINT_DATA(COMP_SEC , DBG_LOUD , "==>  Send EAPOL Start \n" , pBuf->Buffer.VirtualAddress , pTcb->PacketLength);
-		
+
 		DataRate = pMgntInfo->LowestBasicRate;
 		pTcb->bTxUseDriverAssingedRate = TRUE;
 		MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, LOW_QUEUE, DataRate);
@@ -1409,7 +1409,7 @@ SendQosAddTs(
 	u2Byte					DataRate;
 
 	RT_TRACE(COMP_QOS, DBG_LOUD, ("===> SendQosAddTs()\n"));
-	
+
 	PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
 
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
@@ -1450,7 +1450,7 @@ SendQosDelTs(
 	u2Byte					DataRate;
 
 	RT_TRACE(COMP_QOS, DBG_LOUD, ("===> SendQosDelTs()\n"));
-	
+
 	PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
 
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
@@ -1505,14 +1505,14 @@ ApSendNullPacket(
 	u2Byte					DataRate;
 
 	RT_TRACE(COMP_AP, DBG_TRACE, ("===> ApSendNullPacket()\n"));
-	
+
 	PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
 
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 	{
 		//Add bQoS parameter for QoS Null by Isaiah 2006-07-31
 		ConstructNullFunctionData(
-			Adapter, 
+			Adapter,
 			pBuf->Buffer.VirtualAddress,
 			&pTcb->PacketLength,
 			StaAddr,
@@ -1521,7 +1521,7 @@ ApSendNullPacket(
 			bEosp,
 			FALSE);
 
-		DataRate = pMgntInfo->LowestBasicRate;			// Annie, 2005-03-31		
+		DataRate = pMgntInfo->LowestBasicRate;			// Annie, 2005-03-31
 		pTcb->bTxUseDriverAssingedRate = TRUE;
 		pTcb->priority = AC;
 		MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
@@ -1557,19 +1557,19 @@ SendSAQueryReq(
 	PRT_TCB					pTcb;
 	PRT_TX_LOCAL_BUFFER 	pBuf;
 	u2Byte					DataRate;
-	
+
 	PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
 
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 	{
 		ConstructSAQeuryReq(
-			Adapter, 
+			Adapter,
 			pBuf->Buffer.VirtualAddress,
 			&pTcb->PacketLength,
 			pTargetSta,
 			Identifier);
 
-		DataRate = pMgntInfo->LowestBasicRate;			// Annie, 2005-03-31		
+		DataRate = pMgntInfo->LowestBasicRate;			// Annie, 2005-03-31
 		pTcb->bTxUseDriverAssingedRate = TRUE;
 		RT_PRINT_DATA(COMP_SEC, DBG_TRACE, "SendSAQueryReq(): Content:\n", pBuf, pTcb->PacketLength);
 		MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
@@ -1604,19 +1604,19 @@ SendSAQueryRsp(
 	PRT_TCB					pTcb;
 	PRT_TX_LOCAL_BUFFER 	pBuf;
 	u2Byte					DataRate;
-	
+
 	PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
 
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 	{
 		ConstructSAQeuryRsp(
-			Adapter, 
+			Adapter,
 			pBuf->Buffer.VirtualAddress,
 			&pTcb->PacketLength,
 			pTargetSta,
 			Identifier);
 
-		DataRate = pMgntInfo->LowestBasicRate;			// Annie, 2005-03-31		
+		DataRate = pMgntInfo->LowestBasicRate;			// Annie, 2005-03-31
 		pTcb->bTxUseDriverAssingedRate = TRUE;
 		RT_PRINT_DATA(COMP_SEC, DBG_TRACE, "SendSAQueryRsp(): Content:\n", pBuf, pTcb->PacketLength);
 		MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);

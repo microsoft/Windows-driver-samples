@@ -19,16 +19,16 @@ SecCheckMIC(
 	PRT_SECURITY_T	pSec = &Adapter->MgntInfo.SecurityInfo;
 	BOOLEAN			bResult = TRUE;
 
-	
+
 	FillOctetString(frame, pRfd->Buffer.VirtualAddress, pRfd->PacketLength);
-	
-	//2004/07/12, kcwu, 
+
+	//2004/07/12, kcwu,
 	//Check if the packet is encrypted
 	if(!Frame_WEP(frame))
 	{
 		return bResult;
 	}
-	
+
 	//2004/07/12, kcwu
 	//Find the algorithm that should be used
 	PlatformMoveMemory(DestAddr, Frame_Addr1(frame), ETHERNET_ADDRESS_LENGTH);
@@ -45,13 +45,13 @@ SecCheckMIC(
 			bResult = TRUE;
 	}
 	return bResult;
-			
+
 }
 
 
 //
-//	Description: 
-//		Figure out TKIP MIC from packet content and compare it to 
+//	Description:
+//		Figure out TKIP MIC from packet content and compare it to
 //		MIC of packet received.
 //
 //	2004.10.08, by rcnjko.
@@ -85,14 +85,14 @@ SecCheckTKIPMIC(
 		return TRUE;
 	}
 
-	// <RJ_TODO> This is just a workaround for WiFi 5.2.2.4 S2 might failed 
-	// in unknown condition. For example, we think the packets received is TKIP MIC error 
-	// during this test and finally trigger counter measure.  2005.09.06, by rcnjko. 
+	// <RJ_TODO> This is just a workaround for WiFi 5.2.2.4 S2 might failed
+	// in unknown condition. For example, we think the packets received is TKIP MIC error
+	// during this test and finally trigger counter measure.  2005.09.06, by rcnjko.
 	// Prefast warning C28182: Dereferencing NULL pointer. 'pRfd' contains NULL.
 	if(pRfd != NULL && pRfd->nTotalFrag > 1)
 	{
 		return TRUE;
-	}	
+	}
 
 	// Initialize first buffer of the packet to as header.
 	// Prefast warning C6011: Dereferencing NULL pointer 'pRfd'.
@@ -111,13 +111,13 @@ SecCheckTKIPMIC(
 	{
 		IVOffset = sMacHdrLng;
 	}
-	// Prefast warning C6011: Dereferencing NULL pointer 'pRfd'. 
+	// Prefast warning C6011: Dereferencing NULL pointer 'pRfd'.
 	if(pRfd != NULL && pRfd->Status.bContainHTC)
 		IVOffset += sHTCLng;
 
 	IVKeyIdOffset = IVOffset + KEYID_POS_IN_IV;
 
-	
+
 	// Packet length check.
 	if(pRfd != NULL && pRfd->PacketLength < IVOffset )
 	{
@@ -125,7 +125,7 @@ SecCheckTKIPMIC(
 		return FALSE; // Drop the packet.
 	}
 
-	// Prefast warning C6011: Dereferencing NULL pointer 'frame.Octet'. 
+	// Prefast warning C6011: Dereferencing NULL pointer 'frame.Octet'.
 	if (frame.Octet != NULL)
 	{
 		// Get DestAddr from header. //Modified by Jay 0713
@@ -140,25 +140,25 @@ SecCheckTKIPMIC(
 	if(ACTING_AS_AP(Adapter) && frame.Octet != NULL)		//Added by Jay for SwAP 0708
 	{ // AP Mode.
 		pEntry = AsocEntry_GetEntry(pMgntInfo, Frame_pSaddr(frame));
-		
-		if(pEntry == NULL)			
+
+		if(pEntry == NULL)
 			return FALSE;
-		
-		if(pEntry->perSTAKeyInfo.RxMICKey == NULL)			
+
+		if(pEntry->perSTAKeyInfo.RxMICKey == NULL)
 			return FALSE;
-		
+
 		SecMICSetKey(&micdata, pEntry->perSTAKeyInfo.RxMICKey);
 	}
 	else if(pRfd != NULL && pRfd->bTDLPacket)
 	{
 		pEntry = AsocEntry_GetEntry(pMgntInfo, Frame_pSaddr(frame));
-		
-		if(pEntry == NULL)			
+
+		if(pEntry == NULL)
 			return FALSE;
-		
-		if(pEntry->perSTAKeyInfo.TxMICKey == NULL)			
+
+		if(pEntry->perSTAKeyInfo.TxMICKey == NULL)
 			return FALSE;
-		
+
 		SecMICSetKey(&micdata, pEntry->perSTAKeyInfo.TxMICKey);
 	}
 	else
@@ -169,12 +169,12 @@ SecCheckTKIPMIC(
 			Keyidx = SecGetRxKeyIdx( Adapter, DestAddr, ((frame.Octet[IVKeyIdOffset]>>6)&0x03) );	// Changed by Annie, 2005-12-22.
 
 		//RT_TRACE(COMP_DBG, DBG_LOUD, ("SecCheckTKIPMIC(): Keyidx: %d\n", Keyidx));
-		if(Keyidx > 4)	
-		{		
-			RT_TRACE(COMP_SEC, DBG_LOUD, ("SecCheckTKIPMIC(): Keyidx: %d > 4\n", Keyidx));		
-			return FALSE; // Drop the packet.	
+		if(Keyidx > 4)
+		{
+			RT_TRACE(COMP_SEC, DBG_LOUD, ("SecCheckTKIPMIC(): Keyidx: %d > 4\n", Keyidx));
+			return FALSE; // Drop the packet.
 		}
-		
+
 			SecMICSetKey(&micdata, pSec->KeyBuf[Keyidx]+TKIP_MICKEYTX_POS);
 
 	}
@@ -204,16 +204,16 @@ SecCheckTKIPMIC(
 		CurrBufferLen = (int)(pCurrRfd->FragLength) - ((int)(IVOffset)+(int)(pSec->EncryptionHeadOverhead));
 	}
 	while(pCurrRfd != NULL)
-	{	
+	{
 		// Get MIC of the Last buffer and exclude MIC from it.
 		if(pCurrRfd->NextRfd == NULL)
-		{ 
+		{
 			if(CurrBufferLen >= TKIP_MIC_LEN)
 			{ // MIC is not fragmented.
 
 				// Get MIC.
 				PlatformMoveMemory(
-					mic_from_packet, 
+					mic_from_packet,
 					pCurrBuffer + CurrBufferLen - TKIP_MIC_LEN,
 					TKIP_MIC_LEN);
 
@@ -228,11 +228,11 @@ SecCheckTKIPMIC(
 
 				// Get MIC.
 				PlatformMoveMemory(
-					mic_from_packet, 
+					mic_from_packet,
 					pPrevRfd->Buffer.VirtualAddress + pPrevRfd->FragLength - cbMicInPrev,
 					cbMicInPrev);
 				PlatformMoveMemory(
-					mic_from_packet + cbMicInPrev, 
+					mic_from_packet + cbMicInPrev,
 					pCurrBuffer,
 					CurrBufferLen);
 
@@ -242,7 +242,7 @@ SecCheckTKIPMIC(
 		}
 		else if(pCurrRfd->NextRfd->NextRfd == NULL)
 		{ // In case if MIC is fragmented, we must take care about the last two fragment.
-				
+
 			if(pCurrRfd->NextRfd->FragLength < TKIP_MIC_LEN)
 			{ // MIC is fragmented.
 				int cbMicInPrev = TKIP_MIC_LEN - pCurrRfd->NextRfd->FragLength;
@@ -261,7 +261,7 @@ SecCheckTKIPMIC(
 
 		// Next one.
 		pPrevRfd = pCurrRfd;
-		pCurrRfd = pCurrRfd->NextRfd;	
+		pCurrRfd = pCurrRfd->NextRfd;
 		if(pCurrRfd != NULL)
 		{
 			pCurrBuffer = pCurrRfd->Buffer.VirtualAddress + pCurrRfd->FragOffset;
@@ -273,12 +273,12 @@ SecCheckTKIPMIC(
 			CurrBufferLen = 0;
 		}
 	}
-	
+
 	// Figure out MIC from micdata.
 	SecMICGetMIC(&micdata, mic_for_check);
 //	PRINT_DATA((const void*)"mic_for_check===>", (const void*)mic_for_check, TKIP_MIC_LEN);
 //	PRINT_DATA((const void*)"mic_from_packet===>", (const void*)mic_from_packet, TKIP_MIC_LEN);
-	
+
 	// Compare two MICs.
 	if(PlatformCompareMemory(mic_for_check, mic_from_packet,TKIP_MIC_LEN))
 	{ // Different!
@@ -300,9 +300,9 @@ SecCheckTKIPMIC(
 			else if (IsMgntFrame(frame.Octet))
 				CountRxMgntTKIPLocalMICFailuresStatistics(Adapter, pRfd);
 		}
-		
+
 		// Handle TKIP MIC error.
-		if(ACTING_AS_AP(Adapter))		//Added by Jay 0708. 
+		if(ACTING_AS_AP(Adapter))		//Added by Jay 0708.
 		{ // AP Mode.
 			//Enter integrity failure state...
 			Authenticator_StateINTEGRITYFAILURE(Adapter, pEntry);
@@ -313,7 +313,7 @@ SecCheckTKIPMIC(
 		}
 		else
 		{ // STA Mode.
-			
+
 			// We don't indication MIC ERROR in MFP Packet !!
 			// Prefast warning C28182: Dereferencing NULL pointer. 'pRfd' contains the same NULL value as 'pCurrRfd' did.
 			if(pRfd != NULL && !pRfd->Status.bRxMFPPacket )
@@ -325,7 +325,7 @@ SecCheckTKIPMIC(
 	else
 	{ // The same.
 
-		RT_TRACE(COMP_DBG, DBG_LOUD, ("Rx:TKIP_MIC Ok\n"));	
+		RT_TRACE(COMP_DBG, DBG_LOUD, ("Rx:TKIP_MIC Ok\n"));
 		return TRUE;
 	}
 }
@@ -403,11 +403,11 @@ SecHeaderFillIV(
 	{
 		pSecHeader += sQoSCtlLng;
 	}
-	
+
 	// Check address 4 valiaddr , add for BT
 	// Note : AP WDS mode need to do ....
 	oFrame.Octet = PacketStart;
-	
+
 	if( Frame_ValidAddr4( oFrame ) )
 	{
 		RT_TRACE( COMP_SEC , DBG_LOUD, ("===>SecHeaderFillIV() : 4 address data \n") );
@@ -415,7 +415,7 @@ SecHeaderFillIV(
 		pSecHeader += 6;
 		show = TRUE;
 	}
-	
+
 	switch(SelectEncAlgorithm){
 		case RT_ENC_ALG_WEP104:
 		case RT_ENC_ALG_WEP40:
@@ -431,7 +431,7 @@ SecHeaderFillIV(
 			pSecHeader[3] = EF1Byte( (u1Byte)((pSec->DefaultTransmitKeyIdx<<6)&0xc0) );
 		}
 		break;
-		
+
 		case RT_ENC_ALG_TKIP:
 		{
 			if(!ACTING_AS_AP(Adapter))
@@ -439,7 +439,7 @@ SecHeaderFillIV(
 				u2Byte u2IV16 = (u2Byte)(pSec->TxIV& UINT64_C(0x000000000000ffff) );
 				u4Byte u4IV32 = (u4Byte)(((pSec->TxIV& UINT64_C(0x0000ffffffff0000) ) >> 16)& UINT64_C(0x00000000ffffffff) );
 				pSec->TxIV++;
-	
+
 				//keyid is always 0 for STA
 				TKIP_TSC_DECIMAL2ARRAY(u2IV16, u4IV32, 0, pSecHeader);
 			}
@@ -459,9 +459,9 @@ SecHeaderFillIV(
 					if( pEntry==NULL )
 						return;
 					u2IV16 = (u2Byte)(pEntry->perSTAKeyInfo.TxIV & UINT64_C(0x000000000000ffff) );
-					u4IV32 = (u4Byte)(((pEntry->perSTAKeyInfo.TxIV& UINT64_C(0x0000ffffffff0000) ) >> 16)& UINT64_C(0x00000000ffffffff) );		
+					u4IV32 = (u4Byte)(((pEntry->perSTAKeyInfo.TxIV& UINT64_C(0x0000ffffffff0000) ) >> 16)& UINT64_C(0x00000000ffffffff) );
 					pEntry->perSTAKeyInfo.TxIV++;
-	
+
 					//keyid is always 0 for STA
 					TKIP_TSC_DECIMAL2ARRAY(u2IV16, u4IV32, 0, pSecHeader);
 				}
@@ -485,16 +485,16 @@ SecHeaderFillIV(
 				{
 					RT_TRACE( COMP_SEC , DBG_LOUD , ("===>ccw Ok \n") );
 				}
-				
-				PN_DECIMAL2ARRAY((pSec->TxIV& UINT64_C(0xffffffff00000000) ), 
-						(pSec->TxIV& UINT64_C(0x00000000ffffffff)), 
-					PAIRWISE_KEYIDX,		//keyid = 0 for pairwise packet 
+
+				PN_DECIMAL2ARRAY((pSec->TxIV& UINT64_C(0xffffffff00000000) ),
+						(pSec->TxIV& UINT64_C(0x00000000ffffffff)),
+					PAIRWISE_KEYIDX,		//keyid = 0 for pairwise packet
 					pSecHeader);
 				pSec->TxIV++;
 			}
 			else if( ACTING_AS_AP(Adapter) )
 			{
-				
+
 				if(!MacAddr_isMulticast(pRA))
 				{ // Pairwise traffic.
 
@@ -502,45 +502,45 @@ SecHeaderFillIV(
 					PRT_WLAN_STA pEntry;
 
 					pEntry = AsocEntry_GetEntry(pMgntInfo, pRA);
-					
+
 					if( pEntry==NULL )
 						return;
-					
-					PN_DECIMAL2ARRAY((pEntry->perSTAKeyInfo.TxIV& UINT64_C(0xffffffff00000000)), 
-							(pEntry->perSTAKeyInfo.TxIV& UINT64_C(0x00000000ffffffff)), 
-							0,		//keyid = 0 for pairwise packet 
+
+					PN_DECIMAL2ARRAY((pEntry->perSTAKeyInfo.TxIV& UINT64_C(0xffffffff00000000)),
+							(pEntry->perSTAKeyInfo.TxIV& UINT64_C(0x00000000ffffffff)),
+							0,		//keyid = 0 for pairwise packet
 							pSecHeader);
 					pEntry->perSTAKeyInfo.TxIV++;
 				}
 				else
-				{ // Group traffic. 
-					PN_DECIMAL2ARRAY((pSec->TxIV& UINT64_C(0xffffffff00000000)), 
-							(pSec->TxIV& UINT64_C(0x00000000ffffffff)), 
+				{ // Group traffic.
+					PN_DECIMAL2ARRAY((pSec->TxIV& UINT64_C(0xffffffff00000000)),
+							(pSec->TxIV& UINT64_C(0x00000000ffffffff)),
 							pSec->GroupTransmitKeyIdx,// 0,
 							pSecHeader);
 					pSec->TxIV++;
 				}
-					
+
 			}
 			else
 			{
 				if(!MacAddr_isMulticast(pRA))
 				{ // Pairwise traffic.
-					PN_DECIMAL2ARRAY((pSec->TxIV& UINT64_C(0xffffffff00000000) ), 
-							(pSec->TxIV&0x00000000ffffffff), 
-							PAIRWISE_KEYIDX,		//keyid = 0 for pairwise packet 
+					PN_DECIMAL2ARRAY((pSec->TxIV& UINT64_C(0xffffffff00000000) ),
+							(pSec->TxIV&0x00000000ffffffff),
+							PAIRWISE_KEYIDX,		//keyid = 0 for pairwise packet
 							pSecHeader);
 				}
 				else
-				{ // Group traffic. 
-					PN_DECIMAL2ARRAY((pSec->TxIV& UINT64_C(0xffffffff00000000) ), 
-							(pSec->TxIV& UINT64_C(0x00000000ffffffff) ), 
-							pSec->DefaultTransmitKeyIdx,	
+				{ // Group traffic.
+					PN_DECIMAL2ARRAY((pSec->TxIV& UINT64_C(0xffffffff00000000) ),
+							(pSec->TxIV& UINT64_C(0x00000000ffffffff) ),
+							pSec->DefaultTransmitKeyIdx,
 							pSecHeader);
 				}
 				pSec->TxIV++;
 			}
-			
+
 		break;
 
 		case RT_ENC_ALG_SMS4:
@@ -556,7 +556,7 @@ SecHeaderFillIV(
 
 //
 //Note : SecInit() need to Used after SecClearAllKeys();
-//          Because Clear CAM Key will check SecInfo Key Buffer Length 
+//          Because Clear CAM Key will check SecInfo Key Buffer Length
 //		If Length = 0, CAM entey will "NO" Clear ....
 
 VOID
@@ -564,7 +564,7 @@ SecInit(
 	PADAPTER	Adapter
 	)
 {
-	PRT_SECURITY_T pSec = &Adapter->MgntInfo.SecurityInfo;	
+	PRT_SECURITY_T pSec = &Adapter->MgntInfo.SecurityInfo;
 	s1Byte	i = 0;
 
 	pSec->PairwiseEncAlgorithm = pSec->GroupEncAlgorithm = RT_ENC_ALG_AESCCMP;
@@ -572,7 +572,7 @@ SecInit(
 	pSec->DefaultTransmitKeyIdx = 0;
 	pSec->GroupTransmitKeyIdx = 0;
 	SecSetSwEncryptionDecryption(Adapter, FALSE, FALSE);
-	pSec->SWRxAESMICFlag = FALSE;	
+	pSec->SWRxAESMICFlag = FALSE;
 	pSec->bGroupKeyFixed = FALSE;
 
 	pSec->AuthMode = RT_802_11AuthModeWPA2;
@@ -582,7 +582,7 @@ SecInit(
 	// 2007.08.08 We must initialize this value, otherwise, software decryption
 	// without initilization of AES mode cause Assertion in Vista. By Lanhsin
 	pSec->AESCCMPMicLen = 8;
-	
+
 	PlatformZeroMemory(pSec->RSNIEBuf, MAXRSNIELEN);
 	pSec->RSNIE.Length = 0;
 	FillOctetString(pSec->RSNIE, pSec->RSNIEBuf, pSec->RSNIE.Length);
@@ -615,13 +615,13 @@ SecInit(
 	init_crc32();
 
 	// Initialize TKIP MIC error related, 2004.10.06, by rcnjko.
-	pSec->LastPairewiseTKIPMICErrorTime = 0;	
+	pSec->LastPairewiseTKIPMICErrorTime = 0;
 	pSec->bToDisassocAfterMICFailureReportSend = FALSE;
 	for(i = 0; i < MAX_DENY_BSSID_LIST_CNT; i++)
 	{
 		pSec->DenyBssidList[i].bUsed = FALSE;
 	}
-	
+
 }
 
 /*
@@ -636,7 +636,7 @@ SecInit(
 
 //
 //Note : SecClearAllKeys() need to Used before SecInit();
-//          Because Clear CAM Key will check SecInfo Key Buffer Length 
+//          Because Clear CAM Key will check SecInfo Key Buffer Length
 //		If Length = 0, CAM entey will "NO" Clear ....
 
 VOID
@@ -657,8 +657,8 @@ SecClearAllKeys(
 	//
 	for(i = 0; i < MAX_NUM_PER_STA_KEY; i++)
 	{
-		PlatformZeroMemory( &(pSec->PerStaDefKeyTable[i]), sizeof(PER_STA_DEFAULT_KEY_ENTRY) ); 
-		PlatformZeroMemory( &(pSec->MAPKEYTable[i]), sizeof(PER_STA_MPAKEY_ENTRY) ); 
+		PlatformZeroMemory( &(pSec->PerStaDefKeyTable[i]), sizeof(PER_STA_DEFAULT_KEY_ENTRY) );
+		PlatformZeroMemory( &(pSec->MAPKEYTable[i]), sizeof(PER_STA_MPAKEY_ENTRY) );
 	}
 }
 
@@ -669,7 +669,7 @@ SecClearGroupKeyByIdx(
 ){
 	PlatformZeroMemory(Adapter->MgntInfo.SecurityInfo.KeyBuf[paraIndex], MAX_KEY_LEN);
 	Adapter->MgntInfo.SecurityInfo.KeyLen[paraIndex] = 0;
-	Adapter->HalFunc.SetKeyHandler(Adapter, paraIndex, 0, TRUE, 
+	Adapter->HalFunc.SetKeyHandler(Adapter, paraIndex, 0, TRUE,
 		Adapter->MgntInfo.SecurityInfo.GroupEncAlgorithm, FALSE, FALSE);
 }
 
@@ -681,7 +681,7 @@ SecClearWEPKeyByIdx(
 {
 	PlatformZeroMemory(Adapter->MgntInfo.SecurityInfo.KeyBuf[paraIndex], MAX_KEY_LEN);
 	Adapter->MgntInfo.SecurityInfo.KeyLen[paraIndex] = 0;
-	Adapter->HalFunc.SetKeyHandler(Adapter, paraIndex, 0, TRUE, 
+	Adapter->HalFunc.SetKeyHandler(Adapter, paraIndex, 0, TRUE,
 		Adapter->MgntInfo.SecurityInfo.GroupEncAlgorithm, FALSE, FALSE);
 }
 //for AP mode
@@ -695,7 +695,7 @@ SecClearPairwiseKeyByMacAddr(
 	PlatformZeroMemory(Adapter->MgntInfo.SecurityInfo.PairwiseKey, MAX_KEY_LEN);
 	Adapter->MgntInfo.SecurityInfo.KeyLen[PAIRWISE_KEYIDX] = 0;
 	//2004/09/07, kcwu, disable the key entry in cam
-	Adapter->HalFunc.SetKeyHandler(Adapter, PAIRWISE_KEYIDX, paraMacAddr, FALSE, 
+	Adapter->HalFunc.SetKeyHandler(Adapter, PAIRWISE_KEYIDX, paraMacAddr, FALSE,
 		Adapter->MgntInfo.SecurityInfo.PairwiseEncAlgorithm, FALSE, FALSE);
 }
 
@@ -748,8 +748,8 @@ Sec_SelAkmFromAuthMode(
 	if(TEST_FLAG(contentType, CONTENT_PKT_TYPE_CLIENT))
 	{
 		PFT_INFO_ENTRY			pEntry = NULL;
-		
-		if(!pInfoBuf || InfoBufLen < sizeof(RT_WLAN_BSS))			
+
+		if(!pInfoBuf || InfoBufLen < sizeof(RT_WLAN_BSS))
 		{
 			RT_TRACE_F(COMP_SEC, DBG_SERIOUS, ("Invalid input buffer or length, pInfoBuf = %p, InfoBufLen = %d\n", pInfoBuf, InfoBufLen));
 			return RT_STATUS_INVALID_DATA;
@@ -767,7 +767,7 @@ Sec_SelAkmFromAuthMode(
 		{
 			ftMDIeLen = pEntry->MDELen;
 		}
-	}	
+	}
 
 	RT_TRACE_F(COMP_SEC, DBG_LOUD, ("AuthMode = %d, RegCapAKMSuite = 0x%08X\n", AuthMode, pAdapter->MgntInfo.RegCapAKMSuite));
 
@@ -776,7 +776,7 @@ Sec_SelAkmFromAuthMode(
 		default:
 			rtStatus = RT_STATUS_NOT_RECOGNIZED;
 			break;
-			
+
 		case RT_802_11AuthModeWPA:
 			if(bCCX8021xenable && bAPSuportCCKM)
 			{
@@ -787,7 +787,7 @@ Sec_SelAkmFromAuthMode(
 				*pAKM = AKM_WPA_1X;
 			}
 			break;
-			
+
 		case RT_802_11AuthModeWPA2:
 			if(bCCX8021xenable && bAPSuportCCKM)
 			{
@@ -799,7 +799,7 @@ Sec_SelAkmFromAuthMode(
 			}
 			else if(TEST_FLAG(targetAKMSuites, AKM_RSNA_1X_SHA256) && TEST_FLAG(pAdapter->MgntInfo.RegCapAKMSuite, AKM_RSNA_1X_SHA256))
 			{
-				*pAKM = AKM_RSNA_1X_SHA256;		
+				*pAKM = AKM_RSNA_1X_SHA256;
 			}
 			else
 			{
@@ -810,7 +810,7 @@ Sec_SelAkmFromAuthMode(
 		case RT_802_11AuthModeWPAPSK:
 			*pAKM = AKM_WPA_PSK;
 			break;
-			
+
 		case RT_802_11AuthModeWPA2PSK:
 			{
 				if(ftMDIeLen > 0)
@@ -826,7 +826,7 @@ Sec_SelAkmFromAuthMode(
 					*pAKM = AKM_WPA2_PSK;
 				}
 			}
-			break;		
+			break;
 	}
 
 	return rtStatus;
@@ -937,7 +937,7 @@ Sec_MapAKMSuiteToOUIType(
 			PlatformMoveMemory(pOUI, RSN_OUI, SIZE_OUI);
 			*pOUIType = RSN_AKM_SUITE_OUI_TYPE_FT_PSK;
 		}
-		break;	
+		break;
 	}
 
 	return rtStatus;
@@ -974,7 +974,7 @@ Sec_MapOUITypeToAKMSuite(
 	CHECK_NULL_RETURN_STATUS(pOUI);
 	CHECK_NULL_RETURN_STATUS(pOUIType);
 	CHECK_NULL_RETURN_STATUS(pAKMSuite);
-	
+
 	if(RT_SEC_LVL_NONE == secLevl)
 	{
 		*pAKMSuite = AKM_SUITE_NONE;
@@ -988,7 +988,7 @@ Sec_MapOUITypeToAKMSuite(
 			default:
 				rtStatus = RT_STATUS_NOT_RECOGNIZED;
 				break;
-				
+
 			case AKM_WPA_1X_OUI_TYPE:
 				*pAKMSuite = AKM_WPA_1X;
 				break;
@@ -996,7 +996,7 @@ Sec_MapOUITypeToAKMSuite(
 			case AKM_WPA_PSK_OUI_TYPE:
 				*pAKMSuite = AKM_WPA_PSK;
 				break;
-			}			
+			}
 		}
 		else if(eqOUI(pOUI, CCKM_OUI) &&  CCKM_OUI_TYPE == *pOUIType)
 		{
@@ -1005,7 +1005,7 @@ Sec_MapOUITypeToAKMSuite(
 		else
 		{
 			rtStatus = RT_STATUS_NOT_RECOGNIZED;
-		}		
+		}
 	}
 	else if(RT_SEC_LVL_WPA2 == secLevl)
 	{
@@ -1016,7 +1016,7 @@ Sec_MapOUITypeToAKMSuite(
 			default:
 				rtStatus = RT_STATUS_NOT_RECOGNIZED;
 				break;
-				
+
 			case RSN_AKM_SUITE_OUI_TYPE_RSN_1X:
 				*pAKMSuite = AKM_WPA2_1X;
 				break;
@@ -1040,7 +1040,7 @@ Sec_MapOUITypeToAKMSuite(
 			case RSN_AKM_SUITE_OUI_TYPE_PSK_SHA256:
 				*pAKMSuite = AKM_RSNA_PSK_SHA256;
 				break;
-			}			
+			}
 		}
 		else if(eqOUI(pOUI, CCKM_OUI) &&  CCKM_OUI_TYPE == *pOUIType)
 		{
@@ -1051,7 +1051,7 @@ Sec_MapOUITypeToAKMSuite(
 			rtStatus = RT_STATUS_NOT_RECOGNIZED;
 		}
 	}
-	
+
 	return RT_STATUS_NOT_SUPPORT;
 }
 
@@ -1145,7 +1145,7 @@ Sec_MapCipherSuiteToOUIType(
 				RT_TRACE_F(COMP_SEC, DBG_WARNING, ("Invalid Cipher suite RT_ENC_ALG_SMS4 to map OUI\n"));
 				rtStatus = RT_STATUS_INVALID_DATA;
 			}
-			break;		
+			break;
 		}
 	}
 	else if(RT_SEC_LVL_WPA2 == secLevl)
@@ -1266,7 +1266,7 @@ Sec_MapOUITypeToCipherSuite(
 	CHECK_NULL_RETURN_STATUS(pOUI);
 	CHECK_NULL_RETURN_STATUS(pOUIType);
 	CHECK_NULL_RETURN_STATUS(pCipherSuite);
-	
+
 	if(RT_SEC_LVL_NONE == secLevl)
 	{
 		*pCipherSuite = RT_ENC_ALG_NO_CIPHER;
@@ -1280,7 +1280,7 @@ Sec_MapOUITypeToCipherSuite(
 			default:
 				rtStatus = RT_STATUS_NOT_RECOGNIZED;
 				break;
-				
+
 			case WPA_CIPHER_SUITE_OUI_TYPE_NONE:
 				*pCipherSuite = RT_ENC_ALG_NO_CIPHER;;
 				break;
@@ -1299,13 +1299,13 @@ Sec_MapOUITypeToCipherSuite(
 
 			case WPA_CIPHER_SUITE_OUI_TYPE_WEP104:
 				*pCipherSuite = RT_ENC_ALG_WEP104;;
-				break;				
-			}			
+				break;
+			}
 		}
 		else
 		{
 			rtStatus = RT_STATUS_NOT_RECOGNIZED;
-		}		
+		}
 	}
 	else if(RT_SEC_LVL_WPA2 == secLevl)
 	{
@@ -1351,7 +1351,7 @@ Sec_MapOUITypeToCipherSuite(
 			rtStatus = RT_STATUS_NOT_RECOGNIZED;
 		}
 	}
-	
+
 	return RT_STATUS_NOT_SUPPORT;
 }
 
@@ -1374,7 +1374,7 @@ Sec_MapNewCipherToDepCipherAlg(
 	switch(newCipherSuite)
 	{
 	default:
-		{			
+		{
 			RT_TRACE_F(COMP_SEC, DBG_WARNING, ("Unknown newCipherSuite(0x%08X) to map\n", newCipherSuite));
 		}
 		break;
@@ -1426,7 +1426,7 @@ SecGetEncryptionOverhead(
 	PMGNT_INFO		pMgntInfo = &Adapter->MgntInfo;
 	RT_ENC_ALG		ulSwitchCondition = (bByPacket&&bIsBroadcastPkt)? \
 						pMgntInfo->SecurityInfo.GroupEncAlgorithm:pMgntInfo->SecurityInfo.PairwiseEncAlgorithm;
-	
+
 	// Decide EncryptionOverhead according to Encryption algorithm
 	switch( ulSwitchCondition )
 	{
@@ -1460,12 +1460,12 @@ SecGetEncryptionOverhead(
 		if(pMSDUTail){ *pMSDUTail=0; }
 		break;
 
-	case RT_ENC_ALG_SMS4:	        
+	case RT_ENC_ALG_SMS4:
 		if(pMPDUHead){ *pMPDUHead=18; }
 		if(pMPDUTail){ *pMPDUTail=16; }
 		if(pMSDUHead){ *pMSDUHead=0; }
 		if(pMSDUTail){ *pMSDUTail=0; }
-		break;		
+		break;
 
 	default:
 		break;
@@ -1481,7 +1481,7 @@ SecGetGroupCipherFromBeacon(
 	PRT_WLAN_BSS	pbssDesc)
 {
 	PRT_SECURITY_T	pSecInfo = &(Adapter->MgntInfo.SecurityInfo);
-	
+
 	pSecInfo->GroupEncAlgorithm = pbssDesc->GroupCipherSuite;
 	RT_TRACE( COMP_SEC, DBG_LOUD, ("SecGetGroupCipherFromBeacon(): GroupEncAlgorithm = %d\n", pSecInfo->GroupEncAlgorithm) );
 
@@ -1516,7 +1516,7 @@ SecConstructRSNIE(
 					NULL,
 					0,
 					&selAKM);
-		
+
 	if(pSecInfo->SecLvl == RT_SEC_LVL_WPA)
 	{
 		// WPA OUI and Type
@@ -1527,7 +1527,7 @@ SecConstructRSNIE(
 		SET_WPA_IE_VERSION(pIeHead, WPA_VER1);
 		IeLen += 2;
 
-		//	
+		//
 		// 2. Group Cipher Suite.
 		//
 		Sec_MapCipherSuiteToOUIType(pSecInfo->GroupEncAlgorithm, RT_SEC_LVL_WPA, tmpOUI, &tmpOUIType);
@@ -1552,7 +1552,7 @@ SecConstructRSNIE(
 		// AKM suite list
 		Sec_MapAKMSuiteToOUIType(selAKM, tmpOUI, &tmpOUIType);
 		ADD_WPA_IE_AKM_SUITE_OUI_W_TYPE(pIeHead, tmpOUI, tmpOUIType);
-		IeLen += 4;		
+		IeLen += 4;
 
 		// Capabilities
 		SET_WPA_IE_CAP_PTKSA_REPLAY_COUNTER(pIeHead, 0);
@@ -1567,13 +1567,13 @@ SecConstructRSNIE(
 		// Group cipher suite OUI/Type
 		Sec_MapCipherSuiteToOUIType(pSecInfo->GroupEncAlgorithm, RT_SEC_LVL_WPA2, tmpOUI, &tmpOUIType);
 		SET_RSN_IE_GROUP_CIPHER_SUITE_OUI_W_TYPE(pIeHead, tmpOUI, tmpOUIType);
-		IeLen += 4;		
-		
+		IeLen += 4;
+
 		// Pairwise cipher suite OUI/Type
 		Sec_MapCipherSuiteToOUIType(pSecInfo->PairwiseEncAlgorithm, RT_SEC_LVL_WPA2, tmpOUI, &tmpOUIType);
-				
+
 		// RT_TRACE_F(COMP_SEC, DBG_LOUD, ("PairwiseEncAlgorithm = 0x%08X, OUI = %02X-%02X-%02X-%02X\n", pSecInfo->PairwiseEncAlgorithm, tmpOUI[0], tmpOUI[1], tmpOUI[2], tmpOUIType));
-		
+
 		// Intialize pairwise count
 		SET_RSN_IE_PAIRWISE_CIPHER_SUITE_CNT(pIeHead, 0);
 		IeLen += 2;
@@ -1588,7 +1588,7 @@ SecConstructRSNIE(
 
 		Sec_MapAKMSuiteToOUIType(selAKM, tmpOUI, &tmpOUIType);
 		ADD_RSN_IE_AKM_SUITE_OUI_W_TYPE(pIeHead, tmpOUI, tmpOUIType);
-		IeLen += 4;		
+		IeLen += 4;
 
 
 		//
@@ -1613,10 +1613,10 @@ SecConstructRSNIE(
 
 		IeLen += 2;
 	}
-	
+
 	Adapter->MgntInfo.SecurityInfo.RSNIE.Length = IeLen;
-	
-	RT_PRINT_DATA( COMP_SEC, DBG_LOUD, ("SecConstructRSNIE(): RSNIE:\n"), pSecInfo->RSNIE.Octet, pSecInfo->RSNIE.Length);	
+
+	RT_PRINT_DATA( COMP_SEC, DBG_LOUD, ("SecConstructRSNIE(): RSNIE:\n"), pSecInfo->RSNIE.Octet, pSecInfo->RSNIE.Length);
 }
 
 //
@@ -1682,7 +1682,7 @@ Sec_AppendWPAIE(
 				rtStatus = RT_STATUS_INVALID_STATE;
 				break;
 			}
-		}		
+		}
 
 		if(TEST_FLAG(contentType, CONTENT_PKT_TYPE_802_11))
 		{
@@ -1701,7 +1701,7 @@ Sec_AppendWPAIE(
 			}
 			pBssDesc = (PRT_WLAN_BSS)pInfoBuf;
 
-			if(RT_STATUS_SUCCESS != (rtStatus = 
+			if(RT_STATUS_SUCCESS != (rtStatus =
 									Sec_SelAkmFromAuthMode(
 									pAdapter,
 									pSecInfo->AuthMode,
@@ -1713,9 +1713,9 @@ Sec_AppendWPAIE(
 				RT_TRACE_F(COMP_SEC, DBG_WARNING, ("Failed (0x%08X) from Sec_SelAkmFromAuthMode(), pSecInfo->AuthMode = %d, pBssDesc->AKMsuit = 0x%08X\n",
 					rtStatus, pSecInfo->AuthMode, pBssDesc->AKMsuit));
 				break;
-				
+
 			}
-			
+
 			RT_TRACE_F(COMP_SEC, DBG_LOUD, ("selAKM = 0x%08X\n", selAKM));
 
 			// Do not append RSN IE in default.
@@ -1724,7 +1724,7 @@ Sec_AppendWPAIE(
 			{
 			default:
 				rtStatus = RT_STATUS_INVALID_DATA;
-				break;			
+				break;
 
 			case Type_Asoc_Req:
 			case Type_Reasoc_Req:
@@ -1759,12 +1759,12 @@ Sec_AppendWPAIE(
 		osRsn.Length += 4;
 
 		// Pairwise cipher suite OUI/Type
-		if(RT_STATUS_SUCCESS != 
+		if(RT_STATUS_SUCCESS !=
 			(rtStatus = Sec_MapCipherSuiteToOUIType(pSecInfo->PairwiseEncAlgorithm, RT_SEC_LVL_WPA, tmpOUI, &tmpOUIType)))
 		{
 			RT_TRACE_F(COMP_SEC, DBG_WARNING, ("Fail (0x%08X) to get OUI/Type from pairwise EncAlg(0x%08X)\n", rtStatus, pSecInfo->PairwiseEncAlgorithm));
 			break;
-			
+
 		}
 
 		// Initialize Pairwise Suite count
@@ -1781,7 +1781,7 @@ Sec_AppendWPAIE(
 
 		// AKM suite list
 		if(TEST_FLAG(contentType, CONTENT_PKT_TYPE_CLIENT))
-		{			
+		{
 			if(RT_STATUS_SUCCESS != (rtStatus = Sec_MapAKMSuiteToOUIType(selAKM, tmpOUI, &tmpOUIType)))
 			{
 				RT_TRACE_F(COMP_SEC, DBG_WARNING, ("Failed (0x%08X) from Sec_MapAKMSuiteToOUIType() for selAKM = 0x%08X, AuthMode = %d, targetAKMSuite = 0x%08X\n",
@@ -1795,7 +1795,7 @@ Sec_AppendWPAIE(
 		{
 			// ToDo
 			rtStatus = RT_STATUS_NOT_SUPPORT;
-			break;			
+			break;
 		}
 
 		// Capabilities
@@ -1808,7 +1808,7 @@ Sec_AppendWPAIE(
 	{
 		if((maxBufLen - posOutContent->Length) < osRsn.Length)
 		{
-			RT_TRACE_F(COMP_SEC, DBG_WARNING, 
+			RT_TRACE_F(COMP_SEC, DBG_WARNING,
 				("maxBufLen (%d) - posOutContent.Length (%d) < osRsn.Length(%d)\n", maxBufLen, posOutContent->Length, osRsn.Length));
 			rtStatus = RT_STATUS_BUFFER_TOO_SHORT;
 		}
@@ -1875,8 +1875,8 @@ Sec_AppendRSNIE(
 	PFT_INFO_ENTRY	pFtEntry = NULL;
 
 	CHECK_NULL_RETURN_STATUS(posOutContent);
-	
-	FillOctetString(osRsn, rsnBuf, 0);	
+
+	FillOctetString(osRsn, rsnBuf, 0);
 
 	do
 	{
@@ -1908,7 +1908,7 @@ Sec_AppendRSNIE(
 			}
 			pBssDesc = (PRT_WLAN_BSS)pInfoBuf;
 
-			if(RT_STATUS_SUCCESS != (rtStatus = 
+			if(RT_STATUS_SUCCESS != (rtStatus =
 									Sec_SelAkmFromAuthMode(
 									pAdapter,
 									pSecInfo->AuthMode,
@@ -1920,7 +1920,7 @@ Sec_AppendRSNIE(
 				RT_TRACE_F(COMP_SEC, DBG_WARNING, ("Failed (0x%08X) from Sec_SelAkmFromAuthMode(), pSecInfo->AuthMode = %d, pBssDesc->AKMsuit = 0x%08X\n",
 					rtStatus, pSecInfo->AuthMode, pBssDesc->AKMsuit));
 				break;
-				
+
 			}
 
 			RT_TRACE_F(COMP_SEC, DBG_LOUD, ("selAKM = 0x%08X\n", selAKM));
@@ -1960,7 +1960,7 @@ Sec_AppendRSNIE(
 							bFtIeFromEntry = TRUE;
 							RT_TRACE_F(COMP_SEC, DBG_LOUD, ("RSN IE content from FT entry\n"));
 						}
-						
+
 					}
 					rtStatus = RT_STATUS_SUCCESS;
 				}
@@ -1978,32 +1978,32 @@ Sec_AppendRSNIE(
 			if(bFtIeFromEntry)
 				break;
 		}
-		
+
 		SET_RSN_IE_VERSION(osRsn.Octet, RSN_VER1);
 		osRsn.Length += 2;
 
 		// Group cipher suite OUI/Type
-		if(RT_STATUS_SUCCESS != 
+		if(RT_STATUS_SUCCESS !=
 			(rtStatus = Sec_MapCipherSuiteToOUIType(pSecInfo->GroupEncAlgorithm, RT_SEC_LVL_WPA2, tmpOUI, &tmpOUIType)))
 		{
 			RT_TRACE_F(COMP_SEC, DBG_WARNING, ("Fail (0x%08X) to get OUI/Type from group EncAlg(0x%08X)\n", rtStatus, pSecInfo->GroupEncAlgorithm));
 			break;
-			
+
 		}
 		SET_RSN_IE_GROUP_CIPHER_SUITE_OUI_W_TYPE(osRsn.Octet, tmpOUI, tmpOUIType);
 		osRsn.Length += 4;
-		
+
 		// Pairwise cipher suite OUI/Type
-		if(RT_STATUS_SUCCESS != 
+		if(RT_STATUS_SUCCESS !=
 			(rtStatus = Sec_MapCipherSuiteToOUIType(pSecInfo->PairwiseEncAlgorithm, RT_SEC_LVL_WPA2, tmpOUI, &tmpOUIType)))
 		{
 			RT_TRACE_F(COMP_SEC, DBG_WARNING, ("Fail (0x%08X) to get OUI/Type from pairwise EncAlg(0x%08X)\n", rtStatus, pSecInfo->PairwiseEncAlgorithm));
 			break;
-			
+
 		}
-		
+
 		// RT_TRACE_F(COMP_SEC, DBG_LOUD, ("PairwiseEncAlgorithm = 0x%08X, OUI = %02X-%02X-%02X-%02X\n", pSecInfo->PairwiseEncAlgorithm, tmpOUI[0], tmpOUI[1], tmpOUI[2], tmpOUIType));
-		
+
 		// Intialize pairwise count
 		SET_RSN_IE_PAIRWISE_CIPHER_SUITE_CNT(osRsn.Octet, 0);
 		osRsn.Length += 2;
@@ -2015,9 +2015,9 @@ Sec_AppendRSNIE(
 		// Intialize AKM suite count
 		SET_RSN_IE_AKM_SUITE_CNT(osRsn.Octet, 0);
 		osRsn.Length += 2;
-		
+
 		if(TEST_FLAG(contentType, CONTENT_PKT_TYPE_CLIENT))
-		{			
+		{
 			if(RT_STATUS_SUCCESS != (rtStatus = Sec_MapAKMSuiteToOUIType(selAKM, tmpOUI, &tmpOUIType)))
 			{
 				RT_TRACE_F(COMP_SEC, DBG_WARNING, ("Failed (0x%08X) from Sec_MapAKMSuiteToOUIType() for selAKM = 0x%08X, AuthMode = %d, targetAKMSuite = 0x%08X\n",
@@ -2031,7 +2031,7 @@ Sec_AppendRSNIE(
 		{
 			// ToDo
 			rtStatus = RT_STATUS_NOT_SUPPORT;
-			break;			
+			break;
 		}
 
 
@@ -2056,16 +2056,16 @@ Sec_AppendRSNIE(
 		SET_RSN_IE_CAP_GTKSA_REPLAY_COUNTER(osRsn.Octet, 0);
 
 		osRsn.Length += 2;
-		
+
 		if(TEST_FLAG(contentType, CONTENT_PKT_TYPE_CLIENT))
 		{
 			pu1Byte		pPmkIdBuf = NULL;
 			int			pmkIdx = -1;
 			BOOLEAN		bGroupMgntCipher = FALSE;
-						
+
 			// Append PMKID
 			if(pFtEntry)
-			{ // FT PMKID	
+			{ // FT PMKID
 				if(pFtEntry->PMKR0NameLen > 0)
 				{
 					pPmkIdBuf = pFtEntry->PMKR0Name;
@@ -2082,13 +2082,13 @@ Sec_AppendRSNIE(
 				SET_RSN_IE_CAP_MFP_CAPABLE(osRsn.Octet, 1);
 				if(RT_STATUS_SUCCESS == Sec_MapCipherSuiteToOUIType(RT_ENC_ALG_BIP, RT_SEC_LVL_WPA2, tmpOUI, &tmpOUIType))
 				{
-					bGroupMgntCipher = TRUE;					
-				}				
+					bGroupMgntCipher = TRUE;
+				}
 			}
 
 			// Intialize PMKID count if there is any more content to avoid IOT issue
 			if(pPmkIdBuf || bGroupMgntCipher)
-			{				
+			{
 				SET_RSN_IE_PMKID_CNT(osRsn.Octet, 0);
 				osRsn.Length += 2;
 			}
@@ -2111,7 +2111,7 @@ Sec_AppendRSNIE(
 	{
 		if((maxBufLen - posOutContent->Length) < osRsn.Length)
 		{
-			RT_TRACE_F(COMP_SEC, DBG_WARNING, 
+			RT_TRACE_F(COMP_SEC, DBG_WARNING,
 				("maxBufLen (%d) - posOutContent.Length (%d) < osRsn.Length(%d)\n", maxBufLen, posOutContent->Length, osRsn.Length));
 			rtStatus = RT_STATUS_BUFFER_TOO_SHORT;
 		}
@@ -2175,7 +2175,7 @@ SecCalculateMIC(
 				SecCalculateCKIPMIC(Adapter, pTcb);
 			}
 			break;
-		
+
 		case RT_ENC_ALG_TKIP:
 			SecCalculateTKIPMIC(Adapter, pTcb);
 			break;
@@ -2190,20 +2190,20 @@ SecCalculateMIC(
 
 
 //
-//	Descriptin: 
+//	Descriptin:
 //		Append TKIP MIC of given tx packet to send.
 //
 //	Note:
 //		1. TKIP MIC input: DA(6) + SA(6) + Priority(1) + Zero(3) + Data(n)
 //		where Data field shall conform 802.2 LLC and 802.1 bridging.
 //		For example, Data is begined with LLC/SNAP.
-//	
+//
 //	Assumption:
-//		1. The tx packet repsented by RT_TCB here is an 802.11 MPDU 
+//		1. The tx packet repsented by RT_TCB here is an 802.11 MPDU
 //		translated from an MSDU before doing fragmentation.
 //
 // Revision History:
-//		061028, rcnjko: 
+//		061028, rcnjko:
 //			Generalize the way to retrive MSDU payload.
 //
 VOID
@@ -2221,65 +2221,65 @@ SecCalculateTKIPMIC(
 	PRT_WLAN_STA	pEntry = NULL;
 
 	pu1Byte	pHeader = pTcb->BufferList[0].VirtualAddress;
-	u4Byte FrameHdrLng = sMacHdrLng + pSec->EncryptionHeadOverhead; 
+	u4Byte FrameHdrLng = sMacHdrLng + pSec->EncryptionHeadOverhead;
 	u4Byte OffsetToByPass = 0;
 
 
 	//
 	// MIC Key.
 	//
-	if(ACTING_AS_AP(Adapter)) 
+	if(ACTING_AS_AP(Adapter))
 	{
 		if(MacAddr_isMulticast(pTcb->DestinationAddress))
 		{
-			//Check if set GTK was completed	
-			if(pMgntInfo->globalKeyInfo.GTK[0] == 0)									
+			//Check if set GTK was completed
+			if(pMgntInfo->globalKeyInfo.GTK[0] == 0)
 				return;
 
-			//Set Tx Group Key 	
+			//Set Tx Group Key
 			SecMICSetKey(&micdata, &pMgntInfo->globalKeyInfo.GTK[16]);
 		}
 		else
 		{
-			//Check if STA within associated lsit table		
-			pEntry = AsocEntry_GetEntry(pMgntInfo, pTcb->DestinationAddress);		
-			if(pEntry == NULL)			
+			//Check if STA within associated lsit table
+			pEntry = AsocEntry_GetEntry(pMgntInfo, pTcb->DestinationAddress);
+			if(pEntry == NULL)
 				return;
-				
-			//Check if set PTK was completed		
-			if(pEntry->perSTAKeyInfo.TxMICKey == NULL)									
+
+			//Check if set PTK was completed
+			if(pEntry->perSTAKeyInfo.TxMICKey == NULL)
 				return;
-				
-			//Set Tx Pairwise Key by destination Address			
+
+			//Set Tx Pairwise Key by destination Address
 			SecMICSetKey(&micdata, pEntry->perSTAKeyInfo.TxMICKey);
 		}
-	} 
+	}
 	else if(pTcb->bTDLPacket)
 	{
-			//Check if STA within associated lsit table		
-			pEntry = AsocEntry_GetEntry(pMgntInfo, pTcb->DestinationAddress);		
-			if(pEntry == NULL)			
+			//Check if STA within associated lsit table
+			pEntry = AsocEntry_GetEntry(pMgntInfo, pTcb->DestinationAddress);
+			if(pEntry == NULL)
 				return;
-				
-			//Check if set PTK was completed		
-			if(pEntry->perSTAKeyInfo.TxMICKey == NULL)									
+
+			//Check if set PTK was completed
+			if(pEntry->perSTAKeyInfo.TxMICKey == NULL)
 				return;
-				
-			//Set Tx Pairwise Key by destination Address			
+
+			//Set Tx Pairwise Key by destination Address
 			SecMICSetKey(&micdata, pEntry->perSTAKeyInfo.TxMICKey);
 		}
-	else 
-	{	
+	else
+	{
 		if(pSec->PairwiseEncAlgorithm != RT_ENC_ALG_TKIP) {
 			RT_TRACE(COMP_SEC, DBG_LOUD, ("PairwiseEncAlg=%d\n", pSec->PairwiseEncAlgorithm) );
 			return;
 		}
 
 		if(pMgntInfo->mAssoc)
-		{	
+		{
 				SecMICSetKey(&micdata, pSec->KeyBuf[keyidx]+TKIP_MICKEYRX_POS);
 		}
-		else 
+		else
 		{
 			SecMICSetKey(&micdata, pSec->KeyBuf[keyidx]+TKIP_MICKEYTX_POS);
 		}
@@ -2296,7 +2296,7 @@ SecCalculateTKIPMIC(
 	// Qos
 	//
 	PlatformZeroMemory(Qos, 4);
-	
+
 	if(IsQoSDataFrame(pHeader))
 	Qos[0] = pTcb->priority;	// Added by Annie, 2005-12-21.
 
@@ -2320,7 +2320,7 @@ SecCalculateTKIPMIC(
 		else
 		{
 			SecMICAppend(
-				&micdata, 
+				&micdata,
 				pTcb->BufferList[idx].VirtualAddress + OffsetToByPass,
 				pTcb->BufferList[idx].Length - OffsetToByPass);
 		}
@@ -2361,30 +2361,30 @@ SecCalculateCKIPMIC(
 	PRT_GEN_TEMP_BUFFER pGenBufMICdata;
 
 	RT_TRACE( COMP_CKIP, DBG_TRACE, ("==> SecCalculateCKIPMIC()\n") );
-	
+
 	if( !pSec->pCkipPara->bIsMIC) // if not support MIC retun , added by CCW
 		return;
 
 	pGenBufMICdata = GetGenTempBuffer (Adapter, 2000);
 	MICdata = (pu1Byte)pGenBufMICdata->Buffer.Ptr;
-	
+
 	//ckip_miccalc(Adapter, key, pDA, pSA, dcr, dcrlen, calcmic, mickeyid);
 	// key  = wep key , dcr = payload (  | LLC | SNAP |MIC |SEQ |eth-payload |)
 	for(idx=1;idx<pTcb->BufferCount;idx++){	// Only check first nonzero buffer
 		if(pTcb->BufferList[idx].Length==0)
 			continue;
-		
+
 		PlatformMoveMemory(
-				MICdata + datalen, 
+				MICdata + datalen,
 				pTcb->BufferList[idx].VirtualAddress,
 				pTcb->BufferList[idx].Length );
-		
+
 		datalen += pTcb->BufferList[idx].Length;
 	}
 
 	pucMIC = pTcb->BufferList[1].VirtualAddress + 8 ; // Set MIC file point
-	
-	
+
+
 	ckip_miccalc( Adapter , pSec->pCkipPara->CKIPKeyBuf[keyidx] , pTcb->DestinationAddress ,pTcb->SourceAddress
 				, MICdata ,datalen , pucMIC , keyidx );
 
@@ -2401,7 +2401,7 @@ SecSoftwareEncryption(
 {
 	RT_ENC_ALG		SelectEncAlgorithm;
 	PMGNT_INFO      pMgntInfo = &Adapter->MgntInfo;
-	
+
 	if(pMgntInfo->SafeModeEnabled)
 	{
 		RT_TRACE_F(COMP_SEND, DBG_LOUD, ("Do not use software encrypt when safemode enable\n"));
@@ -2420,7 +2420,7 @@ SecSoftwareEncryption(
 	}
 	else
 		SelectEncAlgorithm = Adapter->MgntInfo.SecurityInfo.PairwiseEncAlgorithm;
-		
+
 	switch(SelectEncAlgorithm)
 	{
 		case RT_ENC_ALG_WEP40:
@@ -2485,27 +2485,27 @@ SecSWTKIPEncryption(
 
 
 	// AP mode: get key.
-	if(ACTING_AS_AP(Adapter)) 
+	if(ACTING_AS_AP(Adapter))
 	{ // AP mode.
 		if(MacAddr_isMulticast(pTcb->DestinationAddress))
 		{
 			// [AnnieNote] Current GTK is 12345678...12345678, so it's OK.
 			// It's better to modify it by GTK length if we use PRF-X to generate GTK later. 2005-12-23.
 			//
-		
-			//Check if set GTK was completed	
-			if(Adapter->MgntInfo.globalKeyInfo.GTK[0] == 0)									
+
+			//Check if set GTK was completed
+			if(Adapter->MgntInfo.globalKeyInfo.GTK[0] == 0)
 				return;
 		}
 		else
 		{
-			//Check if STA within associated lsit table				
-			pEntry = AsocEntry_GetEntry(pMgntInfo, pTcb->DestinationAddress);		
-			if(pEntry == NULL)			
+			//Check if STA within associated lsit table
+			pEntry = AsocEntry_GetEntry(pMgntInfo, pTcb->DestinationAddress);
+			if(pEntry == NULL)
 				return;
 
-			//Check if set PTK was completed		
-			if(pEntry->perSTAKeyInfo.TempEncKey == NULL)									
+			//Check if set PTK was completed
+			if(pEntry->perSTAKeyInfo.TempEncKey == NULL)
 				return;
 		}
 	}
@@ -2526,14 +2526,14 @@ SecSWTKIPEncryption(
 	// Get u2IV16 and u4IV32.
 	u2IV16 =	((u2Byte)(*(pHeader+IVOffset + 0)) <<  8) +		\
 			((u2Byte)(*(pHeader+IVOffset + 2)) <<  0);
-	
+
 	u4IV32 = ((u4Byte) (*(pHeader+IVOffset + 4)) <<  0) +		\
 			((u4Byte) (*(pHeader+IVOffset + 5)) <<  8) +		\
 			((u4Byte) (*(pHeader+IVOffset + 6)) << 16) +		\
 			((u4Byte) (*(pHeader+IVOffset + 7)) << 24);
 
 
-	if(ACTING_AS_AP(Adapter)) 
+	if(ACTING_AS_AP(Adapter))
 	{ // AP mode.
 		if(MacAddr_isMulticast(pTcb->DestinationAddress))
 		{
@@ -2544,7 +2544,7 @@ SecSWTKIPEncryption(
 			if(pEntry != NULL)
 				TKIPGenerateKey(key, u4IV32, u2IV16, pMgntInfo->Bssid, pEntry->perSTAKeyInfo.TempEncKey);
 		}
-	} 
+	}
 	else
 	{ // STA mode.
 		TKIPGenerateKey(key, u4IV32, u2IV16, pTcb->SourceAddress, pSec->KeyBuf[SecGetTxKeyIdx(Adapter, pTcb->DestinationAddress)]);
@@ -2558,7 +2558,7 @@ SecSWTKIPEncryption(
 
 		//2004/09/14, kcwu, clear the Security Coalesce Buffer
 		PlatformZeroMemory(pSec->SecBuffer, SW_ENCRYPT_BUF_SIZE);
-		
+
 		//2004/09/14, kcwu, to show how many buffers are there used by this fragment
 		FragBufferCount = pTcb->FragBufCount[FragIndex];
 
@@ -2603,9 +2603,9 @@ SecSWTKIPEncryption(
 			SecBufLen += SecLenForCopy;
 
 			BufferIndex++;
-			//DbgPrint("FragBufferCount = %d, SecBufLen = %d, BufferIndex = %d\n", 
+			//DbgPrint("FragBufferCount = %d, SecBufLen = %d, BufferIndex = %d\n",
 			//	FragBufferCount, SecBufLen, BufferIndex);
-			
+
 		}
 
 		if(SecBufLen <= 0)
@@ -2613,7 +2613,7 @@ SecSWTKIPEncryption(
 			continue;
 		}
 		//PRINT_DATA("SecSWWEPEncryption_before_encrypted==>", SecBuffer, SecBufLen);
-		
+
 		EncodeWEP(key,
 			16,
 			pSec->SecBuffer,
@@ -2630,7 +2630,7 @@ SecSWTKIPEncryption(
 		if(!TEST_FLAG(pTcb->tcbFlags, RT_TCB_FLAG_USE_COALESCE_BUFFER))
 		{
 			SecBufIndex = FragBufferIndexStart+1;
-			FragBufferCount = 1; 
+			FragBufferCount = 1;
 		}
 		else
 		{
@@ -2643,7 +2643,7 @@ SecSWTKIPEncryption(
 
 		// 2005.11.04, by rcnjko.
 		if(TEST_FLAG(pTcb->tcbFlags, RT_TCB_FLAG_USE_COALESCE_BUFFER))
-		{ 
+		{
 			PlatformMoveMemory(
 					pTcb->BufferList[SecBufIndex].VirtualAddress+(SpecificHeadOverhead+DataOffset),
 					pSec->SecBuffer+SecBytesCopied,
@@ -2665,8 +2665,8 @@ SecSWTKIPEncryption(
 			SecBufIndex++;
 			FragBufferCount++;
 		}
-		
-		// Copy WEP ICV. 
+
+		// Copy WEP ICV.
 		// 2005.11.04, by rcnjko.
 		if(TEST_FLAG(pTcb->tcbFlags, RT_TCB_FLAG_USE_COALESCE_BUFFER) || pTcb->FragCount == 1)
 		{
@@ -2729,19 +2729,19 @@ SecSWWEPEncryption(
 		IVOffset = sMacHdrLng;
 	}
 	DataOffset = IVOffset + WEP_IV_LEN;
-	
+
 
 	//2004/09/14, kcwu, the IV has been calculate, just get from current IV
 	//wepIV.ul = (u4Byte) ((pSec->TxIV == 0)?0x00fffffe:((pSec->TxIV-1)&0x00ffffff));
 	SET_WEP_IV_INITVECTOR(&wepIV, *(UNALIGNED pu4Byte)(pHeader+IVOffset));
-	
+
 	SET_WEP_IV_KEYID(& wepIV, pSec->DefaultTransmitKeyIdx);
 
 
 	//PRINT_DATA("SecSWWEPEncryption==>", (pu1Byte)&wepIV, 4);
-	
-	PlatformMoveMemory(key, (pHeader+IVOffset), 3); 
-	PlatformMoveMemory(key+3, pSec->KeyBuf[pSec->DefaultTransmitKeyIdx], 
+
+	PlatformMoveMemory(key, (pHeader+IVOffset), 3);
+	PlatformMoveMemory(key+3, pSec->KeyBuf[pSec->DefaultTransmitKeyIdx],
 		(pSec->PairwiseEncAlgorithm==RT_ENC_ALG_WEP104)?13:5);
 
 	for(FragIndex = 0; FragIndex < pTcb->FragCount; FragIndex++)
@@ -2751,7 +2751,7 @@ SecSWWEPEncryption(
 
 		//2004/09/14, kcwu, clear the Security Coalesce Buffer
 		PlatformZeroMemory(pSec->SecBuffer, SW_ENCRYPT_BUF_SIZE); // 3000 -> 2000 to prevent stack overflow problem in Win98, 2005.03.15, by rcnjko.
-		
+
 		//2004/09/14, kcwu, to show how many buffers are there used by this fragment
 		FragBufferCount = pTcb->FragBufCount[FragIndex];
 
@@ -2759,7 +2759,7 @@ SecSWWEPEncryption(
 		if(!TEST_FLAG(pTcb->tcbFlags, RT_TCB_FLAG_USE_COALESCE_BUFFER))
 		{
 			BufferIndex = FragBufferIndexStart+1;
-			FragBufferCount--; // 2005.11.07, by rcnjko. 
+			FragBufferCount--; // 2005.11.07, by rcnjko.
 		}
 
 		// Concatenate buffers to be encrypted into the buffer, SecBuffer.
@@ -2789,14 +2789,14 @@ SecSWWEPEncryption(
 			}
 
 			PlatformMoveMemory(
-				pSec->SecBuffer + SecBufLen, // 2005.11.07, by rcnjko. 
+				pSec->SecBuffer + SecBufLen, // 2005.11.07, by rcnjko.
 				SecPtr,
 				SecLenForCopy);
 
 			SecBufLen += SecLenForCopy;
 
 			BufferIndex++;
-			//DbgPrint("FragBufferCount = %d, SecBufLen = %d, BufferIndex = %d\n", 
+			//DbgPrint("FragBufferCount = %d, SecBufLen = %d, BufferIndex = %d\n",
 			//	FragBufferCount, SecBufLen, BufferIndex);
 		}
 
@@ -2812,13 +2812,13 @@ SecSWWEPEncryption(
 			SecBufLen,
 			pSec->SecBuffer);
 		//PRINT_DATA("SecSWWEPEncryption_after_encrypted==>", pSec->SecBuffer, SecBufLen+4);
-	
+
 		// For WEP ICV.
 		SecBufLen += 4;
 
 		SecBytesCopied = 0;
-		
-		// 2005.11.07, by rcnjko. 
+
+		// 2005.11.07, by rcnjko.
 		if(!TEST_FLAG(pTcb->tcbFlags, RT_TCB_FLAG_USE_COALESCE_BUFFER))
 		{
 			SecBufIndex = FragBufferIndexStart+1;
@@ -2832,9 +2832,9 @@ SecSWWEPEncryption(
 		//
 
 		//2004/09/14, then copy SecBuffer back to the buffer
-		// 2005.11.04, by rcnjko.	
+		// 2005.11.04, by rcnjko.
 		if(TEST_FLAG(pTcb->tcbFlags, RT_TCB_FLAG_USE_COALESCE_BUFFER))
-		{ 
+		{
 			PlatformMoveMemory(
 					pTcb->BufferList[SecBufIndex].VirtualAddress+(SpecificHeadOverhead+DataOffset),
 					pSec->SecBuffer+SecBytesCopied,
@@ -2845,7 +2845,7 @@ SecSWWEPEncryption(
 			FragBufferCount++;
 		}
 		//
-		
+
 		while(FragBufferCount < pTcb->FragBufCount[FragIndex])
 		{
 			PlatformMoveMemory(
@@ -2858,7 +2858,7 @@ SecSWWEPEncryption(
 			FragBufferCount++;
 		}
 
-		// Copy WEP ICV. 
+		// Copy WEP ICV.
 		// 2005.11.07, by rcnjko.
 		if(TEST_FLAG(pTcb->tcbFlags, RT_TCB_FLAG_USE_COALESCE_BUFFER))
 		{
@@ -2872,7 +2872,7 @@ SecSWWEPEncryption(
 			pTcb->FragLength[FragIndex] += pSec->EncryptionTailOverhead;
 			pTcb->PacketLength += pSec->EncryptionTailOverhead;
 		}
-		else 
+		else
 		{
 			// For non-coalesce case, the WEP ICV cannot append to last buffer of the fragment directly,
 			// because the buffer might belong to upper layer and we are NOT allow to change its length.
@@ -2884,14 +2884,14 @@ SecSWWEPEncryption(
 						pSec->EncryptionTailOverhead
 						);
 				pTcb->Tailer.Length = pSec->EncryptionTailOverhead;
-	
+
 				pTcb->BufferList[pTcb->BufferCount] = pTcb->Tailer;
 				pTcb->BufferCount++;
-	
+
 				pTcb->FragLength[FragIndex] += pSec->EncryptionTailOverhead;
 				pTcb->FragBufCount[FragIndex]++;
 				pTcb->PacketLength += pSec->EncryptionTailOverhead;
-	
+
 				SecBytesCopied += pSec->EncryptionTailOverhead;
 			}
 			else
@@ -2926,7 +2926,7 @@ SecSWAESEncryption(
 	u1Byte				IVOffset;	// Added by Annie, 2005-12-23.
 	u1Byte				DataOffset;	// Added by Annie, 2005-12-23.
 	PRT_WLAN_STA		pEntry;
-	PMGNT_INFO			pMgntInfo=&Adapter->MgntInfo;	
+	PMGNT_INFO			pMgntInfo=&Adapter->MgntInfo;
 	OCTET_STRING		frame;
 
 	SpecificHeadOverhead = Adapter->TXPacketShiftBytes;
@@ -2945,29 +2945,29 @@ SecSWAESEncryption(
 		IVOffset = sMacHdrLng;
 	}
 
-	// check address 4 
+	// check address 4
 	if( Frame_ValidAddr4(frame) )
 	{
 		RT_TRACE( COMP_SEC , DBG_LOUD , ("====>ccw BT data SecSWAESEncryption \n") );
 		IVOffset += ETHERNET_ADDRESS_LENGTH;
 	}
-	
+
 	DataOffset = IVOffset + EXT_IV_LEN;
 
 
-	if(ACTING_AS_AP(Adapter)) 
+	if(ACTING_AS_AP(Adapter))
 	{
 		if(MacAddr_isMulticast(pTcb->DestinationAddress))
 		{
 			// TODO:
-			//keyidx = 
+			//keyidx =
 		}
 		else
 		{
 			// TODO:
-			//keyidx = 
+			//keyidx =
 		}
-	} 
+	}
 	else
 	{
 		keyidx = SecGetTxKeyIdx(Adapter, pTcb->DestinationAddress);
@@ -2980,7 +2980,7 @@ SecSWAESEncryption(
 
 		//2004/09/14, kcwu, clear the Security Coalesce Buffer
 		PlatformZeroMemory(pSec->SecBuffer, SW_ENCRYPT_BUF_SIZE);
-		
+
 		//2004/09/14, kcwu, to show how many buffers are there used by this fragment
 		FragBufferCount = pTcb->FragBufCount[FragIndex];
 
@@ -3011,14 +3011,14 @@ SecSWAESEncryption(
 			}
 
 			PlatformMoveMemory(
-				pSec->SecBuffer + SecBufLen, // 2005.11.07, by rcnjko. 
+				pSec->SecBuffer + SecBufLen, // 2005.11.07, by rcnjko.
 				SecPtr,
 				SecLenForCopy);
 
 			SecBufLen += SecLenForCopy;
 
 			BufferIndex++;
-			//DbgPrint("FragBufferCount = %d, SecBufLen = %d, BufferIndex = %d\n", 
+			//DbgPrint("FragBufferCount = %d, SecBufLen = %d, BufferIndex = %d\n",
 			//	FragBufferCount, SecBufLen, BufferIndex);
 		}
 
@@ -3034,14 +3034,14 @@ SecSWAESEncryption(
 #endif
 		if(pTcb->bTDLPacket)
 		{
-			pEntry = AsocEntry_GetEntry(pMgntInfo, pTcb->DestinationAddress);		
-			if(pEntry == NULL)			
+			pEntry = AsocEntry_GetEntry(pMgntInfo, pTcb->DestinationAddress);
+			if(pEntry == NULL)
 				return;
 
-			//Check if set PTK was completed		
-			if(pEntry->perSTAKeyInfo.AESKeyBuf[0] == 0)									
+			//Check if set PTK was completed
+			if(pEntry->perSTAKeyInfo.AESKeyBuf[0] == 0)
 				return;
-			
+
 			SecRSNAEncodeAESCCM(
 				&Adapter->MgntInfo.SecurityInfo,
 				(u4Byte *)pEntry->perSTAKeyInfo.AESKeyBuf,
@@ -3079,17 +3079,17 @@ SecSWAESEncryption(
 		//AP WPA AES, CCW
 		else if( ACTING_AS_AP(Adapter) )
 		{  // AP mode
-			
-			
+
+
 			if(MacAddr_isMulticast(pTcb->DestinationAddress))
-			{// Multicase packet	 , used AESGTK		
+			{// Multicase packet	 , used AESGTK
 				//RT_TRACE(COMP_WPAAES, DBG_LOUD, ("<===== AP WPA AES Multicase\n"));
-				//Check if set GTK was completed	
-				if(Adapter->MgntInfo.globalKeyInfo.AESGTK[0] == 0)									
+				//Check if set GTK was completed
+				if(Adapter->MgntInfo.globalKeyInfo.AESGTK[0] == 0)
 					return;
 				SecRSNAEncodeAESCCM(
 					&Adapter->MgntInfo.SecurityInfo,
-					(u4Byte *)Adapter->MgntInfo.globalKeyInfo.AESGTK, 
+					(u4Byte *)Adapter->MgntInfo.globalKeyInfo.AESGTK,
 					pSec->GroupTransmitKeyIdx,
 					pSec->SecBuffer,
 					IVOffset,
@@ -3100,15 +3100,15 @@ SecSWAESEncryption(
 		else
 			{ // unitcase packet , used Entry Pairwise key
 				//RT_TRACE(COMP_WPAAES, DBG_LOUD, ("<===== AP WPA AES unitcase\n"));
-				//Check if STA within associated lsit table				
-				pEntry = AsocEntry_GetEntry(pMgntInfo, pTcb->DestinationAddress);		
-				if(pEntry == NULL)			
+				//Check if STA within associated lsit table
+				pEntry = AsocEntry_GetEntry(pMgntInfo, pTcb->DestinationAddress);
+				if(pEntry == NULL)
 					return;
 
-				//Check if set PTK was completed		
-				if(pEntry->perSTAKeyInfo.AESKeyBuf[0] == 0)									
+				//Check if set PTK was completed
+				if(pEntry->perSTAKeyInfo.AESKeyBuf[0] == 0)
 					return;
-				
+
 				SecRSNAEncodeAESCCM(
 					&Adapter->MgntInfo.SecurityInfo,
 					(u4Byte *)pEntry->perSTAKeyInfo.AESKeyBuf,
@@ -3122,7 +3122,7 @@ SecSWAESEncryption(
 		}
 		else
 		{ // RSNA-PSK mode
-			OCTET_STRING	pduOS; 
+			OCTET_STRING	pduOS;
 			pu1Byte	pRA;
 			pu1Byte	pTA;
 			u4Byte index;
@@ -3141,16 +3141,16 @@ SecSWAESEncryption(
 				//
 				// TODO: remvoe our group key from PerStaDefKeyTable[]
 				//
-	
+
 				//Multicast packet
-				//Find out Default KEY Entry  
+				//Find out Default KEY Entry
 				pDefKey = pSec->PerStaDefKeyTable;
 				for( index = 0 ; index < MAX_NUM_PER_STA_KEY ; index++, pDefKey++)
 				{
 					if( pDefKey->Valid && (PlatformCompareMemory(pDefKey->MACAdrss , pTA, 6)==0))
 						break;
 				}
-	
+
 				if(index != MAX_NUM_PER_STA_KEY)
 				{
 					RT_TRACE(COMP_RSNA, DBG_LOUD, ("DefaultTransmitKeyIdx: %d\n", pSec->DefaultTransmitKeyIdx));
@@ -3198,7 +3198,7 @@ SecSWAESEncryption(
 				{ // no key found!
 					RT_PRINT_ADDR(COMP_RSNA, DBG_WARNING, ("SecSWAESEncryption(): No pairwse key found for pRA: \n"), pRA);
 				}
-			}	
+			}
 		}
 		// For AES MIC.
 		SecBufLen += 8;
@@ -3212,8 +3212,8 @@ SecSWAESEncryption(
 #endif
 
 		SecBytesCopied = 0;
-		
-		// 2005.11.07, by rcnjko. 
+
+		// 2005.11.07, by rcnjko.
 		if(!TEST_FLAG(pTcb->tcbFlags, RT_TCB_FLAG_USE_COALESCE_BUFFER))
 		{
 			SecBufIndex = FragBufferIndexStart+1;
@@ -3240,7 +3240,7 @@ SecSWAESEncryption(
 			FragBufferCount++;
 		}
 		//
-		
+
 		while(FragBufferCount < pTcb->FragBufCount[FragIndex])
 		{
 			PlatformMoveMemory(
@@ -3253,7 +3253,7 @@ SecSWAESEncryption(
 			FragBufferCount++;
 		}
 
-		// Copy AES MIC. 
+		// Copy AES MIC.
 		// 2005.11.07, by rcnjko.
 		if(TEST_FLAG(pTcb->tcbFlags, RT_TCB_FLAG_USE_COALESCE_BUFFER))
 		{
@@ -3279,14 +3279,14 @@ SecSWAESEncryption(
 						8//pSec->EncryptionTailOverhead
 						);
 				pTcb->Tailer.Length = 8;//pSec->EncryptionTailOverhead;
-	
+
 				pTcb->BufferList[pTcb->BufferCount] = pTcb->Tailer;
 				pTcb->BufferCount++;
-	
+
 				pTcb->FragLength[FragIndex] += 8;//pSec->EncryptionTailOverhead;
 				pTcb->FragBufCount[FragIndex]++;
 				pTcb->PacketLength +=  8;//pSec->EncryptionTailOverhead;
-	
+
 				SecBytesCopied += 8;//pSec->EncryptionTailOverhead;
 			}
 			else
@@ -3355,8 +3355,8 @@ SecSWCKIPEncryption(
 			else
 			{
 				IVOffset = sMacHdrLng;
-			}		
-			DataOffset = IVOffset + WEP_IV_LEN;  
+			}
+			DataOffset = IVOffset + WEP_IV_LEN;
 
 			PlatformZeroMemory(pSec->SecBuffer, SW_ENCRYPT_BUF_SIZE);
 
@@ -3405,9 +3405,9 @@ SecSWCKIPEncryption(
 				SecBufLen += SecLenForCopy;
 
 				BufferIndex++;
-				//DbgPrint("FragBufferCount = %d, SecBufLen = %d, BufferIndex = %d\n", 
+				//DbgPrint("FragBufferCount = %d, SecBufLen = %d, BufferIndex = %d\n",
 				//	FragBufferCount, SecBufLen, BufferIndex);
-				
+
 			}
 
 			if(SecBufLen <= 0)
@@ -3426,7 +3426,7 @@ SecSWCKIPEncryption(
 			if(!TEST_FLAG(pTcb->tcbFlags, RT_TCB_FLAG_USE_COALESCE_BUFFER))
 			{
 				SecBufIndex = FragBufferIndexStart+1;
-				FragBufferCount = 1; 
+				FragBufferCount = 1;
 			}
 			else
 			{
@@ -3439,7 +3439,7 @@ SecSWCKIPEncryption(
 
 			// 2005.11.04, by rcnjko.
 			if(TEST_FLAG(pTcb->tcbFlags, RT_TCB_FLAG_USE_COALESCE_BUFFER))
-			{ 
+			{
 				PlatformMoveMemory(
 						pTcb->BufferList[SecBufIndex].VirtualAddress+(SpecificHeadOverhead+DataOffset),
 						pSec->SecBuffer+SecBytesCopied,
@@ -3461,9 +3461,9 @@ SecSWCKIPEncryption(
 				SecBufIndex++;
 				FragBufferCount++;
 			}
-		
-			
-			// Copy WEP ICV. 
+
+
+			// Copy WEP ICV.
 			// 2005.11.07, by rcnjko.
 			if(TEST_FLAG(pTcb->tcbFlags, RT_TCB_FLAG_USE_COALESCE_BUFFER))
 			{
@@ -3477,7 +3477,7 @@ SecSWCKIPEncryption(
 				pTcb->FragLength[FragIndex] += pSec->EncryptionTailOverhead;
 				pTcb->PacketLength += pSec->EncryptionTailOverhead;
 			}
-			else 
+			else
 			{
 				// For non-coalesce case, the WEP ICV cannot append to last buffer of the fragment directly,
 				// because the buffer might belong to upper layer and we are NOT allow to change its length.
@@ -3489,14 +3489,14 @@ SecSWCKIPEncryption(
 							pSec->EncryptionTailOverhead
 							);
 					pTcb->Tailer.Length = pSec->EncryptionTailOverhead;
-		
+
 					pTcb->BufferList[pTcb->BufferCount] = pTcb->Tailer;
 					pTcb->BufferCount++;
-		
+
 					pTcb->FragLength[FragIndex] += pSec->EncryptionTailOverhead;
 					pTcb->FragBufCount[FragIndex]++;
 					pTcb->PacketLength += pSec->EncryptionTailOverhead;
-		
+
 					SecBytesCopied += pSec->EncryptionTailOverhead;
 				}
 				else
@@ -3505,7 +3505,7 @@ SecSWCKIPEncryption(
 				}
 			}
 		}
-		
+
 	}
 
 	RT_TRACE( COMP_CKIP, DBG_TRACE, ("<== SecSWCKIPEncryption()\n") );
@@ -3514,7 +3514,7 @@ SecSWCKIPEncryption(
 
 //
 // Check IV increase
-// 
+//
 // In Encrypt mode , IV is not increase ,and return FALSE.
 //
 RT_SEC_STATUS
@@ -3538,7 +3538,7 @@ SecRxCheckIV(
 	FillOctetString(Mpdu, pRfd->Buffer.VirtualAddress, pRfd->PacketLength);
 	DestAddr = Frame_pDaddr(Mpdu);
 	bMulticastDest = MacAddr_isMulticast(DestAddr);
-	
+
 	if(!Frame_WEP(Mpdu))
 	{ // Skip the non-encrypted frame, 2005.06.28, by rcnjko.
 		return RT_SEC_STATUS_SUCCESS;
@@ -3549,14 +3549,14 @@ SecRxCheckIV(
 
 	SecGetEncryptionOverhead(
 		Adapter,
-		&EncryptionMPDUHeadOverhead, 
-		&EncryptionMPDUTailOverhead, 
-		&EncryptionMSDUHeadOverhead, 
+		&EncryptionMPDUHeadOverhead,
+		&EncryptionMPDUTailOverhead,
+		&EncryptionMSDUHeadOverhead,
 		&EncryptionMSDUTailOverhead,
 		TRUE,
 		bMulticastDest);
-	MinEncPktSize = Frame_FrameHdrLng(Mpdu) + 
-					EncryptionMPDUHeadOverhead + EncryptionMSDUHeadOverhead + 
+	MinEncPktSize = Frame_FrameHdrLng(Mpdu) +
+					EncryptionMPDUHeadOverhead + EncryptionMSDUHeadOverhead +
 					EncryptionMSDUTailOverhead + EncryptionMPDUTailOverhead;
 	if(Mpdu.Length < MinEncPktSize)
 	{ // 061214, rcnjo: Discard invalid length frame to prevent memory access violation.
@@ -3582,7 +3582,7 @@ SecRxCheckIV(
 	{
 		IVOffset = sMacHdrLng;
 	}
-	
+
 	if(pRfd->Status.bContainHTC)
 		IVOffset += sHTCLng;
 
@@ -3594,17 +3594,17 @@ SecRxCheckIV(
 				u4Byte			TempIV = 0;
 
 				// Get IV
-				TempIV = (((u4Byte)( Mpdu.Octet[IVOffset] )) << 16 ) + 
+				TempIV = (((u4Byte)( Mpdu.Octet[IVOffset] )) << 16 ) +
 						 (((u4Byte)( Mpdu.Octet[IVOffset+1] )) << 8 ) +
 						 (((u4Byte)( Mpdu.Octet[IVOffset+2] )) << 0 );
 
-				// Check IV 
+				// Check IV
 				// The 2 situations are not IV replay: (1) current IV of Pkt is greater than the rx IV (2) the current pkt is retry and IV is the same
 				if(TempIV  > pSec->RXUntiIV || (Frame_Retry(Mpdu) && pSec->RXUntiIV == TempIV))
 					pSec->RXUntiIV = TempIV;
 				else
 					secStatus = RT_SEC_STATUS_DATA_UNICAST_IV_REPLAY;
-				
+
 			}
 			break;
 
@@ -3618,7 +3618,7 @@ SecRxCheckIV(
 				// Get u2IV16 and u4IV32.
 				u2IV16 = ((u2Byte)(*(Mpdu.Octet+IVOffset + 0)) <<  8)+		\
 						((u2Byte)(*(Mpdu.Octet+IVOffset + 2)) <<  0);
-		
+
 				u4IV32 = ((u4Byte) (*(Mpdu.Octet+IVOffset + 4)) <<  0)+		\
 						((u4Byte) (*(Mpdu.Octet+IVOffset + 5)) <<  8)+		\
 						((u4Byte) (*(Mpdu.Octet+IVOffset + 6)) << 16)+		\
@@ -3642,7 +3642,7 @@ SecRxCheckIV(
 						pSec->RXUntiIV = TempIV;
 					else
 						secStatus = RT_SEC_STATUS_DATA_UNICAST_IV_REPLAY;
-				}		
+				}
 			}
 			break;
 
@@ -3663,7 +3663,7 @@ SecRxCheckIV(
 			case RT_ENC_ALG_AESCCMP:
 				CountRxCCMPRelpayStatistics(Adapter, pRfd);
 				break;
-			
+
 			default: //for MacOSX Compiler warning.
 				break;
 			}
@@ -3680,13 +3680,13 @@ SecRxCheckIV(
 			case RT_ENC_ALG_AESCCMP:
 				CountRxMgntCCMPRelpayStatistics(Adapter, pRfd);
 				break;
-			
+
 			default: //for MacOSX Compiler warning.
-				break;		
+				break;
 			}
 		}
 	}
-	
+
 	return secStatus;
 }
 
@@ -3722,7 +3722,7 @@ SecSoftwareDecryption(
 		if(!pRfd->bRxBTdata)
 		{
 			if(!eqMacAddr(Frame_pBssid(Mpdu), Adapter->MgntInfo.Bssid))
-			{				
+			{
 				// RT_PRINT_ADDR(COMP_SEC, DBG_WARNING, "Mismatched BSSID (RT_SEC_STATUS_UNKNOWN_TA):\nFrame_pBssid: ", Frame_pBssid(Mpdu));
 				// RT_PRINT_ADDR(COMP_SEC, DBG_WARNING, "MgntInfo.Bssid: ", Adapter->MgntInfo.Bssid);
 				secStatus = RT_SEC_STATUS_UNKNOWN_TA;
@@ -3732,14 +3732,14 @@ SecSoftwareDecryption(
 
 		SecGetEncryptionOverhead(
 			Adapter,
-			&EncryptionMPDUHeadOverhead, 
-			&EncryptionMPDUTailOverhead, 
-			&EncryptionMSDUHeadOverhead, 
+			&EncryptionMPDUHeadOverhead,
+			&EncryptionMPDUTailOverhead,
+			&EncryptionMSDUHeadOverhead,
 			&EncryptionMSDUTailOverhead,
 			TRUE,
 			bMulticastDest);
-		MinEncPktSize = Frame_FrameHdrLng(Mpdu) + 
-						EncryptionMPDUHeadOverhead + EncryptionMSDUHeadOverhead + 
+		MinEncPktSize = Frame_FrameHdrLng(Mpdu) +
+						EncryptionMPDUHeadOverhead + EncryptionMSDUHeadOverhead +
 						EncryptionMSDUTailOverhead + EncryptionMPDUTailOverhead;
 		if(Mpdu.Length < MinEncPktSize)
 		{ // 061214, rcnjo: Discard invalid length frame to prevent memory access violation.
@@ -3805,7 +3805,7 @@ SecSoftwareDecryption(
 			RT_TRACE(COMP_RECV, DBG_TRACE, ("SecSoftwareDecryption:() CountRxDecryptErrorStatistics\n"));
 
 			CountRxDecryptErrorStatistics(Adapter, pRfd);
-		
+
 			switch(DecryptAlgorithm)
 			{
 				case RT_ENC_ALG_WEP104:
@@ -3835,7 +3835,7 @@ SecSoftwareDecryption(
 			break;
 		}
 		else
-			CountRxDecryptSuccessStatistics(Adapter, pRfd);	
+			CountRxDecryptSuccessStatistics(Adapter, pRfd);
 
 		if(RT_SEC_STATUS_SUCCESS != secStatus)
 			break;
@@ -3847,7 +3847,7 @@ SecSoftwareDecryption(
 		// driver but not HW. So these packets are indicated to the upper layer.
 		// By Bruce, 2009-10-14.
 		//
-		
+
 		secStatus = SecRxCheckIV(Adapter, pRfd);
 
 		switch(secStatus)
@@ -3864,7 +3864,7 @@ SecSoftwareDecryption(
 			break;
 		}
 	}while(FALSE);
-	
+
 	return secStatus;
 }
 
@@ -3893,14 +3893,14 @@ SecSWAESDecryption(
 	if( pRfd->Status.bContainHTC)
 		IVOffset += sHTCLng;
 
-	// check address 4 
+	// check address 4
 	if( Frame_ValidAddr4(frame) )
 	{
 		IVOffset += ETHERNET_ADDRESS_LENGTH;
 	}
-	
+
 	IVKeyIdOffset = IVOffset + 3;
-	
+
 	keyidx = SecGetRxKeyIdx(
 				Adapter,
 				pRfd->Buffer.VirtualAddress+4,
@@ -3910,19 +3910,19 @@ SecSWAESDecryption(
 	if(pRfd->bTDLPacket)
 	{
 		pu1Byte	pTA;
-		OCTET_STRING	pduOS; 
+		OCTET_STRING	pduOS;
 
 		FillOctetString(pduOS, pRfd->Buffer.VirtualAddress, pRfd->PacketLength);
 		pTA = Frame_Addr2(pduOS);
-		
-		pEntry = AsocEntry_GetEntry(pMgntInfo, pTA);		
-		if(pEntry == NULL)	
+
+		pEntry = AsocEntry_GetEntry(pMgntInfo, pTA);
+		if(pEntry == NULL)
 			return FALSE;
 
-		//Check if set PTK was completed		
+		//Check if set PTK was completed
 		if(pEntry->perSTAKeyInfo.AESKeyBuf[0] == 0)
 			return FALSE;
-		
+
 		micOK = SecDecodeAESCCM(
 				&Adapter->MgntInfo.SecurityInfo,
 				(u4Byte *)pEntry->perSTAKeyInfo.AESKeyBuf,
@@ -3958,25 +3958,25 @@ SecSWAESDecryption(
 				pRfd->PacketLength
 				);
 		}
-	
-			
+
+
 	}
 	else if( ACTING_AS_AP(Adapter) )
 	{
 		pu1Byte	pTA;
-		OCTET_STRING	pduOS; 
+		OCTET_STRING	pduOS;
 
 		FillOctetString(pduOS, pRfd->Buffer.VirtualAddress, pRfd->PacketLength);
 		pTA = Frame_Addr2(pduOS);
-		
-		pEntry = AsocEntry_GetEntry(pMgntInfo, pTA);		
-		if(pEntry == NULL)			
+
+		pEntry = AsocEntry_GetEntry(pMgntInfo, pTA);
+		if(pEntry == NULL)
 			return FALSE;
 
-		//Check if set PTK was completed		
-		if(pEntry->perSTAKeyInfo.AESKeyBuf[0] == 0)									
+		//Check if set PTK was completed
+		if(pEntry->perSTAKeyInfo.AESKeyBuf[0] == 0)
 			return FALSE;
-		
+
 		micOK = SecDecodeAESCCM(
 				&Adapter->MgntInfo.SecurityInfo,
 				(u4Byte *)pEntry->perSTAKeyInfo.AESKeyBuf,
@@ -3987,7 +3987,7 @@ SecSWAESDecryption(
 	}
 	else
 	{
-		OCTET_STRING	pduOS; 
+		OCTET_STRING	pduOS;
 		pu1Byte	pRA;
 		pu1Byte	pTA;
 		u4Byte    index;
@@ -4006,7 +4006,7 @@ SecSWAESDecryption(
 			PPER_STA_DEFAULT_KEY_ENTRY         pDefKey;         // Add by CCW
 
 			//Multicast packet
-			//Find out Default KEY Entry  
+			//Find out Default KEY Entry
 			pDefKey = pSec->PerStaDefKeyTable;
 			for( index = 0 ; index < MAX_NUM_PER_STA_KEY ; index++, pDefKey++)
 			{
@@ -4062,10 +4062,10 @@ SecSWAESDecryption(
 			}
 
 
-		}	
+		}
 		RT_TRACE(COMP_RSNA, DBG_LOUD, (" micOK : %x\n", micOK));
 	}
-	
+
 	return micOK?TRUE:FALSE;
 }
 
@@ -4104,11 +4104,11 @@ SecSWTKIPDecryption(
 	IVKeyIdOffset = IVOffset + KEYID_POS_IN_IV;
 
 	// Get Key Index.
-	keyidx = SecGetRxKeyIdx(Adapter, pHeader+4, ((pHeader[IVKeyIdOffset]>>6)&0x03) );	
+	keyidx = SecGetRxKeyIdx(Adapter, pHeader+4, ((pHeader[IVKeyIdOffset]>>6)&0x03) );
 
 	PlatformMoveMemory(SrcAddr, pHeader+10, ETHERNET_ADDRESS_LENGTH);
 
-	if(ACTING_AS_AP(Adapter)) 
+	if(ACTING_AS_AP(Adapter))
 	{
 		if(MacAddr_isMulticast(SrcAddr))
 		{
@@ -4116,7 +4116,7 @@ SecSWTKIPDecryption(
 			// It's better to modify it by GTK length if we use PRF-X to generate GTK later. 2005-12-23.
 			//
 
-			//Check if set GTK was completed	
+			//Check if set GTK was completed
 			if(Adapter->MgntInfo.globalKeyInfo.GTK[0] == 0)
 			{
 				//RT_TRACE( COMP_AP, DBG_LOUD, ("SecSWTKIPDecryption(): GTK[0] == 0\n") );
@@ -4125,25 +4125,25 @@ SecSWTKIPDecryption(
 		}
 		else
 		{
-			//Check if STA within associated lsit table					
-			pEntry = AsocEntry_GetEntry(pMgntInfo, SrcAddr);		
-			if(pEntry == NULL)					
-				return FALSE;		
-			
-			//Check if set PTK was completed		
-			if(pEntry->perSTAKeyInfo.TempEncKey == NULL)									
+			//Check if STA within associated lsit table
+			pEntry = AsocEntry_GetEntry(pMgntInfo, SrcAddr);
+			if(pEntry == NULL)
+				return FALSE;
+
+			//Check if set PTK was completed
+			if(pEntry->perSTAKeyInfo.TempEncKey == NULL)
 				return FALSE;
 		}
 	}
 	else if(pRfd->bTDLPacket)
 	{
-			//Check if STA within associated lsit table					
-			pEntry = AsocEntry_GetEntry(pMgntInfo, SrcAddr);		
-			if(pEntry == NULL)					
-				return FALSE;		
-			
-			//Check if set PTK was completed		
-			if(pEntry->perSTAKeyInfo.TempEncKey == NULL)									
+			//Check if STA within associated lsit table
+			pEntry = AsocEntry_GetEntry(pMgntInfo, SrcAddr);
+			if(pEntry == NULL)
+				return FALSE;
+
+			//Check if set PTK was completed
+			if(pEntry->perSTAKeyInfo.TempEncKey == NULL)
 				return FALSE;
 		}
 
@@ -4151,13 +4151,13 @@ SecSWTKIPDecryption(
 	// Get u2IV16 and u4IV32.
 	u2IV16 = ((u2Byte)(*(pHeader+IVOffset + 0)) <<  8)+		\
 			((u2Byte)(*(pHeader+IVOffset + 2)) <<  0);
-	
+
 	u4IV32 = ((u4Byte) (*(pHeader+IVOffset + 4)) <<  0)+		\
 			((u4Byte) (*(pHeader+IVOffset + 5)) <<  8)+		\
 			((u4Byte) (*(pHeader+IVOffset + 6)) << 16)+		\
 			((u4Byte) (*(pHeader+IVOffset + 7)) << 24);
 
-#if 1 //Added by Jay 0712 for security IV  
+#if 1 //Added by Jay 0712 for security IV
 	if( ACTING_AS_AP(Adapter) )	// Added by Annie. We should not enter here when STA mode. 2005-07-21.
 	{
 		u8Byte tempIV = 0;
@@ -4173,7 +4173,7 @@ SecSWTKIPDecryption(
 			//RT_TRACE(COMP_SEC, DBG_LOUD, ("Error: pEntry->perSTAKeyInfo.RxIV = 0x%16"i64fmt"x\n", pEntry->perSTAKeyInfo.RxIV));
 
 			//Process IV Error...
-		} 
+		}
 		else
 		{
 			// Prefast warning C6011: Dereferencing NULL pointer 'pEntry'.
@@ -4220,10 +4220,10 @@ SecSWTKIPDecryption(
 			}
 		}
 	}
-#endif	
+#endif
 
 
-	if(ACTING_AS_AP(Adapter)) 
+	if(ACTING_AS_AP(Adapter))
 	{ // AP Mode.
 		if(MacAddr_isMulticast(SrcAddr))
 		{
@@ -4234,7 +4234,7 @@ SecSWTKIPDecryption(
 			if(pEntry != NULL)
 				TKIPGenerateKey(key, u4IV32, u2IV16, SrcAddr, pEntry->perSTAKeyInfo.TempEncKey);
 		}
-	} 
+	}
 	else if(pRfd->bTDLPacket)
 	{
 		// Prefast warning C6011: Dereferencing NULL pointer 'pEntry'
@@ -4276,7 +4276,7 @@ SecSWTKIPDecryption(
 	}
 	RT_TRACE(COMP_SEC, DBG_LOUD,("Rx:TKIP OK\n"));
 	return TRUE;
-	
+
 }
 BOOLEAN
 SecSWWEPDecryption(
@@ -4294,7 +4294,7 @@ SecSWWEPDecryption(
 	pu1Byte					pHeader = pRfd->Buffer.VirtualAddress;
 
 	//Fix SW WEP descryption multicase fail. 2009,12,08
-	
+
 	u2Byte					EncryptionMPDUHeadOverhead, EncryptionMPDUTailOverhead;
 	u2Byte					EncryptionMSDUHeadOverhead, EncryptionMSDUTailOverhead;
 
@@ -4309,12 +4309,12 @@ SecSWWEPDecryption(
 
 	if( pSec->SecLvl == RT_SEC_LVL_NONE  )
 		bMulticastDest = FALSE;
-	
+
 	SecGetEncryptionOverhead(
 		Adapter,
-		&EncryptionMPDUHeadOverhead, 
-		&EncryptionMPDUTailOverhead, 
-		&EncryptionMSDUHeadOverhead, 
+		&EncryptionMPDUHeadOverhead,
+		&EncryptionMPDUTailOverhead,
+		&EncryptionMSDUHeadOverhead,
 		&EncryptionMSDUTailOverhead,
 		TRUE,
 		bMulticastDest
@@ -4323,7 +4323,7 @@ SecSWWEPDecryption(
 	if( !bMulticastDest )
 		TempALg =  pSec->PairwiseEncAlgorithm;
 	else
-		TempALg = pSec->GroupEncAlgorithm; 
+		TempALg = pSec->GroupEncAlgorithm;
 
 	// Get offset. Annie, 2005-12-23.
 	if( pRfd->Status.bIsQosData )
@@ -4337,13 +4337,13 @@ SecSWWEPDecryption(
 	if(pRfd->Status.bContainHTC)
 		IVOffset += sHTCLng;
 
-	
+
 	// Get IV. (Because 802.11 and key both are little endian)
 	PlatformMoveMemory(key, pHeader+IVOffset , 3);
 
 	// Prepare Key.
-	keyidx = GET_WEP_IV_KEYID(pHeader+IVOffset); 
-	keysize = (TempALg==RT_ENC_ALG_WEP104) ? 16 : 8; 
+	keyidx = GET_WEP_IV_KEYID(pHeader+IVOffset);
+	keysize = (TempALg==RT_ENC_ALG_WEP104) ? 16 : 8;
 	PlatformMoveMemory(key+3, pSec->KeyBuf[keyidx], keysize-3);
 
 	// Set up input data.
@@ -4388,10 +4388,10 @@ SecSWCKIPDecryption(
 	}
 	if(pRfd->Status.bContainHTC)
 		IVOffset += sHTCLng;
-	
-	//Get IV 
+
+	//Get IV
 	keyidx= GET_WEP_IV_KEYID( pHeader+IVOffset);
-	
+
 	DEcok = DecodeCKIP( Adapter , (UCHAR *)pHeader , pRfd->PacketLength , pSec->pCkipPara->CKIPKeyBuf[keyidx] , keyidx );
 	RT_TRACE( COMP_CKIP, DBG_LOUD, ("SecSWCKIPDecryption(): DEcok=0x%X\n", DEcok) );
 
@@ -4404,10 +4404,10 @@ SecSWCKIPDecryption(
 //		Used for deny link to MIC failure AP in 60 seconds.
 //	2004.10.06, by rcnjo.
 //
-BOOLEAN 
+BOOLEAN
 SecInsertDenyBssidList (
  	PRT_SECURITY_T	pSec,
-	u1Byte			BssidToDeny[6], 
+	u1Byte			BssidToDeny[6],
 	u8Byte			DenyStartTime
 )
 {
@@ -4436,7 +4436,7 @@ SecInsertDenyBssidList (
 	if(pBssidToDeny == NULL)
 	{
 		// Use the oldest one.
-		pBssidToDeny = pSec->DenyBssidList + EarlyestIdx; 
+		pBssidToDeny = pSec->DenyBssidList + EarlyestIdx;
 	}
 
 	PlatformMoveMemory(pBssidToDeny->Bssid, BssidToDeny, 6);
@@ -4451,7 +4451,7 @@ SecInsertDenyBssidList (
 //		Used for deny link to MIC failure AP in 60 seconds.
 //	2004.10.06, by rcnjo.
 //
-BOOLEAN 
+BOOLEAN
 SecIsInDenyBssidList (
  	PRT_SECURITY_T	pSec,
 	u1Byte			BssidToCheck[6]
@@ -4459,17 +4459,17 @@ SecIsInDenyBssidList (
 {
 	BOOLEAN			bToDeny = FALSE;
 	PRT_DENY_BSSID	pBssidToDeny;
-	u8Byte			CurrTime = PlatformGetCurrentTime();		
+	u8Byte			CurrTime = PlatformGetCurrentTime();
 	int				i;
 
 	for(i = 0; i < MAX_DENY_BSSID_LIST_CNT; i++)
 	{
-		pBssidToDeny = pSec->DenyBssidList + i; 
+		pBssidToDeny = pSec->DenyBssidList + i;
 		if(pBssidToDeny->bUsed)
 		{
 			// Check StartTime.
 			if((CurrTime - pBssidToDeny->StartTime) < MIC_CHECK_TIME) // Diff < 60 seconds.
-			{ 
+			{
 				// Check BSSID.
 				if( PlatformCompareMemory(pBssidToDeny->Bssid, BssidToCheck, 6) == 0 )
 				{ // The same BSSID.
@@ -4491,13 +4491,13 @@ SecIsInDenyBssidList (
 
 //
 //	Desription:
-//		Fill up WEP bit and IV of each fragment in the TCB if necessary.	
+//		Fill up WEP bit and IV of each fragment in the TCB if necessary.
 //	Output:
 //		1. Return TRUE if this packet has to be encrypted.
 //		2. Set up pTcb->EncInfo.
 //	2005.06.27, by rcnjo.
 //
-BOOLEAN 
+BOOLEAN
 SecFillHeader(
 	PADAPTER	Adapter,
 	PRT_TCB		pTcb)
@@ -4514,7 +4514,7 @@ SecFillHeader(
 
 	if(WAPI_QuerySetVariable(Adapter, WAPI_QUERY, WAPI_VAR_NOTSETENCMACHEADER, 0))
 		return FALSE;
-	
+
 	if(!bEncrypt)
 	{
 		RT_TRACE( COMP_CKIP, DBG_TRACE, ("SecFillHeader(): !bEncrypt => return FALSE!\n"));
@@ -4530,10 +4530,10 @@ SecFillHeader(
 
 			pFrame = (pu1Byte)&pTcb->BufferList[i].VirtualAddress[Adapter->TXPacketShiftBytes];
 
-			// WEP bit. 
+			// WEP bit.
 			SET_80211_HDR_WEP(pFrame, 1);
 
-			// IV. 
+			// IV.
 			SecHeaderFillIV(Adapter, pFrame);
 		}
 
@@ -4622,7 +4622,7 @@ SecIsEAPOLKEYPacket(
 	}
 
 	// 888e && Type is Key
-	if( (pPduOS->Octet[Offset_TypeEAPOL]==0x88) && (pPduOS->Octet[Offset_TypeEAPOL+1]==0x8e) 
+	if( (pPduOS->Octet[Offset_TypeEAPOL]==0x88) && (pPduOS->Octet[Offset_TypeEAPOL+1]==0x8e)
 		&& (pPduOS->Octet[Offset_TypeEAPOL+3]==0x03) )
 	{
 		IsEAPOLKeyPkt = TRUE;
@@ -4666,7 +4666,7 @@ SecSetPMKID(
 			pSecInfo->PMKIDList[ulIndex].bUsed = FALSE;
 			PlatformZeroMemory(pSecInfo->PMKIDList[ulIndex].Bssid, sizeof(pSecInfo->PMKIDList[ulIndex].Bssid));
 			pSecInfo->PMKIDList[ulIndex].Ssid.Length = 0;
-		
+
 		}
 		return;
 	}
@@ -4713,7 +4713,7 @@ SecSetPMKID(
 			pBssidInfo ++;	// pointer to next BSSID_INFO.
 			continue;
 		}
-		else 
+		else
 		{
 			// Find a new entry
 			for( j=0 ; j<NUM_PMKID_CACHE; j++ )
@@ -4749,7 +4749,7 @@ SecSetPMKID(
 			RT_PRINT_DATA( COMP_SEC, DBG_LOUD, "BSSID", pSecInfo->PMKIDList[ulIndex].Bssid, 6);
 			RT_PRINT_DATA( COMP_SEC, DBG_LOUD, "PMKID", pSecInfo->PMKIDList[ulIndex].PMKID, sizeof(pBssidInfo->PMKID));
 		}
-	}			
+	}
 }
 
 
@@ -4815,9 +4815,9 @@ SecCatPMKID(
 	int 				iEntry = 0;
 	BOOLEAN			bCCX8021xenable = FALSE;
 	BOOLEAN			bAPSuportCCKM = FALSE;
-	
+
 	u1Byte			BIPOui[4] = {0x00, 0x0f , 0xac , 0x06};
-	
+
 	// Note: PMKID can only be included in (Re)Association.
 	if( ACTING_AS_AP(Adapter) || pMgntInfo->mIbss )
 	{
@@ -4830,15 +4830,15 @@ SecCatPMKID(
 
 	if(WAPI_QuerySetVariable(Adapter, WAPI_QUERY, WAPI_VAR_WAPISUPPORT, 0) && pSecInfo->SecLvl == RT_SEC_LVL_WAPI)
 		return;
-		
+
 	//
 	// CCKM mode  return.
 	// Note:
-	//	Putting PMKID and CCKM together in the reassociation request must confuse the AP and 
+	//	Putting PMKID and CCKM together in the reassociation request must confuse the AP and
 	//	make it no response after reassociation request packet.
 	//
 	CCX_QueryCCKMSupport(Adapter, &bCCX8021xenable, &bAPSuportCCKM);
-	
+
 	if( bCCX8021xenable && bAPSuportCCKM)
 	{
 		return;
@@ -4852,12 +4852,12 @@ SecCatPMKID(
 	{
 		RT_TRACE( COMP_SEC, DBG_LOUD, ("SecCatPMKID(): AP is not in current PMKID List => do nothing.\n") );
 
-		// Check Need to add MFP IE or not !! 
+		// Check Need to add MFP IE or not !!
 		if( pBssDesc->bMFPC && pMgntInfo->bInBIPMFPMode)
 		{
 			pIECurrent = pSecInfo->RSNIE.Octet + pSecInfo->RSNIE.Length - 2; // Point to RSN Capablite
 			SET_RSN_CAP_MFP_CAPABLE(pIECurrent , 1 );
-			
+
 			if( pBssDesc->bMFPR )
 			{
 				// Removed by Bruce, 2014-12-08.
@@ -4867,11 +4867,11 @@ SecCatPMKID(
 				//	allow MFP-capable STA to associate. Access points not supporting MFP capability will fail association. If MFPR is set by an access point
 				//	and STA is not MFP capable, Windows 8 will treat the network as mismatched in capability and not send an association request to the
 				//	miniport. http://msdn.microsoft.com/en-us/library/windows/hardware/ff547688(v=vs.85).aspx
-				// 
+				//
 				// SET_RSN_IE_CAP_MFP_REQUIRED(pIECurrent, 1);
 			}
 			pIECurrent += 2;
-			
+
 			if( pBssDesc->bMFPBIP )
 			{
 				// Add PMKID counter = 0x00 0x00
@@ -4893,7 +4893,7 @@ SecCatPMKID(
 	//
 	pIECurrent = pSecInfo->RSNIE.Octet + pSecInfo->RSNIE.Length;
 	((PDOT11_RSN_IE_PMKID)pIECurrent)->SuiteCount = NUM_CAT_PMKID;	// NUM_CAT_PMKID=1
-	CopyMem(	((PDOT11_RSN_IE_PMKID)pIECurrent)->PMKList, 
+	CopyMem(	((PDOT11_RSN_IE_PMKID)pIECurrent)->PMKList,
 				pSecInfo->PMKIDList[iEntry].PMKID,
 				sizeof(pSecInfo->PMKIDList[iEntry].PMKID)
 				);
@@ -4904,7 +4904,7 @@ SecCatPMKID(
 	// Note : 802.11w sample RSN PMK and BIP support at same time !!
 	//
 
-	// Check Need to add MFP IE or not !! 
+	// Check Need to add MFP IE or not !!
 	if( pBssDesc->bMFPC && pMgntInfo->bInBIPMFPMode )
 	{
 		pIECurrent = pIECurrent - 2; // Point to RSN Capablite
@@ -4914,7 +4914,7 @@ SecCatPMKID(
 		{
 			SET_RSN_CAP_MFP_REQUIRED(pIECurrent, 1);
 		}
-		
+
 		pIECurrent = pSecInfo->RSNIE.Octet + pSecInfo->RSNIE.Length;
 
 		if( pBssDesc->bMFPBIP )
@@ -4934,7 +4934,7 @@ SecCatPMKID(
 // If there is no key when security enabled, drop data frames.
 // Added by Annie, 2006-08-15.
 //
-BOOLEAN 
+BOOLEAN
 SecDropForKeyAbsent(
 	PADAPTER			Adapter,
 	PRT_TCB				pTcb
@@ -4967,13 +4967,13 @@ SecDropForKeyAbsent(
 		{
 			return bDrop;
 		}
-	
+
 		if( pTcb->EncInfo.SecProtInfo == RT_SEC_NORMAL_DATA )
 		{
 			// Data frame, not EAPOL packet.
 			if(RT_STATUS_SUCCESS == WAPI_SecFuncHandler(WAPI_DROPFORSECKEYABSENT,Adapter, (PVOID)pRa, WAPI_END))
 				bDrop = TRUE;
-		
+
 			if( pSecInfo->SecLvl > RT_SEC_LVL_NONE )
 			{ // WPA or WPA2.
 				if( MacAddr_isMulticast(pRa) )
@@ -5044,10 +5044,10 @@ SecSetSwEncryptionDecryption(
 	// Print an warning message.
 	if (pSec->RegSWTxEncryptFlag != bSWTxEncrypt)
 	{
-		RT_TRACE(COMP_SEC, DBG_WARNING, 
+		RT_TRACE(COMP_SEC, DBG_WARNING,
 			("SecSetSwEncryptionDecryption(): Warning! User and driver determined encryption mechanism mismatch.\n"));
-		RT_TRACE(COMP_SEC, DBG_WARNING, 
-			("SecSetSwEncryptionDecryption(): RegSWTxEncryptFlag = %d, bSWTxEncrypt = %d\n", 
+		RT_TRACE(COMP_SEC, DBG_WARNING,
+			("SecSetSwEncryptionDecryption(): RegSWTxEncryptFlag = %d, bSWTxEncrypt = %d\n",
 			pSec->RegSWTxEncryptFlag, bSWTxEncrypt));
 	}
 
@@ -5072,7 +5072,7 @@ SecSetSwEncryptionDecryption(
 	{
 		RT_TRACE(COMP_SEC, DBG_WARNING,
 			("SecSetSwEncryptionDecryption(): Warning! User and driver determined decryption mechanism mismatch.\n"));
-		RT_TRACE(COMP_SEC, DBG_WARNING, 
+		RT_TRACE(COMP_SEC, DBG_WARNING,
 			("SecSetSwEncryptionDecryption(): RegSWRxDecryptFlag = %d, bSWRxDecrypt = %d\n",
 			pSec->RegSWRxDecryptFlag, bSWRxDecrypt));
 	}
@@ -5106,7 +5106,7 @@ SecIsTxKeyInstalled(
 				return FALSE;
 		}
 		else
-		{						
+		{
 			return FALSE;
 		}
 	}
@@ -5117,7 +5117,7 @@ SecIsTxKeyInstalled(
 			pSecInfo->KeyLen[1] == 0 &&
 			pSecInfo->KeyLen[2] == 0 &&
 			pSecInfo->KeyLen[3] == 0 &&
-			pSecInfo->KeyLen[4] == 0 
+			pSecInfo->KeyLen[4] == 0
 			&& 0 == WAPI_QuerySetVariable(pAdapter, WAPI_QUERY, WAPI_VAR_ISCAMUSED, 0)
 			)
 		{
@@ -5129,7 +5129,7 @@ SecIsTxKeyInstalled(
 			if(!ACTING_AS_AP(pAdapter) && pSecInfo->SecLvl > RT_SEC_LVL_NONE )
 			{
 				//
-				// Check Tx key 
+				// Check Tx key
 				// Note:
 				//	This is special case for WPA-2 (RSN).
 				//	When the CCX service (supplicant) receives the ANoce packet in the 1st packet of 4-way,
@@ -5139,7 +5139,7 @@ SecIsTxKeyInstalled(
 				//	We find this behavior of CCX service in the CCX SDK version 1.1.13.
 				//  Advised from CCW, and edited by Bruce, 2009-09-04.
 				//
-				if( pSecInfo->KeyLen[0] == 0 
+				if( pSecInfo->KeyLen[0] == 0
 					&& 0 == WAPI_QuerySetVariable(pAdapter, WAPI_QUERY, WAPI_VAR_ISCAMUSED, 0)
 					)
 				{
@@ -5147,7 +5147,7 @@ SecIsTxKeyInstalled(
 					return FALSE;
 				}
 			}
-			
+
 			return TRUE;
 		}
 	}
@@ -5160,7 +5160,7 @@ SecIsTxKeyInstalled(
 			PPER_STA_MPAKEY_ENTRY pMapKey;
 
 			for( index = 0 ; index < MAX_NUM_PER_STA_KEY ; index++)
-			{  
+			{
 				pMapKey = &(pSecInfo->MAPKEYTable[index]);
 
 				if( pMapKey->Valid && eqMacAddr(pMapKey->MACAdrss , pRA) )
@@ -5197,7 +5197,7 @@ SecIsTxKeyInstalled(
 // Description:
 //	Descrypt the mgnt frame by SW and check if this packet is valid.
 // Arguments:
-//	[in] Adapter - 
+//	[in] Adapter -
 //		The NIC context.
 //	[in] pRfd -
 //		The Rx buffer and information.
@@ -5218,7 +5218,7 @@ SecSWMFPDecryption(
 	PMGNT_INFO		pMgntInfo = &(pAdapter->MgntInfo);
 	PRT_SECURITY_T	pSec = &(pMgntInfo->SecurityInfo);
 	RT_SEC_STATUS	secStatus = RT_SEC_STATUS_SUCCESS;
-	
+
 	if(RT_SEC_STATUS_SUCCESS != (secStatus = SecSoftwareDecryption(pAdapter, pRfd)))
 	{
 		switch(pSec->PairwiseEncAlgorithm)
@@ -5230,20 +5230,20 @@ SecSWMFPDecryption(
 		case RT_ENC_ALG_AESCCMP:
 			CountRxMgntCCMPDecryptErrorsStatistics(pAdapter, pRfd);
 			break;
-		
+
 		default: //for MacOSX Compiler warning.
-			break;		
+			break;
 		}
-			
+
 		RT_TRACE(COMP_SEC , DBG_WARNING , ("SecSWMFPDecryption(): Fail (0x%08X) MFP packe decrypt !!\n", secStatus) );
 		return secStatus;
 	}
 	else if( pMgntInfo->bInBIPMFPMode)
-	{	// 802.11 MFP 
+	{	// 802.11 MFP
 		OCTET_STRING	frame;
-		
+
 		FillOctetString(frame, pRfd->Buffer.VirtualAddress, pRfd->PacketLength);
-	
+
 		// Remove IV, but we haven't remove MIC
 		if(frame.Length > (sMacHdrLng + pMgntInfo->SecurityInfo.EncryptionHeadOverhead))
 		{
@@ -5260,19 +5260,19 @@ SecSWMFPDecryption(
 			return RT_SEC_STATUS_INVALID_PKT_LEN;
 		}
 	}
-	
+
 	else
 	{
 		OCTET_STRING	frame;
-		
-		FillOctetString(frame, pRfd->Buffer.VirtualAddress, pRfd->PacketLength);				
+
+		FillOctetString(frame, pRfd->Buffer.VirtualAddress, pRfd->PacketLength);
 
 		// Check MHDR IE for TKIP...
 		if(pSec->PairwiseEncAlgorithm == RT_ENC_ALG_TKIP)
 		{
 			// Remove the ICV so that we can caculate the MIC.
 			MAKE_RFD_OFFSET_AT_BACK(pRfd, pMgntInfo->SecurityInfo.EncryptionTailOverhead);
-			
+
 			// Check the length is valid including MHDRIE and MIC
 			if(frame.Length < (sMacHdrLng + pMgntInfo->SecurityInfo.EncryptionHeadOverhead + 2 + CCX_MFP_TKIP_MHDR_IE_LEN + TKIP_MIC_LEN)) // MHDRIE (2 + 12) + MIC (8)
 				return RT_SEC_STATUS_INVALID_PKT_LEN;
@@ -5292,7 +5292,7 @@ SecSWMFPDecryption(
 				return RT_SEC_STATUS_MGNT_MIC_FAILURE;
 			}
 		}
-		
+
 		// Remove IV, but we haven't remove MIC and MHDR IE
 		if(frame.Length > (sMacHdrLng + pMgntInfo->SecurityInfo.EncryptionHeadOverhead))
 		{
@@ -5302,7 +5302,7 @@ SecSWMFPDecryption(
 
 			// Clear the WEP bit because we have removed the IV field.
 			SET_80211_HDR_WEP(pRfd->Buffer.VirtualAddress, 0);
-			
+
 		}
 		else
 		{
@@ -5319,12 +5319,12 @@ SecSWMFPDecryption(
 // Description:
 //	Handle 802.11w BIP MIC .
 // Arguments:
-//	[in] Adapter - 
+//	[in] Adapter -
 //		The NIC context.
 //	[in] pRfd -
 //		The Rx buffer and information.
 // Return:
-//	RT_SEC_STATUS_SUCCESS if MIC and MMIE are OK , and otherwise if any error(this packet should be dropped and Do nothing !!). 
+//	RT_SEC_STATUS_SUCCESS if MIC and MMIE are OK , and otherwise if any error(this packet should be dropped and Do nothing !!).
 //
 
 RT_SEC_STATUS
@@ -5345,9 +5345,9 @@ SecCheckMMIE(
 	PMMIE_STRUC		pMMIE = NULL;
 	u1Byte			index = 0;
 
-	
+
 	FillOctetString(frame, pRfd->Buffer.VirtualAddress, pRfd->PacketLength);
-	
+
 	if( frame.Length > 256 || frame.Length < 18 )
 		return RT_SEC_STATUS_MFP_MGNT_LEN_FAILURE;
 
@@ -5361,8 +5361,8 @@ SecCheckMMIE(
 	{
 		return RT_SEC_STATUS_MFP_MGNT_MMIE_FAILURE;
 	}
-	
-	// Get MMIE 
+
+	// Get MMIE
 	pMMIE = (PMMIE_STRUC)( frame.Octet + frame.Length - 18 );
 
 
@@ -5371,7 +5371,7 @@ SecCheckMMIE(
 		RT_PRINT_DATA(COMP_SEC, DBG_WARNING, "[WARNING] Skip this frame because we received the same IPN = \n", pMMIE->IPN, 6);
 		return RT_SEC_STATUS_MGNT_IV_REPLAY;
 	}
-	// Check PN 
+	// Check PN
 	for( index = 0 ; index < 6 ; index++  )
 	{
 		if(pMMIE->IPN[5 - index] > pSec->IPN[5- index])
@@ -5385,8 +5385,8 @@ SecCheckMMIE(
 		else
 			continue;
 	}
-	
-	// Constr ADD | frame body 
+
+	// Constr ADD | frame body
 	PlatformZeroMemory(  PlantData , 256 );
 	PlatformMoveMemory( pCurrent ,  frame.Octet , 2 );  // FC
 	// Reset Retry , PW_MGN and MORE bit
@@ -5394,12 +5394,12 @@ SecCheckMMIE(
 	SET_80211_HDR_PWR_MGNT(PlantData, 0);
 	SET_80211_HDR_MORE_DATA(PlantData, 0);
 	pCurrent += 2;
-	
+
 	// A1 , A2 and A3
 	PlatformMoveMemory( pCurrent , frame.Octet + 4 , 18 );
 	pCurrent += 18;
 
-	// Frame body 
+	// Frame body
 	PlatformMoveMemory( pCurrent , frame.Octet + 24 , frame.Length - 24  );
 
 	// PlantData length  = AAD + PacketLen - Hardlen
@@ -5410,7 +5410,7 @@ SecCheckMMIE(
 
 	RT_PRINT_DATA(COMP_SEC , DBG_LOUD , " PlantData :\n"  , PlantData , PlantDataLen);
 
-	// Calculate MIC 
+	// Calculate MIC
 	AES_CMAC_1W( PlantData  , PlantDataLen , pSec->BIPKeyBuffer , 16 , Micdata , &MACTextLength);
 
 	// Compare MIC
@@ -5431,12 +5431,12 @@ SecCheckMMIE(
 // Description:
 //	Handle Rx Packet encryption status and descrypt it if need.
 // Arguments:
-//	[in] Adapter - 
+//	[in] Adapter -
 //		The NIC context.
 //	[in] pRfd -
 //		The Rx buffer and information.
 // Return:
-//	RT_SEC_STATUS_SUCCESS if this packet is descrypted successfully, and otherwise if any error(this packet should be dropped). 
+//	RT_SEC_STATUS_SUCCESS if this packet is descrypted successfully, and otherwise if any error(this packet should be dropped).
 // By Bruce, 2009-10-15.
 //
 RT_SEC_STATUS
@@ -5494,7 +5494,7 @@ SecRxDescryption(
 		else // Unicast
 		{
 			if(CCX_IS_MFP_ENABLED(pAdapter))
-			{				
+			{
 				// Do nothing.
 			}
 			else if(pMgntInfo->bInBIPMFPMode)
@@ -5528,14 +5528,14 @@ SecRxDescryption(
 				case RT_ENC_ALG_AESCCMP:
 					CountRxMgntCCMPNoEncryptStatistics(pAdapter, pRfd);
 					break;
-				
+
 				default: //for MacOSX Compiler warning.
-					break;		
+					break;
 				}
 				RT_PRINT_DATA(COMP_SEC, DBG_WARNING, "[WARNING] Received mgnt frame without protection bit\n", frame.Octet, frame.Length);
 				return RT_SEC_STATUS_MGNT_FRAME_UNENCRYPT;
 			}
-		}	
+		}
 		return RT_SEC_STATUS_SUCCESS;
 	}
 
@@ -5544,17 +5544,17 @@ SecRxDescryption(
 	if(IsMgntFrame(frame.Octet))
 	{
 		// Open Share Key mode, we do not handle this condition here.
-		if(	IsMgntAuth(frame.Octet) && 
+		if(	IsMgntAuth(frame.Octet) &&
 			(pSec->PairwiseEncAlgorithm == RT_ENC_ALG_WEP40 || pSec->PairwiseEncAlgorithm == RT_ENC_ALG_WEP104))
 		{
 			return SecSoftwareDecryption(pAdapter, pRfd);
 		}
 
 		if(!eqMacAddr(pMgntInfo->Bssid, Frame_Addr3(frame)))
-			return RT_SEC_STATUS_SUCCESS;		
+			return RT_SEC_STATUS_SUCCESS;
 
 		//
-		// 802.11 MFP AES 
+		// 802.11 MFP AES
 		//
 		if(pMgntInfo->bInBIPMFPMode || CCX_IS_MFP_ENABLED(pAdapter))
 		{
@@ -5570,21 +5570,21 @@ SecRxDescryption(
 		{
 			RT_TRACE(COMP_SEC, DBG_WARNING, ("SecRxDescryption(): Error!!! Receive Mgnt Frame with WEP bit (Not support)!"));
 			return RT_SEC_STATUS_PKT_TYPE_NOT_SUPPORT;
-		}		
-		
+		}
+
 		return secStatus;
 	}
 
 	//3 // Data packet.
 	if(IsDataFrame(frame.Octet))
-	{	
+	{
 		if(pSec->SWRxDecryptFlag)
 		{
 			if(pMgntInfo->SafeModeEnabled)
 			{
 				RT_TRACE_F(COMP_RECV, DBG_LOUD, ("Do not use SecSoftwareDecryption when SafeModeEnabled\n"));
-				return RT_SEC_STATUS_SUCCESS;		
-			}		
+				return RT_SEC_STATUS_SUCCESS;
+			}
 
 			if(RT_SEC_STATUS_SUCCESS != (secStatus = SecSoftwareDecryption(pAdapter, pRfd)))
 			{
@@ -5593,7 +5593,7 @@ SecRxDescryption(
 			}
 			return RT_SEC_STATUS_SUCCESS;
 		}
-	
+
 		// Win7 SW Descryption Special Case
 		if(  	pMgntInfo->NdisVersion >= RT_NDIS_VERSION_6_20  ||
 			pMgntInfo->bConcurrentMode  ||
@@ -5619,7 +5619,7 @@ SecRxDescryption(
 			//for win7 FPGA Verification, Adhoc TP test
 			if(pMgntInfo->bRegAdhocUseHWSec && pMgntInfo->Regdot11networktype == RT_JOIN_NETWORKTYPE_ADHOC)
 				bSWSec = FALSE;
-			
+
 			if(bSWSec)
 			{
 				if(RT_SEC_STATUS_SUCCESS != (secStatus = SecSoftwareDecryption(pAdapter, pRfd)))
@@ -5627,11 +5627,11 @@ SecRxDescryption(
 					{
 						RT_TRACE(COMP_SEC , DBG_TRACE , ("===>Fail Win7 SW decrypt\n") );
 						return RT_SEC_STATUS_FAILURE;
-					}		
+					}
 				}
 			}
 		}
-		
+
 		// Normal Case with HW Descryption
 		return RT_SEC_STATUS_SUCCESS;
 	}
@@ -5646,7 +5646,7 @@ SecRxDescryption(
 //		Append 802.11w MFP MMIE , just for AP mode !!
 // Input :
 //		posFrame : Action or mgnt frame , DA is broadcast !!
-//		
+//
 void
 SecAppenMMIE(
 	IN	PADAPTER		pAdapter,
@@ -5712,7 +5712,7 @@ SecStaGetANoseForS5(
 			}
 
 		}
-		
+
 	}
 
 	return FALSE;
@@ -5724,7 +5724,7 @@ SecStaGenPMKForS5(
 	IN	PADAPTER		Adapter
 	)
 {
-	
+
 	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);
 
 	PasswordHash(pMgntInfo->mbPassphrase,pMgntInfo->mPasspharseLen, pMgntInfo->Ssid.Octet, pMgntInfo->Ssid.Length, pMgntInfo->mbS5PMK);
@@ -5743,7 +5743,7 @@ SecStaGenPMKForS5(
 	return TRUE;
 }
 
-// 
+//
 // Description:
 //	Received the SA query packet from the STA.
 //
@@ -5756,7 +5756,7 @@ OnSAQueryReq(
 {
 	PMGNT_INFO		pMgntInfo = &pAdapter->MgntInfo;
 	RT_STATUS		rtStatus = RT_STATUS_SUCCESS;
-	
+
 	RT_PRINT_DATA(COMP_SEC, DBG_LOUD, "OnSAQueryReq(): Content:\n", posMpdu->Octet, posMpdu->Length);
 
 	do
@@ -5786,7 +5786,7 @@ OnSAQueryReq(
 	return RT_STATUS_SUCCESS;
 }
 
-// 
+//
 // Description:
 //	Received the SA query response packet from the STA.
 //
@@ -5800,7 +5800,7 @@ OnSAQueryRsp(
 	PMGNT_INFO		pMgntInfo = &pAdapter->MgntInfo;
 	PRT_SECURITY_T	pSecInfo = &(pMgntInfo->SecurityInfo);
 	RT_STATUS		rtStatus = RT_STATUS_SUCCESS;
-	
+
 	RT_PRINT_DATA(COMP_SEC, DBG_LOUD, "OnSAQueryRsp(): Content:\n", posMpdu->Octet, posMpdu->Length);
 
 	do
@@ -5858,7 +5858,7 @@ OnSAQueryRsp(
 // Description:
 //	Fill and move IV and offset if this tx management frame shall be proteced.
 // Arguments:
-//	[in] Adapter - 
+//	[in] Adapter -
 //		The NIC context.
 //	[in] pTcb -
 //		The context of tx frame.
@@ -5880,7 +5880,7 @@ SecFillProtectTxMgntFrameHeader(
 	PRT_SECURITY_T		pSecInfo = &(pMgntInfo->SecurityInfo);
 	OCTET_STRING		osMpdu;
 	BOOLEAN				bProtected = FALSE;
-	
+
 	FillOctetString(osMpdu, GET_FRAME_OF_FIRST_FRAG(pAdapter, pTcb), (u2Byte)pTcb->BufferList[0].Length);
 
 	do
@@ -5916,18 +5916,18 @@ SecFillProtectTxMgntFrameHeader(
 
 		bProtected = TRUE;
 	}while(FALSE);
-	
+
 	if(bProtected)
 	{
 		//3 // Determine different kind of frames before fill the IV
 		// ToDo
-		
+
 		//RT_PRINT_DATA(COMP_SEC, DBG_LOUD, "SecFillProtectTxMgntFrameHeader(): Before extend IV content:\n", osMpdu.Octet, osMpdu.Length);
 		// Set WEP bit !!
 		SET_80211_HDR_WEP(osMpdu.Octet, 1);
 
 		PlatformMoveMemory(pSecInfo->SecBuffer, (osMpdu.Octet + sMacHdrLng), (osMpdu.Length - sMacHdrLng));
-		
+
 		PlatformMoveMemory((osMpdu.Octet+ sMacHdrLng + pSecInfo->EncryptionHeadOverhead),
 									pSecInfo->SecBuffer,
 									(osMpdu.Length - sMacHdrLng));
@@ -5982,7 +5982,7 @@ SAQueryTimerCallback(
 
 
 //
-// 2011/03/04 MH Move all new CAN search metho to here forcommon binary . 
+// 2011/03/04 MH Move all new CAN search metho to here forcommon binary .
 // We need to reorganize the locaton in he future.
 // ---------------------------------------------------------------
 //
@@ -5995,7 +5995,7 @@ SEC_AsocEntry_ResetEntry(
 	)
 {
 	u1Byte	i;
-	
+
 	for( i = 4 ; i < Adapter->TotalCamEntry ; i++)
 	{
 		if( (Adapter->MgntInfo.SWCamTable[i].bUsed)
@@ -6003,8 +6003,8 @@ SEC_AsocEntry_ResetEntry(
 			{
 				CamDeleteOneEntry( Adapter , pEntry->MacAddr, i);
 				PlatformZeroMemory(  &	Adapter->MgntInfo.SWCamTable[i] , sizeof(SW_CAM_TABLE) );
-			}		
-	}	
+			}
+	}
 }
 
 #endif // #if (HW_EN_DE_CRYPTION_FOR_NEW_CAM_SEARCH_FLOW == 1)
@@ -6021,7 +6021,7 @@ SecUpdateSWGroupKeyInfo(
 	RT_ENC_ALG		EncAlgorithm;
 
 	EncAlgorithm = pSecInfo->GroupEncAlgorithm;
-	RT_TRACE( COMP_INIT, DBG_LOUD, ("SecUpdateSWGroupKeyInfo(): SecLvl>0, Group EncAlgorithm=0x%08X, Pairwise EncAlgo=0x%08X\n", 
+	RT_TRACE( COMP_INIT, DBG_LOUD, ("SecUpdateSWGroupKeyInfo(): SecLvl>0, Group EncAlgorithm=0x%08X, Pairwise EncAlgo=0x%08X\n",
 		EncAlgorithm, pSecInfo->PairwiseEncAlgorithm) );
 
 	SecClearGroupKeyByIdx(Adapter, (u1Byte)KeyIndex);
@@ -6033,7 +6033,7 @@ SecUpdateSWGroupKeyInfo(
 		if((KeyIndex & ADD_KEY_IDX_AS)){//kcwu: Key is set by an Authenticator, exchange Tx/Rx MIC
 			u1Byte tmpbuf[TKIP_MIC_KEY_LEN];
 			PlatformMoveMemory(tmpbuf, KeyMaterial+TKIP_ENC_KEY_LEN, TKIP_MIC_KEY_LEN);
-			PlatformMoveMemory(KeyMaterial+TKIP_ENC_KEY_LEN, 
+			PlatformMoveMemory(KeyMaterial+TKIP_ENC_KEY_LEN,
 				KeyMaterial+TKIP_ENC_KEY_LEN+TKIP_MIC_KEY_LEN, TKIP_MIC_KEY_LEN);
 			PlatformMoveMemory(KeyMaterial+TKIP_ENC_KEY_LEN+TKIP_MIC_KEY_LEN, tmpbuf, TKIP_MIC_KEY_LEN);
 		}
@@ -6057,6 +6057,6 @@ SecUpdateSWGroupKeyInfo(
 
 //
 // ---------------------------------------------------------------
-// 2011/03/04 MH Move all new CAN search metho to here forcommon binary . 
+// 2011/03/04 MH Move all new CAN search metho to here forcommon binary .
 // We need to reorganize the locaton in he future.
 //

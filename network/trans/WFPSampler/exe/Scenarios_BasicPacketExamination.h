@@ -6,7 +6,7 @@
 //      Scenarios_BasicPacketExamination.h
 //
 //   Abstract:
-//      This module contains prototypes for functions which run the specified 
+//      This module contains prototypes for functions which run the specified
 //         BASIC_PACKET_EXAMINATION scenario.
 //
 //   Author:

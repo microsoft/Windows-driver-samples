@@ -6,20 +6,20 @@
 //      ClassifyFunctions_BasicPacketModificationCallouts.cpp
 //
 //   Abstract:
-//      This module contains WFP Classify functions for modifying and injecting packets back into 
+//      This module contains WFP Classify functions for modifying and injecting packets back into
 //         the data path using the clone / block / inject method.
 //
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //       ClassifyBasicPacketModification
 //
 //       <Module>
 //          Classify                - Function is an FWPS_CALLOUT_CLASSIFY_FN
 //       <Scenario>
-//          BasicPacketModification - Function demonstrates the clone / block / modify / inject 
+//          BasicPacketModification - Function demonstrates the clone / block / modify / inject
 //                                       model.
 //
 //      <Action><Scenario><Modifier>
@@ -34,18 +34,18 @@
 //          Perform                   - Executes the desired scenario.
 //        }
 //       <Scenario>
-//          BasicPacketModification   - Function demonstrates the clone / block / modify / inject 
+//          BasicPacketModification   - Function demonstrates the clone / block / modify / inject
 //                                         model.
 //       <Modifier>
-//          DeferredProcedureCall     - DPC routine for Out of Band injection which dispatches the 
+//          DeferredProcedureCall     - DPC routine for Out of Band injection which dispatches the
 //                                         proper Perform Function.
 //          WorkItemRoutine           - WorkItem Routine for Out of Band Injection which dispatches
 //                                         the proper Perform Function.
 //          AtInboundMACFrame         - Function operates on:
-//                                         FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET, and 
+//                                         FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET, and
 //                                         FWPM_LAYER_INBOUND_MAC_NATIVE.
 //          AtOutboundMACFrame        - Function operates on:
-//                                         FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET, and 
+//                                         FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET, and
 //                                         FWPM_LAYER_OUTBOUND_MAC_NATIVE.
 //          AtEgressVSwitchEthernet   - Function operates on:
 //                                         FWPM_LAYER_EGRESS_VSWITCH_ETHERNET.
@@ -57,18 +57,18 @@
 //                                         FWPM_LAYER_OUTBOUND_IPPACKET_V{4/6}
 //          AtForward                 - Function operates on:
 //                                         FWPM_LAYER_IPFORWARD_V{4/6}
-//          AtInboundTransport        - Function operates on: 
+//          AtInboundTransport        - Function operates on:
 //                                         FWPM_LAYER_INBOUND_TRANSPORT_V{4/6},
 //                                         FWPM_LAYER_INBOUND_ICMP_ERROR_V{4/6},
 //                                         FWPM_LAYER_DATAGRAM_DATA_V{4/6},
-//                                         FWPM_LAYER_STREAM_PACKET_V{4/6}, and 
+//                                         FWPM_LAYER_STREAM_PACKET_V{4/6}, and
 //                                         FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V{4/6}
 //                                         FWPM_LAYER_ALE_FLOW_ESTABLISHED_V{4/6}
 //          AtOutboundTransport       - Function operates on:
 //                                         FWPM_LAYER_OUTBOUND_TRANSPORT_V{4/6},
 //                                         FWPM_LAYER_OUTBOUND_ICMP_ERROR_V{4/6},
 //                                         FWPM_LAYER_DATAGRAM_DATA_V{4/6},
-//                                         FWPM_LAYER_STREAM_PACKET_V{4/6}, and 
+//                                         FWPM_LAYER_STREAM_PACKET_V{4/6}, and
 //                                         FWPM_LAYER_ALE_AUTH_CONNECT_V{4/6}
 //                                         FWPM_LAYER_ALE_FLOW_ESTABLISHED_V{4/6}
 //
@@ -97,10 +97,10 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, enhance 
-//                                              traces, fix weakhost injection, fix expected 
-//                                              offsets,fix copy / paste issues with modifying dst 
-//                                              port, and add support for multiple injectors and 
+//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, enhance
+//                                              traces, fix weakhost injection, fix expected
+//                                              offsets,fix copy / paste issues with modifying dst
+//                                              port, and add support for multiple injectors and
 //                                              controlData.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,9 +112,9 @@
 
 /**
  @private_function="PerformBasicPacketModificationAtInboundMACFrame"
- 
-   Purpose:  Clones the NET_BUFFER_LIST, modifies it with data from the associated context and 
-             injects the clone back to the stack's inbound path from the incoming MAC Layers 
+
+   Purpose:  Clones the NET_BUFFER_LIST, modifies it with data from the associated context and
+             injects the clone back to the stack's inbound path from the incoming MAC Layers
              using FwpsInjectMacReceiveAsync().                                                 <br>
                                                                                                 <br>
    Notes:    Applies to the following inbound layers:                                           <br>
@@ -285,145 +285,145 @@ NTSTATUS PerformBasicPacketModificationAtInboundMACFrame(_In_ CLASSIFY_DATA** pp
                case IPPROTO_ICMP:
                {
                   UINT32 icmpHeaderSize = ICMP_HEADER_MIN_SIZE;
-            
+
                   if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                     FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                      icmpHeaderSize = pMetadata->transportHeaderSize;
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE)
                   {
                      FWP_VALUE0 icmpType;
-            
+
                      icmpType.type  = FWP_UINT8;
                      icmpType.uint8 = (UINT8)ntohs(pModificationData->transportData.sourcePort);
-            
+
                      status = KrnlHlprICMPv4HeaderModifyType(&icmpType,
                                                              pNetBufferList,
                                                              icmpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                   {
                      FWP_VALUE0 icmpCode;
-                  
+
                      icmpCode.type  = FWP_UINT8;
                      icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
-            
+
                      status = KrnlHlprICMPv4HeaderModifyCode(&icmpCode,
                                                              pNetBufferList,
                                                              icmpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   break;
                }
                case IPPROTO_TCP:
                {
                   UINT32 tcpHeaderSize = TCP_HEADER_MIN_SIZE;
-            
+
                   if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                     FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                      tcpHeaderSize = pMetadata->transportHeaderSize;
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT)
                   {
                      FWP_VALUE0 srcPort;
-            
+
                      srcPort.type   = FWP_UINT16;
                      srcPort.uint16 = pModificationData->transportData.sourcePort;
-            
+
                      status = KrnlHlprTCPHeaderModifySourcePort(&srcPort,
                                                                 pNetBufferList,
                                                                 tcpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT)
                   {
                      FWP_VALUE0 dstPort;
-            
+
                      dstPort.type   = FWP_UINT16;
                      dstPort.uint16 = pModificationData->transportData.destinationPort;
-            
+
                      status = KrnlHlprTCPHeaderModifyDestinationPort(&dstPort,
                                                                      pNetBufferList,
                                                                      tcpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   break;
                }
                case IPPROTO_UDP:
                {
                   UINT32 udpHeaderSize = UDP_HEADER_MIN_SIZE;
-            
+
                   if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                     FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                      udpHeaderSize = pMetadata->transportHeaderSize;
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT)
                   {
                      FWP_VALUE0 srcPort;
-            
+
                      srcPort.type   = FWP_UINT16;
                      srcPort.uint16 = pModificationData->transportData.sourcePort;
-            
+
                      status = KrnlHlprUDPHeaderModifySourcePort(&srcPort,
                                                                 pNetBufferList,
                                                                 udpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT)
                   {
                      FWP_VALUE0 dstPort;
-            
+
                      dstPort.type   = FWP_UINT16;
                      dstPort.uint16 = pModificationData->transportData.destinationPort;
-            
+
                      status = KrnlHlprUDPHeaderModifyDestinationPort(&dstPort,
                                                                      pNetBufferList,
                                                                      udpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   break;
                }
                case IPPROTO_ICMPV6:
                {
                   UINT32 icmpHeaderSize = ICMP_HEADER_MIN_SIZE;
-            
+
                   if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                     FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                      icmpHeaderSize = pMetadata->transportHeaderSize;
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE)
                   {
                      FWP_VALUE0 icmpType;
-            
+
                      icmpType.type  = FWP_UINT8;
                      icmpType.uint8 = (UINT8)ntohs(pModificationData->transportData.sourcePort);
-            
+
                      status = KrnlHlprICMPv6HeaderModifyType(&icmpType,
                                                              pNetBufferList,
                                                              icmpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                   {
                      FWP_VALUE0 icmpCode;
-            
+
                      icmpCode.type  = FWP_UINT8;
                      icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
-            
+
                      status = KrnlHlprICMPv6HeaderModifyCode(&icmpCode,
                                                              pNetBufferList,
                                                              icmpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   break;
                }
             }
@@ -443,7 +443,7 @@ NTSTATUS PerformBasicPacketModificationAtInboundMACFrame(_In_ CLASSIFY_DATA** pp
                           DPFLTR_ERROR_LEVEL,
                           " !!!! PerformBasicPacketModificationAtInboundMACFrame: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                           status);
-            
+
                HLPR_BAIL;
             }
 
@@ -569,7 +569,7 @@ NTSTATUS PerformBasicPacketModificationAtInboundMACFrame(_In_ CLASSIFY_DATA** pp
                        DPFLTR_ERROR_LEVEL,
                        " !!!! PerformBasicPacketModificationAtInboundMACFrame: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                        status);
-         
+
             HLPR_BAIL;
          }
       }
@@ -588,9 +588,9 @@ NTSTATUS PerformBasicPacketModificationAtInboundMACFrame(_In_ CLASSIFY_DATA** pp
                      WFPSAMPLER_CALLOUT_DRIVER_TAG);
             HLPR_BAIL_ON_ALLOC_FAILURE(value.byteArray6,
                                        status);
-            
+
             value.type = FWP_BYTE_ARRAY6_TYPE;
-            
+
             RtlCopyMemory(value.byteArray6->byteArray6,
                           pModificationData->macData.pSourceMACAddress,
                           ETHERNET_ADDRESS_SIZE);
@@ -620,9 +620,9 @@ NTSTATUS PerformBasicPacketModificationAtInboundMACFrame(_In_ CLASSIFY_DATA** pp
                                        status);
 
 #pragma warning(pop)
-            
+
             value.type = FWP_BYTE_ARRAY6_TYPE;
-            
+
             RtlCopyMemory(value.byteArray6->byteArray6,
                           pModificationData->macData.pDestinationMACAddress,
                           ETHERNET_ADDRESS_SIZE);
@@ -691,8 +691,8 @@ NTSTATUS PerformBasicPacketModificationAtInboundMACFrame(_In_ CLASSIFY_DATA** pp
 
 /**
  @private_function="PerformBasicPacketInjectionAtOutboundMACFrame"
- 
-   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack from the 
+
+   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack from the
              outgoing MAC Layers using FwpsInjectMacSendAsync().                                <br>
                                                                                                 <br>
    Notes:    Applies to the following inbound layers:                                           <br>
@@ -830,145 +830,145 @@ NTSTATUS PerformBasicPacketModificationAtOutboundMACFrame(_In_ CLASSIFY_DATA** p
                case IPPROTO_ICMP:
                {
                   UINT32 icmpHeaderSize = ICMP_HEADER_MIN_SIZE;
-            
+
                   if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                     FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                      icmpHeaderSize = pMetadata->transportHeaderSize;
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE)
                   {
                      FWP_VALUE0 icmpType;
-            
+
                      icmpType.type  = FWP_UINT8;
                      icmpType.uint8 = (UINT8)ntohs(pModificationData->transportData.sourcePort);
-            
+
                      status = KrnlHlprICMPv4HeaderModifyType(&icmpType,
                                                              pNetBufferList,
                                                              icmpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                   {
                      FWP_VALUE0 icmpCode;
-                  
+
                      icmpCode.type  = FWP_UINT8;
                      icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
-            
+
                      status = KrnlHlprICMPv4HeaderModifyCode(&icmpCode,
                                                              pNetBufferList,
                                                              icmpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   break;
                }
                case IPPROTO_TCP:
                {
                   UINT32 tcpHeaderSize = TCP_HEADER_MIN_SIZE;
-            
+
                   if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                     FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                      tcpHeaderSize = pMetadata->transportHeaderSize;
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT)
                   {
                      FWP_VALUE0 srcPort;
-            
+
                      srcPort.type   = FWP_UINT16;
                      srcPort.uint16 = pModificationData->transportData.sourcePort;
-            
+
                      status = KrnlHlprTCPHeaderModifySourcePort(&srcPort,
                                                                 pNetBufferList,
                                                                 tcpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT)
                   {
                      FWP_VALUE0 dstPort;
-            
+
                      dstPort.type   = FWP_UINT16;
                      dstPort.uint16 = pModificationData->transportData.destinationPort;
-            
+
                      status = KrnlHlprTCPHeaderModifyDestinationPort(&dstPort,
                                                                      pNetBufferList,
                                                                      tcpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   break;
                }
                case IPPROTO_UDP:
                {
                   UINT32 udpHeaderSize = UDP_HEADER_MIN_SIZE;
-            
+
                   if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                     FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                      udpHeaderSize = pMetadata->transportHeaderSize;
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT)
                   {
                      FWP_VALUE0 srcPort;
-            
+
                      srcPort.type   = FWP_UINT16;
                      srcPort.uint16 = pModificationData->transportData.sourcePort;
-            
+
                      status = KrnlHlprUDPHeaderModifySourcePort(&srcPort,
                                                                 pNetBufferList,
                                                                 udpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT)
                   {
                      FWP_VALUE0 dstPort;
-            
+
                      dstPort.type   = FWP_UINT16;
                      dstPort.uint16 = pModificationData->transportData.destinationPort;
-            
+
                      status = KrnlHlprUDPHeaderModifyDestinationPort(&dstPort,
                                                                      pNetBufferList,
                                                                      udpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   break;
                }
                case IPPROTO_ICMPV6:
                {
                   UINT32 icmpHeaderSize = ICMP_HEADER_MIN_SIZE;
-            
+
                   if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                     FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                      icmpHeaderSize = pMetadata->transportHeaderSize;
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE)
                   {
                      FWP_VALUE0 icmpType;
-            
+
                      icmpType.type  = FWP_UINT8;
                      icmpType.uint8 = (UINT8)ntohs(pModificationData->transportData.sourcePort);
-            
+
                      status = KrnlHlprICMPv6HeaderModifyType(&icmpType,
                                                              pNetBufferList,
                                                              icmpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                   {
                      FWP_VALUE0 icmpCode;
-            
+
                      icmpCode.type  = FWP_UINT8;
                      icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
-            
+
                      status = KrnlHlprICMPv6HeaderModifyCode(&icmpCode,
                                                              pNetBufferList,
                                                              icmpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   break;
                }
             }
@@ -988,7 +988,7 @@ NTSTATUS PerformBasicPacketModificationAtOutboundMACFrame(_In_ CLASSIFY_DATA** p
                           DPFLTR_ERROR_LEVEL,
                           " !!!! PerformBasicPacketModificationAtOutboundMacFrame: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                           status);
-            
+
                HLPR_BAIL;
             }
 
@@ -1114,7 +1114,7 @@ NTSTATUS PerformBasicPacketModificationAtOutboundMACFrame(_In_ CLASSIFY_DATA** p
                        DPFLTR_ERROR_LEVEL,
                        " !!!! PerformBasicPacketModificationAtOutboundMACFrame: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                        status);
-         
+
             HLPR_BAIL;
          }
       }
@@ -1124,37 +1124,37 @@ NTSTATUS PerformBasicPacketModificationAtOutboundMACFrame(_In_ CLASSIFY_DATA** p
             if(pModificationData->macData.flags & PCPMDF_MODIFY_MAC_HEADER_SOURCE_ADDRESS)
             {
                FWP_VALUE value;
-   
+
                RtlZeroMemory(&value,
                              sizeof(FWP_VALUE));
-   
+
                HLPR_NEW(value.byteArray6,
                         FWP_BYTE_ARRAY6,
                         WFPSAMPLER_CALLOUT_DRIVER_TAG);
                HLPR_BAIL_ON_ALLOC_FAILURE(value.byteArray6,
                                           status);
-               
+
                value.type = FWP_BYTE_ARRAY6_TYPE;
-               
+
                RtlCopyMemory(value.byteArray6->byteArray6,
                              pModificationData->macData.pSourceMACAddress,
                              ETHERNET_ADDRESS_SIZE);
-   
+
                status = KrnlHlprMACHeaderModifySourceAddress(&value,
                                                              pNetBufferList);
-   
+
                KrnlHlprFwpValuePurgeLocalCopy(&value);
-   
+
                HLPR_BAIL_ON_FAILURE(status);
             }
-   
+
             if(pModificationData->macData.flags & PCPMDF_MODIFY_MAC_HEADER_DESTINATION_ADDRESS)
             {
                FWP_VALUE value;
-   
+
                RtlZeroMemory(&value,
                              sizeof(FWP_VALUE));
-   
+
 #pragma warning(push)
 #pragma warning(disable: 6014) /// value.byteArray6 will be freed in with call to KrnlHlprFwpValuePurgeLocalCopy
 
@@ -1165,18 +1165,18 @@ NTSTATUS PerformBasicPacketModificationAtOutboundMACFrame(_In_ CLASSIFY_DATA** p
                                           status);
 
 #pragma warning(pop)
-               
+
                value.type = FWP_BYTE_ARRAY6_TYPE;
-               
+
                RtlCopyMemory(value.byteArray6->byteArray6,
                              pModificationData->macData.pDestinationMACAddress,
                              ETHERNET_ADDRESS_SIZE);
-   
+
                status = KrnlHlprMACHeaderModifyDestinationAddress(&value,
                                                                   pNetBufferList);
-   
+
                KrnlHlprFwpValuePurgeLocalCopy(&value);
-   
+
                HLPR_BAIL_ON_FAILURE(status);
             }
          }
@@ -1233,9 +1233,9 @@ NTSTATUS PerformBasicPacketModificationAtOutboundMACFrame(_In_ CLASSIFY_DATA** p
 
 /**
  @private_function="PerformBasicPacketModificationAtIngressVSwitchEthernet"
- 
-   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the virtual switch's 
-             ingress path from the ingress VSwitch Layers using 
+
+   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the virtual switch's
+             ingress path from the ingress VSwitch Layers using
              FwpsInjectvSwitchEthernetIngressAsync0().                                          <br>
                                                                                                 <br>
    Notes:    Applies to the following ingress layers:                                           <br>
@@ -1387,145 +1387,145 @@ NTSTATUS PerformBasicPacketModificationAtIngressVSwitchEthernet(_In_ CLASSIFY_DA
                case IPPROTO_ICMP:
                {
                   UINT32 icmpHeaderSize = ICMP_HEADER_MIN_SIZE;
-            
+
                   if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                     FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                      icmpHeaderSize = pMetadata->transportHeaderSize;
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE)
                   {
                      FWP_VALUE0 icmpType;
-            
+
                      icmpType.type  = FWP_UINT8;
                      icmpType.uint8 = (UINT8)ntohs(pModificationData->transportData.sourcePort);
-            
+
                      status = KrnlHlprICMPv4HeaderModifyType(&icmpType,
                                                              pNetBufferList,
                                                              icmpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                   {
                      FWP_VALUE0 icmpCode;
-                  
+
                      icmpCode.type  = FWP_UINT8;
                      icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
-            
+
                      status = KrnlHlprICMPv4HeaderModifyCode(&icmpCode,
                                                              pNetBufferList,
                                                              icmpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   break;
                }
                case IPPROTO_TCP:
                {
                   UINT32 tcpHeaderSize = TCP_HEADER_MIN_SIZE;
-            
+
                   if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                     FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                      tcpHeaderSize = pMetadata->transportHeaderSize;
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT)
                   {
                      FWP_VALUE0 srcPort;
-            
+
                      srcPort.type   = FWP_UINT16;
                      srcPort.uint16 = pModificationData->transportData.sourcePort;
-            
+
                      status = KrnlHlprTCPHeaderModifySourcePort(&srcPort,
                                                                 pNetBufferList,
                                                                 tcpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT)
                   {
                      FWP_VALUE0 dstPort;
-            
+
                      dstPort.type   = FWP_UINT16;
                      dstPort.uint16 = pModificationData->transportData.destinationPort;
-            
+
                      status = KrnlHlprTCPHeaderModifyDestinationPort(&dstPort,
                                                                      pNetBufferList,
                                                                      tcpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   break;
                }
                case IPPROTO_UDP:
                {
                   UINT32 udpHeaderSize = UDP_HEADER_MIN_SIZE;
-            
+
                   if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                     FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                      udpHeaderSize = pMetadata->transportHeaderSize;
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT)
                   {
                      FWP_VALUE0 srcPort;
-            
+
                      srcPort.type   = FWP_UINT16;
                      srcPort.uint16 = pModificationData->transportData.sourcePort;
-            
+
                      status = KrnlHlprUDPHeaderModifySourcePort(&srcPort,
                                                                 pNetBufferList,
                                                                 udpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT)
                   {
                      FWP_VALUE0 dstPort;
-            
+
                      dstPort.type   = FWP_UINT16;
                      dstPort.uint16 = pModificationData->transportData.destinationPort;
-            
+
                      status = KrnlHlprUDPHeaderModifyDestinationPort(&dstPort,
                                                                      pNetBufferList,
                                                                      udpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   break;
                }
                case IPPROTO_ICMPV6:
                {
                   UINT32 icmpHeaderSize = ICMP_HEADER_MIN_SIZE;
-            
+
                   if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                     FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                      icmpHeaderSize = pMetadata->transportHeaderSize;
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE)
                   {
                      FWP_VALUE0 icmpType;
-            
+
                      icmpType.type  = FWP_UINT8;
                      icmpType.uint8 = (UINT8)ntohs(pModificationData->transportData.sourcePort);
-            
+
                      status = KrnlHlprICMPv6HeaderModifyType(&icmpType,
                                                              pNetBufferList,
                                                              icmpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                   {
                      FWP_VALUE0 icmpCode;
-            
+
                      icmpCode.type  = FWP_UINT8;
                      icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
-            
+
                      status = KrnlHlprICMPv6HeaderModifyCode(&icmpCode,
                                                              pNetBufferList,
                                                              icmpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   break;
                }
             }
@@ -1545,7 +1545,7 @@ NTSTATUS PerformBasicPacketModificationAtIngressVSwitchEthernet(_In_ CLASSIFY_DA
                           DPFLTR_ERROR_LEVEL,
                           " !!!! PerformBasicPacketModificationAtIngressVSwitchEthernet: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                           status);
-            
+
                HLPR_BAIL;
             }
 
@@ -1671,7 +1671,7 @@ NTSTATUS PerformBasicPacketModificationAtIngressVSwitchEthernet(_In_ CLASSIFY_DA
                        DPFLTR_ERROR_LEVEL,
                        " !!!! PerformBasicPacketModificationAtIngressVSwitchEthernet: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                        status);
-         
+
             HLPR_BAIL;
          }
       }
@@ -1681,37 +1681,37 @@ NTSTATUS PerformBasicPacketModificationAtIngressVSwitchEthernet(_In_ CLASSIFY_DA
             if(pModificationData->macData.flags & PCPMDF_MODIFY_MAC_HEADER_SOURCE_ADDRESS)
             {
                FWP_VALUE value;
-   
+
                RtlZeroMemory(&value,
                              sizeof(FWP_VALUE));
-   
+
                HLPR_NEW(value.byteArray6,
                         FWP_BYTE_ARRAY6,
                         WFPSAMPLER_CALLOUT_DRIVER_TAG);
                HLPR_BAIL_ON_ALLOC_FAILURE(value.byteArray6,
                                           status);
-               
+
                value.type = FWP_BYTE_ARRAY6_TYPE;
-               
+
                RtlCopyMemory(value.byteArray6->byteArray6,
                              pModificationData->macData.pSourceMACAddress,
                              ETHERNET_ADDRESS_SIZE);
-   
+
                status = KrnlHlprMACHeaderModifySourceAddress(&value,
                                                              pNetBufferList);
-   
+
                KrnlHlprFwpValuePurgeLocalCopy(&value);
-   
+
                HLPR_BAIL_ON_FAILURE(status);
             }
-   
+
             if(pModificationData->macData.flags & PCPMDF_MODIFY_MAC_HEADER_DESTINATION_ADDRESS)
             {
                FWP_VALUE value;
-   
+
                RtlZeroMemory(&value,
                              sizeof(FWP_VALUE));
-   
+
 #pragma warning(push)
 #pragma warning(disable: 6014) /// value.byteArray6 will be freed in with call to KrnlHlprFwpValuePurgeLocalCopy
 
@@ -1724,16 +1724,16 @@ NTSTATUS PerformBasicPacketModificationAtIngressVSwitchEthernet(_In_ CLASSIFY_DA
 #pragma warning(pop)
 
                value.type = FWP_BYTE_ARRAY6_TYPE;
-               
+
                RtlCopyMemory(value.byteArray6->byteArray6,
                              pModificationData->macData.pDestinationMACAddress,
                              ETHERNET_ADDRESS_SIZE);
-   
+
                status = KrnlHlprMACHeaderModifyDestinationAddress(&value,
                                                                   pNetBufferList);
-   
+
                KrnlHlprFwpValuePurgeLocalCopy(&value);
-   
+
                HLPR_BAIL_ON_FAILURE(status);
             }
          }
@@ -1792,9 +1792,9 @@ NTSTATUS PerformBasicPacketModificationAtIngressVSwitchEthernet(_In_ CLASSIFY_DA
 
 /**
  @private_function="PerformBasicPacketModificationAtEgressVSwitchEthernet"
- 
-   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the virtual switch's 
-             ingress path from the egress VSwitch Layers using 
+
+   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the virtual switch's
+             ingress path from the egress VSwitch Layers using
              FwpsInjectvSwitchEthernetIngressAsync0().                                          <br>
                                                                                                 <br>
    Notes:    Applies to the following egress layers:                                            <br>
@@ -1946,145 +1946,145 @@ NTSTATUS PerformBasicPacketModificationAtEgressVSwitchEthernet(_In_ CLASSIFY_DAT
                case IPPROTO_ICMP:
                {
                   UINT32 icmpHeaderSize = ICMP_HEADER_MIN_SIZE;
-            
+
                   if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                     FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                      icmpHeaderSize = pMetadata->transportHeaderSize;
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE)
                   {
                      FWP_VALUE0 icmpType;
-            
+
                      icmpType.type  = FWP_UINT8;
                      icmpType.uint8 = (UINT8)ntohs(pModificationData->transportData.sourcePort);
-            
+
                      status = KrnlHlprICMPv4HeaderModifyType(&icmpType,
                                                              pNetBufferList,
                                                              icmpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                   {
                      FWP_VALUE0 icmpCode;
-                  
+
                      icmpCode.type  = FWP_UINT8;
                      icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
-            
+
                      status = KrnlHlprICMPv4HeaderModifyCode(&icmpCode,
                                                              pNetBufferList,
                                                              icmpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   break;
                }
                case IPPROTO_TCP:
                {
                   UINT32 tcpHeaderSize = TCP_HEADER_MIN_SIZE;
-            
+
                   if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                     FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                      tcpHeaderSize = pMetadata->transportHeaderSize;
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT)
                   {
                      FWP_VALUE0 srcPort;
-            
+
                      srcPort.type   = FWP_UINT16;
                      srcPort.uint16 = pModificationData->transportData.sourcePort;
-            
+
                      status = KrnlHlprTCPHeaderModifySourcePort(&srcPort,
                                                                 pNetBufferList,
                                                                 tcpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT)
                   {
                      FWP_VALUE0 dstPort;
-            
+
                      dstPort.type   = FWP_UINT16;
                      dstPort.uint16 = pModificationData->transportData.destinationPort;
-            
+
                      status = KrnlHlprTCPHeaderModifyDestinationPort(&dstPort,
                                                                      pNetBufferList,
                                                                      tcpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   break;
                }
                case IPPROTO_UDP:
                {
                   UINT32 udpHeaderSize = UDP_HEADER_MIN_SIZE;
-            
+
                   if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                     FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                      udpHeaderSize = pMetadata->transportHeaderSize;
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT)
                   {
                      FWP_VALUE0 srcPort;
-            
+
                      srcPort.type   = FWP_UINT16;
                      srcPort.uint16 = pModificationData->transportData.sourcePort;
-            
+
                      status = KrnlHlprUDPHeaderModifySourcePort(&srcPort,
                                                                 pNetBufferList,
                                                                 udpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT)
                   {
                      FWP_VALUE0 dstPort;
-            
+
                      dstPort.type   = FWP_UINT16;
                      dstPort.uint16 = pModificationData->transportData.destinationPort;
-            
+
                      status = KrnlHlprUDPHeaderModifyDestinationPort(&dstPort,
                                                                      pNetBufferList,
                                                                      udpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   break;
                }
                case IPPROTO_ICMPV6:
                {
                   UINT32 icmpHeaderSize = ICMP_HEADER_MIN_SIZE;
-            
+
                   if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                     FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                      icmpHeaderSize = pMetadata->transportHeaderSize;
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE)
                   {
                      FWP_VALUE0 icmpType;
-            
+
                      icmpType.type  = FWP_UINT8;
                      icmpType.uint8 = (UINT8)ntohs(pModificationData->transportData.sourcePort);
-            
+
                      status = KrnlHlprICMPv6HeaderModifyType(&icmpType,
                                                              pNetBufferList,
                                                              icmpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                   {
                      FWP_VALUE0 icmpCode;
-            
+
                      icmpCode.type  = FWP_UINT8;
                      icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
-            
+
                      status = KrnlHlprICMPv6HeaderModifyCode(&icmpCode,
                                                              pNetBufferList,
                                                              icmpHeaderSize);
                      HLPR_BAIL_ON_FAILURE_2(status);
                   }
-            
+
                   break;
                }
             }
@@ -2104,7 +2104,7 @@ NTSTATUS PerformBasicPacketModificationAtEgressVSwitchEthernet(_In_ CLASSIFY_DAT
                           DPFLTR_ERROR_LEVEL,
                           " !!!! PerformBasicPacketModificationAtEgressVSwitchEthernet: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                           status);
-            
+
                HLPR_BAIL;
             }
 
@@ -2230,7 +2230,7 @@ NTSTATUS PerformBasicPacketModificationAtEgressVSwitchEthernet(_In_ CLASSIFY_DAT
                        DPFLTR_ERROR_LEVEL,
                        " !!!! PerformBasicPacketModificationAtEgressVSwitchEthernet: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                        status);
-         
+
             HLPR_BAIL;
          }
       }
@@ -2249,9 +2249,9 @@ NTSTATUS PerformBasicPacketModificationAtEgressVSwitchEthernet(_In_ CLASSIFY_DAT
                      WFPSAMPLER_CALLOUT_DRIVER_TAG);
             HLPR_BAIL_ON_ALLOC_FAILURE(value.byteArray6,
                                        status);
-            
+
             value.type = FWP_BYTE_ARRAY6_TYPE;
-            
+
             RtlCopyMemory(value.byteArray6->byteArray6,
                           pModificationData->macData.pSourceMACAddress,
                           ETHERNET_ADDRESS_SIZE);
@@ -2281,9 +2281,9 @@ NTSTATUS PerformBasicPacketModificationAtEgressVSwitchEthernet(_In_ CLASSIFY_DAT
                                        status);
 
 #pragma warning(pop)
-            
+
             value.type = FWP_BYTE_ARRAY6_TYPE;
-            
+
             RtlCopyMemory(value.byteArray6->byteArray6,
                           pModificationData->macData.pDestinationMACAddress,
                           ETHERNET_ADDRESS_SIZE);
@@ -2353,8 +2353,8 @@ NTSTATUS PerformBasicPacketModificationAtEgressVSwitchEthernet(_In_ CLASSIFY_DAT
 
 /**
  @private_function="PerformBasicPacketModificationAtInboundNetwork"
- 
-   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack from the 
+
+   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack from the
              incoming Network Layers using FwpsInjectNetworkReceiveAsync().                     <br>
                                                                                                 <br>
    Notes:    Applies to the following inbound layers:                                           <br>
@@ -2596,145 +2596,145 @@ NTSTATUS PerformBasicPacketModificationAtInboundNetwork(_In_ CLASSIFY_DATA** ppC
             case IPPROTO_ICMP:
             {
                UINT32 icmpHeaderSize = ICMP_HEADER_MIN_SIZE;
-         
+
                if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                  FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                   icmpHeaderSize = pMetadata->transportHeaderSize;
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE)
                {
                   FWP_VALUE0 icmpType;
-         
+
                   icmpType.type  = FWP_UINT8;
                   icmpType.uint8 = (UINT8)ntohs(pModificationData->transportData.sourcePort);
-         
+
                   status = KrnlHlprICMPv4HeaderModifyType(&icmpType,
                                                           pNetBufferList,
                                                           icmpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                {
                   FWP_VALUE0 icmpCode;
-               
+
                   icmpCode.type  = FWP_UINT8;
                   icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
-         
+
                   status = KrnlHlprICMPv4HeaderModifyCode(&icmpCode,
                                                           pNetBufferList,
                                                           icmpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                break;
             }
             case IPPROTO_TCP:
             {
                UINT32 tcpHeaderSize = TCP_HEADER_MIN_SIZE;
-         
+
                if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                  FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                   tcpHeaderSize = pMetadata->transportHeaderSize;
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT)
                {
                   FWP_VALUE0 srcPort;
-         
+
                   srcPort.type   = FWP_UINT16;
                   srcPort.uint16 = pModificationData->transportData.sourcePort;
-         
+
                   status = KrnlHlprTCPHeaderModifySourcePort(&srcPort,
                                                              pNetBufferList,
                                                              tcpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT)
                {
                   FWP_VALUE0 dstPort;
-         
+
                   dstPort.type   = FWP_UINT16;
                   dstPort.uint16 = pModificationData->transportData.destinationPort;
-         
+
                   status = KrnlHlprTCPHeaderModifyDestinationPort(&dstPort,
                                                                   pNetBufferList,
                                                                   tcpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                break;
             }
             case IPPROTO_UDP:
             {
                UINT32 udpHeaderSize = UDP_HEADER_MIN_SIZE;
-         
+
                if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                  FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                   udpHeaderSize = pMetadata->transportHeaderSize;
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT)
                {
                   FWP_VALUE0 srcPort;
-         
+
                   srcPort.type   = FWP_UINT16;
                   srcPort.uint16 = pModificationData->transportData.sourcePort;
-         
+
                   status = KrnlHlprUDPHeaderModifySourcePort(&srcPort,
                                                              pNetBufferList,
                                                              udpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT)
                {
                   FWP_VALUE0 dstPort;
-         
+
                   dstPort.type   = FWP_UINT16;
                   dstPort.uint16 = pModificationData->transportData.destinationPort;
-         
+
                   status = KrnlHlprUDPHeaderModifyDestinationPort(&dstPort,
                                                                   pNetBufferList,
                                                                   udpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                break;
             }
             case IPPROTO_ICMPV6:
             {
                UINT32 icmpHeaderSize = ICMP_HEADER_MIN_SIZE;
-         
+
                if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                  FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                   icmpHeaderSize = pMetadata->transportHeaderSize;
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE)
                {
                   FWP_VALUE0 icmpType;
-         
+
                   icmpType.type  = FWP_UINT8;
                   icmpType.uint8 = (UINT8)ntohs(pModificationData->transportData.sourcePort);
-         
+
                   status = KrnlHlprICMPv6HeaderModifyType(&icmpType,
                                                           pNetBufferList,
                                                           icmpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                {
                   FWP_VALUE0 icmpCode;
-         
+
                   icmpCode.type  = FWP_UINT8;
                   icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
-         
+
                   status = KrnlHlprICMPv6HeaderModifyCode(&icmpCode,
                                                           pNetBufferList,
                                                           icmpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                break;
             }
          }
@@ -2752,7 +2752,7 @@ NTSTATUS PerformBasicPacketModificationAtInboundNetwork(_In_ CLASSIFY_DATA** ppC
                        DPFLTR_ERROR_LEVEL,
                        " !!!! PerformBasicPacketModificationAtInboundNetwork: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                        status);
-         
+
             HLPR_BAIL;
          }
 
@@ -2930,7 +2930,7 @@ NTSTATUS PerformBasicPacketModificationAtInboundNetwork(_In_ CLASSIFY_DATA** ppC
                  DPFLTR_ERROR_LEVEL,
                  " !!!! PerformBasicPacketModificationAtInboundNetwork: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                  status);
-   
+
       HLPR_BAIL;
    }
 
@@ -2985,8 +2985,8 @@ NTSTATUS PerformBasicPacketModificationAtInboundNetwork(_In_ CLASSIFY_DATA** ppC
 
 /**
  @private_function="PerformBasicPacketModificationAtOutboundNetwork"
- 
-   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack from the 
+
+   Purpose:  Clones the NET_BUFFER_LIST and injects the clone back to the stack from the
              outgoing Network Layers using FwpsInjectNetworkSendAsync().                        <br>
                                                                                                 <br>
    Notes:    Applies to the following inbound layers:                                           <br>
@@ -3101,145 +3101,145 @@ NTSTATUS PerformBasicPacketModificationAtOutboundNetwork(_In_ CLASSIFY_DATA** pp
             case IPPROTO_ICMP:
             {
                UINT32 icmpHeaderSize = ICMP_HEADER_MIN_SIZE;
-         
+
                if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                  FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                   icmpHeaderSize = pMetadata->transportHeaderSize;
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE)
                {
                   FWP_VALUE0 icmpType;
-         
+
                   icmpType.type  = FWP_UINT8;
                   icmpType.uint8 = (UINT8)ntohs(pModificationData->transportData.sourcePort);
-         
+
                   status = KrnlHlprICMPv4HeaderModifyType(&icmpType,
                                                           pNetBufferList,
                                                           icmpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                {
                   FWP_VALUE0 icmpCode;
-               
+
                   icmpCode.type  = FWP_UINT8;
                   icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
-         
+
                   status = KrnlHlprICMPv4HeaderModifyCode(&icmpCode,
                                                           pNetBufferList,
                                                           icmpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                break;
             }
             case IPPROTO_TCP:
             {
                UINT32 tcpHeaderSize = TCP_HEADER_MIN_SIZE;
-         
+
                if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                  FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                   tcpHeaderSize = pMetadata->transportHeaderSize;
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT)
                {
                   FWP_VALUE0 srcPort;
-         
+
                   srcPort.type   = FWP_UINT16;
                   srcPort.uint16 = pModificationData->transportData.sourcePort;
-         
+
                   status = KrnlHlprTCPHeaderModifySourcePort(&srcPort,
                                                              pNetBufferList,
                                                              tcpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT)
                {
                   FWP_VALUE0 dstPort;
-         
+
                   dstPort.type   = FWP_UINT16;
                   dstPort.uint16 = pModificationData->transportData.destinationPort;
-         
+
                   status = KrnlHlprTCPHeaderModifyDestinationPort(&dstPort,
                                                                   pNetBufferList,
                                                                   tcpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                break;
             }
             case IPPROTO_UDP:
             {
                UINT32 udpHeaderSize = UDP_HEADER_MIN_SIZE;
-         
+
                if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                  FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                   udpHeaderSize = pMetadata->transportHeaderSize;
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT)
                {
                   FWP_VALUE0 srcPort;
-         
+
                   srcPort.type   = FWP_UINT16;
                   srcPort.uint16 = pModificationData->transportData.sourcePort;
-         
+
                   status = KrnlHlprUDPHeaderModifySourcePort(&srcPort,
                                                              pNetBufferList,
                                                              udpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT)
                {
                   FWP_VALUE0 dstPort;
-         
+
                   dstPort.type   = FWP_UINT16;
                   dstPort.uint16 = pModificationData->transportData.destinationPort;
-         
+
                   status = KrnlHlprUDPHeaderModifyDestinationPort(&dstPort,
                                                                   pNetBufferList,
                                                                   udpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                break;
             }
             case IPPROTO_ICMPV6:
             {
                UINT32 icmpHeaderSize = ICMP_HEADER_MIN_SIZE;
-         
+
                if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                  FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                   icmpHeaderSize = pMetadata->transportHeaderSize;
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE)
                {
                   FWP_VALUE0 icmpType;
-         
+
                   icmpType.type  = FWP_UINT8;
                   icmpType.uint8 = (UINT8)ntohs(pModificationData->transportData.sourcePort);
-         
+
                   status = KrnlHlprICMPv6HeaderModifyType(&icmpType,
                                                           pNetBufferList,
                                                           icmpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                {
                   FWP_VALUE0 icmpCode;
-         
+
                   icmpCode.type  = FWP_UINT8;
                   icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
-         
+
                   status = KrnlHlprICMPv6HeaderModifyCode(&icmpCode,
                                                           pNetBufferList,
                                                           icmpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                break;
             }
          }
@@ -3259,7 +3259,7 @@ NTSTATUS PerformBasicPacketModificationAtOutboundNetwork(_In_ CLASSIFY_DATA** pp
                        DPFLTR_ERROR_LEVEL,
                        " !!!! PerformBasicPacketModificationAtOutboundNetwork: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                        status);
-         
+
             HLPR_BAIL;
          }
 
@@ -3402,8 +3402,8 @@ NTSTATUS PerformBasicPacketModificationAtOutboundNetwork(_In_ CLASSIFY_DATA** pp
 
 /**
  @private_function="PerformBasicPacketModificationAtForward"
- 
-   Purpose:  Clones the NET_BUFFER_LIST, modifies it with data from the associated context and 
+
+   Purpose:  Clones the NET_BUFFER_LIST, modifies it with data from the associated context and
              injects the clone back to the stack's forward path using FwpsInjectForwardAsync(). <br>
                                                                                                 <br>
    Notes:    Applies to the following forwarding layers:                                        <br>
@@ -3500,14 +3500,14 @@ NTSTATUS PerformBasicPacketModificationAtForward(_In_ CLASSIFY_DATA** ppClassify
       flags = pFlags->uint32;
 
 #if(NTDDI_VERSION >= NTDDI_WIN7)
-   
+
       /// Determine if this is a weakhost forward
       if(flags & FWP_CONDITION_FLAG_IS_INBOUND_PASS_THRU)
          isWeakHostReceive = TRUE;
-   
+
       if(flags & FWP_CONDITION_FLAG_IS_OUTBOUND_PASS_THRU)
          isWeakHostSend = TRUE;
-   
+
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
 
    /// Initial offset is at the IP Header, so just clone the entire NET_BUFFER_LIST.
@@ -3627,145 +3627,145 @@ NTSTATUS PerformBasicPacketModificationAtForward(_In_ CLASSIFY_DATA** ppClassify
             case IPPROTO_ICMP:
             {
                UINT32 icmpHeaderSize = ICMP_HEADER_MIN_SIZE;
-         
+
                if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                  FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                   icmpHeaderSize = pMetadata->transportHeaderSize;
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE)
                {
                   FWP_VALUE0 icmpType;
-         
+
                   icmpType.type  = FWP_UINT8;
                   icmpType.uint8 = (UINT8)ntohs(pModificationData->transportData.sourcePort);
-         
+
                   status = KrnlHlprICMPv4HeaderModifyType(&icmpType,
                                                           pNetBufferList,
                                                           icmpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                {
                   FWP_VALUE0 icmpCode;
-               
+
                   icmpCode.type  = FWP_UINT8;
                   icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
-         
+
                   status = KrnlHlprICMPv4HeaderModifyCode(&icmpCode,
                                                           pNetBufferList,
                                                           icmpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                break;
             }
             case IPPROTO_TCP:
             {
                UINT32 tcpHeaderSize = TCP_HEADER_MIN_SIZE;
-         
+
                if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                  FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                   tcpHeaderSize = pMetadata->transportHeaderSize;
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT)
                {
                   FWP_VALUE0 srcPort;
-         
+
                   srcPort.type   = FWP_UINT16;
                   srcPort.uint16 = pModificationData->transportData.sourcePort;
-         
+
                   status = KrnlHlprTCPHeaderModifySourcePort(&srcPort,
                                                              pNetBufferList,
                                                              tcpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT)
                {
                   FWP_VALUE0 dstPort;
-         
+
                   dstPort.type   = FWP_UINT16;
                   dstPort.uint16 = pModificationData->transportData.destinationPort;
-         
+
                   status = KrnlHlprTCPHeaderModifyDestinationPort(&dstPort,
                                                                   pNetBufferList,
                                                                   tcpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                break;
             }
             case IPPROTO_UDP:
             {
                UINT32 udpHeaderSize = UDP_HEADER_MIN_SIZE;
-         
+
                if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                  FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                   udpHeaderSize = pMetadata->transportHeaderSize;
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT)
                {
                   FWP_VALUE0 srcPort;
-         
+
                   srcPort.type   = FWP_UINT16;
                   srcPort.uint16 = pModificationData->transportData.sourcePort;
-         
+
                   status = KrnlHlprUDPHeaderModifySourcePort(&srcPort,
                                                              pNetBufferList,
                                                              udpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT)
                {
                   FWP_VALUE0 dstPort;
-         
+
                   dstPort.type   = FWP_UINT16;
                   dstPort.uint16 = pModificationData->transportData.destinationPort;
-         
+
                   status = KrnlHlprUDPHeaderModifyDestinationPort(&dstPort,
                                                                   pNetBufferList,
                                                                   udpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                break;
             }
             case IPPROTO_ICMPV6:
             {
                UINT32 icmpHeaderSize = ICMP_HEADER_MIN_SIZE;
-         
+
                if(FWPS_IS_METADATA_FIELD_PRESENT(pMetadata,
                                                  FWPS_METADATA_FIELD_TRANSPORT_HEADER_SIZE))
                   icmpHeaderSize = pMetadata->transportHeaderSize;
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE)
                {
                   FWP_VALUE0 icmpType;
-         
+
                   icmpType.type  = FWP_UINT8;
                   icmpType.uint8 = (UINT8)ntohs(pModificationData->transportData.sourcePort);
-         
+
                   status = KrnlHlprICMPv6HeaderModifyType(&icmpType,
                                                           pNetBufferList,
                                                           icmpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                {
                   FWP_VALUE0 icmpCode;
-         
+
                   icmpCode.type  = FWP_UINT8;
                   icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
-         
+
                   status = KrnlHlprICMPv6HeaderModifyCode(&icmpCode,
                                                           pNetBufferList,
                                                           icmpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                break;
             }
          }
@@ -3785,7 +3785,7 @@ NTSTATUS PerformBasicPacketModificationAtForward(_In_ CLASSIFY_DATA** ppClassify
                        DPFLTR_ERROR_LEVEL,
                        " !!!! PerformBasicPacketModificationAtForward: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                        status);
-         
+
             HLPR_BAIL;
          }
 
@@ -3882,8 +3882,8 @@ NTSTATUS PerformBasicPacketModificationAtForward(_In_ CLASSIFY_DATA** ppClassify
       }
    }
 
-   /// If the Forwarded NBL is destined locally, inject using FwpsInjectNetworkReceiveAsync rather 
-   /// than the traditional FwpsInjectForwardAsync otherwise STATUS_INVALID_PARAMETER will be 
+   /// If the Forwarded NBL is destined locally, inject using FwpsInjectNetworkReceiveAsync rather
+   /// than the traditional FwpsInjectForwardAsync otherwise STATUS_INVALID_PARAMETER will be
    /// returned in the NBL.status and the injection fails.
    if(isWeakHostReceive)
    {
@@ -3915,8 +3915,8 @@ NTSTATUS PerformBasicPacketModificationAtForward(_In_ CLASSIFY_DATA** ppClassify
                                              CompleteBasicPacketInjection,
                                              pCompletionData);
    }
-   /// If the Forwarded NBL is sourced locally, but another interface, inject using 
-   /// FwpsInjectNetworkSendAsync rather than the traditional FwpsInjectForwardAsync otherwise 
+   /// If the Forwarded NBL is sourced locally, but another interface, inject using
+   /// FwpsInjectNetworkSendAsync rather than the traditional FwpsInjectForwardAsync otherwise
    /// STATUS_INVALID_PARAMETER will be returned in the NBL.status and the injection fails
    else if(isWeakHostSend)
    {
@@ -3991,9 +3991,9 @@ NTSTATUS PerformBasicPacketModificationAtForward(_In_ CLASSIFY_DATA** ppClassify
 
 /**
  @private_function="PerformBasicPacketModificationAtInboundTransport"
- 
-   Purpose:  Clones the NET_BUFFER_LIST, modifies it with data from the associated context, and 
-             injects the clone back to the stack's inbound path from the incoming Transport 
+
+   Purpose:  Clones the NET_BUFFER_LIST, modifies it with data from the associated context, and
+             injects the clone back to the stack's inbound path from the incoming Transport
              Layers using FwpsInjectTransportRecveiveAsync().                                   <br>
                                                                                                 <br>
    Notes:    Applies to the following inbound layers:                                           <br>
@@ -4134,7 +4134,7 @@ NTSTATUS PerformBasicPacketModificationAtInboundTransport(_In_ CLASSIFY_DATA** p
    if(pClassifyValues->layerId == FWPS_LAYER_ALE_FLOW_ESTABLISHED_V4)
    {
       ipHeaderSize = IPV4_HEADER_MIN_SIZE;
-   
+
       if(protocol == IPPROTO_ICMP)
          transportHeaderSize = ICMP_HEADER_MIN_SIZE;
       else if(protocol == IPPROTO_TCP)
@@ -4180,7 +4180,7 @@ NTSTATUS PerformBasicPacketModificationAtInboundTransport(_In_ CLASSIFY_DATA** p
          (pClassifyValues->layerId == FWPS_LAYER_ALE_AUTH_RECV_ACCEPT_V4 ||
          pClassifyValues->layerId == FWPS_LAYER_ALE_AUTH_RECV_ACCEPT_V6))
       {
-         /// For asynchronous execution, the drop will cause the stack to continue processing on the 
+         /// For asynchronous execution, the drop will cause the stack to continue processing on the
          /// NBL for auditing purposes.  This processing retreats the NBL Offset to the Transport header.
          /// We need to take this into account because we only took a reference on the NBL.
       }
@@ -4292,7 +4292,7 @@ NTSTATUS PerformBasicPacketModificationAtInboundTransport(_In_ CLASSIFY_DATA** p
          if(pRemoteAddressValue->type == FWP_BYTE_ARRAY16_TYPE)
             addressSize = IPV6_ADDRESS_SIZE;
          else
-            addressSize = IPV4_ADDRESS_SIZE;               
+            addressSize = IPV4_ADDRESS_SIZE;
 
          HLPR_NEW_ARRAY(pSourceAddress,
                         BYTE,
@@ -4342,7 +4342,7 @@ NTSTATUS PerformBasicPacketModificationAtInboundTransport(_In_ CLASSIFY_DATA** p
             RtlCopyMemory(pDestinationAddress,
                           &ipv4Address,
                           addressSize);
-         }            
+         }
       }
 
       pProtocolValue = KrnlHlprFwpValueGetFromFwpsIncomingValues(pClassifyValues,
@@ -4506,11 +4506,11 @@ NTSTATUS PerformBasicPacketModificationAtInboundTransport(_In_ CLASSIFY_DATA** p
       {
          UINT32 sourceAddress      = htonl(pRemoteAddressValue->uint32);
          UINT32 destinationAddress = htonl(pLocalAddressValue->uint32);
-          
+
          RtlCopyMemory(pIPSourceAddress,
                         &sourceAddress,
                         IPV4_ADDRESS_SIZE);
-         
+
          RtlCopyMemory(pIPDestinationAddress,
                        &destinationAddress,
                        IPV4_ADDRESS_SIZE);
@@ -4536,12 +4536,12 @@ NTSTATUS PerformBasicPacketModificationAtInboundTransport(_In_ CLASSIFY_DATA** p
             protocol = IPPROTO_MAX;
 
          NT_ASSERT(protocol != IPPROTO_MAX);
-         
+
          if(pClassifyValues->layerId == FWPS_LAYER_INBOUND_ICMP_ERROR_V4)
             protocol = IPPROTO_ICMP;
          else if(pClassifyValues->layerId == FWPS_LAYER_INBOUND_ICMP_ERROR_V6)
             protocol = IPPROTO_ICMPV6;
-         
+
          switch(protocol)
          {
             case IPPROTO_ICMP:
@@ -4551,125 +4551,125 @@ NTSTATUS PerformBasicPacketModificationAtInboundTransport(_In_ CLASSIFY_DATA** p
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE)
                {
                   FWP_VALUE0 icmpType;
-         
+
                   icmpType.type  = FWP_UINT8;
                   icmpType.uint8 = (UINT8)ntohs(pModificationData->transportData.sourcePort);
-         
+
                   status = KrnlHlprICMPv4HeaderModifyType(&icmpType,
                                                           pNetBufferList,
                                                           icmpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                {
                   FWP_VALUE0 icmpCode;
-               
+
                   icmpCode.type  = FWP_UINT8;
                   icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
-         
+
                   status = KrnlHlprICMPv4HeaderModifyCode(&icmpCode,
                                                           pNetBufferList,
                                                           icmpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                break;
             }
             case IPPROTO_TCP:
             {
                UINT32 tcpHeaderSize = transportHeaderSize ? transportHeaderSize : TCP_HEADER_MIN_SIZE;
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT)
                {
                   FWP_VALUE0 srcPort;
-         
+
                   srcPort.type   = FWP_UINT16;
                   srcPort.uint16 = pModificationData->transportData.sourcePort;
-         
+
                   status = KrnlHlprTCPHeaderModifySourcePort(&srcPort,
                                                              pNetBufferList,
                                                              tcpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT)
                {
                   FWP_VALUE0 dstPort;
-         
+
                   dstPort.type   = FWP_UINT16;
                   dstPort.uint16 = pModificationData->transportData.destinationPort;
-         
+
                   status = KrnlHlprTCPHeaderModifyDestinationPort(&dstPort,
                                                                   pNetBufferList,
                                                                   tcpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                break;
             }
             case IPPROTO_UDP:
             {
                UINT32 udpHeaderSize = transportHeaderSize ? transportHeaderSize : UDP_HEADER_MIN_SIZE;
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_SOURCE_PORT)
                {
                   FWP_VALUE0 srcPort;
-         
+
                   srcPort.type   = FWP_UINT16;
                   srcPort.uint16 = pModificationData->transportData.sourcePort;
-         
+
                   status = KrnlHlprUDPHeaderModifySourcePort(&srcPort,
                                                              pNetBufferList,
                                                              udpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_DESTINATION_PORT)
                {
                   FWP_VALUE0 dstPort;
-         
+
                   dstPort.type   = FWP_UINT16;
                   dstPort.uint16 = pModificationData->transportData.destinationPort;
-         
+
                   status = KrnlHlprUDPHeaderModifyDestinationPort(&dstPort,
                                                                   pNetBufferList,
                                                                   udpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                break;
             }
             case IPPROTO_ICMPV6:
             {
                UINT32 icmpHeaderSize = transportHeaderSize ? transportHeaderSize : ICMP_HEADER_MIN_SIZE;
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_TYPE)
                {
                   FWP_VALUE0 icmpType;
-         
+
                   icmpType.type  = FWP_UINT8;
                   icmpType.uint8 = (UINT8)ntohs(pModificationData->transportData.sourcePort);
-         
+
                   status = KrnlHlprICMPv6HeaderModifyType(&icmpType,
                                                           pNetBufferList,
                                                           icmpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                {
                   FWP_VALUE0 icmpCode;
-         
+
                   icmpCode.type  = FWP_UINT8;
                   icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
-         
+
                   status = KrnlHlprICMPv6HeaderModifyCode(&icmpCode,
                                                           pNetBufferList,
                                                           icmpHeaderSize);
                   HLPR_BAIL_ON_FAILURE_2(status);
                }
-         
+
                break;
             }
          }
@@ -4687,7 +4687,7 @@ NTSTATUS PerformBasicPacketModificationAtInboundTransport(_In_ CLASSIFY_DATA** p
                        DPFLTR_ERROR_LEVEL,
                        " !!!! PerformBasicPacketModificationAtInboundTransport: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                        status);
-         
+
             HLPR_BAIL;
          }
 
@@ -4716,7 +4716,7 @@ NTSTATUS PerformBasicPacketModificationAtInboundTransport(_In_ CLASSIFY_DATA** p
 
                RtlCopyMemory(pIPSourceAddress,
                              pModificationData->ipData.sourceAddress.pIPv4,
-                             IPV4_ADDRESS_SIZE);                             
+                             IPV4_ADDRESS_SIZE);
             }
             else
             {
@@ -4879,9 +4879,9 @@ NTSTATUS PerformBasicPacketModificationAtInboundTransport(_In_ CLASSIFY_DATA** p
 
 /**
  @private_function="PerformBasicPacketModificationAtOutboundTransport"
- 
-   Purpose:  Clones the NET_BUFFER_LIST, modifies it with data from the associated context, and 
-             injects the clone back to the stack's outbound path from the outgoing Transport 
+
+   Purpose:  Clones the NET_BUFFER_LIST, modifies it with data from the associated context, and
+             injects the clone back to the stack's outbound path from the outgoing Transport
              Layers using FwpsInjectTransportSendAsync().                                       <br>
                                                                                                 <br>
    Notes:    Applies to the following outbound layers:                                          <br>
@@ -5101,7 +5101,7 @@ NTSTATUS PerformBasicPacketModificationAtOutboundTransport(_In_ CLASSIFY_DATA** 
                if(pModificationData->transportData.flags & PCPMDF_MODIFY_TRANSPORT_HEADER_ICMP_CODE)
                {
                   FWP_VALUE0 icmpCode;
-               
+
                   icmpCode.type  = FWP_UINT8;
                   icmpCode.uint8 = (UINT8)ntohs(pModificationData->transportData.destinationPort);
 
@@ -5293,8 +5293,8 @@ NTSTATUS PerformBasicPacketModificationAtOutboundTransport(_In_ CLASSIFY_DATA** 
 
 /**
  @private_function="BasicPacketModificationDeferredProcedureCall"
- 
-   Purpose:  Invokes the appropriate private injection routine to perform the injection at 
+
+   Purpose:  Invokes the appropriate private injection routine to perform the injection at
              DISPATCH_LEVEL.                                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -5469,8 +5469,8 @@ VOID BasicPacketModificationDeferredProcedureCall(_In_ KDPC* pDPC,
 
 /**
  @private_function="BasicPacketModificationWorkItemRoutine"
- 
-   Purpose:  Invokes the appropriate private routine to perform the modification and injection 
+
+   Purpose:  Invokes the appropriate private routine to perform the modification and injection
              at PASSIVE_LEVEL.                                                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -5640,8 +5640,8 @@ VOID BasicPacketModificationWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
 
 /**
  @private_function="TriggerBasicPacketModificationInline"
- 
-   Purpose:  Makes a reference to all the classification data structures and invokes the 
+
+   Purpose:  Makes a reference to all the classification data structures and invokes the
              appropriate private routine to perform the modification and injection.             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -5826,8 +5826,8 @@ NTSTATUS TriggerBasicPacketModificationInline(_In_ const FWPS_INCOMING_VALUES* p
 
 /**
  @private_function="TriggerBasicPacketModificationOutOfBand"
- 
-   Purpose:  Creates a local copy of the classification data structures and queues a WorkItem 
+
+   Purpose:  Creates a local copy of the classification data structures and queues a WorkItem
              to perform the modification and injection at PASSIVE_LEVEL.                        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -5926,8 +5926,8 @@ NTSTATUS TriggerBasicPacketModificationOutOfBand(_In_ const FWPS_INCOMING_VALUES
 
 /**
  @classify_function="ClassifyBasicPacketModification"
- 
-   Purpose:  Blocks the current NET_BUFFER_LIST, modifies a clone of the NBL with the specified 
+
+   Purpose:  Blocks the current NET_BUFFER_LIST, modifies a clone of the NBL with the specified
              data and injects the clone back to the stack's data path.                          <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>
@@ -5972,9 +5972,9 @@ VOID NTAPI ClassifyBasicPacketModification(_In_ const FWPS_INCOMING_VALUES0* pCl
       NT_ASSERT(pFilter->providerContext->type == FWPM_GENERAL_CONTEXT);
       NT_ASSERT(pFilter->providerContext->dataBuffer);
       NT_ASSERT(pFilter->providerContext->dataBuffer->size == sizeof(PC_BASIC_PACKET_MODIFICATION_DATA));
-   
+
 #if(NTDDI_VERSION >= NTDDI_WIN8)
-   
+
       NT_ASSERT(pClassifyValues->layerId == FWPS_LAYER_INBOUND_IPPACKET_V4 ||
                 pClassifyValues->layerId == FWPS_LAYER_INBOUND_IPPACKET_V6 ||
                 pClassifyValues->layerId == FWPS_LAYER_OUTBOUND_IPPACKET_V4 ||
@@ -6005,9 +6005,9 @@ VOID NTAPI ClassifyBasicPacketModification(_In_ const FWPS_INCOMING_VALUES0* pCl
                 pClassifyValues->layerId == FWPS_LAYER_OUTBOUND_MAC_FRAME_NATIVE ||
                 pClassifyValues->layerId == FWPS_LAYER_INGRESS_VSWITCH_ETHERNET ||
                 pClassifyValues->layerId == FWPS_LAYER_EGRESS_VSWITCH_ETHERNET);
-   
+
 #else
-   
+
       NT_ASSERT(pClassifyValues->layerId == FWPS_LAYER_INBOUND_IPPACKET_V4 ||
                 pClassifyValues->layerId == FWPS_LAYER_INBOUND_IPPACKET_V6 ||
                 pClassifyValues->layerId == FWPS_LAYER_OUTBOUND_IPPACKET_V4 ||
@@ -6032,9 +6032,9 @@ VOID NTAPI ClassifyBasicPacketModification(_In_ const FWPS_INCOMING_VALUES0* pCl
                 pClassifyValues->layerId == FWPS_LAYER_ALE_FLOW_ESTABLISHED_V6 ||
                 pClassifyValues->layerId == FWPS_LAYER_STREAM_PACKET_V4 ||
                 pClassifyValues->layerId == FWPS_LAYER_STREAM_PACKET_V6);
-      
+
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
-   
+
       NT_ASSERT(pFilter->providerContext);
       NT_ASSERT(pFilter->providerContext->type == FWPM_GENERAL_CONTEXT);
       NT_ASSERT(pFilter->providerContext->dataBuffer);
@@ -6111,7 +6111,7 @@ VOID NTAPI ClassifyBasicPacketModification(_In_ const FWPS_INCOMING_VALUES0* pCl
                                 DPFLTR_ERROR_LEVEL,
                                 " !!!! ClassifyBasicPacketModification: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                                 status);
-                  
+
                      HLPR_BAIL;
                   }
                }
@@ -6151,7 +6151,7 @@ VOID NTAPI ClassifyBasicPacketModification(_In_ const FWPS_INCOMING_VALUES0* pCl
 
                   if(bytesAdvanced)
                   {
-                     /// Initial offset is at the IP Header for OUTBOUND_IPPACKET and IPFORWARD, so 
+                     /// Initial offset is at the IP Header for OUTBOUND_IPPACKET and IPFORWARD, so
                      /// advance the size of the IP Header ...
                      NdisAdvanceNetBufferDataStart(NET_BUFFER_LIST_FIRST_NB((NET_BUFFER_LIST*)pNetBufferList),
                                                    bytesAdvanced,
@@ -6185,7 +6185,7 @@ VOID NTAPI ClassifyBasicPacketModification(_In_ const FWPS_INCOMING_VALUES0* pCl
                                    DPFLTR_ERROR_LEVEL,
                                    " !!!! ClassifyBasicPacketModification: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                                    status);
-                     
+
                         HLPR_BAIL;
                      }
                   }
@@ -6319,8 +6319,8 @@ VOID NTAPI ClassifyBasicPacketModification(_In_ const FWPS_INCOMING_VALUES0* pCl
 
 /**
  @classify_function="ClassifyBasicPacketModification"
- 
-   Purpose:  Blocks the current NET_BUFFER_LIST, modifies a clone of the NBL with the specified 
+
+   Purpose:  Blocks the current NET_BUFFER_LIST, modifies a clone of the NBL with the specified
              data and injects the clone back to the stack's data path.                          <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>
@@ -6463,7 +6463,7 @@ VOID NTAPI ClassifyBasicPacketModification(_In_ const FWPS_INCOMING_VALUES* pCla
                              DPFLTR_ERROR_LEVEL,
                              " !!!! ClassifyBasicPacketModification: NdisRetreatNetBufferDataStart() [status: %#x]\n",
                              status);
-               
+
                   HLPR_BAIL;
                }
             }
@@ -6511,7 +6511,7 @@ VOID NTAPI ClassifyBasicPacketModification(_In_ const FWPS_INCOMING_VALUES* pCla
          HLPR_BAIL_ON_FAILURE(status);
 
 #pragma warning(pop)
-                                           
+
          if(pInjectionData->injectionState != FWPS_PACKET_INJECTED_BY_SELF &&
             pInjectionData->injectionState != FWPS_PACKET_PREVIOUSLY_INJECTED_BY_SELF)
          {

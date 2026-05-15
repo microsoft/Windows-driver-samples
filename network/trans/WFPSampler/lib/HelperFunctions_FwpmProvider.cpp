@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -55,7 +55,7 @@
 
 /**
  @helper_function="HlprFwpmProviderEnum"
- 
+
    Purpose:  Wrapper for the FwpmProviderEnum API.                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -114,7 +114,7 @@ UINT32 HlprFwpmProviderEnum(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmProviderDestroyEnumHandle"
- 
+
    Purpose:  Wrapper for the FwpmProviderDestroyEnumHandle API.                                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -164,7 +164,7 @@ UINT32 HlprFwpmProviderDestroyEnumHandle(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmProviderCreateEnumHandle"
- 
+
    Purpose:  Wrapper for the FwpmProviderCreateEnumHandle API.                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -205,7 +205,7 @@ UINT32 HlprFwpmProviderCreateEnumHandle(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmProviderDeleteByKey"
- 
+
    Purpose:  Wrapper for the FwpmProviderDeleteByKey API.                                       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -255,10 +255,10 @@ UINT32 HlprFwpmProviderDeleteByKey(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmProviderDelete"
- 
+
    Purpose:  Remove the provider that was associated with all of this program's WFP objects.    <br>
                                                                                                 <br>
-   Notes:    Function will fail if any of this program's WFP objects are still present and 
+   Notes:    Function will fail if any of this program's WFP objects are still present and
              associated with this provider.                                                     <br>
                                                                                                 <br>
    MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/Windows/Desktop/AA364195.aspx              <br>
@@ -310,7 +310,7 @@ UINT32 HlprFwpmProviderDelete(_In_opt_ HANDLE* pEngineHandle,
 
 /**
  @helper_function="HlprFwpmProviderAdd"
- 
+
    Purpose:  Add a default provider to associate with all of this program's WFP objects.        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -329,7 +329,7 @@ UINT32 HlprFwpmProviderAdd(_In_ HANDLE engineHandle,
 
    if(engineHandle)
    {
-      FWPM_PROVIDER provider = {0};   
+      FWPM_PROVIDER provider = {0};
 
       provider.providerKey             = *pProviderKey;
       provider.displayData.name        = (PWSTR)pCompanyName;

@@ -22,11 +22,11 @@ p2p_devlist_FreeDev(
 	IN  P2P_DEV_LIST			*dlist,
 	IN  P2P_DEV_LIST_ENTRY		*pDev
 	);
-	
+
 static
 const char *
 p2p_devlist_DevTypeStr(
-	IN  P2P_DEV_TYPE			type	
+	IN  P2P_DEV_TYPE			type
 	);
 
 static
@@ -62,7 +62,7 @@ p2p_devlist_RemoveDatedDev(
 
 			//RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Freeing "MACSTR", type: %s for no rx for %llu ms\n",
 				//MAC2STR(pDev->mac), p2p_devlist_DevTypeStr(pDev->type), lastRxElapsed));
-			
+
 			p2p_devlist_FreeDev(dlist, pDev);
 			nFreedDev++;
 		}
@@ -79,7 +79,7 @@ p2p_devlist_RemoveProbeReqOnlyDev(
 {
 	RT_LIST_ENTRY				*pEntry, *pn = NULL;
 	u4Byte						nFreedDev = 0;
-	
+
 	RtEntryListForEachSafe(&dlist->list, pEntry, pn)
 	{
 		P2P_DEV_LIST_ENTRY		*pDev = (P2P_DEV_LIST_ENTRY *)pEntry;
@@ -95,7 +95,7 @@ p2p_devlist_RemoveProbeReqOnlyDev(
 		{
 			//RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Freeing "MACSTR", type: %s for we've rx only probe req from it\n",
 				//MAC2STR(pDev->mac), p2p_devlist_DevTypeStr(pDev->type)));
-			
+
 			p2p_devlist_FreeDev(dlist, pDev);
 			nFreedDev++;
 		}
@@ -111,13 +111,13 @@ p2p_devlist_AgeFunction(
 	)
 {
 	u4Byte						nFreedDev = 0;
-	
+
 	nFreedDev += p2p_devlist_RemoveDatedDev(dlist);
 	nFreedDev += p2p_devlist_RemoveProbeReqOnlyDev(dlist);
 
 	return nFreedDev;
 }
-	
+
 static
 P2P_DEV_LIST_ENTRY *
 p2p_devlist_NewDev(
@@ -128,14 +128,14 @@ p2p_devlist_NewDev(
 {
 	P2P_DEV_LIST_ENTRY			*pDev = NULL;
 	P2P_DEV_INFO				*pInfo = NULL;
-	
+
 	if(NULL == (pDev = (P2P_DEV_LIST_ENTRY *)Pool_Acquire(&dlist->entryPool)))
 	{
 		if(!p2p_devlist_AgeFunction(dlist))
 		{
 			return NULL;
 		}
-		
+
 		pDev = (P2P_DEV_LIST_ENTRY *)Pool_Acquire(&dlist->entryPool);
 	}
 
@@ -172,7 +172,7 @@ p2p_devlist_FreeRxFrames(
 {
 	u4Byte						it = 0;
 	u4Byte						start = bActionOnly ? P2P_FID_ACTION_START : 0;
-	
+
 	for(it = start; it < P2P_FID_MAX; it++)
 	{
 		if(pDev->rxFrames[it])
@@ -202,7 +202,7 @@ p2p_devlist_FreeTxFrames(
 {
 	u4Byte						it = 0;
 	u4Byte						start = bActionOnly ? P2P_FID_ACTION_START : 0;
-	
+
 	for(it = start; it < P2P_FID_MAX; it++)
 	{
 		if(pDev->txFrames[it])
@@ -251,7 +251,7 @@ p2p_devlist_ParseFrame(
 {
 	RT_STATUS					status = RT_STATUS_SUCCESS;
 	const OCTET_STRING			mpdu = {frame, frameLen};
-	
+
 	if(P2P_FID_ACTION_START <= frameType)
 		status = p2p_parse_Action(&mpdu, DBG_LOUD, msg);
 	else
@@ -280,13 +280,13 @@ p2p_devlist_UpdateFrameInfo(
 	{
 		// Prefast warning C6328: Size mismatch ignore
 #pragma warning (disable: 6328)
-		RT_TRACE_F(COMP_P2P, DBG_WARNING, 
-			("Unable to copy frame, frame size: %u, buf size: %u\n", 
+		RT_TRACE_F(COMP_P2P, DBG_WARNING,
+			("Unable to copy frame, frame size: %u, buf size: %u\n",
 			frameLen, sizeof(finfo->frame)));
-			
+
 		return RT_STATUS_BUFFER_TOO_SHORT;
 	}
-		
+
 	p2p_MoveMemory(finfo->frame, frame, frameLen);
 	finfo->frameLen = frameLen;
 	finfo->type = type;
@@ -320,26 +320,26 @@ p2p_devlist_RxUpdateFrameInfo(
 	)
 {
 	RT_STATUS					status = RT_STATUS_SUCCESS;
-	
+
 	if(!pEntry->rxFrames[type])
 	{
 		if(!(pEntry->rxFrames[type] = Pool_Acquire(&dlist->framePool)))
 		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("Unable to acquire from frame pool\n"));
-			return RT_STATUS_RESOURCE; 
+			return RT_STATUS_RESOURCE;
 		}
 	}
-	
+
 	status = p2p_devlist_UpdateFrameInfo(dlist,
-		rfd->PacketLength, 
-		rfd->Buffer.VirtualAddress, 
-		type, 
-		msg->dialogToken, 
+		rfd->PacketLength,
+		rfd->Buffer.VirtualAddress,
+		type,
+		msg->dialogToken,
 		msg,
-		PlatformGetCurrentTime(), 
-		(msg->_dsParam) ? (msg->dsParam) : (rxChnl), 
-		rfd->Status.RecvSignalPower, 
-		rfd->Status.SignalStrength, 
+		PlatformGetCurrentTime(),
+		(msg->_dsParam) ? (msg->dsParam) : (rxChnl),
+		rfd->Status.RecvSignalPower,
+		rfd->Status.SignalStrength,
 		pEntry->rxFrames[type]);
 
 	if(RT_STATUS_SUCCESS != status)
@@ -370,20 +370,20 @@ p2p_devlist_TxUpdateFrameInfo(
 		if(!(pEntry->txFrames[type] = Pool_Acquire(&dlist->framePool)))
 		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("Unable to acquire from frame pool\n"));
-			return RT_STATUS_RESOURCE; 
+			return RT_STATUS_RESOURCE;
 		}
 	}
 
 	status = p2p_devlist_UpdateFrameInfo(dlist,
-		FrameBuf_Length(buf), 
-		FrameBuf_Head(buf), 
-		type, 
-		token, 
+		FrameBuf_Length(buf),
+		FrameBuf_Head(buf),
+		type,
+		token,
 		NULL,
-		PlatformGetCurrentTime(), 
-		channel, 
-		0, 
-		0, 
+		PlatformGetCurrentTime(),
+		channel,
+		0,
+		0,
 		pEntry->txFrames[type]);
 
 	if(RT_STATUS_SUCCESS != status)
@@ -405,7 +405,7 @@ p2p_devlist_Get(
 	)
 {
 	RT_LIST_ENTRY				*pEntry = NULL;
-	
+
 	RtEntryListForEach(&dlist->list, pEntry)
 	{
 		P2P_DEV_LIST_ENTRY		*pDev = (P2P_DEV_LIST_ENTRY *)pEntry;
@@ -418,7 +418,7 @@ p2p_devlist_Get(
 
 		return pDev;
 	}
-	
+
 	return NULL;
 }
 
@@ -430,7 +430,7 @@ p2p_devlist_GetGo(
 	)
 {
 	RT_LIST_ENTRY				*pEntry = NULL;
-	
+
 	RtEntryListForEach(&dlist->list, pEntry)
 	{
 		P2P_DEV_LIST_ENTRY		*pDev = (P2P_DEV_LIST_ENTRY *)pEntry;
@@ -454,7 +454,7 @@ p2p_devlist_GetGo(
 			return pDev;
 		}
 	}
-	
+
 	return NULL;
 }
 
@@ -478,7 +478,7 @@ p2p_devlist_RxFrameElapsedTimeMs(
 	IN  const P2P_FRAME_INFO 	*finfo
 	)
 {
-	return (PlatformGetCurrentTime() - finfo->time) / 1000; 
+	return (PlatformGetCurrentTime() - finfo->time) / 1000;
 }
 
 static
@@ -488,7 +488,7 @@ p2p_devlist_FrameTypeStr(
 	)
 {
 	const char 					*typeStr = NULL;
-	
+
 	if(P2P_FID_BEACON == type)
 		typeStr = "BEACON";
 	else if(P2P_FID_PROBE_REQ == type)
@@ -509,7 +509,7 @@ p2p_devlist_FrameTypeStr(
 		typeStr = "PdReq";
 	else if(P2P_FID_PD_RSP == type)
 		typeStr = "PdRsp";
-	else 
+	else
 		typeStr = "unknown";
 
 	return typeStr;
@@ -518,18 +518,18 @@ p2p_devlist_FrameTypeStr(
 static
 const char *
 p2p_devlist_DevTypeStr(
-	IN  P2P_DEV_TYPE			type	
+	IN  P2P_DEV_TYPE			type
 	)
 {
 	const char 					*typeStr = NULL;
-	
+
 	if(P2P_DEV_TYPE_LEGACY == type)
 		typeStr = "Legacy";
 	else if(P2P_DEV_TYPE_GO == type)
 		typeStr = "GO";
 	else if(P2P_DEV_TYPE_DEV == type)
 		typeStr = "Device";
-	else 
+	else
 		typeStr = "unknown";
 
 	return typeStr;
@@ -542,7 +542,7 @@ p2p_devlist_DumpFrameInfo(
 	)
 {
 	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("***\n"));
-	
+
 	// Type
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("type: %s\n", p2p_devlist_FrameTypeStr(finfo->type)));
 
@@ -557,7 +557,7 @@ p2p_devlist_DumpFrameInfo(
 
 	// Signal strength
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("sig strength: %u\n", finfo->sigStrength));
-	
+
 }
 
 static
@@ -605,7 +605,7 @@ p2p_devlist_DumpDev(
 
 	// Rx frames
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("Rx frames in chronological order\n"));
-	
+
 	RtEntryListForEach(&pDev->rxFrameQ, pRxFrame)
 	{
 		p2p_devlist_DumpFrameInfo((P2P_FRAME_INFO *)pRxFrame);
@@ -613,7 +613,7 @@ p2p_devlist_DumpDev(
 
 	// Tx frames
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("Tx frames\n"));
-	
+
 	for(it = 0; it < P2P_FID_MAX; it++)
 	{
 		if(!pDev->txFrames[it])
@@ -642,7 +642,7 @@ p2p_devlist_GetCorrespReqActionCode(
 
 	if(P2P_FID_PD_RSP == frameType)
 		return P2P_FID_PD_REQ;
-	
+
 	return P2P_FID_MAX;
 }
 
@@ -663,7 +663,7 @@ p2p_DevList_Init(
 	dlist->count = 0;
 	RTInitializeListHead(&dlist->list);
 	dlist->sig = signature;
-	
+
 	Pool_Init(&dlist->entryPool, "DevPool", sizeof(dlist->entryPoolRsvd), dlist->entryPoolRsvd, sizeof(dlist->entryPoolRsvd[0]), 0, DBG_LOUD);
 	Pool_Init(&dlist->p2pDevInfoPool, "P2PDevInfoPool", sizeof(dlist->p2pDevInfoPoolRsvd), dlist->p2pDevInfoPoolRsvd, sizeof(dlist->p2pDevInfoPoolRsvd[0]), 0, DBG_LOUD);
 	Pool_Init(&dlist->framePool, "FramePool", sizeof(dlist->framePoolRsvd), dlist->framePoolRsvd, sizeof(dlist->framePoolRsvd[0]), 0, DBG_LOUD);
@@ -678,13 +678,13 @@ p2p_DevList_Flush(
 	)
 {
 	RT_LIST_ENTRY				*pEntry = NULL;
-	
+
 	RT_ASSERT(signature == dlist->sig, ("Uninitialized list\n"));
 
 	FunctionIn(COMP_P2P);
-	
+
 	p2p_AcquireLock(&dlist->lock);
-	
+
 	RtEntryListForEach(&dlist->list, pEntry)
 	{
 		P2P_DEV_LIST_ENTRY		*pDev = (P2P_DEV_LIST_ENTRY *)pEntry;
@@ -705,9 +705,9 @@ p2p_DevList_Free(
 	)
 {
 	RT_ASSERT(signature == dlist->sig, ("Uninitialized list\n"));
-	
+
 	p2p_AcquireLock(&dlist->lock);
-	
+
 	p2p_devlist_Flush(dlist);
 
 	dlist->sig = NULL;
@@ -787,7 +787,7 @@ p2p_DevList_RxUpdate(
 		return RT_STATUS_NOT_RECOGNIZED;
 	}
 
-	if(NULL != (pDev = p2p_devlist_Get(dlist, mac, P2P_DEV_TYPE_GO)) 
+	if(NULL != (pDev = p2p_devlist_Get(dlist, mac, P2P_DEV_TYPE_GO))
 		&& P2P_FID_PD_RSP == frameType
 		&& pDev->txFrames[P2P_FID_PD_REQ]
 		)
@@ -796,7 +796,7 @@ p2p_DevList_RxUpdate(
 	}
 
 	reqFrameType = p2p_devlist_GetCorrespReqActionCode(frameType);
-	
+
 	do
 	{
 		// Get existing/new device
@@ -811,7 +811,7 @@ p2p_DevList_RxUpdate(
 				status = RT_STATUS_INVALID_CONTEXT;
 				break;
 			}
-			
+
 			if(NULL == (pDev = p2p_devlist_NewDev(dlist, mac, type)))
 			{
 				RT_TRACE_F(COMP_P2P, DBG_WARNING, ("Failed to acquire new dev entry from the pool\n"));
@@ -819,8 +819,8 @@ p2p_DevList_RxUpdate(
 				break;
 			}
 
-			//RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Add "MACSTR", type: %s for rx: %s\n", 
-				//MAC2STR(mac), 
+			//RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Add "MACSTR", type: %s for rx: %s\n",
+				//MAC2STR(mac),
 				//p2p_devlist_DevTypeStr(type),
 				//p2p_devlist_FrameTypeStr(frameType)));
 		}
@@ -829,10 +829,10 @@ p2p_DevList_RxUpdate(
 		if(P2P_FID_ACTION_START <= frameType
 			&& pDev->rxFrames[frameType]
 			)
-		{// updating an action 
+		{// updating an action
 			if(msg->dialogToken == pDev->rxFrames[frameType]->msg->dialogToken)
 			{
-				//RT_TRACE_F(COMP_P2P, DBG_LOUD, ("rx duplicated %s from "MACSTR", drop it\n", 
+				//RT_TRACE_F(COMP_P2P, DBG_LOUD, ("rx duplicated %s from "MACSTR", drop it\n",
 				//	p2p_devlist_FrameTypeStr(frameType),
 				//	MAC2STR(mac)));
 				status = RT_STATUS_PKT_DROP;
@@ -894,7 +894,7 @@ p2p_DevList_RxUpdate(
 
 	if(ppDev)
 		*ppDev = pDev;
-	
+
 	return status;
 }
 
@@ -934,7 +934,7 @@ p2p_DevList_TxUpdate(
 	P2P_DEV_LIST_ENTRY			*pDev = NULL;
 
 	RT_ASSERT(signature == dlist->sig, ("Uninitialized list\n"));
-	
+
 	do
 	{
 		// Get existing/new device
@@ -947,8 +947,8 @@ p2p_DevList_TxUpdate(
 				break;
 			}
 
-			//RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Add "MACSTR", type: %s for tx: %s", 
-				//MAC2STR(mac), 
+			//RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Add "MACSTR", type: %s for tx: %s",
+				//MAC2STR(mac),
 				//p2p_devlist_DevTypeStr(devType),
 				//p2p_devlist_FrameTypeStr(frameType)));
 		}
@@ -959,7 +959,7 @@ p2p_DevList_TxUpdate(
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("token (%u) specified when updating a mgnt frame, reset it to 0\n", token));
 			token = 0;
 		}
-		
+
 		if(RT_STATUS_SUCCESS != (status = p2p_devlist_TxUpdateFrameInfo(dlist, pDev, buf, frameType, token, channel)))
 		{
 			break;
@@ -970,7 +970,7 @@ p2p_DevList_TxUpdate(
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("token updated to: %u\n", token));
 
 	}while(FALSE);
-	
+
 	return status;
 }
 
@@ -997,7 +997,7 @@ p2p_DevList_Find(
 	RT_ASSERT(signature == dlist->sig, ("Uninitialized list\n"));
 
 	pDev = p2p_devlist_Get(dlist, mac, type);
-	
+
 	return pDev;
 }
 
@@ -1018,7 +1018,7 @@ p2p_DevList_Get(
 	{// no rx frame since last flush
 		return NULL;
 	}
-	
+
 	return pDev;
 }
 
@@ -1058,7 +1058,7 @@ p2p_DevList_Translate(
 
 			if(!pDev->bDirty)
 			{
-				//RT_TRACE_F(COMP_P2P, DBG_TRACE, 
+				//RT_TRACE_F(COMP_P2P, DBG_TRACE,
 					//("skip "MACSTR" for no rx after previous flush\n", MAC2STR(pDev->mac)));
 				continue;
 			}
@@ -1070,14 +1070,14 @@ p2p_DevList_Translate(
 				&& !pDev->rxFrames[P2P_FID_PD_REQ]
 				)
 			{
-				//RT_TRACE_F(COMP_P2P, DBG_LOUD, 
+				//RT_TRACE_F(COMP_P2P, DBG_LOUD,
 					//("skip "MACSTR" for not rx frames with dev info (no dev name)\n", MAC2STR(pDev->mac)));
 				continue;
 			}
-			
+
 			if(maxDevices <= nCopied)
 			{
-				RT_TRACE_F(COMP_P2P, DBG_WARNING, 
+				RT_TRACE_F(COMP_P2P, DBG_WARNING,
 					("Unable to copy all descriptors: max: %u, total: %u\n", maxDevices, dlist->count));
 				status = RT_STATUS_RESOURCE;
 				break;
@@ -1089,7 +1089,7 @@ p2p_DevList_Translate(
 		}
 
 		*pNumDevCopied = nCopied;
-		
+
 	}while(FALSE);
 
 	return status;
@@ -1108,10 +1108,10 @@ p2p_DevList_TranslateDev(
 	RtEntryListForEach(&pDev->rxFrameQ, pRxFrame)
 	{
 		P2P_FRAME_INFO * finfo = (P2P_FRAME_INFO *)pRxFrame;
-				
-		p2p_parse_UpdateDevDesc(finfo->frame, 
-			finfo->msg, 
-			finfo->sigStrength, 
+
+		p2p_parse_UpdateDevDesc(finfo->frame,
+			finfo->msg,
+			finfo->sigStrength,
 			desc);
 	}
 
@@ -1136,7 +1136,7 @@ p2p_DevList_Dump(
 		{
 			p2p_devlist_DumpDev((P2P_DEV_LIST_ENTRY *)pEntry);
 		}
-		
+
 	}while(FALSE);
 
 	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("@@@\n"));
@@ -1161,14 +1161,14 @@ p2p_DevList_RxFrameElapsedTimeMs(
 	)
 {
 	RT_ASSERT(signature == dlist->sig, ("Uninitialized list\n"));
-	
+
 	if(!pDev)
 		return 0;
 
 	if(NULL == pDev->rxFrames[frameType])
 		return 0;
 
-	return p2p_devlist_RxFrameElapsedTimeMs(pDev->rxFrames[frameType]); 
+	return p2p_devlist_RxFrameElapsedTimeMs(pDev->rxFrames[frameType]);
 }
 
 BOOLEAN
@@ -1181,7 +1181,7 @@ p2p_DevList_ActionProcessed(
 {
 	RT_ASSERT(signature == dlist->sig, ("Uninitialized list\n"));
 	RT_ASSERT(P2P_FID_ACTION_START <= frameType, ("%s(): not an action frame: %u\n", __FUNCTION__, frameType));
-	
+
 	if(!pDev)
 		return FALSE;
 
@@ -1215,7 +1215,7 @@ p2p_DevList_GetDevChnl(
 				chnl = finfo->msg->dsParamBuf[0];
 			else
 				chnl = finfo->channel;
-			
+
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("get from beacon/probe, dsParam exist: %u, chnl: %u\n", finfo->msg->_dsParam ? 1 : 0, chnl));
 			break;
 		}
@@ -1241,7 +1241,7 @@ p2p_DevList_GetDevChnl(
 		else if(P2P_FID_INV_RSP == finfo->type)
 		{
 			P2P_FRAME_INFO		*req = dev->txFrames[P2P_FID_INV_REQ];
-			
+
 			if(req)
 			{
 				chnl = req->channel;
@@ -1250,7 +1250,7 @@ p2p_DevList_GetDevChnl(
 			}
 		}
 		else if(P2P_FID_GO_NEG_RSP == finfo->type)
-		{	
+		{
 			if(finfo->msg->_status && P2P_ATTR_STATUS == finfo->msg->status
 				&& finfo->msg->_grpId && !eqMacAddr(finfo->msg->grpDevAddr, finfo->msg->da) // i'm not the go, i.e., peer is the go
 				&& finfo->msg->_opChannel

@@ -39,8 +39,8 @@ typedef const unsigned char cu8;
 typedef unsigned __int64  u64;
 typedef __int64  	s64;
 
-typedef unsigned char	u8;	 
-typedef unsigned short	u16;	
+typedef unsigned char	u8;
+typedef unsigned short	u16;
 typedef unsigned long	u32;
 
 typedef struct _RT_TIMER_HANDLE{
@@ -84,7 +84,7 @@ typedef NDIS_EVENT		PlatformEvent, *PPlatformEvent;
 #define IS_ADAPTER_SENDS_BEACON(__Adapter) IsSendingBeacon(__Adapter)
 
 #define GET_PORT_NUMBER(_Adapter)								\
-		 _Adapter->pNdis62Common->PortNumber	
+		 _Adapter->pNdis62Common->PortNumber
 
 #define N6XC_SET_802_11_ATTRIBUTES(_Adapter) N6Set80211Attributes(_Adapter)
 #define NDIS_6_2_INITIALIZE_EXTENSION_COMPONENT(_Adapter,_MiniportAdapterHandle,_MiniportInitParameters) 												\
@@ -110,11 +110,11 @@ typedef NDIS_EVENT		PlatformEvent, *PPlatformEvent;
 
 #define EXT_AP_START_AP_MODE(_Adapter)
 #define EXT_AP_NOTIFY_STA_LINK_CHANGE(_pMgntInfo)	\
-		{_pMgntInfo->bSwitchingSTAStateInProgress = TRUE;}	
+		{_pMgntInfo->bSwitchingSTAStateInProgress = TRUE;}
 #define EXT_AP_DISASSOCATE_AFTER_STA_LINK_TO_DIFFERENT_CHNNEL_AP(_Adapter)			\
 		AP_DisconnectAfterSTANewConnected(_Adapter)
 #define REMOVE_WCN_IE_FROM_BSS_DESC(_Adapter,_bssDesc,_pSimpleConfig,_mmpdu)					\
-		RemoveWCNIE(_Adapter,_bssDesc,_pSimpleConfig,_mmpdu)	
+		RemoveWCNIE(_Adapter,_bssDesc,_pSimpleConfig,_mmpdu)
 
 #define PLATFORM_GET_PHY_ID_READY(_Adapter)	N6CQueryPhyIdReady(_Adapter)
 #define PLATFORM_GET_FRAGOFFSET(_pRfd) _pRfd->FragOffset

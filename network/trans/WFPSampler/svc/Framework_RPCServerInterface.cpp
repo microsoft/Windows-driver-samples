@@ -14,7 +14,7 @@
 //   Naming Convention:
 //
 //      <Scope><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -112,7 +112,7 @@ extern "C"
 {
    /**
     @framework_function="MIDL_user_free"
-    
+
       Purpose:  RPC stub routine to allocate memory.                                            <br>
                                                                                                 <br>
       Notes:                                                                                    <br>
@@ -138,7 +138,7 @@ extern "C"
 
    /**
     @framework_function="MIDL_user_free"
-    
+
       Purpose:  RPC stub routine to free allocated memory.                                      <br>
                                                                                                 <br>
       Notes:                                                                                    <br>
@@ -156,7 +156,7 @@ extern "C"
 
 /**
  @framework_function="RPCInterfaceSecurityCallback"
- 
+
    Purpose:  Callback routine to enforce security measures.                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -211,8 +211,8 @@ RPC_STATUS CALLBACK RPCServerInterfaceSecurityCallback(_In_ RPC_IF_HANDLE interf
 
 /**
  @framework_function="RPCServerInterfaceTerminate"
- 
-   Purpose:  Remove the RPC server interface by unregistering the endpoint and interface and 
+
+   Purpose:  Remove the RPC server interface by unregistering the endpoint and interface and
              freeing the bindings.                                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -294,8 +294,8 @@ RPC_STATUS RPCServerInterfaceTerminate()
 
 /**
  @framework_function="RPCServerInterfaceInitialize"
- 
-   Purpose:  Initialize the RPC server interface by creating the RPC bindings and registering 
+
+   Purpose:  Initialize the RPC server interface by creating the RPC bindings and registering
              the interface and endpoint.                                                        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

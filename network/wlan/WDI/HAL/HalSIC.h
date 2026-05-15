@@ -3,7 +3,7 @@
 
 //==================================================================
 // Note: If SIC_ENABLE under PCIE, because of the slow operation
-//	you should 
+//	you should
 //	1) "#define USE_WORKITEM	1" 							in PrecompInc.h.
 //	2) "#define RTL8723_FPGA_VERIFICATION	1"				in Precomp.h.WlanE.Windows
 //	3) "#define LOAD_FIRMWARE_FROM_HEADER	0"	in Precomp.h.WlanE.Windows if needed.

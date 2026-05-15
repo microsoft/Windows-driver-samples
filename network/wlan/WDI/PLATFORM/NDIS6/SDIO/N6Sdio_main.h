@@ -22,7 +22,7 @@ extern	GLOBAL_SPINLOCK		GlobalSpinLockForDusc;
 
 
 //-------------------------------------------------------------------------
-// Tx Related. 
+// Tx Related.
 //-------------------------------------------------------------------------
 #define N6SDIO_CANNOT_TX(__pAdapter) \
 	(	RT_SDIO_CANNOT_TX(__pAdapter) || \
@@ -61,7 +61,7 @@ DriverEntry(
 #if defined(__cplusplus)
 };
 #endif
-	
+
 
 NDIS_STATUS
 N6SdioInitialize(
@@ -94,7 +94,7 @@ NTSTATUS
 N6SdioConfigureDevice(
 	IN PRT_SDIO_DEVICE	pDevice
 );
-               
+
 RT_STATUS
 N6SdioQueryCISArea(
 	IN PRT_SDIO_DEVICE	pDevice
@@ -106,9 +106,9 @@ N6SdioFindCisTuple(
 	IN u1Byte	Tuple,
 	IN OUT pu4Byte	pTupleScanAddress,
 	OUT pu1Byte	pBuffer,
-	IN OUT pu1Byte	pLength	
+	IN OUT pu1Byte	pLength
 	);
-               
+
 NTSTATUS
 N6SdioInitTxQueue(
 	IN  PADAPTER 	Adapter
@@ -230,7 +230,7 @@ N6SdioCancelSend(
 	IN    PVOID                    CancelId
 	);
 
-VOID 
+VOID
 N6SdioReturnNetBufferLists(
 	IN  NDIS_HANDLE         MiniportAdapterContext,
 	IN  PNET_BUFFER_LIST    NetBufferLists,
@@ -274,18 +274,18 @@ N6SdioReadRegParameters(
 	IN  PRT_SDIO_DEVICE		device
 	);
 
-VOID 
-N6SdioFreeTxQueueRes( 
+VOID
+N6SdioFreeTxQueueRes(
 	IN PADAPTER		pAdapter
 	);
 
-VOID 
-N6SdioDereferInterface( 
+VOID
+N6SdioDereferInterface(
 	IN PRT_SDIO_DEVICE		sdiodevice
 	);
 
-VOID 
-N6SdioFreeDevice( 
+VOID
+N6SdioFreeDevice(
 	IN PRT_SDIO_DEVICE		usbdevice
 	);
 

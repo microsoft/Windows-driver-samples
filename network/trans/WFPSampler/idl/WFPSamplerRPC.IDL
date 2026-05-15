@@ -45,7 +45,7 @@ interface IWFPSampler
 
       typedef enum
       {
-         IPPROTO_HOPOPTS       =   0, 
+         IPPROTO_HOPOPTS       =   0,
          IPPROTO_ICMP          =   1,
          IPPROTO_IGMP          =   2,
          IPPROTO_GGP           =   3,
@@ -111,7 +111,7 @@ interface IWFPSampler
 
       BYTE   pDestinationMACAddress[8];
    }MAC_DATA;
-   
+
    typedef struct IP_DATA_
    {
       UINT32 flags;

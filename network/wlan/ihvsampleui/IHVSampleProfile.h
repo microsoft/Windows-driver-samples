@@ -64,7 +64,7 @@ protected:
         BSTR* pbstrDefault
     )
     = 0;
-    
+
     HRESULT
     GetTextFromNode
     (
@@ -252,7 +252,7 @@ public:
     SetSecurityType
     (
         IHV_SECURITY_TYPE  SecurityType
-    );    
+    );
 
     // Accessor and Modifier for CipherType
     HRESULT

@@ -36,13 +36,13 @@ NicIFAssociateNIC(
 VOID
 NicIFDisassociateNIC(
 	PADAPTER		Adapter
-)	
+)
 {
 	HalDisassociateNic(Adapter);
 }
 
 
-// 
+//
 // 2010/07/06 MH Seperate the HAL mempro and correspond resource allocaton.
 // All the HAL/common resource and variable shoule be allocated after the HAL memory
 // pointer is allocated.
@@ -63,18 +63,18 @@ NicIFInitResource(
 	// ----------------------------------------------------------
 
 	Hal_InitVars(Adapter);
-	
+
 	Hal_InitCamEntry(Adapter);
-	
+
 	DFS_Init(Adapter);
 
 	HAL_DiffTXDummyLen(Adapter);
 
-	HAL_DiffTXRXLen(Adapter);	
-	
+	HAL_DiffTXRXLen(Adapter);
+
 	Adapter->HalFunc.InitializeVariablesHandler(Adapter);
 
-	// 2015/03/10 Hana, Init Tx Feedback, 
+	// 2015/03/10 Hana, Init Tx Feedback,
 	// the Tx Feedback capability of each IC depends on the HAL define variable HAL_DEF_TX_FEEDBACK_SUPPORT
 	TxFeedbackInitialize(Adapter);
 
@@ -92,7 +92,7 @@ NicIFInitResource(
 VOID
 NicIFDeInitResource(
 	PADAPTER		Adapter
-)	
+)
 {
 	ADCSmp_DeInit(Adapter);
 
@@ -106,7 +106,7 @@ NicIFDeInitResource(
 	DeInitializeMgntVariables(Adapter);
 
 	DeInitializeRxVariables(Adapter);
-	
+
 	// DeInitialize the ActionTimerCommon ----------------------------
 	// init ActionTimer list.
 	ActionTimerDeInitializeCommonContext(Adapter);
@@ -123,9 +123,9 @@ NicIFReadAdapterInfo(
 	PADAPTER		Adapter
 	)
 {
-	// <20130227, Kordan> Initialize the HW-independant data structure for EFUSE related operation. 
+	// <20130227, Kordan> Initialize the HW-independant data structure for EFUSE related operation.
 	HAL_CmnInitPGData(Adapter);
-		
+
 	// Read EEPROM size before call any EEPROM function
 	Adapter->EepromAddressSize=Adapter->HalFunc.GetEEPROMSizeHandler(Adapter);
 	// 2011/03/09 MH Add description. This is used to define different EEPROm offset of different
@@ -134,10 +134,10 @@ NicIFReadAdapterInfo(
 	// 2011/03/09 MH Add description. According to predefined offset to capture EFUSE content.
 	Adapter->HalFunc.ReadAdapterInfoHandler(Adapter);
 
-	// 2013/09/12 MH When registry channel plan is upadted, we need to update regulatory again, 
-	// otherwise, it will use WW table as default.	
+	// 2013/09/12 MH When registry channel plan is upadted, we need to update regulatory again,
+	// otherwise, it will use WW table as default.
 	PHY_MapChnlPlanRegulatory(Adapter);
-	
+
 }
 
 RT_STATUS
@@ -151,8 +151,8 @@ NicIFAllocateMemory(
 	int nTxQueueNum = PLATFORM_GET_RT_NUM_SDIO_TX_QUEUE(sdiodevice); // TX_HIQ, TX_MIQ and TX_LOQ
 
 	if(RT_DRIVER_STOP(Adapter))
-		return status; 
-	
+		return status;
+
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("NicIFAllocateMemory() ==>\n"));
 
 	do
@@ -169,45 +169,45 @@ NicIFAllocateMemory(
 			status = RT_STATUS_FAILURE;
 			break;
 		}
-		RT_TRACE_F(COMP_INIT, DBG_TRACE, ("before PrepareRFDs\n"));						
+		RT_TRACE_F(COMP_INIT, DBG_TRACE, ("before PrepareRFDs\n"));
 
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("PrepareRFDs() ==>\n"));
 		status=PrepareRFDs(Adapter);
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("PrepareRFDs() <==\n"));
 		if(status!=RT_STATUS_SUCCESS)
-		{			
+		{
 			RT_TRACE_F(COMP_INIT, DBG_LOUD, ("PrepareRFDs fail\n"));
 			FreeRFDs(Adapter, FALSE);
 			break;
 		}
 
-		RT_TRACE_F(COMP_INIT, DBG_TRACE, ("before PrepareTCBs\n"));								
+		RT_TRACE_F(COMP_INIT, DBG_TRACE, ("before PrepareTCBs\n"));
 
 		status=PrepareTCBs(Adapter);
 		if(status!=RT_STATUS_SUCCESS)
 		{
-			RT_TRACE_F(COMP_INIT, DBG_LOUD, ("PrepareTCBs fail\n"));	
+			RT_TRACE_F(COMP_INIT, DBG_LOUD, ("PrepareTCBs fail\n"));
 			FreeTCBs(Adapter, FALSE);
 			break;
 		}
 
-		RT_TRACE_F(COMP_INIT, DBG_TRACE, ("before MgntAllocateBeaconBuf\n"));					
+		RT_TRACE_F(COMP_INIT, DBG_TRACE, ("before MgntAllocateBeaconBuf\n"));
 
 		status = MgntAllocateBeaconBuf( Adapter );
 		if(status!=RT_STATUS_SUCCESS)
 		{
-			RT_TRACE_F(COMP_INIT, DBG_LOUD, ("MgntAllocateBeaconBuf fail\n"));				
+			RT_TRACE_F(COMP_INIT, DBG_LOUD, ("MgntAllocateBeaconBuf fail\n"));
 			MgntFreeBeaconBuf(Adapter);
 			break;
 		}
-		RT_TRACE_F(COMP_INIT, DBG_TRACE, ("before FW_AllocateMemory\n"));						
+		RT_TRACE_F(COMP_INIT, DBG_TRACE, ("before FW_AllocateMemory\n"));
 
 		status = FW_AllocateMemory(Adapter);
 		if(status!=RT_STATUS_SUCCESS)
 		{
-			RT_TRACE_F(COMP_INIT, DBG_LOUD, ("FW_AllocateMemory fail\n"));						
+			RT_TRACE_F(COMP_INIT, DBG_LOUD, ("FW_AllocateMemory fail\n"));
 			FW_FreeMemory(Adapter);
-			break;		
+			break;
 		}
 	}while(FALSE);
 
@@ -230,7 +230,7 @@ NicIFFreeMemory(
 
 	// Free Qos related resources.
 	QosDeinitializeSTA(Adapter);
-	
+
 	//2 Note: TCB must be freed before RFD
 	FreeTCBs(Adapter, FALSE);
 	FreeRFDs(Adapter, FALSE);
@@ -346,13 +346,13 @@ NicIFInitializeAdapter(
 		{
 			MultiPortSetAllPortsHWReadyStatus(Adapter, FALSE);
 
-			// 2010/12/17 MH After Code base Lable 977, we need to move the flag here, otherwise, 
-			// HCT card init sequence will be BSOD when transfer adapter in InitializeAdapterHandler. 
+			// 2010/12/17 MH After Code base Lable 977, we need to move the flag here, otherwise,
+			// HCT card init sequence will be BSOD when transfer adapter in InitializeAdapterHandler.
 			Adapter->bInitializeInProgress=TRUE;
 
 			if(!ACTING_AS_AP(Adapter))
 			{
-				RT_TRACE(COMP_INIT, DBG_LOUD, ("InitializeAdapterHandler Delay\n"));			
+				RT_TRACE(COMP_INIT, DBG_LOUD, ("InitializeAdapterHandler Delay\n"));
 			}
 			else
 			{
@@ -386,7 +386,7 @@ NicIFInitializeAdapter(
 			rtStatus = Adapter->HalFunc.InitializeAdapterHandler(Adapter, pMgntInfo->dot11CurrentChannelNumber);
 			#if (VISTA_RX_BATCH_INDICATE)
 				InitBatchIndication(Adapter);
-			#endif		
+			#endif
 			MultiPortSetAllPortsHWReadyStatus(Adapter, TRUE);
 
 			#if (UNDER_LOW_PWR_SOC_PLATFORM && NDIS_SUPPORT_NDIS630)
@@ -394,7 +394,7 @@ NicIFInitializeAdapter(
 			#else
 				Adapter->MgntInfo.bSetWatchDogTimerByDriver = FALSE;
 			#endif
-		}		
+		}
 
 
 		if(rtStatus == RT_STATUS_SUCCESS)
@@ -423,14 +423,14 @@ NicIFHandleInterrupt(
 
 /**
 *	This function is called by Checkforhang to check whether we should ask OS to reset driver
-*	
+*
 *	\param pAdapter	The adapter context for this miniport
 *
 *	Note:NIC with USB interface sholud not call this function because we cannot scan descriptor
 *	to judge whether there is tx stuck.
 *	Note: This function may be required to be rewrite for Vista OS.
 *	<<<Assumption: Tx spinlock has been acquired >>>
-*	
+*
 *	8185 and 8185b does not implement this function. This is added by Emily at 2006.11.24
 */
 RESET_TYPE
@@ -457,7 +457,7 @@ NicIFCheckResetOrNot(
 VOID
 NicIFCoalesceReceivedPacketAndFreeUnusedRFD(
 	PADAPTER		Adapter,
-	PRT_RFD			pRfd	
+	PRT_RFD			pRfd
 	)
 {
 	PRT_RFD		frag;
@@ -484,9 +484,9 @@ NicIFCoalesceReceivedPacketAndFreeUnusedRFD(
 			pRfd->Buffer.VirtualAddress + pRfd->FragOffset + pRfd->FragLength,
 			frag->Buffer.VirtualAddress + frag->FragOffset,
 			frag->FragLength);
-		
+
 		pRfd->FragLength += frag->FragLength;
-	
+
 		frag=frag->NextRfd;
 	}
 
@@ -507,15 +507,15 @@ NicIFCoalesceReceivedPacketAndFreeUnusedRFD(
 VOID
 NicIFReturnPacket(
 	PADAPTER		Adapter,
-	PRT_RFD			pRfd	
+	PRT_RFD			pRfd
 	)
-{	
+{
 
 #if WLAN_ETW_SUPPORT
 	//
 	// <Roger_Notes> No activity needs to be associated with this event, the ActivityId is optional and can be NULL.
 	// 2014.01.14.
-	//	
+	//
 	PlatformAcquireSpinLock(Adapter, RT_RX_REF_CNT_SPINLOCK);
 	EventWriteRxReturnToDriver(
 		NULL, //Without associated with the event
@@ -524,7 +524,7 @@ NicIFReturnPacket(
 		(u2Byte)RT_GET_RCV_REF(Adapter),// RxBacklog
 		0, // CustomData1
 		0, // CustomData2
-		0);// CustomData3	
+		0);// CustomData3
 
 	PlatformReleaseSpinLock(Adapter, RT_RX_REF_CNT_SPINLOCK);
 #endif
@@ -603,7 +603,7 @@ NicIFResetNIC(
 	}
 	pMgntInfo->RFChangeInProgress = TRUE;
 	PlatformReleaseSpinLock(Adapter, RT_RF_STATE_SPINLOCK);
-	
+
 	status = NicIFDisableNIC( Adapter );
 	if( status != RT_STATUS_SUCCESS ){
 		goto END;

@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -54,7 +54,7 @@
 
 /**
   @helper_function="HlprStringsAreEqual"
- 
+
    Purpose:  Determine if two strings are identical.                                            <br>
                                                                                                 <br>
    Notes:    Function is overloaded.                                                            <br>
@@ -108,7 +108,7 @@ BOOLEAN HlprStringsAreEqual(_In_reads_(stringSizeAlpha) PCWSTR pStringAlpha,
 
 /**
  @helper_function="HlprStringsAreEqual"
- 
+
    Purpose:  Determine if two strings are identical.                                            <br>
                                                                                                 <br>
    Notes:    Function is overloaded.                                                            <br>
@@ -138,7 +138,7 @@ BOOLEAN HlprStringsAreEqual(_In_opt_ PCWSTR pStringAlpha,
 
          HLPR_BAIL;
       }
-      
+
       status = StringCchLength(pStringOmega,
                                STRSAFE_MAX_CCH,
                                &omegaSize);
@@ -164,7 +164,7 @@ BOOLEAN HlprStringsAreEqual(_In_opt_ PCWSTR pStringAlpha,
 
 /**
  @helper_function="HlprStringsAreEqual"
- 
+
    Purpose:  Determine if two strings are identical.                                            <br>
                                                                                                 <br>
    Notes:    Function is overloaded.                                                            <br>

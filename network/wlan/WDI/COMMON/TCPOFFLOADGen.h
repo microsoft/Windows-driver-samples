@@ -1,17 +1,17 @@
 #include "Mp_Precomp.h"
 
-#if TCP_OFFLOAD_SUPPORT	
+#if TCP_OFFLOAD_SUPPORT
 //
 //  Description:
-//			Get Register or Hal info to Set up Support TCP-Offload Mode 
+//			Get Register or Hal info to Set up Support TCP-Offload Mode
 VOID
 TCP_OFFLOAD_Init(
-	IN	PADAPTER				pAdapter 	
+	IN	PADAPTER				pAdapter
 );
 
 //
 //  Description:
-//			Set Current by OID or User mode 
+//			Set Current by OID or User mode
 //
 //  Note :
 //			PRT_SUPPORT_TCPOFFLOAD_CAP "Must" call  TCP_OFFLOAD_CheckSupport  before call TCP_OFFLOAD_SetCap

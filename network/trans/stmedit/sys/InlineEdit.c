@@ -4,8 +4,8 @@ Copyright (c) Microsoft Corporation. All rights reserved
 
 Abstract:
     Stream Edit Callout Driver Sample.
-    
-    This sample demonstrates inline stream inspection/editing 
+
+    This sample demonstrates inline stream inspection/editing
     via the WFP stream API.
 
 Environment:
@@ -134,12 +134,12 @@ InlineEditFlushData(
             ExFreePoolWithTag(Buffer, STMEDIT_TAG_MDL_DATA);
         }
 
-        if (mdl != NULL) 
+        if (mdl != NULL)
 		{
             IoFreeMdl(mdl);
         }
 
-        if (NetBufferList != NULL) 
+        if (NetBufferList != NULL)
 		{
             FwpsFreeNetBufferList(NetBufferList);
         }
@@ -167,7 +167,7 @@ InlineInjectToken(
 {
     NTSTATUS Status;
     NET_BUFFER_LIST* NetBufferList;
-    
+
     do
     {
         Status = FwpsAllocateNetBufferAndNetBufferList(
@@ -215,22 +215,22 @@ InlineInjectToken(
         FlowContext->ScratchDataOffset += Globals.StringXLength;
         FlowContext->ScratchDataLength -= Globals.StringXLength;
 
-        if (FlowContext->ScratchDataLength > 0) 
+        if (FlowContext->ScratchDataLength > 0)
 		{
             FlowContext->InlineEditState = INLINE_EDIT_SCANNING;
         }
-        else 
+        else
 		{
             FlowContext->ScratchDataOffset = 0;
             FlowContext->InlineEditState = INLINE_EDIT_IDLE;
         }
     } while (FALSE);
-    
+
     return Status;
 }
 
 
-VOID 
+VOID
 NTAPI
 InlineEditClassify(
    _In_ const FWPS_INCOMING_VALUES* InFixedValues,
@@ -335,7 +335,7 @@ InlineEditClassify(
         goto Exit;
     }
 
-    if (streamData->dataLength == 0) 
+    if (streamData->dataLength == 0)
 	{
 
         PermitBytes(0);
@@ -365,7 +365,7 @@ InlineEditClassify(
             NT_ASSERT(FlowContext->ScratchDataOffset == 0);
 
             PartialLength = (ULONG)FlowContext->ScratchDataLength;
-            if (PartialLength) 
+            if (PartialLength)
 			{
                 NT_ASSERT(FlowContext->PartialSFlags);
                 DoTraceLevelMessage(TRACE_LEVEL_INFORMATION, CO_GENERAL, "FlowCtx %p, Partial Data Found. Length %u", FlowContext, PartialLength);
@@ -414,7 +414,7 @@ InlineEditClassify(
                         if (i != 0)
                         {
                             // Flush any left over partial match data on the scratch buffer.
-                            if (PartialLength) 
+                            if (PartialLength)
 							{
                                 InlineEditFlushData(FlowContext, PartialLength, FlowContext->PartialSFlags);
                             }
@@ -462,7 +462,7 @@ InlineEditClassify(
 
                         // Permit data before partial match. When we get more data, we'll look for a complete match.
                         //
-                        if (PartialLength) 
+                        if (PartialLength)
 						{
                             InlineEditFlushData(FlowContext, PartialLength, FlowContext->PartialSFlags);
                         }
@@ -492,7 +492,7 @@ InlineEditClassify(
             {
                 FlowContext->InlineEditState = INLINE_EDIT_IDLE;
 
-                if (PartialLength) 
+                if (PartialLength)
 				{
                     InlineEditFlushData(FlowContext, PartialLength, FlowContext->PartialSFlags );
                 }

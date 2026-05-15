@@ -12,7 +12,7 @@
 //   Naming Convention:
 //
 //      <Scope><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -26,15 +26,15 @@
 //          }
 //       <Action>
 //          {
-//            Execute                      - Function packages data and invokes RPC to the 
+//            Execute                      - Function packages data and invokes RPC to the
 //                                              WFPSampler service
 //            Log                          - Function writes to the console.
-//            Parse                        - Function pulls data into the required format from the 
+//            Parse                        - Function pulls data into the required format from the
 //                                              provided data.
 //          }
 //       <Modifier>
 //          {
-//            Help                         - Function provides context sensitive help for the 
+//            Help                         - Function provides context sensitive help for the
 //                                              scenario.
 //          }
 //
@@ -60,7 +60,7 @@
 /**
  @scenario_function="FastStreamInjectionScenarioExecute"
 
-   Purpose:  Gather and package data neccessary to setup the FAST_STREAM_INJECTION scenario, 
+   Purpose:  Gather and package data neccessary to setup the FAST_STREAM_INJECTION scenario,
              then invoke RPC to implement the scenario in the WFPSampler service.               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -125,7 +125,7 @@ UINT32 FastStreamInjectionScenarioExecute(_In_reads_(stringCount) PCWSTR* ppCLPS
 
 /**
  @public_function="FastStreamInjectionScenarioLogHelp"
- 
+
    Purpose:  Log usage information for the FAST_STREAM_INJECTION scenario to the console.       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

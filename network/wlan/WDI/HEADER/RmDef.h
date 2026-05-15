@@ -29,16 +29,16 @@ typedef struct _RT_RM_REQUESTS{
 
 	// Source address from the request
 	u1Byte				SrcAddr[6];
-	
-	// Destination of the Radio Measurement Request frame. 
-	u1Byte				DestAddr[6];	
+
+	// Destination of the Radio Measurement Request frame.
+	u1Byte				DestAddr[6];
 
 	// Maximal measurement duration in these requests, in TU.
 	u2Byte				MaxDuration;
 
-	// Relative start time in us. 
+	// Relative start time in us.
 	u4Byte				StartTime;
-	 
+
 	// Dialog Token.
 	u2Byte				DialogToken;
 
@@ -54,7 +54,7 @@ typedef struct _RT_RM_REQUESTS{
 //
 // Radio Measurement Reports.
 //
-#define	MAX_RM_RPT_ELES_BUF	1500 
+#define	MAX_RM_RPT_ELES_BUF	1500
 typedef struct _RT_RM_REPORTS{
 	// This rm report is valid
 	BOOLEAN				bValid;
@@ -73,7 +73,7 @@ typedef struct _RT_RM_REPORTS{
 typedef struct _TSM_INFO{
 	u1Byte				State; // 1: Enable, 0: disable.
 	u2Byte				MeasurementInterval; // in TU.
-	u2Byte				TimeOutTickNum; // # of tick before timeout, unit of tick is TSM_TIMER_PERIOD. 
+	u2Byte				TimeOutTickNum; // # of tick before timeout, unit of tick is TSM_TIMER_PERIOD.
 	u2Byte				TickCounter; // A counter to keep tick passed since last timeout event.
 }TSM_INFO, *PTSM_INFO;
 
@@ -83,27 +83,27 @@ typedef struct _TSM_INFO{
 typedef struct _RT_RM_INFO{
 	DECLARE_RT_OBJECT(RT_RM_INFO);
 
-	// TRUE if we are CCX RM capable, FALSE o.w.. 
+	// TRUE if we are CCX RM capable, FALSE o.w..
 	BOOLEAN					bRegCcxRm;
 
-	// TRUE if current BSS is CCX Radio Measurement Enable, FALSE o.w..	
+	// TRUE if current BSS is CCX Radio Measurement Enable, FALSE o.w..
 	BOOLEAN					bBssCcxRmEnable;
 
-	// TRUE if we are doing one of request in RmRequests, FALSE otherwise. 
+	// TRUE if we are doing one of request in RmRequests, FALSE otherwise.
 	// Note that, it is protected by RT_RM_SPINLOCK.
-	BOOLEAN					bGoingOn;	
+	BOOLEAN					bGoingOn;
 
 	// Postive value means upper limit of non-serving channel measurment duration,
-	// in unit of TU. 0 means unlimited, postive value 
+	// in unit of TU. 0 means unlimited, postive value
 	u2Byte					OffLineDurUpLimit;
 
 	// Radio Measurement Requests to handle.
-	RT_RM_REQUESTS			RmRequests; 
+	RT_RM_REQUESTS			RmRequests;
 
 	// Radio Measurement Reports to RmRequests.
 	RT_RM_REPORTS			RmReports;
 
-	
+
 	// Hash table to keep frame report result.
 	// Note that, hFrameReportTable and related operation are protected by RT_RM_SPINLOCK.
 	RT_HASH_TABLE_HANDLE	hFrameReportTable;
@@ -114,7 +114,7 @@ typedef struct _RT_RM_INFO{
 	// Traffic Stream Metrics related.
 	TSM_INFO				TsmInfo[MAX_STA_TS_COUNT]; // Information about TSM for each TS.
 	RT_TIMER				TsmTimer; // TSM timer, see TSM_TIMER_PERIOD for its timeout period.
-	u1Byte					TsmTimerRefCnt; // Number of TS using TsmTimer.  
+	u1Byte					TsmTimerRefCnt; // Number of TS using TsmTimer.
 	RT_RM_REPORTS			TsmReport; // Buffer and setting for the IAPP frame with TSM report.
 
 	// CCX Radio Measurement /dot11k RM workitem
@@ -130,7 +130,7 @@ typedef struct _RT_RM_INFO{
 typedef struct _RT_RM_REQ_PARAM{
 	// TRUE to clear previous result before starting measurement;
 	// FALSE to accumulate measurement result.
-	BOOLEAN				bToClear; 
+	BOOLEAN				bToClear;
 
 	// Measurement duration in TU.
 	u1Byte				Duration;
@@ -163,11 +163,11 @@ typedef struct _BEACON_REQUEST{
 
 //
 // Max number of STA to monitor, it is bound to size of frame report:
-// (1514 - 12 - 24 - 8 - 4) / 14 = 104.14. 
+// (1514 - 12 - 24 - 8 - 4) / 14 = 104.14.
 // I pick 64 for computaion time and memory space consideration.
 // 070608, by rcnjko.
 //
-#define MAX_NUM_FRPT_ELEMENT 64 
+#define MAX_NUM_FRPT_ELEMENT 64
 
 
 // Ref: CCX 2 spec, Figure S36-14.
@@ -196,14 +196,14 @@ typedef struct _FRAME_REPORT{
 
 //
 // Signal strength of a STA.
-// It is a value object used in the hash table, hFrameReportTable. 
+// It is a value object used in the hash table, hFrameReportTable.
 //
 typedef struct _RT_RM_STA_POWER{
 	//
 	// We will use TA and BSSID as key to hash.
 	//
 	DECLARE_RT_HASH_ENTRY;
-	
+
 	int					RxSignalSum; // in dBm, sum of signal power of frames received.
 	int					NumFrames; // number of frames received.
 }RT_RM_STA_POWER, *PRT_RM_STA_POWER;
@@ -262,7 +262,7 @@ typedef struct _NOISE_HISTOGRAM_REPORT{
 }NOISE_HISTOGRAM_REPORT, *PNOISE_HISTOGRAM_REPORT;
 
 
-// Ref: CCX 2 spec, Figure S36-5 
+// Ref: CCX 2 spec, Figure S36-5
 #define	RM_REQ_MODE_PARALLEL	BIT0
 #define	RM_REQ_MODE_ENABLE		BIT1
 #define	RM_REQ_MODE_REPORT		BIT3
@@ -292,7 +292,7 @@ typedef struct _MEASUREMENT_REQUEST_ELEMENT{
 }MEASUREMENT_REQUEST_ELEMENT, *PMEASUREMENT_REQUEST_ELEMENT;
 
 
-// Ref: CCX 2 spec, Figure S36-12 
+// Ref: CCX 2 spec, Figure S36-12
 #define	RM_RPT_MODE_PARALLEL	BIT0
 #define	RM_RPT_MODE_INCAPABLE	BIT1
 #define	RM_RPT_MODE_REFUSED		BIT2
@@ -341,7 +341,7 @@ typedef struct _RM_CCX_REQUEST_PACKET{
 	u2Byte				DialogToken; // Non-zero value to identify request/report transaction.
 	u1Byte				ActivationDelay; // # of TBTTs until the interval specified by the Measurement Offset field starts.
 	u1Byte				MeasurementOffset; // TUs after the Activation Delay.
-	u1Byte				Elements[1]; // Actual length is ((IappIdLen & 0x0FFF) - 20) 
+	u1Byte				Elements[1]; // Actual length is ((IappIdLen & 0x0FFF) - 20)
 }RM_CCX_REQUEST_PACKET, *PRM_CCX_REQUEST_PACKET;
 
 
@@ -355,9 +355,9 @@ typedef struct _RM_REPORT_PACKET{
 	u1Byte				IappType; // 0x32 indicates Radio Measurement.
 	u1Byte				IappSubtype; // 0x81 indicates response.
 	u1Byte				DstAddr[6]; // Unused, it should be all zeros.
-	u1Byte				SrcAddr[6]; // Reporting STA's MAC address. 
+	u1Byte				SrcAddr[6]; // Reporting STA's MAC address.
 	u2Byte				DialogToken; // Non-zero value to identify request/report transaction.
-	u1Byte				Elements[1]; // Actual length is ((IappIdLen & 0x0FFF) - 18) 
+	u1Byte				Elements[1]; // Actual length is ((IappIdLen & 0x0FFF) - 18)
 }RM_REPORT_PACKET, *PRM_REPORT_PACKET;
 
 //

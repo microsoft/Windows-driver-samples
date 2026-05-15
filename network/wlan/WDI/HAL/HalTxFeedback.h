@@ -69,7 +69,7 @@ typedef struct	_RT_TX_FEEDBACK_INFO
 	// Packet Tx Profile -----------------------------------------------------------
 	RT_TX_FEEDBACK_INFO_TX_PROFILE	TxProfile;
 	// --------------------------------------------------------------------------
-	
+
 }RT_TX_FEEDBACK_INFO, *PRT_TX_FEEDBACK_INFO;
 
 
@@ -96,7 +96,7 @@ typedef struct _TX_FEEDBACK_CONTEXT{
 typedef struct _TX_FEEDBACK_TCB_ZONE{
 
 	PRT_TX_FEEDBACK_INFO 	pTxFeedbackInfo;
-	
+
 } TX_FEEDBACK_TCB_ZONE, *PTX_FEEDBACK_TCB_ZONE;
 
 #define TX_FEEDBACK_SIZE_OF_TCB_ZONE 	sizeof(TX_FEEDBACK_TCB_ZONE)

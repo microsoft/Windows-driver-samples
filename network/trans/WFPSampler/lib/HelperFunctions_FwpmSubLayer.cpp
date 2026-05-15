@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -55,7 +55,7 @@
 
 /**
  @helper_function="HlprFwpmSubLayerEnum"
- 
+
    Purpose:  Wrapper for the FwpmSubLayerEnum API.                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -114,7 +114,7 @@ UINT32 HlprFwpmSubLayerEnum(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmSubLayerDestroyEnumHandle"
- 
+
    Purpose:  Wrapper for the FwpmSubLayerDestroyEnumHandle API.                                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -164,7 +164,7 @@ UINT32 HlprFwpmSubLayerDestroyEnumHandle(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmSubLayerCreateEnumHandle"
- 
+
    Purpose:  Wrapper for the FwpmSubLayerCreateEnumHandle API.                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -205,7 +205,7 @@ UINT32 HlprFwpmSubLayerCreateEnumHandle(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmSubLayerDeleteByKey"
- 
+
    Purpose:  Wrapper for the FwpmSubLayerDeleteByKey API.                                       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -255,11 +255,11 @@ UINT32 HlprFwpmSubLayerDeleteByKey(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmSubLayerAdd"
- 
+
    Purpose:  Add a sublayer to associate with all of this program's filters.                    <br>
                                                                                                 <br>
-   Notes:    By default sublayer is weighted just below the weight of FWPM_SUBLAYER_UNIVERSAL 
-             so IPsec decryption will occur prior to invocation of any of WFPSampler's callout 
+   Notes:    By default sublayer is weighted just below the weight of FWPM_SUBLAYER_UNIVERSAL
+             so IPsec decryption will occur prior to invocation of any of WFPSampler's callout
              routines.                                                                          <br>
                                                                                                 <br>
    MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/AA364207.aspx                              <br>
@@ -313,10 +313,10 @@ UINT32 HlprFwpmSubLayerAdd(_In_ HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmSubLayerDelete"
- 
+
    Purpose:  Remove the sublayer that was associated with all of WFPSampler's filters.          <br>
                                                                                                 <br>
-   Notes:    Function will fail if any of WFPSampler's filters are still present and associated 
+   Notes:    Function will fail if any of WFPSampler's filters are still present and associated
              with this sublayer.                                                                <br>
                                                                                                 <br>
    MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/AA364209.aspx                              <br>

@@ -2,7 +2,7 @@
 #ifndef _STREAM_TRACE_H
 #define _STREAM_TRACE_H
 
-// WPP Software Tracing Definitions 
+// WPP Software Tracing Definitions
 
 
 /* 524F4849-5420-5241-494E-41205A9EEF01 */

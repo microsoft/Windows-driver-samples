@@ -36,7 +36,7 @@ p2p_build_PresenceReqIe(
 	)
 {
 	pu1Byte						pLen = NULL;
-	
+
 	if(NULL == (pLen = p2p_add_IEHdr(pBuf))) return;
 
 	P2PAttr_Make_NoaFromPsSet(pBuf, pPs);
@@ -55,15 +55,15 @@ p2p_build_PresenceRspIe(
 	)
 {
 	pu1Byte						pLen = NULL;
-	
+
 	if(NULL == (pLen = p2p_add_IEHdr(pBuf))) return;
-		
+
 	P2PAttr_Make_Status(pBuf, status);
-	P2PAttr_Make_Noa(pBuf, 
-		pP2PInfo->NoAIEIndex, 
-		pP2PInfo->bOppPS, 
-		pP2PInfo->CTWindow, 
-		P2P_MAX_NUM_NOA_DESC, 
+	P2PAttr_Make_Noa(pBuf,
+		pP2PInfo->NoAIEIndex,
+		pP2PInfo->bOppPS,
+		pP2PInfo->CTWindow,
+		P2P_MAX_NUM_NOA_DESC,
 		pP2PInfo->NoADescriptors);
 
 	p2p_update_IeHdrLen(pBuf, pLen);
@@ -105,7 +105,7 @@ p2p_Construct_PresenceReq(
 	p2p_build_PresenceReqIe(pBuf, pP2pPs);
 
 	FrameBuf_Dump(pBuf, 0, DBG_LOUD, __FUNCTION__);
-	
+
 	return;
 }
 
@@ -117,7 +117,7 @@ p2p_Construct_PresenceRsp(
 	IN  u1Byte					status,
 	IN  FRAME_BUF 				*pBuf
 	)
-{	
+{
 	// MAC Header
 	p2p_add_ActionFrameMacHdr(pBuf, da, pP2PInfo->DeviceAddress, pP2PInfo->DeviceAddress);
 
@@ -139,7 +139,7 @@ p2p_Copnstruct_GoDiscoverabilityReq(
 	IN  u1Byte					dialogToken,
 	IN  FRAME_BUF 				*pBuf
 	)
-{	
+{
 	// MAC Header
 	p2p_add_ActionFrameMacHdr(pBuf, da, pP2PInfo->DeviceAddress, pP2PInfo->InterfaceAddress);
 
@@ -154,7 +154,7 @@ p2p_Copnstruct_GoDiscoverabilityReq(
 	return;
 }
 
-VOID 
+VOID
 p2p_Construct_SDReq(
 	IN  const P2P_INFO 			*pP2PInfo,
 	IN  FRAME_BUF 				*pBuf,
@@ -178,11 +178,11 @@ p2p_Construct_SDReq(
 	FrameBuf_Add_u1(pBuf, 2);		// Legnth
 	FrameBuf_Add_u1(pBuf, 0);		// Query Response Length Limit and PAME-BI
 	FrameBuf_Add_u1(pBuf, 0);		// Advertisment Protocol ID
-	
+
 	//Query Request Length
 	pQueryReqLen = FrameBuf_Add(pBuf, 2);
 
-	// ANQP Query Request 
+	// ANQP Query Request
 	FrameBuf_Add_u1(pBuf, 0xDD); 					// Info ID, first
 	FrameBuf_Add_u1(pBuf, 0xDD); 					// Info ID, second
 	pAnqpQueryReqLen = FrameBuf_Add(pBuf, 2);		// Lenghth
@@ -199,8 +199,8 @@ p2p_Construct_SDReq(
 		FrameBuf_Add_u1(pBuf, tlv->ServiceDesc.ServiceType);	// Service Protocol Type
 		FrameBuf_Add_u1(pBuf, tlv->TransactionID);				// Service Transaction ID
 		FrameBuf_Add_Data(pBuf, 								// Query Data
-			tlv->ServiceDesc.Buffer, 
-			tlv->ServiceDesc.BufferLength); 
+			tlv->ServiceDesc.Buffer,
+			tlv->ServiceDesc.BufferLength);
 
 		WriteEF2Byte(pContentLen, 								// Write back length
 			FrameBuf_Tail(pBuf) - (pContentLen + 2));
@@ -214,7 +214,7 @@ p2p_Construct_SDReq(
 	return;
 }
 
-VOID 
+VOID
 p2p_Construct_SDRsp(
 	IN  const P2P_INFO 			*pP2PInfo,
 	IN  FRAME_BUF 				*pBuf,
@@ -228,7 +228,7 @@ p2p_Construct_SDRsp(
 
 	FunctionIn(COMP_P2P);
 	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("bFragment: %u\n", bFrag));
-	
+
 	// MAC Header
 	p2p_add_ActionFrameMacHdr(pBuf, da, pP2PInfo->DeviceAddress, pP2PInfo->DeviceAddress);
 
@@ -244,7 +244,7 @@ p2p_Construct_SDRsp(
 	// Advertisement Protocol Info IE
 	FrameBuf_Add_u1(pBuf, 108);		// Element ID
 	FrameBuf_Add_u1(pBuf, 2);		// Legnth
-	FrameBuf_Add_u1(pBuf, 0x7F);	// Query Response Length Limit and PAME-BI. 
+	FrameBuf_Add_u1(pBuf, 0x7F);	// Query Response Length Limit and PAME-BI.
 									// The Response Length set to 1111111 PAME-BI is 0
 	FrameBuf_Add_u1(pBuf, 0);		// Advertisment Protocol ID
 
@@ -254,12 +254,12 @@ p2p_Construct_SDRsp(
 	// ANQP Query Response
 	if(!bFrag)
 	{// append the entire ANQP Query Rsp Field
-		FrameBuf_Add_Data(pBuf, 
-			pP2PInfo->SDContext.ANQPQueryRspFieldToSendBuf, 
+		FrameBuf_Add_Data(pBuf,
+			pP2PInfo->SDContext.ANQPQueryRspFieldToSendBuf,
 			pP2PInfo->SDContext.ANQPQueryRspFieldToSendSize);
 
 		RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "Adding query rsp:\n",
-			pP2PInfo->SDContext.ANQPQueryRspFieldToSendBuf, 
+			pP2PInfo->SDContext.ANQPQueryRspFieldToSendBuf,
 			pP2PInfo->SDContext.ANQPQueryRspFieldToSendSize);
 	}
 
@@ -270,19 +270,19 @@ p2p_Construct_SDRsp(
 	return;
 }
 
-VOID 
+VOID
 p2p_Construct_SDComebackReq(
 	IN  const P2P_INFO 			*pP2PInfo,
 	IN  FRAME_BUF 				*pBuf,
 	IN  const u1Byte 			*da,
 	IN  u1Byte 					dialogToken
 	)
-{	
+{
 	FunctionIn(COMP_P2P);
-	
+
 	// MAC Header
 	p2p_add_ActionFrameMacHdr(pBuf, da, pP2PInfo->DeviceAddress, da);
-	
+
 	// Action Header
 	p2p_add_PublicActionHdr(pBuf, WLAN_PA_GAS_COMEBACK_REQ, dialogToken);
 
@@ -300,7 +300,7 @@ p2p_Construct_SDComebackRsp(
 	IN  u2Byte					bytesToCopy,
 	IN  BOOLEAN					bMoreData
 	)
-{	
+{
 	//
 	// Note: if comeback is used, we send only 1 Service Rsp TLV in the ComebackRsp
 	//
@@ -317,11 +317,11 @@ p2p_Construct_SDComebackRsp(
 	p2p_add_PublicActionHdr(pBuf, WLAN_PA_GAS_COMEBACK_RESP, dialogToken);
 
 	// Status code (11u): 2 octets
-	FrameBuf_Add_le_u2(pBuf, 0);			
+	FrameBuf_Add_le_u2(pBuf, 0);
 
 	// GAS Query Response Fragment ID
 	fragId = pP2PInfo->SDContext.FragmentID;
-	if(bMoreData) 
+	if(bMoreData)
 		SET_FLAG(fragId, BIT7);
 	FrameBuf_Add_u1(pBuf, fragId);
 
@@ -331,7 +331,7 @@ p2p_Construct_SDComebackRsp(
 	// Advertisement Protocol Info IE
 	FrameBuf_Add_u1(pBuf, 108);		// Element ID
 	FrameBuf_Add_u1(pBuf, 2);		// Legnth
-	FrameBuf_Add_u1(pBuf, 0x7F);	// Query Response Length Limit and PAME-BI. 
+	FrameBuf_Add_u1(pBuf, 0x7F);	// Query Response Length Limit and PAME-BI.
 									// The Response Length set to 1111111 PAME-BI is 0
 	FrameBuf_Add_u1(pBuf, 0);		// Advertisment Protocol ID
 
@@ -339,8 +339,8 @@ p2p_Construct_SDComebackRsp(
 	pQueryRspLen = FrameBuf_Add(pBuf, 2);
 
 	// Payload
-	FrameBuf_Add_Data(pBuf, 
-		pP2PInfo->SDContext.ANQPQueryRspFieldToSendBuf + pP2PInfo->SDContext.ANQPQueryRspFieldToSendOffset, 
+	FrameBuf_Add_Data(pBuf,
+		pP2PInfo->SDContext.ANQPQueryRspFieldToSendBuf + pP2PInfo->SDContext.ANQPQueryRspFieldToSendOffset,
 		bytesToCopy);
 
 	WriteEF2Byte(pQueryRspLen, FrameBuf_Tail(pBuf) - (pQueryRspLen + 2)); // Write back length
@@ -360,15 +360,15 @@ p2p_Construct_AnqpQueryRspField(
 	//
 	// We construct an un-fragmented ANQP Query Rsp Field according to the Service Req TLVs
 	//
-	
+
 	FRAME_BUF					fbuf;
-	
+
 	const P2P_SERVICE_RSP_TLV 	*pSvcRspTLVs = pRspCtx->ServiceRspTLVList;
 	u1Byte						*pAnqpQueryRspLen = NULL;
 
-	FrameBuf_Init(sizeof(pSdCtx->ANQPQueryRspFieldToSendBuf), 
-		0, 
-		pSdCtx->ANQPQueryRspFieldToSendBuf, 
+	FrameBuf_Init(sizeof(pSdCtx->ANQPQueryRspFieldToSendBuf),
+		0,
+		pSdCtx->ANQPQueryRspFieldToSendBuf,
 		&fbuf);
 
 	FrameBuf_Add_u1(&fbuf, 0xDD);
@@ -382,17 +382,17 @@ p2p_Construct_AnqpQueryRspField(
 	if(pRspCtx->SDStatus == P2P_SD_STATUS_SUCCESS)
 	{
 		u1Byte					itSvcTlv = 0;
-		
+
 		for(itSvcTlv = 0; itSvcTlv < pRspCtx->ServiceRspTLVSize; itSvcTlv++)
 		{
 			u1Byte					*pLen = NULL;
-			
+
 			pLen = FrameBuf_Add(&fbuf, 2);
 			FrameBuf_Add_u1(&fbuf, pSvcRspTLVs[itSvcTlv].ServiceDesc.ServiceType);	// Service Protocol Type
 			FrameBuf_Add_u1(&fbuf, pSvcRspTLVs[itSvcTlv].TransactionID);			// Service Transation ID
 			FrameBuf_Add_u1(&fbuf, pSvcRspTLVs[itSvcTlv].Status);					// Status
 			FrameBuf_Add_Data(&fbuf, 												// Response Data
-				pSvcRspTLVs[itSvcTlv].ServiceDesc.Buffer, 
+				pSvcRspTLVs[itSvcTlv].ServiceDesc.Buffer,
 				pSvcRspTLVs[itSvcTlv].ServiceDesc.BufferLength);
 			WriteEF2Byte(pLen, FrameBuf_Tail(&fbuf) - (pLen + 2));					// Write back length
 		}

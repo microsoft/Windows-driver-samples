@@ -7,8 +7,8 @@
 //
 //   Abstract:
 //      This module contains prototypes for WFP Classify functions that inject data back into the
-//         stream using the clone / block / inject method.  This method is inline only, no 
-//         modification, and uses as little validation and error checking as possible.  These 
+//         stream using the clone / block / inject method.  This method is inline only, no
+//         modification, and uses as little validation and error checking as possible.  These
 //         functions are meant for test performance purposes only.
 //
 //   Author:

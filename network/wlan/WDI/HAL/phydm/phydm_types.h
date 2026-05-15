@@ -1,7 +1,7 @@
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
- *                                        
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
@@ -23,7 +23,7 @@
 //
 // Define Different SW team support
 //
-#define	ODM_AP		 	0x01	//BIT0 
+#define	ODM_AP		 	0x01	//BIT0
 #define	ODM_ADSL	 	0x02	//BIT1
 #define	ODM_CE		 	0x04	//BIT2
 #define	ODM_WIN		 	0x08	//BIT3
@@ -71,7 +71,7 @@ typedef enum _RT_SPINLOCK_TYPE{
 	RT_RM_SPINLOCK = 3,
 	RT_CAM_SPINLOCK = 4,
 	RT_SCAN_SPINLOCK = 5,
-	RT_LOG_SPINLOCK = 7, 
+	RT_LOG_SPINLOCK = 7,
 	RT_BW_SPINLOCK = 8,
 	RT_CHNLOP_SPINLOCK = 9,
 	RT_RF_OPERATE_SPINLOCK = 10,
@@ -84,7 +84,7 @@ typedef enum _RT_SPINLOCK_TYPE{
 	//Shall we define Ndis 6.2 SpinLock Here ?
 	RT_PORT_SPINLOCK=16,
 	RT_VNIC_SPINLOCK=17,
-	RT_HVL_SPINLOCK=18,	
+	RT_HVL_SPINLOCK=18,
 	RT_H2C_SPINLOCK = 20, // For H2C cmd. Added by tynli. 2009.11.09.
 
 	RT_BTData_SPINLOCK=25,
@@ -92,7 +92,7 @@ typedef enum _RT_SPINLOCK_TYPE{
 	RT_WAPI_OPTION_SPINLOCK=26,
 	RT_WAPI_RX_SPINLOCK=27,
 
-      // add for 92D CCK control issue  
+      // add for 92D CCK control issue
 	RT_CCK_PAGEA_SPINLOCK = 28,
 	RT_BUFFER_SPINLOCK = 29,
 	RT_CHANNEL_AND_BANDWIDTH_SPINLOCK = 30,
@@ -105,8 +105,8 @@ typedef enum _RT_SPINLOCK_TYPE{
 	RT_DBG_SPIN_LOCK = 37,
 	RT_IQK_SPINLOCK = 38,
 	RT_PENDED_OID_SPINLOCK = 39,
-	RT_CHNLLIST_SPINLOCK = 40,	
-	RT_INDIC_SPINLOCK = 41,	//protect indication	
+	RT_CHNLLIST_SPINLOCK = 40,
+	RT_INDIC_SPINLOCK = 41,	//protect indication
 	RT_RFD_SPINLOCK = 42,
 	RT_SYNC_IO_CNT_SPINLOCK = 43,
 	RT_LAST_SPINLOCK,
@@ -119,8 +119,8 @@ typedef enum _RT_SPINLOCK_TYPE{
 	#define	STA_INFO_T			RT_WLAN_STA
 	#define	PSTA_INFO_T			PRT_WLAN_STA
 
-	#define CONFIG_HW_ANTENNA_DIVERSITY 
-	#define CONFIG_SW_ANTENNA_DIVERSITY 
+	#define CONFIG_HW_ANTENNA_DIVERSITY
+	#define CONFIG_SW_ANTENNA_DIVERSITY
 	/*#define CONFIG_HL_SMART_ANTENNA_TYPE1*/
 	/*#define CONFIG_PATH_DIVERSITY*/
 	/*#define CONFIG_RA_DYNAMIC_RTY_LIMIT*/
@@ -138,16 +138,16 @@ typedef enum _RT_SPINLOCK_TYPE{
 	// To let ADSL/AP project compile ok; it should be removed after all conflict are solved. Added by Annie, 2011-10-07.
 	#define ADSL_AP_BUILD_WORKAROUND
 	#define AP_BUILD_WORKAROUND
-	
+
 	//2 [ Configure RA Debug H2C CMD ]
 	#define CONFIG_RA_DBG_CMD
-	
+
 	/*#define CONFIG_PATH_DIVERSITY*/
 	/*#define CONFIG_RA_DYNAMIC_RTY_LIMIT*/
-	
+
 	//2 [ Configure Antenna Diversity ]
 #if defined(CONFIG_RTL_8881A_ANT_SWITCH) || defined(CONFIG_SLOT_0_ANT_SWITCH) || defined(CONFIG_SLOT_1_ANT_SWITCH)
-	#define CONFIG_HW_ANTENNA_DIVERSITY 
+	#define CONFIG_HW_ANTENNA_DIVERSITY
 	#define ODM_EVM_ENHANCE_ANTDIV
 
         //----------
@@ -166,16 +166,16 @@ typedef enum _RT_SPINLOCK_TYPE{
 	#endif
 	#if(!defined(CONFIG_NO_5G_DIVERSITY) && !defined(CONFIG_5G_CGCS_RX_DIVERSITY) && !defined(CONFIG_5G_CG_TRX_DIVERSITY) && !defined(CONFIG_2G5G_CG_TRX_DIVERSITY) && !defined(CONFIG_5G_CG_SMART_ANT_DIVERSITY))
 		#define CONFIG_NO_5G_DIVERSITY
-	#endif	
+	#endif
 	//----------
 	#if ( defined(CONFIG_NO_2G_DIVERSITY) && defined(CONFIG_NO_5G_DIVERSITY) )
-		#define CONFIG_NOT_SUPPORT_ANTDIV 
+		#define CONFIG_NOT_SUPPORT_ANTDIV
 	#elif( !defined(CONFIG_NO_2G_DIVERSITY) && defined(CONFIG_NO_5G_DIVERSITY) )
 		#define CONFIG_2G_SUPPORT_ANTDIV
 	#elif( defined(CONFIG_NO_2G_DIVERSITY) && !defined(CONFIG_NO_5G_DIVERSITY) )
 		#define CONFIG_5G_SUPPORT_ANTDIV
 	#elif( (!defined(CONFIG_NO_2G_DIVERSITY) && !defined(CONFIG_NO_5G_DIVERSITY)) || defined(CONFIG_2G5G_CG_TRX_DIVERSITY) )
-		#define CONFIG_2G5G_SUPPORT_ANTDIV 
+		#define CONFIG_2G5G_SUPPORT_ANTDIV
 	#endif
 	//----------
 #endif
@@ -217,7 +217,7 @@ typedef enum _RT_SPINLOCK_TYPE{
 	#else
 		#define	PHYDM_TESTCHIP_SUPPORT 0
 	#endif
-	
+
 #elif (DM_ODM_SUPPORT_TYPE == ODM_CE)
 	#include <drv_types.h>
 
@@ -237,29 +237,29 @@ typedef enum _RT_SPINLOCK_TYPE{
 	typedef s64					s8Byte,*ps8Byte;
 #else
 	#define u1Byte 		u8
-	#define	pu1Byte 	u8*	
+	#define	pu1Byte 	u8*
 
 	#define u2Byte 		u16
-	#define	pu2Byte 	u16*		
+	#define	pu2Byte 	u16*
 
 	#define u4Byte 		u32
-	#define	pu4Byte 	u32*	
+	#define	pu4Byte 	u32*
 
 	#define u8Byte 		u64
 	#define	pu8Byte 	u64*
 
 	#define s1Byte 		s8
-	#define	ps1Byte 	s8*	
+	#define	ps1Byte 	s8*
 
 	#define s2Byte 		s16
-	#define	ps2Byte 	s16*	
+	#define	ps2Byte 	s16*
 
 	#define s4Byte 		s32
-	#define	ps4Byte 	s32*	
+	#define	ps4Byte 	s32*
 
 	#define s8Byte 		s64
-	#define	ps8Byte 	s64*	
-	
+	#define	ps8Byte 	s64*
+
 #endif
 	#ifdef CONFIG_USB_HCI
 		#define DEV_BUS_TYPE  	RT_USB_INTERFACE
@@ -270,22 +270,22 @@ typedef enum _RT_SPINLOCK_TYPE{
 	#elif defined(CONFIG_GSPI_HCI)
 		#define DEV_BUS_TYPE  	RT_SDIO_INTERFACE
 	#endif
-	
 
-	#if defined(CONFIG_LITTLE_ENDIAN)	
+
+	#if defined(CONFIG_LITTLE_ENDIAN)
 		#define	ODM_ENDIAN_TYPE			ODM_ENDIAN_LITTLE
 	#elif defined (CONFIG_BIG_ENDIAN)
 		#define	ODM_ENDIAN_TYPE			ODM_ENDIAN_BIG
 	#endif
-	
+
 	typedef struct timer_list		RT_TIMER, *PRT_TIMER;
 	typedef  void *				RT_TIMER_CALL_BACK;
 	#define	STA_INFO_T			struct sta_info
 	#define	PSTA_INFO_T		struct sta_info *
-		
 
 
-	#define TRUE 	_TRUE	
+
+	#define TRUE 	_TRUE
 	#define FALSE	_FALSE
 
 

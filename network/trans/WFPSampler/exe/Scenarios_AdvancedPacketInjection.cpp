@@ -6,13 +6,13 @@
 //      Scenarios_AdvancedPacketInjection.cpp
 //
 //   Abstract:
-//      This module contains functions which prepares and sends data for the 
+//      This module contains functions which prepares and sends data for the
 //         ADVANCED_PACKET_INJECTION scenario implementation.
 //
 //   Naming Convention:
 //
 //      <Scope><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -22,20 +22,20 @@
 //          }
 //       <Object>
 //          {
-//            AdvancedPacketInjectionScenario - Function pertains to Advanced Packet Injection 
+//            AdvancedPacketInjectionScenario - Function pertains to Advanced Packet Injection
 //                                                 Scenario.
 //          }
 //       <Action>
 //          {
-//            Execute                         - Function packages data and invokes RPC to the 
+//            Execute                         - Function packages data and invokes RPC to the
 //                                                 WFPSampler service
 //            Log                             - Function writes to the console.
-//            Parse                           - Function pulls data into the required format from  
+//            Parse                           - Function pulls data into the required format from
 //                                                 the provided data.
 //          }
 //       <Modifier>
 //          {
-//            Help                            - Function provides context sensitive help for the 
+//            Help                            - Function provides context sensitive help for the
 //                                                 scenario.
 //            InjectionData                   - Function acts on the
 //                                                 PC_ADVANCED_PACKET_INJECTION_DATA.
@@ -62,7 +62,7 @@
 
 /**
  @private_function="PrvAdvancedPacketInjectionScenarioParseInjectionData"
- 
+
    Purpose:  Parse the command line parameters for implementing packet injection such as:       <br>
                 Perform the injection inline (from within the classify)    (-in)                <br>
                 Use threaded DPCs for out of band (asynchronous)           (-tdpc)              <br>
@@ -107,9 +107,9 @@ UINT32 PrvAdvancedPacketInjectionScenarioParseInjectionData(_In_reads_(stringCou
                              ppCLPStrings[stringIndex]))
       {
          pPCAdvancedPacketInjectionData->useThreadedDPC = TRUE;
-      
+
          found++;
-      
+
          continue;
       }
 
@@ -150,7 +150,7 @@ UINT32 PrvAdvancedPacketInjectionScenarioParseInjectionData(_In_reads_(stringCou
 /**
  @scenario_function="AdvancedPacketInjectionScenarioExecute"
 
-   Purpose:  Gather and package data neccessary to setup the ADVANCED_PACKET_INJECTION scenario, 
+   Purpose:  Gather and package data neccessary to setup the ADVANCED_PACKET_INJECTION scenario,
              then invoke RPC to implement the scenario in the WFPSampler service.               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -190,7 +190,7 @@ UINT32 AdvancedPacketInjectionScenarioExecute(_In_reads_(stringCount) PCWSTR* pp
                PC_ADVANCED_PACKET_INJECTION_DATA);
       HLPR_BAIL_ON_ALLOC_FAILURE(pPCAdvancedPacketInjectionData,
                                  status);
-      
+
       status = PrvAdvancedPacketInjectionScenarioParseInjectionData(ppCLPStrings,
                                                                     stringCount,
                                                                     pPCAdvancedPacketInjectionData);
@@ -221,7 +221,7 @@ UINT32 AdvancedPacketInjectionScenarioExecute(_In_reads_(stringCount) PCWSTR* pp
 
 /**
  @public_function="AdvancedPacketInjectionScenarioLogHelp"
- 
+
    Purpose:  Log usage information for the ADVANCED_PACKET_INJECTION scenario to the console.   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

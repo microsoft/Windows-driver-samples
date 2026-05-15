@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -51,7 +51,7 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Add offset to check in 
+//      December  13,   2013  -     1.1   -  Add offset to check in
 //                                              HlprEthernetMACAddressStringToValue
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@
 
 /**
  @helper_function="HlprEthernetMACAddressStringIsValidFormat"
- 
+
    Purpose: Determine if a string may be an Ethernet MAC address by verifying the string:       <br>
                is at least 17 characters                                                        <br>
                has at least 5 colons(':') or hyphens('-')                                       <br>
@@ -140,7 +140,7 @@ BOOLEAN HlprEthernetMACAddressStringIsValidFormat(_In_ PCWSTR pEthernetMACAddres
 
 /**
  @helper_function="HlprEthernetMACAddressStringToValue"
- 
+
    Purpose:  Convert a string representing an Ethernet MAC Address to it's 6 BYTE value.        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

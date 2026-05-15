@@ -12,7 +12,7 @@
 //
 //      <Scope><Object><Action><Modifier>
 //      <Scope><Object><Action>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -22,7 +22,7 @@
 //          }
 //       <Object>
 //          {
-//            ScenarioAdvancedPacketInjection - Function pertains to all of the Advanced Packet 
+//            ScenarioAdvancedPacketInjection - Function pertains to all of the Advanced Packet
 //                                                 Injection Scenarios
 //            RPC                             - Function is and RPC entry point.
 //          }
@@ -30,8 +30,8 @@
 //          {
 //            Add                             - Function adds objects
 //            Remove                          - Function removes objects
-//            Invoke                          - Function implements the scenario based on parameters 
-//                                                 passed from the commandline interface 
+//            Invoke                          - Function implements the scenario based on parameters
+//                                                 passed from the commandline interface
 //                                                 (WFPSampler.exe).
 //          }
 //       <Modifier>
@@ -64,10 +64,10 @@
 
 /**
  @private_function="PrvScenarioAdvancedPacketInjectionDeleteFwpmObjects"
- 
+
    Purpose:  Function that disables the SCENARIO_ADVANCED_PACKET_INJECTION scenarios.           <br>
                                                                                                 <br>
-   Notes:    Scenario removes the filters using specified filtering conditions at the specified 
+   Notes:    Scenario removes the filters using specified filtering conditions at the specified
              layer. Associated callouts are removed as well.                                    <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -162,11 +162,11 @@ UINT32 PrvScenarioAdvancedPacketInjectionDeleteFwpmObjects(_In_ const FWPM_FILTE
 
 /**
  @private_function="PrvScenarioAdvancedPacketInjectionAddFwpmObjects"
- 
+
    Purpose:  Function that enables the SCENARIO_ADVANCED_PACKET_INJECTION scenarios.            <br>
                                                                                                 <br>
-   Notes:    Scenario adds a filter using specified filtering conditions to the specified layer. 
-             This filter is associated with WFPSampler's default sublayer and provider.  The 
+   Notes:    Scenario adds a filter using specified filtering conditions to the specified layer.
+             This filter is associated with WFPSampler's default sublayer and provider.  The
              appropriate callout is then added and associated with the filter.                  <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -208,9 +208,9 @@ UINT32 PrvScenarioAdvancedPacketInjectionAddFwpmObjects(_In_ const FWPM_FILTER* 
       ||
       pFilter->layerKey == FWPM_LAYER_STREAM_PACKET_V4 ||
       pFilter->layerKey == FWPM_LAYER_STREAM_PACKET_V6
-   
+
 #if(NTDDI_VERSION >= NTDDI_WIN8)
-   
+
       ||
       pFilter->layerKey == FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET ||
       pFilter->layerKey == FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET ||
@@ -218,7 +218,7 @@ UINT32 PrvScenarioAdvancedPacketInjectionAddFwpmObjects(_In_ const FWPM_FILTER* 
       pFilter->layerKey == FWPM_LAYER_OUTBOUND_MAC_FRAME_NATIVE ||
       pFilter->layerKey == FWPM_LAYER_INGRESS_VSWITCH_ETHERNET ||
       pFilter->layerKey == FWPM_LAYER_EGRESS_VSWITCH_ETHERNET
-   
+
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
 
@@ -310,8 +310,8 @@ UINT32 PrvScenarioAdvancedPacketInjectionAddFwpmObjects(_In_ const FWPM_FILTER* 
 
 /**
  @scenario_function="ScenarioAdvancedPacketInjectionRemove"
- 
-   Purpose:  Function that removes corresponding objects for a previously added 
+
+   Purpose:  Function that removes corresponding objects for a previously added
              SCENARIO_ADVANCED_PACKET_INJECTION.                                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -331,13 +331,13 @@ UINT32 ScenarioAdvancedPacketInjectionRemove(_In_ const FWPM_FILTER* pFilter)
 
    Purpose:  Scenario which will blindly reinject the classified traffic.                       <br>
                                                                                                 <br>
-   Notes:    Adds a filter which references one of the 
+   Notes:    Adds a filter which references one of the
              WFPSAMPLER_CALLOUT_ADVANCED_PACKET_INJECTION callouts for the provided layer.      <br>
                                                                                                 <br>
-             No data modification is made to the traffic, and checks are in place to prevent 
+             No data modification is made to the traffic, and checks are in place to prevent
              infinite reinjection of the traffic.                                               <br>
                                                                                                 <br>
-             Ideal usage is to implement in the presence of a 3rd party firewall to see how they 
+             Ideal usage is to implement in the presence of a 3rd party firewall to see how they
              coexist with another provider performing injection.                                <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -356,8 +356,8 @@ UINT32 ScenarioAdvancedPacketInjectionAdd(_In_ const FWPM_FILTER* pFilter,
 
 /**
  @rpc_function="RPCInvokeScenarioAdvancedPacketInjection"
- 
-   Purpose:  RPC exposed function used to dipatch the scenario routines for 
+
+   Purpose:  RPC exposed function used to dipatch the scenario routines for
              SCENARIO_ADVANCED_PACKET_INJECTION.                                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

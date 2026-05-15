@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -67,7 +67,7 @@
 
 /**
  @helper_function="HlprFwpmProviderContextDeleteByKey"
- 
+
    Purpose:  Wrapper for the FwpmProviderContextDeleteByKey API.                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -106,7 +106,7 @@ UINT32 HlprFwpmProviderContextDeleteByKey(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmProviderContextAdd"
- 
+
    Purpose:  Wrapper for the FwpmProviderContextAdd API.                                        <br>
                                                                                                 <br>
    Notes:    ProviderContext ID is written to pProviderContext->providerContextId.              <br>
@@ -144,7 +144,7 @@ UINT32 HlprFwpmProviderContextAdd(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmProviderContextEnum"
- 
+
    Purpose:  Wrapper for the FwpmProviderContextEnum API.                                       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -190,7 +190,7 @@ UINT32 HlprFwpmProviderContextEnum(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmProviderContextDestroyEnumHandle"
- 
+
    Purpose:  Wrapper for the FwpmProviderContextDestroyEnumHandle API.                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -240,7 +240,7 @@ UINT32 HlprFwpmProviderContextDestroyEnumHandle(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmProviderContextCreateEnumHandle"
- 
+
    Purpose:  Wrapper for the FwpmProviderContextCreateEnumHandle API.                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -271,7 +271,7 @@ UINT32 HlprFwpmProviderContextCreateEnumHandle(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmProviderContextRemoveAll"
- 
+
    Purpose:  Remove all providerContexts associated with the specified provider.                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

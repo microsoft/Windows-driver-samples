@@ -43,7 +43,7 @@ HRESULT CSampleRadioManager::FinalConstruct()
                 {
                     hr = _AddInstance(strSubKeyName, nullptr);
                 }
-				
+
                 dwCount++;
             }
             else
@@ -54,7 +54,7 @@ HRESULT CSampleRadioManager::FinalConstruct()
         }
 
     }
-    
+
     // register the regkey subkey add/remove event
     if (ERROR_SUCCESS == dwError)
     {
@@ -99,7 +99,7 @@ HRESULT CSampleRadioManager::FinalConstruct()
 }
 
 void CSampleRadioManager::FinalRelease()
-{    
+{
     if ((nullptr != _hRegChangeEvent) &&  (nullptr != _hEventThread))
     {
         {
@@ -135,7 +135,7 @@ IFACEMETHODIMP CSampleRadioManager::GetRadioInstances(_Out_ IRadioInstanceCollec
     CAutoVectorPtr<IRadioInstance *> rgpIRadioInstance;
     HRESULT  hr = S_OK;
     DWORD    cInstance;
-	
+
     if (nullptr == ppCollection)
     {
         return E_INVALIDARG;
@@ -194,7 +194,7 @@ IFACEMETHODIMP CSampleRadioManager::OnSystemRadioStateChange(
     HRESULT hr = S_OK;
     CAutoPtr<SET_SYS_RADIO_JOB> spSetSysRadioJob;
     bool fRefAdded = false;
-	
+
     spSetSysRadioJob.Attach(new SET_SYS_RADIO_JOB);
     if (nullptr == spSetSysRadioJob)
     {
@@ -353,7 +353,7 @@ HRESULT CSampleRadioManager::_AddInstance(_In_ PCWSTR pszKeyName, _Out_opt_ IRad
     if (SUCCEEDED(hr))
     {
         CComPtr<ISampleRadioManagerInternal> spRMInternal = this;
-        hr = CSampleRadioInstance_CreateInstance(pszKeyName, spRMInternal, &spRadioInstance);        
+        hr = CSampleRadioInstance_CreateInstance(pszKeyName, spRMInternal, &spRadioInstance);
     }
 
     if (SUCCEEDED(hr))
@@ -391,7 +391,7 @@ void CSampleRadioManager::_OnInstanceAddRemove()
     WCHAR    szSubKeyName[128];
     DWORD    cchSubKeyName;
     POSITION p;
-	
+
     // Set all instances as invalid
     for (p = _listRadioInstances.GetHeadPosition(); p != nullptr; _listRadioInstances.GetNext(p))
     {
@@ -436,7 +436,7 @@ void CSampleRadioManager::_OnInstanceAddRemove()
                     if(SUCCEEDED(hr))
                     {
                         _FireEventOnInstanceAdd(spRadioInstance);
-                    }                    
+                    }
                 }
                 else
                 {

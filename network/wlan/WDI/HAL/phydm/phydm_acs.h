@@ -1,7 +1,7 @@
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
- *                                        
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
@@ -17,7 +17,7 @@
  *
  *
  ******************************************************************************/
- 
+
 #ifndef	__PHYDMACS_H__
 #define    __PHYDMACS_H__
 
@@ -38,22 +38,22 @@ typedef struct _ACS_
 	u1Byte		CleanChannel_2G;
 	u1Byte		CleanChannel_5G;
 	u2Byte		Channel_Info_2G[2][ODM_MAX_CHANNEL_2G];		//Channel_Info[1]: Channel Score, Channel_Info[2]:Channel_Scan_Times
-	u2Byte		Channel_Info_5G[2][ODM_MAX_CHANNEL_5G];	
+	u2Byte		Channel_Info_5G[2][ODM_MAX_CHANNEL_5G];
 
-#if ( DM_ODM_SUPPORT_TYPE & ODM_AP )    
+#if ( DM_ODM_SUPPORT_TYPE & ODM_AP )
     u1Byte              ACS_Step;
     // NHM Count 0-11
     u1Byte              NHM_Cnt[14][11];
 
     // AC-Series, for storing previous setting
-    u4Byte              Reg0x990; 
+    u4Byte              Reg0x990;
     u4Byte              Reg0x994;
     u4Byte              Reg0x998;
     u4Byte              Reg0x99C;
     u1Byte              Reg0x9A0;   // u1Byte
 
     // N-Series, for storing previous setting
-    u4Byte              Reg0x890; 
+    u4Byte              Reg0x890;
     u4Byte              Reg0x894;
     u4Byte              Reg0x898;
     u4Byte              Reg0x89C;
@@ -91,7 +91,7 @@ VOID
 phydm_AutoChannelSelectSettingAP(
     IN  PVOID   pDM_VOID,
     IN  u4Byte  Setting,             // 0: STORE_DEFAULT_NHM_SETTING; 1: RESTORE_DEFAULT_NHM_SETTING, 2: ACS_NHM_SETTING
-    IN  u4Byte  acs_step        
+    IN  u4Byte  acs_step
 );
 
 VOID

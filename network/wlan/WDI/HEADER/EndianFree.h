@@ -41,10 +41,10 @@
 //
 #define WriteEF1Byte(_ptr, _val)	(*((pu1Byte)(_ptr)))=EF1Byte(_val)
 #define WriteEF2Byte(_ptr, _val)	(*((UNALIGNED pu2Byte)(_ptr)))=EF2Byte(_val)
-#define WriteEF4Byte(_ptr, _val)	(*((UNALIGNED pu4Byte)(_ptr)))=EF4Byte(_val)									
+#define WriteEF4Byte(_ptr, _val)	(*((UNALIGNED pu4Byte)(_ptr)))=EF4Byte(_val)
 
 //
-// Convert Host system specific byte ording (litten or big endia) to Network byte ording (big endian). 
+// Convert Host system specific byte ording (litten or big endia) to Network byte ording (big endian).
 // 20060507, by rcnjko.
 //
 #if BYTE_ORDER == __MACHINE_LITTLE_ENDIAN
@@ -61,7 +61,7 @@
 	#define H2N4BYTE(_val)				((u4Byte)(_val))
 #endif
 
-// Read/Write Host system specific byte ording (litten or big endia) from/to Network byte ording (big endian). 
+// Read/Write Host system specific byte ording (litten or big endia) from/to Network byte ording (big endian).
 // By Bruce, 2012-03-07.
 #define	WriteH2N1BYTE(_ptr, _val)	(*((pu1Byte)(_ptr)))= H2N1BYTE(_val)
 #define	WriteH2N2BYTE(_ptr, _val)	(*((UNALIGNED pu2Byte)(_ptr)))= H2N2BYTE(_val)
@@ -112,7 +112,7 @@
 //		BIT_OFFSET_LEN_MASK_32(16, 2) => 0x00030000
 //
 #define BIT_OFFSET_LEN_MASK_32(__BitOffset, __BitLen) \
-	(BIT_LEN_MASK_32(__BitLen) << (__BitOffset)) 
+	(BIT_LEN_MASK_32(__BitLen) << (__BitOffset))
 
 //
 //	Description:
@@ -136,7 +136,7 @@
 
 //
 //	Description:
-//		Mask subfield (continuous bits in little-endian) of 4-byte value in litten byte oredering  
+//		Mask subfield (continuous bits in little-endian) of 4-byte value in litten byte oredering
 //		and return the result in 4-byte value in host byte ordering.
 //
 #define LE_BITS_CLEARED_TO_4BYTE(__pStart, __BitOffset, __BitLen) \
@@ -148,7 +148,7 @@
 
 //
 //	Description:
-//		Set subfield of little-endian 4-byte value to specified value.	
+//		Set subfield of little-endian 4-byte value to specified value.
 //
 #define SET_BITS_TO_LE_4BYTE(__pStart, __BitOffset, __BitLen, __Value) \
 	*((UNALIGNED pu4Byte)(__pStart)) = \
@@ -158,23 +158,23 @@
 			( (((u4Byte)__Value) & BIT_LEN_MASK_32(__BitLen)) << (__BitOffset) ) \
 		);
 
-		
+
 #define BIT_LEN_MASK_16(__BitLen) \
 		(0xFFFF >> (16 - (__BitLen)))
-		
+
 #define BIT_OFFSET_LEN_MASK_16(__BitOffset, __BitLen) \
 	(BIT_LEN_MASK_16(__BitLen) << (__BitOffset))
-	
+
 #define LE_P2BYTE_TO_HOST_2BYTE(__pStart) \
 	(EF2Byte(*((UNALIGNED pu2Byte)(__pStart))))
-	
+
 #define LE_BITS_TO_2BYTE(__pStart, __BitOffset, __BitLen) \
 	( \
 		( LE_P2BYTE_TO_HOST_2BYTE(__pStart) >> (__BitOffset) ) \
 		& \
 		BIT_LEN_MASK_16(__BitLen) \
 	)
-	
+
 #define LE_BITS_CLEARED_TO_2BYTE(__pStart, __BitOffset, __BitLen) \
 	( \
 		LE_P2BYTE_TO_HOST_2BYTE(__pStart) \
@@ -189,7 +189,7 @@
 			| \
 			( (((u2Byte)__Value) & BIT_LEN_MASK_16(__BitLen)) << (__BitOffset) ) \
 		);
-					
+
 #define BIT_LEN_MASK_8(__BitLen) \
 		(0xFF >> (8 - (__BitLen)))
 

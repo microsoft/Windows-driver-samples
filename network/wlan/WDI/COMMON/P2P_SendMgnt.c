@@ -35,9 +35,9 @@ p2p_Send_ProbeRsp(
 	if(MgntGetBuffer(pP2PInfo->pAdapter, &pTcb, &pBuf))
 	{
 		FRAME_BUF				fbuf;
-		
+
 		FrameBuf_Init(pP2PInfo->pAdapter->MAX_TRANSMIT_BUFFER_SIZE, 0, pBuf->Buffer.VirtualAddress, &fbuf);
-		
+
 		if(p2p_Construct_ProbeRsp(&fbuf, pP2PInfo, da, rfdProbeReq, posProbeReq, posAttrs))
 		{
 			pTcb->PacketLength = FrameBuf_Length(&fbuf);
@@ -51,7 +51,7 @@ p2p_Send_ProbeRsp(
 			ReturnTCB(pP2PInfo->pAdapter, pTcb, RT_STATUS_SUCCESS);
 		}
 	}
-	
+
 	PlatformReleaseSpinLock(pP2PInfo->pAdapter, RT_TX_SPINLOCK);
 }
 

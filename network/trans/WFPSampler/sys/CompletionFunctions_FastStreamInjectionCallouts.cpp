@@ -6,20 +6,20 @@
 //      CompletionFunctions_FastStreamInjectionCallouts.cpp
 //
 //   Abstract:
-//      This module contains WFP Completion functions for data injected back into the stream using 
+//      This module contains WFP Completion functions for data injected back into the stream using
 //         the clone / block / inject method.
 //
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //       CompleteFastStreamInjection
 //
 //       <Module>
 //          Complete             - Function is an FWPS_INJECT_COMPLETE function.
 //       <Scenario>
-//          FastStreamInjection  - Function demonstrates the clone / block / inject model in the 
+//          FastStreamInjection  - Function demonstrates the clone / block / inject model in the
 //                                    fastest form available (inline, no validation, etc.).
 //
 //   Private Functions:
@@ -42,7 +42,7 @@
 
 /**
  @completion_function="CompleteFastStreamInjection"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

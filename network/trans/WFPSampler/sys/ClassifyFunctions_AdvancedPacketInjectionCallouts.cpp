@@ -6,13 +6,13 @@
 //      ClassifyFunctions_AdvancedPacketInjectionCallouts.cpp
 //
 //   Abstract:
-//      This module contains WFP Classify functions for injecting packets back into the data path 
+//      This module contains WFP Classify functions for injecting packets back into the data path
 //         using the allocate / block / inject method.
 //
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //       ClassifyAdvancedPacketInjection
 //
@@ -35,15 +35,15 @@
 //       <Scenario>
 //          AdvancedPacketInjection   - Function demonstrates the allocate / block / inject model.
 //       <Modifier>
-//          DeferredProcedureCall     - DPC routine for Out of Band injection which dispatches the 
+//          DeferredProcedureCall     - DPC routine for Out of Band injection which dispatches the
 //                                         proper Perform Function.
 //          WorkItemRoutine           - WorkItem Routine for Out of Band Injection which dispatches
 //                                         the proper Perform Function.
 //          AtInboundMACFrame         - Function operates on:
-//                                         FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET, and 
+//                                         FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET, and
 //                                         FWPM_LAYER_INBOUND_MAC_NATIVE.
 //          AtOutboundMACFrame        - Function operates on:
-//                                         FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET, and 
+//                                         FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET, and
 //                                         FWPM_LAYER_OUTBOUND_MAC_NATIVE.
 //          AtEgressVSwitchEthernet   - Function operates on:
 //                                         FWPM_LAYER_EGRESS_VSWITCH_ETHERNET.
@@ -55,18 +55,18 @@
 //                                         FWPM_LAYER_OUTBOUND_IPPACKET_V{4/6}
 //          AtForward                 - Function operates on:
 //                                         FWPM_LAYER_IPFORWARD_V{4/6}
-//          AtInboundTransport        - Function operates on: 
+//          AtInboundTransport        - Function operates on:
 //                                         FWPM_LAYER_INBOUND_TRANSPORT_V{4/6},
 //                                         FWPM_LAYER_INBOUND_ICMP_ERROR_V{4/6},
 //                                         FWPM_LAYER_DATAGRAM_DATA_V{4/6},
-//                                         FWPM_LAYER_STREAM_PACKET_V{4/6}, and 
+//                                         FWPM_LAYER_STREAM_PACKET_V{4/6}, and
 //                                         FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V{4/6}
 //                                         FWPM_LAYER_ALE_FLOW_ESTABLISHED_V{4/6}
 //          AtOutboundTransport       - Function operates on:
 //                                         FWPM_LAYER_OUTBOUND_TRANSPORT_V{4/6},
 //                                         FWPM_LAYER_OUTBOUND_ICMP_ERROR_V{4/6},
 //                                         FWPM_LAYER_DATAGRAM_DATA_V{4/6},
-//                                         FWPM_LAYER_STREAM_PACKET_V{4/6}, and 
+//                                         FWPM_LAYER_STREAM_PACKET_V{4/6}, and
 //                                         FWPM_LAYER_ALE_AUTH_CONNECT_V{4/6}
 //                                         FWPM_LAYER_ALE_FLOW_ESTABLISHED_V{4/6}
 //
@@ -112,7 +112,7 @@ INJECTION_COUNTERS g_apiOutstandingNewNBLs            = {0};
 
 /**
  @function="PrvAdvancedPacketInjectionCountersIncrement"
- 
+
    Purpose:  Increment the appropriate counters based on the layerId and direction.             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -394,7 +394,7 @@ VOID PrvAdvancedPacketInjectionCountersIncrement(_In_ const FWPS_INCOMING_VALUES
 
 /**
  @private_function="PrvAdvancedPacketInjectionCountersIncrementTotalActionResults"
- 
+
    Purpose:  Increment the appropriate counters based on the layerId, direction, and action.    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -425,7 +425,7 @@ VOID PrvAdvancedPacketInjectionCountersIncrementTotalActionResults(_In_ const FW
 
 /**
  @function="AdvancedPacketInjectionCountersIncrement"
- 
+
    Purpose:  Increment the appropriate counters based on the injection handle.                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -522,8 +522,8 @@ VOID AdvancedPacketInjectionCountersIncrement(_In_ HANDLE injectionHandle,
 
 /**
  @private_function="PerformAdvancedPacketInjectionAtInboundMACFrame"
- 
-   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the stack from the incoming MAC 
+
+   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the stack from the incoming MAC
              Layers using FwpsInjectMacReceiveAsync().                                          <br>
                                                                                                 <br>
    Notes:    Applies to the following inbound layers:                                           <br>
@@ -746,8 +746,8 @@ NTSTATUS PerformAdvancedPacketInjectionAtInboundMACFrame(_In_ CLASSIFY_DATA** pp
 
 /**
  @private_function="PerformAdvancedPacketInjectionAtOutboundMACFrame"
- 
-   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the stack from the outgoing MAC 
+
+   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the stack from the outgoing MAC
              Layers using FwpsInjectMacSendAsync().                                             <br>
                                                                                                 <br>
    Notes:    Applies to the following outbound layers:                                          <br>
@@ -830,7 +830,7 @@ NTSTATUS PerformAdvancedPacketInjectionAtOutboundMACFrame(_In_ CLASSIFY_DATA** p
       pNDISPort->type == FWP_UINT32)
       ndisPort = (NDIS_PORT_NUMBER)pNDISPort->uint32;
 
-   /// Initial offset is at the MAC Header, so just create a new NET_BUFFER_LIST based on the 
+   /// Initial offset is at the MAC Header, so just create a new NET_BUFFER_LIST based on the
    /// original NET_BUFFER_LIST ...
    pNetBufferList = KrnlHlprNBLCreateNew(g_pNDISPoolData->nblPoolHandle,
                                          (NET_BUFFER_LIST*)pCompletionData->pClassifyData->pPacket,
@@ -851,10 +851,10 @@ NTSTATUS PerformAdvancedPacketInjectionAtOutboundMACFrame(_In_ CLASSIFY_DATA** p
    }
 
 #if DBG
-   
+
       AdvancedPacketInjectionCountersIncrement(injectionHandle,
                                                &g_apiOutstandingNewNBLs);
-   
+
 #endif /// DBG
 
    pCompletionData->refCount = KrnlHlprNBLGetRequiredRefCount(pNetBufferList,
@@ -937,9 +937,9 @@ NTSTATUS PerformAdvancedPacketInjectionAtOutboundMACFrame(_In_ CLASSIFY_DATA** p
 
 /**
  @private_function="PerformAdvancedPacketInjectionAtIngressVSwitchEthernet"
- 
-   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the virtual switch's ingress 
-             path from the ingress VSwitch Layers using 
+
+   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the virtual switch's ingress
+             path from the ingress VSwitch Layers using
              FwpsInjectvSwitchEthernetIngressAsync0().                                          <br>
                                                                                                 <br>
    Notes:    Applies to the following ingress layers:                                           <br>
@@ -1036,7 +1036,7 @@ NTSTATUS PerformAdvancedPacketInjectionAtIngressVSwitchEthernet(_In_ CLASSIFY_DA
       HLPR_BAIL;
    }
 
-   /// Initial offset is at the MAC Header, so just create a new NET_BUFFER_LIST based on the 
+   /// Initial offset is at the MAC Header, so just create a new NET_BUFFER_LIST based on the
    /// original NET_BUFFER_LIST ...
    pNetBufferList = KrnlHlprNBLCreateNew(g_pNDISPoolData->nblPoolHandle,
                                          (NET_BUFFER_LIST*)pCompletionData->pClassifyData->pPacket,
@@ -1057,10 +1057,10 @@ NTSTATUS PerformAdvancedPacketInjectionAtIngressVSwitchEthernet(_In_ CLASSIFY_DA
    }
 
 #if DBG
-   
+
       AdvancedPacketInjectionCountersIncrement(injectionHandle,
                                                &g_apiOutstandingNewNBLs);
-   
+
 #endif /// DBG
 
    pCompletionData->refCount = KrnlHlprNBLGetRequiredRefCount(pNetBufferList,
@@ -1143,9 +1143,9 @@ NTSTATUS PerformAdvancedPacketInjectionAtIngressVSwitchEthernet(_In_ CLASSIFY_DA
 
 /**
  @private_function="PerformAdvancedPacketInjectionAtEgressVSwitchEthernet"
- 
-   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the virtual switch's ingress 
-             path from the egress VSwitch Layers using 
+
+   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the virtual switch's ingress
+             path from the egress VSwitch Layers using
              FwpsInjectvSwitchEthernetIngressAsync0().                                          <br>
                                                                                                 <br>
    Notes:    Applies to the following egress layers:                                            <br>
@@ -1242,7 +1242,7 @@ NTSTATUS PerformAdvancedPacketInjectionAtEgressVSwitchEthernet(_In_ CLASSIFY_DAT
       HLPR_BAIL;
    }
 
-   /// Initial offset is at the MAC Header, so just create a new NET_BUFFER_LIST based on the 
+   /// Initial offset is at the MAC Header, so just create a new NET_BUFFER_LIST based on the
    /// original NET_BUFFER_LIST ...
    pNetBufferList = KrnlHlprNBLCreateNew(g_pNDISPoolData->nblPoolHandle,
                                          (NET_BUFFER_LIST*)pCompletionData->pClassifyData->pPacket,
@@ -1263,10 +1263,10 @@ NTSTATUS PerformAdvancedPacketInjectionAtEgressVSwitchEthernet(_In_ CLASSIFY_DAT
    }
 
 #if DBG
-   
+
       AdvancedPacketInjectionCountersIncrement(injectionHandle,
                                                &g_apiOutstandingNewNBLs);
-   
+
 #endif /// DBG
 
    pCompletionData->refCount = KrnlHlprNBLGetRequiredRefCount(pNetBufferList,
@@ -1351,8 +1351,8 @@ NTSTATUS PerformAdvancedPacketInjectionAtEgressVSwitchEthernet(_In_ CLASSIFY_DAT
 
 /**
  @private_function="PerformAdvancedPacketInjectionAtInboundNetwork"
- 
-   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the stack's inbound path from 
+
+   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the stack's inbound path from
              the incoming Network Layers using FwpsInjectNetworkReceiveAsync().                 <br>
                                                                                                 <br>
    Notes:    Applies to the following inbound layers:                                           <br>
@@ -1567,10 +1567,10 @@ NTSTATUS PerformAdvancedPacketInjectionAtInboundNetwork(_In_ CLASSIFY_DATA** ppC
    }
 
 #if DBG
-   
+
       AdvancedPacketInjectionCountersIncrement(injectionHandle,
                                                &g_apiOutstandingNewNBLs);
-   
+
 #endif /// DBG
 
    pCompletionData->refCount = KrnlHlprNBLGetRequiredRefCount(pNetBufferList);
@@ -1707,8 +1707,8 @@ NTSTATUS PerformAdvancedPacketInjectionAtInboundNetwork(_In_ CLASSIFY_DATA** ppC
 
 /**
  @private_function="PerformAdvancedPacketInjectionAtOutboundNetwork"
- 
-   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the stack's outbound path 
+
+   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the stack's outbound path
              from the outgoing Network Layers using FwpsInjectNetworkSendAsync().               <br>
                                                                                                 <br>
    Notes:    Applies to the following outbound layers:                                          <br>
@@ -1779,7 +1779,7 @@ NTSTATUS PerformAdvancedPacketInjectionAtOutboundNetwork(_In_ CLASSIFY_DATA** pp
                                      FWPS_METADATA_FIELD_COMPARTMENT_ID))
       compartmentID = (COMPARTMENT_ID)pMetadata->compartmentId;
 
-   /// Initial offset is at the IP Header, so just create a new NET_BUFFER_LIST based on the 
+   /// Initial offset is at the IP Header, so just create a new NET_BUFFER_LIST based on the
    /// original NET_BUFFER_LIST ...
    pNetBufferList = KrnlHlprNBLCreateNew(g_pNDISPoolData->nblPoolHandle,
                                          (NET_BUFFER_LIST*)pCompletionData->pClassifyData->pPacket,
@@ -1800,10 +1800,10 @@ NTSTATUS PerformAdvancedPacketInjectionAtOutboundNetwork(_In_ CLASSIFY_DATA** pp
    }
 
 #if DBG
-   
+
       AdvancedPacketInjectionCountersIncrement(injectionHandle,
                                                &g_apiOutstandingNewNBLs);
-   
+
 #endif /// DBG
 
    pCompletionData->refCount = KrnlHlprNBLGetRequiredRefCount(pNetBufferList);
@@ -1882,8 +1882,8 @@ NTSTATUS PerformAdvancedPacketInjectionAtOutboundNetwork(_In_ CLASSIFY_DATA** pp
 
 /**
  @private_function="PerformAdvancedPacketInjectionAtForward"
- 
-   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the stack's forward path using 
+
+   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the stack's forward path using
              FwpsInjectForwardAsync().                                                          <br>
                                                                                                 <br>
    Notes:    Applies to the following forwarding layers:                                        <br>
@@ -1991,7 +1991,7 @@ NTSTATUS PerformAdvancedPacketInjectionAtForward(_In_ CLASSIFY_DATA** ppClassify
 
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
 
-   /// Initial offset is at the IP Header, so just create a new NET_BUFFER_LIST based on the 
+   /// Initial offset is at the IP Header, so just create a new NET_BUFFER_LIST based on the
    /// original NET_BUFFER_LIST ...
    pNetBufferList = KrnlHlprNBLCreateNew(g_pNDISPoolData->nblPoolHandle,
                                          (NET_BUFFER_LIST*)pCompletionData->pClassifyData->pPacket,
@@ -2011,10 +2011,10 @@ NTSTATUS PerformAdvancedPacketInjectionAtForward(_In_ CLASSIFY_DATA** ppClassify
       HLPR_BAIL;
    }
 #if DBG
-   
+
       AdvancedPacketInjectionCountersIncrement(injectionHandle,
                                                &g_apiOutstandingNewNBLs);
-   
+
 #endif /// DBG
 
    checksumInfo.Value = (ULONG)(ULONG_PTR)NET_BUFFER_LIST_INFO((NET_BUFFER_LIST*)pCompletionData->pClassifyData->pPacket,
@@ -2090,8 +2090,8 @@ NTSTATUS PerformAdvancedPacketInjectionAtForward(_In_ CLASSIFY_DATA** ppClassify
 
    pCompletionData->refCount = KrnlHlprNBLGetRequiredRefCount(pNetBufferList);
 
-   /// If the Forwarded NBL is destined locally, inject using FwpsInjectNetworkReceiveAsync rather 
-   /// than the traditional FwpsInjectForwardAsync otherwise STATUS_INVALID_PARAMETER will be 
+   /// If the Forwarded NBL is destined locally, inject using FwpsInjectNetworkReceiveAsync rather
+   /// than the traditional FwpsInjectForwardAsync otherwise STATUS_INVALID_PARAMETER will be
    /// returned in the NBL.status and the injection fails.
    if(isWeakHostReceive)
    {
@@ -2141,8 +2141,8 @@ NTSTATUS PerformAdvancedPacketInjectionAtForward(_In_ CLASSIFY_DATA** ppClassify
                                              CompleteAdvancedPacketInjection,
                                              pCompletionData);
    }
-   /// If the Forwarded NBL is sourced locally, but another interface, inject using 
-   /// FwpsInjectNetworkSendAsync rather than the traditional FwpsInjectForwardAsync otherwise 
+   /// If the Forwarded NBL is sourced locally, but another interface, inject using
+   /// FwpsInjectNetworkSendAsync rather than the traditional FwpsInjectForwardAsync otherwise
    /// STATUS_INVALID_PARAMETER will be returned in the NBL.status and the injection fails
    else if(isWeakHostSend)
    {
@@ -2260,8 +2260,8 @@ NTSTATUS PerformAdvancedPacketInjectionAtForward(_In_ CLASSIFY_DATA** ppClassify
 
 /**
  @private_function="PerformAdvancedPacketInjectionAtInboundTransport"
- 
-   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the stack's inbound path from 
+
+   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the stack's inbound path from
              the incoming Transport Layers using FwpsInjectTransportRecveiveAsync().            <br>
                                                                                                 <br>
    Notes:    Applies to the following inbound layers:                                           <br>
@@ -2402,7 +2402,7 @@ NTSTATUS PerformAdvancedPacketInjectionAtInboundTransport(_In_ CLASSIFY_DATA** p
    if(pClassifyValues->layerId == FWPS_LAYER_ALE_FLOW_ESTABLISHED_V4)
    {
       ipHeaderSize = IPV4_HEADER_MIN_SIZE;
-   
+
       if(protocol == IPPROTO_ICMP)
          transportHeaderSize = ICMP_HEADER_MIN_SIZE;
       else if(protocol == IPPROTO_TCP)
@@ -2448,7 +2448,7 @@ NTSTATUS PerformAdvancedPacketInjectionAtInboundTransport(_In_ CLASSIFY_DATA** p
          (pClassifyValues->layerId == FWPS_LAYER_ALE_AUTH_RECV_ACCEPT_V4 ||
          pClassifyValues->layerId == FWPS_LAYER_ALE_AUTH_RECV_ACCEPT_V6))
       {
-         /// For asynchronous execution, the drop will cause the stack to continue processing on the 
+         /// For asynchronous execution, the drop will cause the stack to continue processing on the
          /// NBL for auditing purposes.  This processing retreats the NBL Offset to the Transport header.
          /// We need to take this into account because we only took a reference on the NBL.
       }
@@ -2534,10 +2534,10 @@ NTSTATUS PerformAdvancedPacketInjectionAtInboundTransport(_In_ CLASSIFY_DATA** p
    }
 
 #if DBG
-   
+
       AdvancedPacketInjectionCountersIncrement(injectionHandle,
                                                &g_apiOutstandingNewNBLs);
-   
+
 #endif /// DBG
 
    checksumInfo.Value = (ULONG)(ULONG_PTR)NET_BUFFER_LIST_INFO((NET_BUFFER_LIST*)pCompletionData->pClassifyData->pPacket,
@@ -2562,7 +2562,7 @@ NTSTATUS PerformAdvancedPacketInjectionAtInboundTransport(_In_ CLASSIFY_DATA** p
          if(pRemoteAddressValue->type == FWP_BYTE_ARRAY16_TYPE)
             addressSize = IPV6_ADDRESS_SIZE;
          else
-            addressSize = IPV4_ADDRESS_SIZE;               
+            addressSize = IPV4_ADDRESS_SIZE;
 
          HLPR_NEW_ARRAY(pSourceAddress,
                         BYTE,
@@ -2612,7 +2612,7 @@ NTSTATUS PerformAdvancedPacketInjectionAtInboundTransport(_In_ CLASSIFY_DATA** p
             RtlCopyMemory(pDestinationAddress,
                           &ipv4Address,
                           addressSize);
-         }            
+         }
       }
 
       pProtocolValue = KrnlHlprFwpValueGetFromFwpsIncomingValues(pClassifyValues,
@@ -2836,8 +2836,8 @@ NTSTATUS PerformAdvancedPacketInjectionAtInboundTransport(_In_ CLASSIFY_DATA** p
 
 /**
  @private_function="PerformAdvancedPacketInjectionAtOutboundTransport"
- 
-   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the stack's outbound path from 
+
+   Purpose:  Creates a new NET_BUFFER_LIST and injects it in to the stack's outbound path from
              the outgoing Transport Layers using FwpsInjectTransportSendAsync().                <br>
                                                                                                 <br>
    Notes:    Applies to the following outbound layers:                                          <br>
@@ -2981,7 +2981,7 @@ NTSTATUS PerformAdvancedPacketInjectionAtOutboundTransport(_In_ CLASSIFY_DATA** 
    pCompletionData->pSendParams->controlData       = (WSACMSGHDR*)pCompletionData->pInjectionData->pControlData;
    pCompletionData->pSendParams->controlDataLength = pCompletionData->pInjectionData->controlDataLength;
 
-   /// Initial offset is at Transport Header, so just create a new NET_BUFFER_LIST based on the 
+   /// Initial offset is at Transport Header, so just create a new NET_BUFFER_LIST based on the
    /// original NET_BUFFER_LIST ...
    pNetBufferList = KrnlHlprNBLCreateNew(g_pNDISPoolData->nblPoolHandle,
                                          (NET_BUFFER_LIST*)pCompletionData->pClassifyData->pPacket,
@@ -3002,10 +3002,10 @@ NTSTATUS PerformAdvancedPacketInjectionAtOutboundTransport(_In_ CLASSIFY_DATA** 
    }
 
 #if DBG
-   
+
       AdvancedPacketInjectionCountersIncrement(injectionHandle,
                                                &g_apiOutstandingNewNBLs);
-   
+
 #endif /// DBG
 
    pCompletionData->refCount = KrnlHlprNBLGetRequiredRefCount(pNetBufferList);
@@ -3087,8 +3087,8 @@ NTSTATUS PerformAdvancedPacketInjectionAtOutboundTransport(_In_ CLASSIFY_DATA** 
 
 /**
  @private_function="AdvancedPacketInjectionDeferredProcedureCall"
- 
-   Purpose:  Invokes the appropriate private injection routine to perform the injection at 
+
+   Purpose:  Invokes the appropriate private injection routine to perform the injection at
              DISPATCH_LEVEL.                                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -3250,8 +3250,8 @@ VOID AdvancedPacketInjectionDeferredProcedureCall(_In_ KDPC* pDPC,
 
 /**
  @private_function="AdvancedPacketInjectionWorkItemRoutine"
- 
-   Purpose:  Invokes the appropriate private injection routine to perform the injection at 
+
+   Purpose:  Invokes the appropriate private injection routine to perform the injection at
              PASSIVE_LEVEL.                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -3408,8 +3408,8 @@ VOID AdvancedPacketInjectionWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
 
 /**
  @private_function="TriggerAdvancedPacketInjectionInline"
- 
-   Purpose:  Makes a reference to all the classification data structures and invokes the 
+
+   Purpose:  Makes a reference to all the classification data structures and invokes the
              appropriate private injection routine to perform the injection.                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -3583,8 +3583,8 @@ NTSTATUS TriggerAdvancedPacketInjectionInline(_In_ const FWPS_INCOMING_VALUES* p
 
 /**
  @private_function="TriggerAdvancedPacketInjectionOutOfBand"
- 
-   Purpose:  Creates a local copy of the classification data structures and queues a WorkItem 
+
+   Purpose:  Creates a local copy of the classification data structures and queues a WorkItem
              to perform the injection at PASSIVE_LEVEL.                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -3652,7 +3652,7 @@ NTSTATUS TriggerAdvancedPacketInjectionOutOfBand(_In_ const FWPS_INCOMING_VALUES
       status = KrnlHlprThreadedDPCQueue(AdvancedPacketInjectionDeferredProcedureCall,
                                         pClassifyData,
                                         pInjectionData,
-                                        0);      
+                                        0);
    else
       status = KrnlHlprDPCQueue(AdvancedPacketInjectionDeferredProcedureCall,
                                 pClassifyData,
@@ -3685,7 +3685,7 @@ NTSTATUS TriggerAdvancedPacketInjectionOutOfBand(_In_ const FWPS_INCOMING_VALUES
 
 /**
  @classify_function="ClassifyAdvancedPacketInjection"
- 
+
    Purpose:  Blocks the current NET_BUFFER_LIST and injects a new NBL back to the stack.        <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>
@@ -3896,7 +3896,7 @@ VOID NTAPI ClassifyAdvancedPacketInjection(_In_ const FWPS_INCOMING_VALUES* pCla
                                                                                     &FWPM_CONDITION_IP_LOCAL_ADDRESS);
                FWP_VALUE* pRemoteAddress = KrnlHlprFwpValueGetFromFwpsIncomingValues(pClassifyValues,
                                                                                      &FWPM_CONDITION_IP_REMOTE_ADDRESS);
-               
+
                if((pLocalAddress &&
                   ((pLocalAddress->type == FWP_UINT32 &&
                   RtlCompareMemory(&(pLocalAddress->uint32),
@@ -3993,7 +3993,7 @@ VOID NTAPI ClassifyAdvancedPacketInjection(_In_ const FWPS_INCOMING_VALUES* pCla
 
 /**
  @classify_function="ClassifyAdvancedPacketInjection"
- 
+
    Purpose:  Blocks the current NET_BUFFER_LIST and injects a new NBL back to the stack.        <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>
@@ -4156,7 +4156,7 @@ VOID NTAPI ClassifyAdvancedPacketInjection(_In_ const FWPS_INCOMING_VALUES* pCla
                                                                                     &FWPM_CONDITION_IP_LOCAL_ADDRESS);
                FWP_VALUE* pRemoteAddress = KrnlHlprFwpValueGetFromFwpsIncomingValues(pClassifyValues,
                                                                                      &FWPM_CONDITION_IP_REMOTE_ADDRESS);
-               
+
                if((pLocalAddress &&
                   (pLocalAddress->type == FWP_UINT32 &&
                   RtlCompareMemory(&(pLocalAddress->uint32),

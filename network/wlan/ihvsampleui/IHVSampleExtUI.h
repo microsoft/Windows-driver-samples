@@ -21,7 +21,7 @@ extern long g_serverLock;
 
 // IHV Auth types
 typedef enum _IHV_AUTH_TYPE {
-    IHVAuthV1, 
+    IHVAuthV1,
     IHVAuthV2,
     IHVAuthV3,
     IHVAuthInvalid
@@ -54,7 +54,7 @@ typedef struct _IHV_SECURITY_CONFIG {
 	IHV_CIPHER_TYPE Cipher;
 } IHV_SECURITY_CONFIG, *PIHV_SECURITY_CONFIG;
 
-extern IHV_AUTH_CIPHER_CAPABILITY g_IHVOneXExtCapability; 
+extern IHV_AUTH_CIPHER_CAPABILITY g_IHVOneXExtCapability;
 
 extern LPWSTR g_IHVAuthFriendlyName[];
 extern LPWSTR g_IHVCipherFriendlyName[];
@@ -65,7 +65,7 @@ extern LPWSTR g_IHVCipherFriendlyName[];
 #define PROP_COUNT_SECURITY     2
 #define PROP_COUNT_SEC_CIPHERS  2
 typedef enum _IHV_SECURITY_TYPE {
-    IHVSecurityV1, 
+    IHVSecurityV1,
     IHVSecurityV2,
     IHVSecurityInvalid
 } IHV_SECURITY_TYPE, *PIHV_SECURITY_TYPE;
@@ -89,7 +89,7 @@ typedef struct _IHV_CIPHERS_FOR_AUTH_INFO
 static DOT11_EXT_UI_PROPERTY_DISPLAY_INFO cipherOne = {1, DOT11_EXT_UI_DISPLAY_INFO_CIPHER, 0};
 static DOT11_EXT_UI_PROPERTY_DISPLAY_INFO cipherTwo = {2, DOT11_EXT_UI_DISPLAY_INFO_CIPHER, 0};
 static DOT11_EXT_UI_PROPERTY_DISPLAY_INFO cipherThree = {3, DOT11_EXT_UI_DISPLAY_INFO_CIPHER, 0};
-static DOT11_EXT_UI_PROPERTY_DISPLAY_INFO ciphersInfoArray[MAX_IHV_AUTHS][MAX_IHV_CIPHERS] = {0}; 
+static DOT11_EXT_UI_PROPERTY_DISPLAY_INFO ciphersInfoArray[MAX_IHV_AUTHS][MAX_IHV_CIPHERS] = {0};
 
 
 //////// structures for balloon /////////
@@ -123,7 +123,7 @@ public:
     CDot11SampleExtUI();
 
     ~CDot11SampleExtUI();
-    
+
     // IUnknown Implementation
     BEGIN_INTERFACE_TABLE()
         IMPLEMENTS_INTERFACE(IDot11ExtUI)
@@ -155,7 +155,7 @@ public:
         ULONG *pcExtensions,
         IDot11ExtUIProperty **ppDot11ExtUIProperty
         );
-    
+
     HRESULT
     CreateSecurityProperties(
         ULONG *pcExtensions,
@@ -174,14 +174,14 @@ public:
         );
 
     STDMETHOD (GetSite) (
-        REFIID riid, 
+        REFIID riid,
         void** ppvSite
         );
 
     //IWizardExtension
     STDMETHOD (AddPages) (
-        HPROPSHEETPAGE* aPages, 
-        UINT cPages, 
+        HPROPSHEETPAGE* aPages,
+        UINT cPages,
         UINT *pnPagesAdded
         );
 
@@ -197,29 +197,29 @@ private:
     HRESULT FinalConstruct();
     void FinalRelease();
     static BOOL CALLBACK GetKeyDlgProc (
-        HWND hwndDlg,  
+        HWND hwndDlg,
         UINT uMsg,
         WPARAM wParam,
-        LPARAM lParam 
+        LPARAM lParam
         );
 
-        
+
     static BOOL CALLBACK HelpDlgProc (
-        HWND hwndDlg,  
+        HWND hwndDlg,
         UINT uMsg,
         WPARAM wParam,
-        LPARAM lParam 
+        LPARAM lParam
         );
 
     static BOOL CALLBACK LastPageDlgProc (
-        HWND hwndDlg,  
+        HWND hwndDlg,
         UINT uMsg,
         WPARAM wParam,
-        LPARAM lParam 
+        LPARAM lParam
         );
 
     HRESULT GetClsidPropertyName (
-        _In_ const CLSID* pCLSID, 
+        _In_ const CLSID* pCLSID,
         _In_opt_ PCWSTR pwszPropertyName,
         _Out_writes_(maxResultLen) PWSTR pResultStr,
         _In_ UINT  maxResultLen);
@@ -227,9 +227,9 @@ private:
 private:
     IHV_UI_REQUEST*         m_pUIRequest;
     IHV_UI_RESPONSE         m_UIResponse;
-    
+
     IUnknown*				m_pUnkSite;
-    
+
     HPROPSHEETPAGE			m_hFirstPagePsp;
     HPROPSHEETPAGE			m_hLastPagePsp;
 };

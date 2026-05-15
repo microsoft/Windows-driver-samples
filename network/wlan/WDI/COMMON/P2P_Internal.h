@@ -1,10 +1,10 @@
 //---------------------------------------------------------------------------
 //
 // Copyright (c) 2014 Realtek Semiconductor, Inc. All rights reserved.
-// 
+//
 //---------------------------------------------------------------------------
 // Description:
-//		
+//
 //
 
 #ifndef __INC_P2P_INTERNAL_H
@@ -29,10 +29,10 @@ p2p_MoveMemory(
 	IN  const VOID			*src,
 	IN  u4Byte				len
 	);
-	
+
 int
 p2p_go_det(
-	IN  u1Byte					selfVal, 
+	IN  u1Byte					selfVal,
 	IN  u1Byte					peerVal
 	);
 
@@ -114,7 +114,7 @@ p2p_add_P2PPublicActionHdr(
 	IN  u1Byte					subtype,
 	IN  u1Byte					dialogToken
 	);
-	
+
 VOID
 p2p_Construct_GoNegReq(
 	IN  P2P_INFO 				*pP2PInfo,
@@ -237,14 +237,14 @@ p2p_Copnstruct_GoDiscoverabilityReq(
 	IN  FRAME_BUF 				*pBuf
 	);
 
-VOID 
+VOID
 p2p_Construct_SDReq(
 	IN  const P2P_INFO 			*pP2PInfo,
 	IN  FRAME_BUF 				*pBuf,
 	IN  const u1Byte 			*da
 	);
 
-VOID 
+VOID
 p2p_Construct_SDRsp(
 	IN  const P2P_INFO 			*pP2PInfo,
 	IN  FRAME_BUF 				*pBuf,
@@ -254,7 +254,7 @@ p2p_Construct_SDRsp(
 	IN  BOOLEAN					bFrag
 	);
 
-VOID 
+VOID
 p2p_Construct_SDComebackReq(
 	IN  const P2P_INFO 			*pP2PInfo,
 	IN  FRAME_BUF 				*pBuf,
@@ -493,27 +493,27 @@ p2p_parse_ValidateAttribute(
 RT_STATUS
 p2p_parse_P2PIe(
 	IN  const FRAME_BUF			*pAttr,		// a series of P2P attributes
-	OUT P2P_MESSAGE				*msg 
+	OUT P2P_MESSAGE				*msg
 	);
 
 RT_STATUS
 p2p_parse_WpsIe(
 	IN  const FRAME_BUF			*pAttr,
-	OUT P2P_MESSAGE				*msg 
+	OUT P2P_MESSAGE				*msg
 	);
 
 RT_STATUS
 p2p_parse_Ies(
-	IN  const OCTET_STRING		*posMpdu, 
+	IN  const OCTET_STRING		*posMpdu,
 	IN  u4Byte					dbgLevel,
-	OUT P2P_MESSAGE				*msg 
+	OUT P2P_MESSAGE				*msg
 	);
 
 RT_STATUS
 p2p_parse_Action(
-	IN  const OCTET_STRING		*posMpdu, 
+	IN  const OCTET_STRING		*posMpdu,
 	IN  u4Byte					dbgLevel,
-	OUT P2P_MESSAGE				*msg 
+	OUT P2P_MESSAGE				*msg
 	);
 
 RT_STATUS
@@ -528,9 +528,9 @@ RT_STATUS
 p2p_parse_ChannelEntryList(
 	IN  u2Byte					len,
 	IN  const u1Byte			*data,
-	OUT P2P_CHANNELS			*channels	
+	OUT P2P_CHANNELS			*channels
 	);
-	
+
 //---------------------------------------------------------------------------
 // P2P_Channel
 //---------------------------------------------------------------------------
@@ -554,7 +554,7 @@ p2p_Channel_Intersect(
 	IN  const P2P_CHANNELS		*b,
 	OUT P2P_CHANNELS			*res
 	);
-	
+
 BOOLEAN
 p2p_Channel_ChannelListAttrToChannels(
 	IN  u2Byte					chnlListAttrLen,

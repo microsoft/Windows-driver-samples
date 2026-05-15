@@ -234,7 +234,7 @@ error:
 
 //////////////////////////////////////////////////////////
 
-WCHAR	g_szDefaultConnectivityProfile[] = 
+WCHAR	g_szDefaultConnectivityProfile[] =
 L"<IhvConnectivity xmlns=\"http://www.sampleihv.com/nwifi/profile\">"
 L"            <IHVConnectivityParam1>0</IHVConnectivityParam1>"
 L"            <IHVConnectivityParam2>parameter value</IHVConnectivityParam2>"
@@ -453,7 +453,7 @@ LPCWSTR     gppszIhvCipherTypes[] =
 };
 
 
-WCHAR	g_szDefaultSecurityProfile[] = 
+WCHAR	g_szDefaultSecurityProfile[] =
 L"<IhvSecurity xmlns=\"http://www.sampleihv.com/nwifi/profile\">"
 L"            <IHVUsesFullSecurity>TRUE</IHVUsesFullSecurity>"
 L"            <IHVAuthentication>IHVAuthV1</IHVAuthentication>"

@@ -27,7 +27,7 @@ typedef struct _RT_DOT11D_INFO {
 	u2Byte CountryIeLen; // > 0 if CountryIeBuf[] contains valid country information element.
 	u1Byte CountryIeBuf[MAX_IE_LEN];
 	u1Byte CountryIeSrcAddr[6]; // Source AP of the country IE.
-	u1Byte CountryIeWatchdog; 
+	u1Byte CountryIeWatchdog;
 
 	u1Byte ChnlListLen; // #Bytes valid in ChnlList[].
 	u1Byte ChnlList[DOT11D_MAX_CHNL_NUM];
@@ -40,8 +40,8 @@ typedef enum _REGULATION_TXPWR_LMT {
 	TXPWR_LMT_FCC = 0,
 	TXPWR_LMT_MKK = 1,
 	TXPWR_LMT_ETSI = 2,
-	TXPWR_LMT_WW = 3,	
-	
+	TXPWR_LMT_WW = 3,
+
 	TXPWR_LMT_MAX_REGULATION_NUM = 4
 } REGULATION_TXPWR_LMT;
 
@@ -83,15 +83,15 @@ typedef enum _REGULATION_TXPWR_LMT {
 
 //
 // Channel Plan Type.
-// Note: 
-//	We just add new channel plan when the new channel plan is different from any of the following 
-//	channel plan. 
+// Note:
+//	We just add new channel plan when the new channel plan is different from any of the following
+//	channel plan.
 //	If you just wnat to customize the acitions(scan period or join actions) about one of the channel plan,
 //	customize them in RT_CHNL_LIST_ENTRY in the RT_CHANNEL_LIST.
-// 
+//
 //3 |-----------------------------------------------------------------------|
-//3 |<Note> When a new domain code added, check if the order correctly mapped with    
-//3 |               DefaultChannelPlan array index.                                                                                    
+//3 |<Note> When a new domain code added, check if the order correctly mapped with
+//3 |               DefaultChannelPlan array index.
 //3 |-----------------------------------------------------------------------|
 typedef enum _RT_CHANNEL_DOMAIN
 {
@@ -119,8 +119,8 @@ typedef enum _RT_CHANNEL_DOMAIN
 	RT_CHANNEL_DOMAIN_TAIWAN_NO_DFS = 21,
 	RT_CHANNEL_DOMAIN_DEFAULT = 22,
 	RT_CHANNEL_DOMAIN_OMNIPEEK_ALL_CHANNEL = 23,
-	RT_CHANNEL_DOMAIN_WHQL = 24,	
-	
+	RT_CHANNEL_DOMAIN_WHQL = 24,
+
 	//4 <New Definitions (The order below should not be changed!) >
 	// <20120516, Kordan> The naming is according to the specification of channel plan on Mantis #11235.
 	// (The legacy definition above is still reserved to be compatible with legacy EFUSE maps.)
@@ -164,10 +164,10 @@ typedef enum _RT_CHANNEL_DOMAIN
 	RT_CHANNEL_DOMAIN_2G_FCC1_5G_FCC10,                // 62
 	RT_CHANNEL_DOMAIN_2G_MKK2_5G_MKK4,                // 63
 	RT_CHANNEL_DOMAIN_WW13_2G_5G_ETSI14,                // 64
-	
-	
+
+
 	//4 <----------------End of New Definitions---------------->
-	
+
 	//===== Add new channel plan above this line ===============//
 #if 0
 	// For new architecture we define different 2G/5G CH area for all country.
@@ -182,9 +182,9 @@ typedef enum _RT_CHANNEL_DOMAIN
 	RT_CHANNEL_DOMAIN_2G_WORLD_5G_ETSI1				= 0x26,
 	RT_CHANNEL_DOMAIN_2G_WORLD_5G_ETSI1				= 0x27,
 	// .....
-#endif	
+#endif
 
-	RT_CHANNEL_DOMAIN_WHQL_WFD,	
+	RT_CHANNEL_DOMAIN_WHQL_WFD,
 
 	RT_CHANNEL_DOMAIN_UNDEFINED,
 	RT_CHANNEL_DOMAIN_MAX,
@@ -193,7 +193,7 @@ typedef enum _RT_CHANNEL_DOMAIN
 typedef struct _RT_CHANNEL_PLAN
 {
 	u1Byte	Channel[MAX_CHANNEL_NUM];
-	u1Byte	Len;	
+	u1Byte	Len;
 	u1Byte	Channel2_4G[MAX_CHANNEL_NUM];
 	u1Byte	Len2_4G;
 	u1Byte	Channel5G[MAX_CHANNEL_NUM];
@@ -246,7 +246,7 @@ typedef struct _RT_CHNL_LIST_ENTRY
 typedef struct _RT_CHANNEL_LIST
 {
 	DECLARE_RT_OBJECT(RT_CHANNEL_LIST);
-	BOOLEAN				bDot11d;						// True if this channel list supports dot11d. 
+	BOOLEAN				bDot11d;						// True if this channel list supports dot11d.
 	u1Byte				ChannelLen;						// Availabe channel number.
 	RT_CHANNEL_DOMAIN	ChannelPlan;					// Current channel plan for this channel list.
 	u2Byte				WirelessMode;					// Record the wireless mode if this channel list is conformed to the current wireless mode.
@@ -264,7 +264,7 @@ typedef struct _RT_CHANNEL_LIST
 #define IS_COUNTRY_IE_VALID(__pMgntInfo) (	(GET_DOT11D_INFO(__pMgntInfo)->CountryIeLen > 0) && \
 											(IS_DOT11D_STATE_DONE(__pMgntInfo)))
 
-#define IS_EQUAL_CIE_SRC(__pMgntInfo, __pTa) eqMacAddr(GET_DOT11D_INFO(__pMgntInfo)->CountryIeSrcAddr, __pTa) 
+#define IS_EQUAL_CIE_SRC(__pMgntInfo, __pTa) eqMacAddr(GET_DOT11D_INFO(__pMgntInfo)->CountryIeSrcAddr, __pTa)
 #define UPDATE_CIE_SRC(__pMgntInfo, __pTa) cpMacAddr(GET_DOT11D_INFO(__pMgntInfo)->CountryIeSrcAddr, __pTa)
 
 #define IS_COUNTRY_IE_CHANGED(__pMgntInfo, __Ie) \
@@ -274,7 +274,7 @@ typedef struct _RT_CHANNEL_LIST
 
 #define CIE_WATCHDOG_TH 1
 #define GET_CIE_WATCHDOG(__pMgntInfo) GET_DOT11D_INFO(__pMgntInfo)->CountryIeWatchdog
-#define RESET_CIE_WATCHDOG(__pMgntInfo) GET_CIE_WATCHDOG(__pMgntInfo) = 0 
+#define RESET_CIE_WATCHDOG(__pMgntInfo) GET_CIE_WATCHDOG(__pMgntInfo) = 0
 #define UPDATE_CIE_WATCHDOG(__pMgntInfo) ++GET_CIE_WATCHDOG(__pMgntInfo)
 
 #define IS_DOT11D_STATE_DONE(__pMgntInfo) (GET_DOT11D_INFO(__pMgntInfo)->State == DOT11D_STATE_DONE)
@@ -296,7 +296,7 @@ VOID
 Dot11d_UpdateCountryIe(
 	IN PADAPTER		pAdapter,
 	IN pu1Byte		pTaddr,
-	IN POCTET_STRING	posCoutryIe	 
+	IN POCTET_STRING	posCoutryIe
 	);
 
 u1Byte
@@ -324,7 +324,7 @@ RtActChannelList(
 	OUT		PVOID		pOutputBuf
 	);
 
-u1Byte 
+u1Byte
 RtGetDualBandChannel(
 		IN	PADAPTER	Adapter,
 		OUT		PRT_CHNL_LIST_ENTRY	ChnlListEntryArray

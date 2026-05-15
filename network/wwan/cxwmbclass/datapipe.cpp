@@ -361,18 +361,18 @@ Routine Description
     Target - Handle to the Iotarget to which teh Request was sent. COnceptually this
               is the BULK USB __out pipe(on of  Data or beacon)
     CompletionParams - In case of USB this contains the USB status and amount of bytes transferred
-                       
+
 
     Context - This is the COntext we set in WdfRequestSend
 
 
 Arguments:
 
-    
+
 
 Return Value:
 
-    
+
 
 --*/
 
@@ -642,7 +642,7 @@ MbbBusWriteData(__in MBB_BUS_HANDLE BusHandle, __in MBB_REQUEST_HANDLE RequestHa
         if (WriteRequestZLP != NULL)
         {
 
-            
+
 
             Status = WdfUsbTargetPipeFormatRequestForWrite(usbDeviceContext->BulkOutputPipe, WriteRequestZLP, NULL, NULL);
             if (!NT_SUCCESS(Status))

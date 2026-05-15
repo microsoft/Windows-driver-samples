@@ -6,7 +6,7 @@
 //      HelperFunctions_IPAddress.h
 //
 //   Abstract:
-//      This module contains prototypes for functions which assist in actions pertaining to IP 
+//      This module contains prototypes for functions which assist in actions pertaining to IP
 //      Addresses.
 //
 //   Author:

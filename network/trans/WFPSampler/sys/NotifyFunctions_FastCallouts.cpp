@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //
 //       NotifyBasicNotification
@@ -28,17 +28,17 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense and 
+//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense and
 //                                              improve traces
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "Framework_WFPSamplerCalloutDriver.h" /// . 
+#include "Framework_WFPSamplerCalloutDriver.h" /// .
 #include "NotifyFunctions_FastCallouts.tmh"    /// $(OBJ_PATH)\$(O)\
 
 /**
  @private_function="PrvFastNotificationWorkItemRoutine"
- 
+
    Purpose:  Traces the appropriate notification event.                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -144,7 +144,7 @@ VOID PrvFastNotificationWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PrvFastNotificationWorkItemRoutine()\n");
@@ -156,7 +156,7 @@ VOID PrvFastNotificationWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
 
 /**
  @notify_function="NotifyFastNotification"
- 
+
    Purpose:  Traces the notification event.                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

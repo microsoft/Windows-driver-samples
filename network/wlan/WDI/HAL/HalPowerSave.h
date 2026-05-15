@@ -15,8 +15,8 @@
 typedef struct _LPS_DEEP_SLEEP_CONTEXT
 {
 	BOOLEAN		bEnable;
-	pu1Byte		pStaticConfigureFile;			
-	pu1Byte	  	pDynamicConfigureFile;	
+	pu1Byte		pStaticConfigureFile;
+	pu1Byte	  	pDynamicConfigureFile;
 	u4Byte		ConfigurationFileOffset;
 	u2Byte		ConfigureFileLengthForPTK;
 	u2Byte		ConfigureFileLengthForGTK;
@@ -115,12 +115,12 @@ FwInactivePSLeave(
 	IN	PADAPTER	Adapter
 	);
 
-VOID 
+VOID
 FwLPSDeepSleepInit(
 	IN PADAPTER Adapter
 );
 
-VOID 
+VOID
 FwLPSDeepSleepDeInit(
 	IN PADAPTER Adapter
 );

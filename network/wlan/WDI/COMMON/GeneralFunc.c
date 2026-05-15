@@ -4,7 +4,7 @@
 #include "GeneralFunc.tmh"
 #endif
 
-BOOLEAN 
+BOOLEAN
 eqNByte(
 	pu1Byte	str1,
 	pu1Byte	str2,
@@ -25,7 +25,7 @@ eqNByte(
 
 //
 //	Description:
-//		Return TRUE if chTmp is represent for hex digit and 
+//		Return TRUE if chTmp is represent for hex digit and
 //		FALSE otherwise.
 //
 //
@@ -34,7 +34,7 @@ IsHexDigit(
 	IN		s1Byte		chTmp
 )
 {
-	if( (chTmp >= '0' && chTmp <= '9') ||  
+	if( (chTmp >= '0' && chTmp <= '9') ||
 		(chTmp >= 'a' && chTmp <= 'f') ||
 		(chTmp >= 'A' && chTmp <= 'F') )
 	{
@@ -60,10 +60,10 @@ MapCharToHexDigit(
 		return (chTmp - '0');
 	else if(chTmp >= 'a' && chTmp <= 'f')
 		return (10 + (chTmp - 'a'));
-	else if(chTmp >= 'A' && chTmp <= 'F') 
+	else if(chTmp >= 'A' && chTmp <= 'F')
 		return (10 + (chTmp - 'A'));
 	else
-		return 0;	
+		return 0;
 }
 
 
@@ -72,7 +72,7 @@ MapCharToHexDigit(
 //	Description:
 //		Parse hex number from the string pucStr.
 //
-BOOLEAN 
+BOOLEAN
 GetHexValueFromString(
 	IN		ps1Byte			szStr,
 	IN OUT	pu4Byte			pu4bVal,
@@ -84,7 +84,7 @@ GetHexValueFromString(
 	// Check input parameter.
 	if(szStr == NULL || pu4bVal == NULL || pu4bMove == NULL)
 	{
-		RT_TRACE(COMP_DBG, DBG_WARNING, 
+		RT_TRACE(COMP_DBG, DBG_WARNING,
 			("GetHexValueFromString(): Invalid inpur argumetns! szStr: %p, pu4bVal: %p, pu4bMove: %p\n", szStr, pu4bVal, pu4bMove));
 		return FALSE;
 	}
@@ -94,7 +94,7 @@ GetHexValueFromString(
 	*pu4bVal = 0;
 
 	// Skip leading space.
-	while(	*szScan != '\0' && 
+	while(	*szScan != '\0' &&
 			(*szScan == ' ' || *szScan == '\t') )
 	{
 		szScan++;
@@ -106,9 +106,9 @@ GetHexValueFromString(
 	{
 		szScan += 2;
 		(*pu4bMove) += 2;
-	}	
+	}
 
-	// Check if szScan is now pointer to a character for hex digit, 
+	// Check if szScan is now pointer to a character for hex digit,
 	// if not, it means this is not a valid hex number.
 	if(!IsHexDigit(*szScan))
 	{
@@ -128,7 +128,7 @@ GetHexValueFromString(
 	return TRUE;
 }
 
-BOOLEAN 
+BOOLEAN
 GetFractionValueFromString(
 	IN		ps1Byte			szStr,
 	IN OUT	pu1Byte			pInteger,
@@ -157,11 +157,11 @@ GetFractionValueFromString(
 		++szScan;
 		++(*pu4bMove);
 
-		if ( *szScan == '.' ) 
+		if ( *szScan == '.' )
 		{
 			++szScan;
 			++(*pu4bMove);
-			
+
 			if ( *szScan < '0' || *szScan > '9' )
 				return FALSE;
 			else {
@@ -196,16 +196,16 @@ IsCommentString(
 	}
 }
 
-// <20121004, Kordan> For example, 
+// <20121004, Kordan> For example,
 // ParseQualifiedString(inString, 0, outString, '[', ']') gets "Kordan" from a string "Hello [Kordan]".
 // If RightQualifier does not exist, it will hang on in the while loop
-BOOLEAN 
+BOOLEAN
 ParseQualifiedString(
-    IN      ps1Byte 		In, 
-    IN OUT  pu4Byte 		Start, 
+    IN      ps1Byte 		In,
+    IN OUT  pu4Byte 		Start,
     OUT     ps1Byte 		Out,
-    OUT     const u4Byte 	MaxOutLen,    
-    IN      s1Byte  		LeftQualifier, 
+    OUT     const u4Byte 	MaxOutLen,
+    IN      s1Byte  		LeftQualifier,
     IN      s1Byte  		RightQualifier
     )
 {
@@ -219,7 +219,7 @@ ParseQualifiedString(
 
     i = (*Start);
 
-	while ((c = In[(*Start)++]) != RightQualifier) 
+	while ((c = In[(*Start)++]) != RightQualifier)
 		; // Keep going until the RightQualifier is found.
 
 	j = (*Start) - 2;
@@ -237,7 +237,7 @@ ParseQualifiedString(
 
 	if (status == FALSE)
 		*Start = origin; // Reset the position
-	
+
     return status;
 }
 
@@ -276,9 +276,9 @@ GetS1ByteIntegerFromStringInDecimal(
 {
 	u2Byte i = 0;
 	s1Byte Sign = 1; // Positive
-	
+
 	*pInt = 0;
-	
+
 	if( Str[i] == '-' )
 	{
 		Sign = -1; // Negative
@@ -340,10 +340,10 @@ GenTag(
 {
 	u2Byte	units, tens = 0;
 	u4Byte	tag;
-	
+
 	units = (u2Byte)strlen(pFunName);
 	tag = pFunName[0] | (pFunName[units-1] << 8);
-	
+
 	while(units >= 10)
 	{
 		units -= 10;

@@ -1,10 +1,10 @@
 //---------------------------------------------------------------------------
 //
 // Copyright (c) 2014 Realtek Semiconductor, Inc. All rights reserved.
-// 
+//
 //---------------------------------------------------------------------------
 // Description:
-//		
+//
 //
 
 #ifndef __INC_P2P_ADDITIONAL_IE_H
@@ -62,5 +62,5 @@ P2P_AddIe_Append(
 	IN  P2P_ADD_IE_ID			id,
 	IN  FRAME_BUF				*pBuf
 	);
-	
+
 #endif	// #ifndef __INC_P2P_ADDITIONAL_IE_H

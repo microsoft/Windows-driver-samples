@@ -6,7 +6,7 @@
 //      HelperFunctions_FwpmEngine.h
 //
 //   Abstract:
-//      This module contains prototypes for functions which assist in actions pertaining to BFE 
+//      This module contains prototypes for functions which assist in actions pertaining to BFE
 //         engine objects.
 //
 //   Author:

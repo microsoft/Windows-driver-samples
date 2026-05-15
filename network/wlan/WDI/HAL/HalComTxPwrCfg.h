@@ -32,30 +32,30 @@ PHY_GetRateIndexOfTxPowerByRate(
 	IN	u1Byte	Rate
 	);
 
-VOID 
+VOID
 PHY_SetTxPowerIndexByRateSection(
 	IN	PADAPTER			pAdapter,
-	IN	u1Byte				RFPath,	
+	IN	u1Byte				RFPath,
 	IN	u1Byte				Channel,
 	IN	u1Byte				RateSection
 	);
 
 
 s1Byte
-PHY_GetTxPowerByRate( 
-	IN	PADAPTER		pAdapter, 
-	IN	u1Byte			Band, 
-	IN	u1Byte			RFPath, 
-	IN	u1Byte			TxNum, 
+PHY_GetTxPowerByRate(
+	IN	PADAPTER		pAdapter,
+	IN	u1Byte			Band,
+	IN	u1Byte			RFPath,
+	IN	u1Byte			TxNum,
 	IN  u1Byte			RateIndex
 	);
 
 VOID
-PHY_SetTxPowerByRate( 
-	IN	PADAPTER		pAdapter, 
-	IN	u1Byte			Band, 
-	IN	u1Byte			RFPath, 
-	IN	u1Byte			TxNum, 
+PHY_SetTxPowerByRate(
+	IN	PADAPTER		pAdapter,
+	IN	u1Byte			Band,
+	IN	u1Byte			RFPath,
+	IN	u1Byte			TxNum,
 	IN  u1Byte			Rate,
 	IN	s1Byte			Value
 	);
@@ -67,11 +67,11 @@ PHY_SetTxPowerLevelByPath(
 	IN	u1Byte			path
 	);
 
-VOID 
+VOID
 PHY_SetTxPowerIndexByRateArray(
 	IN	PADAPTER			pAdapter,
 	IN	u1Byte				RFPath,
-	IN	CHANNEL_WIDTH		BandWidth,	
+	IN	CHANNEL_WIDTH		BandWidth,
 	IN	u1Byte				Channel,
 	IN	pu1Byte				Rates,
 	IN	u1Byte				RateArraySize
@@ -103,14 +103,14 @@ u1Byte
 PHY_GetTxPowerIndexBase(
 	IN	PADAPTER			pAdapter,
 	IN	u1Byte				RFPath,
-	IN	u1Byte				Rate,	
-	IN	CHANNEL_WIDTH		BandWidth,	
+	IN	u1Byte				Rate,
+	IN	CHANNEL_WIDTH		BandWidth,
 	IN	u1Byte				Channel,
 	OUT PBOOLEAN			bIn24G
 	);
 
 s1Byte
-PHY_GetTxPowerTrackingOffset( 
+PHY_GetTxPowerTrackingOffset(
 	PADAPTER pAdapter,
 	u1Byte	 RFPath,
 	u1Byte	 Rate

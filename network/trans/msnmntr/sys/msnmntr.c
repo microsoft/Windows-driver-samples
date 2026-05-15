@@ -141,7 +141,7 @@ MonitorCoRegisterCallouts(
     NTSTATUS status;
 
    //
-   // We won't be called for flow deletion for the flow established layer 
+   // We won't be called for flow deletion for the flow established layer
    // since we only establish a flow for the stream layer, so we don't
    // specify a flow deletion function.
    //
@@ -280,9 +280,9 @@ MonitorCoAllocFlowContext(
       goto cleanup;
 
    }
-   
+
    *flowContextOut = flowContext;
-   
+
    cleanup:
       if (!NT_SUCCESS(status))
       {
@@ -350,7 +350,7 @@ Notes
 
    //  Flow context is always created at the Flow established layer.
 
-   // flowContext gets deleted in MonitorCoCleanupFlowContext 
+   // flowContext gets deleted in MonitorCoCleanupFlowContext
 
    flowContext->deleting = FALSE;
    flowContext->flowHandle = inMetaValues->flowHandle;
@@ -372,7 +372,7 @@ Notes
    index = FWPS_FIELD_ALE_FLOW_ESTABLISHED_V4_IP_PROTOCOL;
    flowContext->ipProto = inFixedValues->incomingValue[index].value.uint16;
 
-   // flowContext->processPath gets deleted in MonitorCoCleanupFlowContext 
+   // flowContext->processPath gets deleted in MonitorCoCleanupFlowContext
    memcpy(flowContext->processPath, processPath->data, processPath->size);
 
    status = MonitorCoInsertFlowContext(flowContext);
@@ -816,21 +816,21 @@ void MonitorCoStreamFlowDeletion(
    result = ULongLongToULongPtr(flowContext, &flowPtr);
    ASSERT(result == S_OK);
    _Analysis_assume_(result == S_OK);
-   
+
 
    flowData = ((FLOW_DATA*)flowPtr);
 
    //
-   // If we're already being deleted from the list then we mustn't try to 
+   // If we're already being deleted from the list then we mustn't try to
    // remove ourselves here.
    //
    KeAcquireInStackQueuedSpinLock(&flowContextListLock, &lockHandle);
-   
+
    if (!flowData->deleting)
    {
       RemoveEntryList(&flowData->listEntry);
    }
-   
+
    KeReleaseInStackQueuedSpinLock(&lockHandle);
 
    MonitorCoCleanupFlowContext(flowData);

@@ -109,7 +109,7 @@ WFD_AppendTDLSSetupIEs(
 	OUT POCTET_STRING	posMsdu
 	);
 
-VOID 
+VOID
 WFD_ScanListClear(
 	IN	PADAPTER	pAdapter
 	);

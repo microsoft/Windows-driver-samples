@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //
 //       ClassifyBasicPacketExamination
@@ -33,8 +33,8 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, enhance 
-//                                              traces, add support for discard layers, and support 
+//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense, enhance
+//                                              traces, add support for discard layers, and support
 //                                              tracing all of the classifyFn parameters.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@
 
 /**
  @private_function="LogFlags"
- 
+
    Purpose:  Logs each of the flags from the FWPM_CONDITION_FLAGS value.                        <br>
                                                                                                 <br>
    Notes:    Uses ETW Tracing for the logging.                                                  <br>
@@ -190,7 +190,7 @@ VOID LogFlags(_In_ UINT32 flags)
 
 /**
  @private_function="LogL2Flags"
- 
+
    Purpose:  Logs each of the flags from the FWPM_CONDITION_FLAGS value.                        <br>
                                                                                                 <br>
    Notes:    Uses ETW Tracing for the logging.                                                  <br>
@@ -246,7 +246,7 @@ VOID LogL2Flags(_In_ UINT32 flags)
 
 /**
  @private_function="LogValue"
- 
+
    Purpose:  Logs each of the FWPS_INCOMING_VALUE from the FWPS_INCOMING_VALUES in classifyFn.  <br>
                                                                                                 <br>
    Notes:    Uses ETW Tracing for the logging.                                                  <br>
@@ -574,7 +574,7 @@ VOID LogValue(_In_ const FWP_VALUE* pValue,
 
 /**
  @private_function="LogValues"
- 
+
    Purpose:  Logs each of the FWPS_INCOMING_VALUE from the FWPS_INCOMING_VALUES in classifyFn.  <br>
                                                                                                 <br>
    Notes:    Uses ETW Tracing for the logging.                                                  <br>
@@ -615,7 +615,7 @@ VOID LogValues(_In_reads_(numValues) const FWPS_INCOMING_VALUE* pValues,
 
 /**
  @private_function="LogClassifyValues"
- 
+
    Purpose:  Logs the FWPS_INCOMING_VALUES from the classifyFn.                                 <br>
                                                                                                 <br>
    Notes:    Uses ETW Tracing for the logging.                                                  <br>
@@ -665,7 +665,7 @@ VOID LogClassifyValues(_In_ const FWPS_INCOMING_VALUES* pClassifyValues)
 
 /**
  @private_function="LogMetadata"
- 
+
    Purpose:  Logs the FWPS_INCOMING_METADATA_VALUES from the classifyFn.                        <br>
                                                                                                 <br>
    Notes:    Uses ETW Tracing for the logging.                                                  <br>
@@ -1125,7 +1125,7 @@ VOID LogMetadata(_In_ const FWPS_INCOMING_METADATA_VALUES* pMetadata)
 
 /**
  @private_function="LogFilter"
- 
+
    Purpose:  Logs the FWPS_FILTER from the classifyFn.                                          <br>
                                                                                                 <br>
    Notes:    Uses ETW Tracing for the logging.                                                  <br>
@@ -1208,7 +1208,7 @@ VOID LogFilter(_In_ const FWPS_FILTER* pFilter)
 
 /**
  @private_function="LogClassifyOut"
- 
+
    Purpose:  Logs the FWPS_CLASSIFY_OUT from the classifyFn.                                    <br>
                                                                                                 <br>
    Notes:    Uses ETW Tracing for the logging.                                                  <br>
@@ -1299,7 +1299,7 @@ VOID LogClassifyOut(_In_ const FWPS_CLASSIFY_OUT* pClassifyOut)
 
 /**
  @private_function="LogEthernetIIHeader"
- 
+
    Purpose:  Logs the Ethernet II Header into a more easily readable format.                    <br>
                                                                                                 <br>
    Notes:    Uses ETW Tracing for the logging, which is not ideal in a real world scenario.     <br>
@@ -1307,7 +1307,7 @@ VOID LogClassifyOut(_In_ const FWPS_CLASSIFY_OUT* pClassifyOut)
    MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/FF562859.aspx                              <br>
 */
 VOID LogEthernetIIHeader(_In_ ETHERNET_II_HEADER* pEthernetIIHeader,
-                         _In_ UINT32 vlanID = 0) 
+                         _In_ UINT32 vlanID = 0)
 {
 #if DBG
 
@@ -1428,7 +1428,7 @@ VOID LogEthernetIIHeader(_In_ ETHERNET_II_HEADER* pEthernetIIHeader,
 
 /**
  @private_function="LogEthernetSNAPHeader"
- 
+
    Purpose:  Logs the MAC Ethernet SNAP Header into a more easily readable format.              <br>
                                                                                                 <br>
    Notes:    Uses ETW Tracing for the logging, which is not ideal in a real world scenario.     <br>
@@ -1535,7 +1535,7 @@ VOID LogEthernetSNAPHeader(_In_ ETHERNET_SNAP_HEADER* pEthernetSNAPHeader)
 
 /**
  @private_function="LogIPv4Header"
- 
+
    Purpose:  Logs the IPv4 Header into a more easily readable format.                           <br>
                                                                                                 <br>
    Notes:    Uses ETW Tracing for the logging, which is not ideal in a real world scenario.     <br>
@@ -1629,7 +1629,7 @@ VOID LogIPv4Header(_In_ IP_HEADER_V4* pIPv4Header)
 
 /**
  @private_function="LogIPv6Header"
- 
+
    Purpose:  Logs the IPv6 Header into a more easily readable format.                           <br>
                                                                                                 <br>
    Notes:    Uses ETW Tracing for the logging, which is not ideal in a real world scenario.     <br>
@@ -1758,7 +1758,7 @@ VOID LogIPv6Header(_In_ IP_HEADER_V6* pIPv6Header)
 
 /**
  @private_function="LogIPHeader"
- 
+
    Purpose:  Proxy IP Header logging to appropriate logging function base on IP version.        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1780,7 +1780,7 @@ VOID LogIPHeader(_In_ VOID* pIPHeader,
 
 /**
  @private_function="LogICMPv4Header"
- 
+
    Purpose:  Logs the ICMPv4 Header into a more easily readable format.                         <br>
                                                                                                 <br>
    Notes:    Uses ETW Tracing for the logging, which is not ideal in a real world scenario.     <br>
@@ -1853,7 +1853,7 @@ VOID LogICMPv4Header(_In_ ICMP_HEADER_V4* pICMPv4Header)
 
 /**
  @private_function="LogICMPv6Header"
- 
+
    Purpose:  Logs the ICMPv6 Header into a more easily readable format.                         <br>
                                                                                                 <br>
    Notes:    Uses ETW Tracing for the logging, which is not ideal in a real world scenario.     <br>
@@ -1926,7 +1926,7 @@ VOID LogICMPv6Header(_In_ ICMP_HEADER_V6* pICMPv6Header)
 
 /**
  @private_function="LogTCPHeader"
- 
+
    Purpose:  Logs the TCP Header into a more easily readable format.                            <br>
                                                                                                 <br>
    Notes:    Uses ETW Tracing for the logging, which is not ideal in a real world scenario.     <br>
@@ -2026,7 +2026,7 @@ VOID LogTCPHeader(_In_ TCP_HEADER* pTCPHeader)
 
 /**
  @private_function="LogUDPHeader"
- 
+
    Purpose:  Logs the UDP Header into a more easily readable format.                            <br>
                                                                                                 <br>
    Notes:    Uses ETW Tracing for the logging, which is not ideal in a real world scenario.     <br>
@@ -2101,7 +2101,7 @@ VOID LogUDPHeader(_In_ UDP_HEADER* pUDPHeader)
 
 /**
  @private_function="LogTransportHeader"
- 
+
    Purpose:  Proxy Transport Header logging to appropriate logging function base on IP protocol.<br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -2148,8 +2148,8 @@ VOID LogTransportHeader(_In_ VOID* pTransportHeader,
 
 /**
  @private_function="PerformBasicPacketExaminationAtInboundMACFrame"
- 
-   Purpose:  Examines and logs the contents of the MAC Header and Ip and Transport Headers if 
+
+   Purpose:  Examines and logs the contents of the MAC Header and Ip and Transport Headers if
              available.                                                                         <br>
                                                                                                 <br>
    Notes:    Applies to the following framing layers:                                           <br>
@@ -2314,7 +2314,7 @@ VOID PerformBasicPacketExaminationAtInboundMACFrame(_In_ CLASSIFY_DATA* pClassif
       {
          HLPR_DELETE_ARRAY(pHeader,
                            WFPSAMPLER_SYSLIB_TAG);
-      
+
          needToFreeMemory = FALSE;
       }
 
@@ -2371,7 +2371,7 @@ VOID PerformBasicPacketExaminationAtInboundMACFrame(_In_ CLASSIFY_DATA* pClassif
       {
          HLPR_DELETE_ARRAY(pHeader,
                            WFPSAMPLER_SYSLIB_TAG);
-      
+
          needToFreeMemory = FALSE;
       }
 
@@ -2401,7 +2401,7 @@ VOID PerformBasicPacketExaminationAtInboundMACFrame(_In_ CLASSIFY_DATA* pClassif
    {
       HLPR_DELETE_ARRAY(pHeader,
                         WFPSAMPLER_SYSLIB_TAG);
-   
+
       needToFreeMemory = FALSE;
    }
 
@@ -2441,8 +2441,8 @@ VOID PerformBasicPacketExaminationAtInboundMACFrame(_In_ CLASSIFY_DATA* pClassif
 
 /**
  @private_function="PerformBasicPacketExaminationAtOutboundMACFrame"
- 
-   Purpose:  Examines and logs the contents of the MAC Header and Ip and Transport Headers if 
+
+   Purpose:  Examines and logs the contents of the MAC Header and Ip and Transport Headers if
              available.                                                                         <br>
                                                                                                 <br>
    Notes:    Applies to the following framing layers:                                           <br>
@@ -2584,7 +2584,7 @@ VOID PerformBasicPacketExaminationAtOutboundMACFrame(_In_ CLASSIFY_DATA* pClassi
       {
          HLPR_DELETE_ARRAY(pHeader,
                            WFPSAMPLER_SYSLIB_TAG);
-      
+
          needToFreeMemory = FALSE;
       }
 
@@ -2628,7 +2628,7 @@ VOID PerformBasicPacketExaminationAtOutboundMACFrame(_In_ CLASSIFY_DATA* pClassi
       {
          HLPR_DELETE_ARRAY(pHeader,
                            WFPSAMPLER_SYSLIB_TAG);
-      
+
          needToFreeMemory = FALSE;
       }
 
@@ -2658,7 +2658,7 @@ VOID PerformBasicPacketExaminationAtOutboundMACFrame(_In_ CLASSIFY_DATA* pClassi
    {
       HLPR_DELETE_ARRAY(pHeader,
                         WFPSAMPLER_SYSLIB_TAG);
-   
+
       needToFreeMemory = FALSE;
    }
 
@@ -2689,7 +2689,7 @@ VOID PerformBasicPacketExaminationAtOutboundMACFrame(_In_ CLASSIFY_DATA* pClassi
 
 /**
  @private_function="PerformBasicPacketExaminationAtVSwitchTransport"
- 
+
    Purpose:  Examines and logs the contents of the IP Header and Transport Headers if available.<br>
                                                                                                 <br>
    Notes:    Applies to the following vSwitch layers:                                           <br>
@@ -2784,7 +2784,7 @@ VOID PerformBasicPacketExaminationAtVSwitchEthernet(_In_ CLASSIFY_DATA* pClassif
    {
       HLPR_DELETE_ARRAY(pHeader,
                         WFPSAMPLER_SYSLIB_TAG);
-   
+
       needToFreeMemory = FALSE;
    }
 
@@ -2828,7 +2828,7 @@ VOID PerformBasicPacketExaminationAtVSwitchEthernet(_In_ CLASSIFY_DATA* pClassif
    {
       HLPR_DELETE_ARRAY(pHeader,
                         WFPSAMPLER_SYSLIB_TAG);
-   
+
       needToFreeMemory = FALSE;
    }
 
@@ -2857,7 +2857,7 @@ VOID PerformBasicPacketExaminationAtVSwitchEthernet(_In_ CLASSIFY_DATA* pClassif
    {
       HLPR_DELETE_ARRAY(pHeader,
                         WFPSAMPLER_SYSLIB_TAG);
-   
+
       needToFreeMemory = FALSE;
    }
 
@@ -2888,7 +2888,7 @@ VOID PerformBasicPacketExaminationAtVSwitchEthernet(_In_ CLASSIFY_DATA* pClassif
 
 /**
  @private_function="PerformBasicPacketExaminationAtVSwitchTransport"
- 
+
    Purpose:  Examines and logs the contents of the IP Header and Transport Headers if available.<br>
                                                                                                 <br>
    Notes:    Applies to the following vSwitch layers:                                           <br>
@@ -2997,7 +2997,7 @@ VOID PerformBasicPacketExaminationAtVSwitchTransport(_In_ CLASSIFY_DATA* pClassi
    {
       HLPR_DELETE_ARRAY(pHeader,
                         WFPSAMPLER_SYSLIB_TAG);
-   
+
       needToFreeMemory = FALSE;
    }
 
@@ -3068,7 +3068,7 @@ VOID PerformBasicPacketExaminationAtVSwitchTransport(_In_ CLASSIFY_DATA* pClassi
    {
       HLPR_DELETE_ARRAY(pHeader,
                         WFPSAMPLER_SYSLIB_TAG);
-   
+
       needToFreeMemory = FALSE;
    }
 
@@ -3101,7 +3101,7 @@ VOID PerformBasicPacketExaminationAtVSwitchTransport(_In_ CLASSIFY_DATA* pClassi
 
 /**
  @private_function="PerformBasicPacketExaminationAtInboundNetwork"
- 
+
    Purpose:  Examines and logs the contents of the IP Header and Transport Header if available. <br>
                                                                                                 <br>
    Notes:    Applies to the following network layers:                                           <br>
@@ -3262,7 +3262,7 @@ VOID PerformBasicPacketExaminationAtInboundNetwork(_In_ CLASSIFY_DATA* pClassify
 
 /**
  @private_function="PerformBasicPacketExaminationAtOutboundNetwork"
- 
+
    Purpose:  Examines and logs the contents of the IP Header and Transport Header if available. <br>
                                                                                                 <br>
    Notes:    Applies to the following network layers:                                           <br>
@@ -3407,7 +3407,7 @@ VOID PerformBasicPacketExaminationAtOutboundNetwork(_In_ CLASSIFY_DATA* pClassif
 
 /**
  @private_function="PerformBasicPacketExaminationAtForward"
- 
+
    Purpose:  Examines and logs the contents of the IP Header and Transport Header if available. <br>
                                                                                                 <br>
    Notes:    Applies to the following forwarding layers:                                        <br>
@@ -3550,7 +3550,7 @@ VOID PerformBasicPacketExaminationAtForward(_In_ CLASSIFY_DATA* pClassifyData)
 
 /**
  @private_function="PerformBasicPacketExaminationAtInboundTransport"
- 
+
    Purpose:  Examines and logs the contents of the IP Header and Transport Header if available. <br>
                                                                                                 <br>
    Notes:    Applies to the following transport layers:                                         <br>
@@ -3636,7 +3636,7 @@ VOID PerformBasicPacketExaminationAtInboundTransport(_In_ CLASSIFY_DATA* pClassi
    if(pClassifyValues->layerId == FWPS_LAYER_ALE_FLOW_ESTABLISHED_V4)
    {
       ipHeaderSize = IPV4_HEADER_MIN_SIZE;
-   
+
       if(protocol == ICMPV4)
          transportHeaderSize = ICMP_HEADER_MIN_SIZE;
       else if(protocol == TCP)
@@ -3859,7 +3859,7 @@ VOID PerformBasicPacketExaminationAtInboundTransport(_In_ CLASSIFY_DATA* pClassi
 
 /**
  @private_function="PerformBasicPacketExaminationAtOutboundTransport"
- 
+
    Purpose:  Examines and logs the contents of the IP Header and Transport Header if available. <br>
                                                                                                 <br>
    Notes:    Applies to the following transport layers:                                         <br>
@@ -4005,7 +4005,7 @@ VOID PerformBasicPacketExaminationAtOutboundTransport(_In_ CLASSIFY_DATA* pClass
 
 /**
  @private_function="PerformBasicPacketExaminationAtOutboundTransport"
- 
+
    Purpose:  Logs the Discard reason.                                                           <br>
                                                                                                 <br>
    Notes:    Applies to the following discard layers:                                           <br>
@@ -4070,139 +4070,139 @@ VOID PerformBasicPacketExaminationAtDiscard(_In_ CLASSIFY_DATA* pClassifyData)
             case IpDiscardBadSourceAddress:
             {
                pDiscardReason = "Bad Source Address";
-            
+
                break;
             }
             case IpDiscardNotLocallyDestined:
             {
                pDiscardReason = "Not Locally Destined";
-            
+
                break;
             }
             case IpDiscardProtocolUnreachable:
             {
                pDiscardReason = "Unreachable Protocol";
-            
+
                break;
             }
             case IpDiscardPortUnreachable:
             {
                pDiscardReason = "UnreachablePort";
-            
+
                break;
             }
             case IpDiscardBadLength:
             {
                pDiscardReason = "Bad Length";
-            
+
                break;
             }
             case IpDiscardMalformedHeader:
             {
                pDiscardReason = "Malformed Header";
-            
+
                break;
             }
             case IpDiscardNoRoute:
             {
                pDiscardReason = "No Route";
-            
+
                break;
             }
             case IpDiscardBeyondScope:
             {
                pDiscardReason = "Beyond Scope";
-            
+
                break;
             }
             case IpDiscardInspectionDrop:
             {
                pDiscardReason = "Inspection Drop";
-            
+
                break;
             }
             case IpDiscardTooManyDecapsulations:
             {
                pDiscardReason = "Too Many Decapsulations";
-            
+
                break;
             }
             case IpDiscardAdministrativelyProhibited:
             {
                pDiscardReason = "Administratively Prohibited";
-            
+
                break;
             }
             case IpDiscardHopLimitExceeded:
             {
                pDiscardReason = "Hop Limit Exceeded";
-            
+
                break;
             }
             case IpDiscardAddressUnreachable:
             {
                pDiscardReason = "Unreachable Address";
-            
+
                break;
             }
             case IpDiscardRscPacket:
             {
                pDiscardReason = "RSC Packet";
-            
+
                break;
             }
             case IpDiscardArbitrationUnhandled:
             {
                pDiscardReason = "Unhandled Arbitration";
-            
+
                break;
             }
             case IpDiscardInspectionAbsorb:
             {
                pDiscardReason = "Inspection Absorb";
-            
+
                break;
             }
             case IpDiscardDontFragmentMtuExceeded:
             {
                pDiscardReason = "Don't Fragment / MTU Exceeded";
-            
+
                break;
             }
             case IpDiscardBufferLengthExceeded:
             {
                pDiscardReason = "Buffer Length Exceeded";
-            
+
                break;
             }
             case IpDiscardAddressResolutionTimeout:
             {
                pDiscardReason = "Address Resolution Timeout";
-            
+
                break;
             }
             case IpDiscardAddressResolutionFailure:
             {
                pDiscardReason = "Address Resolution Failure";
-            
+
                break;
             }
             case IpDiscardIpsecFailure:
             {
                pDiscardReason = "IPsec Failure";
-            
+
                break;
             }
             case IpDiscardExtensionHeadersFailure:
             {
                pDiscardReason = "Extension Headers Failure";
-            
+
                break;
             }
             case IpDiscardIpsnpiClientDrop:
             {
                pDiscardReason = "IPSNPI Drop";
-            
+
                break;
             }
          }
@@ -4218,49 +4218,49 @@ VOID PerformBasicPacketExaminationAtDiscard(_In_ CLASSIFY_DATA* pClassifyData)
             case InetDiscardSourceUnspecified:
             {
                pDiscardReason = "Unspecified Source";
-            
+
                break;
             }
             case InetDiscardDestinationMulticast:
             {
                pDiscardReason = "Multicast Destination";
-            
+
                break;
             }
             case InetDiscardHeaderInvalid:
             {
                pDiscardReason = "Invalid Header";
-            
+
                break;
             }
             case InetDiscardChecksumInvalid:
             {
                pDiscardReason = "Invalid Checksum";
-            
+
                break;
             }
             case InetDiscardEndpointNotFound:
             {
                pDiscardReason = "Endpoint Not Found";
-            
+
                break;
             }
             case InetDiscardConnectedPath:
             {
                pDiscardReason = "Connected Path";
-            
+
                break;
             }
             case InetDiscardSessionState:
             {
                pDiscardReason = "Session State";
-            
+
                break;
             }
             case InetDiscardReceiveInspection:
             {
                pDiscardReason = "Receive Inspection";
-            
+
                break;
             }
          }
@@ -4276,13 +4276,13 @@ VOID PerformBasicPacketExaminationAtDiscard(_In_ CLASSIFY_DATA* pClassifyData)
             case FWPS_DISCARD_FIREWALL_POLICY:
             {
                pDiscardReason = "Firewall Policy";
-            
+
                break;
             }
             case FWPS_DISCARD_IPSEC:
             {
                pDiscardReason = "IPsec Policy";
-            
+
                break;
             }
          }
@@ -4333,7 +4333,7 @@ VOID PerformBasicPacketExaminationAtDiscard(_In_ CLASSIFY_DATA* pClassifyData)
 
 /**
  @private_function="PerformBasicPacketExaminationAtOther"
- 
+
    Purpose:  Logs the classify.                                                                 <br>
                                                                                                 <br>
    Notes:    Applies to the following discard layers:                                           <br>
@@ -4974,7 +4974,7 @@ VOID PerformBasicPacketExaminationAtOther(_In_ CLASSIFY_DATA* pClassifyData)
 
 /**
  @classify_function="ClassifyBasicPacketExamination"
- 
+
    Purpose:  Examines the packet and returns FWP_ACTION_CONTINUE.                               <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>
@@ -5377,7 +5377,7 @@ VOID NTAPI ClassifyBasicPacketExamination(_In_ const FWPS_INCOMING_VALUES0* pCla
 
 /**
  @classify_function="ClassifyBasicPacketExamination"
- 
+
    Purpose:  Examines the packet and returns FWP_ACTION_CONTINUE.                               <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>
@@ -5610,7 +5610,7 @@ VOID NTAPI ClassifyBasicPacketExamination(_In_ const FWPS_INCOMING_VALUES* pClas
    if(pFilter->context & PCPEF_EXAMINE_UNDER_LOCK)
       KeReleaseSpinLock(&g_bpeSpinLock,
                         originalIRQL);
- 
+
    HLPR_BAIL_LABEL:
 
    if(status != STATUS_SUCCESS)

@@ -7,9 +7,9 @@
 //
 //   Abstract:
 //      This module contains prototypes for WFP Classify functions that inject packets back into the
-//         data path using the clone / block / inject method.  This method is inline only, no 
-//         modification, and uses as little validation and error checking as possible.  Certain 
-//         scenarios will definitely fail injection, such as injection to loopback, or IPsec 
+//         data path using the clone / block / inject method.  This method is inline only, no
+//         modification, and uses as little validation and error checking as possible.  Certain
+//         scenarios will definitely fail injection, such as injection to loopback, or IPsec
 //         encrypted packets.  These functions are meant for test performance purposes only.
 //
 //   Author:

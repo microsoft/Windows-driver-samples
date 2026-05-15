@@ -7,7 +7,7 @@ Module Name:
 
 Abstract:
     Contains Port specific defines
-    
+
 Revision History:
       When        What
     ----------    ----------------------------------------------

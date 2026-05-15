@@ -24,7 +24,7 @@ extern "C" {
 #ifndef MCGEN_DISABLE_PROVIDER_CODE_GENERATION
 #if  !defined(McGenDebug)
 #define McGenDebug(a,b)
-#endif 
+#endif
 
 
 #if !defined(MCGEN_TRACE_CONTEXT_DEF)
@@ -37,7 +37,7 @@ typedef struct _MCGEN_TRACE_CONTEXT
     ULONGLONG              MatchAllKeyword;
     ULONG                  Flags;
     ULONG                  IsEnabled;
-    UCHAR                  Level; 
+    UCHAR                  Level;
     UCHAR                  Reserve;
     USHORT                 EnableBitsCount;
     PULONG                 EnableBitMask;
@@ -128,22 +128,22 @@ Routine Description:
 
 Arguments:
 
-    SourceId - The GUID that identifies the session that enabled the provider. 
+    SourceId - The GUID that identifies the session that enabled the provider.
 
-    ControlCode - The parameter indicates whether the provider 
+    ControlCode - The parameter indicates whether the provider
                   is being enabled or disabled.
 
     Level - The level at which the event is enabled.
 
-    MatchAnyKeyword - The bitmask of keywords that the provider uses to 
+    MatchAnyKeyword - The bitmask of keywords that the provider uses to
                       determine the category of events that it writes.
 
-    MatchAllKeyword - This bitmask additionally restricts the category 
-                      of events that the provider writes. 
+    MatchAllKeyword - This bitmask additionally restricts the category
+                      of events that the provider writes.
 
     FilterData - The provider-defined data.
 
-    CallbackContext - The context of the callback that is defined when the provider 
+    CallbackContext - The context of the callback that is defined when the provider
                       called EtwRegister to register itself.
 
 Remarks:
@@ -189,7 +189,7 @@ Remarks:
                 RtlZeroMemory(Ctx->EnableBitMask, (((Ctx->EnableBitsCount - 1) / 32) + 1) * sizeof(ULONG));
             }
             break;
- 
+
         default:
             break;
     }
@@ -208,7 +208,7 @@ Remarks:
         CallbackContext
         );
 #endif
-   
+
     return;
 }
 
@@ -260,13 +260,13 @@ EXTERN_C __declspec(selectany) const EVENT_DESCRIPTOR RxReturnToDriver = {0x6, 0
 //
 // Note on Generate Code from Manifest Windows Vista and above
 //
-//Structures :  are handled as a size and pointer pairs. The macro for the event will have an extra 
+//Structures :  are handled as a size and pointer pairs. The macro for the event will have an extra
 //parameter for the size in bytes of the structure. Make sure that your structures have no extra padding.
 //
-//Strings: There are several cases that can be described in the manifest. For array of variable length 
-//strings, the generated code will take the count of characters for the whole array as an input parameter. 
+//Strings: There are several cases that can be described in the manifest. For array of variable length
+//strings, the generated code will take the count of characters for the whole array as an input parameter.
 //
-//SID No support for array of SIDs, the macro will take a pointer to the SID and use appropriate 
+//SID No support for array of SIDs, the macro will take a pointer to the SID and use appropriate
 //GetLengthSid function to get the length.
 //
 
@@ -276,7 +276,7 @@ EXTERN_C __declspec(selectany) const EVENT_DESCRIPTOR RxReturnToDriver = {0x6, 0
 #ifndef MCGEN_DISABLE_PROVIDER_CODE_GENERATION
 
 //
-// Globals 
+// Globals
 //
 
 
@@ -332,7 +332,7 @@ Remarks:
         return STATUS_SUCCESS;
     }
 
-    Error = EtwRegister( ProviderId, EnableCallback, CallbackContext, RegHandle); 
+    Error = EtwRegister( ProviderId, EnableCallback, CallbackContext, RegHandle);
 
     return Error;
 }
@@ -364,14 +364,14 @@ Remarks:
         return STATUS_SUCCESS;
     }
 
-    Error = EtwUnregister(*RegHandle); 
+    Error = EtwUnregister(*RegHandle);
     *RegHandle = (REGHANDLE)0;
-    
+
     return Error;
 }
 #endif
 
-// 
+//
 // Tx Events
 //
 #define		ETW_TX_FRAME_RECV_FROM_OS_EN	BIT0
@@ -379,7 +379,7 @@ Remarks:
 #define		ETW_TX_COMPLETE_BY_NIC_EN		BIT2
 #define		ETW_TX_COMPLETE_TO_OS			BIT3
 
-// 
+//
 // Rx Events
 //
 #define		ETW_RX_INDIC_FROM_NIC			BIT4
@@ -391,14 +391,14 @@ Remarks:
 // Register with ETW Vista +
 //
 #ifndef EventRegisterMicrosoft_Windows_WLAN_Driver
-#define EventRegisterMicrosoft_Windows_WLAN_Driver() McGenEventRegister(&MICROSOFT_WINDOWS_WLAN_DRIVER_PROVIDER_GUID, McGenControlCallbackV2, &MICROSOFT_WINDOWS_WLAN_DRIVER_PROVIDER_GUID_Context, &Microsoft_Windows_WLAN_DriverHandle) 
+#define EventRegisterMicrosoft_Windows_WLAN_Driver() McGenEventRegister(&MICROSOFT_WINDOWS_WLAN_DRIVER_PROVIDER_GUID, McGenControlCallbackV2, &MICROSOFT_WINDOWS_WLAN_DRIVER_PROVIDER_GUID_Context, &Microsoft_Windows_WLAN_DriverHandle)
 #endif
 
 //
 // UnRegister with ETW
 //
 #ifndef EventUnregisterMicrosoft_Windows_WLAN_Driver
-#define EventUnregisterMicrosoft_Windows_WLAN_Driver() McGenEventUnregister(&Microsoft_Windows_WLAN_DriverHandle) 
+#define EventUnregisterMicrosoft_Windows_WLAN_Driver() McGenEventUnregister(&Microsoft_Windows_WLAN_DriverHandle)
 #endif
 
 //
@@ -501,7 +501,7 @@ Remarks:
 #ifndef MCGEN_DISABLE_PROVIDER_CODE_GENERATION
 
 //
-// Template Functions 
+// Template Functions
 //
 //
 //Template from manifest : TxFrameReceivedFromOS

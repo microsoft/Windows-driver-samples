@@ -5,7 +5,7 @@
 
 #define		KEY_BUF_SIZE			5
 
-#define		TKIP_ENC_KEY_LEN		16		// Added by Annie, 2005-07-05.		
+#define		TKIP_ENC_KEY_LEN		16		// Added by Annie, 2005-07-05.
 #define		TKIP_MIC_KEY_LEN		8
 #define		TKIP_MIC_LEN			8
 #define		TKIP_KEY_LEN			(TKIP_ENC_KEY_LEN+TKIP_MIC_KEY_LEN*2)
@@ -193,12 +193,12 @@ typedef enum _RT_AUTH_MODE
     RT_802_11AuthModeWPA2PSK,
     RT_802_11AuthModeCCKM,
     RT_802_11AuthModeWAPI,
-    RT_802_11AuthModeCertificateWAPI, 
+    RT_802_11AuthModeCertificateWAPI,
     //===== Add new Mode above this line=====//
     RT_802_11AuthModeMax,
 
 	RT_NETWORK_EAP = 0x80,
-    
+
 } RT_AUTH_MODE, *PRT_AUTH_MODE;
 
 typedef enum _RT_802_11_WEP_STATUS
@@ -211,9 +211,9 @@ typedef enum _RT_802_11_WEP_STATUS
     RT802_11Encryption1KeyAbsent = RT802_11WEPKeyAbsent,
     RT802_11WEPNotSupported,
     RT802_11EncryptionNotSupported = RT802_11WEPNotSupported,
-    RT802_11Encryption2Enabled, 
+    RT802_11Encryption2Enabled,
     RT802_11Encryption2KeyAbsent,
-    RT802_11Encryption3Enabled, 
+    RT802_11Encryption3Enabled,
     RT802_11Encryption3KeyAbsent,
     Wapi_Encryption,
     Wapi_Certificate
@@ -354,7 +354,7 @@ typedef struct _RT_SECURITY_T{
 
 	//The pointer of Pairwise Key, it always points to KeyBuf[4]
 	pu1Byte			PairwiseKey;
-	
+
 	u1Byte			TxMICKey[TKIP_MIC_KEY_LEN];		//  Tx MIC Key
 	u1Byte			RxMICKey[TKIP_MIC_KEY_LEN];		//  Rx MIC Key
 
@@ -382,13 +382,13 @@ typedef struct _RT_SECURITY_T{
 	RT_SECURITY_LEVEL	SecLvl;
 
 	u1Byte					AssocInfo[512];
-	
+
 	//---------------------------------------------------------------------------
 	// For MIC failure.
 	//---------------------------------------------------------------------------
 	u8Byte			LastPairewiseTKIPMICErrorTime;	// Last pairewise key TKIP MIC error happen time or 0 if it has not happed in 60 seconds.
 	BOOLEAN			bToDisassocAfterMICFailureReportSend;	// Disassociate from the AP for twice MIC failure in 60 seconds.
-	RT_DENY_BSSID	DenyBssidList[MAX_DENY_BSSID_LIST_CNT]; // List of BSS denied by us for MIC failure. 	  
+	RT_DENY_BSSID	DenyBssidList[MAX_DENY_BSSID_LIST_CNT]; // List of BSS denied by us for MIC failure.
 
 
 	//---------------------------------------------------------------------------
@@ -407,7 +407,7 @@ typedef struct _RT_SECURITY_T{
 	AESCCMP_PACKET	AESCCMP_Packet;
 	AESCCMP_PACKET 	RX_AESCCMP_Packet;
 	u4Byte			AESCCMPMicLen ;
-	
+
 	//
 	// For CKIP. Revised by Annie, 2006-08-14.
 	//
@@ -420,16 +420,16 @@ typedef struct _RT_SECURITY_T{
 	u1Byte			CCKMReqIEBuf[MAX_CCKM_IE_REQ_LEN];
 	OCTET_STRING	CCKMIE;
 	u1Byte			CCKMIEBuf[MAX_CCKM_IE_LEN];
-	
+
 	//--------------------------------------
 	// For NDIS6 RSNA, by CCW
 	//--------------------------------------
 	// TODO: remvoe our group key from PerStaDefKeyTable[]
 	PER_STA_DEFAULT_KEY_ENTRY		PerStaDefKeyTable[MAX_NUM_PER_STA_KEY]; // Keep group key of each STA in the IBSS.
 	PER_STA_MPAKEY_ENTRY			MAPKEYTable[MAX_NUM_PER_STA_KEY]; // Keep pairwise key of each STA in the IBSS.
-	
+
 	//
-	// For Check IV 
+	// For Check IV
 	//
 	u8Byte			RXMutiIV;	// Rx multicast IV for IV replay check, and 0 means do not check IV replay.
 	u8Byte			RXUntiIV;	// Rx unicast IV for IV replay check, and 0 means do not check IV replay.
@@ -520,7 +520,7 @@ typedef struct _RT_SECURITY_T{
 //
 
 // Definition of events in ASM (Authenticator state machine)
-typedef enum _ASM_EVENT_ID { 
+typedef enum _ASM_EVENT_ID {
 	ASMEID_NoEvent,
 	ASMEID_AssociationRequest,
 	ASMEID_ReAssociationRequest,
@@ -548,7 +548,7 @@ typedef enum _ASM_PAIRWISEKEY_STATE {
 	ASMPS_DISCONNECTED,
 	ASMPS_AUTHENTICATION,
 	ASMPS_AUTHENTICATION2,		// described on Fig.53. 802.11i D3.0.
-	ASMPS_INITPMK, 
+	ASMPS_INITPMK,
 	ASMPS_INITPSK,
 	ASMPS_PTKSTART,
 	ASMPS_PTKINITNEGOTIATING,
@@ -557,7 +557,7 @@ typedef enum _ASM_PAIRWISEKEY_STATE {
 	ASMPS_MICFAILURE,
 	ASMPS_INTEGRITYFAILURE,		// Added by Annie, 2005-07-18.
 	ASMPS_KEYUPDATE,
-	ASMPS_ERRORHANDLE,			// Added states 
+	ASMPS_ERRORHANDLE,			// Added states
 }ASM_PAIRWISEKEY_STATE, *PASM_PAIRWISEKEY_STATE;
 
 
@@ -595,7 +595,7 @@ typedef enum _PORT_SECURE_TYPE {
 
 
 typedef struct _AUTH_PKEY_MGNT_TAG{
-	
+
 	//2 machine state
 
        ASM_PAIRWISEKEY_STATE	PrState;
@@ -617,7 +617,7 @@ typedef struct _AUTH_PKEY_MGNT_TAG{
 	RT_ENC_ALG					PairwiseCipherSuite[MAX_CIPHER_SUITE_NUM];
 	u2Byte						PairwiseCipherCount;
 	AKM_SUITE_TYPE				AuthSuite[MAX_AUTH_SUITE_NUM];
-	u2Byte						AuthSuiteCount;	
+	u2Byte						AuthSuiteCount;
 
 	BOOLEAN						bPreAuth;
 	u1Byte						NumOfPTKReplayCounter;
@@ -650,14 +650,14 @@ typedef struct _AUTH_PKEY_MGNT_TAG{
 	pu1Byte			TempEncKey;				// Temporal Encryption Key
 	pu1Byte			TxMICKey;					// Tx MIC Key
 	pu1Byte			RxMICKey;					// Rx MIC Key
-	
+
 #if 1 //Added by Jay 0712 for security IV
 	u8Byte			TxIV;
 	u8Byte			RxIV;
 	u8Byte			KeyRSC;
 #endif
 #if 1//Added by Jay 0713 for processing integrity failure
-	u8Byte			TimeSlot_lastIntegrityFailed; 
+	u8Byte			TimeSlot_lastIntegrityFailed;
 #endif
 
 	int				MicErrorCnt;		// Added by Annie for debug, 2005-07-25.
@@ -677,7 +677,7 @@ typedef struct _AUTH_GLOBAL_KEY_TAG
 
 	int					currentId;		// Id for current authentication session
 	int					receivedId;
-	
+
         OCTET_STRING		EAPOLMsgRecvd;			//The Overall 802.1x message
         OCTET_STRING		EapolKeyMsgRecvd;		//The start point of eapol-key payload
 
@@ -690,14 +690,14 @@ typedef struct _AUTH_GLOBAL_KEY_TAG
 	pu1Byte				TxMICKey;				// Group Tx MIC Key		// Added by Annie, 2005-07-06.
 	pu1Byte				RxMICKey;				// Group Rx MIC Key
 	u1Byte				AESGTK[AESCCMP_BLK_SIZE_TOTAL];
-	
+
 //	AUTH_GKEY_MGNT_TAG	groupKeyInfo;			//marked by Annie: It seems not necessary.
 	u1Byte				ANonce[KEY_NONCE_LEN];
 	u1Byte				GNonce[KEY_NONCE_LEN];
 //	u8Byte				GroupReplayCounter;		// Added by Annie, 2005-07-02.
 	u8Byte				KeyRSC;					// Added by Annie, 2005-07-02
 	// End of Annie add.
-	
+
 
 	u1Byte				MaxRetryCounts;
 	u1Byte				EventId;
@@ -716,7 +716,7 @@ typedef struct _AUTH_GLOBAL_KEY_TAG
 //	struct _Dot1x_Authenticator	*auth;
 	//End Added WPA
 #if 1 //Added by Jay 0713 for processing integrity failure
-	u8Byte				TimeSlot_IntegrityFail2;			
+	u8Byte				TimeSlot_IntegrityFail2;
 #endif
 } AUTH_GLOBAL_KEY_TAG, *PAUTH_GLOBAL_KEY_TAG;
 
@@ -730,7 +730,7 @@ typedef struct _AUTH_GLOBAL_KEY_TAG
 	)
 
 //
-// Higher layer meaning and related context information for security purpose. 
+// Higher layer meaning and related context information for security purpose.
 // 2006.01.08, by rcnjko.
 //
 typedef	u4Byte	RT_SEC_PROT_INFO;

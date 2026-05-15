@@ -1,23 +1,23 @@
 /******************************************************************************
- * 
- *     (c) Copyright  2012, RealTEK Technologies Inc. All Rights Reserved.
- * 
- * Module:	Hal8723BEfuse.c	( Source C File)
- * 
- * Note:		Copy from WMAC for the first version!!!!
- *			
  *
- * Function:	
- * 		 
- * Export:	
- * 
- * Abbrev:	
- * 
+ *     (c) Copyright  2012, RealTEK Technologies Inc. All Rights Reserved.
+ *
+ * Module:	Hal8723BEfuse.c	( Source C File)
+ *
+ * Note:		Copy from WMAC for the first version!!!!
+ *
+ *
+ * Function:
+ *
+ * Export:
+ *
+ * Abbrev:
+ *
  * History:
  * Data			Who		Remark
- * 
+ *
  * 07/10/2012	Kordan  Set an independent files.
- * 	
+ *
 ******************************************************************************/
 #ifndef __8723B_EFUSE_H__
 #define __8723B_EFUSE_H__
@@ -47,7 +47,7 @@
 
 //			EFUSE Parsing
 //===========================================================
-VOID 
+VOID
 Hal_EfuseParseBTCoexistInfo8723B(
 	IN PADAPTER			Adapter,
 	IN pu1Byte			hwinfo,
@@ -114,7 +114,7 @@ Hal_EfuseParseXtal_8723B(
 
 VOID
 Hal_ReadThermalMeter_8723B(
-	IN	PADAPTER	Adapter,	
+	IN	PADAPTER	Adapter,
 	IN	pu1Byte 	PROMContent,
 	IN	BOOLEAN 	AutoloadFail
 	);
@@ -155,7 +155,7 @@ Hal_ReadTxPowerInfo8723B(
 
 VOID
 Hal_ReadBoardType8723B(
-	IN	PADAPTER	Adapter,	
+	IN	PADAPTER	Adapter,
 	IN	pu1Byte		PROMContent,
 	IN	BOOLEAN		AutoloadFail
 	);
@@ -171,7 +171,7 @@ Hal_EfuseSwitchToBank8723B(
 	);
 
 
-BOOLEAN 
+BOOLEAN
 Hal_GetChnlGroup8723B(
 	IN	u1Byte Channel,
 	OUT pu1Byte	pGroup
@@ -179,7 +179,7 @@ Hal_GetChnlGroup8723B(
 
 VOID
 Hal_ReadPROMVersion8723B(
-	IN	PADAPTER	Adapter,	
+	IN	PADAPTER	Adapter,
 	IN	pu1Byte 	PROMContent,
 	IN	BOOLEAN 	AutoloadFail
 	);
@@ -218,4 +218,4 @@ Hal_EfuseParsePackageType_8723B(
 
 #endif
 
- 
+

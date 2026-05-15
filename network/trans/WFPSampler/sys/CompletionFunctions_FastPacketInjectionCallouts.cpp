@@ -6,20 +6,20 @@
 //      CompletionFunctions_FastPacketInjectionCallouts.cpp
 //
 //   Abstract:
-//      This module contains WFP Completion functions for packets injected back into the data path 
+//      This module contains WFP Completion functions for packets injected back into the data path
 //         using the clone / block / inject method.
 //
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //       CompleteFastPacketInjection
 //
 //       <Module>
 //          Complete             - Function is an FWPS_INJECT_COMPLETE function.
 //       <Scenario>
-//          FastPacketInjection  - Function demonstrates the clone / block / inject model in the 
+//          FastPacketInjection  - Function demonstrates the clone / block / inject model in the
 //                                    fastest form available (inline, no validation, etc.).
 //
 //   Private Functions:
@@ -42,7 +42,7 @@
 
 /**
  @completion_function="CompleteFastPacketInjection"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -70,7 +70,7 @@ VOID NTAPI CompleteFastPacketInjection(_In_ VOID* pContext,
 
       HLPR_DELETE_ARRAY(pSendParams->remoteAddress,
                         WFPSAMPLER_CALLOUT_DRIVER_TAG);
-      
+
       HLPR_DELETE(pSendParams,
                   WFPSAMPLER_CALLOUT_DRIVER_TAG);
    }

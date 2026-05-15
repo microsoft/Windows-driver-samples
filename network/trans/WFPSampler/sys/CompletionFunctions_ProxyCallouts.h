@@ -6,7 +6,7 @@
 //      CompletionFunctions_ProxyCallouts.cpp
 //
 //   Abstract:
-//      This module contains prototypes of WFP Completion functions for proxied connections using 
+//      This module contains prototypes of WFP Completion functions for proxied connections using
 //         the injection clone / drop / modify /inject model.
 //
 //   Author:

@@ -21,7 +21,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 
 	*BytesRead = 0;
 	*BytesNeeded = 0;
-	
+
 	switch(Oid)
 	{
 	default:
@@ -41,7 +41,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				*BytesNeeded = sizeof(ULONG);
 				goto set_oid_exit;
-			}	
+			}
 			else
 			{
 				*BytesRead = sizeof(ULONG);
@@ -56,7 +56,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				*BytesNeeded = sizeof(ULONG);
 				goto set_oid_exit;
-			}	
+			}
 			else
 			{
 				*BytesRead = sizeof(ULONG);
@@ -66,8 +66,8 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 
 	case OID_802_11_BSSID_LIST_SCAN:
 			//
-			// Note! this OID is also implemented in N6CSetInformation(). 
-			// Since, we had some special requirement (which may not be necessary) for 8187, 
+			// Note! this OID is also implemented in N6CSetInformation().
+			// Since, we had some special requirement (which may not be necessary) for 8187,
 			// we implement it here instead of using that in N6CSetInformation().
 			// 2005.10.16, by rcnjko.
 			//
@@ -77,7 +77,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 			// Sometimes we also need site survey when chariot running, comment out by Bruce, 2007-06-28.
 			// 061010, by rcnjko.
 			// if(pMgntInfo->LinkDetectInfo.bBusyTraffic && pMgntInfo->bMediaConnect)
-			//{ 
+			//{
 			//	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set OID_802_11_BSSID_LIST_SCAN (Immediate return because traffic is busy now)\n"));
 			//	goto set_oid_exit;
 			// }
@@ -88,20 +88,20 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set OID_802_11_BSSID_LIST_SCAN.\n"));
 			break;
-			
+
     case OID_RT_SCAN_AVAILABLE_BSSID:
 			//
-			// Note! this OID is also implemented in N6CSetInformation(). 
-			// Since, we had some special requirement (which may not be necessary) for 8187, 
+			// Note! this OID is also implemented in N6CSetInformation().
+			// Since, we had some special requirement (which may not be necessary) for 8187,
 			// we implement it here instead of using that in N6CSetInformation().
 			// 2005.10.16, by rcnjko.
 			//
-			
+
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===> Set OID_RT_SCAN_AVAILABLE_BSSID.\n"));
 
 			// 061010, by rcnjko.
 			if(pMgntInfo->LinkDetectInfo.bBusyTraffic && pMgntInfo->bMediaConnect)
-			{ 
+			{
 				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_SCAN_AVAILABLE_BSSID (Immediate return because traffic is busy now)\n"));
 				goto set_oid_exit;
 			}
@@ -109,7 +109,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 			MgntActSet_802_11_BSSID_LIST_SCAN( Adapter );
 
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_SCAN_AVAILABLE_BSSID.\n"));
-			break;	
+			break;
 
 	case OID_RT_PRO_READ_REGISTRY:
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===> Set OID_RT_PRO_READ_REGISTRY.\n"));
@@ -151,7 +151,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 			{
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				*BytesNeeded = sizeof(ULONG)*3;
-				
+
 				goto set_oid_exit;
 			}
 			// Get offset, data width, and value to write.
@@ -159,7 +159,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 			ulRegDataWidth = *((ULONG*)InformationBuffer+1);
 			ulRegValue = *((ULONG*)InformationBuffer+2);
 			// Write MAC register asynchronously.
-			// Caller should use OID_RT_PRO8187_WI_POLL to make sure IO is completed. 
+			// Caller should use OID_RT_PRO8187_WI_POLL to make sure IO is completed.
 			if(!DbgWriteMacReg(GetDefaultAdapter(Adapter), ulRegOffset, ulRegDataWidth, ulRegValue))
 			{
 				Status = NDIS_STATUS_NOT_ACCEPTED;
@@ -187,7 +187,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 			ulRegOffset = *((ULONG*)InformationBuffer);
 			ulBeOFDM = *((ULONG*)InformationBuffer+1);
 			// Write BB register asynchronously.
-			// Caller should use OID_RT_PRO8187_WI_POLL to make sure IO is completed. 
+			// Caller should use OID_RT_PRO8187_WI_POLL to make sure IO is completed.
 			if(!DbgReadBbReg(GetDefaultAdapter(Adapter), ulRegOffset, ulBeOFDM))
 			{
 				Status = NDIS_STATUS_NOT_ACCEPTED;
@@ -208,7 +208,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 			{
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				*BytesNeeded = sizeof(ULONG)*3;
-				
+
 				goto set_oid_exit;
 			}
 			// Get offset, type of BB register, and value to write.
@@ -216,14 +216,14 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 			ulBeOFDM = *((ULONG*)InformationBuffer+1);
 			ulRegValue = *((ULONG*)InformationBuffer+2);
 			// Write BB register asynchronously.
-			// Caller should use OID_RT_PRO8187_WI_POLL to make sure IO is completed. 
+			// Caller should use OID_RT_PRO8187_WI_POLL to make sure IO is completed.
 			if(!DbgWriteBbReg(GetDefaultAdapter(Adapter), ulRegOffset, ulBeOFDM, ulRegValue))
 			{
 				Status = NDIS_STATUS_NOT_ACCEPTED;
 			}
 		}
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_PRO_WRITE_BB_REG.\n"));
-		break;	
+		break;
 
 	case OID_RT_PRO_RF_READ_REGISTRY:
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===> Set OID_RT_PRO_RF_READ_REGISTRY.\n"));
@@ -236,7 +236,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 			{
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				*BytesNeeded = sizeof(ULONG)*2;
-				
+
 				goto set_oid_exit;
 			}
 			// Get offset and data width.
@@ -272,7 +272,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 			ulRegDataWidth = *((ULONG*)InformationBuffer+1);
 			ulRegValue = *((ULONG*)InformationBuffer+2);
 			// Write RF register asynchronously.
-			// Caller should use OID_RT_PRO8187_WI_POLL to make sure IO is completed. 
+			// Caller should use OID_RT_PRO8187_WI_POLL to make sure IO is completed.
 			if(!DbgWriteRfReg(GetDefaultAdapter(Adapter), ulRegOffset, ulRegDataWidth, ulRegValue))
 			{
 				Status = NDIS_STATUS_NOT_ACCEPTED;
@@ -292,7 +292,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 			{
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				*BytesNeeded = sizeof(ULONG)*2;
-				
+
 				goto set_oid_exit;
 			}
 			// Get offset and data width.
@@ -328,7 +328,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 			ulRegDataWidth = *((ULONG*)InformationBuffer+1);
 			ulRegValue = *((ULONG*)InformationBuffer+2);
 			// Write EEPROM asynchronously.
-			// Caller should use OID_RT_PRO8187_WI_POLL to make sure IO is completed. 
+			// Caller should use OID_RT_PRO8187_WI_POLL to make sure IO is completed.
 			if(!DbgWriteEeprom(GetDefaultAdapter(Adapter), ulRegOffset, ulRegDataWidth, ulRegValue))
 			{
 				Status = NDIS_STATUS_NOT_ACCEPTED;
@@ -348,7 +348,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 			{
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				*BytesNeeded = sizeof(ULONG)*2;
-				
+
 				goto set_oid_exit;
 			}
 			// Get offset and data width.
@@ -384,7 +384,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 			ulRegDataWidth = *((ULONG*)InformationBuffer+1);
 			ulRegValue = *((ULONG*)InformationBuffer+2);
 			// Write EFUSE asynchronously.
-			// Caller should use OID_RT_PRO8187_WI_POLL to make sure IO is completed. 
+			// Caller should use OID_RT_PRO8187_WI_POLL to make sure IO is completed.
 			if(!DbgWriteEFuse(GetDefaultAdapter(Adapter), ulRegOffset, ulRegDataWidth, ulRegValue))
 			{
 				Status = NDIS_STATUS_NOT_ACCEPTED;
@@ -395,7 +395,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 
 	case OID_RT_PRO_UPDATE_EFUSE:
 		RT_TRACE(COMP_OID_SET|COMP_EFUSE, DBG_LOUD, ("===> Set OID_RT_PRO_UPDATE_EFUSE.\n"));
-		
+
 		if(!DbgUpdateEFuse(Adapter))
 		{
 			Status = NDIS_STATUS_NOT_ACCEPTED;
@@ -413,7 +413,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 			{
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				*BytesNeeded = sizeof(ULONG)*2;
-				
+
 				goto set_oid_exit;
 			}
 			// Get offset and data width.
@@ -449,7 +449,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 			ulRegDataWidth = *((ULONG*)InformationBuffer+1);
 			ulRegValue = *((ULONG*)InformationBuffer+2);
 			// Write EFUSE asynchronously.
-			// Caller should use OID_RT_PRO8187_WI_POLL to make sure IO is completed. 
+			// Caller should use OID_RT_PRO8187_WI_POLL to make sure IO is completed.
 			if(!DbgWriteBTEFuse(GetDefaultAdapter(Adapter), ulRegOffset, ulRegDataWidth, ulRegValue))
 			{
 				Status = NDIS_STATUS_NOT_ACCEPTED;
@@ -460,7 +460,7 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 
 	case OID_RT_PRO_UPDATE_EFUSE_BT:
 		RT_TRACE(COMP_OID_SET|COMP_EFUSE, DBG_LOUD, ("===> Set OID_RT_PRO_UPDATE_EFUSE_BT.\n"));
-		
+
 		if(!DbgUpdateBTEFuse(Adapter))
 		{
 			Status = NDIS_STATUS_NOT_ACCEPTED;
@@ -479,16 +479,16 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 				Status = NDIS_STATUS_INVALID_DATA;
 				goto set_oid_exit;
 			}
-			
+
 			pHalData->UsbTxAggDescNum = numValue;
-			
+
 
 			value32 = PlatformEFIORead4Byte(Adapter, REG_TDECTRL);
 			value32 = value32 & ~(BLK_DESC_NUM_MASK << BLK_DESC_NUM_SHIFT);
 			value32 |= ((pHalData->UsbTxAggDescNum & BLK_DESC_NUM_MASK) << BLK_DESC_NUM_SHIFT);
-		
+
 			PlatformEFIOWrite4Byte(Adapter, REG_TDECTRL, value32);
-		
+
 		}
 #endif
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_11N_USB_TX_AGGR_NUM.\n"));
@@ -498,16 +498,16 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===> Set OID_RT_PRO_SET_ANTENNA_BB.\n"));
 		{
 			u1Byte	antennaIndex;
-			
+
 			// Verify input paramter.
 			if(InformationBufferLength < sizeof(ULONG)*1)
 			{
 				Status = NDIS_STATUS_INVALID_LENGTH;
 				*BytesNeeded = sizeof(ULONG)*1;
 				RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_PRO_SET_ANTENNA_BB. return!!\n"));
-				return Status;				
+				return Status;
 			}
-			
+
 			// Get antenna index.
 			antennaIndex = *((UCHAR*)InformationBuffer);
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_PRO_SET_ANTENNA_BB, antennaIndex(%#x)\n", antennaIndex));
@@ -515,12 +515,12 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 			{
 				Status = NDIS_STATUS_NOT_ACCEPTED;
 			}
-			
-			// Initialize antenna test 
+
+			// Initialize antenna test
 			pMgntInfo->AntennaTest = 1;
 			Adapter->RxStats.PWDBAllCnt = Adapter->RxStats.PWDBAllOldCnt = 0;
 			Adapter->RxStats.RssiCalculateCnt = Adapter->RxStats.RssiOldCalculateCnt = 0;
-	
+
 			Adapter->HalFunc.SetTxAntennaHandler(Adapter, antennaIndex);
 		}
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<=== Set OID_RT_PRO_SET_ANTENNA_BB.\n"));
@@ -529,8 +529,8 @@ InterfaceSetInformationHandleCustomizedOriginalMPSetOid(
 	case OID_RT_SDIO_REG_CTRL:
 		{
 			u1Byte	SdioRegCtrl = *(pu1Byte)InformationBuffer;
-			
-			pDevice->SdioRegDbgCtrl = SdioRegCtrl & SDIO_REG_CTRL_MASK; 
+
+			pDevice->SdioRegDbgCtrl = SdioRegCtrl & SDIO_REG_CTRL_MASK;
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Set OID_RT_SDIO_REG_CTRL: SdioRegCtrl(%d)\n", pDevice->SdioRegDbgCtrl));
 		}
 		break;

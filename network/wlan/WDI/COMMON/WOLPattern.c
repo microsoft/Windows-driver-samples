@@ -3,11 +3,11 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	WOLPattern.c
-	
+
 Abstract:
 	1. This source file is going to be implemented the functions about Wake-on WLAN (WOL).
 
-	    
+
 Major Change History:
 	When       		Who               What
 	---------- ---------------   -------------------------------
@@ -26,9 +26,9 @@ Major Change History:
 
 //
 // Description: Get the wake up frame pattern for wake-on WLAN (WOL).
-// 
-// pWOLMaskToHW -It is an output. We must to set bit mask to HW in a reverse order, and 
-//				sometimes to shift some bits because the payload offset from OS may 
+//
+// pWOLMaskToHW -It is an output. We must to set bit mask to HW in a reverse order, and
+//				sometimes to shift some bits because the payload offset from OS may
 //				be different from real wake up pattern.
 // 2009.06.15. by tynli.
 //
@@ -51,29 +51,29 @@ GetWOLWakeUpPattern(
 	PMGNT_INFO				pMgntInfo = &(pAdapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	PRT_PM_WOL_PATTERN_INFO pWoLPatternInfo = &(pPSC->PmWoLPatternInfo[0]);
-	
+
 	// Set the pattern match flag.
 	pWoLPatternInfo[Index].IsPatternMatch = 1;
-	
+
 	// <Case 1> 8723A Hw just can save 12 patterns mask and CRC in registers, for the DTM reqirement,
 		// the device should support 16 patterns, so the remain 4 patterns will be handled by Fw.
 		// Keep all the pattern masks and contents, then download them in HaltAdapter(). 2012.03.19. by tynli.
 	// <Case 2> To support wake pattern parsing so we need to store the pattern info. 2013.01.10, by tynli.
 	AddWoLPatternEntry(pAdapter, pWOLPatternMask, WOLPatternMaskSize, pWOLPatternContent, WOLPatternContentSize, Index);
-	
+
 	PlatformZeroMemory((pu1Byte)WOLWakeupPattern, MAX_WOL_PATTERN_SIZE);
 	PlatformZeroMemory((pu1Byte)mask, MAX_WOL_BIT_MASK_SIZE);
 	PlatformZeroMemory((pu1Byte)MaskToHW, MAX_WOL_BIT_MASK_SIZE);
-	
-	//RT_PRINT_DATA( (COMP_OID_QUERY|COMP_AP), DBG_LOUD, ("GetWOLWakeUpPattern() Mask: "), 
+
+	//RT_PRINT_DATA( (COMP_OID_QUERY|COMP_AP), DBG_LOUD, ("GetWOLWakeUpPattern() Mask: "),
 	//pWOLPatternMask, WOLPatternMaskSize);
 
-	//RT_PRINT_DATA( (COMP_OID_QUERY|COMP_AP), DBG_LOUD, ("GetWOLWakeUpPattern() Pattern: "), 
+	//RT_PRINT_DATA( (COMP_OID_QUERY|COMP_AP), DBG_LOUD, ("GetWOLWakeUpPattern() Pattern: "),
 	//pWOLPatternContent, WOLPatternContentSize);
 
 	//1. Compare if DA  = our MAC ADDR
 
-	
+
 /*
 	// 2009.07.09.
 	//for DTM bit mask, it will macth from the highest bit of a byte, so we reverse each of byte.
@@ -91,7 +91,7 @@ GetWOLWakeUpPattern(
 		{
 			MaskToHW[i] = pWOLPatternMask[i];
 		}
-		
+
 		// Remove MAC header 24 bytes.
 		for(i=0; i<WOLPatternMaskSize*8; i++)
 		{
@@ -102,14 +102,14 @@ GetWOLWakeUpPattern(
 				len++;
 			}
 		}
-		
+
 	}
 	else
 	{
-		//2. To macth HW design, we need to change bit mask. HW catch payload which begin from LLC 
-		//in 802.11 packet, but OS set the wake up pattern in 802.3 format (DA[6]|SA[6]|Type[2]|Data), 
+		//2. To macth HW design, we need to change bit mask. HW catch payload which begin from LLC
+		//in 802.11 packet, but OS set the wake up pattern in 802.3 format (DA[6]|SA[6]|Type[2]|Data),
 		//so (1) we need to shift bit mask left for 6 bits to filter out DA[6], and the type is at the last 2 bits
-		//in LLC[8], so (2) we also need to set bit 0-5 to zero in the new bit mask which means SA[6] 
+		//in LLC[8], so (2) we also need to set bit 0-5 to zero in the new bit mask which means SA[6]
 		//to prevent CRC error (HW count from LLC, it is not a SA). by tynli. 2009.07.03.
 
 	 	for(i=0; i<(WOLPatternMaskSize-1); i++)  //(1) Shift 6 bits
@@ -136,7 +136,7 @@ GetWOLWakeUpPattern(
 	//4. Calculate CRC remainder
 	CRCRemainder = CalculateWOLPatternCRC(WOLWakeupPattern, len);
 	pWoLPatternInfo[Index].CrcRemainder = CRCRemainder;
-	RT_TRACE(COMP_POWER, DBG_LOUD, 
+	RT_TRACE(COMP_POWER, DBG_LOUD,
 		("GetWOLWakeUpPattern(): CrcRemainder = %x\n",pWoLPatternInfo[Index].CrcRemainder));
 
 	//5. Change the byte order of the bit mask to macth HW design.
@@ -153,18 +153,18 @@ GetWOLWakeUpPattern(
 
 	{
 		// Download them in HaltAdapter() on 8723A. 2012.07.17, by tynli.
-		pAdapter->HalFunc.SetHwRegHandler(pAdapter, HW_VAR_WF_MASK, (pu1Byte)(&Index)); 
-		pAdapter->HalFunc.SetHwRegHandler(pAdapter, HW_VAR_WF_CRC, (pu1Byte)(&Index)); 
+		pAdapter->HalFunc.SetHwRegHandler(pAdapter, HW_VAR_WF_MASK, (pu1Byte)(&Index));
+		pAdapter->HalFunc.SetHwRegHandler(pAdapter, HW_VAR_WF_CRC, (pu1Byte)(&Index));
 	}
 }
 
 
 //
-// Description: 
+// Description:
 // 		To calculate the CRC remainder for the WOL wake up pattern.
-// Input: 
+// Input:
 //		A WOL Pattern, pattern length
-// Output: 
+// Output:
 //		The CRC remainder for the pattern
 // 2009.06.16. by tynli.
 //
@@ -177,7 +177,7 @@ CalculateWOLPatternCRC(
 //    unsigned char data[2]={0xC6,0xAA};
 	u2Byte	CRC=0xffff;
 	u4Byte	i;
-	
+
 	for(i=0; i<PatternLength; i++)
 	{
 		CRC=CRC16_CCITT(Pattern[i], CRC);
@@ -186,7 +186,7 @@ CalculateWOLPatternCRC(
 
 	//DbgPrint("\n");
 
-	CRC=~CRC; 
+	CRC=~CRC;
 	//DbgPrint("CRC =%x\n",CRC);
 
 	return CRC;
@@ -194,12 +194,12 @@ CalculateWOLPatternCRC(
 }
 
 //
-// Description: 
+// Description:
 //		This is not a standard CRC16-CCITT algorithm, we re-write it to C code from
-// 		VR code which is  from HW designer. 
-// Input: 
+// 		VR code which is  from HW designer.
+// Input:
 //		1 byte data, CRC remainder
-// Output: 
+// Output:
 //		The CRC remainder for each byte
 // 2009.06.16. by tynli and SD1 Isaac.
 //
@@ -219,27 +219,27 @@ CRC16_CCITT(
 		DataBit  =(data&(BIT0<<index) ? 1:0);
 		shift_in=CRC_BIT15^DataBit;
 		//printf("CRC_BIT15=%d, DataBit=%d, shift_in=%d \n",CRC_BIT15,DataBit,shift_in);
-		
+
 		CRC_Result=CRC<<1;
-		//set BIT0 
+		//set BIT0
 		//	printf("CRC =%x\n",CRC_Result);
 		//CRC bit 0 =shift_in,
 		if(shift_in==0)
-			CRC_Result&=(~BIT0); 
+			CRC_Result&=(~BIT0);
 		else
 			CRC_Result|=BIT0;
 		//printf("CRC =%x\n",CRC_Result);
 
 		CRC_BIT11 = ((CRC&BIT11) ? 1:0)^shift_in;
 		if(CRC_BIT11==0)
-			CRC_Result&=(~BIT12); 
+			CRC_Result&=(~BIT12);
 		else
 			CRC_Result|=BIT12;
 		//printf("bit12 CRC =%x\n",CRC_Result);
 
 		CRC_BIT4 = ((CRC&BIT4) ? 1:0)^shift_in;
 		if(CRC_BIT4==0)
-			CRC_Result&=(~BIT5); 
+			CRC_Result&=(~BIT5);
 		else
 			CRC_Result|=BIT5;
 		//printf("bit5 CRC =%x\n",CRC_Result);
@@ -248,7 +248,7 @@ CRC16_CCITT(
 	}
 
 	return CRC;
-	
+
 }
 
 //
@@ -258,7 +258,7 @@ CRC16_CCITT(
 //	2009.06.19. by tynli.
 VOID
 ResetWoLPara(
-	IN		PADAPTER		Adapter 
+	IN		PADAPTER		Adapter
 )
 {
 	PMGNT_INFO				pMgntInfo = &(Adapter->MgntInfo);
@@ -266,7 +266,7 @@ ResetWoLPara(
 	PRT_PM_WOL_PATTERN_INFO	pPmWOLPatternInfo = &(pPSC->PmWoLPatternInfo[0]);
 	int	i;
 
-	PlatformZeroMemory(pPmWOLPatternInfo, 
+	PlatformZeroMemory(pPmWOLPatternInfo,
 		sizeof(RT_PM_WOL_PATTERN_INFO)*(MAX_SUPPORT_WOL_PATTERN_NUM(Adapter)));
 	for(i=0; i<MAX_SUPPORT_WOL_PATTERN_NUM(Adapter); i++) //reset structure content
 	{
@@ -275,7 +275,7 @@ ResetWoLPara(
 			pPmWOLPatternInfo[i].HwWFMIndex = 0xff;
 	}
 
-	Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_RESET_WFCRC, 0); 
+	Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_RESET_WFCRC, 0);
 }
 
 VOID
@@ -301,8 +301,8 @@ ConstructUserDefinedWakeUpPattern(
 	{
 		pGenBufAuthPacket = GetGenTempBuffer (Adapter, 100);
 		AuthBuf = (u1Byte *)pGenBufAuthPacket->Buffer.Ptr;
-		
-		// 
+
+		//
 		// 1. Auth
 		//
 		//Since this is always the 1st authentication frame
@@ -331,7 +331,7 @@ ConstructUserDefinedWakeUpPattern(
 			if(pPmWoLPatternInfo[Index].PatternId == 0)
 				break;
 		}
-		
+
 		if(Index >= MAX_SUPPORT_WOL_PATTERN_NUM(Adapter))
 		{
 			RT_TRACE(COMP_POWER, DBG_LOUD,
@@ -376,10 +376,10 @@ WolByGtkUpdate(
 {
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL((&pAdapter->MgntInfo));
 
-	if((pPSC->WakeUpReason & (WOL_REASON_GTK_UPDATE | WOL_REASON_PTK_UPDATE)) != 0) 
-	{		
+	if((pPSC->WakeUpReason & (WOL_REASON_GTK_UPDATE | WOL_REASON_PTK_UPDATE)) != 0)
+	{
 		if(PlatformGetCurrentTime() <= pPSC->LastWakeUpTime + 20000000) // 10 sec
-		{			
+		{
 			RT_TRACE_F(COMP_POWER, DBG_LOUD, ("Wake up by GTK and Indicate the WOL by GTK event!\n"));
 			PlatformIndicateCustomStatus(
 				pAdapter,
@@ -417,11 +417,11 @@ RemoveUserDefinedWoLPattern(
 			pPmWoLPatternInfo[Index].IsPatternMatch = 0;
 			pPmWoLPatternInfo[Index].IsUserDefined = 0;
 			pPmWoLPatternInfo[Index].IsSupportedByFW = 0;
-			
-			Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_WF_MASK, (pu1Byte)(&Index)); 
-			Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_WF_CRC, (pu1Byte)(&Index)); 
+
+			Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_WF_MASK, (pu1Byte)(&Index));
+			Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_WF_CRC, (pu1Byte)(&Index));
 			pPmWoLPatternInfo[Index].HwWFMIndex = 0xff; // reset the value after clear HW/CAM entry.
-			
+
 			pPSC->WoLPatternNum--;
 		}
 	}
@@ -464,8 +464,8 @@ AddWoLPatternEntry(
 			}
 		}
 
-	}	
-	
+	}
+
 	//
 	// Add pattern content entry.
 	//
@@ -479,7 +479,7 @@ AddWoLPatternEntry(
 
 //
 // Description: Get the entrties to download to Fw.
-// Input:	
+// Input:
 //	- EnteryNum: [total pattern number (set by the OID) - 12 (Hw capability)]
 //
 VOID
@@ -487,7 +487,7 @@ GetWoLPatternMatchOffloadEntries(
 	IN PADAPTER	Adapter,
 	IN u1Byte	EntryNum
 )
-{	
+{
 	PMGNT_INFO				pMgntInfo = &(Adapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	PRT_PM_WOL_PATTERN_INFO	pWoLPatternInfo = &(pPSC->PmWoLPatternInfo[0]);
@@ -562,7 +562,7 @@ WoL_TranslateDot11FrameToDot3(
 
 	bToDS = (Frame_ToDS(frame) ? TRUE : FALSE);
 	bFromDS = (Frame_FromDS(frame) ? TRUE : FALSE);
-	
+
 	if(bToDS && !bFromDS)
 	{
 		GET_80211_HDR_ADDRESS3(pHeader, MacDestAddr); // DA
@@ -655,7 +655,7 @@ WoL_IsMagicPacket(
 	u2Byte			i, j;
 	u2Byte			PayloadLen;
 	BOOLEAN			bMatchPacket=FALSE;
-	
+
 	FillOctetString(frame, pRfd->Buffer.VirtualAddress, pRfd->PacketLength);
 	pHeader = frame.Octet;
 
@@ -705,9 +705,9 @@ WoL_IsMagicPacket(
 				RT_TRACE(COMP_RECV, DBG_TRACE, ("WoL_IsMagicPacket(): Packet length error. 1\n"));
 				break;
 			}
-			
+
 			// Find FF FF FF FF FF FF pattern.
-			if(*(pHeader+i+1) == 0xFF && *(pHeader+i+2) == 0xFF && 
+			if(*(pHeader+i+1) == 0xFF && *(pHeader+i+2) == 0xFF &&
 				*(pHeader+i+3) == 0xFF && *(pHeader+i+4) == 0xFF &&
 				*(pHeader+i+5) == 0xFF)
 			{
@@ -717,7 +717,7 @@ WoL_IsMagicPacket(
 					RT_TRACE(COMP_RECV, DBG_TRACE, ("WoL_IsMagicPacket(): Packet length error. 2\n"));
 					break;
 				}
-				
+
 				// Repeat STA addr 16 times.
 				for(j=0; j<16; j++)
 				{
@@ -780,7 +780,7 @@ WoL_IsPatternMatchPacket(
 
 	// Translate 802.11 packet format to 802.3 format to match the pattern match content set by OID.
 	WoL_TranslateDot11FrameToDot3(Adapter, pRfd, pDot3Packet, &Dot3PacketLen);
-	
+
 	for(Index=0; Index<MAX_SUPPORT_WOL_PATTERN_NUM(Adapter); Index++)
 	{
 		bMatchPacket = TRUE;
@@ -792,7 +792,7 @@ WoL_IsPatternMatchPacket(
 				{
 					offset = i*8+j;
 					if(pPmWoLPatternInfo[Index].FwPattern.BitMask[i] & (0x01<<j)) // bitmask == 1
-					{ 
+					{
 						if(Dot3PacketLen < offset)
 						{
 							bMatchPacket = FALSE;
@@ -800,7 +800,7 @@ WoL_IsPatternMatchPacket(
 						}
 
 						if(pDot3Packet[offset] != pPmWoLPatternInfo[Index].FwPattern.PatternContent[offset])
-						{ 
+						{
 							bMatchPacket = FALSE;
 							break;
 						}
@@ -846,7 +846,7 @@ WoL_HandleReceivedPacket(
 	PRT_RFD		pRfd
 )
 {
-	//OCTET_STRING	frame = {NULL, 0};	
+	//OCTET_STRING	frame = {NULL, 0};
 	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	//static BOOLEAN			bWakePacket = FALSE;
@@ -880,7 +880,7 @@ WoL_HandleReceivedPacket(
 		}
 		RT_TRACE(COMP_POWER, DBG_LOUD, ("~~~~~~~~ It is a wake packet(%d)!\n", pRtRfdStatus->WakeMatch));
 		//RT_PRINT_DATA(COMP_INIT, DBG_LOUD,"WoL_HandleReceivedPacket: \n", pRfd->Buffer.VirtualAddress, pRfd->PacketLength);
-	
+
 	}
 	else
 	{
@@ -903,7 +903,7 @@ WoL_HandleReceivedPacket(
 				pPSC->WakeUpReason = WOL_REASON_PATTERN_PKT;
 		}
 	}
-	
+
 	// Indicate PM wake reason and packet to the OS.
 	if(pPSC->bFindWakePacket)
 	{

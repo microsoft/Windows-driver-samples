@@ -23,7 +23,7 @@ p2p_MoveMemory(
 	IN  u4Byte				len
 	)
 {
-	u4Byte 					it = 0; 
+	u4Byte 					it = 0;
 
 	for(it = 0; it < len; it++)
 		*(((u1Byte *)dest) + it) = *(((u1Byte *)src) + it);
@@ -31,7 +31,7 @@ p2p_MoveMemory(
 
 int
 p2p_go_det(
-	IN  u1Byte					selfVal, 
+	IN  u1Byte					selfVal,
 	IN  u1Byte					peerVal
 	)
 {
@@ -40,7 +40,7 @@ p2p_go_det(
 
 	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("self intent: %u, tie: %u, peer intent: %u, tie: %u\n",
 		selfVal >> 1, selfVal & 0x01, peerVal >> 1, peerVal & 0x01));
-	
+
 	if(selfIntent == peerIntent)
 	{
 		if (P2P_MAX_GO_INTENT == selfIntent)
@@ -57,11 +57,11 @@ p2p_go_det(
 BOOLEAN
 p2p_ActingAs_Go(
 	IN  P2P_INFO 				*pP2PInfo
-	) 
+	)
 {
 	BOOLEAN						bGo = FALSE;
-	ADAPTER 					*pExtAdapter = P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter) 
-									? pP2PInfo->pAdapter 
+	ADAPTER 					*pExtAdapter = P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter)
+									? pP2PInfo->pAdapter
 								: GetFirstGOPort(pP2PInfo->pAdapter);
 
 	bGo = (P2P_GO == pP2PInfo->Role && ACTING_AS_AP(pExtAdapter)); // copied from P2PMakeP2PCapability
@@ -83,7 +83,7 @@ p2p_Doing_Provisioning(
 	IN  const P2P_INFO 			*pP2PInfo
 	)
 {
-	PMGNT_INFO	pDefaultMgntInfo = &(GetDefaultAdapter(pP2PInfo->pAdapter)->MgntInfo);	
+	PMGNT_INFO	pDefaultMgntInfo = &(GetDefaultAdapter(pP2PInfo->pAdapter)->MgntInfo);
 
 	if(0 < GET_SIMPLE_CONFIG_IE_LEN(pDefaultMgntInfo) && GET_SIMPLE_CONFIG_ENABLED(pDefaultMgntInfo))
 	{
@@ -122,7 +122,7 @@ p2p_MessageSrcType(
 	{
 		return P2P_DEV_TYPE_LEGACY;
 	}
-			
+
 	if(msg->_dialogToken)
 	{// action frame
 		if(msg->_capability)
@@ -169,7 +169,7 @@ p2p_FindClientInfoByDevAddr(
 	)
 {
 	BOOLEAN						bFound = FALSE;
-	
+
 	if(msg->_grpInfo && TEST_FLAG(msg->grpCap, P2P_GROUP_CAP_GROUP_OWNER))
 	{
 		const u1Byte 			*pos = msg->cliInfoDescList;
@@ -185,7 +185,7 @@ p2p_FindClientInfoByDevAddr(
 
 			len = pos[0];
 			pos += 1;
-			
+
 			infoend = pos + len;
 			if(end < infoend)
 			{
@@ -211,7 +211,7 @@ p2p_FindClientInfoByDevAddr(
 				pos = infoend;
 			}
 		}
-	}	
+	}
 
 	return bFound;
 }

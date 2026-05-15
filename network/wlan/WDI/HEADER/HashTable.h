@@ -6,15 +6,15 @@
 //		Generic hash table for kernel mode module.
 //
 //	Note:
-//		1. Memory allocation is a issue on kernel space for calling context 
-//		and computation time limitation. So we don't re-hash the table even 
-//		it is full. In short, this implementation is not a perfect hash, 
-//		however, if user has a good guess on hash table usage to prevent 
-//		full and colission condition, this implementation is still a 
+//		1. Memory allocation is a issue on kernel space for calling context
+//		and computation time limitation. So we don't re-hash the table even
+//		it is full. In short, this implementation is not a perfect hash,
+//		however, if user has a good guess on hash table usage to prevent
+//		full and colission condition, this implementation is still a
 //		constant time on put, remove, and get operations.
 //
-//		2. This implementation is not thread-safe, that is, user have to 
-//		protect related resource and the function exported here by their 
+//		2. This implementation is not thread-safe, that is, user have to
+//		protect related resource and the function exported here by their
 //		own means.
 //
 //	070606, by rcnjko.
@@ -39,7 +39,7 @@ typedef unsigned int
 // Definition of a hash entry of an value object.
 //
 typedef struct _RT_HASH_ENTRY{
-	RT_LIST_ENTRY			BusyLink; // For list of all value objects in the hash table. 
+	RT_LIST_ENTRY			BusyLink; // For list of all value objects in the hash table.
 	RT_LIST_ENTRY			BucketLink; // For list of value objects in the same bucket.
 	RT_SINGLE_LIST_ENTRY	FreeLink; // For list of free objects in the hash table.
 	RT_HASH_KEY				Key; // Key associated.
@@ -51,7 +51,7 @@ typedef struct _RT_HASH_ENTRY{
 #define DECLARE_RT_HASH_ENTRY RT_HASH_ENTRY __HashEntry
 
 //
-// Routines to translate from link list entry inside RT_HASH_ENTRY object 
+// Routines to translate from link list entry inside RT_HASH_ENTRY object
 // to pointer to the RT_HASH_ENTRY object.
 //
 #define RT_HASH_ENTRY_FROM_BUSY_LINK(__pBusyLink) (PRT_HASH_ENTRY)(__pBusyLink)
@@ -75,10 +75,10 @@ typedef struct _RT_HASH_TABLE {
 	//
 	// Hash table stuff.
 	//
-	RT_HT_HASH_FUNC		pfHash; // Hash function. 
+	RT_HT_HASH_FUNC		pfHash; // Hash function.
 	RT_LIST_ENTRY		BusyValuesList; // List of all value object put in Buckets[].
 	unsigned int 		Capacity; // Number of Buckets[] allocated.
-	RT_LIST_ENTRY 		Buckets[1]; // Each entry accommodates value objects of the same hash result. 
+	RT_LIST_ENTRY 		Buckets[1]; // Each entry accommodates value objects of the same hash result.
 }*RT_HASH_TABLE_HANDLE;
 
 
@@ -122,7 +122,7 @@ RtGetValueFromHashTable(
 	IN RT_HASH_KEY			Key
 	);
 
-#define RtGetAllValuesFromHashTable(__hHashTable) &((__hHashTable)->BusyValuesList) 
+#define RtGetAllValuesFromHashTable(__hHashTable) &((__hHashTable)->BusyValuesList)
 
 #endif
 

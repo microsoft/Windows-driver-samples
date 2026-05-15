@@ -5,7 +5,7 @@
 #define IS_FW_HEADER_EXIST_8723B(_pFwHdr)	((GET_FIRMWARE_HDR_SIGNATURE(_pFwHdr) &0xFFF0) ==  0x5300)
 
 //--------------------------------------------
-//3				Host Message Box 
+//3				Host Message Box
 //--------------------------------------------
 
 // Keep Alive Control
@@ -138,7 +138,7 @@
 #define SET_8723B_H2CCMD_AOAC_RSVDPAGE_LOC_REALWOW_V2ACKPATTERN(__pH2CCmd, __Value)	SET_BITS_TO_LE_1BYTE((__pH2CCmd)+5, 0, 8, __Value)
 #define SET_8723B_H2CCMD_AOAC_RSVDPAGE_LOC_REALWOW_V2WAKEUPPATTERN(__pH2CCmd, __Value)	SET_BITS_TO_LE_1BYTE((__pH2CCmd)+6, 0, 8, __Value)
 
-//	
+//
 
 // RSVDPAGE_LOC_3
 #define SET_8723B_H2CCMD_RSVDPAGE_LOC_3_NLO_INFO(__pH2CCmd, __Value)					SET_BITS_TO_LE_1BYTE((__pH2CCmd), 0, 8, __Value)
@@ -181,7 +181,7 @@
 #define GET_8723B_H2CCMD_INACTIVE_PS_PARM_FUNC_ENABLE(__pH2CCmd)		LE_BITS_TO_1BYTE(__pH2CCmd, 0, 1)
 
 // Disconnect_Decision_Control
-// <Note> 
+// <Note>
 // 1. The value "CHECK_PERIOD" should be larger than 5 which Fw checks beacon lost period.
 // 2. "TRY_OK_BCN_LOST_CNT" should be smaller than "CHECK_PERIOD".
 #define SET_8723B_H2CCMD_DISCONNECT_DECISION_CTRL_ENABLE(__pH2CCmd, __Value)			SET_BITS_TO_LE_1BYTE(__pH2CCmd, 0, 1, __Value)
@@ -217,7 +217,7 @@
 
 #define	GET_8723B_C2H_FCS_STATUS(_Header)		LE_BITS_TO_1BYTE((_Header + 0), 0, 8)
 
-typedef enum _RTL8723B_H2C_CMD 
+typedef enum _RTL8723B_H2C_CMD
 {
 	H2C_8723B_RSVDPAGE = 0,
 	H2C_8723B_MSRRPT = 1,
@@ -225,24 +225,24 @@ typedef enum _RTL8723B_H2C_CMD
 	H2C_8723B_KEEP_ALIVE_CTRL = 3,
 	H2C_8723B_DISCONNECT_DECISION = 4,
 
-	H2C_8723B_INIT_OFFLOAD = 6,		
+	H2C_8723B_INIT_OFFLOAD = 6,
 	H2C_8723B_AP_OFFLOAD = 8,
 	H2C_8723B_BCN_RSVDPAGE = 9,
 	H2C_8723B_PROBERSP_RSVDPAGE = 10,
-	
+
 	H2C_8723B_FCS_LOCATION = 0x10,
 	H2C_8723B_FCS_INFO = 0x11,
 	H2C_8723B_FCS_UPDATE_PARAM = 0x15,
 	H2C_8723B_FCS_MACID_BITMAP = 0x16,
 	H2C_8723B_FCS_INFO_V2 = 0x18,
-	
-	H2C_8723B_SETPWRMODE = 0x20,		
+
+	H2C_8723B_SETPWRMODE = 0x20,
 	H2C_8723B_PS_TUNING_PARA = 0x21,
 	H2C_8723B_PS_TUNING_PARA2 = 0x22,
 	H2C_8723B_PS_LPS_PARA = 0x23,
 	H2C_8723B_P2P_PS_OFFLOAD = 0x24,
 	H2C_8723B_INACTIVE_PS = 0x27,
-	
+
 	H2C_8723B_RA_MASK = 0x40,
 	H2C_8723B_RSSI_REPORT = 0x42,
 

@@ -29,8 +29,8 @@ typedef enum _MAC_ID_OWNER_TYPE {
 	// No Single Peer
 	MAC_ID_OWNER_BROADCAST_MULTICAST,
 
-	// Default Port 
-	MAC_ID_OWNER_DEFAULT_PORT, 
+	// Default Port
+	MAC_ID_OWNER_DEFAULT_PORT,
 
 	// BT High Speed Client
 	MAC_ID_OWNER_BT,
@@ -46,11 +46,11 @@ typedef enum _MAC_ID_OWNER_TYPE {
 
 	// N62 Virtual Station / N62 P2P Client for broadcast & multicast
 	MAC_ID_OWNER_INFRA_STA_MULTICAST,
-	
+
 	// N62 Virtual AP / N63 P2P GO
 	MAC_ID_OWNER_INFRA_AP,
 
-	MAC_ID_OWNER_MAX	
+	MAC_ID_OWNER_MAX
 } MAC_ID_OWNER_TYPE, *PMAC_ID_OWNER_TYPE;
 
 
@@ -69,9 +69,9 @@ typedef struct _HAL_MAC_ID_COMMON_CONTEXT{
 
 	// Define the dynamically assigned MacID section
 	u1Byte MacIdDynamicZoneStart;
-	
+
 	MAC_ID_DESCRIPTOR	MacIdDescriptor[NUMBER_OF_HAL_MAC_ID_DESCRIPTOR];
-	
+
 } HAL_MAC_ID_COMMON_CONTEXT, *PHAL_MAC_ID_COMMON_CONTEXT;
 
 #define HAL_MAC_ID_SIZE_OF_COMMON_CONTEXT 	sizeof(HAL_MAC_ID_COMMON_CONTEXT)

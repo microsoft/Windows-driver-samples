@@ -6,7 +6,7 @@
 //      ProviderContexts.h
 //
 //   Abstract:
-//      This module contains global definitions of FWPM_PROVIDER_CONTEXT Data for the WFPSampler 
+//      This module contains global definitions of FWPM_PROVIDER_CONTEXT Data for the WFPSampler
 //         project
 //
 //   Author:

@@ -3,7 +3,7 @@
 //		CcxType.h
 //
 //	Description:
-//		CCX related information.	
+//		CCX related information.
 //
 //-----------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@
 #endif
 
 //------------------------------------------------------------------------------
-// CCX IAPP frame. 
+// CCX IAPP frame.
 //------------------------------------------------------------------------------
 #define CISCO_AIRONET_SNAP_LENGTH 8
 
@@ -27,11 +27,11 @@
 // Dest MAC Addr 6 + Src MAC Addr 6 + dummy Adjacent Report Element 1
 #define CISCO_ADJ_RPT_IAPP_LENGTH    25
 
-#define RT_CCX_PACKET_TYPE u4Byte 
+#define RT_CCX_PACKET_TYPE u4Byte
 #define CPT_NONE					0 // Not a CCX IAPP Packet
 #define CPT_UNKNOWN_IAPP			1
 #define CPT_INVALID_IAPP			2
-#define CPT_ADJACENT_AP_REPORT		3 // S30, Adjacent AP Report frame. 
+#define CPT_ADJACENT_AP_REPORT		3 // S30, Adjacent AP Report frame.
 #define CPT_RM_REQUEST				4 // S36, Radio Measurement Request frame.
 #define CPT_NEIGHBOR_LIST_RESPONSE	5 // S51.2.2 Neighbor List Response frame.
 #define CPT_DIRECT_ROAM				6 // S51.2.3 Direct Roam frame.
@@ -79,7 +79,7 @@
 #define CCX_RM_REPORT_IAPP_SUBTYPE	0x81
 
 //
-// Definition of IappType and IappSubtype for 
+// Definition of IappType and IappSubtype for
 // Neighbor List Response and  Direct Roam frames.
 // Ref: CCXv4 S51.2.3, S51.2.4.
 //
@@ -133,11 +133,11 @@
 
 typedef struct _CCX_IAPP_HEADER{
 	u1Byte				SnapHeader[CISCO_AIRONET_SNAP_LENGTH]; // Cisco Aironet SNAP header: AAAA 0300 4096 0000
-	u2Byte				IappIdLen; 
+	u2Byte				IappIdLen;
 	u1Byte				IappType;
 	u1Byte				IappSubtype;
-	u1Byte				DstAddr[6]; 
-	u1Byte				SrcAddr[6]; 
+	u1Byte				DstAddr[6];
+	u1Byte				SrcAddr[6];
 }CCX_IAPP_HEADER, *PCCX_IAPP_HEADER;
 #define CCX_IAPP_HEADER_SIZE 24
 
@@ -168,11 +168,11 @@ static u1Byte CCKM_OUI[SIZE_OUI] = {0x00,0x40,0x96};
 //
 typedef struct _CCX_ADJACENT_REPORT{
 	u1Byte				SnapHeader[CISCO_AIRONET_SNAP_LENGTH]; // Cisco Aironet SNAP header: AAAA 0300 4096 0000
-	u2Byte				IappIdLen; 
+	u2Byte				IappIdLen;
 	u1Byte				IappType; // 0x30.
 	u1Byte				IappFunction; // 0x00.
 	u1Byte				DstAddr[6]; // MAC address of the AP.
-	u1Byte				SrcAddr[6]; // Reporting STA's MAC address. 
+	u1Byte				SrcAddr[6]; // Reporting STA's MAC address.
 	u1Byte				Elements[1];
 }CCX_ADJACENT_REPORT, *PCCX_ADJACENT_REPORT;
 
@@ -209,7 +209,7 @@ typedef struct _CCX_ASSOC_REASON_ELEMENT{
 	u2Byte				Tag; // 0x009C
 	u2Byte				Length;
 	u1Byte				Aironet_OUI[4]; // 0x00 0x40 0x96 0x00
-	u1Byte				AssocReason; 
+	u1Byte				AssocReason;
 }CCX_ASSOC_REASON_ELEMENT, *PCCX_ASSOC_REASON_ELEMENT;
 
 //
@@ -244,9 +244,9 @@ typedef enum _CCX_ASOC_REASON{
 //
 // Roaming related configuration.
 //
-#define RT_DEF_MIN_RX_POWER -82 // in dBm. 
-#define RT_DEF_ADAPTIVE_SCAN_THRESHOLD -72 // in dBm. 
-#define RT_MIN_ROAM_HYSTERSIS 10 // in dBm. 
+#define RT_DEF_MIN_RX_POWER -82 // in dBm.
+#define RT_DEF_ADAPTIVE_SCAN_THRESHOLD -72 // in dBm.
+#define RT_MIN_ROAM_HYSTERSIS 10 // in dBm.
 #define RT_DEFAULT_ROAM_HYSTERSIS	6
 #define RT_MIN_ADAPTIVE_SCAN_CHECK_INTERVAL 1 // In number of times MgntLinkStatusWatchdog invoked.
 #define RT_MAX_ADAPTIVE_SCAN_CHECK_INTERVAL 16 // In number of times MgntLinkStatusWatchdog invoked.
@@ -282,7 +282,7 @@ typedef struct _RT_CCX_NEIGHBOR{
 
 }RT_CCX_NEIGHBOR, *PRT_CCX_NEIGHBOR;
 
-#define MAX_NUM_CCX_NEIGHBOR_LIST 32 
+#define MAX_NUM_CCX_NEIGHBOR_LIST 32
 #define CCX_NEIGHBOR_KEY_SIZE 6
 
 //
@@ -294,16 +294,16 @@ typedef enum _RT_CCX_ROAMING_STATE{
 	CRS_TRY_TO_ROAM,
 }RT_CCX_ROAMING_STATE;
 
-#define CCX_LINK_TEST_SET_FRAME_NUM(_pEleOffset, _Value) (*((UNALIGNED pu2Byte)(_pEleOffset)) = H2N2BYTE(_Value)) 
-#define CCX_LINK_TEST_SET_NUM_RETRY(_pEleOffset, _Value) (*((_pEleOffset)+8) = (_Value)) 
-#define CCX_LINK_TEST_SET_RSSI(_pEleOffset, _Value) (*((_pEleOffset)+9) = (_Value)) 
+#define CCX_LINK_TEST_SET_FRAME_NUM(_pEleOffset, _Value) (*((UNALIGNED pu2Byte)(_pEleOffset)) = H2N2BYTE(_Value))
+#define CCX_LINK_TEST_SET_NUM_RETRY(_pEleOffset, _Value) (*((_pEleOffset)+8) = (_Value))
+#define CCX_LINK_TEST_SET_RSSI(_pEleOffset, _Value) (*((_pEleOffset)+9) = (_Value))
 
 //
-// 1. must <= 1600, see definition of MAX_TRANSMIT_BUFFER_SIZE. 
-// 2. 1534 = 1514(Eth) - 12 + 30(WLAN) + 2(QoS). 
+// 1. must <= 1600, see definition of MAX_TRANSMIT_BUFFER_SIZE.
+// 2. 1534 = 1514(Eth) - 12 + 30(WLAN) + 2(QoS).
 // 3. 1536 is multiple of 4.
 //
-#define MAX_CCX_LINK_TEST_PACKET_SIZE 1536 
+#define MAX_CCX_LINK_TEST_PACKET_SIZE 1536
 
 //------------------------------------------------------------------------------
 // CCX Qos part.
@@ -351,7 +351,7 @@ typedef struct _RT_CCX_CAC_PHY_RATE {
 #define IE_CISCO_FLAG_POSITION		0x08	// Flag byte: byte 8, numbered from 0.
 #define SUPPORT_CKIP_MIC			0x08	// bit3
 #define SUPPORT_CKIP_PK			0x10	// bit4
-#define RT_KEEP_ALIVE_INTERVAL 20 // in seconds. 
+#define RT_KEEP_ALIVE_INTERVAL 20 // in seconds.
 #define RT_NEIGHBOR_CHECK_INTERVAL 60 // in seconds.
 
 typedef struct _CCX_TSM_COUNTER{
@@ -382,9 +382,9 @@ typedef struct _RT_LT_REP_RETRY
 	u1Byte		RetryCnt;
 	u2Byte		SeqNo;
 	u2Byte		FrameNumber;
-	u2Byte		PacketID;	// The ID of the HW Tx Desc usage. Only used under RTL819x serious. 
+	u2Byte		PacketID;	// The ID of the HW Tx Desc usage. Only used under RTL819x serious.
 }RT_LT_REP_RETRY, *PRT_LT_REP_RETRY;
-// 
+//
 // Change the size to 1 because the link test is a ping pong test and we don't need to
 // queue more than 1 packet. By Bruce, 2010-07-13.
 //
@@ -417,14 +417,14 @@ typedef struct _RT_CCX_INFO{
 	//
 	BOOLEAN					bCCXenable;
 	u1Byte					BssCcxVerNumber; // 0: not a CCX AP, >0: CCX version of current BSS associated.
-	u1Byte					CurrCcxVerNumber; // 0: not acting as CCX device. >0: the CCX version we are using. 
+	u1Byte					CurrCcxVerNumber; // 0: not acting as CCX device. >0: the CCX version we are using.
 	BOOLEAN					bWithAironetIE;
 
 	//
 	// 2. Security.
 	// LEAP, PEAP, FAST, CCKM, CKIP.
 	//
-	BOOLEAN					bCCX8021xenable;  //for fast roam enable or disable 
+	BOOLEAN					bCCX8021xenable;  //for fast roam enable or disable
 	BOOLEAN					bCCXwaitCCXInfoInProgess;   // For wait CCX_Info to be set or timeout call back contiune by Mars
 	RT_TIMER				SetCCXInfoTimer;
 	BOOLEAN					bCCX8021xResultenable;  //for fast roam can send CCKM IE, set by meeting house only.
@@ -433,7 +433,7 @@ typedef struct _RT_CCX_INFO{
 	BOOLEAN					bAPSuportCCKM;
 	OCTET_STRING			CCKMIE;
 	u1Byte					CCKMIEBuf[64];
-	
+
 	//
 	// 3. Layer 2 roaming.
 	//
@@ -451,9 +451,9 @@ typedef struct _RT_CCX_INFO{
 	u1Byte					NeighborCheckCount;
 
 	//
-	// 4. Radio and link related. 
+	// 4. Radio and link related.
 	//
-	
+
 	//
 	// For TSM.
 	//
@@ -463,11 +463,11 @@ typedef struct _RT_CCX_INFO{
 	BOOLEAN					bEnableTSM;			// Indicate enabling TSM or not. 0: disable, 1: enable.
 	CCX_TSM_COUNTER			TsmCounters[MAX_STA_TS_COUNT];	// Tsm Info according to the specified TSID.
 	// For CCXv5 Catastrophic Roaming Scenario, 4.1.9.4/4.1.9.5
-	u1Byte					CatasRoamCnt;	
+	u1Byte					CatasRoamCnt;
 	u1Byte					CatasRoamLimit;
 
 	//
-	// For keep-alive mechanism. 
+	// For keep-alive mechanism.
 	//
 	u1Byte					IdleCount;
 	u8Byte					LastNumTxUnicast;
@@ -479,7 +479,7 @@ typedef struct _RT_CCX_INFO{
 	u8Byte					LastRxRetryCnt;
 	u8Byte					LastRxUniCnt;
 	u1Byte					LastRetryRatio;
-	
+
 	//
 	// Link Test, which are protected by RT_RM_SPINLOCK.
 	//
@@ -491,7 +491,7 @@ typedef struct _RT_CCX_INFO{
 	u4Byte					LtRequestWaitQueueStartIdx;
 	u4Byte					LtRequestWaitQueueSize;
 	BOOLEAN					bSendingLtReply;
-	u1Byte					LtReqQueueCheckCount;	
+	u1Byte					LtReqQueueCheckCount;
 	u1Byte					LtreplyRetryID;	// The ID to determine the link test packet for Tx descriptor usage.
 
 	//
@@ -501,7 +501,7 @@ typedef struct _RT_CCX_INFO{
 	BOOLEAN					SessionStartFrameRejected;
 	BOOLEAN					bFakeDecreasingSignal;
 	s4Byte					FakeRxSignalPower;
-        
+
 	//
 	//7. SSIDL
 	//
@@ -528,7 +528,7 @@ typedef struct _RT_CCX_INFO{
 	u1Byte					IhvTxIndicBuffer[sMaxMpduLng];
 
 	// CCX V5 S67
-	BOOLEAN					bCcxMFPEnable; // Enable MFP mode 
+	BOOLEAN					bCcxMFPEnable; // Enable MFP mode
 	u1Byte					MFPtk[MAX_KEY_LEN];
 	u1Byte					MFPAESKeyBuf[AESCCMP_BLK_SIZE_TOTAL];
 
@@ -542,7 +542,7 @@ typedef struct _RT_CCX_INFO{
 
 	BOOLEAN					bSendEAPStar;
 	u1Byte					SendEAPStarCount;
-	
+
 	// CCX v2 Send CCX report by Driver !!
 	BOOLEAN					bSendCCXReport;
 
@@ -551,7 +551,7 @@ typedef struct _RT_CCX_INFO{
 
 	// Flag for marking the OID is coming from IHV
 	BOOLEAN					bQueryFromIHV;
-	
+
 }RT_CCX_INFO, *PRT_CCX_INFO;
 
 
@@ -564,8 +564,8 @@ typedef struct _RT_CCX_INFO{
 
 #define CCX_IS_MFP_ENABLED(___pAdapter)	(SUPPORT_CCX(___pAdapter) ? ((GET_CCX_INFO(&((___pAdapter)->MgntInfo)))->bCcxMFPEnable) : FALSE)
 
-#define GET_CURR_CCX_VER(__pAdapter) ( ((PRT_CCX_INFO)((__pAdapter)->MgntInfo.pCcxInfo))->CurrCcxVerNumber ) 
-#define GET_HW_CCX_VER(__pAdapter) ((__pAdapter)->HalFunc.CcxVerSupported) 
+#define GET_CURR_CCX_VER(__pAdapter) ( ((PRT_CCX_INFO)((__pAdapter)->MgntInfo.pCcxInfo))->CurrCcxVerNumber )
+#define GET_HW_CCX_VER(__pAdapter) ((__pAdapter)->HalFunc.CcxVerSupported)
 
 
 //
@@ -583,14 +583,14 @@ typedef struct _RT_CCX_INFO{
 
 
 typedef struct _CCX_SSIDL_SSID_FIELD{
-	u1Byte				ExtenCapab;  // bit1: 1x bit2: WPS bit2~5 :MS reserve bit6.7: Cisco reserve 
+	u1Byte				ExtenCapab;  // bit1: 1x bit2: WPS bit2~5 :MS reserve bit6.7: Cisco reserve
 	u1Byte				Capability[4];
 	u1Byte				SSIDLen; // 0x00 0x40 0x96 0x00
-	u1Byte				SSID[1]; 
+	u1Byte				SSID[1];
 }CCX_SSIDL_SSID_ELEMENT, *PCCX_SSIDL_SSID_ELEMENT;
 
 
-// SSIDL Mutilcase-Chiper  
+// SSIDL Mutilcase-Chiper
 #define CCX_IS_MCHIPER_NONE( _Capability ) 		( _Capability[3] & 0x00 ?TRUE:FALSE)
 #define CCX_IS_MCHIPER_WEP40( _Capability ) 		( _Capability[3] & 0x01 ?TRUE:FALSE)
 #define CCX_IS_MCHIPER_WEP104( _Capability ) 	( _Capability[3] & 0x02 ?TRUE:FALSE)
@@ -600,7 +600,7 @@ typedef struct _CCX_SSIDL_SSID_FIELD{
 #define CCX_IS_MCHIPER_CKIP( _Capability )  		( _Capability[3] & 0x06 ?TRUE:FALSE)
 #define CCX_IS_MCHIPER_CMIC( _Capability )   		( _Capability[3] & 0x07 ?TRUE:FALSE)
 
-// SSIDL Untilcase-Chiper  
+// SSIDL Untilcase-Chiper
 #define CCX_IS_UCHIPER_NONE( _Capability ) 	   	(  _Capability[3] & 0x10 ?TRUE:FALSE)
 #define CCX_IS_UCHIPER_WEP40( _Capability ) 		(  _Capability[3] & 0x20 ?TRUE:FALSE)
 #define CCX_IS_UCHIPER_WEP104( _Capability )	(  _Capability[3] & 0x40 ?TRUE:FALSE)

@@ -6,7 +6,7 @@
 //      WFPArrays.h
 //
 //   Abstract:
-//      This module contains global variables and definitions of WFP specific data for the 
+//      This module contains global variables and definitions of WFP specific data for the
 //         WFPSampler project
 //
 //   Author:
@@ -166,17 +166,17 @@ const GUID* const ppConditionInboundIPPacket[]            = {&FWPM_CONDITION_IP_
                                                              &FWPM_CONDITION_IP_REMOTE_ADDRESS,
                                                              &FWPM_CONDITION_IP_LOCAL_ADDRESS_TYPE,
                                                              &FWPM_CONDITION_IP_LOCAL_INTERFACE,               /// &FWPM_CONDITION_INTERFACE
-                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX 
-                                                             &FWPM_CONDITION_SUB_INTERFACE_INDEX,              /// &FWPM_CONDITION_ARRIVAL_SUB_INTERFACE_INDEX 
+                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX
+                                                             &FWPM_CONDITION_SUB_INTERFACE_INDEX,              /// &FWPM_CONDITION_ARRIVAL_SUB_INTERFACE_INDEX
                                                              &FWPM_CONDITION_FLAGS,
                                                              &FWPM_CONDITION_INTERFACE_TYPE,                   /// &FWPM_CONDITION_LOCAL_INTERFACE_TYPE
-                                                             &FWPM_CONDITION_TUNNEL_TYPE,                      /// &FWPM_CONDITION_LOCAL_TUNNEL_TYPE 
+                                                             &FWPM_CONDITION_TUNNEL_TYPE,                      /// &FWPM_CONDITION_LOCAL_TUNNEL_TYPE
                                                             };
 const GUID* const ppConditionOutboundIPPacket[]           = {&FWPM_CONDITION_IP_LOCAL_ADDRESS,
                                                              &FWPM_CONDITION_IP_LOCAL_ADDRESS_TYPE,
                                                              &FWPM_CONDITION_IP_REMOTE_ADDRESS,
                                                              &FWPM_CONDITION_IP_LOCAL_INTERFACE,               /// &FWPM_CONDITION_INTERFACE
-                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX 
+                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX
                                                              &FWPM_CONDITION_SUB_INTERFACE_INDEX,              /// &FWPM_CONDITION_ARRIVAL_SUB_INTERFACE_INDEX
                                                              &FWPM_CONDITION_FLAGS,
                                                              &FWPM_CONDITION_INTERFACE_TYPE,                   /// &FWPM_CONDITION_LOCAL_INTERFACE_TYPE
@@ -210,7 +210,7 @@ const GUID* const ppConditionInboundTransport[]           = {&FWPM_CONDITION_IP_
                                                              &FWPM_CONDITION_IP_LOCAL_PORT,                    /// &FWPM_CONDITION_ICMP_TYPE
                                                              &FWPM_CONDITION_IP_REMOTE_PORT,                   /// &FWPM_CONDITION_ICMP_CODE
                                                              &FWPM_CONDITION_IP_LOCAL_INTERFACE,               /// &FWPM_CONDITION_INTERFACE
-                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX 
+                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX
                                                              &FWPM_CONDITION_SUB_INTERFACE_INDEX,              /// &FWPM_CONDITION_ARRIVAL_SUB_INTERFACE_INDEX
                                                              &FWPM_CONDITION_FLAGS,
                                                              &FWPM_CONDITION_INTERFACE_TYPE,                   /// &FWPM_CONDITION_LOCAL_INTERFACE_TYPE
@@ -235,7 +235,7 @@ const GUID* const ppConditionOutboundTransport[]          = {&FWPM_CONDITION_IP_
                                                              &FWPM_CONDITION_IP_LOCAL_PORT,                    /// &FWPM_CONDITION_ICMP_TYPE
                                                              &FWPM_CONDITION_IP_REMOTE_PORT,                   /// &FWPM_CONDITION_ICMP_CODE
                                                              &FWPM_CONDITION_IP_LOCAL_INTERFACE,               /// &FWPM_CONDITION_INTERFACE
-                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX 
+                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX
                                                              &FWPM_CONDITION_SUB_INTERFACE_INDEX,              /// &FWPM_CONDITION_ARRIVAL_SUB_INTERFACE_INDEX
                                                              &FWPM_CONDITION_IP_DESTINATION_ADDRESS_TYPE,
                                                              &FWPM_CONDITION_FLAGS,
@@ -275,7 +275,7 @@ const GUID* const ppConditionDatagramData[]               = {&FWPM_CONDITION_IP_
                                                              &FWPM_CONDITION_IP_LOCAL_PORT,                    /// &FWPM_CONDITION_ICMP_TYPE
                                                              &FWPM_CONDITION_IP_REMOTE_PORT,                   /// &FWPM_CONDITION_ICMP_CODE
                                                              &FWPM_CONDITION_IP_LOCAL_INTERFACE,               /// &FWPM_CONDITION_INTERFACE
-                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX 
+                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX
                                                              &FWPM_CONDITION_SUB_INTERFACE_INDEX,              /// &FWPM_CONDITION_ARRIVAL_SUB_INTERFACE_INDEX
                                                              &FWPM_CONDITION_DIRECTION,
                                                              &FWPM_CONDITION_FLAGS,
@@ -292,7 +292,7 @@ const GUID* const ppConditionInboundICMPError[]           = {&FWPM_CONDITION_EMB
                                                              &FWPM_CONDITION_IP_LOCAL_INTERFACE,               /// &FWPM_CONDITION_INTERFACE
                                                              &FWPM_CONDITION_ICMP_TYPE,
                                                              &FWPM_CONDITION_ICMP_CODE,
-                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX 
+                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX
                                                              &FWPM_CONDITION_SUB_INTERFACE_INDEX,              /// &FWPM_CONDITION_ARRIVAL_SUB_INTERFACE_INDEX
                                                              &FWPM_CONDITION_INTERFACE_TYPE,                   /// &FWPM_CONDITION_LOCAL_INTERFACE_TYPE
                                                              &FWPM_CONDITION_TUNNEL_TYPE,                      /// &FWPM_CONDITION_LOCAL_TUNNEL_TYPE
@@ -320,7 +320,7 @@ const GUID* const ppConditionOutboundICMPError[]          = {&FWPM_CONDITION_IP_
                                                              &FWPM_CONDITION_IP_LOCAL_INTERFACE,               /// &FWPM_CONDITION_INTERFACE
                                                              &FWPM_CONDITION_ICMP_TYPE,
                                                              &FWPM_CONDITION_ICMP_CODE,
-                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX 
+                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX
                                                              &FWPM_CONDITION_SUB_INTERFACE_INDEX,              /// &FWPM_CONDITION_ARRIVAL_SUB_INTERFACE_INDEX
                                                              &FWPM_CONDITION_INTERFACE_TYPE,                   /// &FWPM_CONDITION_LOCAL_INTERFACE_TYPE
                                                              &FWPM_CONDITION_TUNNEL_TYPE,                      /// &FWPM_CONDITION_LOCAL_TUNNEL_TYPE
@@ -360,7 +360,7 @@ const GUID* const ppConditionALEResourceAssignment[]      = {&FWPM_CONDITION_ALE
                                                              &FWPM_CONDITION_ALE_PACKAGE_ID,
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-    
+
                                                              &FWPM_CONDITION_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE,
 
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
@@ -412,7 +412,7 @@ const GUID* const ppConditionALEAuthRecvAccept[]          = {&FWPM_CONDITION_ALE
                                                              &FWPM_CONDITION_ALE_NAP_CONTEXT,
                                                              &FWPM_CONDITION_INTERFACE_TYPE,                   /// &FWPM_CONDITION_LOCAL_INTERFACE_TYPE
                                                              &FWPM_CONDITION_TUNNEL_TYPE,                      /// &FWPM_CONDITION_LOCAL_TUNNEL_TYPE
-                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX 
+                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX
                                                              &FWPM_CONDITION_SUB_INTERFACE_INDEX,              /// &FWPM_CONDITION_ARRIVAL_SUB_INTERFACE_INDEX
 
 #if(NTDDI_VERSION >= NTDDI_VISTASP1)
@@ -467,7 +467,7 @@ const GUID* const ppConditionALEAuthConnect[]             = {&FWPM_CONDITION_ALE
 
 #if(NTDDI_VERSION >= NTDDI_VISTASP1)
 
-                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX 
+                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX
                                                              &FWPM_CONDITION_SUB_INTERFACE_INDEX,              /// &FWPM_CONDITION_ARRIVAL_SUB_INTERFACE_INDEX
 
 #if(NTDDI_VERSION >= NTDDI_WIN7)
@@ -739,7 +739,7 @@ const GUID* const ppConditionStreamPacket[]               = {&FWPM_CONDITION_IP_
                                                              &FWPM_CONDITION_IP_LOCAL_PORT,
                                                              &FWPM_CONDITION_IP_REMOTE_PORT,                   /// &FWPM_CONDITION_ICMP_CODE
                                                              &FWPM_CONDITION_IP_LOCAL_INTERFACE,               /// &FWPM_CONDITION_INTERFACE
-                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX 
+                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX
                                                              &FWPM_CONDITION_SUB_INTERFACE_INDEX,              /// &FWPM_CONDITION_ARRIVAL_SUB_INTERFACE_INDEX
                                                              &FWPM_CONDITION_DIRECTION,
                                                              &FWPM_CONDITION_FLAGS,
@@ -765,7 +765,7 @@ const GUID* const ppConditionInboundMACFrameEthernet[]    = {&FWPM_CONDITION_INT
                                                              &FWPM_CONDITION_ETHER_TYPE,
                                                              &FWPM_CONDITION_VLAN_ID,
                                                              &FWPM_CONDITION_INTERFACE,
-                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX 
+                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX
                                                              &FWPM_CONDITION_NDIS_PORT,
                                                              &FWPM_CONDITION_L2_FLAGS,
                                                             };
@@ -777,7 +777,7 @@ const GUID* const ppConditionOutboundMACFrameEthernet[]   = {&FWPM_CONDITION_INT
                                                              &FWPM_CONDITION_ETHER_TYPE,
                                                              &FWPM_CONDITION_VLAN_ID,
                                                              &FWPM_CONDITION_INTERFACE,
-                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX 
+                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX
                                                              &FWPM_CONDITION_NDIS_PORT,
                                                              &FWPM_CONDITION_L2_FLAGS,
                                                             };
@@ -785,7 +785,7 @@ const GUID* const ppConditionInboundMACFrameNative[]      = {&FWPM_CONDITION_NDI
                                                              &FWPM_CONDITION_NDIS_PHYSICAL_MEDIA_TYPE,
                                                              &FWPM_CONDITION_INTERFACE,
                                                              &FWPM_CONDITION_INTERFACE_TYPE,                   /// &FWPM_CONDITION_LOCAL_INTERFACE_TYPE
-                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX 
+                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX
                                                              &FWPM_CONDITION_NDIS_PORT,
                                                              &FWPM_CONDITION_L2_FLAGS,
                                                             };
@@ -793,7 +793,7 @@ const GUID* const ppConditionOutboundMACFrameNative[]     = {&FWPM_CONDITION_NDI
                                                              &FWPM_CONDITION_NDIS_PHYSICAL_MEDIA_TYPE,
                                                              &FWPM_CONDITION_INTERFACE,
                                                              &FWPM_CONDITION_INTERFACE_TYPE,                   /// &FWPM_CONDITION_LOCAL_INTERFACE_TYPE
-                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX 
+                                                             &FWPM_CONDITION_INTERFACE_INDEX,                  /// &FWPM_CONDITION_LOCAL_INTERFACE_INDEX
                                                              &FWPM_CONDITION_NDIS_PORT,
                                                              &FWPM_CONDITION_L2_FLAGS,
                                                             };

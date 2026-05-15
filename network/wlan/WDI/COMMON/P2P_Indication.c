@@ -26,7 +26,7 @@ p2p_IndicateEvent(
 
 		mbObject.Buffer = (pu1Byte) pEventData;
 		mbObject.Length = sizeof(P2P_EVENT_DATA);
-		
+
 		PlatformIndicateP2PEvent(pP2PInfo, eventId, &mbObject);
 	}
 	else
@@ -49,9 +49,9 @@ p2p_IndicateActionFrameReceivedWithToken(
 	)
 {
 	u1Byte						origToken = GET_P2P_PUB_ACT_FRAME_DIALOG_TOKEN(pFrameBuf);
-	
+
 	SET_P2P_PUB_ACT_FRAME_DIALOG_TOKEN(pFrameBuf, token);
-	
+
 	p2p_IndicateActionFrameReceived(pP2PInfo, eventId, rtStatus, pFrameBuf, frameLen);
 
 	SET_P2P_PUB_ACT_FRAME_DIALOG_TOKEN(pFrameBuf, origToken);
@@ -137,14 +137,14 @@ p2p_IndicateActionFrameSendCompleteWithToken(
 		origToken = GET_P2P_PUB_ACT_FRAME_DIALOG_TOKEN(pFrameBuf);
 		SET_P2P_PUB_ACT_FRAME_DIALOG_TOKEN(pFrameBuf, token);
 	}
-	
+
 	p2p_IndicateActionFrameSendComplete(pP2PInfo, eventId, rtStatus, pFrameBuf, frameLen);
 
 	if(RT_STATUS_SUCCESS == rtStatus)
 	{
 		SET_P2P_PUB_ACT_FRAME_DIALOG_TOKEN(pFrameBuf, origToken);
 	}
-	
+
 	return;
 }
 
@@ -157,19 +157,19 @@ p2p_IndicatePdReqSent(
 	if(P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter))
 	{
 		// Change dialog token to make sure the token is the same as the previous query.
-		p2p_IndicateActionFrameSendCompleteWithToken(pP2PInfo, 
-			P2P_EVENT_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE, 
-			RT_STATUS_SUCCESS, 
-			pDev->txFrames[P2P_FID_PD_REQ]->frame, 
+		p2p_IndicateActionFrameSendCompleteWithToken(pP2PInfo,
+			P2P_EVENT_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE,
+			RT_STATUS_SUCCESS,
+			pDev->txFrames[P2P_FID_PD_REQ]->frame,
 			pDev->txFrames[P2P_FID_PD_REQ]->frameLen,
 			pP2PInfo->oidDialogToken);
 	}
 	else
 	{
-		p2p_IndicateActionFrameSendComplete(pP2PInfo, 
-			P2P_EVENT_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE, 
-			RT_STATUS_SUCCESS, 
-			pDev->txFrames[P2P_FID_PD_REQ]->frame, 
+		p2p_IndicateActionFrameSendComplete(pP2PInfo,
+			P2P_EVENT_PROVISION_DISCOVERY_REQUEST_SEND_COMPLETE,
+			RT_STATUS_SUCCESS,
+			pDev->txFrames[P2P_FID_PD_REQ]->frame,
 			pDev->txFrames[P2P_FID_PD_REQ]->frameLen);
 	}
 }
@@ -183,11 +183,11 @@ p2p_IndicatePdRspReceived(
 	RT_STATUS					status = RT_STATUS_SUCCESS;
 	u1Byte						*rxFrame = NULL;
 	u2Byte						rxFrameLen = 0;
-	
+
 	if(pDev->rxFrames[P2P_FID_PD_RSP])
 	{
 		RT_ASSERT(pDev->txFrames[P2P_FID_PD_REQ], ("%s(): no corresponding tx frame\n", __FUNCTION__));
-		
+
 		rxFrame = pDev->rxFrames[P2P_FID_PD_RSP]->frame;
 		rxFrameLen = pDev->rxFrames[P2P_FID_PD_RSP]->frameLen;
 	}
@@ -195,27 +195,27 @@ p2p_IndicatePdRspReceived(
 	{// failed to rx rsp frame
 		status = RT_STATUS_FAILURE;
 	}
-	
+
 	// Handle PD req dialog token
 	// Note that if status is not success, frame and frameLen could be 0
-	if(P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter) 
+	if(P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter)
 		&& RT_STATUS_SUCCESS == status
 		)
 	{
 		// Change dialog token to make sure the token is the same as the previous query.
-		p2p_IndicateActionFrameReceivedWithToken(pP2PInfo, 
-			P2P_EVENT_RECEIVED_PROVISION_DISCOVERY_RESPONSE, 
-			status, 
-			rxFrame, 
+		p2p_IndicateActionFrameReceivedWithToken(pP2PInfo,
+			P2P_EVENT_RECEIVED_PROVISION_DISCOVERY_RESPONSE,
+			status,
+			rxFrame,
 			rxFrameLen,
 			pP2PInfo->oidDialogToken);
 	}
 	else
 	{
-		p2p_IndicateActionFrameReceived(pP2PInfo, 
-			P2P_EVENT_RECEIVED_PROVISION_DISCOVERY_RESPONSE, 
-			status, 
-			rxFrame, 
+		p2p_IndicateActionFrameReceived(pP2PInfo,
+			P2P_EVENT_RECEIVED_PROVISION_DISCOVERY_RESPONSE,
+			status,
+			rxFrame,
 			rxFrameLen);
 	}
 
@@ -278,24 +278,24 @@ p2p_IndicateFakePdRspReceived(
 		if(P2P_ADAPTER_OS_SUPPORT_P2P(pP2PInfo->pAdapter))
 		{
 			// Change dialog token to make sure the token is the same as the previous query.
-			p2p_IndicateActionFrameReceivedWithToken(pP2PInfo, 
-				P2P_EVENT_RECEIVED_PROVISION_DISCOVERY_RESPONSE, 
-				rtStatus, 
-				fbuf.os.Octet, 
+			p2p_IndicateActionFrameReceivedWithToken(pP2PInfo,
+				P2P_EVENT_RECEIVED_PROVISION_DISCOVERY_RESPONSE,
+				rtStatus,
+				fbuf.os.Octet,
 				fbuf.os.Length,
 				pP2PInfo->oidDialogToken);
 		}
 		else
 		{
-			p2p_IndicateActionFrameReceived(pP2PInfo, 
-				P2P_EVENT_RECEIVED_PROVISION_DISCOVERY_RESPONSE, 
-				rtStatus, 
-				fbuf.os.Octet, 
+			p2p_IndicateActionFrameReceived(pP2PInfo,
+				P2P_EVENT_RECEIVED_PROVISION_DISCOVERY_RESPONSE,
+				rtStatus,
+				fbuf.os.Octet,
 				fbuf.os.Length);
 		}
 	}while(FALSE);
 
-	
+
 	if(pGenBuf)
 	{
 		ReturnGenTempBuffer (pAdapter, pGenBuf);

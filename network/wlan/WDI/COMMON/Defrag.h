@@ -73,20 +73,20 @@ DefragEntrySetRFD(
 	pu1Byte			pSenderAddr,
 	u1Byte			TID,
 	u2Byte			SeqNum,
-	u1Byte			FragNum	
+	u1Byte			FragNum
 	);
 
 VOID
 DefragEntryAddRFD(
 	PDEFRAG_ENTRY	pEntry,
 	PRT_RFD			pRfd,
-	u1Byte			FragNum	
+	u1Byte			FragNum
 	);
 
 VOID
 DefragEntryFree(
 	PDEFRAG_ENTRY	pEntry,
-	PADAPTER		Adapter	
+	PADAPTER		Adapter
 	);
 
 VOID

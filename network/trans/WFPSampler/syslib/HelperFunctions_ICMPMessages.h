@@ -6,7 +6,7 @@
 //      HelperFunctions_ICMPMessages.h
 //
 //   Abstract:
-//      This module contains prototypes for kernel helper functions that assist with ICMP Message 
+//      This module contains prototypes for kernel helper functions that assist with ICMP Message
 //         packets.
 //
 //   Author:

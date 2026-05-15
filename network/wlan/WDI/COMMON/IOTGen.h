@@ -23,7 +23,7 @@ IOTActIsNullDataPowerSaving(
 BOOLEAN
 IOTActIsForcedRTSCTS(
 	PADAPTER		Adapter,
-	PRT_WLAN_BSS	pBssDesc	
+	PRT_WLAN_BSS	pBssDesc
 	);
 
 BOOLEAN

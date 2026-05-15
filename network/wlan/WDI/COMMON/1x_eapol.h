@@ -2,7 +2,7 @@
 
 Module Name:
 	1x_eapol.h
-	
+
 Abstract:
 	Data structure and definition about EAPOL, EAP.
 	See also 1x_kmsm_eapolkey.h for EAPOL-Key.
@@ -22,7 +22,7 @@ Abstract:
 // File		: 1x_eapol.h
 // Programmer	: Arunesh Mishra
 //
-// This contains the EAPOL packet routine 
+// This contains the EAPOL packet routine
 // declarations.
 //
 //

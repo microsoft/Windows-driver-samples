@@ -19,13 +19,13 @@ CIHVClassFactory::~CIHVClassFactory()
 {
 }
 
-STDMETHODIMP_(ULONG) 
+STDMETHODIMP_(ULONG)
 CIHVClassFactory::AddRef()
 {
 	return InterlockedIncrement(&m_refCount);
 }
 
-STDMETHODIMP_(ULONG) 
+STDMETHODIMP_(ULONG)
 CIHVClassFactory::Release()
 {
 	ULONG refCount = InterlockedDecrement(&m_refCount);
@@ -36,9 +36,9 @@ CIHVClassFactory::Release()
 	return refCount;
 }
 
-STDMETHODIMP 
+STDMETHODIMP
 CIHVClassFactory::QueryInterface(
-    REFIID riid, 
+    REFIID riid,
     void **ppvObject
     )
 {
@@ -59,7 +59,7 @@ CIHVClassFactory::QueryInterface(
 		    *ppvObject = NULL;
 		    return E_NOINTERFACE;
 	    }
-	    reinterpret_cast<IUnknown *>(*ppvObject)->AddRef();	
+	    reinterpret_cast<IUnknown *>(*ppvObject)->AddRef();
     }
 
 	return hr;
@@ -69,10 +69,10 @@ CIHVClassFactory::QueryInterface(
 //
 // IClassFactory Implementaion
 //
-STDMETHODIMP 
+STDMETHODIMP
 CIHVClassFactory::CreateInstance(
-    IUnknown *pUnkOuter, 
-    REFIID riid, 
+    IUnknown *pUnkOuter,
+    REFIID riid,
     void **ppvObject
     )
 {
@@ -91,7 +91,7 @@ CIHVClassFactory::CreateInstance(
 
    // Figure out which interface is wanted
    // the ui will call us only as IID_IDot11ExtUI
-   if (IID_IDot11SampleExtUI == riid || 
+   if (IID_IDot11SampleExtUI == riid ||
        IID_IDot11ExtUI == riid ||
        IID_IWizardExtension == riid)
    {
@@ -150,7 +150,7 @@ CIHVClassFactory::CreateInstance(
 }
 
 
-STDMETHODIMP 
+STDMETHODIMP
 CIHVClassFactory::LockServer(BOOL fLock)
 {
 	if (fLock)

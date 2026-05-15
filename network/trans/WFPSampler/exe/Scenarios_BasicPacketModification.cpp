@@ -6,13 +6,13 @@
 //      Scenarios_BasicPacketModification.cpp
 //
 //   Abstract:
-//      This module contains functions which prepares and sends data for the 
+//      This module contains functions which prepares and sends data for the
 //         BASIC_PACKET_MODIFICATION scenario implementation.
 //
 //   Naming Convention:
 //
 //      <Scope><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -22,21 +22,21 @@
 //          }
 //       <Object>
 //          {
-//            BasicPacketModificationScenario - Function pertains to Basic Packet Modification 
+//            BasicPacketModificationScenario - Function pertains to Basic Packet Modification
 //                                                 Scenario.
 //          }
 //       <Action>
 //          {
-//            Execute                         - Function packages data and invokes RPC to the 
+//            Execute                         - Function packages data and invokes RPC to the
 //                                                 WFPSampler service.
 //            Log                             - Function writes to the console.
-//            Parse                           - Function pulls data into the required format from 
+//            Parse                           - Function pulls data into the required format from
 //                                                 the provided data.
 //          }
 //       <Modifier>
 //          {
 //            ModificationData                - Function acts on modification data.
-//            Help                            - Function provides context sensitive help for the 
+//            Help                            - Function provides context sensitive help for the
 //                                                 scenario.
 //          }
 //
@@ -55,7 +55,7 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Add support for specifying a different sublayer, 
+//      December  13,   2013  -     1.1   -  Add support for specifying a different sublayer,
 //                                              modifying the interfaceIndex, and set the original
 //                                              traffic data in the providerContext.
 //
@@ -65,7 +65,7 @@
 
 /**
  @private_function="PrvBasicPacketModificationScenarioParseModificationData"
- 
+
    Purpose:  Parse the command line parameters for modifying packets such as:                   <br>
                 Perform the injection inline (from within the classify)    (-in)                <br>
                 Use threaded DPCs for out of band (asynchronous)           (-tdpc)              <br>
@@ -126,8 +126,8 @@ UINT32 PrvBasicPacketModificationScenarioParseModificationData(_In_reads_(string
                              ppCLPStrings[stringIndex]))
       {
          pPCBasicPacketModificationData->useThreadedDPC = TRUE;
-      
-     
+
+
          continue;
       }
 
@@ -464,7 +464,7 @@ UINT32 PrvBasicPacketModificationScenarioParseModificationData(_In_reads_(string
 /**
  @scenario_function="BasicPacketModificationScenarioExecute"
 
-   Purpose:  Gather and package data neccessary to setup the BASIC_PACKET_MODIFICATION scenario, 
+   Purpose:  Gather and package data neccessary to setup the BASIC_PACKET_MODIFICATION scenario,
              then invoke RPC to implement the scenario in the WFPSampler service.               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -536,7 +536,7 @@ UINT32 BasicPacketModificationScenarioExecute(_In_reads_(stringCount) PCWSTR* pp
 
 /**
  @public_function="BasicPacketModificationScenarioLogHelp"
- 
+
    Purpose:  Log usage information for the BASIC_PACKET_MODIFICATION scenario to the console.   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

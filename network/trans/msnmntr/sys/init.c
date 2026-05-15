@@ -33,7 +33,7 @@ Environment:
 #include "notify.h"
 
 //
-// Software Tracing Definitions 
+// Software Tracing Definitions
 //
 #define WPP_CONTROL_GUIDS \
     WPP_DEFINE_CONTROL_GUID(MsnMntrInit,(e7db16bb, 41be, 4c05, b73e, 5feca06f8207),  \
@@ -106,8 +106,8 @@ Return Value:
    //
    // This macro is required to initialize software tracing on XP and beyond
    // For XP and beyond use the DriverObject as the first argument.
-   // 
-   
+   //
+
    WPP_INIT_TRACING(driverObject,registryPath);
 
    DoTraceMessage(TRACE_INIT, "Initializing MonitorSample Driver");
@@ -136,7 +136,7 @@ Return Value:
       status = STATUS_INSUFFICIENT_RESOURCES;
       goto cleanup;
    }
-   
+
    status = MonitorEvtDeviceAdd(pInit);
 
 cleanup:
@@ -198,7 +198,7 @@ MonitorEvtDeviceAdd(
    {
       goto cleanup;
    }
-   
+
    WdfControlFinishInitializing(device);
 
 cleanup:

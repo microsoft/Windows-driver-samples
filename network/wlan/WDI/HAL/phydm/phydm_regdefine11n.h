@@ -1,7 +1,7 @@
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
- *                                        
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
@@ -17,7 +17,7 @@
  *
  *
  ******************************************************************************/
- 
+
 #ifndef	__ODM_REGDEFINE11N_H__
 #define __ODM_REGDEFINE11N_H__
 

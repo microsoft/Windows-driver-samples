@@ -14,8 +14,8 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Add support for multiple injectors and redirectors, and 
-//                                              add support for serializing asynchronous 
+//      December  13,   2013  -     1.1   -  Add support for multiple injectors and redirectors, and
+//                                              add support for serializing asynchronous
 //                                              FWPM_LAYER_STREAM injections
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ NTSTATUS PrvFwpmBfeStateSubscribeChanges()
                  status);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PrvFwpmBfeStateSubscribeChanges() [status: %#x]\n",
@@ -139,7 +139,7 @@ NTSTATUS PrvFwpmBfeStateSubscribeChanges()
 
 /**
  @private_function="PrvWFPSamplerDeviceDataPopulate"
- 
+
    Purpose:  Register the  global WFP objects such as:                                          <br>
                 Callouts                                                                        <br>
                                                                                                 <br>
@@ -154,13 +154,13 @@ _Success_(return == STATUS_SUCCESS)
 NTSTATUS PrvWFPSamplerFwpObjectsAddGlobal(_In_ WFPSAMPLER_DEVICE_DATA* pDeviceData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PrvWFPSamplerFwpObjectsAddGlobal()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(pDeviceData);
 
    NT_ASSERT(pDeviceData);
@@ -178,20 +178,20 @@ NTSTATUS PrvWFPSamplerFwpObjectsAddGlobal(_In_ WFPSAMPLER_DEVICE_DATA* pDeviceDa
    HLPR_BAIL_LABEL:
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PrvWFPSamplerFwpObjectsAddGlobal() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @private_function="PrvWFPSamplerDeviceDataPopulate"
- 
+
    Purpose:  Populate the deviceData with the BFE engineHandle and various injection handles.   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -205,13 +205,13 @@ _Success_(return == STATUS_SUCCESS)
 NTSTATUS PrvWFPSamplerDeviceDataPopulate(_Inout_ WFPSAMPLER_DEVICE_DATA* pDeviceData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PrvWFPSamplerDeviceDataPopulate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pDeviceData);
 
    NTSTATUS status = STATUS_SUCCESS;
@@ -222,7 +222,7 @@ NTSTATUS PrvWFPSamplerDeviceDataPopulate(_Inout_ WFPSAMPLER_DEVICE_DATA* pDevice
       HLPR_BAIL_ON_FAILURE(status);
    }
 
-   /// There are injection handles for each of the supported sublayers that allow injection.  This 
+   /// There are injection handles for each of the supported sublayers that allow injection.  This
    /// allows us to do multiple injectors in the layer provided that the callouts are in different
    /// sublayers.
    for(UINT32 index = 0;
@@ -329,7 +329,7 @@ NTSTATUS PrvWFPSamplerDeviceDataPopulate(_Inout_ WFPSAMPLER_DEVICE_DATA* pDevice
       DbgPrintEx(DPFLTR_IHVNETWORK_ID,
                  DPFLTR_INFO_LEVEL,
                  " <--- PrvWFPSamplerDeviceDataPopulate()\n");
-   
+
 #endif /// DBG
 
    return status;
@@ -337,7 +337,7 @@ NTSTATUS PrvWFPSamplerDeviceDataPopulate(_Inout_ WFPSAMPLER_DEVICE_DATA* pDevice
 
 /**
  @private_function="PrvDriverDeviceAdd"
- 
+
    Purpose:  Add the device and configure initial WFP callout driver settings.                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -356,13 +356,13 @@ _Success_(return == STATUS_SUCCESS)
 NTSTATUS PrvDriverDeviceAdd(_In_ WDFDRIVER* pWDFDriver)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PrvDriverDeviceAdd()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pWDFDriver);
 
    NTSTATUS              status         = STATUS_SUCCESS;
@@ -384,7 +384,7 @@ NTSTATUS PrvDriverDeviceAdd(_In_ WDFDRIVER* pWDFDriver)
                  " !!!! PrvDriverDeviceAdd : WdfControlDeviceInitAllocate() [status: %#x]\n",
                  status);
 
-      HLPR_BAIL;      
+      HLPR_BAIL;
    }
 
    WdfDeviceInitSetDeviceType(pWDFDeviceInit,
@@ -451,20 +451,20 @@ NTSTATUS PrvDriverDeviceAdd(_In_ WDFDRIVER* pWDFDriver)
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PrvDriverDeviceAdd() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @framework_function="DriverEntry"
- 
+
    Purpose:  Entry point for the driver.                                                        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -481,13 +481,13 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT pDriverObject,
                     pRegistryPath);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> DriverEntry()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pDriverObject);
    NT_ASSERT(pRegistryPath);
 
@@ -533,7 +533,7 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT pDriverObject,
                  DPFLTR_INFO_LEVEL,
                  " <--- DriverEntry() [status: %#x]\n",
                  status);
-   
+
 #endif /// DBG
 
    if(status != STATUS_SUCCESS)

@@ -22,7 +22,7 @@
 // BW and sideband setting
 #define		rBWIndication_Jaguar		0x834
 #define		rL1PeakTH_Jaguar			0x848
-#define		rRFMOD_Jaguar				0x8ac	//RF mode 
+#define		rRFMOD_Jaguar				0x8ac	//RF mode
 
 #define		rADC_Buf_160_Clk_Jaguar		0x8c4
 #define		rADC_Buf_40_Clk_Jaguar2		0x8c8
@@ -40,7 +40,7 @@
 #define		rTxPath_Jaguar				0x80c	// Tx antenna
 #define		bTxPath_Jaguar				0x0fffffff
 #define		rCCK_RX_Jaguar				0xa04	// for cck rx path selection
-#define		bCCK_RX_Jaguar				0x0c000000 
+#define		bCCK_RX_Jaguar				0x0c000000
 #define		rVhtlen_Use_Lsig_Jaguar		0x8c3	// Use LSIG for VHT length
 
 #define		rRxPath_Jaguar2				0xa04	// Rx antenna
@@ -83,7 +83,7 @@
 #define		rNBI_Setting_Jaguar			0x87c
 
 
-// YN: mask the following register definition temporarily 
+// YN: mask the following register definition temporarily
 //#define		rFPGA0_XA_RFInterfaceOE		0x860	// RF Channel switch
 #define		rFPGA0_XB_RFInterfaceOE		0x864
 
@@ -115,7 +115,7 @@
 
 
 // YN: mask the following register definition temporarily
-//#define		rPdp_AntA      					0xb00  
+//#define		rPdp_AntA      					0xb00
 //#define		rPdp_AntA_4    				0xb04
 //#define		rConfig_Pmpd_AntA 			0xb28
 //#define		rConfig_AntA 					0xb68
@@ -158,7 +158,7 @@
 #define		rB_TxPwrTraing_Jaguar		0xe54
 
 // Report-related
-#define		rOFDM_ShortCFOAB_Jaguar		0xf60  
+#define		rOFDM_ShortCFOAB_Jaguar		0xf60
 #define		rOFDM_LongCFOAB_Jaguar		0xf64
 #define		rOFDM_EndCFOAB_Jaguar		0xf70
 #define		rOFDM_AGCReport_Jaguar		0xf84
@@ -173,7 +173,7 @@
 #define		bAGC_table_Jaguar			0x3
 #define		b_sel5g_Jaguar    			0x1000 // sel5g
 #define		b_LNA_sw_Jaguar			0x8000 // HW/WS control for LNA
-#define		rFc_area_Jaguar				0x860   // fc_area 
+#define		rFc_area_Jaguar				0x860   // fc_area
 #define		bFc_area_Jaguar				0x1ffe000
 #define		rSingleTone_ContTx_Jaguar 	0x914
 
@@ -184,13 +184,13 @@
 // RFE
 #define		rA_RFE_Pinmux_Jaguar	0xcb0	// Path_A RFE cotrol pinmux
 #define		rB_RFE_Pinmux_Jaguar	0xeb0	// Path_B RFE control pinmux
-#define		rA_RFE_Inv_Jaguar		0xcb4	// Path_A RFE cotrol   
+#define		rA_RFE_Inv_Jaguar		0xcb4	// Path_A RFE cotrol
 #define		rB_RFE_Inv_Jaguar		0xeb4	// Path_B RFE control
-#define		rA_RFE_Jaguar			0xcb8 	// Path_A RFE cotrol   
+#define		rA_RFE_Jaguar			0xcb8 	// Path_A RFE cotrol
 #define		rB_RFE_Jaguar			0xeb8	// Path_B RFE control
 #define		r_ANTSEL_SW_Jaguar		0x900	// ANTSEL SW Control
 #define		bMask_RFEInv_Jaguar	0x3ff00000
-#define		bMask_AntselPathFollow_Jaguar 0x00030000   
+#define		bMask_AntselPathFollow_Jaguar 0x00030000
 
 #define		rC_RFE_Pinmux_Jaguar	0x18B4	// Path_C RFE cotrol pinmux
 #define		rD_RFE_Pinmux_Jaguar	0x1AB4	// Path_D RFE cotrol pinmux
@@ -198,7 +198,7 @@
 
 
 
-// TX AGC 
+// TX AGC
 #define		rTxAGC_A_CCK11_CCK1_JAguar	0xc20
 #define		rTxAGC_A_Ofdm18_Ofdm6_JAguar	0xc24
 #define		rTxAGC_A_Ofdm54_Ofdm24_JAguar	0xc28
@@ -229,7 +229,7 @@
 #define		bTxAGC_byte3_Jaguar	0xff000000
 
 
-// TX AGC 
+// TX AGC
 #define		rTxAGC_A_CCK11_CCK1_Jaguar2	0xc20
 #define		rTxAGC_A_Ofdm18_Ofdm6_Jaguar2	0xc24
 #define		rTxAGC_A_Ofdm54_Ofdm24_Jaguar2	0xc28
@@ -360,24 +360,24 @@
 // RSSI Dump
 #define		rA_RSSIDump_Jaguar		0xBF0
 #define		rB_RSSIDump_Jaguar		0xBF1
-#define		rS1_RXevmDump_Jaguar	0xBF4 
+#define		rS1_RXevmDump_Jaguar	0xBF4
 #define		rS2_RXevmDump_Jaguar	0xBF5
 #define		rA_RXsnrDump_Jaguar		0xBF6
 #define		rB_RXsnrDump_Jaguar		0xBF7
-#define		rA_CfoShortDump_Jaguar	0xBF8 
+#define		rA_CfoShortDump_Jaguar	0xBF8
 #define		rB_CfoShortDump_Jaguar	0xBFA
 #define		rA_CfoLongDump_Jaguar	0xBEC
 #define		rB_CfoLongDump_Jaguar	0xBEE
- 
+
 
 // RF Register
 //
-#define		RF_AC_Jaguar				0x00	// 
-#define		RF_RF_Top_Jaguar			0x07	// 
-#define		RF_TXLOK_Jaguar				0x08	// 
+#define		RF_AC_Jaguar				0x00	//
+#define		RF_RF_Top_Jaguar			0x07	//
+#define		RF_TXLOK_Jaguar				0x08	//
 #define		RF_TXAPK_Jaguar				0x0B
 #define		RF_CHNLBW_Jaguar			0x18	// RF channel and BW switch
-#define		RF_RCK1_Jaguar				0x1c	// 
+#define		RF_RCK1_Jaguar				0x1c	//
 #define		RF_RCK2_Jaguar				0x1d
 #define		RF_RCK3_Jaguar				0x1e
 #define		RF_ModeTableAddr			0x30

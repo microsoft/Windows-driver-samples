@@ -6,13 +6,13 @@
 //      ClassifyFunctions_BasicActionCallouts.cpp
 //
 //   Abstract:
-//      This module contains WFP Classify functions for returning the simple actions 
+//      This module contains WFP Classify functions for returning the simple actions
 //         FWP_ACTION_BLOCK and FWP_ACTION_PERMIT.
 //
 //   Naming Convention:
 //
 //      <Module><Scenario><Action>
-//  
+//
 //      i.e.
 //
 //       ClassifyBasicActionBlock
@@ -24,7 +24,7 @@
 //       <Action>
 //          {
 //            Block     - Function returns FWP_ACTION_BLOCK, thus blocking the traffic.
-//            Continue  - Function returns FWP_ACTION_CONTINUE thus allowing the traffic for another 
+//            Continue  - Function returns FWP_ACTION_CONTINUE thus allowing the traffic for another
 //                           filter (if any) to make a final decision.
 //            Permit    - Function returns FWP_ACTION_PERMIT, thus allowing the traffic.
 //            Random    - Function randomly returns either FWP_ACTION_BLOCK or FWP_ACTION_PERMIT.
@@ -56,7 +56,7 @@
 
 /**
  @private_function="PerformBasicAction"
- 
+
    Purpose:  Sets the pClassifyOut->actionType to the basic action specified.                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -131,7 +131,7 @@ VOID PerformBasicAction(_In_ const FWPS_INCOMING_VALUES* pClassifyValues,
 
 /**
  @classify_function="ClassifyBasicActionBlock"
- 
+
    Purpose:  Sets the pClassifyOut->actionType to FWP_ACTION_BLOCK.                             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -188,7 +188,7 @@ VOID NTAPI ClassifyBasicActionBlock(_In_ const FWPS_INCOMING_VALUES* pClassifyVa
 
 /**
  @classify_function="ClassifyBasicActionContinue"
- 
+
    Purpose:  Sets the pClassifyOut->actionType to FWP_ACTION_CONTINUE.                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -245,7 +245,7 @@ VOID NTAPI ClassifyBasicActionContinue(_In_ const FWPS_INCOMING_VALUES* pClassif
 
 /**
  @classify_function="ClassifyBasicActionPermit"
- 
+
    Purpose:  Sets the pClassifyOut->actionType to FWP_ACTION_PERMIT.                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -302,14 +302,14 @@ VOID NTAPI ClassifyBasicActionPermit(_In_ const FWPS_INCOMING_VALUES* pClassifyV
 
 /**
  @classify_function="ClassifyBasicActionRandom"
- 
+
    Purpose:  Sets the pClassifyOut->actionType to either FWP_ACTION_BLOCK or FWP_ACTION_PERMIT. <br>
                                                                                                 <br>
-   Notes:    Specifying -rab at the command line will allow one to determine how randomly 
+   Notes:    Specifying -rab at the command line will allow one to determine how randomly
                 FWP_ACTION_BLOCK is returned.                                                   <br>
-             Specifying -rac at the command line will allow one to determine how randomly 
+             Specifying -rac at the command line will allow one to determine how randomly
                 FWP_ACTION_CONTINUE is returned.                                                <br>
-             Specifying -rap at the command line will allow one to determine how randomly 
+             Specifying -rap at the command line will allow one to determine how randomly
                 FWP_ACTION_PERMIT is returned.                                                  <br>
                                                                                                 <br>
    MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/Windows/Hardware/FF551229.aspx             <br>
@@ -396,7 +396,7 @@ VOID NTAPI ClassifyBasicActionRandom(_In_ const FWPS_INCOMING_VALUES* pClassifyV
 
 /**
  @classify_function="ClassifyBasicActionBlock"
- 
+
    Purpose:  Sets the pClassifyOut->actionType to FWP_ACTION_BLOCK.                             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -452,7 +452,7 @@ VOID NTAPI ClassifyBasicActionBlock(_In_ const FWPS_INCOMING_VALUES* pClassifyVa
 
 /**
  @classify_function="ClassifyBasicActionContinue"
- 
+
    Purpose:  Sets the pClassifyOut->actionType to FWP_ACTION_CONTINUE.                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -508,7 +508,7 @@ VOID NTAPI ClassifyBasicActionContinue(_In_ const FWPS_INCOMING_VALUES* pClassif
 
 /**
  @classify_function="ClassifyBasicActionPermit"
- 
+
    Purpose:  Sets the pClassifyOut->actionType to FWP_ACTION_PERMIT.                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -568,14 +568,14 @@ VOID NTAPI ClassifyBasicActionPermit(_In_ const FWPS_INCOMING_VALUES* pClassifyV
 
 /**
  @classify_function="ClassifyBasicActionRandom"
- 
+
    Purpose:  Sets the pClassifyOut->actionType to either FWP_ACTION_BLOCK or FWP_ACTION_PERMIT. <br>
                                                                                                 <br>
-   Notes:    Specifying -rab at the command line will allow one to determine how randomly 
+   Notes:    Specifying -rab at the command line will allow one to determine how randomly
                 FWP_ACTION_BLOCK is returned.                                                   <br>
-             Specifying -rac at the command line will allow one to determine how randomly 
+             Specifying -rac at the command line will allow one to determine how randomly
                 FWP_ACTION_CONTINUE is returned.                                                <br>
-             Specifying -rap at the command line will allow one to determine how randomly 
+             Specifying -rap at the command line will allow one to determine how randomly
                 FWP_ACTION_PERMIT is returned.                                                  <br>
                                                                                                 <br>
    MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/Windows/Hardware/FF551229.aspx             <br>

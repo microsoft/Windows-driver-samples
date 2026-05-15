@@ -29,7 +29,7 @@
 	#define		RTL8188EE_HWIMG_SUPPORT					0
 	#define		RTL8188EU_HWIMG_SUPPORT					0
 	#define		RTL8188ES_HWIMG_SUPPORT					0
-	
+
 	#elif (DEV_BUS_TYPE == RT_USB_INTERFACE)
 	// For 92C
 	#define 	RTL8192CE_HWIMG_SUPPORT 				0
@@ -52,7 +52,7 @@
 	#define		RTL8188EE_HWIMG_SUPPORT					0
 	#define		RTL8188EU_HWIMG_SUPPORT					0
 	#define		RTL8188ES_HWIMG_SUPPORT					0
-	
+
 	#elif (DEV_BUS_TYPE == RT_SDIO_INTERFACE)
 	// For 92C
 	#define 	RTL8192CE_HWIMG_SUPPORT 				0
@@ -102,7 +102,7 @@
 	#define		RTL8188EU_HWIMG_SUPPORT					0
 	#define		RTL8188ES_HWIMG_SUPPORT					0
 
-	#else 
+	#else
 
 	// For 8723
 	#define		RTL8723E_HWIMG_SUPPORT					1

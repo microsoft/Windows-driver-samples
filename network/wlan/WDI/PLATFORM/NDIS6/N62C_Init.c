@@ -9,52 +9,52 @@ N62CCopyDefaultVariablesToExt(
     IN  PADAPTER                Adapter
     )
 {
-	Adapter->HWDescHeadLength = 
+	Adapter->HWDescHeadLength =
 		GetDefaultAdapter(Adapter)->HWDescHeadLength;
-	
-	Adapter->TXPacketShiftBytes = 
+
+	Adapter->TXPacketShiftBytes =
 		GetDefaultAdapter(Adapter)->TXPacketShiftBytes;
 
-	Adapter->MAX_TRANSMIT_BUFFER_SIZE = 
+	Adapter->MAX_TRANSMIT_BUFFER_SIZE =
 		GetDefaultAdapter(Adapter)->MAX_TRANSMIT_BUFFER_SIZE;
 
 	Adapter->RT_TCB_NUM = GetDefaultAdapter(Adapter)->RT_TCB_NUM;
-	
-	Adapter->RT_LOCAL_BUF_NUM = 
+
+	Adapter->RT_LOCAL_BUF_NUM =
 		GetDefaultAdapter(Adapter)->RT_LOCAL_BUF_NUM;
-	
-	Adapter->RT_LOCAL_FW_BUF_NUM = 
+
+	Adapter->RT_LOCAL_FW_BUF_NUM =
 		GetDefaultAdapter(Adapter)->RT_LOCAL_FW_BUF_NUM;
-	
+
 	Adapter->RT_TXDESC_NUM = GetDefaultAdapter(Adapter)->RT_TXDESC_NUM;
-	
-	Adapter->RT_TXDESC_NUM_BE_QUEUE = 
+
+	Adapter->RT_TXDESC_NUM_BE_QUEUE =
 		GetDefaultAdapter(Adapter)->RT_TXDESC_NUM_BE_QUEUE;
 
-	Adapter->MAX_RECEIVE_BUFFER_SIZE = 
+	Adapter->MAX_RECEIVE_BUFFER_SIZE =
 		GetDefaultAdapter(Adapter)->MAX_RECEIVE_BUFFER_SIZE;
 
 	Adapter->MAX_NUM_RFD = GetDefaultAdapter(Adapter)->MAX_NUM_RFD;
-	Adapter->MAX_NUM_RX_DESC = GetDefaultAdapter(Adapter)->MAX_NUM_RX_DESC;	
+	Adapter->MAX_NUM_RX_DESC = GetDefaultAdapter(Adapter)->MAX_NUM_RX_DESC;
 }
 
 
 NDIS_STATUS
 N62CInitializeExtAdapter(
-	IN	PADAPTER		pAdapter,	
+	IN	PADAPTER		pAdapter,
        IN    NDIS_HANDLE         MiniportAdapterHandle,
     	IN  PNDIS_MINIPORT_INIT_PARAMETERS     MiniportInitParameters
 	)
 {
-	// return this status 
+	// return this status
 	NDIS_STATUS			ndisStatus = NDIS_STATUS_SUCCESS;
-	
+
 	PADAPTER 			pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	RT_STATUS			RtStatus = NDIS_STATUS_FAILURE;
 	PMGNT_INFO			pMgntInfo = NULL;
 	PRT_NDIS6_COMMON	pNdisCommon = NULL;
 
-	
+
 	// N62C Specific Resource Elements --------------------------
 	BOOLEAN				bMgntVariableInitialized = FALSE,
 						bRxVariableInitialized = FALSE,
@@ -64,17 +64,17 @@ N62CInitializeExtAdapter(
 	RES_MON_OBJ		ResMonObj;
 	PRT_SDIO_DEVICE	sdiodevice = GET_RT_SDIO_DEVICE(pAdapter);
 	PRT_SDIO_DEVICE	Defualtsdiodevice = GET_RT_SDIO_DEVICE(pDefaultAdapter);
-	
+
 	RT_TRACE(COMP_DBG, DBG_TRACE, ("===> N62CInitializeExtAdapter()	SDIO\n"));
 
 	INIT_RES_MON_OBJ(ResMonObj);
-	
+
 	pAdapter->HardwareType = pDefaultAdapter->HardwareType;
-	
-	sdiodevice->pAdapter = pAdapter;		
+
+	sdiodevice->pAdapter = pAdapter;
 	sdiodevice->hNdisAdapter = MiniportAdapterHandle;
 	pMgntInfo = &(pAdapter->MgntInfo);
-	pNdisCommon = pAdapter->pNdisCommon;	
+	pNdisCommon = pAdapter->pNdisCommon;
 
 	pNdisCommon->NdisVersion = pDefaultAdapter->pNdisCommon->NdisVersion;
 	RT_TRACE_F(COMP_INIT, DBG_LOUD, ("NdisVersion direct get 0x%x\n", pNdisCommon->NdisVersion));
@@ -93,14 +93,14 @@ N62CInitializeExtAdapter(
 
 	pAdapter->pNdisCommon->WDISupport = pDefaultAdapter->pNdisCommon->WDISupport;
 
-	N62CCopyDefaultVariablesToExt(pAdapter);	
-	
+	N62CCopyDefaultVariablesToExt(pAdapter);
+
 	// Initialize event.
 	NdisInitializeEvent(&(sdiodevice->evtSendingNBLCompleted));
 
-	// SyncIo Method 2.  
+	// SyncIo Method 2.
 	KeInitializeEvent( &(sdiodevice->SyncIoEvent), NotificationEvent, TRUE);
-	
+
 	//To avoid allociate pfirmware again.
 	pAdapter->bInitByExtPort=TRUE;
 	//For debug by Maddest
@@ -111,26 +111,26 @@ N62CInitializeExtAdapter(
 
 	// Read the registry parameters
 	ndisStatus= N6SdioReadRegParameters(sdiodevice);
-	if (ndisStatus != NDIS_STATUS_SUCCESS) 
+	if (ndisStatus != NDIS_STATUS_SUCCESS)
 	{
 		RT_TRACE(COMP_INIT, DBG_SERIOUS, ("N6SdioReadRegParameters(X): Read Registry Parameter Failed!\n"));
 		ndisStatus = NDIS_STATUS_FAILURE;
 		goto error;
-	} 
+	}
 
 	InitializeTxVariables(pAdapter);
 
 	InitializeRxVariables(pAdapter);
 	bRxVariableInitialized = TRUE;
-	
+
 	InitializeMgntVariables(pAdapter);
 	bMgntVariableInitialized = TRUE;
 
-	
-		
+
+
 	//----------------------------------------------------------------------------
 	// Update the parameter read from registery to coresponding ones in MGNT_INFO.
-	// NOTE! These modification should be after InitializeMgntVariables() which is called by 
+	// NOTE! These modification should be after InitializeMgntVariables() which is called by
 	// NicIFAssociateNIC().
 	// 2005.01.13, by rcnjko.
 	//
@@ -145,7 +145,7 @@ N62CInitializeExtAdapter(
 
 	// Read adapter information such as MAC address from EEPROM
 	//
-	// Read data from EEPROM and do some customization 
+	// Read data from EEPROM and do some customization
 	// according to custermer ID read from EEPROM.
 	//
 	//NicIFReadAdapterInfo(pAdapter);
@@ -159,7 +159,7 @@ N62CInitializeExtAdapter(
 
 		PMGNT_INFO		pDefaultMgntInfo = &(pDefaultAdapter->MgntInfo);
 		PMGNT_INFO		pMgntInfo = &(pAdapter->MgntInfo);
-		
+
 		pAdapter->EepromAddressSize = pDefaultAdapter->EepromAddressSize;
 
 		PlatformMoveMemory(pAdapter->PermanentAddress, pDefaultAdapter->PermanentAddress, 6);
@@ -212,14 +212,14 @@ N62CInitializeExtAdapter(
 		ndisStatus = NDIS_STATUS_FAILURE;
 		goto error;
 	}
-	
+
 	ADD_RES_TO_MON(ResMonObj, InitRM_AllocNWifi);
 
 	N6InitializeNative80211MIBs(pAdapter);
 
 
 	// Initialize common NDIS resource in PRT_NDIS6_COMMON. 2006.05.07, by rcnjko.
-	InitNdis6CommonResources(pAdapter);		
+	InitNdis6CommonResources(pAdapter);
 	ADD_RES_TO_MON(ResMonObj, InitRM_CommonRS);
 
 
@@ -230,11 +230,11 @@ N62CInitializeExtAdapter(
 #endif
 
 	//
-	// Mark the miniport driver as paused state. 
+	// Mark the miniport driver as paused state.
 	// Note that, please keep this action as last one in MiniportInitializeEx().
 	//
 	N6C_SET_MP_DRIVER_STATE(pAdapter, MINIPORT_PAUSED);
-		
+
 	RT_TRACE(COMP_DBG, DBG_TRACE, ("<=== N62CInitializeExtAdapter(), Initialized Successfully!\n"));
 	return ndisStatus;
 
@@ -246,8 +246,8 @@ error:
 	if(bMgntVariableInitialized) 	DeInitializeMgntVariables(pAdapter);
 	if(bRxVariableInitialized) 	DeInitializeRxVariables(pAdapter);
 
-	CLEANUP_RES_IN_MON(ResMonObj, pAdapter);	
-	return ndisStatus;	
+	CLEANUP_RES_IN_MON(ResMonObj, pAdapter);
+	return ndisStatus;
 
 }
 
@@ -258,12 +258,12 @@ error:
  * Win 7 Initialize Here, for tell N62 initial process we use compile flag
  * Here Initialize everything releated N62
  *
- * @param	pAdapter is driver main strucutre.  
+ * @param	pAdapter is driver main strucutre.
 */
 
 NDIS_STATUS
 N62CInitialize(
-	IN	PADAPTER		pAdapter,	
+	IN	PADAPTER		pAdapter,
        IN    NDIS_HANDLE         MiniportAdapterHandle,
     	IN  	PNDIS_MINIPORT_INIT_PARAMETERS     MiniportInitParameters
 	)
@@ -272,8 +272,8 @@ N62CInitialize(
 	u1Byte 			i;
 	PADAPTER		pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER		pExtAdapter = NULL;
-	
-	
+
+
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("===>N62CInitialize()\n"));
 
 
@@ -301,7 +301,7 @@ N62CInitialize(
 	// Initialize variables for Ndis 6.20+ ---
 	N62CInitVariable(pDefaultAdapter);
 	// -------------------------------
-	
+
 
 	// Prepare Each Extension Port ------------------------------------------------------------------------
 	for( i = 1; i < MP_DEFAULT_NUMBER_OF_PORT; i++)
@@ -312,17 +312,17 @@ N62CInitialize(
 		{
 
 			RT_TRACE(COMP_INIT, DBG_SERIOUS, ("%s: N62CAllocateExtAdapter: Failure!\n", __FUNCTION__));
-			break;	
+			break;
 		}
 
 		cpMacAddr(pExtAdapter->CurrentAddress,pDefaultAdapter->CurrentAddress);
 
 		PlatformMoveMemory(
-				pExtAdapter->pNdis62Common, 
-				pDefaultAdapter->pNdis62Common, 
+				pExtAdapter->pNdis62Common,
+				pDefaultAdapter->pNdis62Common,
 				sizeof(RT_NDIS62_COMMON)
 			);
-		
+
 		pExtAdapter->pNdis62Common->PortNumber= 0;
 		pExtAdapter->bHWInitReady = pDefaultAdapter->bHWInitReady;
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("N62CInitialize(), set pExtAdapter->bHWInitReady=pDefaultAdapter->bHWInitReady = %d\n",
@@ -330,13 +330,13 @@ N62CInitialize(
 		pExtAdapter->bSWInitReady = FALSE;
 
 		ndisStatus = N62CInitializeExtAdapter(
-				pExtAdapter, 
-				MiniportAdapterHandle, 
+				pExtAdapter,
+				MiniportAdapterHandle,
 				MiniportInitParameters
 			);
-		
+
 		if(ndisStatus != NDIS_STATUS_SUCCESS)
-		{	
+		{
 			// Release the resource allocated in N62CAllocateExtAdapter
 			N62CFreePortSpecificComponent(pExtAdapter);
 			N6FreeAdapter(pExtAdapter);
@@ -368,9 +368,9 @@ N62CInitialize(
 	}
 	else
 	{
-		RT_TRACE(COMP_INIT, DBG_LOUD, ("%d Adapters have been allocated <===N62CInitialize ()\n", i));	
+		RT_TRACE(COMP_INIT, DBG_LOUD, ("%d Adapters have been allocated <===N62CInitialize ()\n", i));
 	}
-	
+
 	return ndisStatus;
 }
 
@@ -384,14 +384,14 @@ N62CAllocateExtAdapter(
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	RT_STATUS			rtStatus = RT_STATUS_SUCCESS;
 
-	do 
+	do
 	{
 		//
 		// Allocate the adapter structure.
 		//
 		rtStatus = PlatformAllocateMemory(
-				pDefaultAdapter, 
-				(PVOID*)&(*ppHelperAdapter), 
+				pDefaultAdapter,
+				(PVOID*)&(*ppHelperAdapter),
 				sizeof(ADAPTER)
 			);
 		if (rtStatus != RT_STATUS_SUCCESS)
@@ -404,13 +404,13 @@ N62CAllocateExtAdapter(
 		{
 			PlatformZeroMemory((*ppHelperAdapter), sizeof(ADAPTER));
 		}
-		
+
 		//
 		// Allocate RT_NDIS6_COMMON.
 		//
 		rtStatus = PlatformAllocateMemory(
-				pDefaultAdapter, 
-				(PVOID)&((*ppHelperAdapter)->pNdisCommon), 
+				pDefaultAdapter,
+				(PVOID)&((*ppHelperAdapter)->pNdisCommon),
 				sizeof(RT_NDIS6_COMMON)
 			);
 		if (rtStatus != RT_STATUS_SUCCESS)
@@ -426,7 +426,7 @@ N62CAllocateExtAdapter(
 			PlatformZeroMemory((*ppHelperAdapter)->pNdisCommon, sizeof(RT_NDIS6_COMMON));
 		}
 
-		
+
 		//
 		// Store Handle to the ext adapter.
 		//
@@ -446,23 +446,23 @@ N62CAllocateExtAdapter(
 		rtStatus = MgntAllocMemory((*ppHelperAdapter));
 		if(rtStatus != RT_STATUS_SUCCESS)
 		{
-			RT_TRACE(COMP_INIT, DBG_SERIOUS, 
+			RT_TRACE(COMP_INIT, DBG_SERIOUS,
 				("N62CAllocateExtAdapter(): failed to allocate MGNT_INFO for the ExtAdapter!!!\n"));
 
 			PlatformFreeMemory((*ppHelperAdapter)->pNdisCommon, sizeof(RT_NDIS6_COMMON));
-			
+
 			PlatformFreeMemory((*ppHelperAdapter), sizeof(ADAPTER));
-			
+
 			ndisStatus = NDIS_STATUS_FAILURE;
 			break;
 		}
 
 
-		
+
 		ndisStatus = N62CAllocatePortSpecificComponent(*ppHelperAdapter);
 		if (ndisStatus != NDIS_STATUS_SUCCESS)
 		{
-			RT_TRACE(COMP_INIT, DBG_SERIOUS, 
+			RT_TRACE(COMP_INIT, DBG_SERIOUS,
 				("N62CAllocateExtAdapter(): failed to allocate RT_NDIS6_COMMON for the ExtAdapter!!!\n"));
 
 			MgntFreeMemory((*ppHelperAdapter));
@@ -470,15 +470,15 @@ N62CAllocateExtAdapter(
 			PlatformFreeMemory((*ppHelperAdapter)->pNdisCommon, sizeof(RT_NDIS6_COMMON));
 
 			PlatformFreeMemory((*ppHelperAdapter), sizeof(ADAPTER));
-			
+
 			ndisStatus = NDIS_STATUS_FAILURE;
 			break;
 		}
-		
+
 	}while(FALSE);
 
 	return ndisStatus;
-	
+
 }
 
 //
@@ -494,9 +494,9 @@ N62CFreeExtAdapter(
 	PRT_NDIS6_COMMON pNdisCommon = pExtAdapter->pNdisCommon;
 
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("===> N62CFreeExtAdapter()\n"));
-	
+
 	pExtAdapter->bDriverStopped = TRUE;
-	
+
 	// For AP mode. 2005.06.30, by rcnjko.
 	if(ACTING_AS_AP(pExtAdapter))
 	{
@@ -504,14 +504,14 @@ N62CFreeExtAdapter(
 		NdisMSleep(500); // Sleep for a while here to allow disasoc completed sending out.
 	}
 
-	
+
 	// Release common NDIS resource
 	ReleaseNdis6CommonResources(pExtAdapter);
 
 	N6SdioFreeNative80211MIBs(pExtAdapter);
 
 	DeInitializeMgntVariables(pExtAdapter);
-		
+
 	DeInitializeRxVariables(pExtAdapter);
 
 
@@ -525,11 +525,11 @@ N62CFreeExtAdapter(
 
 	PlatformReleaseSpinLock(pExtAdapter, RT_TX_SPINLOCK);
 	PlatformReleaseSpinLock(pExtAdapter, RT_RX_SPINLOCK);
-		
+
 	N62CFreePortSpecificComponent(pExtAdapter);
-		
+
 	N6FreeAdapter(pExtAdapter);
-		
+
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("<=== N62CFreeExtAdapter()\n"));
 }
 
@@ -539,29 +539,29 @@ N62CAllocatePortCommonComponent(
 )
 {
 	// Allocate Port Common Component for Ndis 6.20+
-	
+
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	RT_STATUS		rtStatus = RT_STATUS_SUCCESS;
 
 	PPORT_COMMON_INFO pPortCommonInfo = pAdapter->pPortCommonInfo;
-	
+
 	do
 	{
 		// Allocate the helper structure that is shared by every adapter ------------------------------------------------------------------------
 		rtStatus = PlatformAllocateMemory(
 				pAdapter,
-				&(pPortCommonInfo->pPortHelper), 
+				&(pPortCommonInfo->pPortHelper),
 				sizeof(PORT_HELPER)
 			);
-		
+
 		if (rtStatus != RT_STATUS_SUCCESS)
 		{
 			RT_TRACE(COMP_INIT, DBG_SERIOUS, ("N62CAllocatePortCommonComponent(): failed to allocate memory for the HELPER structure.\n"));
 			ndisStatus = NDIS_STATUS_FAILURE;
 			break;
 		}
-		else 
-		{	
+		else
+		{
 			PlatformZeroMemory(pPortCommonInfo->pPortHelper, sizeof(PORT_HELPER));
 		}
 		// ---------------------------------------------------------------------------------------------------------------------------
@@ -569,19 +569,19 @@ N62CAllocatePortCommonComponent(
 
 
 		// Allocate the WorkItem to Create and Delete Ports ------------------------------------------------------------------------
-		rtStatus = PlatformInitializeWorkItem(pAdapter, 
+		rtStatus = PlatformInitializeWorkItem(pAdapter,
 				&(pPortCommonInfo->pPortHelper->CreateDeleteMacWorkitem),
 				( RT_WORKITEM_CALL_BACK) N62CCreateDeleteMacWorkItemCallback,
-				(PVOID) pAdapter, 
+				(PVOID) pAdapter,
 				"Ndis62CreateDeleteWorkitem"
 			);
 
 
 		PlatformInitializeTimer(
-							pAdapter, 
-							&(pPortCommonInfo->pPortHelper->CreateDeleteMacTimer), 
-							(RT_TIMER_CALL_BACK)N62CCreateDeleteMacTimerCallback, 
-							NULL, 
+							pAdapter,
+							&(pPortCommonInfo->pPortHelper->CreateDeleteMacTimer),
+							(RT_TIMER_CALL_BACK)N62CCreateDeleteMacTimerCallback,
+							NULL,
 							"CreateDeleteMacTimer");
 
 
@@ -594,7 +594,7 @@ N62CAllocatePortCommonComponent(
 		}
 		// ------------------------------------------------------------------------------------------------------------------
 	} while(FALSE);
-	
+
 	return	ndisStatus;
 }
 
@@ -607,7 +607,7 @@ N62CFreePortCommonComponent(
 
 	PlatformFreeWorkItem( &(pPortCommonInfo->pPortHelper->CreateDeleteMacWorkitem));
 	PlatformReleaseTimer(pAdapter, &(pPortCommonInfo->pPortHelper->CreateDeleteMacTimer));
-	PlatformFreeMemory(pPortCommonInfo->pPortHelper, sizeof(PORT_HELPER));	
+	PlatformFreeMemory(pPortCommonInfo->pPortHelper, sizeof(PORT_HELPER));
 }
 
 NDIS_STATUS
@@ -617,31 +617,31 @@ N62CAllocatePortSpecificComponent(
 {
 	NDIS_STATUS		ndisStatus = NDIS_STATUS_SUCCESS;
 	RT_STATUS		rtStatus = RT_STATUS_SUCCESS;
-	
+
 	do
 	{
 		//
 		// Allocate Ndis62Common
 		//
 		rtStatus = PlatformAllocateMemory(
-				pAdapter, 
-				&(pAdapter->pNdis62Common), 
+				pAdapter,
+				&(pAdapter->pNdis62Common),
 				sizeof(RT_NDIS62_COMMON)
 			);
-		
+
 		if (rtStatus != RT_STATUS_SUCCESS)
 		{
 			RT_TRACE(COMP_INIT, DBG_SERIOUS, ("N62CAllocatePortSpecificComponent(): failed to allocate memory for pNdis62Common.\n"));
 			ndisStatus = NDIS_STATUS_FAILURE;
 			break;
 		}
-		else 
-		{	
+		else
+		{
 			PlatformZeroMemory(pAdapter->pNdis62Common, sizeof(RT_NDIS62_COMMON));
 		}
-		
+
 	} while(FALSE);
-	
+
 	return	ndisStatus;
 }
 
@@ -651,22 +651,22 @@ N62CFreePortSpecificComponent(
 )
 {
 	PRT_NDIS62_COMMON pNdis62Common = pAdapter->pNdis62Common;
-	
+
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("===>N62CFreePortSpecificComponent()\n"));
 
 	PlatformFreeMemory(pAdapter->pNdis62Common, sizeof(RT_NDIS62_COMMON));
 	pAdapter->pNdis62Common = NULL;
-	
+
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("<===N62CFreePortSpecificComponent()\n"));
 }
 
 
 /*
  *2008/05/09 Add by Mars
- * 
- * To Register the AP and Ndis 6.2 Releated Attribute 
  *
- * @param	pAdapter is driver main strucutre.  
+ * To Register the AP and Ndis 6.2 Releated Attribute
+ *
+ * @param	pAdapter is driver main strucutre.
 */
 
 NDIS_STATUS
@@ -685,9 +685,9 @@ N62CSet80211Attributes(
 	u1Byte                                    tempAuthType = 0;
 
         ULONG                       vwifiAttrSize = 0;
-	PHAL_DATA_TYPE	    pHalData = GET_HAL_DATA(pAdapter);       
+	PHAL_DATA_TYPE	    pHalData = GET_HAL_DATA(pAdapter);
 	BOOLEAN			    bStartVwifi = TRUE;
-	PMGNT_INFO		    pMgntInfo = &(pAdapter->MgntInfo);	
+	PMGNT_INFO		    pMgntInfo = &(pAdapter->MgntInfo);
 
 
 	PlatformZeroMemory(&Dot11Attributes, sizeof(NDIS_MINIPORT_ADAPTER_ATTRIBUTES));
@@ -697,38 +697,38 @@ N62CSet80211Attributes(
 	Dot11Attributes.Native_802_11_Attributes.Header.Type=NDIS_OBJECT_TYPE_MINIPORT_ADAPTER_NATIVE_802_11_ATTRIBUTES;
 		//NDIS 6
 	Dot11Attributes.Native_802_11_Attributes.Header.Revision=NDIS_MINIPORT_ADAPTER_802_11_ATTRIBUTES_REVISION_2;
-	Dot11Attributes.Native_802_11_Attributes.Header.Size=NDIS_SIZEOF_MINIPORT_ADAPTER_NATIVE_802_11_ATTRIBUTES_REVISION_2;	
+	Dot11Attributes.Native_802_11_Attributes.Header.Size=NDIS_SIZEOF_MINIPORT_ADAPTER_NATIVE_802_11_ATTRIBUTES_REVISION_2;
 
 	Dot11Attributes.Native_802_11_Attributes.OpModeCapability = pNdisCommon->dot11OperationModeCapability.uOpModeCapability;
 	Dot11Attributes.Native_802_11_Attributes.NumOfTXBuffers = pNdisCommon->dot11OperationModeCapability.uNumOfTXBuffers;
 	Dot11Attributes.Native_802_11_Attributes.NumOfRXBuffers = pNdisCommon->dot11OperationModeCapability.uNumOfRXBuffers;
 	Dot11Attributes.Native_802_11_Attributes.MultiDomainCapabilityImplemented = pNdisCommon->dot11MultiDomainCapabilityImplemented;
 	Dot11Attributes.Native_802_11_Attributes.NumSupportedPhys = pNdisCommon->pDot11SupportedPhyTypes->uNumOfEntries;//NATIVE_802_11_CURR_NUM_PHY_TYPES;//pNdisCommon->pDot11SupportedPhyTypes->uNumOfEntries;
-	
+
 	//
 	// SupportedPhyAttributes attributes.
 	//
 	if (Dot11Attributes.Native_802_11_Attributes.NumSupportedPhys)
 	{
 		rtStatus = PlatformAllocateMemory(
-			pAdapter, 
+			pAdapter,
 			&(Dot11Attributes.Native_802_11_Attributes.SupportedPhyAttributes),
 			Dot11Attributes.Native_802_11_Attributes.NumSupportedPhys * sizeof(DOT11_PHY_ATTRIBUTES)
 			);
 		if (rtStatus != RT_STATUS_SUCCESS)
 		{
-			RT_TRACE(COMP_INIT, DBG_SERIOUS, 
+			RT_TRACE(COMP_INIT, DBG_SERIOUS,
 				("N6usbSet80211Attributes(): failed to allocate memory for SupportedPhyAttributes\n"));
 			ndisStatus = NDIS_STATUS_FAILURE;
 			goto Exit;
 		}
 
-		PlatformZeroMemory(Dot11Attributes.Native_802_11_Attributes.SupportedPhyAttributes, 
+		PlatformZeroMemory(Dot11Attributes.Native_802_11_Attributes.SupportedPhyAttributes,
 				Dot11Attributes.Native_802_11_Attributes.NumSupportedPhys * sizeof(DOT11_PHY_ATTRIBUTES));
 		N6SdioFill80211PhyAttributes(pAdapter, &(Dot11Attributes.Native_802_11_Attributes));
 	}
 
-    vwifiAttrSize = sizeof(DOT11_VWIFI_ATTRIBUTES) + 
+    vwifiAttrSize = sizeof(DOT11_VWIFI_ATTRIBUTES) +
                 (NUM_SUPPORTED_VWIFI_COMBINATIONS) * sizeof(DOT11_VWIFI_COMBINATION);
 
 	rtStatus = PlatformAllocateMemory(
@@ -745,12 +745,12 @@ N62CSet80211Attributes(
 	}
 
         //pVWiFiAttribs = (PDOT11_VWIFI_ATTRIBUTES)&(Dot11Attributes.Native_802_11_Attributes.VWiFiAttributes);
-        
+
 	PlatformZeroMemory(Dot11Attributes.Native_802_11_Attributes.VWiFiAttributes, vwifiAttrSize);
-        
-        
+
+
         N6_ASSIGN_OBJECT_HEADER(
-            Dot11Attributes.Native_802_11_Attributes.VWiFiAttributes->Header, 
+            Dot11Attributes.Native_802_11_Attributes.VWiFiAttributes->Header,
             NDIS_OBJECT_TYPE_DEFAULT,
             DOT11_VWIFI_ATTRIBUTES_REVISION_1,
             sizeof(DOT11_VWIFI_ATTRIBUTES));
@@ -759,24 +759,24 @@ N62CSet80211Attributes(
 
         // support for Infra-Infra
         N6_ASSIGN_OBJECT_HEADER(
-            Dot11Attributes.Native_802_11_Attributes.VWiFiAttributes->Combinations[0].Header, 
+            Dot11Attributes.Native_802_11_Attributes.VWiFiAttributes->Combinations[0].Header,
             NDIS_OBJECT_TYPE_DEFAULT,
             DOT11_VWIFI_COMBINATION_REVISION_1,
             sizeof(DOT11_VWIFI_COMBINATION));
 
         Dot11Attributes.Native_802_11_Attributes.VWiFiAttributes->Combinations[0].uNumInfrastructure = 1;
-        
+
         // support for Infra-SoftAP
         // TODO: Sample Driver do this, but a little weird
         N6_ASSIGN_OBJECT_HEADER(
-            Dot11Attributes.Native_802_11_Attributes.VWiFiAttributes->Combinations[0].Header, 
+            Dot11Attributes.Native_802_11_Attributes.VWiFiAttributes->Combinations[0].Header,
             NDIS_OBJECT_TYPE_DEFAULT,
             DOT11_VWIFI_COMBINATION_REVISION_1,
             sizeof(DOT11_VWIFI_COMBINATION));
 
         Dot11Attributes.Native_802_11_Attributes.VWiFiAttributes->Combinations[1].uNumInfrastructure = 1;
         Dot11Attributes.Native_802_11_Attributes.VWiFiAttributes->Combinations[1].uNumSoftAP = 1;
-        
+
 
 	//
 	// ExtSTAAttributes attributes.
@@ -796,7 +796,7 @@ N62CSet80211Attributes(
 
 	PlatformZeroMemory(Dot11Attributes.Native_802_11_Attributes.ExtSTAAttributes,
 						sizeof(DOT11_EXTSTA_ATTRIBUTES));
-	
+
 	//
 	// Get the supported authentication and cipher algorithm.
 	//
@@ -804,10 +804,10 @@ N62CSet80211Attributes(
 
 	// Store current mode and switch to infrastructure mode.
 	// <SC_TODO:>
-	
+
 	tempAuthType = pAdapter->MgntInfo.Regdot11networktype;
 	pAdapter->MgntInfo.Regdot11networktype = RT_JOIN_NETWORKTYPE_INFRA;
-	
+
 	// Unicast & Infrastructure.
 	ndisStatus = N6CQuery_DOT11_SUPPORTED_UNICAST_ALGORITHM_PAIR(
 				pAdapter,
@@ -816,17 +816,17 @@ N62CSet80211Attributes(
 				&BytesWritten,
 				&BytesNeeded);
 	rtStatus = PlatformAllocateMemory(
-				pAdapter, 
-				&(SupportedAuthCipherAlgs.pInfraUcastAuthCipherList), 
+				pAdapter,
+				&(SupportedAuthCipherAlgs.pInfraUcastAuthCipherList),
 				BytesNeeded);
 	if (rtStatus != RT_STATUS_SUCCESS)
 	{
-		RT_TRACE(COMP_INIT, DBG_SERIOUS, 
+		RT_TRACE(COMP_INIT, DBG_SERIOUS,
 			("N6usbSet80211Attributes(): no buffer for N6CQuery_DOT11_SUPPORTED_UNICAST_ALGORITHM_PAIR under infra mode\n"));
 		ndisStatus = NDIS_STATUS_FAILURE;
 		goto Exit;
 	}
-	
+
 	PlatformZeroMemory(SupportedAuthCipherAlgs.pInfraUcastAuthCipherList, BytesNeeded);
 
 	ndisStatus = N6CQuery_DOT11_SUPPORTED_UNICAST_ALGORITHM_PAIR(
@@ -888,17 +888,17 @@ N62CSet80211Attributes(
 				&BytesWritten,
 				&BytesNeeded);
 	rtStatus = PlatformAllocateMemory(
-				pAdapter, 
-				&(SupportedAuthCipherAlgs.pAdhocUcastAuthCipherList), 
+				pAdapter,
+				&(SupportedAuthCipherAlgs.pAdhocUcastAuthCipherList),
 				BytesNeeded);
 	if (rtStatus != RT_STATUS_SUCCESS)
 	{
-		RT_TRACE(COMP_INIT, DBG_SERIOUS, 
+		RT_TRACE(COMP_INIT, DBG_SERIOUS,
 			("N6usbSet80211Attributes(): no buffer for N6CQuery_DOT11_SUPPORTED_UNICAST_ALGORITHM_PAIR under adhoc mode\n"));
 		ndisStatus = NDIS_STATUS_FAILURE;
 		goto Exit;
 	}
-	
+
 	PlatformZeroMemory(SupportedAuthCipherAlgs.pAdhocUcastAuthCipherList, BytesNeeded);
 
 	ndisStatus = N6CQuery_DOT11_SUPPORTED_UNICAST_ALGORITHM_PAIR(
@@ -956,16 +956,16 @@ N62CSet80211Attributes(
 	N6Fill80211ExtStaAttributes(pAdapter, &(Dot11Attributes.Native_802_11_Attributes), &SupportedAuthCipherAlgs);
 
 	//
-	// Register Ndis 6.2 AP Mode 
+	// Register Ndis 6.2 AP Mode
 	//
 	//Set Extension AP Mode
-	
+
 	if(bStartVwifi)
 	{
         Dot11Attributes.Native_802_11_Attributes.OpModeCapability |= DOT11_OPERATION_MODE_EXTENSIBLE_AP;
 
-		PlatformAllocateMemory(pAdapter, 
-			&(Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes), 
+		PlatformAllocateMemory(pAdapter,
+			&(Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes),
 			sizeof(DOT11_EXTAP_ATTRIBUTES));
 
 		if(Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes == NULL)
@@ -978,7 +978,7 @@ N62CSet80211Attributes(
 		PlatformZeroMemory(Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes, sizeof(DOT11_EXTAP_ATTRIBUTES));
 
 		N6_ASSIGN_OBJECT_HEADER(
-	            Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes->Header, 
+	            Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes->Header,
 	            NDIS_OBJECT_TYPE_DEFAULT,
 	            DOT11_EXTAP_ATTRIBUTES_REVISION_1,
 	            sizeof(DOT11_EXTAP_ATTRIBUTES));
@@ -987,7 +987,7 @@ N62CSet80211Attributes(
 	        Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes->uPrivacyExemptionListSize = NATIVE_802_11_MAX_PRIVACY_EXEMPTION;
 		 // TODO: Get the real Size Some day
 	        Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes->uDefaultKeyTableSize = DOT11_MAX_NUM_DEFAULT_KEY;//VNic11DefaultKeyTableSize(vnic);
-	        Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes->uWEPKeyValueMaxLength = ( 104 / 8);//VNic11WEP104Implemented(vnic) ? 
+	        Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes->uWEPKeyValueMaxLength = ( 104 / 8);//VNic11WEP104Implemented(vnic) ?
 	                                                // 104 / 8 : (VNic11WEP40Implemented(vnic) ? 40 / 8 : 0);
 
 	        Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes->uDesiredSSIDListSize = AP_DESIRED_SSID_LIST_MAX_SIZE;
@@ -999,7 +999,7 @@ N62CSet80211Attributes(
 	        //
 	        Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes->uNumSupportedCountryOrRegionStrings = 0;
 	        Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes->pSupportedCountryOrRegionStrings = NULL;
-			
+
 		// In Ndis 6.0 We use Ad hoc to simulize AP mode So the Ad hoc Security will be the security we support
 		// TODO: Win 7 , We should support more security in here for Win 7 V3 AP Mode
 		if(pAdapter->bInHctTest)
@@ -1016,24 +1016,24 @@ N62CSet80211Attributes(
 		else
 		{
 			// In Ndis 6.0 We use Ad hoc to simulize AP mode So the Ad hoc Security will be the security we support
-			Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes->uInfraNumSupportedUcastAlgoPairs = 
+			Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes->uInfraNumSupportedUcastAlgoPairs =
 				SupportedAuthCipherAlgs.pInfraUcastAuthCipherList	->uNumOfEntries;
 			Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes->pInfraSupportedUcastAlgoPairs =
 				SupportedAuthCipherAlgs.pInfraUcastAuthCipherList->AuthCipherPairs;
 
-			Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes->uInfraNumSupportedMcastAlgoPairs = 
+			Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes->uInfraNumSupportedMcastAlgoPairs =
 				SupportedAuthCipherAlgs.pInfraMcastAuthCipherList->uNumOfEntries;
 			Dot11Attributes.Native_802_11_Attributes.ExtAPAttributes->pInfraSupportedMcastAlgoPairs =
 				SupportedAuthCipherAlgs.pInfraMcastAuthCipherList->AuthCipherPairs;
 		}
-		
+
 	}
 	//
 	// Ok, now egister the attributes.
 	//
 	ndisStatus = NdisMSetMiniportAttributes(pAdapter->pNdisCommon->hNdisAdapter,
 								(PNDIS_MINIPORT_ADAPTER_ATTRIBUTES)&Dot11Attributes
-								);	
+								);
 
 Exit:
 	// Memory cleanup.
@@ -1042,7 +1042,7 @@ Exit:
 	{
 		PlatformFreeMemory(
 			SupportedAuthCipherAlgs.pInfraUcastAuthCipherList,
-			SupportedAuthCipherAlgs.pInfraUcastAuthCipherList->uNumOfEntries * sizeof(DOT11_AUTH_CIPHER_PAIR) + 
+			SupportedAuthCipherAlgs.pInfraUcastAuthCipherList->uNumOfEntries * sizeof(DOT11_AUTH_CIPHER_PAIR) +
 				FIELD_OFFSET(DOT11_AUTH_CIPHER_PAIR_LIST, AuthCipherPairs));
 	}
 
@@ -1050,15 +1050,15 @@ Exit:
 	{
 		PlatformFreeMemory(
 			SupportedAuthCipherAlgs.pInfraMcastAuthCipherList,
-			SupportedAuthCipherAlgs.pInfraMcastAuthCipherList->uNumOfEntries * sizeof(DOT11_AUTH_CIPHER_PAIR) + 
+			SupportedAuthCipherAlgs.pInfraMcastAuthCipherList->uNumOfEntries * sizeof(DOT11_AUTH_CIPHER_PAIR) +
 				FIELD_OFFSET(DOT11_AUTH_CIPHER_PAIR_LIST, AuthCipherPairs));
-	}	
+	}
 
 	if (SupportedAuthCipherAlgs.pAdhocUcastAuthCipherList != NULL)
 	{
 		PlatformFreeMemory(
 			SupportedAuthCipherAlgs.pAdhocUcastAuthCipherList,
-			SupportedAuthCipherAlgs.pAdhocUcastAuthCipherList->uNumOfEntries * sizeof(DOT11_AUTH_CIPHER_PAIR) + 
+			SupportedAuthCipherAlgs.pAdhocUcastAuthCipherList->uNumOfEntries * sizeof(DOT11_AUTH_CIPHER_PAIR) +
 				FIELD_OFFSET(DOT11_AUTH_CIPHER_PAIR_LIST, AuthCipherPairs));
 	}
 
@@ -1066,7 +1066,7 @@ Exit:
 	{
 		PlatformFreeMemory(
 			SupportedAuthCipherAlgs.pAdhocMcastAuthCipherList,
-			SupportedAuthCipherAlgs.pAdhocMcastAuthCipherList->uNumOfEntries * sizeof(DOT11_AUTH_CIPHER_PAIR) + 
+			SupportedAuthCipherAlgs.pAdhocMcastAuthCipherList->uNumOfEntries * sizeof(DOT11_AUTH_CIPHER_PAIR) +
 				FIELD_OFFSET(DOT11_AUTH_CIPHER_PAIR_LIST, AuthCipherPairs));
 	}
 
@@ -1107,7 +1107,7 @@ N62CInitVariable(
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PPORT_HELPER pPortHelper =pDefaultAdapter->pPortCommonInfo->pPortHelper;
 	PMGNT_INFO pMgntInfo = &(pAdapter->MgntInfo);
-		
+
 	//===================Default Adapter variable initialize===================
 	pNdisCommon->dot11CurrentOperationMode.uCurrentOpMode=DOT11_OPERATION_MODE_UNKNOWN;
 	pNdis62Common->PortNumber=0;
@@ -1121,27 +1121,27 @@ N62CInitVariable(
 
 	//===================initialize VWiFi AP variable========================
 	GetDefaultMgntInfo(pAdapter)->ApType = RT_AP_TYPE_NONE;
-	
+
 }
 
 PADAPTER
 GetAdapterByPortNum(
-	PADAPTER	Adapter, 
+	PADAPTER	Adapter,
 	u1Byte PortNum
 	)
 {
 	PADAPTER	pAdapter = GetDefaultAdapter((Adapter));
 
-	while(pAdapter!=NULL) 	
+	while(pAdapter!=NULL)
 	{
 		if(pAdapter->pNdis62Common->PortNumber == PortNum)
 			break;
 		pAdapter = GetNextExtAdapter(pAdapter);
 	}
-	
+
 	if(pAdapter == NULL)
 		pAdapter = GetDefaultAdapter(Adapter);
-	
+
 	return pAdapter;
 }
 

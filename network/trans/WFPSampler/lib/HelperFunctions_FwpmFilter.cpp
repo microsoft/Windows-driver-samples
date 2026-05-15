@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -95,7 +95,7 @@
 
 /**
  @private_function="PrvFwpByteBlobPurge"
- 
+
    Purpose:  Cleanup an FWP_BYTE_BLOB.                                                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -113,7 +113,7 @@ inline VOID PrvFwpByteBlobPurge(_Inout_ FWP_BYTE_BLOB* pBlob)
 
 /**
  @private_function="PrvFwpByteBlobDestroy"
- 
+
    Purpose:  Cleanup and free an FWP_BYTE_BLOB.                                                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -135,7 +135,7 @@ VOID PrvFwpByteBlobDestroy(_Inout_ FWP_BYTE_BLOB** ppBlob)
 
 /**
  @private_function="PrvFwpTokenInformationPurge"
- 
+
    Purpose:  Cleanup an FWP_TOKEN_INFORMATION.                                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -152,16 +152,16 @@ inline VOID PrvFwpTokenInformationPurge(_Inout_ FWP_TOKEN_INFORMATION* pTokenInf
    {
       HLPR_DELETE_ARRAY(pTokenInfo->sids[i].Sid);
    }
-   
+
    HLPR_DELETE_ARRAY(pTokenInfo->sids);
-   
+
    for(UINT32 i = 0;
        i < pTokenInfo->restrictedSidCount;
        i++)
    {
       HLPR_DELETE_ARRAY(pTokenInfo->restrictedSids[i].Sid);
    }
-   
+
    HLPR_DELETE_ARRAY(pTokenInfo->restrictedSids);
 
    return;
@@ -169,7 +169,7 @@ inline VOID PrvFwpTokenInformationPurge(_Inout_ FWP_TOKEN_INFORMATION* pTokenInf
 
 /**
  @private_function="PrvFwpTokenInformationDestroy"
- 
+
    Purpose:  Cleanup and free an FWP_TOKEN_INFORMATION.                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -229,7 +229,7 @@ VOID PrvFwpV6AddrAndMaskDestroy(_Inout_ FWP_V6_ADDR_AND_MASK** ppAddrMask)
 
 /**
  @private_function="PrvFwpValuePurge"
- 
+
    Purpose:  Cleanup an FWP_VALUE.                                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -329,7 +329,7 @@ VOID PrvFwpValuePurge(_Inout_ FWP_VALUE* pValue)
 
 /**
  @private_function="PrvFwpRangeDestroy"
- 
+
    Purpose:  Cleanup and free an FWP_RANGE.                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -355,10 +355,10 @@ VOID PrvFwpRangeDestroy(_Inout_ FWP_RANGE** ppRange)
 }
 /**
  @helper_function="HlprFwpmFilterConditionPrune"
- 
+
    Purpose:  Remove duplicate conditions from the supplied filterCondition array.               <br>
                                                                                                 <br>
-   Notes:    Due to a bug in WFP, filter enumeration cannot handle multiple consecutive 
+   Notes:    Due to a bug in WFP, filter enumeration cannot handle multiple consecutive
              conditions.                                                                        <br>
                                                                                                 <br>
    MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/Windows/Desktop/AA364268.aspx              <br>
@@ -408,7 +408,7 @@ VOID HlprFwpmFilterConditionPrune(_In_reads_(numFilterConditions) const FWPM_FIL
             }
             else
             {
-               /// ... then copy only if the current condition is not the same as the previous 
+               /// ... then copy only if the current condition is not the same as the previous
                /// condition.
                if(pFilterConditions[index].fieldKey != pFilterConditions[index - 1].fieldKey)
                {
@@ -434,7 +434,7 @@ VOID HlprFwpmFilterConditionPrune(_In_reads_(numFilterConditions) const FWPM_FIL
 
 /**
  @helper_function="HlprFwpmFilterConditionPurge"
- 
+
    Purpose:  Cleanup an FWPM_FILTER_CONDITION.                                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -564,7 +564,7 @@ VOID HlprFwpmFilterConditionPurge(_Inout_ FWPM_FILTER_CONDITION* pFilterConditio
 
 /**
  @helper_function="HlprFwpmFilterConditionDestroy"
- 
+
    Purpose:  Cleanup and free an (array of) FWPM_FILTER_CONDITION.                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -600,7 +600,7 @@ VOID HlprFwpmFilterConditionDestroy(_Inout_updates_all_(numFilterConditions) FWP
 
 /**
  @helper_function="HlprFwpmFilterConditionCreate"
- 
+
    Purpose:  Allocate an (array of) FWPM_FILTER_CONDITION.                                      <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -643,7 +643,7 @@ UINT32 HlprFwpmFilterConditionCreate(_Inout_updates_all_(numFilterConditions) FW
 
 /**
  @helper_function="HlprFwpmFilterConditionIsValidForLayer"
- 
+
    Purpose:  Determine if the provided filtering condition is available at the provided layer.  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1289,7 +1289,7 @@ BOOLEAN HlprFwpmFilterConditionIsValidForLayer(_In_ const GUID* pLayerKey,
 
 /**
  @helper_function="HlprFwpmFilterEnum"
- 
+
    Purpose:  Wrapper for the FwpmFilterEnum API.                                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1336,7 +1336,7 @@ UINT32 HlprFwpmFilterEnum(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmFilterDestroyEnumHandle"
- 
+
    Purpose:  Wrapper for the FwpmFilterDestroyEnumHandle API.                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1376,7 +1376,7 @@ UINT32 HlprFwpmFilterDestroyEnumHandle(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmFilterCreateEnumHandle"
- 
+
    Purpose:  Wrapper for the FwpmFilterCreateEnumHandle API.                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1411,7 +1411,7 @@ UINT32 HlprFwpmFilterCreateEnumHandle(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmFilterDeleteByKey"
- 
+
    Purpose:  Wrapper for the FwpmFilterDeleteByKey API.                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1450,7 +1450,7 @@ UINT32 HlprFwpmFilterDeleteByKey(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmFilterAdd"
- 
+
    Purpose:  Wrapper for the FwpmFilterAdd API.                                                 <br>
                                                                                                 <br>
    Notes:    Filter ID is written to pFilter->filterId.                                         <br>
@@ -1479,7 +1479,7 @@ UINT32 HlprFwpmFilterAdd(_In_ const HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmFilterRemoveAll"
- 
+
    Purpose:  Remove all filters associated with the specified provider.                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1560,7 +1560,7 @@ UINT32 HlprFwpmFilterRemoveAll(_In_opt_ HANDLE* pEngineHandle,
 
 /**
  @helper_function="HlprFwpmFilterPurge"
- 
+
    Purpose:  Cleanup an FWPM_FILTER.                                                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1583,7 +1583,7 @@ VOID HlprFwpmFilterPurge(_Inout_ FWPM_FILTER* pFilter)
 
 /**
  @helper_function="HlprFwpmFilterDestroy"
- 
+
    Purpose:  Cleanup and free an (array of) FWPM_FILTER.                                        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1619,7 +1619,7 @@ VOID HlprFwpmFilterDestroy(_Inout_updates_all_(numFilters) FWPM_FILTER** ppFilte
 
 /**
  @helper_function="HlprFwpmFilterCreate"
- 
+
    Purpose:  Allocate an (array of) FWPM_FILTER.                                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

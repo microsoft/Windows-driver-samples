@@ -6,7 +6,7 @@
 //      Scenarios_BasicPacketModification.h
 //
 //   Abstract:
-//      This module contains prototypes for functions which run the specified 
+//      This module contains prototypes for functions which run the specified
 //         BASIC_PACKET_MODIFICATION scenario.
 //
 //   Author:

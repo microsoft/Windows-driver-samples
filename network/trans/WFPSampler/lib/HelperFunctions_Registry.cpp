@@ -30,7 +30,7 @@
 
 /**
  @helper_function="HlprRegistryDeleteValue"
- 
+
    Purpose: Delete the Value from the specified Registry key.                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -96,7 +96,7 @@ UINT32 HlprRegistryDeleteValue(_In_ HKEY hKey,
 
 /**
  @helper_function="HlprRegistrySetValue"
- 
+
    Purpose: Opens a handle to the key, creates the appropriate value, and closes the key.       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -158,7 +158,7 @@ UINT32 HlprRegistrySetValue(_In_ HKEY hKey,
 
 /**
  @helper_function="HlprRegistryGetValue"
- 
+
    Purpose: Retrieves a value from the registry.                                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -193,11 +193,11 @@ UINT32 HlprRegistryGetValue(_In_ HKEY hKey,
    HLPR_BAIL_LABEL:
 
    return status;
-} 
+}
 
 /**
  @helper_function="HlprRegistryDeleteKey"
- 
+
    Purpose: Delete the SubKey from the Registry.                                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

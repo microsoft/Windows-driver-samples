@@ -6,7 +6,7 @@
 //      CompletionFunctions_BasicPacketModificationCallouts.cpp
 //
 //   Abstract:
-//      This module contains prototypes for WFP Completion functions for injecting modified packets 
+//      This module contains prototypes for WFP Completion functions for injecting modified packets
 //         back into the data path using the clone / block / inject method.
 //
 //   Author:

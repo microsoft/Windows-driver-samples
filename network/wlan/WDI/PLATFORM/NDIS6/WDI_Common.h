@@ -35,27 +35,27 @@ WDI_Initialize(
 	);
 
 VOID
-WDI_DeInitialize(	
+WDI_DeInitialize(
 	IN  NDIS_HANDLE			DriverHandle
 	);
 
 VOID
-WDI_InitRxQueue(	
+WDI_InitRxQueue(
 	IN  PADAPTER		pAdapter
 	);
 
 VOID
-WDI_DeInitRxQueue(	
+WDI_DeInitRxQueue(
 	IN  PADAPTER		pAdapter
 	);
 
 VOID
-WDI_DeInitRxQueue(	
+WDI_DeInitRxQueue(
 	IN  PADAPTER		pAdapter
 	);
-	
+
 VOID
-WDI_PnPNotiry(	
+WDI_PnPNotiry(
 	IN  PADAPTER				pAdapter
 	);
 
@@ -134,7 +134,7 @@ WDI_IndicateBssListBySSID(
 	);
 
 VOID
-WDI_IndicateConnectionComplete(	
+WDI_IndicateConnectionComplete(
 	PADAPTER		Adapter,
 	RT_STATUS		status
 	);
@@ -146,7 +146,7 @@ WDI_IndicateAssociationComplete(
 	);
 
 VOID
-WDI_IndicateDisassociation(	
+WDI_IndicateDisassociation(
 	PADAPTER		Adapter,
 	u2Byte			reason,
 	pu1Byte			pAddr
@@ -163,7 +163,7 @@ WDI_IndicateCurrentPhyStatus(
 	);
 
 VOID
-WDI_IndicateP2PEvent(	
+WDI_IndicateP2PEvent(
 	VOID 			*pvP2PInfo,
 	u4Byte 			EventID,
 	MEMORY_BUFFER	*pInformation
@@ -176,12 +176,12 @@ WDI_CompleteCreateDeleteMac(
 	);
 
 VOID
-WDI_IndicateRoamingComplete(	
+WDI_IndicateRoamingComplete(
 	PADAPTER		Adapter
 	);
 
 VOID
-WDI_IndicateLinkStateChanged(	
+WDI_IndicateLinkStateChanged(
 	PADAPTER		pAdapter,
 	BOOLEAN			bForceLinkQuality,
 	u1Byte			ucLinkQuality
@@ -202,30 +202,30 @@ WDI_IndicateWakeReason(
 	);
 
 VOID
-WDI_IndicateRoamingNeeded(	
+WDI_IndicateRoamingNeeded(
 	PADAPTER				pAdapter,
 	RT_PREPARE_ROAM_TYPE	IndicationReason
 	);
 
-VOID 
+VOID
 WDI_AddGroupPeer(
 	IN  PADAPTER 	pAdapter,
 	IN  u2Byte		PortNumber
 	);
 
-VOID 
+VOID
 WDI_DeleteGroupPeer(
 	IN  PADAPTER 	pAdapter,
 	IN  u2Byte		PortNumber
 	);
 
-NDIS_STATUS 
+NDIS_STATUS
 WDI_AddDatapathPeer(
 	IN	PADAPTER 	pAdapter,
 	IN	pu1Byte 		pAddr
 	);
 
-void 
+void
 WDI_DeleteDatapathPeer(
 	IN	PADAPTER 	pAdapter,
 	IN	pu1Byte		pAddr
@@ -244,7 +244,7 @@ WDI_FetchNBLByPort(
 	OUT		PNET_BUFFER_LIST	*ppNetBufferList
 	);
 
-VOID 
+VOID
 WDI_IndicateTKIPMICFailure(
 	PADAPTER		pAdapter
 	);

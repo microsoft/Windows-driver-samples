@@ -8,19 +8,19 @@
  *
  *
  * Note:		Declare some variable which will be used by any debug command.
- *			
  *
- * Export:		
  *
- * Abbrev:			
+ * Export:
  *
- * History:		
- *	Data		Who		Remark 
+ * Abbrev:
+ *
+ * History:
+ *	Data		Who		Remark
  *	08/01/2007  MHC    	Create initial version.
- *	08/02/2007	MHC		Because some variable use strcure defined in HAL 
+ *	08/02/2007	MHC		Because some variable use strcure defined in HAL
  *						relative header files. We must copy the structure to
  *						pass all NIC's source files in common directory.
- * 
+ *
  *****************************************************************************/
  /* Check to see if the file has been included already.  */
 #ifndef	__DBG_CMD_H__
@@ -39,7 +39,7 @@
 /*--------------------------Define Parameters-------------------------------*/
 
 
-/*------------------------------Define structure----------------------------*/ 
+/*------------------------------Define structure----------------------------*/
 /* 2007/08/02 MH The structure must be the same with _TX_FWINFO_8190PCI */
 
 #ifdef REMOVE_PACK
@@ -53,18 +53,18 @@ typedef struct _TX_FWINFO_STRUCUTRE{
 	u1Byte			RtsRate:7;
 	u1Byte			RtsEnable:1;
 	u1Byte			TxHT:1;
-	u1Byte			Short:1;					
-	u1Byte			TxBandwidth:1;				
-	u1Byte			TxSubCarrier:2;				
+	u1Byte			Short:1;
+	u1Byte			TxBandwidth:1;
+	u1Byte			TxSubCarrier:2;
 	u1Byte			STBC:2;
 	u1Byte			AllowAggregation:1;
-	u1Byte			RtsHT:1;					
-	u1Byte			RtsShort:1;					
-	u1Byte			RtsBandwidth:1;				
-	u1Byte			RtsSubcarrier:2;			
+	u1Byte			RtsHT:1;
+	u1Byte			RtsShort:1;
+	u1Byte			RtsBandwidth:1;
+	u1Byte			RtsSubcarrier:2;
 	u1Byte			RtsSTBC:2;
-	u1Byte			EnableCPUDur:1;				
-	
+	u1Byte			EnableCPUDur:1;
+
 	//DWORD 1
 	u4Byte			RxMF:2;
 	u4Byte			RxAMD:3;
@@ -96,19 +96,19 @@ typedef struct tag_Dbg_Cmd_Interrupt_Service_Time_Count_Structure
 
 typedef enum tag_Interrupt_Service_Type_Definition
 {
-	ISR_ALL = 0,		
+	ISR_ALL = 0,
 	ISR_TX,
 	ISR_RX,
 	ISR_NUM_MAX,
 	ISR_MP_SEND_PACKET,
 	ISR_MP_RETURN_PACKET,
 	ISR_MP_CHK_FOR_HANG,
-	
+
 }ISR_TYPE_E;
 
 typedef enum tag_Interrupt_Service_Action_Type_Definition
 {
-	ISR_ENTER = 0,		
+	ISR_ENTER = 0,
 	ISR_EXIT
 }ISR_ACTION_TYPE_E;
 
@@ -122,10 +122,10 @@ typedef struct tag_Dbg_Verification_Console_Structure
 	u2Byte				TxPktLength;
 	u4Byte				TransPktNum;
 }VERA_CONSOLE_T;
-	
 
 
-// Byte[0] BIT7 in Frame Control is reserved for QoS. Added by Annie, 2005-12-02. 
+
+// Byte[0] BIT7 in Frame Control is reserved for QoS. Added by Annie, 2005-12-02.
 #define	FC_QOS_BIT				BIT7
 
 // Byte[0] BIT6 in Frame Control seems to be reserved for "No Data". Added by Annie, 2006-01-06.
@@ -162,10 +162,10 @@ typedef struct _DEBUG_CONSOLE_VAIABLE_STRUCTURE{
 	u4Byte			DBG_MpSendEnd;
 	u4Byte			DBG_MpcaptureFlag;
 
-	// Capture the max time range from MP sned to inser polling 
+	// Capture the max time range from MP sned to inser polling
 	u4Byte			DBG_MpPollCapStart;
 	u4Byte			DBG_MpPollRangeMax;
-	
+
 	// --------Use to switch debug print or not--------
 	// Display current beacom interrupt number from MAC
 	u4Byte			DBG_Beacon_Cnt;
@@ -185,11 +185,11 @@ typedef struct _DEBUG_CONSOLE_VAIABLE_STRUCTURE{
 	// --------Use to switch or display RX Descriptor content--------
 	// Control to print RX DESC BUF ADDR
 	u4Byte				DBG_RxDescBuffAddr;
-	
+
 	// Collect MP send packet and complete NDIS packet number
 	u4Byte				DBG_MpTxCnt;
 	u4Byte				DBG_MpTxCompleteCnt;
-	
+
 
 	// Check RFD memory sapce to check if it is modified incorrectlly
 	VIRTUAL_MEMORY		PseudoRfd;
@@ -204,7 +204,7 @@ typedef struct _DEBUG_CONSOLE_VAIABLE_STRUCTURE{
 	u1Byte				UserSwitchTid;
 	u1Byte				UserForceTid;
 	u1Byte				UserForceQue;
-	
+
 	// Fragmentation debug structure!!
 	u1Byte				pSenderAddr[4];
 	u1Byte				TID[4];
@@ -225,7 +225,7 @@ typedef struct _DEBUG_CONSOLE_VAIABLE_STRUCTURE{
 
 
 
-/*------------------------------Define structure----------------------------*/ 
+/*------------------------------Define structure----------------------------*/
 
 
 /*------------------------Export global variable----------------------------*/
@@ -267,7 +267,7 @@ extern	void	DBG_ConsoleInitialize();//	PADAPTER	pAdapter);
 
 extern	void DBG_RecordSvnVersion();
 
-extern	void	DBG_IsrTimeCapture(	PADAPTER	pAdapter, 		
+extern	void	DBG_IsrTimeCapture(	PADAPTER	pAdapter,
 									u1Byte		Isr_Type,
 									u1Byte		Isr_Action);
 extern	void	DBG_IsrTimeClear(	void);

@@ -15,27 +15,27 @@
 #endif
 
 NDIS_STATUS
-CopyFromUnicodeToOS( 
+CopyFromUnicodeToOS(
 	UCHAR			*pointer,
 	UNICODE_STRING	*uniStr,
 	USHORT			copyLen)
 {
 	int		s;
 	OCTET_STRING	*os = (OCTET_STRING *)pointer;
-	
+
 	for(s=0; s<copyLen; s++)
 	{
 		os->Octet[s] = (UCHAR)uniStr->Buffer[s];
 	}
-	
-	
+
+
 	os->Length = copyLen;
-	
+
 	return NDIS_STATUS_SUCCESS;
 }
 
 NDIS_STATUS
-CopyFromUnicodeToString( 
+CopyFromUnicodeToString(
 	UCHAR			*pointer,
 	UNICODE_STRING	*uniStr,
 	USHORT			copyLen)
@@ -49,11 +49,11 @@ CopyFromUnicodeToString(
 }
 
 // for Decoding WEP key
-VOID 
+VOID
 RegistryDecode(
-	unsigned char *in, 
+	unsigned char *in,
 	unsigned char *out,
-	int maxdecode)	
+	int maxdecode)
 {
 	int len;
 	int i,j=2;
@@ -96,7 +96,7 @@ StringToHex(
 	{
 		return out;
 	}
-*/	
+*/
 	if(IsNum)
 	{
 		for(i=inlen-1,j=0;i>=0 && j<outlen;i-=2)
@@ -125,11 +125,11 @@ StringToHex(
 	return out;
 }
 
-// 
-// Translate from NDIS_802_11_POWER_MODE to RT_PS_MODE. 
+//
+// Translate from NDIS_802_11_POWER_MODE to RT_PS_MODE.
 // 2005.02.15, by rcnjko.
 //
-int 
+int
 TranslateNdisPsToRtPs(
 	IN	NDIS_802_11_POWER_MODE	ndisPsMode
 	)
@@ -139,17 +139,17 @@ TranslateNdisPsToRtPs(
 	switch(ndisPsMode)
 	{
 	case Ndis802_11PowerModeCAM:
-		rtPsMode = eActive; 
-		break;	
+		rtPsMode = eActive;
+		break;
 	case Ndis802_11PowerModeMAX_PSP:
-		rtPsMode = eMaxPs; 
-		break;	
+		rtPsMode = eMaxPs;
+		break;
 	case Ndis802_11PowerModeFast_PSP:
-		rtPsMode = eFastPs; 
-		break;	
+		rtPsMode = eFastPs;
+		break;
 	default:
 		RT_TRACE(COMP_DBG, DBG_SERIOUS, ("TranslateNdisPsToRtPs(): Unknown ndisPsMode: 0x%X !!!\n", ndisPsMode));
-		rtPsMode = eActive; 
+		rtPsMode = eActive;
 		break;
 	}
 
@@ -167,7 +167,7 @@ N6OpenConfigurationHandle(
 	NDIS_STATUS						Status = NDIS_STATUS_SUCCESS;
 
 	PlatformZeroMemory(&ConfigObject, sizeof(NDIS_CONFIGURATION_OBJECT));
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 		ConfigObject.Header,
 		NDIS_OBJECT_TYPE_CONFIGURATION_OBJECT,
@@ -207,14 +207,14 @@ Routine Description:
 
 Arguments:
 
-    pAdapter						Pointer to ADAPTER. 
+    pAdapter						Pointer to ADAPTER.
     WrapperConfigurationContext		For use by NdisOpenConfiguration
 
 Return Value:
 
     NDIS_STATUS_SUCCESS
     NDIS_STATUS_FAILURE
-    NDIS_STATUS_RESOURCES                                       
+    NDIS_STATUS_RESOURCES
 
 --*/
 {
@@ -228,7 +228,7 @@ Return Value:
 	UINT				Length;
 	PNDIS_CONFIGURATION_PARAMETER	ReturnedValue;
 	ULONG_PTR			value;
-#if READ_BT_REGISTRY	
+#if READ_BT_REGISTRY
 	u1Byte					result=0;
 	PWCHAR					registryName;
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(pAdapter);
@@ -243,7 +243,7 @@ Return Value:
 		RT_TRACE(COMP_INIT,DBG_TRACE, ("<== N6ReadCommonRegistry, Status=%x\n", Status));
 		return Status;
 	}
-	
+
 #if READ_BT_REGISTRY
 	registryName = L"BTLoadOption";
 	PlatformReadBTFWLoaderDwordRegistry(registryName,&result);
@@ -261,7 +261,7 @@ Return Value:
 	pNdisCommon->RegLocale.Octet = &(pNdisCommon->RegLocaleBuf[0]);
 	pNdisCommon->RegDriverDesc.Octet = &(pNdisCommon->RegDriverDescBuf[0]);
 
-	// For 818x UI and WPA Verify. 2004.11.30, by rcnjko. 
+	// For 818x UI and WPA Verify. 2004.11.30, by rcnjko.
 	for(i = 0; i < 4; i++)
 	{
 		pNdisCommon->RegDefaultKey[i].Octet = pNdisCommon->RegDefaultKeyBuf[i];
@@ -274,7 +274,7 @@ Return Value:
 	pNdisCommon->RegPwrLimitFile.Octet = &(pNdisCommon->RegPwrLimitFileBuf[0]);
 	pNdisCommon->RegSecondaryPwrLimitFile.Octet = &(pNdisCommon->RegSecondaryPwrLimitFileBuf[0]);
 	pNdisCommon->RegChannelPlan2G.Octet = pNdisCommon->RegChannelPlan2GBuf;
-	pNdisCommon->RegChannelPlan5G.Octet = pNdisCommon->RegChannelPlan5GBuf;	
+	pNdisCommon->RegChannelPlan5G.Octet = pNdisCommon->RegChannelPlan5GBuf;
 
 	//----------------------------------------------------------------------------
 
@@ -301,14 +301,14 @@ Return Value:
 			{
 				RT_PRINT_UUID(COMP_INIT, DBG_LOUD, "The current adapter GUID is:", pNdisCommon->NetCfgInstanceId);
 			}
-		}		
+		}
 	}
 	//----------------------------------------------------------------------------
 	// Read all the registry values.
-	for(i = 0, pRegEntry = CommonRegTable; i < COM_NUM_REG_PARAMS; i++, pRegEntry++)	
+	for(i = 0, pRegEntry = CommonRegTable; i < COM_NUM_REG_PARAMS; i++, pRegEntry++)
 	{
 		RT_TRACE(COMP_INIT, DBG_TRACE, ("RegName: [%ws]\n", (pRegEntry->RegName).Buffer));
-		
+
 		pointer = (PUCHAR) pNdisCommon + pRegEntry->FieldOffset;
 
 		// Get the configuration value for a specific parameter.  Under NT the
@@ -419,8 +419,8 @@ Return Value:
 	// For 818x UI, 2004.11.30, by rcnjko.
 	for(i = 0; i < 4; i++)	// Decode WEP key
 	{
-		unsigned char temp[30]; 
-		
+		unsigned char temp[30];
+
 		if(pNdisCommon->RegDefaultKey[i].Length > 0)
 		{
 			pNdisCommon->RegDefaultKey[i].Octet[pNdisCommon->RegDefaultKey[i].Length] = 0;
@@ -440,7 +440,7 @@ Return Value:
 	// Convert bssid string to hex.
 	StringToHex((char *)pNdisCommon->RegBssidBuf, 12, pNdisCommon->RegBssid, 6,0);
 
-	// Read NetworkAddress registry value 
+	// Read NetworkAddress registry value
 	// Use it as the current address if any
 	if(Status == NDIS_STATUS_SUCCESS)
 	{
@@ -451,14 +451,14 @@ Return Value:
 			ConfigurationHandle);
 
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("NdisReadNetworkAddress, Status=%x\n", Status));
-	
-		// If there is a NetworkAddress override in registry, use it 
+
+		// If there is a NetworkAddress override in registry, use it
 		if ((Status == NDIS_STATUS_SUCCESS) && (Length == ETH_LENGTH_OF_ADDRESS))
 		{
 			if(ETH_IS_MULTICAST(NetworkAddress) || ETH_IS_BROADCAST(NetworkAddress) || ((NetworkAddress[0]&0x02)==0))
 			{
-				RT_TRACE(COMP_INIT,DBG_LOUD, 
-				("Overriding NetworkAddress is invalid - %02x-%02x-%02x-%02x-%02x-%02x\n", 
+				RT_TRACE(COMP_INIT,DBG_LOUD,
+				("Overriding NetworkAddress is invalid - %02x-%02x-%02x-%02x-%02x-%02x\n",
 				NetworkAddress[0], NetworkAddress[1], NetworkAddress[2],
 				NetworkAddress[3], NetworkAddress[4], NetworkAddress[5]));
 			}
@@ -469,18 +469,18 @@ Return Value:
 					 (NetworkAddress[2]==0x00) &&
 					 (NetworkAddress[3]==0x00) &&
 					 (NetworkAddress[4]==0x00) &&
-					 (NetworkAddress[5]==0x00) ) 
-				{ 
+					 (NetworkAddress[5]==0x00) )
+				{
 					// Network addr = 00 00 00 00 00 00
 					pNdisCommon->bOverrideAddress = FALSE;
 				}
-				else 
+				else
 				{
-					RT_TRACE(COMP_INIT,DBG_LOUD, 
-					("Overriding NetworkAddress - %02x-%02x-%02x-%02x-%02x-%02x\n", 
+					RT_TRACE(COMP_INIT,DBG_LOUD,
+					("Overriding NetworkAddress - %02x-%02x-%02x-%02x-%02x-%02x\n",
 					NetworkAddress[0], NetworkAddress[1], NetworkAddress[2],
 					NetworkAddress[3], NetworkAddress[4], NetworkAddress[5]));
-				
+
 					ETH_COPY_NETWORK_ADDRESS(pNdisCommon->CurrentAddress, NetworkAddress);
 					pNdisCommon->bOverrideAddress = TRUE;
 				}
@@ -505,37 +505,37 @@ N6UpdateDefaultSetting(
 /*++
 Routine Description:
 
-	Update the parameter read from registery to coresponding ones in MGNT_INFO 
+	Update the parameter read from registery to coresponding ones in MGNT_INFO
 	or ADAPTER.
 
 Arguments:
 
-    pAdapter						Pointer to ADAPTER. 
+    pAdapter						Pointer to ADAPTER.
 
 Return Value:
 
 	TRUE if succeeded, FALSE otherwise.
 
-Assumption: 
-	These modification should be after InitializeMgntVariables() which is called by 
+Assumption:
+	These modification should be after InitializeMgntVariables() which is called by
 	NicIFAssociateNIC().
 
 --*/
 {
-	PMGNT_INFO				pMgntInfo = &(pAdapter->MgntInfo);	
+	PMGNT_INFO				pMgntInfo = &(pAdapter->MgntInfo);
 	PRT_DOT11D_INFO			pDot11dInfo = GET_DOT11D_INFO(pMgntInfo);
 	PRT_NDIS6_COMMON		pNdisCommon = pAdapter->pNdisCommon;
 	PADAPTER				pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PMGNT_INFO				pDefaultMgntInfo = &(pDefaultAdapter->MgntInfo);
 	PRT_FIRMWARE			pFirmware = GET_FIRMWARE(pAdapter);
 
-	HAL_DATA_TYPE			*pHalData	= GET_HAL_DATA(pAdapter);	
+	HAL_DATA_TYPE			*pHalData	= GET_HAL_DATA(pAdapter);
 	s1Byte 					i = 0, diff = 0;
 	u1Byte 					IndicationNumber, tempNumber = 0;
 	BOOLEAN					bFcsCapable = FALSE;
 	u4Byte					result=0;
 	PWCHAR					registryName;
-	   
+
 	// Workaround for HCT.
 	pAdapter->bInHctTest = pNdisCommon->bRegHctTest ? 1: (pDefaultAdapter->bInHctTest);  //YJ,mod,120626
 	pAdapter->bInWFDTest = pNdisCommon->bRegWFDTest ? 1: (pDefaultAdapter->bInWFDTest);  //YJ,mod,120626
@@ -544,8 +544,8 @@ Assumption:
 	// For EQC require to fix the Mac Address.
 	pAdapter->bFixedMacAddr = pNdisCommon->bRegFixedMacAddr;
 
-	pAdapter->bDPCISRTest = pNdisCommon->bRegDPCISRTest;		
-	pAdapter->bUseThreadHandleInterrupt = pNdisCommon->bRegUseThreadHandleInterrupt;	
+	pAdapter->bDPCISRTest = pNdisCommon->bRegDPCISRTest;
+	pAdapter->bUseThreadHandleInterrupt = pNdisCommon->bRegUseThreadHandleInterrupt;
 	pAdapter->bInChaosTest = pNdisCommon->bRegChaos;
 	pAdapter->interfaceIndex = pDefaultAdapter->interfaceIndex;
 	pMgntInfo->ChannelPlan = pDefaultMgntInfo->ChannelPlan;
@@ -562,7 +562,7 @@ Assumption:
 
 	pMgntInfo->ForcedBstDataRate = pNdisCommon->RegForcedBstDataRate;
 
-	// For power save mode. 2005.02.15, by rcnjko. 
+	// For power save mode. 2005.02.15, by rcnjko.
 	pMgntInfo->dot11PowerSaveMode = (RT_PS_MODE)TranslateNdisPsToRtPs((NDIS_802_11_POWER_MODE)pNdisCommon->RegPowerSaveMode);
 
 
@@ -587,27 +587,27 @@ Assumption:
 	//
 	pMgntInfo->bWiFiConfg = pNdisCommon->bRegWiFi;
 
-	// 2010/05/18 MH For GPIO detect timer delay setting.	
+	// 2010/05/18 MH For GPIO detect timer delay setting.
 	pMgntInfo->bRegTimerGPIO=pNdisCommon->bRegTimerGPIO;
 	pMgntInfo->bRegGPIODelay=pNdisCommon->bRegGPIODelay;
 	pMgntInfo->bRegGPIOBack=pNdisCommon->bRegGPIOBack;
 
-	// 2010/08/25 MH support power down mode switch 
+	// 2010/08/25 MH support power down mode switch
 	pMgntInfo->bRegPDNMode = pNdisCommon->bRegPDNMode;
 
-	// 2010/09/01 MH According to PM's request, we support dongle selective suspend mode switch.	
+	// 2010/09/01 MH According to PM's request, we support dongle selective suspend mode switch.
 	pMgntInfo->bRegDongleSS = pNdisCommon->bRegDongleSS;
 
-	// 2010/09/13 MH According to PM's request, we support different SS power seave level.	
+	// 2010/09/13 MH According to PM's request, we support different SS power seave level.
 	pMgntInfo->bRegSSPwrLvl = pNdisCommon->bRegSSPwrLvl;
 
 	// 2011/02/16 MH Add for SS HW radio detect workaround temporarily.
 	pMgntInfo->bRegSSWakeCnt = pNdisCommon->bRegSSWakeCnt;
-		
-	// 2010/12/17 MH Add for RX aggregation mode switch according to TX/RX traffic.	
+
+	// 2010/12/17 MH Add for RX aggregation mode switch according to TX/RX traffic.
 	pMgntInfo->bRegAggDMEnable = pNdisCommon->bRegAggDMEnable;
 
-	// 2010/12/31 MH Add for UPHY dynamic chaneg.	
+	// 2010/12/31 MH Add for UPHY dynamic chaneg.
 	pMgntInfo->bRegUPDMEnable = pNdisCommon->bRegUPDMEnable;
 
 	// 2011/07/08 MH Add for different link speed display.
@@ -616,10 +616,10 @@ Assumption:
 	// Update Signal Bar settings
 	pMgntInfo->RSSI2GridMode = pNdisCommon->RegRSSI2GridMode;
 
-	// 2011/07/14 MH Add for rx short cut.	
+	// 2011/07/14 MH Add for rx short cut.
 	pMgntInfo->bRegRxSC = pNdisCommon->bRegRxSC;
 
-	// 2011/07/15 Sinda Add for tx short cut.	
+	// 2011/07/15 Sinda Add for tx short cut.
 	pAdapter->TXSCSupport = (pNdisCommon->bRegTxSC) ? TRUE : FALSE;
 
 	// 2011/12/08 hpfan Add for Tcp Reorder
@@ -661,7 +661,7 @@ Assumption:
 	pMgntInfo->bClientSkipScanForWFD = pNdisCommon->RegClientSkipScanForWFDTest;
 	pMgntInfo->bForceGoTxData20MBw = pNdisCommon->RegForceGoTxData20MBw;
 
-	if(IS_HARDWARE_TYPE_8821U(pAdapter))	
+	if(IS_HARDWARE_TYPE_8821U(pAdapter))
 	{
 		pMgntInfo->RegFWOffload = FALSE;
 		pNdisCommon->RegFWOffload =FALSE;
@@ -676,7 +676,7 @@ Assumption:
 	pMgntInfo->RegTxPwrLmtDynamicLoading = pNdisCommon->RegTxPwrLmtDynamicLoading;
 
 	pMgntInfo->RegSupportTxPwrTableDump = pNdisCommon->RegSupportTxPwrTableDump;
-	
+
 	pMgntInfo->bDisableTXPowerTraining = !pNdisCommon->RegTxPowerTraining;
 
 	pMgntInfo->RegLoadSystemSKUfromUEFI = pNdisCommon->RegLoadSystemSKUfromUEFI;
@@ -690,7 +690,7 @@ Assumption:
 	pMgntInfo->RegSecondaryPwrLimitFile.Octet = pNdisCommon->RegSecondaryPwrLimitFile.Octet;
 
 	pMgntInfo->RegChannelPlan2G.Octet = pNdisCommon->RegChannelPlan2GBuf;
-	pMgntInfo->RegChannelPlan5G.Octet = pNdisCommon->RegChannelPlan5GBuf; 
+	pMgntInfo->RegChannelPlan5G.Octet = pNdisCommon->RegChannelPlan5GBuf;
 	pMgntInfo->RegChannelPlan2G.Length = pNdisCommon->RegChannelPlan2G.Length;
 	pMgntInfo->RegChannelPlan5G.Length = pNdisCommon->RegChannelPlan5G.Length;
 	pMgntInfo->RegChannelPlan2G.bDefaultStr = pNdisCommon->RegChannelPlan2G.bDefaultStr;
@@ -712,7 +712,7 @@ Assumption:
 	pMgntInfo->RegPwrTblSel = pNdisCommon->RegPwrTblSel;
 
 	pMgntInfo->RegTxPwrLevel = pNdisCommon->RegTxPwrLevel;
-	
+
 	// 2011/11/15 MH Add for user can select different tx power by rate switch by default value and registry value.
 	pMgntInfo->RegPwrByRate = pNdisCommon->RegPwrByRate;
 	pMgntInfo->RegPwrRaTbl1 = pNdisCommon->RegPwrRaTbl1;
@@ -738,13 +738,13 @@ Assumption:
 	//Isaiah 2006-06-13
 	if(pNdisCommon->bRegSupportQoS) //WMM
 	{
-		pMgntInfo->pStaQos->QosCapability = QOS_WMM;	
+		pMgntInfo->pStaQos->QosCapability = QOS_WMM;
 
 		pMgntInfo->pStaQos->b4ac_Uapsd=pNdisCommon->StaUapsd & 0x0F;
 		pMgntInfo->pStaQos->MaxSPLength=pNdisCommon->MaxSPLength;
 
 		if(pMgntInfo->pStaQos->b4ac_Uapsd & 0x0F) //UAPSD
-		{	
+		{
 			pMgntInfo->pStaQos->QosCapability |= QOS_WMM_UAPSD;
 		}
 		else  // 8xB disable WMM Power Save
@@ -753,9 +753,9 @@ Assumption:
 			pMgntInfo->pStaQos->b4ac_Uapsd=0;
 			pMgntInfo->pStaQos->MaxSPLength=0;
 		}
-		
+
 		pMgntInfo->pStaQos->QosCapabilityBackup = pMgntInfo->pStaQos->QosCapability;
-		
+
 		// EDCA Parameters for QAP
 		pAdapter->AP_EDCA_PARAM[0] = pNdisCommon->RegApEDCAParamBE;
 		pAdapter->AP_EDCA_PARAM[1] = pNdisCommon->RegApEDCAParamBK;
@@ -771,7 +771,7 @@ Assumption:
 		// No Ack Setting
 		pMgntInfo->pStaQos->AcNoAck = pNdisCommon->RegAcNoAck;
 	}
-	
+
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("N6UpdateDefaultSetting(): QosCapability=0x%x\n", pMgntInfo->pStaQos->QosCapability) );
 
 
@@ -781,7 +781,7 @@ Assumption:
 	pMgntInfo->TxPowerLevel	= pNdisCommon->RegTxPowerLevel;
 
 	if(pAdapter->pNdis62Common==NULL)
-		MgntActSet_TX_POWER_LEVEL(pAdapter, pMgntInfo->TxPowerLevel);	
+		MgntActSet_TX_POWER_LEVEL(pAdapter, pMgntInfo->TxPowerLevel);
 
 	// Default LowRfdThreshold.
 	pAdapter->LowRfdThreshold = pNdisCommon->LowRfdThreshold;
@@ -806,7 +806,7 @@ Assumption:
 		TURBOMODE_TYPE		TurboModeType;
 		TurboModeType.charData = (u1Byte)pNdisCommon->RegTurboModeSelect;
 		pMgntInfo->bSupportTurboMode = (BOOLEAN)TurboModeType.field.SupportTurboMode;// Default: sholud be FALSE. Roger, 2006.12.07.
-		pMgntInfo->bAutoTurboBy8186  = (BOOLEAN)TurboModeType.field.AutoTurboBy8186;	// Default: should be TRUE.  Roger, 2006.12.07.		
+		pMgntInfo->bAutoTurboBy8186  = (BOOLEAN)TurboModeType.field.AutoTurboBy8186;	// Default: should be TRUE.  Roger, 2006.12.07.
 		RT_TRACE( COMP_MLME, DBG_LOUD, ("UpdateDefaultSetting(): bSupportTurboMode=%d, bAutoTurboBy8186=%d\n",
 											pMgntInfo->bSupportTurboMode,
 											pMgntInfo->bAutoTurboBy8186
@@ -817,7 +817,7 @@ Assumption:
 	// NOTE: the default of bExcludeUnencrypted in NDIS5 is TRUE, but in NDIS6
 	// The native wifi document required the default value to be FALSE.
 	pMgntInfo->bExcludeUnencrypted = FALSE;
-	pMgntInfo->SafeModeEnabled = FALSE;	
+	pMgntInfo->SafeModeEnabled = FALSE;
 
 	// 802.11d.
 	pDot11dInfo->bEnabled = pNdisCommon->bRegDot11dEnable;
@@ -828,15 +828,15 @@ Assumption:
 	// WDS mode.
 	pMgntInfo->WdsMode = pNdisCommon->RegWdsMode;
 
-	// Overwrite pMgntInfo->CustomerID if necessary, otherwise, don't change it. 
-	// Note that, pMgntInfo->CustomerID might be initialized in NicIFReadAdapterInfo() 
+	// Overwrite pMgntInfo->CustomerID if necessary, otherwise, don't change it.
+	// Note that, pMgntInfo->CustomerID might be initialized in NicIFReadAdapterInfo()
 	// before. 2006.07.03.
 	pMgntInfo->CustomerID = (RT_CUSTOMER_ID)(pNdisCommon->RegCustomerID);
 
 	//Fragment threadhold
 	pMgntInfo->FragThreshold = pNdisCommon->RegFragThreshold;
 
-	  //change by ylb 20111124 to Fix DTM error: Vertify Beacon after WakeUp	
+	  //change by ylb 20111124 to Fix DTM error: Vertify Beacon after WakeUp
 	{
 		PADAPTER pTargetAdapter = GetDefaultAdapter(pAdapter);
 
@@ -848,30 +848,30 @@ Assumption:
 		}
 	}
 
-	//========================= BT related======================== 
+	//========================= BT related========================
 	pMgntInfo->btHsMode = pNdisCommon->RegbtHsMode;
 
 	pAdapter->bFixBTTdma = (BOOLEAN)pNdisCommon->RegFixBTTdma;
-	//========================= BT related end======================== 
+	//========================= BT related end========================
 
 	// Set debug monitor components
 	EXdbgmon_SetOutComponents((u4Byte)pNdisCommon->RegDbgMonitor);
-	//========================= Power Save Mechanism related======================== 
+	//========================= Power Save Mechanism related========================
 
 	PSC_UpdateDefaultSetting(pAdapter);
 
 	pMgntInfo->bDisableCck = pNdisCommon->bRegDisableCck;
 	pMgntInfo->bHwWpsPbc = pNdisCommon->bRegHwWpsPbc;
 
-	//========================= Power Save Mechanism end======================== 
+	//========================= Power Save Mechanism end========================
 
 
-	//========================= HAL related======================== 
+	//========================= HAL related========================
 	HAL_UpdateDefaultSetting(pAdapter);
-	//========================= HAL related end======================== 
+	//========================= HAL related end========================
 
 	pAdapter->bBtFwSupport = (BOOLEAN) pNdisCommon->bRegBtFwSupport;
-	
+
 
 	// ROAM Sensitive Level
 
@@ -918,7 +918,7 @@ Assumption:
 
 	SET_TDLS_ENABLED(pMgntInfo, pNdisCommon->bRegTDLSEnable);
 
-	pMgntInfo->bDefaultAntenna= pNdisCommon->bRegDefaultAntenna;	
+	pMgntInfo->bDefaultAntenna= pNdisCommon->bRegDefaultAntenna;
 
 	pMgntInfo->bRegVelocity = pNdisCommon->bRegVelocity;
 
@@ -936,7 +936,7 @@ Assumption:
 	pHalData->PAMode = pNdisCommon->RegPAMode;
 
 	pMgntInfo->CurrentWirelessBand = pNdisCommon->RegWirelessBand;
-	
+
 	// 2012/07/24 MH Add for win8 usb whql tst & WFD multi channel.
 	pMgntInfo->RegUseDefaultCID = pNdisCommon->RegUseDefaultCID;
 	pMgntInfo->RegWfdTime = pNdisCommon->RegWfdTime;
@@ -953,7 +953,7 @@ Assumption:
 	pAdapter->HalFunc.SetHalDefVarHandler(pAdapter, HAL_DEF_ANT_DETECT, (pu1Byte)&(pNdisCommon->RegAntDetection));
 
 	// TxPwr percentage, added by Roger, 2010.03.09.
-	pAdapter->HalFunc.SetHalDefVarHandler(pAdapter, HAL_DEF_TX_PWR_PERCENTAGE, &(pNdisCommon->RegTxPwrPercentage));	
+	pAdapter->HalFunc.SetHalDefVarHandler(pAdapter, HAL_DEF_TX_PWR_PERCENTAGE, &(pNdisCommon->RegTxPwrPercentage));
 
 	// Pre-transition for OID_PNP_SET_POWER OID wake up handling, added by Roger, 2012.11.28.
 	pMgntInfo->bPreTransPnP = pNdisCommon->RegPreTransPnP;
@@ -975,16 +975,16 @@ Assumption:
 	if(pAdapter->bInHctTest)
 		pMgntInfo->RegEnableAdaptivity = 0;
 	else
-		pMgntInfo->RegEnableAdaptivity = pNdisCommon->RegEnableAdaptivity;	
-	pMgntInfo->RegL2HForAdaptivity = pNdisCommon->RegL2HForAdaptivity;	
-	pMgntInfo->RegHLDiffForAdaptivity = pNdisCommon->RegHLDiffForAdaptivity;	
+		pMgntInfo->RegEnableAdaptivity = pNdisCommon->RegEnableAdaptivity;
+	pMgntInfo->RegL2HForAdaptivity = pNdisCommon->RegL2HForAdaptivity;
+	pMgntInfo->RegHLDiffForAdaptivity = pNdisCommon->RegHLDiffForAdaptivity;
 	pMgntInfo->RegEnableCarrierSense = pNdisCommon->RegEnableCarrierSense;
 	pMgntInfo->RegNHMEnable = pNdisCommon->RegNHMEnable;
 	pMgntInfo->RegDmLinkAdaptivity = pNdisCommon->RegDmLinkAdaptivity;
 	pMgntInfo->RegDCbackoff = pNdisCommon->RegDCbackoff;
 	pMgntInfo->RegAPNumTH = pNdisCommon->RegAPNumTH;
 	pMgntInfo->RegPacketDrop = pNdisCommon->RegPacketDrop;
-	
+
 	pMgntInfo->EnableResetTxStuck = pNdisCommon->RegEnableResetTxStuck;
 
 	pMgntInfo->RegSifsThresh = pNdisCommon->RegSifsThresh;
@@ -1002,8 +1002,8 @@ Assumption:
 	pMgntInfo->RegbCustomizedScanPeriod = pNdisCommon->RegbCustomizedScanPeriod;
 	pMgntInfo->RegIntelCustomizedScanPeriod = pNdisCommon->RegIntelCustomizedScanPeriod;
 	pMgntInfo->RegAMDCustomizedScanPeriod = pNdisCommon->RegAMDCustomizedScanPeriod;
-	
-	
+
+
 	pMgntInfo->RegDisableBTCoexist = pNdisCommon->RegDisableBTCoexist;
 
 	pMgntInfo->EnableMA = pNdisCommon->RegEnableMA;
@@ -1014,7 +1014,7 @@ Assumption:
 	// 0= by channel plan, 1=5g all passive scan / 2= 24g passive scan /3= 2/5g all passive scan
 	pMgntInfo->RegPassiveScan = pNdisCommon->RegPassiveScan;
 
-	pMgntInfo->IsAMDIOIC = pNdisCommon->RegIsAMDIOIC;	
+	pMgntInfo->IsAMDIOIC = pNdisCommon->RegIsAMDIOIC;
 	pMgntInfo->RegWmmPage = pNdisCommon->RegWmmPage;
 	pMgntInfo->Regbcndelay = pNdisCommon->Regbcndelay;
 
@@ -1075,11 +1075,11 @@ Assumption:
 	else
 		pMgntInfo->CurTxSendAsap = 0;
 
-	// MAC Address Randomization 
+	// MAC Address Randomization
 	pMgntInfo->RegSupportMACRandom = pNdisCommon->RegSupportMACRandom;
 
 	pMgntInfo->RegSupportECSA = pNdisCommon->RegSupportECSA;
-	
+
 	pMgntInfo->RegSupportFT= pNdisCommon->RegSupportFT;
 
 	// Cancel and suspend all timers in Dx low power state, e.g., SoC Off
@@ -1089,13 +1089,13 @@ Assumption:
 
 
 
-// 
+//
 // Initialize variables read from registry for 818x UI.
 // 2004.11.30, by rcnjko.
 //
-VOID 
+VOID
 N6RestoreLastInitSetting(
-	IN	PADAPTER		pAdapter	
+	IN	PADAPTER		pAdapter
 	)
 {
 	PMGNT_INFO pMgntInfo = (PMGNT_INFO)(&(pAdapter->MgntInfo));
@@ -1104,18 +1104,18 @@ N6RestoreLastInitSetting(
 	int nTmp;
 	ULONG BytesRead, BytesNeeded;
 
-	// We keep local copy of RegWepEncStatus here for it can be changed via OID_802_11_ENCRYPTION_STATUS. 
+	// We keep local copy of RegWepEncStatus here for it can be changed via OID_802_11_ENCRYPTION_STATUS.
 	// 2005.03.16, by rcnjko.
-	int nTmpRegWepEncStatus = pNdisCommon->RegWepEncStatus; 
+	int nTmpRegWepEncStatus = pNdisCommon->RegWepEncStatus;
 
 	RT_TRACE( COMP_SEC, DBG_LOUD, ("===> N6RestoreLastInitSetting()\n") );
 
-	// OID_802_11_AUTHENTICATION_MODE. 
+	// OID_802_11_AUTHENTICATION_MODE.
 	nTmp = pNdisCommon->RegAuthentAlg;
 	N6CSetInformation(pAdapter, OID_802_11_AUTHENTICATION_MODE, (PVOID)(&nTmp), sizeof(nTmp), &BytesRead, &BytesNeeded);
-	
+
 	// OID_802_11_ENCRYPTION_STATUS.
-	switch(nTmpRegWepEncStatus) 
+	switch(nTmpRegWepEncStatus)
 	{
 	case REG_WEP_STATUS_NO_WEP:
 		switch(pNdisCommon->RegEncAlgorithm)
@@ -1130,10 +1130,10 @@ N6RestoreLastInitSetting(
 			nTmp = (int)Ndis802_11Encryption3Enabled;
 			break;
 
-		case REG_WAPI_PSK:	
+		case REG_WAPI_PSK:
 			nTmp = (int)Wapi_Encryption;
 			break;
-		case REG_WAPI_CERT:	
+		case REG_WAPI_CERT:
 			nTmp = (int)Wapi_Certificate;
 			break;
 
@@ -1142,7 +1142,7 @@ N6RestoreLastInitSetting(
 			break;
 		}
 		break;
-	
+
 	case REG_WEP_STATUS_WEP64:
 	case REG_WEP_STATUS_WEP128:
 		nTmp = (int)(Ndis802_11Encryption1Enabled);
@@ -1159,7 +1159,7 @@ N6RestoreLastInitSetting(
 		POCTET_STRING		pKey;
 		u4Byte				dwKeyLen;
 		int					nKeyIdx;
-		UCHAR				NdisKeyTmpBuf[128]; 
+		UCHAR				NdisKeyTmpBuf[128];
 		PNDIS_802_11_WEP	pNdisKeyTmp;
 
 		for(nKeyIdx = 0; nKeyIdx < 4;nKeyIdx++)
@@ -1167,7 +1167,7 @@ N6RestoreLastInitSetting(
 			pNdisCommon->RegDefaultKey[nKeyIdx].Octet = pNdisCommon->RegDefaultKeyBuf[nKeyIdx];
 			pNdisCommon->RegDefaultKey[nKeyIdx].Octet = pNdisCommon->RegDefaultKeyBuf[nKeyIdx];
 		}
-		// Fix stack overflow bug, 2005.01.06, by rcnjko. 
+		// Fix stack overflow bug, 2005.01.06, by rcnjko.
 		pNdisKeyTmp = (PNDIS_802_11_WEP)NdisKeyTmpBuf;
 		pNdisKeyTmp->Length = 128;
 
@@ -1214,13 +1214,13 @@ N6RestoreLastInitSetting(
 	// Network type.
 	switch(pNdisCommon->RegNetworkType)
 	{
-	case NI_ADHOC: 
+	case NI_ADHOC:
 		pMgntInfo->Regdot11networktype = RT_JOIN_NETWORKTYPE_ADHOC;
 		break;
-	case NI_Infrastructure: 
+	case NI_Infrastructure:
 		pMgntInfo->Regdot11networktype = RT_JOIN_NETWORKTYPE_INFRA;
 		break;
-	case NI_AUTO: 
+	case NI_AUTO:
 		pMgntInfo->Regdot11networktype = RT_JOIN_NETWORKTYPE_AUTO;
 		break;
 	default:
@@ -1239,19 +1239,19 @@ N6RestoreLastInitSetting(
 	}
 
 	pMgntInfo->bEDCCASupport = pNdisCommon->bRegEDCCASupport;
-	
+
 	RT_TRACE( COMP_SEC, DBG_LOUD, ("<=== N6RestoreLastInitSetting()\n") );
-	
+
 }
 
 
 
 //   Description:
-//			Restore all config for wake up in IBSS mode 
+//			Restore all config for wake up in IBSS mode
 //
 VOID
 N6RestoreLastInitSettingAterWakeUP(
-	IN	PADAPTER		pAdapter	
+	IN	PADAPTER		pAdapter
 	)
 {
 	PMGNT_INFO pMgntInfo = (PMGNT_INFO)(&(pAdapter->MgntInfo));
@@ -1261,11 +1261,11 @@ N6RestoreLastInitSettingAterWakeUP(
 	POCTET_STRING		pKey;
 	BOOLEAN				IsDefaultKeyId;
 	u1Byte	MacAddress[ETHERNET_ADDRESS_LENGTH] = {0x00,0x00,0x00,0x00,0x00,0x00};
-	
-//add by ylb for wapi S3 BSOD 20110906	
+
+//add by ylb for wapi S3 BSOD 20110906
       if(WAPI_QuerySetVariable(pAdapter, WAPI_QUERY, WAPI_VAR_WAPIENABLE, 0))
               return;
-	
+
 	//if( pNdisCommon->RegNetworkType == RT_JOIN_NETWORKTYPE_INFRA )
 	//	return; // Autoconfig will do all thing to connent to AP.
 
@@ -1276,7 +1276,7 @@ N6RestoreLastInitSettingAterWakeUP(
 	// It will make BssType to be auto and cause Ad Hoc WPA2 in Vista Fial
 	//N6CSet_DOT11_DESIRED_BSS_TYPE(pAdapter , &BssType );
 
-	// 2.set Auth Mod	
+	// 2.set Auth Mod
 	N6CSet_DOT11_AUTHENTICATION_ALOGORITHM(pAdapter , pNdisCommon->RegAuthalg);
 	RT_TRACE(COMP_RSNA, DBG_LOUD, ("N6RestoreLastInitSettingAterWakeUP pSecInfo->AuthMode = 0x%08X\n",pSecInfo->AuthMode));
 	// 3. Set Uncast Chiper
@@ -1287,7 +1287,7 @@ N6RestoreLastInitSettingAterWakeUP(
 	//N6CSet_DOT11_MULTICAST_CIPHER_ALGORITHM( pAdapter, pNdisCommon->RegGroupALg);
 
 	// 5. Set Key if NEED!!
-	if( (pNdisCommon->RegPairwiseAlg == DOT11_CIPHER_ALGO_WEP40 
+	if( (pNdisCommon->RegPairwiseAlg == DOT11_CIPHER_ALGO_WEP40
 		||pNdisCommon->RegPairwiseAlg == DOT11_CIPHER_ALGO_WEP104
 		||pNdisCommon->RegPairwiseAlg == DOT11_CIPHER_ALGO_WEP )   // Need to check if wep-802.1x used  wep to Pairwise key.we need to remove it.
 		// &&  pNdisCommon->RegAuthalg == DOT11_AUTH_ALGO_80211_OPEN  // remove it for Infra mode.
@@ -1299,14 +1299,14 @@ N6RestoreLastInitSettingAterWakeUP(
 			pNdisCommon->RegDefaultKey[nKeyIdx].Octet = pNdisCommon->RegDefaultKeyBuf[nKeyIdx];
 			pNdisCommon->RegDefaultKeyW[nKeyIdx].Octet = pNdisCommon->RegDefaultKeyWBuf[nKeyIdx];
 		}
-		
+
 		if( pSecInfo->PairwiseEncAlgorithm ==  RT_ENC_ALG_WEP104 ){
 			pKey = pNdisCommon->RegDefaultKeyW;
 		}else{
 			pKey = pNdisCommon->RegDefaultKey;
 		}
 
-		
+
 		for( nKeyIdx = 0 ; nKeyIdx < 4 ; nKeyIdx++ )
 		{
 			if(nKeyIdx == pNdisCommon->RegDefaultKeyId)
@@ -1324,7 +1324,7 @@ N6RestoreLastInitSettingAterWakeUP(
 				);
 		}
 		}
-	}else if(pMgntInfo->bRSNAPSKMode) 
+	}else if(pMgntInfo->bRSNAPSKMode)
 	{
 		MgntActSet_RSNA_ADD_DEAULT_KEY(
 			pAdapter,
@@ -1344,11 +1344,11 @@ N6RestoreLastInitSettingAterWakeUP(
 //
 VOID
 InitNdis6CommonResources(
-	IN	PADAPTER		pAdapter	
+	IN	PADAPTER		pAdapter
 	)
 {
 	PRT_NDIS6_COMMON 	pNdisCommon = pAdapter->pNdisCommon;
-	PMGNT_INFO			pMgntInfo 	= &(pAdapter->MgntInfo);	
+	PMGNT_INFO			pMgntInfo 	= &(pAdapter->MgntInfo);
 	u2Byte				index = 0;
 
 	RTInitializeSListHead( &(pNdisCommon->TxNBLWaitQueue) );
@@ -1359,52 +1359,52 @@ InitNdis6CommonResources(
 
 	PlatformInitializeWorkItem(
 		pAdapter,
-		&(pNdisCommon->SetRFPowerStateWorkItem), 
+		&(pNdisCommon->SetRFPowerStateWorkItem),
 		(RT_WORKITEM_CALL_BACK)SetRFPowerStateWorkItemCallback,
 		(PVOID)pAdapter,
 		"SetRFPowerStateWorkItem");
 
 	PlatformInitializeWorkItem(
 		pAdapter,
-		&(pNdisCommon->SetAdhocLinkStateWorkItem), 
+		&(pNdisCommon->SetAdhocLinkStateWorkItem),
 		(RT_WORKITEM_CALL_BACK)SetAdhocLinkStateWorkItemCallback,
 		(PVOID)pAdapter,
 		"SetAdhocLinkStateWorkItem");
 
-	PlatformInitializeTimer(pAdapter, &(pNdisCommon->InitializeAdapterTimer), 
+	PlatformInitializeTimer(pAdapter, &(pNdisCommon->InitializeAdapterTimer),
 		(RT_TIMER_CALL_BACK)InitializeAdapterTimerCallback, NULL, "InitializeTimer");
 
-	PlatformInitializeTimer(pAdapter, &pNdisCommon->N6CSendSingleNetBufferListTimer, 
-		(RT_TIMER_CALL_BACK)N6CSendSingleNetBufferListTimerCallback, 
-		NULL, "N6CSendSingleNetBufferListTimer");	
+	PlatformInitializeTimer(pAdapter, &pNdisCommon->N6CSendSingleNetBufferListTimer,
+		(RT_TIMER_CALL_BACK)N6CSendSingleNetBufferListTimerCallback,
+		NULL, "N6CSendSingleNetBufferListTimer");
 
-	PlatformInitializeTimer(pAdapter, &(pNdisCommon->PNPReConnentTimer), 
+	PlatformInitializeTimer(pAdapter, &(pNdisCommon->PNPReConnentTimer),
 		(RT_TIMER_CALL_BACK)PNPReConnentTimerCallback, NULL, "PNPReConnentTimer");
 
 	if(pMgntInfo->bSupportPacketCoalescing)
 	{
 		// Do colese
-		PlatformInitializeTimer(pAdapter, &(pNdisCommon->D0RxIndicatTimer), 
+		PlatformInitializeTimer(pAdapter, &(pNdisCommon->D0RxIndicatTimer),
 			(RT_TIMER_CALL_BACK)D0RxIndicatTimerCallback, NULL, "D0RxIndicatTimer");
-		
+
 		RTInitializeListHead( &(pNdisCommon->D0FilterPktQueue) );
-			
+
 		NdisAllocateSpinLock(&(pNdisCommon->D0FilterPktLock));
-			
+
 		//pNdisCommon->D0FilterState = RT_D0_FILTER_NONE; // Init D0FilterState !!
 		pNdisCommon->D0FilterState = RT_D0_FILTER_INIT;  // For Test !!!
 	}
 
         PlatformInitializeWorkItem(
 		pAdapter,
-		&(pNdisCommon->InitializeAdapterWorkItem), 
+		&(pNdisCommon->InitializeAdapterWorkItem),
 		(RT_WORKITEM_CALL_BACK)InitializeAdapterWorkItemCallback,
 		(PVOID)pAdapter,
 		"InitializeAdapterWorkItem");
 
 	PlatformInitializeWorkItem(
 		pAdapter,
-		&(pNdisCommon->ReleaseDataFrameQueuedWorkItem), 
+		&(pNdisCommon->ReleaseDataFrameQueuedWorkItem),
 		(RT_WORKITEM_CALL_BACK)N6CReleaseDataFrameQueuedWorkItemCallback,
 		(PVOID)pAdapter,
 		"N6CReleaseDataFrameQueuedWorkItemCallback");
@@ -1419,7 +1419,7 @@ InitNdis6CommonResources(
 //
 VOID
 ReleaseNdis6CommonResources(
-	IN	PADAPTER		pAdapter	
+	IN	PADAPTER		pAdapter
 	)
 {
 	PRT_NDIS6_COMMON 	pNdisCommon = pAdapter->pNdisCommon;
@@ -1432,11 +1432,11 @@ ReleaseNdis6CommonResources(
 	PlatformFreeWorkItem( &(pNdisCommon->SetAdhocLinkStateWorkItem) );
 
 	PlatformFreeWorkItem( &(pNdisCommon->InitializeAdapterWorkItem) );
-	PlatformCancelTimer(pAdapter, &(pNdisCommon->InitializeAdapterTimer));	
-	PlatformReleaseTimer(pAdapter, &(pNdisCommon->InitializeAdapterTimer));	
+	PlatformCancelTimer(pAdapter, &(pNdisCommon->InitializeAdapterTimer));
+	PlatformReleaseTimer(pAdapter, &(pNdisCommon->InitializeAdapterTimer));
 	PlatformCancelTimer(pAdapter, &(pNdisCommon->N6CSendSingleNetBufferListTimer));
 	PlatformReleaseTimer(pAdapter, &(pNdisCommon->N6CSendSingleNetBufferListTimer));
-	
+
 	PlatformCancelTimer(pAdapter, &(pNdisCommon->PNPReConnentTimer));
 	PlatformReleaseTimer(pAdapter, &(pNdisCommon->PNPReConnentTimer));
 
@@ -1447,20 +1447,20 @@ ReleaseNdis6CommonResources(
 
 		NdisFreeSpinLock(&(pNdisCommon->D0FilterPktLock));
 	}
-			
+
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("Release TxSemaphore IOSemaphore before N6CDeInitThread\n"));
 		// Release Tx semaphore before cancel corresponding Tx thread.
 		PlatformReleaseSemaphore(&device->TxSemaphore);
 		// Free Tx semaphore.
 		PlatformFreeSemaphore(&device->TxSemaphore);
-#if RTL8723_SDIO_IO_THREAD_ENABLE 
+#if RTL8723_SDIO_IO_THREAD_ENABLE
 		// Release IO semaphore before cancel corresponding IO thread.
 		PlatformReleaseSemaphore(&device->IOSemaphore);
 		// Free IO semaphore.
 		PlatformFreeSemaphore(&device->IOSemaphore);
 #endif
 		//
-		// <Roger_Notes> In the WDI model, the MS Component handles the original MiniportHaltEx call 
+		// <Roger_Notes> In the WDI model, the MS Component handles the original MiniportHaltEx call
 		// and splits it into multiple WDI interface calls. So we only need to handle DeinitThread here instead.
 		// 2015.03.09.
 		//
@@ -1521,7 +1521,7 @@ N6IndicateStatus(
 
 VOID
 N6CInitializeSpinLocks(
-	IN	PADAPTER		pAdapter	
+	IN	PADAPTER		pAdapter
 	)
 {
 	TX_InitializeSpinlock(pAdapter);
@@ -1546,7 +1546,7 @@ N6CInitializeSpinLocks(
 	PlatformInitializeSpinLock(pAdapter, RT_USBRX_POSTPROC_SPINLOCK);
 #endif
 
-	PlatformInitializeSpinLock(pAdapter, RT_PORT_SPINLOCK);	
+	PlatformInitializeSpinLock(pAdapter, RT_PORT_SPINLOCK);
 
 	PlatformInitializeSpinLock(pAdapter, RT_GEN_TEMP_BUF_SPINLOCK);
 
@@ -1561,17 +1561,17 @@ N6CInitializeSpinLocks(
 	PlatformInitializeSpinLock(pAdapter, RT_P2P_SPIN_LOCK);
 	PlatformInitializeSpinLock(pAdapter, RT_IQK_SPINLOCK);
 	PlatformInitializeSpinLock(pAdapter, RT_DYN_TXPWRTBL_SPINLOCK);
-	PlatformInitializeSpinLock(pAdapter, RT_CHNLLIST_SPINLOCK);	
+	PlatformInitializeSpinLock(pAdapter, RT_CHNLLIST_SPINLOCK);
 
 	PlatformInitializeSpinLock(pAdapter, RT_INDIC_SPINLOCK);
 	PlatformInitializeSpinLock(pAdapter, RT_RFD_SPINLOCK);
-	
+
 #if DRV_LOG_REGISTRY
-	PlatformInitializeSpinLock(pAdapter, RT_DRV_STATE_SPINLOCK);	
+	PlatformInitializeSpinLock(pAdapter, RT_DRV_STATE_SPINLOCK);
 #endif
 
 #if (AUTO_CHNL_SEL_NHM == 1)
-	PlatformInitializeSpinLock(pAdapter, RT_ACS_SPINLOCK);	
+	PlatformInitializeSpinLock(pAdapter, RT_ACS_SPINLOCK);
 #endif
 
 	PlatformInitializeSpinLock(pAdapter, RT_RX_REF_CNT_SPINLOCK);
@@ -1583,7 +1583,7 @@ N6CInitializeSpinLocks(
 
 VOID
 N6CFreeSpinLocks(
-	IN	PADAPTER		pAdapter	
+	IN	PADAPTER		pAdapter
 	)
 {
 	TX_FreeSpinlock(pAdapter);
@@ -1609,12 +1609,12 @@ N6CFreeSpinLocks(
 #endif
 
 
-	PlatformFreeSpinLock(pAdapter, RT_PORT_SPINLOCK);	
+	PlatformFreeSpinLock(pAdapter, RT_PORT_SPINLOCK);
 
 	PlatformFreeSpinLock(pAdapter, RT_GEN_TEMP_BUF_SPINLOCK);
 
 	PlatformFreeSpinLock(pAdapter, RT_AWB_SPINLOCK);
-	
+
 	PlatformFreeSpinLock(pAdapter, RT_BTData_SPINLOCK);
 
 	PlatformFreeSpinLock(pAdapter, RT_BUFFER_SPINLOCK);
@@ -1622,10 +1622,10 @@ N6CFreeSpinLocks(
 	PlatformFreeSpinLock(pAdapter, RT_HW_TIMER_SPIN_LOCK);
 
 	PlatformFreeSpinLock(pAdapter, RT_P2P_SPIN_LOCK);
-	PlatformFreeSpinLock(pAdapter, RT_IQK_SPINLOCK);	
+	PlatformFreeSpinLock(pAdapter, RT_IQK_SPINLOCK);
 	PlatformFreeSpinLock(pAdapter, RT_DYN_TXPWRTBL_SPINLOCK);
-	PlatformFreeSpinLock(pAdapter, RT_CHNLLIST_SPINLOCK);	
-	
+	PlatformFreeSpinLock(pAdapter, RT_CHNLLIST_SPINLOCK);
+
 	PlatformFreeSpinLock(pAdapter, RT_INDIC_SPINLOCK);
 	PlatformFreeSpinLock(pAdapter, RT_RFD_SPINLOCK);
 
@@ -1634,7 +1634,7 @@ N6CFreeSpinLocks(
 #endif
 
 #if (AUTO_CHNL_SEL_NHM == 1)
-	PlatformFreeSpinLock(pAdapter, RT_ACS_SPINLOCK);	
+	PlatformFreeSpinLock(pAdapter, RT_ACS_SPINLOCK);
 #endif
 
 	PlatformFreeSpinLock(pAdapter, RT_RX_REF_CNT_SPINLOCK);

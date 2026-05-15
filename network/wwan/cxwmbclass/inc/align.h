@@ -62,9 +62,9 @@ Revision History:
 // There is a subtle issue with all these alignment methods
 // The way the alignment is done depends on the lValue assignment of these MACRO
 // For example:
-// UINT64 fileSizeAlligned = ROUND_UP_COUNT(fileSize, pageSize) 
+// UINT64 fileSizeAlligned = ROUND_UP_COUNT(fileSize, pageSize)
 //      will do a correct 64 bit aligned rounding up
-// UINT32 pagesInFileCount = ROUND_UP_COUNT(fileSize, pageSize) / pageSize; 
+// UINT32 pagesInFileCount = ROUND_UP_COUNT(fileSize, pageSize) / pageSize;
 //      this will truncate the pageSize to UINT32 when evaluating ~(Pow2-1) below
 //      causing the result to truncate the most significant 32 bits in fileSize
 

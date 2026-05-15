@@ -35,7 +35,7 @@
 typedef enum _DBGM_CALLER_{
 	DBGM_CALLER_DBG_CMD					= 0x0,
 	DBGM_CALLER_AUTO					= 0x1,
-	DBGM_CALLER_MAX	
+	DBGM_CALLER_MAX
 }DBGM_CALLER,*PDBGM_CALLER;
 
 
@@ -45,36 +45,36 @@ typedef enum _DBGM_WIFI_BW_MODE{
 	DBGM_WIFI_BW_HT40					= 0x2,
 	DBGM_WIFI_BW_HT80					= 0x3,
 	DBGM_WIFI_BW_HT160					= 0x4,
-	DBGM_WIFI_BW_MAX	
+	DBGM_WIFI_BW_MAX
 }DBGM_WIFI_BW_MODE,*PDBGM_WIFI_BW_MODE;
 
 typedef enum _DBGM_WIFI_TRAFFIC_DIR{
 	DBGM_WIFI_TRAFFIC_TX					= 0x0,
 	DBGM_WIFI_TRAFFIC_RX					= 0x1,
-	DBGM_WIFI_TRAFFIC_MAX	
+	DBGM_WIFI_TRAFFIC_MAX
 }DBGM_WIFI_TRAFFIC_DIR,*PDBGM_WIFI_TRAFFIC_DIR;
 
 typedef enum _DBGM_PWR_MODE_{
 	DBGM_PWR_DC_MODE						= 0x0,
 	DBGM_PWR_AC_MODE						= 0x1,
-	DBGM_PWR_MODE_MAX	
+	DBGM_PWR_MODE_MAX
 }DBGM_PWR_MODE,*PDBGM_PWR_MODE;
 
 typedef enum _DBGM_WIFI_FREQ_{
 	DBGM_WIFI_FREQ_24G					= 0x0,
 	DBGM_WIFI_FREQ_5G					= 0x1,
-	DBGM_WIFI_FREQ_MAX	
+	DBGM_WIFI_FREQ_MAX
 }DBGM_WIFI_FREQ,*PDBGM_WIFI_FREQ;
 
 
-typedef struct _DBGM_BASIC_WIFI_INFO_{	
+typedef struct _DBGM_BASIC_WIFI_INFO_{
 	u2Byte				vid;
 	u2Byte				did;
 	u2Byte				svid;
 	u2Byte				smid;
 	u1Byte				customerId;
 	u1Byte				macAddr[6];
-	
+
 	u2Byte				apNum;
 	u1Byte				chnl;
 	u4Byte				bandwidth;
@@ -122,7 +122,7 @@ typedef struct _DBGM_BASIC_WIFI_INFO_{
 	BOOLEAN				bWowlan32k;
 
 	// ap type info
-	u1Byte				apType;		
+	u1Byte				apType;
 	u4Byte				numTxBcnOk;
 	u4Byte				numTxBcnErr;
 	u4Byte				numTxBcnUpdate;

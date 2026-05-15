@@ -6,13 +6,13 @@
 //      Scenarios_Proxy.cpp
 //
 //   Abstract:
-//      This module contains functions which prepares and sends data for the PROXY scenario 
+//      This module contains functions which prepares and sends data for the PROXY scenario
 //         implementation.
 //
 //   Naming Convention:
 //
 //      <Scope><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -63,7 +63,7 @@
 
 /**
  @private_function="PrvProxyScenarioParseProxyData"
- 
+
    Purpose:  Parse the command line parameters for proxying data such as:                       <br>
                 Proxy to local address                                     (-pla IP_ADDRESS)    <br>
                 Proxy to local port                                        (-plp PORT)          <br>
@@ -431,20 +431,20 @@ UINT32 PrvProxyScenarioParseProxyData(_In_reads_(stringCount) PCWSTR* ppCLPStrin
                              ppCLPStrings[stringIndex]))
       {
          pPCProxyData->useThreadedDPC = TRUE;
-      
+
          found++;
-      
+
          continue;
       }
-      
+
       /// Work Items
       if(HlprStringsAreEqual(L"-wi",
                              ppCLPStrings[stringIndex]))
       {
          pPCProxyData->useWorkItems = TRUE;
-      
+
          found++;
-      
+
          continue;
       }
    }
@@ -478,7 +478,7 @@ UINT32 PrvProxyScenarioParseProxyData(_In_reads_(stringCount) PCWSTR* ppCLPStrin
 /**
  @scenario_function="ProxyScenarioExecute"
 
-   Purpose:  Gather and package data neccessary to setup the PROXY scenario, then invoke RPC to 
+   Purpose:  Gather and package data neccessary to setup the PROXY scenario, then invoke RPC to
              implement the scenario in the WFPSampler service.                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -603,7 +603,7 @@ UINT32 ProxyScenarioExecute(_In_reads_(stringCount) PCWSTR* ppCLPStrings,
 
 /**
  @public_function="ProxyScenarioLogHelp"
- 
+
    Purpose:  Log usage information for the PROXY scenario to the console.                       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -657,7 +657,7 @@ VOID ProxyScenarioLogHelp()
    wprintf(L"\n\t\t Note: if the layer specified is FWPM_LAYER_OUTBOUND_TRANSPORT_V{4/6}:");
    wprintf(L"\n\t\t\tIf proxying the ports, then you must specify the protocol (-ipp) and the original port being modified (-iprp and / or -iplp)");
    wprintf(L"\n\t\t\tIf proxying the addresses, then you must specify the the original address (-ipra and / or -ipla)");
-   wprintf(L"\n");      
+   wprintf(L"\n");
 
    return;
 }

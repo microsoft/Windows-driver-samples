@@ -1,4 +1,4 @@
-// 
+//
 // Description:
 //		Implement P2PSvc interface to other part of the driver.
 //
@@ -48,7 +48,7 @@ p2psvc_Free_P2PSvcInfo(
 			P2PSvc_Free_SeekReqList(&pP2PSvcInfo->seekReqList, &pP2PSvcInfo->seekReqListCnt, 0);
 			P2PSvc_Free_SearchResultObjList(&pP2PSvcInfo->searchResultList, &pP2PSvcInfo->searchResultListCnt);
 			P2PSvc_Free_PDSessionList(&pP2PSvcInfo->pdSessionList, &pP2PSvcInfo->pdSessionListCnt);
- 
+
 			pP2PSvcInfo->bEnabled = FALSE;
 		}
 		PLATFORM_RELEASE_RT_SPINLOCK(pP2PSvcInfo->lock);
@@ -72,7 +72,7 @@ p2psvc_Free_P2PSvcInfo(
 	return;
 }
 
-RT_STATUS 
+RT_STATUS
 p2psvc_Set_Enable(
 	IN  PADAPTER					pAdapter,
 	IN  PVOID						infoBuf,
@@ -96,19 +96,19 @@ p2psvc_Set_Enable(
 		PP2PSVC_OBJ_LIST			pObjList = (PP2PSVC_OBJ_LIST)(((PRT_OBJECT_HEADER)infoBuf)->Value);
 		PRT_OBJECT_HEADER			pBEnableObj = P2PSvc_GetParam(pObjList, P2PSVC_OBJ_HDR_ID_DATA_BENABLE, 0);
 		BOOLEAN 					bEnable = *(PBOOLEAN)pBEnableObj->Value;
-		
+
 		if(bEnable)
 		{// To enable
 			if(pP2PSvcInfo->bEnabled)
-			{// already enabled => free the old and re-init 
+			{// already enabled => free the old and re-init
 				p2psvc_Free_P2PSvcInfo(pP2PInfo);
 				RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] Already enable, the old one will be freed!\n"));
 			}
-			
+
 			PlatformZeroMemory(pP2PSvcInfo, sizeof(P2PSVC_INFO));
-			
+
 			PLATFORM_INIT_RT_SPINLOCK(pP2PSvcInfo->lock);
-			
+
 			PLATFORM_ACQUIRE_RT_SPINLOCK(pP2PSvcInfo->lock);
 			{
 				pP2PSvcInfo->bEnabled = TRUE;
@@ -121,7 +121,7 @@ p2psvc_Set_Enable(
 				pP2PSvcInfo->seekReqListCnt = 0;
 				pP2PSvcInfo->searchResultListCnt = 0;
 				pP2PSvcInfo->pdSessionListCnt = 0;
-				
+
 				pP2PSvcInfo->connCap = P2PSVC_CONN_CAP_BMP_NONE;
 				pP2PSvcInfo->pAdapter = pAdapter;
 			}
@@ -134,7 +134,7 @@ p2psvc_Set_Enable(
 				rtStatus = RT_STATUS_INVALID_STATE;
 				break;
 			}
-			
+
 			p2psvc_Free_P2PSvcInfo(pP2PInfo);
 		}
 	}while(FALSE);
@@ -143,10 +143,10 @@ p2psvc_Set_Enable(
 
 	P2PSVC_FUNC_OUT(DBG_LOUD, rtStatus);
 
-	return rtStatus;	
+	return rtStatus;
 }
 
-RT_STATUS 
+RT_STATUS
 p2psvc_Query_Enable(
 	IN  PADAPTER					pAdapter,
 	IN  PVOID						infoBuf,
@@ -164,7 +164,7 @@ p2psvc_Query_Enable(
 	P2PSVC_CHECK_NULL(pAdapter);
 
 	P2PSVC_FUNC_IN(DBG_LOUD);
-	
+
 	do
 	{
 		*pBytesNeeded = RT_OBJECT_HEADER_SIZE + sizeof(u1Byte);
@@ -177,7 +177,7 @@ p2psvc_Query_Enable(
 		}
 
 		pObjHdr = (PRT_OBJECT_HEADER)(infoBuf);
-		
+
 		RT_ASSIGN_OBJECT_HEADER(
 				pObjHdr,
 				RT_OB_HDR_TYPE_QUERY,
@@ -206,100 +206,100 @@ P2PSVC_REQUEST_ID_MAP lP2PSvcRequestIdMap[] =
 {
 	// Set Enable/Disable
 	{
-		RT_OB_HDR_TYPE_SET, 	
-		P2PSVC_OBJ_HDR_ID_ACT_ENABLE, 	
-		P2PSVC_MIN_SUPPORT_VER, 
-		P2PSVC_MAX_SUPPORT_VER, 
-		p2psvc_Set_Enable			
+		RT_OB_HDR_TYPE_SET,
+		P2PSVC_OBJ_HDR_ID_ACT_ENABLE,
+		P2PSVC_MIN_SUPPORT_VER,
+		P2PSVC_MAX_SUPPORT_VER,
+		p2psvc_Set_Enable
 	},
-	
+
 	// Query enabled
 	{
-		RT_OB_HDR_TYPE_QUERY,	
-		P2PSVC_OBJ_HDR_ID_ACT_ENABLE, 	
-		P2PSVC_MIN_SUPPORT_VER, 
-		P2PSVC_MAX_SUPPORT_VER, 
-		p2psvc_Query_Enable		
+		RT_OB_HDR_TYPE_QUERY,
+		P2PSVC_OBJ_HDR_ID_ACT_ENABLE,
+		P2PSVC_MIN_SUPPORT_VER,
+		P2PSVC_MAX_SUPPORT_VER,
+		p2psvc_Query_Enable
 	},
 
 	// Set seek
 	{
-		RT_OB_HDR_TYPE_SET, 	
-		P2PSVC_OBJ_HDR_ID_ACT_SEEK, 		
-		P2PSVC_MIN_SUPPORT_VER, 
-		P2PSVC_MAX_SUPPORT_VER, 
+		RT_OB_HDR_TYPE_SET,
+		P2PSVC_OBJ_HDR_ID_ACT_SEEK,
+		P2PSVC_MIN_SUPPORT_VER,
+		P2PSVC_MAX_SUPPORT_VER,
 		P2PSvc_Set_Seek
 	},
 
 	// Set cancel seek
 	{
-		RT_OB_HDR_TYPE_SET, 	
-		P2PSVC_OBJ_HDR_ID_ACT_CANCEL_SEEK, 		
-		P2PSVC_MIN_SUPPORT_VER, 
-		P2PSVC_MAX_SUPPORT_VER, 
+		RT_OB_HDR_TYPE_SET,
+		P2PSVC_OBJ_HDR_ID_ACT_CANCEL_SEEK,
+		P2PSVC_MIN_SUPPORT_VER,
+		P2PSVC_MAX_SUPPORT_VER,
 		P2PSvc_Set_CancelSeek
 	},
 
-	// Set advertise 
+	// Set advertise
 	{
-		RT_OB_HDR_TYPE_SET, 	
-		P2PSVC_OBJ_HDR_ID_ACT_ADVERTISE, 
-		P2PSVC_MIN_SUPPORT_VER, 
-		P2PSVC_MAX_SUPPORT_VER, 
-		P2PSvc_Set_AdvSvc	
+		RT_OB_HDR_TYPE_SET,
+		P2PSVC_OBJ_HDR_ID_ACT_ADVERTISE,
+		P2PSVC_MIN_SUPPORT_VER,
+		P2PSVC_MAX_SUPPORT_VER,
+		P2PSvc_Set_AdvSvc
 	},
 
 	// Set cancel advertise
 	{
-		RT_OB_HDR_TYPE_SET,	
-		P2PSVC_OBJ_HDR_ID_ACT_CANCEL_ADVERTISE, 
-		P2PSVC_MIN_SUPPORT_VER, 
-		P2PSVC_MAX_SUPPORT_VER, 
-		P2PSvc_Set_CancelAdvSvc	
+		RT_OB_HDR_TYPE_SET,
+		P2PSVC_OBJ_HDR_ID_ACT_CANCEL_ADVERTISE,
+		P2PSVC_MIN_SUPPORT_VER,
+		P2PSVC_MAX_SUPPORT_VER,
+		P2PSvc_Set_CancelAdvSvc
 	},
 
 	// Set svc status
 	{
-		RT_OB_HDR_TYPE_SET,	
-		P2PSVC_OBJ_HDR_ID_ACT_SVC_STATUS, 
-		P2PSVC_MIN_SUPPORT_VER, 
-		P2PSVC_MAX_SUPPORT_VER, 
-		P2PSvc_Set_SvcStatus	
-	},	
+		RT_OB_HDR_TYPE_SET,
+		P2PSVC_OBJ_HDR_ID_ACT_SVC_STATUS,
+		P2PSVC_MIN_SUPPORT_VER,
+		P2PSVC_MAX_SUPPORT_VER,
+		P2PSvc_Set_SvcStatus
+	},
 
 	// PD Req data
 	{
-		RT_OB_HDR_TYPE_SET, 	
-		P2PSVC_OBJ_HDR_ID_ACT_PD_REQ, 
-		P2PSVC_MIN_SUPPORT_VER, 
-		P2PSVC_MAX_SUPPORT_VER, 
-		P2PSvc_Set_PDReq	
+		RT_OB_HDR_TYPE_SET,
+		P2PSVC_OBJ_HDR_ID_ACT_PD_REQ,
+		P2PSVC_MIN_SUPPORT_VER,
+		P2PSVC_MAX_SUPPORT_VER,
+		P2PSvc_Set_PDReq
 	},
 
 	// Conn cap
 	{
-		RT_OB_HDR_TYPE_SET, 	
-		P2PSVC_OBJ_HDR_ID_ACT_CONN_CAP, 
-		P2PSVC_MIN_SUPPORT_VER, 
-		P2PSVC_MAX_SUPPORT_VER, 
-		P2PSvc_Set_ConnCap	
+		RT_OB_HDR_TYPE_SET,
+		P2PSVC_OBJ_HDR_ID_ACT_CONN_CAP,
+		P2PSVC_MIN_SUPPORT_VER,
+		P2PSVC_MAX_SUPPORT_VER,
+		P2PSvc_Set_ConnCap
 	},
 
 	// Follow on PD req
 	{
-		RT_OB_HDR_TYPE_SET, 	
-		P2PSVC_OBJ_HDR_ID_ACT_FOPD_REQ, 
-		P2PSVC_MIN_SUPPORT_VER, 
-		P2PSVC_MAX_SUPPORT_VER, 
-		P2PSvc_Set_RspdorFOPDReq	
+		RT_OB_HDR_TYPE_SET,
+		P2PSVC_OBJ_HDR_ID_ACT_FOPD_REQ,
+		P2PSVC_MIN_SUPPORT_VER,
+		P2PSVC_MAX_SUPPORT_VER,
+		P2PSvc_Set_RspdorFOPDReq
 	},
-	
+
 	// ===== Insert new map above this line ===== //
 	{
-		RT_OB_HDR_TYPE_UNKNOWN, 
-		P2PSVC_OBJ_HDR_ID_UNKNOWN, 
-		P2PSVC_OBJECT_VERSION_INVLAID, 
-		P2PSVC_OBJECT_VERSION_INVLAID, 
+		RT_OB_HDR_TYPE_UNKNOWN,
+		P2PSVC_OBJ_HDR_ID_UNKNOWN,
+		P2PSVC_OBJECT_VERSION_INVLAID,
+		P2PSVC_OBJECT_VERSION_INVLAID,
 		NULL
 	}
 };
@@ -323,7 +323,7 @@ P2PSvc_Dump(
 	)
 {
 	PP2PSVC_INFO					pP2PSvcInfo = P2PSVC_GET_INFO(pAdapter);
-		
+
 	if(!P2PSVC_ENABLED(pP2PSvcInfo)) return;
 
 	RT_TRACE(COMP_P2P, DBG_LOUD, ("\n"));
@@ -367,7 +367,7 @@ P2PSvc_Request(
 	*pBytesNeeded = RT_OBJECT_HEADER_SIZE;
 
 	P2PSVC_FUNC_IN(DBG_LOUD);
-	
+
 	do
 	{
 		if(outBufLen < *pBytesNeeded)
@@ -388,7 +388,7 @@ P2PSvc_Request(
 
 		if(RT_OB_HDR_TYPE_SET == pObjHdr->Type)
 		{
-			// The ObjList is right after an obj header. 
+			// The ObjList is right after an obj header.
 			// The obj header is used for oid.
 			pObjList = (PP2PSVC_OBJ_LIST)(((PRT_OBJECT_HEADER)infoBuf)->Value);
 			if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_ValidateActionParam(pObjHdr->Id, pObjList)))
@@ -418,7 +418,7 @@ P2PSvc_Request(
 			if(pObjHdr->Type == lP2PSvcRequestIdMap[idx].type && pObjHdr->Id == lP2PSvcRequestIdMap[idx].id)
 			{// type and id matched
 				// Check Version
-				if(pObjHdr->Version >= lP2PSvcRequestIdMap[idx].minVer	
+				if(pObjHdr->Version >= lP2PSvcRequestIdMap[idx].minVer
 					&& pObjHdr->Version <= lP2PSvcRequestIdMap[idx].maxVer)
 				{
 					reqHdlr = lP2PSvcRequestIdMap[idx].reqHdlr;
@@ -428,7 +428,7 @@ P2PSvc_Request(
 				else
 				{
 					bMismatchVer = TRUE;
-				}		
+				}
 			}
 		}
 
@@ -479,7 +479,7 @@ P2PSvc_AllocP2PSvcInfo(
 		}
 
 		PlatformZeroMemory(pP2PInfo->pP2PSvcInfo, sizeof(P2PSVC_INFO));
-		
+
 	}while(FALSE);
 
 	P2PSVC_FUNC_OUT(DBG_LOUD, rtStatus);
@@ -504,7 +504,7 @@ P2PSvc_Free_P2PSvcInfo(
 	P2PSVC_FUNC_IN(DBG_LOUD);
 
 	do
-	{	
+	{
 		p2psvc_Free_P2PSvcInfo(pP2PInfo);
 
 		PlatformFreeMemory(pP2PSvcInfo, sizeof(P2PSVC_INFO));
@@ -540,11 +540,11 @@ P2PSvc_OnP2PScanComplete(
 	{
 		PRT_LIST_ENTRY				pListHead = &pP2PSvcInfo->searchResultList;
 		PRT_LIST_ENTRY 				pEntry = NULL;
-		
+
 		for(pEntry = RTGetHeadList(pListHead); pEntry != pListHead; pEntry = RTNextEntryList(pEntry))
 		{
 			PP2PSVC_SR_LIST_ENTRY	pSREntry = (PP2PSVC_SR_LIST_ENTRY)pEntry;
-			
+
 			if(pSREntry->bDirty)
 			{
 				P2PSvc_Indicate(pP2PSvcInfo, P2PSVC_OBJ_LIST_LEN(&pSREntry->srObjList), &pSREntry->srObjList);
@@ -553,7 +553,7 @@ P2PSvc_OnP2PScanComplete(
 		}
 	}while(FALSE);
 
-	PLATFORM_RELEASE_RT_SPINLOCK(pP2PSvcInfo->lock); 
+	PLATFORM_RELEASE_RT_SPINLOCK(pP2PSvcInfo->lock);
 
 	P2PSVC_FUNC_OUT(DBG_LOUD, rtStatus);
 
@@ -588,7 +588,7 @@ P2PSvc_OnDevDiscComplete(
 		P2PSvc_Free_SearchResultObjList(&pP2PSvcInfo->searchResultList, &pP2PSvcInfo->searchResultListCnt);
 	}while(FALSE);
 
-	PLATFORM_RELEASE_RT_SPINLOCK(pP2PSvcInfo->lock); 
+	PLATFORM_RELEASE_RT_SPINLOCK(pP2PSvcInfo->lock);
 
 	P2PSVC_FUNC_OUT(DBG_LOUD, rtStatus);
 
@@ -597,9 +597,9 @@ P2PSvc_OnDevDiscComplete(
 
 //
 // Description:
-// 	On receiving P2PProbeRsp, 
-//		- 
-//check for every seek req to see if it is done by 
+// 	On receiving P2PProbeRsp,
+//		-
+//check for every seek req to see if it is done by
 //		checking whether it has svc-info-req or svc-name is ended with * (i.e., whether SD is needed).
 //	 	If it is done, indicate search result.
 // 	If it needs further SD req, indicate search result up when SD req is done.
@@ -668,7 +668,7 @@ P2PSvc_OnProbeRsp(
 
 			P2PSVC_CHECK_NULL(pSREntry);
 
-			// Update the search result list	
+			// Update the search result list
 			if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_UpdateSearchResult(pP2PSvcInfo, searchId, devAddr, pSREntry, &bDuplicatedEntry, &pSREntryInList)))
 			{
 				P2PSvc_FreeMem(pSREntry, P2PSVC_SR_LIST_LEN(pSREntry));
@@ -707,7 +707,7 @@ P2PSvc_OnProbeRsp(
 				// Remove the seek entry since it is completed
 				RTRemoveEntryListWithCnt(pEntry, &pP2PSvcInfo->seekReqListCnt);
 				P2PSvc_FreeMem(pEntry, P2PSVC_REQ_INFO_LIST_LEN(pSeekInfoEntry));
-				pEntry = pForeEntry;	
+				pEntry = pForeEntry;
 			}
 			else
 			{// search for all dev addr
@@ -716,7 +716,7 @@ P2PSvc_OnProbeRsp(
 		}
 	}while(FALSE);
 
-	PLATFORM_RELEASE_RT_SPINLOCK(pP2PSvcInfo->lock); 
+	PLATFORM_RELEASE_RT_SPINLOCK(pP2PSvcInfo->lock);
 
 	P2PSVC_FUNC_OUT(DBG_TRACE, rtStatus);
 
@@ -725,11 +725,11 @@ P2PSvc_OnProbeRsp(
 
 //
 // Description
-//		Make P2PIE for ProbeRsp. According to addendum v0.1, it shall contain 
+//		Make P2PIE for ProbeRsp. According to addendum v0.1, it shall contain
 // 	the following attributes:
 //		* adv-svc-info (id: 23)
 //
-//		If it is too big to fit into a single P2PIE, it will be splited into 
+//		If it is too big to fit into a single P2PIE, it will be splited into
 //		several.
 //
 RT_STATUS
@@ -800,7 +800,7 @@ P2PSvc_MakeProbeReqIE(
 	if(!P2PSVC_ENABLED(pP2PSvcInfo)) return RT_STATUS_SUCCESS;
 
 	do
-	{		
+	{
 		if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_MakeSvcNameHash(pP2PSvcInfo, pBuf)))
 		{
 			break;
@@ -823,14 +823,14 @@ P2PSvc_MakeProbeReqIE(
 //		- Do exact svc-name matching if the query svc-name does not contain *
 //			otherwise match substring.
 //		- Add svc-info if svc-info-req len is not 0
-//		The ANQP query rsp data is constructed 
+//		The ANQP query rsp data is constructed
 //
 RT_STATUS
 P2PSvc_OnSDReq(
 	IN  PVOID						pvP2PSvcInfo,
 	IN  pu1Byte						devAddr,
 	IN  u1Byte						dlgToken,
-	IN  u1Byte						SDReqRecvdSize, 
+	IN  u1Byte						SDReqRecvdSize,
 	IN  PVOID					 	pvSDReqRecvd,
 	OUT PBOOLEAN					pbToSendSDRsp
 	)
@@ -847,7 +847,7 @@ P2PSvc_OnSDReq(
 	P2PSVC_CHECK_NULL(pbToSendSDRsp);
 
 	*pbToSendSDRsp = TRUE;
-	
+
 	if(!P2PSVC_ENABLED(pP2PSvcInfo)) return RT_STATUS_INVALID_STATE;
 	if(P2P_SD_PROTOCOL_P2PSVC != pSvcReqTlv->ServiceDesc.ServiceType) return RT_STATUS_INVALID_DATA;
 
@@ -856,7 +856,7 @@ P2PSvc_OnSDReq(
 	PLATFORM_ACQUIRE_RT_SPINLOCK(pP2PSvcInfo->lock);
 
 	do
-	{	
+	{
 		u1Byte						svcNameLen = 0;
 		pu1Byte						svcNameBuf = NULL;
 		u1Byte						svcInfoReqLen = 0;
@@ -888,17 +888,17 @@ P2PSvc_OnSDReq(
 			// Match svc-name
 			if(!P2PSvc_SDMatchSvcName(pAdvInfoEntry, svcNameLen, svcNameBuf)) continue;
 
-			// Attach svc info desc to 
+			// Attach svc info desc to
 			P2PSvc_MakeSvcInfoDesc(pP2PSvcInfo, pAdvInfoEntry, svcInfoReqLen, svcInfoReqBuf, &fbuf);
 
 			nAddedAdvSvc++;
 		}
-		
+
 		if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_SDRsp(pP2PSvcInfo, devAddr, dlgToken, pSvcReqTlv->TransactionID, nAddedAdvSvc, &fbuf)))
 		{
 			break;
 		}
-		
+
 	}while(FALSE);
 
 	PLATFORM_RELEASE_RT_SPINLOCK(pP2PSvcInfo->lock);
@@ -921,14 +921,14 @@ P2PSvc_OnSDReq(
 //
 // Description:
 //		Handle SD rsp with P2PSvc protocol type.
-//		
+//
 //
 RT_STATUS
 P2PSvc_OnSDRsp(
 	IN  PVOID						pvP2PSvcInfo,
 	IN  pu1Byte						devAddr,
 	IN  u1Byte						transactionId,
-	IN  PVOID						pvSvcRspTlv, 
+	IN  PVOID						pvSvcRspTlv,
 	OUT PBOOLEAN					pbNeedFurtherProcess
 	)
 {
@@ -1008,7 +1008,7 @@ P2PSvc_OnSDRsp(
 				PRT_LIST_ENTRY 			pForeEntry = RTForeEntryList(pEntry);
 				RTRemoveEntryListWithCnt(pEntry, &pP2PSvcInfo->seekReqListCnt);
 				P2PSvc_FreeMem(pEntry, P2PSVC_REQ_INFO_LIST_LEN(pSeekInfoEntry));
-				pEntry = pForeEntry;	
+				pEntry = pForeEntry;
 			}
 			else
 			{// search for all dev addr
@@ -1027,7 +1027,7 @@ P2PSvc_OnSDRsp(
 	}
 
 	P2PSVC_FUNC_OUT(DBG_LOUD, rtStatus);
-	
+
 	return rtStatus;
 }
 
@@ -1096,13 +1096,13 @@ P2PSvc_OnPDRsp(
 	PLATFORM_RELEASE_RT_SPINLOCK(pP2PSvcInfo->lock);
 
 	P2PSVC_FUNC_OUT(DBG_LOUD, rtStatus);
-	
+
 	return rtStatus;
 }
 
 //
 // Description:
-//		This function handles PD req. 
+//		This function handles PD req.
 //		The P2P module is expected NOT to send PD rsp if this function returns error.
 //
 RT_STATUS
@@ -1153,7 +1153,7 @@ P2PSvc_OnPDReq(
 			else
 			{// rspdor, currently involved in another session
 				// Will attach status attr with code 2 when constructing PD rsp
-			}	
+			}
 		}
 		else
 		{// no session, we are the rspdor, create a PD session
@@ -1172,7 +1172,7 @@ P2PSvc_OnPDReq(
 	}
 
 	P2PSVC_FUNC_OUT(DBG_LOUD, rtStatus);
-	
+
 	return rtStatus;
 }
 
@@ -1201,7 +1201,7 @@ P2PSvc_OnPDRspSent(
 		{
 			break;
 		}
-		
+
 		if(bSendOk)
 		{
 			if(pPDEntry->bInitor)
@@ -1223,7 +1223,7 @@ P2PSvc_OnPDRspSent(
 	PLATFORM_RELEASE_RT_SPINLOCK(pP2PSvcInfo->lock);
 
 	P2PSVC_FUNC_OUT(DBG_LOUD, rtStatus);
-	
+
 	return rtStatus;
 }
 
@@ -1337,7 +1337,7 @@ P2PSvc_MakePDRspIE(
 //
 // Description:
 //		This function handles the case when the PD initor fails to send PD req.
-//		
+//
 //
 RT_STATUS
 P2PSvc_OnSendPDReqFailure(
@@ -1351,7 +1351,7 @@ P2PSvc_OnSendPDReqFailure(
 
 	P2PSVC_CHECK_NULL(pvP2PSvcInfo);
 	P2PSVC_CHECK_NULL(devAddr);
-	
+
 	if(!P2PSVC_ENABLED(pP2PSvcInfo)) return RT_STATUS_INVALID_STATE;
 
 	P2PSVC_FUNC_IN(DBG_LOUD);
@@ -1389,7 +1389,7 @@ P2PSvc_OnSendPDReqFailure(
 	PLATFORM_RELEASE_RT_SPINLOCK(pP2PSvcInfo->lock);
 
 	P2PSVC_FUNC_OUT(DBG_LOUD, rtStatus);
-	
+
 	return rtStatus;
 
 }
@@ -1401,9 +1401,9 @@ P2PSvc_OnWatchdog(
 {
 	RT_STATUS						rtStatus = RT_STATUS_SUCCESS;
 	PP2PSVC_INFO					pP2PSvcInfo = (PP2PSVC_INFO)pvP2PSvcInfo;
-	
+
 	P2PSVC_CHECK_NULL(pvP2PSvcInfo);
-	
+
 	if(!P2PSVC_ENABLED(pP2PSvcInfo)) return RT_STATUS_SUCCESS;
 
 	P2PSVC_FUNC_IN(DBG_LOUD);
@@ -1420,7 +1420,7 @@ P2PSvc_OnWatchdog(
 	PLATFORM_RELEASE_RT_SPINLOCK(pP2PSvcInfo->lock);
 
 	P2PSVC_FUNC_OUT(DBG_LOUD, rtStatus);
-	
+
 	return rtStatus;
 }
 
@@ -1433,7 +1433,7 @@ P2PSvc_OnDisconnect(
 	PP2PSVC_INFO					pP2PSvcInfo = (PP2PSVC_INFO)pvP2PSvcInfo;
 
 	P2PSVC_CHECK_NULL(pvP2PSvcInfo);
-	
+
 	if(!P2PSVC_ENABLED(pP2PSvcInfo)) return RT_STATUS_SUCCESS;
 
 	P2PSVC_FUNC_IN(DBG_LOUD);
@@ -1448,7 +1448,7 @@ P2PSvc_OnDisconnect(
 	PLATFORM_RELEASE_RT_SPINLOCK(pP2PSvcInfo->lock);
 
 	P2PSVC_FUNC_OUT(DBG_LOUD, rtStatus);
-	
+
 	return rtStatus;
 }
 

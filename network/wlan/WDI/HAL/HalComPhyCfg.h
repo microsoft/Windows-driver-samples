@@ -4,18 +4,18 @@
  * Module:	__INC_HALCOMPHYCFG_H
  *
  *
- * Note:	
- *			
+ * Note:
+ *
  *
  * Export:	Constants, macro, functions(API), global variables(None).
  *
- * Abbrev:	
+ * Abbrev:
  *
  * History:
- *		Data		Who		Remark 
+ *		Data		Who		Remark
  *      08/07/2007  MHC    	1. Porting from 9x series PHYCFG.h.
  *							2. Reorganize code architecture.
- * 
+ *
  *****************************************************************************/
  /* Check to see if the file has been included already.  */
 #ifndef __INC_HALCOMPHYCFG_H
@@ -35,13 +35,13 @@
 #define		bMaskHWord                	0xffff0000
 #define		bMaskLWord                	0x0000ffff
 #define		bMaskDWord                	0xffffffff
-#define		bMask12Bits				0xfff	
+#define		bMask12Bits				0xfff
 #define		bMask7bits				0x7f
-#define		bMaskH4Bits				0xf0000000	
+#define		bMaskH4Bits				0xf0000000
 #define		bMaskOFDM_D			0xffc00000
 #define		bMaskCCK				0x3f3f3f3f
 
-#define 		bRFRegOffsetMask		0xfffff		
+#define 		bRFRegOffsetMask		0xfffff
 
 
 typedef enum _RATE_SECTION {
@@ -50,7 +50,7 @@ typedef enum _RATE_SECTION {
 	HT_MCS0_MCS7,
 	HT_MCS8_MCS15,
 	HT_MCS16_MCS23,
-	HT_MCS24_MCS31,	
+	HT_MCS24_MCS31,
 	VHT_1SSMCS0_1SSMCS9,
 	VHT_2SSMCS0_2SSMCS9,
 	VHT_3SSMCS0_3SSMCS9,
@@ -65,7 +65,7 @@ typedef enum _RF_TX_NUM {
 	RF_MAX_TX_NUM,
 	RF_TX_NUM_NONIMPLEMENT,
 } RF_TX_NUM;
-	
+
 /*--------------------------Define Parameters-------------------------------*/
 
 #define MAX_DOZE_WAITING_TIMES_9x	64
@@ -91,23 +91,23 @@ typedef enum _RF_TX_NUM {
 #define MAX_BASE_NUM_IN_PHY_REG_PG_2_4G			10 //  CCK:1, OFDM:1, HT:4, VHT:4
 #define MAX_BASE_NUM_IN_PHY_REG_PG_5G			9 // OFDM:1, HT:4, VHT:4
 
-/*------------------------------Define structure----------------------------*/ 
+/*------------------------------Define structure----------------------------*/
 typedef struct _BB_REGISTER_DEFINITION{
-	u4Byte rfintfs;			// set software control: 
+	u4Byte rfintfs;			// set software control:
 							//		0x870~0x877[8 bytes]
-							
-	u4Byte rfintfo; 		// output data: 
+
+	u4Byte rfintfo; 		// output data:
 							//		0x860~0x86f [16 bytes]
-							
-	u4Byte rfintfe; 		// output enable: 
+
+	u4Byte rfintfe; 		// output enable:
 							//		0x860~0x86f [16 bytes]
-							
+
 	u4Byte rf3wireOffset;	// LSSI data:
 							//		0x840~0x84f [16 bytes]
 
-	u4Byte rfHSSIPara2; 	// wire parameter control2 : 
+	u4Byte rfHSSIPara2; 	// wire parameter control2 :
 							//		0x824~0x827,0x82c~0x82f, 0x834~0x837, 0x83c~0x83f [16 bytes]
-								
+
 	u4Byte rfLSSIReadBack; 	//LSSI RF readback data SI mode
 								//		0x8a0~0x8af [16 bytes]
 
@@ -167,14 +167,14 @@ typedef struct _BB_REGISTER_DEFINITION{
 
 //----------------------------------------------------------------------
 //  Initial MAC/BB/RF config by reading Hard Code.
-//----------------------------------------------------------------------		
-		
+//----------------------------------------------------------------------
+
 RT_STATUS
 phy_ConfigBBWithHeaderFile(
 	IN	PADAPTER		Adapter,
 	IN	u1Byte 			ConfigType
 );
-													
+
 RT_STATUS
 PHY_ConfigRFWithHeaderFile(
 	IN	PADAPTER			Adapter,
@@ -219,7 +219,7 @@ RT_STATUS
 PHY_MACConfig(
 	IN	PADAPTER	Adapter
 );
-	
+
 RT_STATUS
 PHY_BBConfig(
 	IN	PADAPTER	Adapter
@@ -230,7 +230,7 @@ s4Byte
 phy_TxPwrIdxToDbm(
 	IN	PADAPTER		Adapter,
 	IN	WIRELESS_MODE	WirelessMode,
-	IN	u1Byte			TxPwrIdx	
+	IN	u1Byte			TxPwrIdx
 	);
 
 
@@ -247,8 +247,8 @@ PHY_MapChannelPlan(
 	IN	u2Byte			HalChannelPlan
 	);
 
-void 
-SINGLEMODULE_MAPFUN(	
+void
+SINGLEMODULE_MAPFUN(
 	IN  PADAPTER 	Adapter,
 	IN  u2Byte 		Regchannelplane,
 	IN	u1Byte		RegEnableAdaptivity,
@@ -264,21 +264,21 @@ VOID
 PHY_IQCalibrate(
 	IN	PADAPTER 	Adapter,
 	IN	BOOLEAN 	bReCovery
-	);	
+	);
 
 
 VOID
 PHY_SetTxPowerIndexShadow(
 	IN	PADAPTER			Adapter,
 	IN	u4Byte				PowerIndex,
-	IN	u1Byte				RFPath,	
+	IN	u1Byte				RFPath,
 	IN	u1Byte				Rate
 	);
 
 u1Byte
 PHY_GetTxPowerIndexShadow(
 	IN	PADAPTER			Adapter,
-	IN	u1Byte				RFPath,	
+	IN	u1Byte				RFPath,
 	IN	u1Byte				Rate
 	);
 
@@ -319,7 +319,7 @@ PHY_LCCalibrate_Dummy(
 
 typedef struct __RT_SINGLEMODULE_ENTRY
 {
-	u4Byte 		country_code;	 
+	u4Byte 		country_code;
 	u2Byte 		Regchannelplane;
 	u1Byte		RegEnableAdaptivity;
 	u2Byte		RegHTMode;

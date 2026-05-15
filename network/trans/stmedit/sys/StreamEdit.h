@@ -86,7 +86,7 @@ typedef struct _OUTGOING_STREAM_DATA
     // If the NetBufferList is a clone or did we allocate it
     BOOLEAN isClone;
 
-    // Valid data length 
+    // Valid data length
     size_t DataLength;
 
     // Stream Flags to be used when injecting this segment of data
@@ -169,14 +169,14 @@ typedef struct _STREAM_FLOW_CONTEXT
     size_t ScratchDataOffset;
     size_t ScratchDataLength;
 
-    // 
+    //
     // Flow information for data (re-)injection.
     //
 
     UINT64 FlowHandle;
     UINT16 LayerId;
     UINT32 CalloutId;
-    
+
     volatile char  bFlowActive;     // If the Flow is still active. true @FlowEstablished, false @FlowDelete
 
     BOOLEAN bFlowTerminating : 1;   // FIN/RST has been received.
@@ -213,7 +213,7 @@ typedef struct _TASK_ENTRY
 } TASK_ENTRY, *PTASK_ENTRY;
 
 //
-// Stream Editor Globals block 
+// Stream Editor Globals block
 //
 typedef struct _STMEDIT_GLOBALS
 {
@@ -284,7 +284,7 @@ typedef struct _STMEDIT_GLOBALS
 
     DEVICE_OBJECT* WdmDevice;   // Device object for StreamEdit
 
-    // 
+    //
     // Configurable parameters block
     //
 
@@ -346,7 +346,7 @@ WFP_CLASSIFY_FUNCTION(
     _In_ PVOID,
 #if(NTDDI_VERSION >= NTDDI_WIN7)
     _In_ const void*,
-#endif  
+#endif
     _In_ const FWPS_FILTER*,
     _In_ UINT64,
     _Inout_ FWPS_CLASSIFY_OUT*
@@ -466,7 +466,7 @@ ULONG NetBufferListLength(PNET_BUFFER_LIST Nbl)
     return Length;
 }
 
-// 
+//
 // Callout driver keys
 //
 

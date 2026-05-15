@@ -5,19 +5,19 @@
  Module:	DFS.c	(RTL8190  Source C File)
 
  Note:		Declare some variable which will be used by any debug command.
- 
- Function:	
- 		 
- Export:	
 
- Abbrev:	
+ Function:
+
+ Export:
+
+ Abbrev:
 
  History:
 	Data		Who		Remark
-	
+
 	??/??/2010	Cosa	Create initial version.
 	12/23/2010	MHC		Gather the code from other source files.
-		
+
 ******************************************************************************/
 /* Header Files. */
 #include "Mp_Precomp.h"
@@ -39,7 +39,7 @@ Hal_PauseTx(
 
 #if (DFS_SUPPORT == 1)
 //============================================
-//		The following is for DFS local function, 
+//		The following is for DFS local function,
 //		start with dfs_*()
 //============================================
 VOID
@@ -53,7 +53,7 @@ dfs_StaDisableTx(
 	if(type == DFS_DISABLE_TX_ALL)
 	{
 		RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], dfs_StaDisableTx all!!\n"));
-		Hal_PauseTx(Adapter, HW_DISABLE_TX_ALL);		
+		Hal_PauseTx(Adapter, HW_DISABLE_TX_ALL);
 	}
 	else if(type == DFS_DISABLE_TX_DATA)
 	{
@@ -97,14 +97,14 @@ dfs_StaCsaWorkItemCallback(
 			pMgntDFS->staMode.dfsSwitchChannel));
 
 		pMgntDFS->staMode.dfsOldConnectedChannel = pMgntInfo->dot11CurrentChannelNumber;
-		
+
 		if(pMgntInfo->dot11CurrentChannelNumber != pMgntDFS->staMode.dfsSwitchChannel)
 		{
 			pMgntInfo->dot11CurrentChannelNumber = pMgntDFS->staMode.dfsSwitchChannel;
 			Mgnt_SwChnl(GetDefaultAdapter(Adapter)
 				,pMgntInfo->dot11CurrentChannelNumber,2);
 		}
-		
+
 		pMgntDFS->staMode.dfsSwitchChannel = 0;
 
 		if(DFS_5G_RADAR_CHANNEL(pMgntInfo->dot11CurrentChannelNumber))
@@ -178,10 +178,10 @@ dfs_ApInsertRejectChnl(
 {
 	PDFS_MGNT		pMgntDFS = &Adapter->MgntInfo.DFSMgnt;
 	u1Byte			i;
-	
+
 	RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], dfs_ApInsertRejectChnl(), insert chnl %d to Radar channel list\n",
 				Rejectchnl));
-	
+
 	for(i=0; i<DFS_MAX_RADAR_CHNL_NUM; i++)
 	{
 		if(pMgntDFS->apMode.dfsRadarChnl[i].radarChnl == 0)
@@ -211,7 +211,7 @@ dfs_ApDisableTx(
 	)
 {
 	PDFS_MGNT		pMgntDFS = &Adapter->MgntInfo.DFSMgnt;
-	
+
 	if(type == DFS_DISABLE_TX_ALL)
 	{
 		RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], dfs_ApDisableTx all!!\n"));
@@ -250,7 +250,7 @@ dfs_ApResetMonitorState(
 	)
 {
 	PDFS_MGNT		pMgntDFS = &Adapter->MgntInfo.DFSMgnt;
-	
+
 	if(bNeedMonitor)
 	{
 		pMgntDFS->apMode.bMonitored = FALSE;
@@ -281,14 +281,14 @@ dfs_ApEnableTx(
 VOID
 dfs_ApSwitchChnl(
 	IN	PVOID	Context
-	)	
+	)
 {
 	PADAPTER		Adapter = (PADAPTER)Context;
 	PDFS_MGNT		pMgntDFS = &Adapter->MgntInfo.DFSMgnt;
 
 	RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], dfs_ApSwitchChnl(), switch chnl to %d\n",
 		pMgntDFS->apMode.dfsSwitchChannel));
-	
+
 	dfs_ApDisableTx(Adapter, DFS_DISABLE_TX_ALL);
 
 	MgntActSet_802_11_REG_20MHZ_CHANNEL_AND_SWITCH(Adapter, pMgntDFS->apMode.dfsSwitchChannel);
@@ -314,14 +314,14 @@ dfs_ApSelectChannel(
 		}
 		RT_TRACE( COMP_DFS, DBG_LOUD, ("]\n"));
 
-		num = (u1Byte)GetRandomNumber(0, AviNum);	
+		num = (u1Byte)GetRandomNumber(0, AviNum);
 		which_channel = aviChnl[num];
 	}
 	else
 	{
 		which_channel = 153;
 	}
-	
+
 	RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], dfs_ApSelectChannel to chnl-%d\n", which_channel));
 	return which_channel;
 }
@@ -360,14 +360,14 @@ dfs_ApDetecting(
 #endif
 
 	if(pMgntDFS->apMode.bRadarDetected)
-	{	
+	{
 		// Only display counters when real radar signal is detected
 		if(pMgntDFS->apMode.dfsTestAlert)
 			pMgntDFS->apMode.dfsTestAlert = 0;
 
 		if(radar_type == 1)
 		{
-			RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], 0xcf8=0x%x, 0xcf4=0x%x !\n", 
+			RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], 0xcf8=0x%x, 0xcf4=0x%x !\n",
 				radar_detect_val, radar_cnt));
 		}
 
@@ -375,7 +375,7 @@ dfs_ApDetecting(
 		pMgntDFS->apMode.dfsState = DFS_AP_BECONING;
 
 		dfs_ApDisableTx(Adapter, DFS_DISABLE_TX_DATA);
-		
+
 		ReleaseDataFrameQueued(Adapter);
 
 		// Insert current channel to the reject list.
@@ -442,7 +442,7 @@ dfs_ApInitialize(
 		pMgntDFS->apMode.dfsRadarChnl[i].radarChnl = 0;
 		pMgntDFS->apMode.dfsRadarChnl[i].rejectTime = 0;
 	}
-	
+
 	pMgntDFS->apMode.bRadarDetected = FALSE;
 	pMgntDFS->apMode.bDisableTx = FALSE;
 	pMgntDFS->apMode.dfsSwitchChannel = 0;
@@ -485,7 +485,7 @@ dfs_APDFSTimerWorkItemCallback(
 			RT_TRACE(COMP_DFS, DBG_LOUD, ("[DFS], AP switch channel!!\n"));
 			dfs_ApSwitchChnl(Adapter);
 			break;
-			
+
 		default:
 			RT_ASSERT(FALSE, ("AP Unknown state\n"));
 			break;
@@ -514,7 +514,7 @@ dfs_ApDfsTimerCallback(
 
 
 //============================================
-//		The following is for DFS Extern function, 
+//		The following is for DFS Extern function,
 //		start with DFS_*()
 //============================================
 
@@ -525,7 +525,7 @@ DFS_Init(
 {
 	PDFS_MGNT	pMgntDFS = &Adapter->MgntInfo.DFSMgnt;
 	BOOLEAN		bSupportDFS = FALSE;
-	
+
 	Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_SUPPORT_5G, (PBOOLEAN)&bSupportDFS);
 	if (bSupportDFS)
 	{
@@ -566,9 +566,9 @@ DFS_TimerContrl(
 	if(pMgntDFS->apMode.bDisableDfs)
 		return;
 
-	// Comment out for compiler type cast warnning on Vista x64	
+	// Comment out for compiler type cast warnning on Vista x64
 	//RT_TRACE(COMP_DFS, DBG_LOUD, ("[DFS], DFS_TimerContrl(), Adapter=0x%x, type=", (u4Byte)Adapter));
-	
+
 	switch(TimerCtrlType)
 	{
 		case DFS_TIMER_INIT:
@@ -580,7 +580,7 @@ DFS_TimerContrl(
 			RT_TRACE( COMP_DFS, DBG_LOUD, ("Set Timer for AP mode!!\n"));
 			PlatformSetTimer( Adapter, &pMgntInfo->DFSMgnt.apMode.dfsTimer, 100);
 			break;
-		
+
 		case DFS_TIMER_CANCEL:
 			RT_TRACE( COMP_DFS, DBG_LOUD, ("Cancel Timer for AP mode!!\n"));
 			PlatformCancelTimer(Adapter, &pMgntInfo->DFSMgnt.apMode.dfsTimer);
@@ -590,7 +590,7 @@ DFS_TimerContrl(
 			RT_TRACE( COMP_DFS, DBG_LOUD, ("Release Timer for AP mode!!\n"));
 			PlatformReleaseTimer(Adapter, &pMgntInfo->DFSMgnt.apMode.dfsTimer);
 			break;
-			
+
 		default:
 			RT_ASSERT(FALSE, ("Unknown Action!!\n"));
 			break;
@@ -608,13 +608,13 @@ DFS_WorkItemContrl(
 {
 	PMGNT_INFO	pMgntInfo = &Adapter->MgntInfo;
 	PDFS_MGNT	pMgntDFS = &Adapter->MgntInfo.DFSMgnt;
-	
+
 	if(Adapter->DFSSupport == FALSE)
 		return;
-		
+
 	// Comment out for compiler type cast warnning on Vista x64
 	//RT_TRACE(COMP_DFS, DBG_LOUD, ("[DFS], DFS_WorkItemContrl(), Adapter=0x%x, type=", (u4Byte)Adapter));
-	
+
 	switch(WorkItemCtrlType)
 	{
 		case DFS_WORKITEM_INIT:
@@ -623,8 +623,8 @@ DFS_WorkItemContrl(
 				RT_TRACE(COMP_DFS, DBG_LOUD, ("Workitem initialization for AP mode!!\n"));
 				PlatformInitializeWorkItem(
 				Adapter,
-				&(pMgntInfo->DFSMgnt.apMode.dfsTimerWorkItem), 
-				(RT_WORKITEM_CALL_BACK)dfs_APDFSTimerWorkItemCallback, 
+				&(pMgntInfo->DFSMgnt.apMode.dfsTimerWorkItem),
+				(RT_WORKITEM_CALL_BACK)dfs_APDFSTimerWorkItemCallback,
 				(PVOID)Adapter,
 				"AP_DFSTimerWorkItem");
 			}
@@ -633,13 +633,13 @@ DFS_WorkItemContrl(
 				RT_TRACE(COMP_DFS, DBG_LOUD, ("Workitem initialization for STA mode!!\n"));
 				PlatformInitializeWorkItem(
 				Adapter,
-				&(pMgntInfo->DFSMgnt.staMode.csaWorkItem), 
-				(RT_WORKITEM_CALL_BACK)dfs_StaCsaWorkItemCallback, 
+				&(pMgntInfo->DFSMgnt.staMode.csaWorkItem),
+				(RT_WORKITEM_CALL_BACK)dfs_StaCsaWorkItemCallback,
 				(PVOID)Adapter,
 				"DFS_CSAWorkItem");
 			}
 			break;
-		
+
 		case DFS_WORKITEM_FREE:
 			if(!pMgntDFS->apMode.bDisableDfs)
 			{
@@ -652,7 +652,7 @@ DFS_WorkItemContrl(
 				PlatformFreeWorkItem(&(pMgntInfo->DFSMgnt.staMode.csaWorkItem));
 			}
 			break;
-			
+
 		default:
 			break;
 	}
@@ -667,7 +667,7 @@ DFS_IsTxDisabled(
 
 	if (Adapter->DFSSupport == FALSE)
 		return FALSE;
-	
+
 	if(ACTING_AS_AP(Adapter))
 	{
 		if (!pMgntDFS->apMode.bDisableDfs &&
@@ -704,7 +704,7 @@ DFS_ApChnlLocked(
 
 	if (pMgntDFS->apMode.bDisableDfs)
 		return FALSE;
-	
+
 	for(i=0; i<DFS_MAX_RADAR_CHNL_NUM; i++)
 	{
 		if((pMgntDFS->apMode.dfsRadarChnl[i].radarChnl == chnl))
@@ -742,19 +742,19 @@ DFS_ApIfNeedMonitorChnl(
 
 	if (pMgntDFS->apMode.bDisableDfs)
 		return;
-	
+
 	if(!ACTING_AS_AP(Adapter))
 		return;
 
 	RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS_ApIfNeedMonitorChnl()!!\n"));
-	
+
 	dfs_ApResetRadarDetectCounterAndFlag(Adapter);
 
 	if(DFS_5G_RADAR_CHANNEL(pMgntInfo->dot11CurrentChannelNumber))
 	{
 		RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], chnl %d is a Radar channel, have to monitor first!!\n",
 			pMgntInfo->dot11CurrentChannelNumber));
-		
+
 		dfs_ApResetMonitorState(Adapter, TRUE);
 		dfs_ApDisableTx(Adapter, DFS_DISABLE_TX_ALL);
 	}
@@ -773,7 +773,7 @@ DFS_ApConstructBeaconIEcsa(
 	IN	PADAPTER	Adapter
 )
 {
-	PMGNT_INFO		pMgntInfo = &Adapter->MgntInfo;	
+	PMGNT_INFO		pMgntInfo = &Adapter->MgntInfo;
 	PDFS_MGNT		pMgntDFS = &Adapter->MgntInfo.DFSMgnt;
 	OCTET_STRING	ChlSwitchAnnounce;
 	u1Byte			ChlSwitchAnnounceBuf[3];
@@ -784,7 +784,7 @@ DFS_ApConstructBeaconIEcsa(
 
 	if(pMgntDFS->apMode.bDisableDfs)
 		return;
-	
+
 	if(ACTING_AS_AP(Adapter))
 	{
 		pbcn = pMgntInfo->beaconframe.Octet;
@@ -801,9 +801,9 @@ DFS_ApConstructBeaconIEcsa(
 
 				FillOctetString(ChlSwitchAnnounce, ChlSwitchAnnounceBuf, 3);
 				PacketMakeElement(&pMgntInfo->beaconframe, EID_ChlSwitchAnnounce, ChlSwitchAnnounce);
-				
+
 				pMgntDFS->apMode.dfsSwitchChCountDown--;
-				RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS counting = %d\n", 
+				RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS counting = %d\n",
 					pMgntDFS->apMode.dfsSwitchChCountDown));
 
 				if( pMgntDFS->apMode.dfsSwitchChCountDown == 0 &&
@@ -830,7 +830,7 @@ DFS_StaInsertToRadarChnlList(
 
 	if(pMgntDFS->staMode.bDisableDfs)
 		return;
-	
+
 	for(i=0; i<DFS_MAX_RADAR_CHNL_NUM; i++)
 	{
 		if((pMgntDFS->staMode.dfsRadarChnl[i].radarChnl == 0))
@@ -867,7 +867,7 @@ DFS_StaMgntResetVars(
 		pMgntDFS->staMode.dfsRadarChnl[i].radarChnl = 0;
 		pMgntDFS->staMode.dfsRadarChnl[i].rxBcnTime = 0;
 	}
-	
+
 	pMgntDFS->staMode.bDisableTx = FALSE;
 	pMgntDFS->staMode.dfsSwitchChannel = 0;
 	pMgntDFS->staMode.dfsSwitchChCountDown = 0;
@@ -889,10 +889,10 @@ DFS_StaCheckCsaInfo(
 
 	if(pMgntDFS->staMode.bDisableDfs)
 		return;
-	
+
 	if(pBssDesc->CSA.bWithCSA)
-	{	
-		RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], OnBeacon_Bss(), CSA info, Mode/ Newchnl/ Cnt = %d/ %d/ %d !!!\n", 
+	{
+		RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], OnBeacon_Bss(), CSA info, Mode/ Newchnl/ Cnt = %d/ %d/ %d !!!\n",
 			pBssDesc->CSA.channelSwtichMode, pBssDesc->CSA.NewChnlNum, pBssDesc->CSA.channelSwitchCnt));
 
 		if(pMgntDFS->staMode.dfsState == DFS_STA_LISTEN)
@@ -926,9 +926,9 @@ DFS_StaConstructAssociateReq(
 
 	if(pMgntDFS->staMode.bDisableDfs)
 		return;
-	
+
 	//for 11H, add Power Capability.
-	//For 11H,add Supported Channels element 
+	//For 11H,add Supported Channels element
 	if(asocCap & BIT8)
 	{
 		RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS_StaConstructAssociateReq()\n"));
@@ -938,7 +938,7 @@ DFS_StaConstructAssociateReq(
 		PowerCap.Octet = PowerCapConnent;
 		PowerCap.Length = 2;
 		PacketMakeElement( &AsocReq, EID_PowerCap, PowerCap );
-		
+
 		pChannelList = MgntActQuery_ChannelList(Adapter);
 		RT_TRACE(COMP_SCAN, DBG_LOUD, ("@@@Channel Plan: "));
 		for(i = 0; i < pChannelList->ChannelLen; i ++)
@@ -951,7 +951,7 @@ DFS_StaConstructAssociateReq(
 			else
 				SupportChannelConnent[i] = 1;
 		}
-		
+
 		//FillOctetString(SupportChannelIE, SuppRatesContent, i*2);
 		SupportChannelIE.Octet = SupportChannelConnent;
 		SupportChannelIE.Length = i;
@@ -974,10 +974,10 @@ DFS_StaGetValueFromBeacon(
 {
 	PDFS_MGNT		pMgntDFS = &Adapter->MgntInfo.DFSMgnt;
 	OCTET_STRING	ChlSwitchAnnounceInfo;
-	
+
 	if (Adapter->DFSSupport == FALSE)
 		return;
-	
+
 	if (pMgntDFS->staMode.bDisableDfs)
 		return;
 
@@ -988,7 +988,7 @@ DFS_StaGetValueFromBeacon(
 		bssDesc->CSA.channelSwitchCnt = EF1Byte(*(ChlSwitchAnnounceInfo.Octet+2));
 		bssDesc->CSA.NewChnlNum= EF1Byte(*(ChlSwitchAnnounceInfo.Octet+1));
 		bssDesc->CSA.channelSwtichMode = EF1Byte(*(ChlSwitchAnnounceInfo.Octet));
-		RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], GetValueFromBeaconOrProbeRsp(), CSA info, Mode/ Newchnl/ Cnt = %d/ %d/ %d !!!\n", 
+		RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], GetValueFromBeaconOrProbeRsp(), CSA info, Mode/ Newchnl/ Cnt = %d/ %d/ %d !!!\n",
 			bssDesc->CSA.channelSwtichMode, bssDesc->CSA.NewChnlNum, bssDesc->CSA.channelSwitchCnt));
 	}
 	else
@@ -1016,7 +1016,7 @@ DFS_StaMonitor(
 
 	if(ACTING_AS_AP(Adapter))
 		return;
-	
+
 	if(pMgntDFS->staMode.bMonitorAfterSwitch)
 	{
 		currTime = PlatformGetCurrentTime();
@@ -1026,14 +1026,14 @@ DFS_StaMonitor(
 		{
 			RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS_StaMonitor(), monitor started!!\n"));
 		}
-		
+
 		if(PlatformDivision64(diffTime,1000000) < DFS_STA_CHNL_MONITOR_TIME)
 		{
 			if( Adapter->MgntInfo.LinkDetectInfo.NumRecvBcnInPeriod==0 ||
 				Adapter->MgntInfo.LinkDetectInfo.NumRecvDataInPeriod==0 )
-			{				
+			{
 				Adapter->MgntInfo.LinkDetectInfo.NumRecvBcnInPeriod = 1;
-				Adapter->MgntInfo.LinkDetectInfo.NumRecvDataInPeriod= 1;	
+				Adapter->MgntInfo.LinkDetectInfo.NumRecvDataInPeriod= 1;
 			}
 		}
 		else
@@ -1041,7 +1041,7 @@ DFS_StaMonitor(
 			pMgntDFS->staMode.bMonitorAfterSwitch = FALSE;
 			pMgntDFS->staMode.bMonitorAfterSwitchIsDone = TRUE;
 			dfs_StaEnableTx(Adapter);
-			RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS_StaMonitor(), monitor is finished, over %d seconds!!\n", 
+			RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS_StaMonitor(), monitor is finished, over %d seconds!!\n",
 				DFS_STA_CHNL_MONITOR_TIME));
 		}
 	}
@@ -1063,7 +1063,7 @@ DFS_StaCheckRadarChnl(
 
 	if (pMgntDFS->staMode.bDisableDfs)
 		return;
-	
+
 #if (DFS_CLIENT_PASSIVE_SCAN_ONLY == 1)
 	return;
 #endif
@@ -1073,9 +1073,9 @@ DFS_StaCheckRadarChnl(
 	if(!DFS_5G_RADAR_CHANNEL(chnl))
 		return;
 
-	RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS_StaCheckRadarChnl(), rx beacon, channel =  %d!!\n", 
+	RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS_StaCheckRadarChnl(), rx beacon, channel =  %d!!\n",
 		pbssdesc->ChannelNumber));
-	
+
 	if(pbssdesc->CSA.bWithCSA)
 	{
 		// Beacon with Channel Switch Annouence, set rx beacon time = 0.
@@ -1085,20 +1085,20 @@ DFS_StaCheckRadarChnl(
 		{
 			if(pMgntDFS->staMode.dfsRadarChnl[i].radarChnl == chnl)
 			{
-				RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS_StaCheckRadarChnl(), CSA beacon, set rx beacon time = 0 at channel =  %d!!\n", 
+				RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS_StaCheckRadarChnl(), CSA beacon, set rx beacon time = 0 at channel =  %d!!\n",
 					chnl));
 				pMgntDFS->staMode.dfsRadarChnl[i].rxBcnTime = 0;
 			}
 		}
 	}
 	else
-	{	
+	{
 		// Update the rx beacon time.
 		for(i=0; i<DFS_MAX_RADAR_CHNL_NUM; i++)
 		{
 			if(pMgntDFS->staMode.dfsRadarChnl[i].radarChnl == chnl)
 			{
-				RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS_StaCheckRadarChnl(), update rx beacon time at channel =  %d!!\n", 
+				RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS_StaCheckRadarChnl(), update rx beacon time at channel =  %d!!\n",
 					chnl));
 				pMgntDFS->staMode.dfsRadarChnl[i].rxBcnTime = PlatformGetCurrentTime();
 			}
@@ -1144,22 +1144,22 @@ DFS_StaUpdateRadarChnlScanType(
 				if(pChanneList->ChnlListEntry[j].ChannelNum == radarChnl)
 				{
 					ch_idx = (u1Byte)j;
-					RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS_StaUpdateRadarChnlScanType(), find channel-%d in channel plan!!", 
+					RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS_StaUpdateRadarChnlScanType(), find channel-%d in channel plan!!",
 						radarChnl));
 					break;
 				}
 			}
 			if(ch_idx == 0xff)
 			{
-				RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS_StaUpdateRadarChnlScanType(), channel-%d NOT found in channel plan!!\n", 
+				RT_TRACE( COMP_DFS, DBG_LOUD, ("[DFS], DFS_StaUpdateRadarChnlScanType(), channel-%d NOT found in channel plan!!\n",
 					radarChnl));
 				return;
 			}
-			
+
 			if(PlatformDivision64(diffTime,1000000) < DFS_STA_CHNL_SCAN_TYPE_MONITOR_TIME)
 			{
 				RT_TRACE( COMP_DFS, DBG_LOUD, (" and set to Active scan!!\n"));
-				pChanneList->ChnlListEntry[ch_idx].ScanType = SCAN_ACTIVE;			
+				pChanneList->ChnlListEntry[ch_idx].ScanType = SCAN_ACTIVE;
 			}
 			else
 			{
@@ -1167,7 +1167,7 @@ DFS_StaUpdateRadarChnlScanType(
 				pChanneList->ChnlListEntry[ch_idx].ScanType = SCAN_PASSIVE;
 			}
 		}
-	}	
+	}
 
 }
 

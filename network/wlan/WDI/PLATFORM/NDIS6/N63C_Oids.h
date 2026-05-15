@@ -5,7 +5,7 @@
 	#define _N63C_OIDS_H
 
 // ------------------------------------------------------------------------------------------------
-// Definitions 
+// Definitions
 // ------------------------------------------------------------------------------------------------
 
 // Set the correct state which the OID can be accepted
@@ -52,7 +52,7 @@ N63CResetWifiDirectPorts(
 
 VOID
 N63CIndicateP2PEvent(
-	PVOID pP2PInfo, 
+	PVOID pP2PInfo,
 	u4Byte EventID,
 	PMEMORY_BUFFER pInformation
 );

@@ -8,17 +8,17 @@
     <PRECOMPILED_PCH>precomp.pch</PRECOMPILED_PCH>
     <PRECOMPILED_OBJ>precomp.obj</PRECOMPILED_OBJ>
     <INCLUDES>
-		.;				
-		..;						
-		$(SRC_ROOT)\Header;		
-		$(SRC_ROOT)\Common;		
+		.;
+		..;
+		$(SRC_ROOT)\Header;
+		$(SRC_ROOT)\Common;
 		$(HAL_INC_DIRS);
 	</INCLUDES>
   </PropertyGroup>
   <Import Project="$(SRC_ROOT)\$(PLATFORM_INC).props" />
   <PropertyGroup>
     <SOURCES>
-		<!--TAG_REALTEK_SOURCE_FILES-->		 		
+		<!--TAG_REALTEK_SOURCE_FILES-->
 	</SOURCES>
   </PropertyGroup>
 </Project>

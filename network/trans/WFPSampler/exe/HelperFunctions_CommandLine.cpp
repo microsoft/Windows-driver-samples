@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -25,7 +25,7 @@
 //          }
 //       <Object>
 //          {
-//            CommandLine                   - Function acts on the arguments passed to the command 
+//            CommandLine                   - Function acts on the arguments passed to the command
 //                                               line.
 //            DataLinkAddressType           - Function pertains to DL_ADDRESS_TYPE values.
 //            EtherType                     - Function pertains to the Ethernet types.
@@ -45,7 +45,7 @@
 //          }
 //       <Action>
 //          {
-//            Parse              - Function pulls data into the required format from the provided 
+//            Parse              - Function pulls data into the required format from the provided
 //                                    data.
 //          }
 //       <Modifier>
@@ -99,7 +99,7 @@
 
 /**
  @private_function="PrvHlprCreateAppContainerSecurityDescriptor"
- 
+
    Purpose:  Create a SECURITY_DESCRIPTOR for use with AppContainer filtering.                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -263,7 +263,7 @@ PSECURITY_DESCRIPTOR PrvHlprCreateAppContainerSecurityDescriptor()
 
 /**
  @private_function="AppliesToAppContainers"
- 
+
    Purpose:  Determine if the codition should apply to app containers.                          <br>
                                                                                                 <br>
    Notes:    Applies additional logic to:                                                       <br>
@@ -296,7 +296,7 @@ BOOLEAN AppliesToAppContainers(_In_reads_(stringCount) PCWSTR* ppCLPStrings,
 
 /**
  @private_function="PrvHlprSIDGet"
- 
+
    Purpose:  Lookup the SID for the provided user.                                              <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using HLPR_DELETE_ARRAY.<br>
@@ -370,7 +370,7 @@ UINT32 PrvHlprSIDGet(_In_ PCWSTR pName,
    if(!IsValidSid(pSID))
    {
       status = ERROR_INVALID_SID;
-   
+
       HlprLogError(L"PrvHlprSIDGet: IsValidSid() [status: %#x]",
                    status);
 
@@ -378,7 +378,7 @@ UINT32 PrvHlprSIDGet(_In_ PCWSTR pName,
    }
 
    *ppSID = pSID;
-   
+
    status = NO_ERROR;
 
    HLPR_BAIL_LABEL:
@@ -395,7 +395,7 @@ UINT32 PrvHlprSIDGet(_In_ PCWSTR pName,
 
 /**
  @private_function="PrvHlprCommandLineStringToFwpMatchType"
- 
+
    Purpose:  Parse a string for a FWP_MATCH_TYPE value.                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -434,7 +434,7 @@ FWP_MATCH_TYPE PrvHlprCommandLineStringToFwpMatchType(_In_ PCWSTR pMatchType)
 
 /**
  @private_function="PrvHlprEtherTypeParse"
- 
+
    Purpose:  Parse a string for a well known frame type value.                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -477,7 +477,7 @@ UINT32 PrvHlprEtherTypeParse(_In_ PCWSTR pEtherType)
 
 /**
  @private_function="PrvHlprNDISMediumTypeParse"
- 
+
    Purpose:  Parse a string for a NDIS_MEDIUM value.                                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -595,7 +595,7 @@ UINT32 PrvHlprNDISMediumTypeParse(_In_ PCWSTR pMediumType)
 
 /**
  @private_function="PrvHlprNDISMediumTypeParse"
- 
+
    Purpose:  Parse a string for a NDIS_PHYSICAL_MEDIUM value.                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -712,7 +712,7 @@ UINT32 PrvHlprNDISPhysicalMediumTypeParse(_In_ PCWSTR pPhysicalMediumType)
 
 /**
  @private_function="PrvHlprDataLinkAddressTypeParse"
- 
+
    Purpose:  Parse a string for an DL_ADDRESS_TYPE value.                                       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -746,7 +746,7 @@ UINT8 PrvHlprDataLinkAddressTypeParse(_In_ PCWSTR pDLAddressType)
 
 /**
  @private_function="PrvHlprIPAddressTypeParse"
- 
+
    Purpose:  Parse a string for an NL_ADDRESS_TYPE value.                                       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -785,7 +785,7 @@ UINT8 PrvHlprIPAddressTypeParse(_In_ PCWSTR pNLAddressType)
 
 /**
  @private_function="PrvHlprProtocolParse"
- 
+
    Purpose:  Parse a string for a well known protocol value.                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -816,7 +816,7 @@ UINT32 PrvHlprProtocolParse(_In_ PCWSTR pProtocol)
 
 /**
  @private_function="PrvHlprFwpDirectionParse"
- 
+
    Purpose:  Parse a string for a FWP_DIRECTION value.                                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -845,7 +845,7 @@ UINT32 PrvHlprFwpDirectionParse(_In_ PCWSTR pDirection)
 
 /**
  @helper_function="PrvHlprFwpConditionFlagParse"
- 
+
    Purpose:  Parse a string for a FWP_CONDITION_FLAGS value.                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -940,7 +940,7 @@ UINT32 PrvHlprFwpConditionFlagParse(_In_ PCWSTR pFlag)
 
 /**
  @private_function="PrvHlprInterfaceTypeParse"
- 
+
    Purpose:  Parse a string for an interface type value.                                        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -994,7 +994,7 @@ UINT32 PrvHlprInterfaceTypeParse(_In_ PCWSTR pInterfaceType)
 
 /**
  @private_function="PrvHlprTunnelTypeParse"
- 
+
    Purpose:  Parse a string for a TUNNEL_TYPE value.                                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1038,7 +1038,7 @@ UINT32 PrvHlprTunnelTypeParse(_In_ PCWSTR pTunnelType)
 
 /**
  @private_function="PrvHlprProfileIDParse"
- 
+
    Purpose:  Parse a string for a NLM_NETWORK_CATEGORY value.                                   <br>
                                                                                                 <br>
    Notes:    Function converts from NLM_NETWORK_CATEGORY to NL_INTERFACE_NETWORK_CATEGORY_STATE.<br>
@@ -1083,7 +1083,7 @@ UINT32 PrvHlprProfileIDParse(_In_ PCWSTR pProfileID)
 
 /**
  @private_function="PrvHlprRPCIFFlagParse"
- 
+
    Purpose:  Parse a string for a RPC_FW_IF_FLAG value.                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1105,7 +1105,7 @@ UINT32 PrvHlprRPCIFFlagParse(_In_ PCWSTR pFlag)
 
 /**
  @private_function="PrvHlprRPCProtocolParse"
- 
+
    Purpose:  Parse a string for a RPC protocol value.                                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1139,7 +1139,7 @@ UINT8 PrvHlprRPCProtocolParse(_In_ PCWSTR pProtocol)
 
 /**
  @private_function="PrvHlprRPCAuthTypeParse"
- 
+
    Purpose:  Parse a string for a RPC Auth Type value.                                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1173,7 +1173,7 @@ UINT32 PrvHlprRPCAuthTypeParse(_In_ PCWSTR pType)
 
 /**
  @private_function="PrvHlprRPCAuthLevelParse"
- 
+
    Purpose:  Parse a string for a RPC Auth Level value.                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1227,8 +1227,8 @@ UINT8 PrvHlprRPCAuthLevelParse(_In_ PCWSTR pLevel)
 
 /**
  @private_function="PrvHlprFwpmFilterConditionsSort"
- 
-   Purpose:  Pare down the filterConditions to only those applicable to the intended layer, and 
+
+   Purpose:  Pare down the filterConditions to only those applicable to the intended layer, and
              sort them so identical condition fields are contiguous.                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1299,7 +1299,7 @@ UINT32 PrvHlprFwpmFilterConditionsSort(_In_reads_(numFilterConditions) FWPM_FILT
 
 /**
  @private_function="PrvHlprFwpConditionReauthorizeReasonParse"
- 
+
    Purpose:  Parse a string for a FWP_CONDITION_REAUTHORIZE_REASON value.                       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1365,7 +1365,7 @@ UINT32 PrvHlprFwpConditionReauthorizeReasonParse(_In_ PCWSTR pFlag)
 
 /**
  @private_function="PrvHlprFwpConditionL2FlagParse"
- 
+
    Purpose:  Parse a string for a FWP_CONDITION_L2_FLAGS value.                                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1396,7 +1396,7 @@ UINT32 PrvHlprFwpConditionL2FlagParse(_In_ PCWSTR pL2Flag)
 
 /**
  @private_function="PrvHlprVSwitchNetworkTypeParse"
- 
+
    Purpose:  Parse a string for an FWP_VSWITCH_NETWORK_TYPE value.                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1435,7 +1435,7 @@ UINT8 PrvHlprVSwitchNetworkTypeParse(_In_ PCWSTR pVSwitchNetworkType)
 
 /**
  @private_function="PrvHlprVSwitchNICTypeParse"
- 
+
    Purpose:  Parse a string for an NDIS_SWITCH_NIC_TYPE value.                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1477,7 +1477,7 @@ UINT32 PrvHlprVSwitchNICTypeParse(_In_ PCWSTR pNICType)
 
 /**
  @helper_function="HlprCommandLineParseForScenarioRemoval"
- 
+
    Purpose:  Parse the command line parameters for strings which detail:                        <br>
                 -r - remove the objects associated with this scenario.                          <br>
    Notes:                                                                                       <br>
@@ -1512,9 +1512,9 @@ VOID HlprCommandLineParseForScenarioRemoval(_In_reads_(stringCount) PCWSTR* ppCL
 
 /**
  @helper_function="HlprCommandLineParseForScenarioRemoval"
- 
+
    Purpose:  Parse the command line parameters for strings which detail:                        <br>
-                -b - mark the filter for boottime use and make the associated objects 
+                -b - mark the filter for boottime use and make the associated objects
                      persistent.                                                                <br>
    Notes:                                                                                       <br>
                                                                                                 <br>
@@ -1549,7 +1549,7 @@ VOID HlprCommandLineParseForBootTime(_In_reads_(stringCount) PCWSTR* ppCLPString
 
 /**
  @helper_function="HlprCommandLineParseForCalloutUse"
- 
+
    Purpose:  Parse the command line parameters for strings which detail:                        <br>
                 -c - mark the callout to use the appropriate callout.                           <br>
                                                                                                 <br>
@@ -1586,7 +1586,7 @@ VOID HlprCommandLineParseForCalloutUse(_In_reads_(stringCount) PCWSTR* ppCLPStri
 
 /**
  @helper_function="HlprCommandLineParseForVolatility"
- 
+
    Purpose:  Parse the command line parameters for strings which detail:                        <br>
                 -v - unmark the filter and associated objects as persistent.                    <br>
                                                                                                 <br>
@@ -1621,7 +1621,7 @@ VOID HlprCommandLineParseForVolatility(_In_reads_(stringCount) PCWSTR* ppCLPStri
 
 /**
  @helper_function="HlprCommandLineParseForLayerKey"
- 
+
    Purpose: Parse the command line parameters for strings which detail:                         <br>
                -l <FWPM_LAYER> - specify at which layer the filter should be added.             <br>
    Notes:                                                                                       <br>
@@ -1685,7 +1685,7 @@ UINT32 HlprCommandLineParseForLayerKey(_In_reads_(stringCount) PCWSTR* ppCLPStri
 
 /**
  @helper_function="HlprCommandLineParseForSubLayerKey"
- 
+
    Purpose: Parse the command line parameters for strings which detail:                         <br>
                -s <FWPM_SUBLAYER> - specify at which sublayer the filter should be added.       <br>
    Notes:                                                                                       <br>
@@ -1733,8 +1733,8 @@ UINT32 HlprCommandLineParseForSubLayerKey(_In_reads_(stringCount) PCWSTR* ppCLPS
 
 /**
  @helper_function="HlprCommandLineParseForFilterConditions"
- 
-   Purpose:  Parse the command line parameters for strings which the conditions, match type, and 
+
+   Purpose:  Parse the command line parameters for strings which the conditions, match type, and
              value to use.                                                                      <br>
                                                                                                 <br>
    Notes:    If no match type is specified, then MATCH_TYPE_EQUAL is used.                      <br>
@@ -2349,7 +2349,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
                if(pData == 0)
                {
                   LocalFree(pSID);
-               
+
                   status = (UINT32)STATUS_NO_MEMORY;
 
                   HLPR_BAIL;
@@ -3055,7 +3055,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          else
          {
             status = ERROR_INVALID_PARAMETER;
-         
+
             HLPR_BAIL;
          }
 
@@ -3100,7 +3100,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          else
          {
             status = ERROR_INVALID_PARAMETER;
-         
+
             HLPR_BAIL;
          }
 
@@ -3222,11 +3222,11 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          }
 
          tempConditionIndex++;
-         
+
          continue;
       }
 
-      
+
       /// FWPM_CONDITION_NEXTHOP_SUB_INTERFACE_INDEX
       /// -nhsii <MATCH_TYPE> <INDEX>
       /// -nhsii == 0
@@ -3273,7 +3273,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
 
       /// FWPM_CONDITION_IP_NEXTHOP_INTERFACE
       /// -ipnhi <MATCH_TYPE> <INTERFACE>
-      /// -ipnhi == 
+      /// -ipnhi ==
       if(HlprStringsAreEqual(L"-ipnhi",
                              ppCLPStrings[stringIndex]))
       {
@@ -3348,7 +3348,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          else
          {
             status = ERROR_INVALID_PARAMETER;
-         
+
             HLPR_BAIL;
          }
 
@@ -3761,7 +3761,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
 
       /// FWPM_CONDITION_IP_PHYSICAL_ARRIVAL_INTERFACE
       /// -ippai <MATCH_TYPE> <INTERFACE>
-      /// -ippai == 
+      /// -ippai ==
       if(HlprStringsAreEqual(L"-ippai",
                              ppCLPStrings[stringIndex]))
       {
@@ -3802,7 +3802,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
 
       /// FWPM_CONDITION_IP_PHYSICAL_NEXTHOP_INTERFACE
       /// -ippnhi <MATCH_TYPE> <INTERFACE>
-      /// -ippnhi == 
+      /// -ippnhi ==
       if(HlprStringsAreEqual(L"-ippnhi",
                              ppCLPStrings[stringIndex]))
       {
@@ -3930,7 +3930,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          }
 
          tempConditionIndex++;
-         
+
          continue;
       }
 
@@ -3979,7 +3979,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          }
 
          tempConditionIndex++;
-         
+
          continue;
       }
 
@@ -4028,7 +4028,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          }
 
          tempConditionIndex++;
-         
+
          continue;
       }
 
@@ -4077,7 +4077,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          }
 
          tempConditionIndex++;
-         
+
          continue;
       }
 
@@ -4117,7 +4117,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          else
          {
             status = ERROR_INVALID_PARAMETER;
-         
+
             HLPR_BAIL;
          }
 
@@ -4162,7 +4162,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          else
          {
             status = ERROR_INVALID_PARAMETER;
-         
+
             HLPR_BAIL;
          }
 
@@ -4173,7 +4173,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
 
       /// FWPM_CONDITION_IP_LOCAL_INTERFACE \ FWPM_CONDITION_INTERFACE
       /// -ipli <MATCH_TYPE> <INTERFACE> \ -ipi <MATCH_TYPE> <INTERFACE>
-      /// -ipli == 
+      /// -ipli ==
       if(HlprStringsAreEqual(L"-ipli",
                              ppCLPStrings[stringIndex]) ||
          HlprStringsAreEqual(L"-ipi",
@@ -4216,7 +4216,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
 
       /// FWPM_CONDITION_IP_ARRIVAL_INTERFACE
       /// -ipai <MATCH_TYPE> <INTERFACE>
-      /// -ipai == 
+      /// -ipai ==
       if(HlprStringsAreEqual(L"-ipai",
                              ppCLPStrings[stringIndex]))
       {
@@ -4291,7 +4291,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          else
          {
             status = ERROR_INVALID_PARAMETER;
-         
+
             HLPR_BAIL;
          }
 
@@ -4389,7 +4389,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          continue;
       }
 
-     
+
       /// FWPM_CONDITION_INTERFACE_TYPE \ FWPM_CONDITION_LOCAL_INTERFACE_TYPE
       /// -it <MATCH_TYPE> <TYPE> \ -lit <MATCH_TYPE> <TYPE>
       /// -it == 0 \ -lit == 0
@@ -4428,7 +4428,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          else
          {
             status = ERROR_INVALID_PARAMETER;
-         
+
             HLPR_BAIL;
          }
 
@@ -4486,7 +4486,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
 
       /// FWPM_CONDITION_IP_FORWARD_INTERFACE
       /// -ipfi <MATCH_TYPE> <INTERFACE>
-      /// -ipfi == 
+      /// -ipfi ==
       if(HlprStringsAreEqual(L"-ipfi",
                              ppCLPStrings[stringIndex]))
       {
@@ -4737,7 +4737,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          }
 
          tempConditionIndex++;
-         
+
          continue;
       }
 
@@ -6089,7 +6089,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          }
 
          tempConditionIndex++;
-         
+
          continue;
       }
 
@@ -6130,7 +6130,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          }
 
          tempConditionIndex++;
-         
+
          continue;
       }
 
@@ -6168,7 +6168,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          }
 
          tempConditionIndex++;
-         
+
          continue;
       }
 
@@ -6209,7 +6209,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
          }
 
          tempConditionIndex++;
-         
+
          continue;
       }
 
@@ -6224,9 +6224,9 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
       {
          PCWSTR pString = ppCLPStrings[++stringIndex];
          UINT32 flag    = 0;
-      
+
          pTempFilterConditions[tempConditionIndex].matchType = PrvHlprCommandLineStringToFwpMatchType(pString);
-      
+
          if(pTempFilterConditions[tempConditionIndex].matchType == FWP_MATCH_TYPE_MAX)
             pTempFilterConditions[tempConditionIndex].matchType = FWP_MATCH_EQUAL;
          else
@@ -6236,21 +6236,21 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
            else
               HLPR_BAIL;
          }
-      
+
          pTempFilterConditions[tempConditionIndex].fieldKey            = FWPM_CONDITION_RPC_EP_FLAGS;
          pTempFilterConditions[tempConditionIndex].conditionValue.type = FWP_UINT32;
-      
+
          if(iswdigit((wint_t)pString[0]))
             flag = wcstol(pString,
                           0,
                           0);
          else
             flag = PrvHlprRPCIFFlagParse(pString);
-      
+
          pTempFilterConditions[tempConditionIndex].conditionValue.uint32 = flag;
-      
+
          tempConditionIndex++;
-      
+
          continue;
       }
 
@@ -6620,14 +6620,15 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
                            BYTE,
                            stringSize);
             HLPR_BAIL_ON_ALLOC_FAILURE(pByteBlob->data,
-                                      status);
+
+    status);
 
             RtlCopyMemory(pByteBlob->data,
                           pString,
                           stringSize);
-   
+
             pByteBlob->size = (UINT32)stringSize;
-   
+
             pTempFilterConditions[tempConditionIndex].conditionValue.type     = FWP_BYTE_BLOB_TYPE;
             pTempFilterConditions[tempConditionIndex].conditionValue.byteBlob = pByteBlob;
          }
@@ -6682,9 +6683,9 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
             RtlCopyMemory(pByteBlob->data,
                           pString,
                           stringSize);
-   
+
             pByteBlob->size = (UINT32)stringSize;
-   
+
             pTempFilterConditions[tempConditionIndex].conditionValue.type     = FWP_BYTE_BLOB_TYPE;
             pTempFilterConditions[tempConditionIndex].conditionValue.byteBlob = pByteBlob;
          }
@@ -6721,7 +6722,7 @@ UINT32 HlprCommandLineParseForFilterConditions(_In_reads_(stringCount) PCWSTR* p
 
 /**
  @helper_function="HlprCommandLineParseForFilterInfo"
- 
+
    Purpose: Parse the command line parameters for strings which detail:                         <br>
                -l <FWPM_LAYER> - which layer to have the filter reside.                         <br>
                -b              - mark the filter and corresponding objects for boot time.       <br>

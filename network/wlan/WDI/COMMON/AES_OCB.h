@@ -47,15 +47,15 @@
 
 
 
-/* 
+/*
  * This implementation precomputes L(-1), L(0), L(1), L(PRE_COMP_BLOCKS),
- * where L(0) = L and L(-1) = L/x and L(i) = x*L(i) for i>0.  
+ * where L(0) = L and L(-1) = L/x and L(i) = x*L(i) for i>0.
  * Normally, one would select PRE_COMP_BLOCKS to be a small number
  * (like 0-6) and compute any larger L(i) values "on the fly", when they
  * are needed.  This saves space in _keystruct and needn't adversely
- * impact running time.  But in this implementation, to keep things as 
+ * impact running time.  But in this implementation, to keep things as
  * simple as possible, we compute all the L(i)-values we might ever see.
- */ 
+ */
 #define PRE_COMP_BLOCKS 31     /* Must be between 0 and 31 */
 
 #define OCB_AES_ROUNDS (OCB_AES_KEY_BITLEN / 32 + 6)
@@ -74,7 +74,7 @@ struct _keystruct {
     rblock L_inv;                    /* Precomputed L/x value             */
 };
 
-/* Opaque forward declaration of key structure */ 
+/* Opaque forward declaration of key structure */
 typedef struct _keystruct keystruct;
 
 
@@ -102,7 +102,7 @@ ocb_aes_init(void      *enc_key,    /* AES key                       */
 /* "ocb_done deallocates a key structure and returns NULL */
 keystruct *
 ocb_done(keystruct *key);
-                              
+
 /*
  * "ocb_aes_encrypt takes a key structure, four buffers and a length
  * parameter as input. "pt_len" bytes that are pointed to by "pt" are
@@ -119,7 +119,7 @@ ocb_aes_encrypt(keystruct *key,    /* Initialized key struct           */
                 void      *ct,     /* Buffer for (outgoing) ciphertext */
                 void      *tag);   /* Buffer for generated tag         */
 
-                              
+
 /*
  * "ocb_aes_decrypt takes a key structure, four buffers and a length
  * parameter as input. "ct_len" bytes that are pointed to by "ct" are
@@ -137,7 +137,7 @@ ocb_aes_decrypt(keystruct *key,    /* Initialized key struct           */
                 ULONG     ct_len, /* Byte length of ct                */
                 void      *pt,     /* Buffer for (outgoing) plaintext  */
                 void      *tag);   /* Tag to be verified               */
-                     
+
 
 
 

@@ -4,7 +4,7 @@
 
 
 //============================================================================
-// All Type Port Supported 
+// All Type Port Supported
 //============================================================================
 
 #define GetDefaultAdapter(_Adapter)		((_Adapter)->pPortCommonInfo->pDefaultAdapter)
@@ -22,12 +22,12 @@ MultiPortSetAllPortsHWReadyStatus(
 #if (MULTIPORT_SUPPORT == 1)
 
 //============================================================================
-// Multiple Port Supported 
+// Multiple Port Supported
 //============================================================================
 
 #define GetFirstExtAdapter(_Adapter) 				GetNextExtAdapter(GetDefaultAdapter(_Adapter))
 #define IsFirstGoAdapter(_Adapter)				(_Adapter==GetFirstGOPort(_Adapter))
-		
+
 typedef struct _MULTIPORT_COMMON_CONTEXT {
 
 	// Only for active extension adapters
@@ -36,10 +36,10 @@ typedef struct _MULTIPORT_COMMON_CONTEXT {
 	// For default port only: The RFDs will be used to clone the input RFDs (no physical shared memory allocated).
 	MEMORY_BUFFER		CloneRfdMemoryBuffer;	// The memory for the allocated RFD structures
 	u4Byte				uNumberOfCloneRfds;	// The total number of Clone RFDs
-	
+
 	RT_LIST_ENTRY		CloneRfdIdleQueue;
 	u4Byte				uCloneRfdIdleQueueSize;
-	
+
 	RT_LIST_ENTRY		CloneRfdBusyQueue;
 	u4Byte				uCloneRfdBusyQueueSize;
 
@@ -123,7 +123,7 @@ MultiPortRemoveExtAdapter(
 
 BOOLEAN
 MultiPortInsertIntoTargetAdapterList(
-	IN PADAPTER			TargetAdapter, 
+	IN PADAPTER			TargetAdapter,
 	OUT PADAPTER		TargetList[],
 	OUT pu4Byte 			puCurrentTarget,
 	IN u4Byte			uMaxTarget
@@ -228,10 +228,10 @@ MultiportGetLastConnectionActionTime(
 	IN	PADAPTER	pAdapter
 	);
 
-#else 
+#else
 
 //============================================================================
-// Single Port Supported 
+// Single Port Supported
 //============================================================================
 
 #define IsActiveAPModeExist(_Adapter)			AP_DetermineAlive(_Adapter)
@@ -252,7 +252,7 @@ MultiportGetLastConnectionActionTime(
 #define MultiPortReleaseCloneRfdBuffer(_pRfd)
 #define MultiPortReturnCloneRFD(_pAdapter, _pRfd)
 #define MultiPortRemoveExtAdapter(_pAdapter)							NULL
-#define MultiPortInitializeContext(_pAdapter)						
+#define MultiPortInitializeContext(_pAdapter)
 #define MultiPortCanCheckCheckBssid(_pAdapter)						TRUE
 #define MultiPortIsPreallocatedExtAdapterExist(_Adapter)				FALSE
 #define MultiPortInsertIdleExtAdapter(_pDefaultAdapter, _pAdapter)

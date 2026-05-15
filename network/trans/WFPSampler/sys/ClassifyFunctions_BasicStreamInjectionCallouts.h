@@ -6,13 +6,13 @@
 //      ClassifyFunctions_BasicStreamInjectionCallouts.cpp
 //
 //   Abstract:
-//      This module contains prototypes for WFP Classify functions that inject data back into TCP's 
+//      This module contains prototypes for WFP Classify functions that inject data back into TCP's
 //         stream using the clone / block / inject method.
 //
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //
 //       ClassifyBasicStreamInjection

@@ -10,12 +10,12 @@
 // Local
 //-----------------------------------------------------------------------------
 
-// 
+//
 // Description:
 // 	Add the req info (obj hdr + obj list) to the info list.
 //		Assume the req info has been validated by P2PSvc_ValidateReqInfo
 //
-RT_STATUS 
+RT_STATUS
 p2psvc_AddReqInfoToList(
 	IN  PADAPTER 					pAdapter,
 	IN  PP2PSVC_INFO				pP2PSvcInfo,
@@ -26,14 +26,14 @@ p2psvc_AddReqInfoToList(
 {
 	RT_STATUS						rtStatus = RT_STATUS_SUCCESS;
 	PP2PSVC_OBJ_LIST				pObjList = NULL;
-	
+
 	P2PSVC_FUNC_IN(DBG_LOUD);
 
 	if(!pP2PSvcInfo->bEnabled)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] P2PSvc not enabled!"));
 		P2PSVC_FUNC_OUT(DBG_LOUD, RT_STATUS_INVALID_STATE);
-		
+
 		return RT_STATUS_INVALID_STATE;
 	}
 
@@ -84,7 +84,7 @@ P2PSvc_Free_AdvSvcList(
 	PRT_LIST_ENTRY					pEntry = NULL;
 	BOOLEAN							bFreeAll = (0 == advId) ? (TRUE) : (FALSE);
 	BOOLEAN							bFreed = FALSE;
-	
+
 	for(pEntry = RTGetHeadList(pListHead); pEntry != pListHead; pEntry = RTNextEntryList(pEntry))
 	{
 		PP2PSVC_REQ_INFO_ENTRY 		pInfoEntry = (PP2PSVC_REQ_INFO_ENTRY)pEntry;
@@ -113,7 +113,7 @@ P2PSvc_Free_AdvSvcList(
 		if(bFree)
 		{
 			PRT_LIST_ENTRY 			pForeEntry = RTForeEntryList(pEntry);
-			
+
 			RTRemoveEntryListWithCnt(pEntry, pListCnt);
 			P2PSvc_FreeMem(pEntry, FIELD_OFFSET(P2PSVC_REQ_INFO_ENTRY, objList) + P2PSVC_OBJ_LIST_LEN(pAdvSvcObjList));
 
@@ -140,7 +140,7 @@ P2PSvc_Free_SeekReqList(
 	PRT_LIST_ENTRY					pEntry = NULL;
 	BOOLEAN							bFreeAll = (0 == seekId) ? (TRUE) : (FALSE);
 	BOOLEAN							bFreed = FALSE;
-	
+
 	for(pEntry = RTGetHeadList(pListHead); pEntry != pListHead; pEntry = RTNextEntryList(pEntry))
 	{
 		PP2PSVC_REQ_INFO_ENTRY 		pInfoEntry = (PP2PSVC_REQ_INFO_ENTRY)pEntry;
@@ -188,7 +188,7 @@ P2PSvc_Free_SeekReqList(
 	return bFreed;
 }
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_Set_AdvSvc(
 	IN  PADAPTER 					pAdapter,
 	IN  PVOID 						infoBuf,
@@ -219,7 +219,7 @@ P2PSvc_Set_AdvSvc(
 	return rtStatus;
 }
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_Set_CancelAdvSvc(
 	IN  PADAPTER 					pAdapter,
 	IN  PVOID 						infoBuf,
@@ -239,7 +239,7 @@ P2PSvc_Set_CancelAdvSvc(
 	{
 		PRT_OBJECT_HEADER			pObjHdr = (PRT_OBJECT_HEADER)(infoBuf);
 		PP2PSVC_OBJ_LIST 			pObjList = (PP2PSVC_OBJ_LIST)(pObjHdr->Value);
-		
+
 		PRT_OBJECT_HEADER 			pAdvIdObj = NULL;
 		u4Byte						advIdToCancel = 0;
 
@@ -258,7 +258,7 @@ P2PSvc_Set_CancelAdvSvc(
 	return rtStatus;
 }
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_Set_SvcStatus(
 	IN  PADAPTER 					pAdapter,
 	IN  PVOID 						infoBuf,
@@ -284,7 +284,7 @@ P2PSvc_Set_SvcStatus(
 
 		u4Byte						advIdToSet = 0;
 		u1Byte						svcStatusToSet = 0;
-		
+
 		PRT_LIST_ENTRY				pEntry = NULL;
 
 		// Get adv-id and svc-status to set
@@ -293,7 +293,7 @@ P2PSvc_Set_SvcStatus(
 
 		pSvcStatusObj = P2PSvc_GetParam(pObjList, P2PSVC_OBJ_HDR_ID_DATA_SVC_STATUS, 0);
 		svcStatusToSet = *(pu1Byte)pSvcStatusObj->Value;
-	
+
 		for(pEntry = RTGetHeadList(&pP2PSvcInfo->advSvcList); pEntry != &pP2PSvcInfo->advSvcList; pEntry = RTNextEntryList(pEntry))
 		{
 			PP2PSVC_REQ_INFO_ENTRY 	pInfoEntry = (PP2PSVC_REQ_INFO_ENTRY)pEntry;
@@ -328,7 +328,7 @@ P2PSvc_Set_SvcStatus(
 	return rtStatus;
 }
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_Set_Seek(
 	IN  PADAPTER 					pAdapter,
 	IN  PVOID 						infoBuf,
@@ -360,7 +360,7 @@ P2PSvc_Set_Seek(
 
 }
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_Set_CancelSeek(
 	IN  PADAPTER 					pAdapter,
 	IN  PVOID 						infoBuf,
@@ -380,7 +380,7 @@ P2PSvc_Set_CancelSeek(
 	{
 		PRT_OBJECT_HEADER			pObjHdr = (PRT_OBJECT_HEADER)(infoBuf);
 		PP2PSVC_OBJ_LIST 			pObjList = (PP2PSVC_OBJ_LIST)(pObjHdr->Value);
-		
+
 		PRT_OBJECT_HEADER 			pSearchIdObj = NULL;
 		u1Byte						searchIdToCancel = 0;
 
@@ -400,7 +400,7 @@ P2PSvc_Set_CancelSeek(
 
 }
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_Set_ConnCap(
 	IN  PADAPTER 					pAdapter,
 	IN  PVOID 						infoBuf,
@@ -440,9 +440,9 @@ P2PSvc_Set_ConnCap(
 	return rtStatus;
 }
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_Set_PDReq(
-	IN  PADAPTER 					pAdapter, 
+	IN  PADAPTER 					pAdapter,
 	IN  PVOID 						infoBuf,
 	IN  u4Byte						inBufLen,
 	IN  u4Byte						outBufLen,
@@ -460,7 +460,7 @@ P2PSvc_Set_PDReq(
 		if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_AddPDInitorData(pAdapter, infoBuf, inBufLen, outBufLen)))
 		{
 			break;
-		}		
+		}
 	}while(FALSE);
 
 	P2PSVC_FUNC_OUT(DBG_LOUD, rtStatus);
@@ -468,7 +468,7 @@ P2PSvc_Set_PDReq(
 	return rtStatus;
 }
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_Set_RspdorFOPDReq(
 	IN  PADAPTER 					pAdapter,
 	IN  PVOID 						infoBuf,

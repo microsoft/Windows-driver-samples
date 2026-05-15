@@ -12,7 +12,7 @@
 //
 //      <Scope><Object><Action><Modifier>
 //      <Scope><Object><Action>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -22,7 +22,7 @@
 //          }
 //       <Object>
 //          {
-//            ScenarioBasicPacketModification - Function pertains to all of the Basic Packet  
+//            ScenarioBasicPacketModification - Function pertains to all of the Basic Packet
 //                                                 Modification Scenarios.
 //            RPC                             - Function is and RPC entry point.
 //          }
@@ -31,13 +31,13 @@
 //            Add                             - Function adds objects.
 //            Remove                          - Function removes objects.
 //            Invoke                          - Function implements the scenario based on parameters
-//                                                 passed from the commandline interface 
+//                                                 passed from the commandline interface
 //                                                 (WFPSampler.exe).
 //          }
 //       <Modifier>
 //          {
 //            FwpmObjects                     - Function acts on WFP objects.
-//            ScenarioBasicPacketModification - Function pertains to all of the Basic Packet 
+//            ScenarioBasicPacketModification - Function pertains to all of the Basic Packet
 //                                                 Modification Scenarios.
 //          }
 //
@@ -58,7 +58,7 @@
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
 //      December  13,   2013  -     1.1   -  Prune filters for enumeration and limit scenario to
-//                                              only the supported layers 
+//                                              only the supported layers
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,10 +66,10 @@
 
 /**
  @private_function="PrvBasicPacketModificationScenarioDeleteFwpmObjects"
- 
+
    Purpose:  Function that disables the SCENARIO_BASIC_PACKET_MODIFICATION scenarios.           <br>
                                                                                                 <br>
-   Notes:    Scenario removes the filters using specified filtering conditions at the specified 
+   Notes:    Scenario removes the filters using specified filtering conditions at the specified
              layer.  Associated callouts and provider contexts are removed as well.             <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -164,12 +164,12 @@ UINT32 PrvBasicPacketModificationScenarioDeleteFwpmObjects(_In_ const FWPM_FILTE
 
 /**
  @private_function="PrvBasicPacketModificationScenarioAddFwpmObjects"
- 
+
    Purpose:  Function that enables the SCENARIO_BASIC_PACKET_INJECTION scenarios.               <br>
                                                                                                 <br>
-   Notes:    Scenario adds a filter using specified filtering conditions to the 
-             specified layer.  This filter is associated with WFPSampler's default sublayer and 
-             provider.  The appropriate callout and provider contest is then added and 
+   Notes:    Scenario adds a filter using specified filtering conditions to the
+             specified layer.  This filter is associated with WFPSampler's default sublayer and
+             provider.  The appropriate callout and provider contest is then added and
              associated with the filter.                                                        <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -211,9 +211,9 @@ UINT32 PrvBasicPacketModificationScenarioAddFwpmObjects(_In_ const FWPM_FILTER* 
       ||
       pFilter->layerKey == FWPM_LAYER_STREAM_PACKET_V4 ||
       pFilter->layerKey == FWPM_LAYER_STREAM_PACKET_V6
-   
+
 #if(NTDDI_VERSION >= NTDDI_WIN8)
-   
+
       ||
       pFilter->layerKey == FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET ||
       pFilter->layerKey == FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET ||
@@ -221,7 +221,7 @@ UINT32 PrvBasicPacketModificationScenarioAddFwpmObjects(_In_ const FWPM_FILTER* 
       pFilter->layerKey == FWPM_LAYER_OUTBOUND_MAC_FRAME_NATIVE ||
       pFilter->layerKey == FWPM_LAYER_INGRESS_VSWITCH_ETHERNET ||
       pFilter->layerKey == FWPM_LAYER_EGRESS_VSWITCH_ETHERNET
-   
+
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
 
@@ -313,8 +313,8 @@ UINT32 PrvBasicPacketModificationScenarioAddFwpmObjects(_In_ const FWPM_FILTER* 
 
 /**
  @private_function="PrvBasicPacketModificationScenarioRemove"
- 
-   Purpose:  Function that removes corresponding objects for a previously added 
+
+   Purpose:  Function that removes corresponding objects for a previously added
              SCENARIO_BASIC_PACKET_MODIFICATION.                                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -331,13 +331,13 @@ UINT32 PrvBasicPacketModificationScenarioRemove(_In_ const FWPM_FILTER* pFilter)
 
 /**
  @private_function="PrvBasicPacketModificationScenarioAdd"
- 
+
    Purpose:  Scenario which will inject modified traffic back into the stack.                   <br>
                                                                                                 <br>
-   Notes:    Adds a filter which references one of the 
+   Notes:    Adds a filter which references one of the
              WFPSAMPLER_CALLOUT_BASIC_PACKET_MODIFICATION callouts for the provided layer.      <br>
                                                                                                 <br>
-             Ideal usage is to implement in the presence of a 3rd party firewall to see how 
+             Ideal usage is to implement in the presence of a 3rd party firewall to see how
              they coexist with another provider performing modified packet injection.           <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -355,8 +355,8 @@ UINT32 PrvBasicPacketModificationScenarioAdd(_In_ const FWPM_FILTER* pFilter,
 
 /**
  @rpc_function="RPCInvokeScenarioBasicPacketModification"
- 
-   Purpose:  RPC exposed function used to dipatch the scenario routines for 
+
+   Purpose:  RPC exposed function used to dipatch the scenario routines for
              SCENARIO_BASIC_PACKET_MODIFICATION.                                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

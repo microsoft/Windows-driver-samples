@@ -42,13 +42,13 @@ AMSDU_QuerySizeAndNum(
 VOID
 AMSDU_UpdateRxAMSDUSizeHistogram(
 	PADAPTER			Adapter,
-	u2Byte				PacketLength	
+	u2Byte				PacketLength
 	);
 
 VOID
 AMSDU_UpdateRxAMSDUNumHistogram(
 	PADAPTER			Adapter,
-	u2Byte				totalSubframe	
+	u2Byte				totalSubframe
 	);
 
 VOID
@@ -59,13 +59,13 @@ AMSDU_ClearTRxAMSDUHistogram(
 VOID
 AMSDU_UpdateTxAMSDUSizeHistogram(
 	PADAPTER			Adapter,
-	u2Byte				PacketLength	
+	u2Byte				PacketLength
 	);
 
 VOID
 AMSDU_UpdateTxAMSDUNumHistogram(
 	PADAPTER			Adapter,
-	u1Byte				totalSubframe	
+	u1Byte				totalSubframe
 	);
 
 

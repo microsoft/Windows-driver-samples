@@ -31,16 +31,16 @@
 
 
 //
-// (Ported from MS's code, Annie, 2006-10-11.) 
+// (Ported from MS's code, Annie, 2006-10-11.)
 // Macros for assigning and verifying NDIS_OBJECT_HEADER
 //
 #define N6_ASSIGN_OBJECT_HEADER(_header, _type, _revision, _size) \
 		(_header).Type = _type; \
 		(_header).Revision = _revision; \
-		(_header).Size = _size; 
+		(_header).Size = _size;
 
 //
-// (Ported from MS's code, Annie, 2006-10-11.) 
+// (Ported from MS's code, Annie, 2006-10-11.)
 // With NDIS 6.0 header versioning, the driver should allow higher versions
 // of structures to be set. This macro verifies that for sets the version is atleast
 // the expected one and size is greater or equal to required
@@ -123,7 +123,7 @@ N6CProcessOidRequest(
 	IN  BOOLEAN bSelfMadeNdisRequest
 );
 
-	
+
 BOOLEAN
 N6CompletePendedOID(
 	IN 	PADAPTER 			Adapter,

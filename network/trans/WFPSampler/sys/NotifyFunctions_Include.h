@@ -20,7 +20,7 @@
 //                                              NotifyFunctions_FlowDelete.h, and replace
 //                                              NotifyFunctions_PendAuthorizationCallouts.h, with
 //                                              NotifyFunctions_PendCallouts.h
-//                             
+//
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifndef NOTIFY_INCLUDE_H

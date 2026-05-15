@@ -6,16 +6,16 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	N6Sdio_PlatformSdioWdf.h
-	
+
 Abstract:
 	Prototype of WdfSdio_XXX() implemented via WDF SDIO.
-	These function shall be only use under Platform\.	
-	    
+	These function shall be only use under Platform\.
+
 Major Change History:
 	When       Who               What
 	---------- ---------------   -------------------------------
 	2012-01-16 Roger            Create.
-	
+
 --*/
 
 #if USE_WDF_SDIO
@@ -62,7 +62,7 @@ WdfSdio_AsyncVendorRequestWrite(
 	IN	PADAPTER				pAdapter,
 	IN	u1Byte					bReq,				// 1 byte bReq field of setup token.
 	IN	u2Byte					wValue, 			// 2 byte wValue field of setup token.
-	IN	u2Byte					wIndex,				// 2 byte wIndex field of setup token. 
+	IN	u2Byte					wIndex,				// 2 byte wIndex field of setup token.
 	IN	pu1Byte					pBuffer,			// Pointer to buffer to transfer in data-phase.
 	IN	u4Byte					BufferLength		// # of bytes to OUT or maximal # of bytes to IN.
 	);

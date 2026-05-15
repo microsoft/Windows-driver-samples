@@ -6,13 +6,13 @@
 //      HelperFunctions_InjectionData.cpp
 //
 //   Abstract:
-//      This module contains kernel helper functions that assist with INJECTION_DATA and 
+//      This module contains kernel helper functions that assist with INJECTION_DATA and
 //         INJECTION_HANDLE_DATA.
 //
 //   Naming Convention:
 //
 //      <Module><Object><Action>
-//  
+//
 //      i.e.
 //
 //       KrnlHlprInjectionDataCreate
@@ -47,8 +47,8 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance annotations, add multiple injector support, add 
-//                                              missing layers for injection handles, and add 
+//      December  13,   2013  -     1.1   -  Enhance annotations, add multiple injector support, add
+//                                              missing layers for injection handles, and add
 //                                              support for controlData.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@
 
 /**
  @kernel_helper_function="KrnlHlprInjectionDataPurge"
- 
+
    Purpose:  Cleanup a INJECTION_DATA object.                                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -74,13 +74,13 @@ _IRQL_requires_same_
 VOID KrnlHlprInjectionDataPurge(_Inout_ INJECTION_DATA* pInjectionData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprInjectionDataPurge()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pInjectionData);
 
    if(pInjectionData->pControlData)
@@ -99,13 +99,13 @@ VOID KrnlHlprInjectionDataPurge(_Inout_ INJECTION_DATA* pInjectionData)
               " <--- KrnlHlprInjectionDataPurge()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprInjectionDataDestroy"
- 
+
    Purpose:  Cleanup and free a INJECTION_DATA object.                                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -121,13 +121,13 @@ _Success_(*ppInjectionData == 0)
 VOID KrnlHlprInjectionDataDestroy(_Inout_ INJECTION_DATA** ppInjectionData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprInjectionDataDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppInjectionData);
 
    if(*ppInjectionData)
@@ -139,20 +139,20 @@ VOID KrnlHlprInjectionDataDestroy(_Inout_ INJECTION_DATA** ppInjectionData)
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprInjectionDataDestroy()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprInjectionDataPopulate"
- 
-   Purpose:  Populates a INJECTION_DATA object with the data based off values obtained in the 
+
+   Purpose:  Populates a INJECTION_DATA object with the data based off values obtained in the
              classifyFn.                                                                        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -171,13 +171,13 @@ NTSTATUS KrnlHlprInjectionDataPopulate(_Inout_ INJECTION_DATA* pInjectionData,
                                        _In_ const FWPS_FILTER* pFilter)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprInjectionDataPopulate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pInjectionData);
    NT_ASSERT(pClassifyValues);
    NT_ASSERT(pMetadataValues);
@@ -230,7 +230,7 @@ NTSTATUS KrnlHlprInjectionDataPopulate(_Inout_ INJECTION_DATA* pInjectionData,
                         WFPSAMPLER_CALLOUT_DRIVER_TAG);
          HLPR_BAIL_ON_ALLOC_FAILURE(pInjectionData->pControlData,
                                     status);
-   
+
          RtlCopyMemory(pInjectionData->pControlData,
                        pMetadataValues->controlData,
                        pMetadataValues->controlDataLength);
@@ -606,21 +606,21 @@ NTSTATUS KrnlHlprInjectionDataPopulate(_Inout_ INJECTION_DATA* pInjectionData,
    HLPR_BAIL_LABEL:
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprInjectionDataPopulate() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprInjectionDataCreate"
- 
-   Purpose:  Allocates and populates a INJECTION_DATA object with data based on values obtained 
+
+   Purpose:  Allocates and populates a INJECTION_DATA object with data based on values obtained
              in the classifyFn.                                                                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -642,13 +642,13 @@ NTSTATUS KrnlHlprInjectionDataCreate(_Outptr_ INJECTION_DATA** ppInjectionData,
                                      _In_ const FWPS_FILTER* pFilter)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprInjectionDataCreate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppInjectionData);
    NT_ASSERT(pClassifyValues);
    NT_ASSERT(pMetadataValues);
@@ -671,7 +671,7 @@ NTSTATUS KrnlHlprInjectionDataCreate(_Outptr_ INJECTION_DATA** ppInjectionData,
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// *ppInjectionData initialized with call to HLPR_NEW & KrnlHlprInjectionDataPopulate 
+#pragma warning(disable: 6001) /// *ppInjectionData initialized with call to HLPR_NEW & KrnlHlprInjectionDataPopulate
 
    if(status != STATUS_SUCCESS &&
       *ppInjectionData)
@@ -680,14 +680,14 @@ NTSTATUS KrnlHlprInjectionDataCreate(_Outptr_ INJECTION_DATA** ppInjectionData,
 #pragma warning(pop)
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprInjectionDataCreate() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
@@ -698,7 +698,7 @@ NTSTATUS KrnlHlprInjectionDataCreate(_Outptr_ INJECTION_DATA** ppInjectionData,
 
 /**
  @kernel_helper_function="KrnlHlprInjectionHandleDataDestroy"
- 
+
    Purpose:  Cleanup and free a INJECTION_HANDLE_DATA object.                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -713,13 +713,13 @@ _Success_(return == STATUS_SUCCESS)
 NTSTATUS KrnlHlprInjectionHandleDataDestroy(_Inout_ INJECTION_HANDLE_DATA** ppInjectionHandleData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprInjectionHandleDataDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppInjectionHandleData);
 
    NTSTATUS status = STATUS_SUCCESS;
@@ -769,24 +769,24 @@ NTSTATUS KrnlHlprInjectionHandleDataDestroy(_Inout_ INJECTION_HANDLE_DATA** ppIn
    HLPR_BAIL_LABEL:
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprInjectionHandleDataDestroy() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprInjectionHandleDataCreate"
- 
-   Purpose:  Allocates and populates a INJECTION_HANDLE_DATA object with the various injection 
+
+   Purpose:  Allocates and populates a INJECTION_HANDLE_DATA object with the various injection
              handles created when the driver loads.                                             <br>
                                                                                                 <br>
-   Notes:    The index is related to which sublayer the handle operates on.  For 
+   Notes:    The index is related to which sublayer the handle operates on.  For
              FWPM_SUBLAYER_UNIVERSAL, the index is 1, otherwise it's 0.                         <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -804,13 +804,13 @@ NTSTATUS KrnlHlprInjectionHandleDataCreate(_Outptr_ INJECTION_HANDLE_DATA** ppIn
                                            _In_ UINT32 index)                                      /* WFPSAMPLER_INDEX */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprInjectionHandleDataCreate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppInjectionHandleData);
 
    NTSTATUS status = STATUS_SUCCESS;
@@ -974,14 +974,14 @@ NTSTATUS KrnlHlprInjectionHandleDataCreate(_Outptr_ INJECTION_HANDLE_DATA** ppIn
       KrnlHlprInjectionHandleDataDestroy(ppInjectionHandleData);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprInjectionHandleDataCreate() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 

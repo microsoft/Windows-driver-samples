@@ -5,7 +5,7 @@
 #endif
 
 //============================================================================
-// All Type Port Supported 
+// All Type Port Supported
 //============================================================================
 
 
@@ -16,7 +16,7 @@ MultiPortSetAllPortsHWReadyStatus(
 )
 {
 	PADAPTER pLoopAdapter = GetDefaultAdapter(pAdapter);
-	
+
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("MultiPortSetAllPortsHWReadyStatus(), set pAdapter->bHWInitReady=%d\n", (u4Byte)bReady));
 	while(pLoopAdapter != NULL)
 	{
@@ -29,7 +29,7 @@ MultiPortSetAllPortsHWReadyStatus(
 #if (MULTIPORT_SUPPORT == 1)
 
 //============================================================================
-// Multiple Port Supported 
+// Multiple Port Supported
 //============================================================================
 
 // Please do not use this function outside of this module
@@ -55,7 +55,7 @@ MultiPortGetPortContext(
 )
 {
 	if(pAdapter == NULL) return NULL;
-	
+
 	RT_ASSERT(
 			sizeof(pAdapter->MultiPort) == sizeof(MULTIPORT_PORT_CONTEXT),
 			("MultiPort Port Context Memory Allocation Size Mismatch !")
@@ -69,7 +69,7 @@ GetAdapterByListEntry(
 	PRT_LIST_ENTRY	pListEntry
 )
 {
-	
+
 	u4Byte offset1 = FIELD_OFFSET(ADAPTER, MultiPort);
 	u4Byte offset2 = FIELD_OFFSET(MULTIPORT_PORT_CONTEXT, MultiList);
 
@@ -91,7 +91,7 @@ GetAdapterByListEntry(
 PADAPTER
 GetNextExtAdapter(
 	PADAPTER	pAdapter
-)	
+)
 {
 	// Active Extension Adapter Only ----------------------------------------------
 	PMULTIPORT_PORT_CONTEXT pMultiPort = MultiPortGetPortContext(pAdapter);
@@ -106,11 +106,11 @@ GetNextExtAdapter(
 	while(pExtAdapter != NULL)
 	{
 		pMultiPort = MultiPortGetPortContext(pExtAdapter);
-		
+
 		if (IsDefaultAdapter(pExtAdapter))
 			break;
 
-		if(pMultiPort->bActiveAdapter == TRUE) 
+		if(pMultiPort->bActiveAdapter == TRUE)
 		{
 			return pExtAdapter;
 		}
@@ -118,15 +118,15 @@ GetNextExtAdapter(
 		pListEntry = RTNextEntryList(&pMultiPort->MultiList);
 		pExtAdapter = GetAdapterByListEntry(pListEntry);
 	}
-	
+
 	return NULL;
 }
-	
+
 
 PADAPTER
 GetFirstAPAdapter(
 	PADAPTER	pAdapter
-)	
+)
 {
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pAPAdapter = pDefaultAdapter;
@@ -135,7 +135,7 @@ GetFirstAPAdapter(
 	{
 		if(ACTING_AS_AP(pAPAdapter))
 			break;
-		pAPAdapter = GetNextExtAdapter(pAPAdapter);			
+		pAPAdapter = GetNextExtAdapter(pAPAdapter);
 	}
 
 	return pAPAdapter;
@@ -148,9 +148,9 @@ GetFirstDevicePort(
 {
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pDevicePort = NULL;
-	
+
 	pDevicePort = pDefaultAdapter;
-	
+
 	while(pDevicePort != NULL)
 	{
 
@@ -161,7 +161,7 @@ GetFirstDevicePort(
 				break;
 		}
 	#endif
-	
+
 		pDevicePort = GetNextExtAdapter(pDevicePort);
 	}
 
@@ -175,9 +175,9 @@ GetFirstGOPort(
 {
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pGOPort = NULL;
-	
+
 	pGOPort = pDefaultAdapter;
-	
+
 	while(pGOPort != NULL)
 	{
 
@@ -194,7 +194,7 @@ GetFirstGOPort(
 			}
 		}
 	#endif
-	
+
 		pGOPort = GetNextExtAdapter(pGOPort);
 	}
 
@@ -208,9 +208,9 @@ GetFirstClientPort(
 {
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pClientPort = NULL;
-	
+
 	pClientPort = pDefaultAdapter;
-	
+
 	while(pClientPort != NULL)
 	{
 
@@ -221,7 +221,7 @@ GetFirstClientPort(
 				break;
 		}
 	#endif
-	
+
 		pClientPort = GetNextExtAdapter(pClientPort);
 	}
 
@@ -241,7 +241,7 @@ MultiPortGetIdleExtAdapter(
 	while(!IsDefaultAdapter(pExtAdapter))
 	{
 		pMultiPort = MultiPortGetPortContext(pExtAdapter);
-			
+
 		if(pMultiPort->bActiveAdapter == FALSE)
 		{
 			return pExtAdapter;
@@ -263,13 +263,13 @@ MultiPortRemoveExtAdapter(
 	PMULTIPORT_PORT_CONTEXT pMultiPortDefault = MultiPortGetPortContext(pDefaultAdapter);
 	PADAPTER pExtAdapter = NULL;
 	PRT_LIST_ENTRY pListEntry = NULL;
-	
+
 	if(!RTIsListEmpty(&pMultiPortDefault->MultiList))
 	{
 		pListEntry = RTRemoveHeadList(&pMultiPortDefault->MultiList);
 		pExtAdapter = GetAdapterByListEntry(pListEntry);
 	}
-	
+
 	return pExtAdapter;
 }
 
@@ -277,7 +277,7 @@ MultiPortRemoveExtAdapter(
 
 BOOLEAN
 MultiPortInsertIntoTargetAdapterList(
-	IN PADAPTER			TargetAdapter, 
+	IN PADAPTER			TargetAdapter,
 	OUT PADAPTER		TargetList[],
 	OUT pu4Byte 			puCurrentTarget,
 	IN u4Byte			uMaxTarget
@@ -285,7 +285,7 @@ MultiPortInsertIntoTargetAdapterList(
 {
 	u4Byte i = 0;
 	BOOLEAN  bExist = FALSE;
-	
+
 	for(i = 0; i < *puCurrentTarget; i++)
 	{
 		if(TargetList[i] == TargetAdapter)
@@ -311,7 +311,7 @@ MultiPortInsertIntoTargetAdapterList(
 	}
 
 	// TargetAdapter will be in TargetList[]
-	
+
 	return TRUE;
 }
 
@@ -358,7 +358,7 @@ MultiPortGetTargetAdapterList(
 
 
 	if(PacketGetActionFrameType(&osFrame) == ACT_PKT_GAS_INT_REQ)
-	{// Service Discovery Request: Only Send to Device Port 
+	{// Service Discovery Request: Only Send to Device Port
 
 		// Here should have more consideration.
 
@@ -373,7 +373,7 @@ MultiPortGetTargetAdapterList(
 			}
 		}
 
-		// Win8 
+		// Win8
 		pExtAdapter = GetFirstDevicePort(pAdapter);
 
 		if(pExtAdapter != NULL)
@@ -385,9 +385,9 @@ MultiPortGetTargetAdapterList(
 	}
 #endif
 
-	// Probe Request Filter 
+	// Probe Request Filter
 	if(PacketGetType(osFrame) == Type_Probe_Req)
-	{	
+	{
 		// Normal AP
 		pExtAdapter = GetDefaultAdapter(pAdapter);
 		while(pExtAdapter != NULL)
@@ -400,7 +400,7 @@ MultiPortGetTargetAdapterList(
 		// Workaround for NdisTest-v8150 WFD_Group_ext test due to the SUT's not cleaning the resources ----------------
 		//  The WFD_Performance_ext test will therefore have two device ports, which is not valid.
 		//  We let it can be discovered for passing the test.
-		#if (P2P_SUPPORT == 1) 
+		#if (P2P_SUPPORT == 1)
 			if(P2P_ENABLED(GET_P2P_INFO(pExtAdapter)))
 			{
 				if(GET_P2P_INFO(pExtAdapter)->Role == P2P_DEVICE)
@@ -415,35 +415,35 @@ MultiPortGetTargetAdapterList(
 		}
 
 		return uTargetAdapter;
-	}	
+	}
 
-	// Probe Response Filter 
-	RT_TRACE(COMP_P2P, DBG_TRACE, ("MultiPortGetTargetAdapterList: check probrsp\n"));	
-	
+	// Probe Response Filter
+	RT_TRACE(COMP_P2P, DBG_TRACE, ("MultiPortGetTargetAdapterList: check probrsp\n"));
+
 	if(PacketGetType(osFrame) == Type_Probe_Rsp)
 	{
 		pExtAdapter = GetDefaultAdapter(pAdapter);
-		
+
 		while(pExtAdapter != NULL)
 		{
 			pExtMgntInfo = &(pExtAdapter->MgntInfo);
 
 			if( ((pExtMgntInfo->state_Synchronization_Sta >= STATE_Act_Receive) ||
 				(pExtMgntInfo->state_Synchronization_Sta <= STATE_Act_Listen)) &&
-				eqMacAddr(Frame_pRaddr(osFrame), pExtAdapter->CurrentAddress)				
+				eqMacAddr(Frame_pRaddr(osFrame), pExtAdapter->CurrentAddress)
 			)
 			{
 				RT_TRACE(COMP_P2P, DBG_TRACE, ("MultiPortGetTargetAdapterList listen state: port number %d\n", pExtAdapter->pNdis62Common->PortNumber));
 				MultiPortInsertIntoTargetAdapterList(pExtAdapter, TargetList, &uTargetAdapter, uMaxTarget);
 				bMatch = TRUE;
-			}				
+			}
 			pExtAdapter = GetNextExtAdapter(pExtAdapter);
 		}
-	
+
 	}
 
 	if(bMatch)
-		return uTargetAdapter;	
+		return uTargetAdapter;
 
 	if(PacketGetType(osFrame) == Type_Beacon)
 	{
@@ -457,7 +457,7 @@ MultiPortGetTargetAdapterList(
 				(pExtMgntInfo->state_Synchronization_Sta <= STATE_Act_Listen)
 			)
 				MultiPortInsertIntoTargetAdapterList(pExtAdapter, TargetList, &uTargetAdapter, uMaxTarget);
-			
+
 			pExtAdapter = GetNextExtAdapter(pExtAdapter);
 		}
 		return uTargetAdapter;
@@ -465,7 +465,7 @@ MultiPortGetTargetAdapterList(
 
 	bMatch = FALSE;
 	// BSSID Filter
-	RT_PRINT_ADDR(COMP_P2P, DBG_TRACE, "MultiPortGetTargetAdapterList(): receive Bss BSSID:", Frame_pBssid(osFrame));	
+	RT_PRINT_ADDR(COMP_P2P, DBG_TRACE, "MultiPortGetTargetAdapterList(): receive Bss BSSID:", Frame_pBssid(osFrame));
 	pExtAdapter = GetDefaultAdapter(pAdapter);
 	while(pExtAdapter != NULL)
 	{
@@ -473,19 +473,19 @@ MultiPortGetTargetAdapterList(
 
 		RT_TRACE(COMP_P2P, DBG_TRACE, ("MultiPortGetTargetAdapterList: port number %d\n", pExtAdapter->pNdis62Common->PortNumber));
 		if(eqMacAddr(Frame_pBssid(osFrame), pExtAdapter->MgntInfo.Bssid))
-		{		
-			RT_TRACE(COMP_P2P, DBG_TRACE, ("MultiPortGetTargetAdapterList eqMacAddr: port number %d\n", pExtAdapter->pNdis62Common->PortNumber));	
+		{
+			RT_TRACE(COMP_P2P, DBG_TRACE, ("MultiPortGetTargetAdapterList eqMacAddr: port number %d\n", pExtAdapter->pNdis62Common->PortNumber));
 			MultiPortInsertIntoTargetAdapterList(pExtAdapter, TargetList, &uTargetAdapter, uMaxTarget);
 			bMatch = TRUE;
 		}
-			
+
 		pExtAdapter = GetNextExtAdapter(pExtAdapter);
 	}
 
 	if(bMatch)
 		return uTargetAdapter;
 
-	// Broadcast Packet Filter  
+	// Broadcast Packet Filter
 	pExtAdapter = GetDefaultAdapter(pAdapter);
 	while(pExtAdapter != NULL)
 	{
@@ -512,11 +512,11 @@ MultiPortFeedPacketToMultipleAdapter(
 	PRT_RFD pExtRfd = NULL;
 	u4Byte i = 0;
 	RT_STATUS rtStatus = RT_STATUS_SUCCESS;
-	
+
 	// Assertion Check Variable
 	u4Byte uCurrentCloneRFDs;
-	
-	// Target List 
+
+	// Target List
 	u4Byte uTargetAdapter = 0;
 	PADAPTER TargetList[10];
 
@@ -548,7 +548,7 @@ MultiPortFeedPacketToMultipleAdapter(
 	// Get the target adapter list -----------------------------------------------------------------------------
 	uTargetAdapter = MultiPortGetTargetAdapterList(pAdapter, pRfd, frame, TargetList, sizeof(TargetList) / sizeof(PADAPTER));
 	//RT_TRACE(COMP_INIT, DBG_TRACE, ("%s: uTargetAdapter: %d \n", __FUNCTION__, uTargetAdapter));
-	
+
 	if(uTargetAdapter == 0)
 	{
 		// Free the original RFD since the RFD is not necessary
@@ -571,7 +571,7 @@ MultiPortFeedPacketToMultipleAdapter(
 
 		PlatformAcquireSpinLock(pDefaultAdapter, RT_RFD_SPINLOCK);
 		if(RTIsListEmpty(&pMultiPortCommon->CloneRfdIdleQueue))
-		{			
+		{
 			PlatformReleaseSpinLock(pDefaultAdapter, RT_RFD_SPINLOCK);
 			RT_TRACE(COMP_INIT, DBG_SERIOUS, ("%s: No enough Clone RFD!\n", __FUNCTION__));
 			break;
@@ -579,26 +579,26 @@ MultiPortFeedPacketToMultipleAdapter(
 
 		// Acquire an idle Clone RFD and initialize the Clone RFD -----------------------------------------
 		pExtRfd = (PRT_RFD) RTRemoveHeadListWithCnt(
-				&pMultiPortCommon->CloneRfdIdleQueue, 
+				&pMultiPortCommon->CloneRfdIdleQueue,
 				&pMultiPortCommon->uCloneRfdIdleQueueSize
 			);
 
 		// + Clone the original information
 		PlatformZeroMemory(pExtRfd, sizeof(RT_RFD));
-		PlatformMoveMemory(pExtRfd, pRfd, sizeof(RT_RFD));	
+		PlatformMoveMemory(pExtRfd, pRfd, sizeof(RT_RFD));
 
-		// + Record the needed memory length 
+		// + Record the needed memory length
 		pExtRfd->mbCloneRfdDataBuffer.Length = pRfd->Buffer.Length;
 
 		// + Allocate the memory based on the needed memory length above
 		rtStatus = DrvIFAssociateRFD(pDefaultAdapter, pExtRfd);
-		
+
 		if(rtStatus != RT_STATUS_SUCCESS)
 		{
 			// Return the CloneRFD resource
 			RTInsertTailListWithCnt(
-				&pMultiPortCommon->CloneRfdIdleQueue, 
-				&pExtRfd->List, 
+				&pMultiPortCommon->CloneRfdIdleQueue,
+				&pExtRfd->List,
 				&pMultiPortCommon->uCloneRfdIdleQueueSize
 			);
 			PlatformReleaseSpinLock(pDefaultAdapter, RT_RFD_SPINLOCK);
@@ -632,7 +632,7 @@ MultiPortFeedPacketToMultipleAdapter(
 		//	+ Move data
 		PlatformMoveMemory(
 				pExtRfd->Buffer.VirtualAddress,
-				pRfd->Buffer.VirtualAddress - pAdapter->HalFunc.GetRxPacketShiftBytesHandler(pRfd), 
+				pRfd->Buffer.VirtualAddress - pAdapter->HalFunc.GetRxPacketShiftBytesHandler(pRfd),
 				(pRfd->PacketLength + pAdapter->HalFunc.GetRxPacketShiftBytesHandler(pRfd))>pAdapter->MAX_RECEIVE_BUFFER_SIZE? pAdapter->MAX_RECEIVE_BUFFER_SIZE:(pRfd->PacketLength + pAdapter->HalFunc.GetRxPacketShiftBytesHandler(pRfd))
 			);
 
@@ -642,8 +642,8 @@ MultiPortFeedPacketToMultipleAdapter(
 
 		// Insert into busy Clone RFD queue
 		RTInsertHeadListWithCnt(
-				&pMultiPortCommon->CloneRfdBusyQueue, 
-				&pExtRfd->List, 
+				&pMultiPortCommon->CloneRfdBusyQueue,
+				&pExtRfd->List,
 				&pMultiPortCommon->uCloneRfdBusyQueueSize
 			);
 
@@ -668,11 +668,11 @@ MultiPortReturnCloneRFD(
 {
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PMULTIPORT_COMMON_CONTEXT pMultiPortCommon = MultiPortGetCommonContext(pDefaultAdapter);
-	
+
 	if(IsCloneRFD(pDefaultAdapter, pRfd))
 	{
 		RT_ASSERT(pRfd->bFeedPacketToSingleAdapter == TRUE, ("Error: Clone RFD may be returned again!\n"));
-	
+
 		// Return the Multiport Clone RFDs -------------------------------------------
 		if(pRfd->bFeedPacketToSingleAdapter)
 		{
@@ -682,18 +682,18 @@ MultiPortReturnCloneRFD(
 			// Return the data buffer
 			RT_ASSERT(pRfd->mbCloneRfdDataBuffer.Buffer != NULL, ("Multiport Clone RFD should have a data buffer!\n"));
 			DrvIFDisassociateRFD(pDefaultAdapter, pRfd);
-		
+
 			PlatformAcquireSpinLock(pDefaultAdapter, RT_RFD_SPINLOCK);
 			// Remove the RFD from Busy Queue
 			RTRemoveEntryListWithCnt(
-					&pRfd->List, 
+					&pRfd->List,
 					&pMultiPortCommon->uCloneRfdBusyQueueSize
 				);
 
 			// Return the RFD to the Idle Queue
 			RTInsertTailListWithCnt(
-					&pMultiPortCommon->CloneRfdIdleQueue, 
-					&pRfd->List, 
+					&pMultiPortCommon->CloneRfdIdleQueue,
+					&pRfd->List,
 					&pMultiPortCommon->uCloneRfdIdleQueueSize
 				);
 			PlatformReleaseSpinLock(pDefaultAdapter, RT_RFD_SPINLOCK);
@@ -713,7 +713,7 @@ IsMultiPortAllowDisableHWSecurity(
 	PMGNT_INFO	pMgntInfo = &(pAdapter->MgntInfo);;
 
 	while(pAdapter != NULL)
-	{		
+	{
 		if(!pMgntInfo->SecurityInfo.SWTxEncryptFlag || !pMgntInfo->SecurityInfo.SWRxDecryptFlag)
 			return FALSE;
 
@@ -756,7 +756,7 @@ IsAPModeExist(
 		pAdapter = GetNextExtAdapter(pAdapter);
 	}
 
- 
+
 	return FALSE;
 }
 
@@ -766,14 +766,14 @@ IsExtAPModeExist(
 )
 {
 	 PADAPTER pAdapter =  GetFirstExtAdapter(Adapter);
-	 
+
 	 while(pAdapter != NULL)
 	 {
 		if(ACTING_AS_AP(pAdapter))
 			return TRUE;
 		pAdapter = GetNextExtAdapter(pAdapter);
 	 }
-	 
+
 	 return FALSE;
 }
 
@@ -786,7 +786,7 @@ IsDevicePortDiscoverable(
 
 	PADAPTER pDevicePort = GetFirstDevicePort(pAdapter);
 	PP2P_INFO pDeviceP2PInfo = NULL;
-	
+
 	if(pDevicePort)
 	{
 		pDeviceP2PInfo = GET_P2P_INFO(pDevicePort);
@@ -808,7 +808,7 @@ IsCloneRFD(
 	PMULTIPORT_COMMON_CONTEXT pMultiPortCommon = MultiPortGetCommonContext(pAdapter);
 	PRT_RFD pRfdStart = (PRT_RFD) pMultiPortCommon->CloneRfdMemoryBuffer.Buffer;
 	u4Byte IndexMax = pMultiPortCommon->uNumberOfCloneRfds;
-	
+
 	if(pRfd >= pRfdStart && pRfd <= pRfdStart + IndexMax - 1)
 	{
 		return TRUE;
@@ -831,7 +831,7 @@ MultiPortDumpPortStatus(
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("PORT_NUMBER: %d\n", portNumber));
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("pAdapter: %p\n", pAdapter));
-	RT_TRACE(COMP_MLME, DBG_LOUD, (", MP_PORT_TYPE: %s\n", 
+	RT_TRACE(COMP_MLME, DBG_LOUD, (", MP_PORT_TYPE: %s\n",
 			(portType == HELPER_PORT) ? "HELPER_PORT" :
 			(portType == EXTSTA_PORT) ? "EXTSTA_PORT" :
 			(portType == EXTAP_PORT) ? "EXTAP_PORT" :
@@ -844,27 +844,27 @@ MultiPortDumpPortStatus(
 	if(pMgntInfo->pP2PInfo)
 	{
 		PP2P_INFO			pP2PInfo = (PP2P_INFO)(pMgntInfo->pP2PInfo);
-		
+
 		RT_TRACE(COMP_P2P, DBG_LOUD, (", P2PSupport Type: %d\n", pTargetAdapter->P2PSupport));
-				
-		RT_TRACE(COMP_P2P, DBG_LOUD, (", P2P_ROLE: %s\n", 
+
+		RT_TRACE(COMP_P2P, DBG_LOUD, (", P2P_ROLE: %s\n",
 				(pP2PInfo->Role == P2P_NONE) ? "P2P_NONE" :
 				(pP2PInfo->Role == P2P_DEVICE) ? "P2P_DEVICE" :
 				(pP2PInfo->Role == P2P_CLIENT) ? "P2P_CLIENT" :
-				(pP2PInfo->Role == P2P_GO) ? "P2P_GO" : 
+				(pP2PInfo->Role == P2P_GO) ? "P2P_GO" :
 				"ERROR"
 			));
-		RT_TRACE(COMP_P2P, DBG_LOUD, (", P2P_STATE: %d\n", 
+		RT_TRACE(COMP_P2P, DBG_LOUD, (", P2P_STATE: %d\n",
 				pP2PInfo->State
 			));
-		
+
 		P2PSvc_Dump(pTargetAdapter);
 	}
 #endif
 
-	RT_TRACE(COMP_MLME, DBG_LOUD, (", MP_PORT_OP_STATE: %s \n", 
+	RT_TRACE(COMP_MLME, DBG_LOUD, (", MP_PORT_OP_STATE: %s \n",
 			(portState == INIT_STATE) ? "INIT_STATE" :
-			(portState == OP_STATE) ? "OP_STATE" : 
+			(portState == OP_STATE) ? "OP_STATE" :
 			"ERROR"
 		));
 
@@ -879,18 +879,18 @@ MultiPortAllocateCloneRfdBuffer(
 {
 	RT_STATUS rtStatus = RT_STATUS_FAILURE;
 	u4Byte	MaxLen=pRfd->mbCloneRfdDataBuffer.Length;
-	
+
 	// Correctness Checking --------------------------------------
 	RT_ASSERT(
-			pRfd->mbCloneRfdDataBuffer.Length != 0 && 
-			pRfd->mbCloneRfdDataBuffer.Buffer == NULL, 
+			pRfd->mbCloneRfdDataBuffer.Length != 0 &&
+			pRfd->mbCloneRfdDataBuffer.Buffer == NULL,
 			("DrvIFAssociateRFD: Wrong Parameters Observed!\n")
 		);
 
 	// Get the non-shared memory ---------------------------------
 	rtStatus = PlatformAllocateMemory(
-			pAdapter, 
-			(PVOID*)&(pRfd->mbCloneRfdDataBuffer.Buffer), 
+			pAdapter,
+			(PVOID*)&(pRfd->mbCloneRfdDataBuffer.Buffer),
 			MaxLen
 		);
 
@@ -906,19 +906,19 @@ MultiPortReleaseCloneRfdBuffer(
 
 	// Correctness Checking --------------------------------------
 	RT_ASSERT(
-			pRfd->mbCloneRfdDataBuffer.Length != 0 && 
-			pRfd->mbCloneRfdDataBuffer.Buffer != NULL, 
+			pRfd->mbCloneRfdDataBuffer.Length != 0 &&
+			pRfd->mbCloneRfdDataBuffer.Buffer != NULL,
 			("DrvIFDisassociateRFD: Wrong Parameters Observed!\n")
 		);
 
 	RT_ASSERT(
-			pRfd->bFeedPacketToSingleAdapter == FALSE, 
+			pRfd->bFeedPacketToSingleAdapter == FALSE,
 			("Error: Clone RFD in use should not be returned!\n")
 		);
 
 	// Free the non-shared memory --------------------------------
 	PlatformFreeMemory(
-			pRfd->mbCloneRfdDataBuffer.Buffer, 
+			pRfd->mbCloneRfdDataBuffer.Buffer,
 			pRfd->mbCloneRfdDataBuffer.Length
 		);
 }
@@ -929,11 +929,11 @@ MultiPortInitializeCloneRfdQueue(
 )
 {
 	PMULTIPORT_COMMON_CONTEXT pMultiPortCommon = MultiPortGetCommonContext(pAdapter);
-	
+
 	PlatformAcquireSpinLock(pAdapter, RT_RFD_SPINLOCK);
 	pMultiPortCommon->uCloneRfdIdleQueueSize = 0;
 	RTInitializeListHead(&pMultiPortCommon->CloneRfdIdleQueue);
-	
+
 	pMultiPortCommon->uCloneRfdBusyQueueSize = 0;
 	RTInitializeListHead(&pMultiPortCommon->CloneRfdBusyQueue);
 	PlatformReleaseSpinLock(pAdapter, RT_RFD_SPINLOCK);
@@ -948,7 +948,7 @@ MultiPortPrepareCloneRfd(
 	PRT_RFD	 pRfd = NULL;
 	u4Byte i = 0;
 	PMULTIPORT_COMMON_CONTEXT pMultiPortCommon = MultiPortGetCommonContext(pAdapter);
-		
+
 	const u4Byte SIZE_OF_CLONE_RFD_QUEUE = 256;
 
 	do
@@ -956,7 +956,7 @@ MultiPortPrepareCloneRfd(
 		// Allocate memory for the Multiport Clone RFD -------------------------------------------------
 		pMultiPortCommon->CloneRfdMemoryBuffer.Length = SIZE_OF_CLONE_RFD_QUEUE * sizeof(RT_RFD);
 
-		rtStatus = PlatformAllocateMemory(pAdapter, 
+		rtStatus = PlatformAllocateMemory(pAdapter,
 				&pMultiPortCommon->CloneRfdMemoryBuffer.Buffer,
 				pMultiPortCommon->CloneRfdMemoryBuffer.Length
 			);
@@ -972,17 +972,17 @@ MultiPortPrepareCloneRfd(
 		pMultiPortCommon->uNumberOfCloneRfds = SIZE_OF_CLONE_RFD_QUEUE;
 
 		PlatformZeroMemory(
-				pMultiPortCommon->CloneRfdMemoryBuffer.Buffer, 
+				pMultiPortCommon->CloneRfdMemoryBuffer.Buffer,
 				pMultiPortCommon->CloneRfdMemoryBuffer.Length
 			);
 		PlatformAcquireSpinLock(pAdapter,RT_RFD_SPINLOCK);
 		pRfd = (PRT_RFD) pMultiPortCommon->CloneRfdMemoryBuffer.Buffer;
-		
+
 		for(i = 0; i < pMultiPortCommon->uNumberOfCloneRfds; i++)
 		{
 			RTInsertTailListWithCnt(
-					&pMultiPortCommon->CloneRfdIdleQueue, 
-					&pRfd[i].List, 
+					&pMultiPortCommon->CloneRfdIdleQueue,
+					&pRfd[i].List,
 					&pMultiPortCommon->uCloneRfdIdleQueueSize
 				);
 		}
@@ -1007,7 +1007,7 @@ MultiPortFreeCloneRfd(
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("Clone RFD Allocated: %d\n", pMultiPortCommon->uNumberOfCloneRfds));
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("Clone RFD Freed: %d\n", pMultiPortCommon->uCloneRfdIdleQueueSize));
 	RT_ASSERT(pMultiPortCommon->uCloneRfdBusyQueueSize == 0, ("No Busy Clone RFD when in free status !!"));
-	RT_ASSERT(pMultiPortCommon->uNumberOfCloneRfds ==pMultiPortCommon->uCloneRfdIdleQueueSize, ("Freed RFD less than allocated!!\n"));	
+	RT_ASSERT(pMultiPortCommon->uNumberOfCloneRfds ==pMultiPortCommon->uCloneRfdIdleQueueSize, ("Freed RFD less than allocated!!\n"));
 
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("====================================\n\n"));
 
@@ -1019,7 +1019,7 @@ MultiPortFreeCloneRfd(
 	PlatformReleaseSpinLock(pAdapter, RT_RFD_SPINLOCK);
 
 	PlatformFreeMemory(
-			pMultiPortCommon->CloneRfdMemoryBuffer.Buffer, 
+			pMultiPortCommon->CloneRfdMemoryBuffer.Buffer,
 			pMultiPortCommon->CloneRfdMemoryBuffer.Length
 		);
 }
@@ -1033,7 +1033,7 @@ MultiPortInitializeContext(
 	PMULTIPORT_PORT_CONTEXT	pMultiPortDefault = MultiPortGetPortContext(pDefaultAdapter);
 
 	pMultiPortCommon->uNumberOfActiveExtAdapters = 0;
-	
+
 	RTInitializeListHead(&pMultiPortDefault->MultiList);
 	pMultiPortDefault->bActiveAdapter = TRUE;
 	pMultiPortDefault->pAdapter = pDefaultAdapter;
@@ -1082,7 +1082,7 @@ MultiPortCanCheckCheckBssid(
 		{
 			break;
 		}
-		
+
 		if(GetFirstClientPort(pAdapter))
 		{
 			bCanCheckBssid = FALSE;
@@ -1102,7 +1102,7 @@ MultiPortCanCheckCheckBssid(
 			break;
 		}
 	}while(FALSE);
-		
+
 
 	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("bCanCheckBssid: %d\n", bCanCheckBssid));
 
@@ -1125,7 +1125,7 @@ MultiPortInsertIdleExtAdapter(
 
 	// + MultiPort Insert the Adapter into the Adapter Queue
 	RTInsertTailList(
-			&pMultiPortDefault->MultiList, 
+			&pMultiPortDefault->MultiList,
 			&pMultiPort->MultiList
 		);
 }
@@ -1138,8 +1138,8 @@ MultiPortChangeExtAdapterActiveState(
 {
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PMULTIPORT_COMMON_CONTEXT pMultiPortCommon = MultiPortGetCommonContext(pDefaultAdapter);
-	PMULTIPORT_PORT_CONTEXT pMultiPort = MultiPortGetPortContext(pAdapter);	
-	
+	PMULTIPORT_PORT_CONTEXT pMultiPort = MultiPortGetPortContext(pAdapter);
+
 	RT_ASSERT(pMultiPort->bActiveAdapter != bActive, ("Same state changing is illegal !"));
 
 	pMultiPort->bActiveAdapter = bActive;
@@ -1159,7 +1159,7 @@ MultiPortGetNumberOfActiveExtAdapters(
 	PADAPTER pAdapter
 )
 {
-	PMULTIPORT_COMMON_CONTEXT pMultiPortCommon = MultiPortGetCommonContext(pAdapter);	
+	PMULTIPORT_COMMON_CONTEXT pMultiPortCommon = MultiPortGetCommonContext(pAdapter);
 
 	return pMultiPortCommon->uNumberOfActiveExtAdapters;
 }
@@ -1170,7 +1170,7 @@ MultiPortIsPreallocatedExtAdapterExist(
 )
 {
 	PMULTIPORT_PORT_CONTEXT pMultiPortDefault = MultiPortGetPortContext(pDefaultAdapter);
-	
+
 	return (!RTIsListEmpty(&pMultiPortDefault->MultiList));
 }
 
@@ -1208,16 +1208,16 @@ MultiportGetLastConnectionActionTime(
 	{
 		if(pLoopAdapter->LastConnectionActionTime > tmpConnectionActionTime)
 			tmpConnectionActionTime = pLoopAdapter->LastConnectionActionTime;
-		
+
 		pLoopAdapter = GetNextExtAdapter(pLoopAdapter);
 	}
 	return tmpConnectionActionTime;
 }
 
-#else 
+#else
 
 //============================================================================
-// Single Port Supported 
+// Single Port Supported
 //============================================================================
 
 VOID

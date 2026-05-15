@@ -12,7 +12,7 @@
 //
 //      <Scope><Object><Action><Modifier>
 //      <Scope><Object><Action>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -22,7 +22,7 @@
 //          }
 //       <Object>
 //          {
-//            ScenarioAppContainer      - Function pertains to all of the Application Container 
+//            ScenarioAppContainer      - Function pertains to all of the Application Container
 //                                           Scenarios
 //            RPC                       - Function is and RPC entry point.
 //          }
@@ -30,13 +30,13 @@
 //          {
 //            Add                       - Function adds objects
 //            Remove                    - Function removes objects
-//            Invoke                    - Function implements the scenario based on parameters 
+//            Invoke                    - Function implements the scenario based on parameters
 //                                           passed from the commandline interface (WFPSampler.exe).
 //          }
 //       <Modifier>
 //          {
 //            FwpmObjects               - Function acts on WFP objects.
-//            ScenarioAppContainer      - Function pertains to all of the Application Container 
+//            ScenarioAppContainer      - Function pertains to all of the Application Container
 //                                           Scenarios
 //          }
 //
@@ -65,7 +65,7 @@ static HANDLE  registrationHandle = 0;
 
 /**
  @private_function="PrvScenarioAppContainerDeleteFwpmObjects"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:    Function is overloaded.                                                            <br>
@@ -166,7 +166,7 @@ UINT32 PrvScenarioAppContainerDeleteFwpmObjects(_In_ const SID* pPackageID,
 
 /**
  @private_function="PrvScenarioAppContainerDeleteFwpmObjects"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:    Function is overloaded.                                                            <br>
@@ -267,7 +267,7 @@ UINT32 PrvScenarioAppContainerDeleteFwpmObjects()
 
 /**
  @private_function="PrvScenarioAppContainerAddFwpmObjects"
- 
+
    Purpose:  Add filters for specific containers.                                               <br>
                                                                                                 <br>
    Notes:    Function is overloaded.                                                            <br>
@@ -374,7 +374,7 @@ UINT32 PrvScenarioAppContainerAddFwpmObjects(_In_ const SID* pPackageID,
 
 /**
  @private_function="PrvScenarioAppContainerAddFwpmObjects"
- 
+
    Purpose:  Function that enables the SCENARIO_APP_CONTAINER scenarios.                        <br>
                                                                                                 <br>
    Notes:    Function is overloaded.                                                            <br>
@@ -477,8 +477,8 @@ UINT32 PrvScenarioAppContainerAddFwpmObjects(_In_ BOOLEAN persistent = TRUE,
 
 /**
  @callback_function="PrvScenarioAppContainerActOnChange"
- 
-   Purpose:  Callback function which is invoked when an application adds or removes it's 
+
+   Purpose:  Callback function which is invoked when an application adds or removes it's
              appContainer capabilities.                                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -509,7 +509,7 @@ VOID CALLBACK PrvScenarioAppContainerActOnChange(_In_opt_ VOID* pContext,
 
 /**
  @private_function="PrvScenarioAppContainerEnumExisting"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -546,7 +546,7 @@ UINT32 PrvScenarioAppContainerEnumExisting()
 
 /**
  @private_function="PrvScenarioAppContainerUnregister"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -573,7 +573,7 @@ UINT32 PrvScenarioAppContainerUnregister()
 
 /**
  @private_function="PrvScenarioAppContainerRegister"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -598,8 +598,8 @@ UINT32 PrvScenarioAppContainerRegister()
 
 /**
  @scenario_function="ScenarioAppContainerRemove"
- 
-   Purpose:  Function that removes corresponding objects for a previously added 
+
+   Purpose:  Function that removes corresponding objects for a previously added
              SCENARIO_APP_CONTAINER.                                                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -622,7 +622,7 @@ UINT32 ScenarioAppContainerRemove(_In_ BOOLEAN trustWSH)
 
 /**
  @scenario_function="ScenarioAppContainerAdd"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -658,8 +658,8 @@ UINT32 ScenarioAppContainerAdd(_In_ BOOLEAN trustWSH,
 
 /**
  @rpc_function="RPCInvokeScenarioBasicAction"
- 
-   Purpose:  RPC exposed function used to dipatch the scenario routines for 
+
+   Purpose:  RPC exposed function used to dipatch the scenario routines for
              SCENARIO_APP_CONTAINER.                                                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -734,11 +734,11 @@ error_status_t RPCInvokeScenarioAppContainer(/* [in] */ handle_t rpcBindingHandl
 
 /**
  @rpc_function="RPCInvokeScenarioBasicAction"
- 
-   Purpose:  RPC exposed function used to dipatch the scenario routines for 
+
+   Purpose:  RPC exposed function used to dipatch the scenario routines for
              SCENARIO_APP_CONTAINER.                                                            <br>
                                                                                                 <br>
-   Notes:    This particular function is only a stub for RPC on downlevel SKUs (Windows 7 and 
+   Notes:    This particular function is only a stub for RPC on downlevel SKUs (Windows 7 and
              below).                                                                            <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>

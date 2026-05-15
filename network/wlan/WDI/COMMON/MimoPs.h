@@ -3,7 +3,7 @@
 
 VOID
 SetSelfMimoPsMode(
-	IN	PADAPTER 	Adapter, 
+	IN	PADAPTER 	Adapter,
 	IN	u1Byte 		NewMimoPsMode
 	);
 

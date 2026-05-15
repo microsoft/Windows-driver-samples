@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //
 //       ClassifyFlowAssociation
@@ -86,7 +86,7 @@ NTSTATUS PerformFlowAssociation(_In_ const FWPS_INCOMING_METADATA_VALUES* pMetad
    HLPR_BAIL_LABEL:
 
 #if DBG
-   
+
       DbgPrintEx(DPFLTR_IHVNETWORK_ID,
                  DPFLTR_INFO_LEVEL,
                  " <--- PerformFlowAssociation() [status: %#x]\n",
@@ -101,8 +101,8 @@ NTSTATUS PerformFlowAssociation(_In_ const FWPS_INCOMING_METADATA_VALUES* pMetad
 
 /**
  @classify_function="ClassifyFlowAssociation"
- 
-   Purpose:  Associates a context with a flow which is available for each of the layers 
+
+   Purpose:  Associates a context with a flow which is available for each of the layers
              specified in the provider context                                                  <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>
@@ -171,8 +171,8 @@ VOID NTAPI ClassifyFlowAssociation(_In_ const FWPS_INCOMING_VALUES0* pClassifyVa
 
 /**
  @classify_function="ClassifyFlowAssociation"
- 
-   Purpose:  Associates a context with a flow which is available for each of the layers 
+
+   Purpose:  Associates a context with a flow which is available for each of the layers
              specified in the provider context                                                  <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>

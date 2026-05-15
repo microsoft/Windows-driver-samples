@@ -7,12 +7,12 @@
 
 	//
 	// <Roger_Notes> We set Maximum Rx Buffer Size to 16K to avoid USB BABBLE error status. 2008.06.20.
-	// <Roger_Notes> Revise Maximal Receive buffer size to 32K to overcome Rx FIFO overflow issue. 
+	// <Roger_Notes> Revise Maximal Receive buffer size to 32K to overcome Rx FIFO overflow issue.
 	// Suggeseted by Scott, 2008.10.03.
 	//
 	// 2011/05/31 MH We will fine tue RX aggregation size for USB later.
 	//
-#define RX_AGG_BLOCK_SIZE						512			// hardware defined the size of a block, for USB mode	
+#define RX_AGG_BLOCK_SIZE						512			// hardware defined the size of a block, for USB mode
 #define RX_AGG_PAGE_SIZE						128			// hardware defined the size of a page, for DMA mode
 
 #define MAX_RX_AGG_BLKCNT					60				// Maximum available RX aggregation block count
@@ -29,7 +29,7 @@
 
 #define IsThereBufferInRxDesc(_Adapter, _QueueID)		\
 		((_Adapter)->nBufInRxDesc[_QueueID] > 0)
-		
+
 #define IncrementRxDescToFill(_Adapter, _QueueID)		\
 		(_Adapter)->NextRxDescToFill[_QueueID]=((_Adapter)->NextRxDescToFill[_QueueID]+1)%(_Adapter)->NumRxDesc[_QueueID];			\
 		(_Adapter)->nBufInRxDesc[_QueueID]++;
@@ -89,7 +89,7 @@ ChkValidVAs(
 	PADAPTER	Adapter,
 	pu4Byte		pRfdAddr
 	);
-	
+
 RT_STATUS
 PrepareRFDs(
 	PADAPTER	Adapter
@@ -111,29 +111,29 @@ PrepareOneRxDescBuffer8814AE(
 	PADAPTER	Adapter
 	);
 
-VOID 
+VOID
 SpareRxDesc(
 	PADAPTER	Adapter
 	);
 
-VOID 
+VOID
 ResetRxStatistics(
 	PADAPTER	Adapter
 	);
 
-VOID 
+VOID
 CountRxFragmentStatistics(
 	PADAPTER Adapter
 	);
 
-VOID 
+VOID
 CountRxStatistics(
 	PADAPTER	Adapter,
 	PRT_RFD		pRfd
 	);
 
 
-VOID 
+VOID
 CountRxErrStatistics(
 	PADAPTER	Adapter,
 	PRT_RFD		pRfd
@@ -266,7 +266,7 @@ RxCheckSWDecryption(
 	PRT_RFD		pRfd
 	);
 
-PADAPTER 
+PADAPTER
 SelectReceiveAdapter(
 	PADAPTER			Adapter,
 	OCTET_STRING		frame
@@ -318,7 +318,7 @@ ReturnRFDList(
 VOID
 MakeRFDListOffsetAtBack(
 	PADAPTER	Adapter,
-	PRT_RFD		pRfd, 
+	PRT_RFD		pRfd,
 	u2Byte		offset
 	);
 

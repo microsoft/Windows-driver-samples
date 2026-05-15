@@ -10,12 +10,12 @@ typedef	struct _SDIO_OUT_CONTEXT	SDIO_OUT_CONTEXT, *PSDIO_OUT_CONTEXT;
 
 
 //
-//	Description: 
+//	Description:
 //		This routine is exported for SDIO WLAN IOREG I/O Bus Domain(Host),
 //		Host Address Mapping Range is 0x1026_0000~0x1026_FFFF.
 //
 //	Assumption:
-//		Proper I/O bus domain address should be converted before calling any 
+//		Proper I/O bus domain address should be converted before calling any
 //		IO_RW_DIRECT or IO_RW_EXTENDED Commands.
 //
 //	2010.12.10, added by Roger.
@@ -36,7 +36,7 @@ PlatformIOWrite1Byte(
 	u1Byte			FwPSState;
 
 	LARGE_INTEGER	StartTime, EndTime;
-	
+
 	if(RT_SDIO_CANNOT_IO(pDefaultAdapter))
 		return;
 
@@ -44,14 +44,14 @@ PlatformIOWrite1Byte(
 	if( pDefaultAdapter->bCtrlPnPTime )
 		StartTime = KeQueryPerformanceCounter(NULL);
 
-	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));	
+	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));
 
 	if(DeviceID == WLAN_IOREG_DEVICE_ID)
 		bCmd52Available = pDefaultAdapter->HalFunc.HalSdioIoRegCmd52AvailableHandler(pDefaultAdapter, offset);
 
 	if ((KeGetCurrentIrql() > PASSIVE_LEVEL) ||
 		(GlobalSdioDbg & SDIO_DBG_ASYN_IO))
-	{	
+	{
 #if RTL8723_SDIO_IO_THREAD_ENABLE
 		SdioAsynIOWriteEnqueue(sdiodevice, DeviceID, sdiodevice->SdioFuncNum, 1, (u2Byte)offset, &data);
 #else
@@ -62,14 +62,14 @@ PlatformIOWrite1Byte(
 	{
 		NdisAcquireSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
 		sdiodevice->SyncIoInProgressCount++;
-		NdisReleaseSpinLock( &(sdiodevice->SyncIoCntSpinLock) );	
-		
-	
+		NdisReleaseSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
+
+
 		//------------------------------------------------------------
 		// tynli add for 32k. 2011.02.25.
 		if(pDefaultAdapter->bFWReady)
 		{
-			pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_FW_PS_STATE, &FwPSState);		
+			pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_FW_PS_STATE, &FwPSState);
 			if(IS_IN_LOW_POWER_STATE(pDefaultAdapter, FwPSState) &&
 				!IS_SDIO_POWER_ON_IO_REG(DeviceID, offset))
 			{
@@ -79,30 +79,30 @@ PlatformIOWrite1Byte(
 		}
 		//------------------------------------------------------------
 
-		if( bCmd52Available && (sdiodevice->IoRegDirectAccess || 
+		if( bCmd52Available && (sdiodevice->IoRegDirectAccess ||
 			((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) ||
 			!bMacPwrCtrlOn) )
-		{	
+		{
 			rtstatus = PlatformSdioCmd52ReadWrite(
-								sdiodevice, 
+								sdiodevice,
 								DeviceID,
 								sdiodevice->SdioFuncNum,
-								1, 
-								(ULONG)offset, 
+								1,
+								(ULONG)offset,
 								TRUE,
-								&data);	
+								&data);
 		}
 		else
 		{
 			// Use I/O RW extended command as default.
 			rtstatus = PlatformSdioCmd53ReadWrite(
-								sdiodevice, 
+								sdiodevice,
 								DeviceID,
-								sdiodevice->SdioFuncNum, 
-								1, 
-								(ULONG)offset, 
+								sdiodevice->SdioFuncNum,
+								1,
+								(ULONG)offset,
 								TRUE,
-								&data);		
+								&data);
 		}
 
 		NdisAcquireSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
@@ -122,12 +122,12 @@ PlatformIOWrite1Byte(
 
 
 //
-//	Description: 
+//	Description:
 //		This routine is exported for SDIO WLAN IOREG I/O Bus Domain(Host),
 //		Host Address Mapping Range is 0x1026_0000~0x1026_FFFF.
 //
 //	Assumption:
-//		Proper I/O bus domain address should be converted before calling any 
+//		Proper I/O bus domain address should be converted before calling any
 //		IO_RW_DIRECT or IO_RW_EXTENDED Commands.
 //
 //	2010.12.10, added by Roger.
@@ -155,7 +155,7 @@ PlatformIOWrite2Byte(
 	if( pDefaultAdapter->bCtrlPnPTime )
 		StartTime = KeQueryPerformanceCounter(NULL);
 
-	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));	
+	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));
 
 	if(DeviceID == WLAN_IOREG_DEVICE_ID)
 		bCmd52Available = pDefaultAdapter->HalFunc.HalSdioIoRegCmd52AvailableHandler(pDefaultAdapter, offset);
@@ -165,7 +165,7 @@ PlatformIOWrite2Byte(
 	{
 #if RTL8723_SDIO_IO_THREAD_ENABLE
 		SdioAsynIOWriteEnqueue(sdiodevice, DeviceID, sdiodevice->SdioFuncNum, 2, (u2Byte)offset, &data);
-#else		
+#else
 		SdioAsynIOWrite(sdiodevice, DeviceID, sdiodevice->SdioFuncNum, 2, (u2Byte)offset, &data);
 #endif
 	}
@@ -174,12 +174,12 @@ PlatformIOWrite2Byte(
 		NdisAcquireSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
 		sdiodevice->SyncIoInProgressCount++;
 		NdisReleaseSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
-		
+
 		//------------------------------------------------------------
 		// tynli add for 32k. 2011.02.25.
 		if(pDefaultAdapter->bFWReady)
 		{
-			pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_FW_PS_STATE, &FwPSState);		
+			pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_FW_PS_STATE, &FwPSState);
 			if(IS_IN_LOW_POWER_STATE(pDefaultAdapter, FwPSState) &&
 				!IS_SDIO_POWER_ON_IO_REG(DeviceID, offset))
 			{
@@ -189,30 +189,30 @@ PlatformIOWrite2Byte(
 		}
 		//------------------------------------------------------------
 
-		if( bCmd52Available && (sdiodevice->IoRegDirectAccess || 
-			((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) || 
+		if( bCmd52Available && (sdiodevice->IoRegDirectAccess ||
+			((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) ||
 			!bMacPwrCtrlOn) )
 		{
 			rtstatus = PlatformSdioCmd52ReadWrite(
-								sdiodevice, 
+								sdiodevice,
 								DeviceID,
 								sdiodevice->SdioFuncNum,
-								2, 
-								(ULONG)offset, 
+								2,
+								(ULONG)offset,
 								TRUE,
-								&data);	
+								&data);
 		}
 		else
 		{
 			// Use I/O RW extended command as default.
 			rtstatus = PlatformSdioCmd53ReadWrite(
-								sdiodevice, 
+								sdiodevice,
 								DeviceID,
 								sdiodevice->SdioFuncNum,
-								2, 
-								(ULONG)offset, 
+								2,
+								(ULONG)offset,
 								TRUE,
-								&data);	
+								&data);
 		}
 
 		NdisAcquireSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
@@ -222,7 +222,7 @@ PlatformIOWrite2Byte(
 			sdiodevice->SyncIoInProgressCount = 0;
 		NdisReleaseSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
 	}
-	
+
 	if( pDefaultAdapter->bCtrlPnPTime )
 	{
 		EndTime = KeQueryPerformanceCounter(NULL);
@@ -231,12 +231,12 @@ PlatformIOWrite2Byte(
 }
 
 //
-//	Description: 
+//	Description:
 //		This routine is exported for SDIO WLAN IOREG I/O Bus Domain(Host),
 //		Host Address Mapping Range is 0x1026_0000~0x1026_FFFF.
 //
 //	Assumption:
-//		Proper I/O bus domain address should be converted before calling any 
+//		Proper I/O bus domain address should be converted before calling any
 //		IO_RW_DIRECT or IO_RW_EXTENDED Commands.
 //
 //	2010.12.10, added by Roger.
@@ -256,7 +256,7 @@ PlatformIOWrite4Byte(
 	u1Byte			FwPSState;
 
 	LARGE_INTEGER	StartTime, EndTime;
-	
+
 	if(RT_SDIO_CANNOT_IO(pDefaultAdapter))
 		return;
 
@@ -264,7 +264,7 @@ PlatformIOWrite4Byte(
 	if( pDefaultAdapter->bCtrlPnPTime )
 		StartTime = KeQueryPerformanceCounter(NULL);
 
-	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));	
+	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));
 
 	if(DeviceID == WLAN_IOREG_DEVICE_ID)
 		bCmd52Available = pDefaultAdapter->HalFunc.HalSdioIoRegCmd52AvailableHandler(pDefaultAdapter, offset);
@@ -279,16 +279,16 @@ PlatformIOWrite4Byte(
 #endif
 	}
 	else
-	{	
+	{
 		NdisAcquireSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
 		sdiodevice->SyncIoInProgressCount++;
 		NdisReleaseSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
-		
+
 		//------------------------------------------------------------
 		// tynli add for 32k. 2011.02.25.
 		if(pDefaultAdapter->bFWReady)
 		{
-			pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_FW_PS_STATE, &FwPSState);		
+			pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_FW_PS_STATE, &FwPSState);
 			if(IS_IN_LOW_POWER_STATE(pDefaultAdapter, FwPSState) &&
 				!IS_SDIO_POWER_ON_IO_REG(DeviceID, offset))
 			{
@@ -298,34 +298,34 @@ PlatformIOWrite4Byte(
 		}
 		//------------------------------------------------------------
 #if (RK_PLATFORM_SUPPORT ==1)
-		if( bCmd52Available && ((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100) || 
+		if( bCmd52Available && ((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100) ||
 			!bMacPwrCtrlOn) )
 #else
-		if( bCmd52Available && (sdiodevice->IoRegDirectAccess || 
-			((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) || 
+		if( bCmd52Available && (sdiodevice->IoRegDirectAccess ||
+			((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) ||
 			!bMacPwrCtrlOn) )
 #endif
 		{
 			rtstatus = PlatformSdioCmd52ReadWrite(
-								sdiodevice, 
+								sdiodevice,
 								DeviceID,
-								sdiodevice->SdioFuncNum, 
-								4, 
-								(ULONG)offset, 
+								sdiodevice->SdioFuncNum,
+								4,
+								(ULONG)offset,
 								TRUE,
-								&data);	
+								&data);
 		}
 		else
 		{
 			// Use I/O RW extended command as default.
 			rtstatus = PlatformSdioCmd53ReadWrite(
-								sdiodevice, 
+								sdiodevice,
 								DeviceID,
 								sdiodevice->SdioFuncNum,
-								4, 
-								(ULONG)offset, 
+								4,
+								(ULONG)offset,
 								TRUE,
-								&data);	
+								&data);
 		}
 
 		NdisAcquireSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
@@ -344,12 +344,12 @@ PlatformIOWrite4Byte(
 }
 
 //
-//	Description: 
+//	Description:
 //		This routine is exported for SDIO WLAN IOREG I/O Bus Domain(Host),
 //		Host Address Mapping Range is 0x1026_0000~0x1026_FFFF.
 //
 //	Assumption:
-//		Proper I/O bus domain address should be converted before calling any 
+//		Proper I/O bus domain address should be converted before calling any
 //		IO_RW_DIRECT or IO_RW_EXTENDED Commands.
 //
 //	2010.12.10, added by Roger.
@@ -378,32 +378,32 @@ PlatformIOWriteNByte(
 	if( pDefaultAdapter->bCtrlPnPTime )
 		StartTime = KeQueryPerformanceCounter(NULL);
 
-	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));	
+	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));
 
 	if(DeviceID == WLAN_IOREG_DEVICE_ID)
 		bCmd52Available = pDefaultAdapter->HalFunc.HalSdioIoRegCmd52AvailableHandler(pDefaultAdapter, offset);
 
 	if ((KeGetCurrentIrql() > PASSIVE_LEVEL) ||
 		(GlobalSdioDbg & SDIO_DBG_ASYN_IO))
-	{	
-		RT_PRINT_DATA(COMP_INIT|COMP_IO, DBG_LOUD, "PlatformIOWriteNByte(): Sync IO Write N byte:\n", 
+	{
+		RT_PRINT_DATA(COMP_INIT|COMP_IO, DBG_LOUD, "PlatformIOWriteNByte(): Sync IO Write N byte:\n",
 				pdata, count);
 		SdioAsynIOWrite(sdiodevice, DeviceID, sdiodevice->SdioFuncNum, (u2Byte)count, (u2Byte)offset, pdata);// Issue CMD53 Asyn CMD as default.
 	}
 	else
 	{
-		RT_PRINT_DATA(COMP_INIT|COMP_IO, DBG_LOUD, "PlatformIOWriteNByte(): ASync IO Write N byte:\n", 
-				pdata, count);	
+		RT_PRINT_DATA(COMP_INIT|COMP_IO, DBG_LOUD, "PlatformIOWriteNByte(): ASync IO Write N byte:\n",
+				pdata, count);
 
 		NdisAcquireSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
 		sdiodevice->SyncIoInProgressCount++;
 		NdisReleaseSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
-		
+
 		//------------------------------------------------------------
 		// tynli add for 32k. 2011.02.25.
 		if(pDefaultAdapter->bFWReady)
 		{
-			pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_FW_PS_STATE, &FwPSState);		
+			pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_FW_PS_STATE, &FwPSState);
 			if(IS_IN_LOW_POWER_STATE(pDefaultAdapter, FwPSState) &&
 				!IS_SDIO_POWER_ON_IO_REG(DeviceID, offset))
 			{
@@ -413,28 +413,28 @@ PlatformIOWriteNByte(
 		}
 		//------------------------------------------------------------
 
-		if( bCmd52Available && (sdiodevice->IoRegDirectAccess || 
-			((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) || 
+		if( bCmd52Available && (sdiodevice->IoRegDirectAccess ||
+			((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) ||
 			!bMacPwrCtrlOn) )
 		{
 			rtstatus = PlatformSdioCmd52ReadWrite(
-								sdiodevice, 
+								sdiodevice,
 								DeviceID,
-								sdiodevice->SdioFuncNum, 
-								count, 
-								(ULONG)offset, 
+								sdiodevice->SdioFuncNum,
+								count,
+								(ULONG)offset,
 								TRUE,
-								pdata);	
+								pdata);
 		}
 		else
 		{
 			// Use I/O RW extended command as default.
 			rtstatus = PlatformSdioCmd53ReadWrite(
-								sdiodevice, 
+								sdiodevice,
 								DeviceID,
-								sdiodevice->SdioFuncNum, 
-								count, 
-								(ULONG)offset, 
+								sdiodevice->SdioFuncNum,
+								count,
+								(ULONG)offset,
 								TRUE,
 								pdata);
 		}
@@ -456,12 +456,12 @@ PlatformIOWriteNByte(
 
 
 //
-//	Description: 
+//	Description:
 //		This routine is exported for SDIO WLAN IOREG I/O Bus Domain(Host),
 //		Host Address Mapping Range is 0x1026_0000~0x1026_FFFF.
 //
 //	Assumption:
-//		Proper I/O bus domain address should be converted before calling any 
+//		Proper I/O bus domain address should be converted before calling any
 //		IO_RW_DIRECT or IO_RW_EXTENDED Commands.
 //
 //	2010.12.10, added by Roger.
@@ -483,56 +483,56 @@ PlatformIOSyncWriteNByte(
 	if(RT_SDIO_CANNOT_IO(pDefaultAdapter))
 		return;
 
-	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));		
+	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));
 
 	if(DeviceID == WLAN_IOREG_DEVICE_ID)
 		bCmd52Available = pDefaultAdapter->HalFunc.HalSdioIoRegCmd52AvailableHandler(pDefaultAdapter, offset);
 
-	RT_PRINT_DATA(COMP_INIT|COMP_IO, DBG_TRACE, "PlatformIOSyncWriteNByte(): Sync IO Write N byte:\n", 
+	RT_PRINT_DATA(COMP_INIT|COMP_IO, DBG_TRACE, "PlatformIOSyncWriteNByte(): Sync IO Write N byte:\n",
 				pdata, count);
 
 #if (RK_PLATFORM_SUPPORT==1)
-	if( bCmd52Available && ( (count <4) || 
-		((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) || 
+	if( bCmd52Available && ( (count <4) ||
+		((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) ||
 		!bMacPwrCtrlOn) )
 #else
-	if( bCmd52Available && (sdiodevice->IoRegDirectAccess || 
-		((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) || 
+	if( bCmd52Available && (sdiodevice->IoRegDirectAccess ||
+		((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) ||
 		!bMacPwrCtrlOn) )
 #endif
-	{	
+	{
 		rtstatus = PlatformSdioCmd52ReadWrite(
-							sdiodevice, 
+							sdiodevice,
 							DeviceID,
-							sdiodevice->SdioFuncNum, 
-							count, 
-							(ULONG)offset, 
+							sdiodevice->SdioFuncNum,
+							count,
+							(ULONG)offset,
 							TRUE,
-							pdata);	
+							pdata);
 	}
 	else
 	{
 		// Use I/O RW extended command as default.
 		rtstatus = PlatformSdioCmd53ReadWrite(
-							sdiodevice, 
+							sdiodevice,
 							DeviceID,
-							sdiodevice->SdioFuncNum, 
-							count, 
-							(ULONG)offset, 
+							sdiodevice->SdioFuncNum,
+							count,
+							(ULONG)offset,
 							TRUE,
 							pdata);
 	}
-	
+
 }
 
 
 //
-//	Description: 
+//	Description:
 //		This routine is exported for SDIO WLAN IOREG I/O Bus Domain(Host),
 //		Host Address Mapping Range is 0x1026_0000~0x1026_FFFF.
 //
 //	Assumption:
-//		Proper I/O bus domain address should be converted before calling any 
+//		Proper I/O bus domain address should be converted before calling any
 //		IO_RW_DIRECT or IO_RW_EXTENDED Commands.
 //
 //	2010.12.10, added by Roger.
@@ -569,7 +569,7 @@ PlatformIORead1Byte(
 	if(pDefaultAdapter->bFWReady)
 	{
 		pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_FW_PS_STATE, &FwPSState);
-		if(IS_IN_LOW_POWER_STATE(pDefaultAdapter, FwPSState) && 
+		if(IS_IN_LOW_POWER_STATE(pDefaultAdapter, FwPSState) &&
 			!IS_SDIO_POWER_ON_IO_REG(DeviceID, offset))
 		{
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("CANNOT IO ---> Wake up Hw. PlatformIORead1Byte(): DeviceID=%d, offset=%#X\n", DeviceID, offset));
@@ -577,9 +577,9 @@ PlatformIORead1Byte(
 		}
 	}
 
-	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));	
+	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));
 
-	if (KeGetCurrentIrql() > PASSIVE_LEVEL)	
+	if (KeGetCurrentIrql() > PASSIVE_LEVEL)
 	{
 		RT_ASSERT(FALSE, ("PlatformIORead1Byte() > PASSIVE_LEVEL is not allowed! DeviceID=%d, offset=%#X\n", DeviceID, offset));
 
@@ -594,34 +594,34 @@ PlatformIORead1Byte(
 	}
 	else
 	{
-		if( sdiodevice->IoRegDirectAccess || 
-			((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) || 
+		if( sdiodevice->IoRegDirectAccess ||
+			((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) ||
 			!bMacPwrCtrlOn )
 		{
 			rtstatus = PlatformSdioCmd52ReadWrite(
-								sdiodevice, 
+								sdiodevice,
 								DeviceID,
-								sdiodevice->SdioFuncNum, 
-								1, 
-								(ULONG)offset, 
+								sdiodevice->SdioFuncNum,
+								1,
+								(ULONG)offset,
 								FALSE,
-								&Data);	
+								&Data);
 		}
 		else
 		{
 			// Use I/O RW extended command as default.
 			rtstatus = PlatformSdioCmd53ReadWrite(
-								sdiodevice, 
+								sdiodevice,
 								DeviceID,
-								sdiodevice->SdioFuncNum, 
-								1, 
-								(ULONG)offset, 
+								sdiodevice->SdioFuncNum,
+								1,
+								(ULONG)offset,
 								FALSE,
-								&Data);	
-		}			
-		
+								&Data);
+		}
+
 		if(rtstatus != RT_STATUS_SUCCESS)
-			Data = 0xff;	
+			Data = 0xff;
 
 		NdisAcquireSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
 		if(sdiodevice->SyncIoInProgressCount>0)
@@ -641,12 +641,12 @@ PlatformIORead1Byte(
 }
 
 //
-//	Description: 
+//	Description:
 //		This routine is exported for SDIO WLAN IOREG I/O Bus Domain(Host),
 //		Host Address Mapping Range is 0x1026_0000~0x1026_FFFF.
 //
 //	Assumption:
-//		Proper I/O bus domain address should be converted before calling any 
+//		Proper I/O bus domain address should be converted before calling any
 //		IO_RW_DIRECT or IO_RW_EXTENDED Commands.
 //
 //	2010.12.10, added by Roger.
@@ -679,11 +679,11 @@ PlatformIORead2Byte(
 	sdiodevice->SyncIoInProgressCount++;
 	NdisReleaseSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
 
-	// tynli add for 32k. 2011.02.25.		
+	// tynli add for 32k. 2011.02.25.
 	if(pDefaultAdapter->bFWReady)
-	{	
+	{
 		pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_FW_PS_STATE, &FwPSState);
-		if(IS_IN_LOW_POWER_STATE(pDefaultAdapter, FwPSState) && 
+		if(IS_IN_LOW_POWER_STATE(pDefaultAdapter, FwPSState) &&
 			!IS_SDIO_POWER_ON_IO_REG(DeviceID, offset))
 		{
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("CANNOT IO---> Wake up Hw. PlatformIORead2Byte(): DeviceID=%d, offset=%#X\n", DeviceID, offset));
@@ -691,7 +691,7 @@ PlatformIORead2Byte(
 		}
 	}
 
-	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));	
+	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));
 
 	if (KeGetCurrentIrql() > PASSIVE_LEVEL)
 	{
@@ -708,34 +708,34 @@ PlatformIORead2Byte(
 	}
 	else
 	{
-		if( sdiodevice->IoRegDirectAccess || 
-			((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) || 
+		if( sdiodevice->IoRegDirectAccess ||
+			((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) ||
 			!bMacPwrCtrlOn )
 		{
 			rtstatus = PlatformSdioCmd52ReadWrite(
-								sdiodevice, 
+								sdiodevice,
 								DeviceID,
-								sdiodevice->SdioFuncNum, 
-								2, 
-								(ULONG)offset, 
+								sdiodevice->SdioFuncNum,
+								2,
+								(ULONG)offset,
 								FALSE,
-								&Data);	
+								&Data);
 		}
 		else
 		{
 			// Use I/O RW extended command as default.
 			rtstatus = PlatformSdioCmd53ReadWrite(
-								sdiodevice, 
+								sdiodevice,
 								DeviceID,
-								sdiodevice->SdioFuncNum, 
-								2, 
-								(ULONG)offset, 
+								sdiodevice->SdioFuncNum,
+								2,
+								(ULONG)offset,
 								FALSE,
 								&Data);
-		}		
-		
+		}
+
 		if(rtstatus != RT_STATUS_SUCCESS)
-			Data = 0xffff;	
+			Data = 0xffff;
 
 		NdisAcquireSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
 		if(sdiodevice->SyncIoInProgressCount>0)
@@ -749,18 +749,18 @@ PlatformIORead2Byte(
 			EndTime = KeQueryPerformanceCounter(NULL);
 			pDefaultAdapter->PnPIOTime.QuadPart += (EndTime.QuadPart - StartTime.QuadPart);
 		}
-		
+
 		return Data;
 	}
 }
 
 //
-//	Description: 
+//	Description:
 //		This routine is exported for SDIO WLAN IOREG I/O Bus Domain(Host),
 //		Host Address Mapping Range is 0x1026_0000~0x1026_FFFF.
 //
 //	Assumption:
-//		Proper I/O bus domain address should be converted before calling any 
+//		Proper I/O bus domain address should be converted before calling any
 //		IO_RW_DIRECT or IO_RW_EXTENDED Commands.
 //
 //	2010.12.10, added by Roger.
@@ -795,9 +795,9 @@ PlatformIORead4Byte(
 
 	// tynli add for 32k. 2011.02.25.
 	if(pDefaultAdapter->bFWReady)
-	{	
+	{
 		pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_FW_PS_STATE, &FwPSState);
-		if(IS_IN_LOW_POWER_STATE(pDefaultAdapter, FwPSState) && 
+		if(IS_IN_LOW_POWER_STATE(pDefaultAdapter, FwPSState) &&
 			!IS_SDIO_POWER_ON_IO_REG(DeviceID, offset))
 		{
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("CANNOT IO---> Wake up Hw. PlatformIORead4Byte(): DeviceID=%d, offset=%#X\n", DeviceID, offset));
@@ -805,7 +805,7 @@ PlatformIORead4Byte(
 		}
 	}
 
-	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));	
+	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));
 
 	if (KeGetCurrentIrql() > PASSIVE_LEVEL)
 	{
@@ -824,22 +824,22 @@ PlatformIORead4Byte(
 	{
 
 #if (RK_PLATFORM_SUPPORT==1)
-		if( ((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) || 
+		if( ((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) ||
 			!bMacPwrCtrlOn )
 #else
-		if( sdiodevice->IoRegDirectAccess || 
-			((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) || 
+		if( sdiodevice->IoRegDirectAccess ||
+			((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) ||
 			!bMacPwrCtrlOn )
 #endif
 		{
 			rtstatus = PlatformSdioCmd52ReadWrite(
-								sdiodevice, 
+								sdiodevice,
 								DeviceID,
-								sdiodevice->SdioFuncNum, 
-								4, 
-								(ULONG)offset, 
+								sdiodevice->SdioFuncNum,
+								4,
+								(ULONG)offset,
 								FALSE,
-								&Data);	
+								&Data);
 		}
 		else
 		{
@@ -847,15 +847,15 @@ PlatformIORead4Byte(
 			rtstatus = PlatformSdioCmd53ReadWrite(
 								sdiodevice,
 								DeviceID,
-								sdiodevice->SdioFuncNum, 
-								4, 
-								(ULONG)offset, 
+								sdiodevice->SdioFuncNum,
+								4,
+								(ULONG)offset,
 								FALSE,
 								&Data);
-		}		
-		
+		}
+
 		if(rtstatus != RT_STATUS_SUCCESS)
-			Data = 0xffffffff;	
+			Data = 0xffffffff;
 
 		NdisAcquireSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
 		if(sdiodevice->SyncIoInProgressCount>0)
@@ -869,7 +869,7 @@ PlatformIORead4Byte(
 			EndTime = KeQueryPerformanceCounter(NULL);
 			pDefaultAdapter->PnPIOTime.QuadPart += (EndTime.QuadPart - StartTime.QuadPart);
 		}
-		
+
 		return Data;
 	}
 }
@@ -877,12 +877,12 @@ PlatformIORead4Byte(
 
 
 //
-//	Description: 
+//	Description:
 //		This routine is exported for SDIO WLAN IOREG or SDIO_LOCAL_DEVICE_ID I/O Bus Domain(Host),
 //		Host Address Mapping Range is 0x1025_0000~0x1025_FFFF.
 //
 //	Assumption:
-//		Proper I/O bus domain address should be converted before calling any 
+//		Proper I/O bus domain address should be converted before calling any
 //		IO_RW_DIRECT or IO_RW_EXTENDED Commands.
 //
 //	2011.03.07, added by Roger.
@@ -895,7 +895,7 @@ PlatformIOReadNByte(
 	IN	u4Byte		count,	//data length
 	OUT	pu1Byte		pBuffer
 	)
-{	
+{
 	PADAPTER	pDefaultAdapter = GetDefaultAdapter(((PADAPTER)Adapter));
 	PRT_SDIO_DEVICE	sdiodevice = GET_RT_SDIO_DEVICE(pDefaultAdapter);
 	BOOLEAN			bMacPwrCtrlOn;
@@ -920,9 +920,9 @@ PlatformIOReadNByte(
 
 	// tynli add for 32k. 2011.02.25.
 	if(pDefaultAdapter->bFWReady)
-	{	
+	{
 		pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_FW_PS_STATE, &FwPSState);
-		if(IS_IN_LOW_POWER_STATE(pDefaultAdapter, FwPSState) && 
+		if(IS_IN_LOW_POWER_STATE(pDefaultAdapter, FwPSState) &&
 			!IS_SDIO_POWER_ON_IO_REG(DeviceID, offset))
 		{
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("CANNOT IO---> Wake up Hw. PlatformIOReadNByte(): DeviceID=%d, offset=%#X\n", DeviceID, offset));
@@ -930,27 +930,27 @@ PlatformIOReadNByte(
 		}
 	}
 
-	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));	
+	pDefaultAdapter->HalFunc.GetHwRegHandler(pDefaultAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));
 
 	if (KeGetCurrentIrql() > PASSIVE_LEVEL)
-	{	
-		RT_ASSERT(FALSE, ("PlatformIOReadNByte() > PASSIVE_LEVEL is not allowed. DeviceID=%d, offset=%#X\n", DeviceID, offset));		
+	{
+		RT_ASSERT(FALSE, ("PlatformIOReadNByte() > PASSIVE_LEVEL is not allowed. DeviceID=%d, offset=%#X\n", DeviceID, offset));
 		PlatformFillMemory((PVOID)pBuffer, count, 0xff);
 	}
 	else
-	{		
-		if( sdiodevice->IoRegDirectAccess || 
-			((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) || 
+	{
+		if( sdiodevice->IoRegDirectAccess ||
+			((DeviceID == WLAN_IOREG_DEVICE_ID)&&(offset < 0x100)) ||
 			!bMacPwrCtrlOn )
 		{
 			rtstatus = PlatformSdioCmd52ReadWrite(
-								sdiodevice, 
+								sdiodevice,
 								DeviceID,
-								sdiodevice->SdioFuncNum, 
-								count, 
-								(ULONG)offset, 
+								sdiodevice->SdioFuncNum,
+								count,
+								(ULONG)offset,
 								FALSE,
-								pBuffer);	
+								pBuffer);
 		}
 		else
 		{
@@ -958,16 +958,16 @@ PlatformIOReadNByte(
 			rtstatus = PlatformSdioCmd53ReadWrite(
 								sdiodevice,
 								DeviceID,
-								sdiodevice->SdioFuncNum, 
-								count, 
-								(ULONG)offset, 
+								sdiodevice->SdioFuncNum,
+								count,
+								(ULONG)offset,
 								FALSE,
 								pBuffer);
-		}		
-		
+		}
+
 		if(rtstatus != RT_STATUS_SUCCESS)
-			PlatformFillMemory((PVOID)pBuffer, count, 0xff);		
-		
+			PlatformFillMemory((PVOID)pBuffer, count, 0xff);
+
 	}
 
 	NdisAcquireSpinLock( &(sdiodevice->SyncIoCntSpinLock) );
@@ -991,9 +991,9 @@ PlatformIOReadNByte(
 //		Retrieve SDIO bus related properties.
 //
 //	Assumption:
-//		 A Secure Digital (SD) card bus interface has been initialized.	
+//		 A Secure Digital (SD) card bus interface has been initialized.
 //
-//	2010.12.09, added by Roger. 
+//	2010.12.09, added by Roger.
 //
 NTSTATUS
 PlatformSdioGetProperty(
@@ -1002,15 +1002,15 @@ PlatformSdioGetProperty(
               IN PVOID Buffer,
               IN ULONG Length
                )
-{      	
+{
      	PSDBUS_REQUEST_PACKET psdrp = NULL;
 	NTSTATUS	status;
-	
+
 	psdrp = (PSDBUS_REQUEST_PACKET)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(SDBUS_REQUEST_PACKET), '3278');
 
 	if(!psdrp)
 		return STATUS_INSUFFICIENT_RESOURCES;
-	
+
 	psdrp->RequestFunction = SDRF_GET_PROPERTY;
 	psdrp->Parameters.GetSetProperty.Property = Property;
 	psdrp->Parameters.GetSetProperty.Buffer = Buffer;
@@ -1034,7 +1034,7 @@ PlatformSdioGetProperty(
 		RT_TRACE(COMP_IO, DBG_SERIOUS, ("PlatformSdioGetProperty(): Fail to get SDIO property!!\n"));
 	}
    	ExFreePoolWithTag(psdrp, '3278');
-   
+
     	return status;
 }
 
@@ -1044,9 +1044,9 @@ PlatformSdioGetProperty(
 //		Configure sdio bus related properties.
 //
 //	Assumption:
-//		 A Secure Digital (SD) card bus interface has been initialized.	
+//		 A Secure Digital (SD) card bus interface has been initialized.
 //
-//	2010.12.09, added by Roger. 
+//	2010.12.09, added by Roger.
 //
 NTSTATUS
 PlatformSdioSetProperty(
@@ -1059,7 +1059,7 @@ PlatformSdioSetProperty(
 
 	PSDBUS_REQUEST_PACKET psdrp = NULL;
 	NTSTATUS	status;
-	
+
 	psdrp = (PSDBUS_REQUEST_PACKET)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(SDBUS_REQUEST_PACKET), '3278');
 
 	if(!psdrp)
@@ -1088,17 +1088,17 @@ PlatformSdioSetProperty(
 		RT_TRACE(COMP_IO, DBG_SERIOUS, ("PlatformSdioSetProperty(): Fail to set SDIO property!!\n"));
 	}
    	ExFreePoolWithTag(psdrp, '3278');
-   
+
     	return status;
 }
 
 
 
 //
-//	Description: 
-//		Schedule IO_RW_EXTENDED Command (CMD53) to perform Read Write I/O operation 
-//		on specific function number. This command allows the reading of a large number of I/O 
-//		registers with a single command. We should decide what kind of mode(Block or byte count mode) 
+//	Description:
+//		Schedule IO_RW_EXTENDED Command (CMD53) to perform Read Write I/O operation
+//		on specific function number. This command allows the reading of a large number of I/O
+//		registers with a single command. We should decide what kind of mode(Block or byte count mode)
 //		to use.
 //
 //	Assumption:
@@ -1110,7 +1110,7 @@ RT_STATUS
 PlatformSdioCmd53ReadWrite(
 	PRT_SDIO_DEVICE	sdiodevice,
 	UCHAR			DeviceID,
-	UCHAR			funcNum,			
+	UCHAR			funcNum,
 	ULONG			byteCount,
 	ULONG			registerIndex,
 	BOOLEAN			writeFlag,
@@ -1124,8 +1124,8 @@ PlatformSdioCmd53ReadWrite(
 	BOOLEAN		bMacPwrCtrlOn;
 	u1Byte		SDRPErrHandleType;
 
-	pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));	
-	
+	pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));
+
 	if(!bMacPwrCtrlOn)
 	{
 		RT_TRACE(COMP_POWER, DBG_WARNING, ("PlatformSdioCmd53ReadWrite(): registerIndex(%#x), power is off return!!\n", registerIndex));
@@ -1137,7 +1137,7 @@ PlatformSdioCmd53ReadWrite(
 
 	//
 	// <Roger_Notes> We should not use block mode while the number of byte count is less than functional block size.
-	// Because the length field(Indicates the length, in bytes, of the response data) in DeviceCommand 
+	// Because the length field(Indicates the length, in bytes, of the response data) in DeviceCommand
 	// will be the multiple of block size, which might cause memory corruption while using MDL description.
 	// 2011.03.09.
 	//
@@ -1146,10 +1146,10 @@ PlatformSdioCmd53ReadWrite(
 	{
 		//Block mode
 		rtstatus = PlatformSdioCmd53ReadWriteBlock(
-							sdiodevice, 
-							funcNum, 
-							byteCount, 
-							(ULONG)TargetAddr, 
+							sdiodevice,
+							funcNum,
+							byteCount,
+							(ULONG)TargetAddr,
 							writeFlag,
 							buffer);
 	}
@@ -1157,10 +1157,10 @@ PlatformSdioCmd53ReadWrite(
 	{
 		//Byte count mode
 		rtstatus = PlatformSdioCmd53ReadWriteByte(
-							sdiodevice, 
-							funcNum, 
-							byteCount, 
-							(ULONG)TargetAddr, 
+							sdiodevice,
+							funcNum,
+							byteCount,
+							(ULONG)TargetAddr,
 							writeFlag,
 							buffer);
 	}
@@ -1173,18 +1173,18 @@ PlatformSdioCmd53ReadWrite(
 			sdiodevice->FailureCount++;
 			if(sdiodevice->FailureCount == 1) // To avoid infinite loop
 			{
-				//Check SD_CLK and Power OK 
-				RT_TRACE(COMP_INIT, DBG_LOUD, ("[DBG] Cmd52 R REG 0x0[31:0]: %#x, 0x100[31:0]: %#x,\n", 
+				//Check SD_CLK and Power OK
+				RT_TRACE(COMP_INIT, DBG_LOUD, ("[DBG] Cmd52 R REG 0x0[31:0]: %#x, 0x100[31:0]: %#x,\n",
 					PlatformEFSdioCmd52Read4Byte(pAdapter, WLAN_IOREG_DEVICE_ID, sdiodevice->SdioFuncNum, 0),
 					PlatformEFSdioCmd52Read4Byte(pAdapter, WLAN_IOREG_DEVICE_ID, sdiodevice->SdioFuncNum, 0x100)));
 
 				//Check CMD53 and MAC power on
-				RT_TRACE(COMP_INIT, DBG_LOUD, ("[DBG] Cmd53 R REG 0x100[31:0]: %#x\n", 
+				RT_TRACE(COMP_INIT, DBG_LOUD, ("[DBG] Cmd53 R REG 0x100[31:0]: %#x\n",
 					PlatformEFSdioCmd53Read4Byte(pAdapter, WLAN_IOREG_DEVICE_ID, 0x100)));
-				
+
 				//Check CMD3 Write
-				PlatformEFSdioCmd53Write4Byte(pAdapter, WLAN_IOREG_DEVICE_ID, 0x1b8, 0x12345678); 		 
-				RT_TRACE(COMP_INIT, DBG_LOUD, ("[DBG] Cmd53 W => Cmd52 R REG 0x1b8[31:0]: %#x\n", 
+				PlatformEFSdioCmd53Write4Byte(pAdapter, WLAN_IOREG_DEVICE_ID, 0x1b8, 0x12345678);
+				RT_TRACE(COMP_INIT, DBG_LOUD, ("[DBG] Cmd53 W => Cmd52 R REG 0x1b8[31:0]: %#x\n",
 					PlatformEFSdioCmd52Read4Byte(pAdapter, WLAN_IOREG_DEVICE_ID, sdiodevice->SdioFuncNum, 0x1b8)));
 			}
 
@@ -1216,15 +1216,15 @@ PlatformSdioCmd53ReadWrite(
 	{
 		sdiodevice->FailureCount = 0;
 	}
-	
+
 	return rtstatus;
 }
 
 
 	//
-//	Description: 
-//		Schedule IO_RW_EXTENDED Command (CMD53) to perform Read Write I/O operation 
-//		on specific function number. This command allows the reading of a large number of I/O 
+//	Description:
+//		Schedule IO_RW_EXTENDED Command (CMD53) to perform Read Write I/O operation
+//		on specific function number. This command allows the reading of a large number of I/O
 //		registers with a single command.
 	//
 //	Assumption:
@@ -1235,7 +1235,7 @@ PlatformSdioCmd53ReadWrite(
 RT_STATUS
 PlatformSdioCmd53ReadWriteBlock(
 	PRT_SDIO_DEVICE	sdiodevice,
-	UCHAR			funcNum,			
+	UCHAR			funcNum,
 	ULONG			byteCount,
 	ULONG			registerIndex,
 	BOOLEAN			writeFlag,
@@ -1243,37 +1243,37 @@ PlatformSdioCmd53ReadWriteBlock(
 )
 	{
 
-	PMDL pmdl = NULL;	
+	PMDL pmdl = NULL;
 	RT_STATUS	status = RT_STATUS_FAILURE;
-	u4Byte		nBytesForMDL = 0;	
-	
+	u4Byte		nBytesForMDL = 0;
+
 
 	//
 	// We shall keep identity of bytes count between MDL allocation and corresponding SDBUS_REQUEST_PACKET we are going to send.
 	// Revised by Roger, 2014.01.02.
 	//
 	nBytesForMDL = ((byteCount/sdiodevice->SdioFuncBlockSize)+((byteCount%sdiodevice->SdioFuncBlockSize?1:0)))*sdiodevice->SdioFuncBlockSize;
-	
+
 
 	//
 	// First get a MDL to map the data. We asume the caller passed a buffer to non pageed pool.
 	//
-	pmdl = IoAllocateMdl((pu1Byte)buffer, nBytesForMDL , FALSE, FALSE, NULL);	
-	
+	pmdl = IoAllocateMdl((pu1Byte)buffer, nBytesForMDL , FALSE, FALSE, NULL);
+
 	if(pmdl == NULL)
 		return status;
-	
+
 	MmBuildMdlForNonPagedPool(pmdl);
 
 	status = PlatformSdioCmd53ReadWriteMDL(
-								sdiodevice, 
-								funcNum, 
+								sdiodevice,
+								funcNum,
 								pmdl,
-								nBytesForMDL, 
-								(ULONG)registerIndex, 
+								nBytesForMDL,
+								(ULONG)registerIndex,
 								writeFlag,
 								TRUE);
-	
+
 	if(pmdl){
 		IoFreeMdl(pmdl);
 	}
@@ -1283,9 +1283,9 @@ PlatformSdioCmd53ReadWriteBlock(
 
 
 //
-//	Description: 
-//		Schedule IO_RW_EXTENDED Command (CMD53) to perform Read Write I/O operation 
-//		on specific function number. This command allows the reading of a large number of I/O 
+//	Description:
+//		Schedule IO_RW_EXTENDED Command (CMD53) to perform Read Write I/O operation
+//		on specific function number. This command allows the reading of a large number of I/O
 //		registers with a single command.
 //
 //	Assumption:
@@ -1296,7 +1296,7 @@ PlatformSdioCmd53ReadWriteBlock(
 RT_STATUS
 PlatformSdioCmd53ReadWriteByte(
 	PRT_SDIO_DEVICE	sdiodevice,
-	UCHAR			funcNum,			
+	UCHAR			funcNum,
 	ULONG			byteCount,
 	ULONG			registerIndex,
 	BOOLEAN			writeFlag,
@@ -1305,27 +1305,27 @@ PlatformSdioCmd53ReadWriteByte(
 {
 	ULONG 	TotalLength = 0, RwLength = 0;
 	PUCHAR	VirtualAddr = (PUCHAR)buffer;
-	PMDL pmdl = NULL;	
+	PMDL pmdl = NULL;
 	RT_STATUS	rtstatus = RT_STATUS_FAILURE;
 
 	TotalLength = byteCount; // Total length needs to transfer
 
 	do{
-		
+
 		RwLength = (TotalLength > sdiodevice->SdioFuncBlockSize) ? sdiodevice->SdioFuncBlockSize : TotalLength;
-		pmdl = IoAllocateMdl((pu1Byte)VirtualAddr, RwLength , FALSE, FALSE, NULL);	
-		
+		pmdl = IoAllocateMdl((pu1Byte)VirtualAddr, RwLength , FALSE, FALSE, NULL);
+
 		if(pmdl == NULL)
 			break;
-		
+
 		MmBuildMdlForNonPagedPool(pmdl);
 
 		rtstatus = PlatformSdioCmd53ReadWriteMDL(
-								sdiodevice, 
-								funcNum, 
+								sdiodevice,
+								funcNum,
 								pmdl,
-								RwLength, 
-								(ULONG)registerIndex, 
+								RwLength,
+								(ULONG)registerIndex,
 								writeFlag,
 								FALSE);
 
@@ -1337,18 +1337,18 @@ PlatformSdioCmd53ReadWriteByte(
 
 		VirtualAddr += RwLength;
 		TotalLength -= RwLength;
-		IoFreeMdl(pmdl);		
-		
+		IoFreeMdl(pmdl);
+
 	}while(TotalLength > 0);
-	
+
 	return rtstatus;
 }
 
 
 //
-//	Description: 
-//		Schedule IO_RW_EXTENDED Command (CMD53) to perform Read Write I/O operation 
-//		on specific function number. This command allows the reading of a large number of I/O 
+//	Description:
+//		Schedule IO_RW_EXTENDED Command (CMD53) to perform Read Write I/O operation
+//		on specific function number. This command allows the reading of a large number of I/O
 //		registers with a single command.
 //
 //	Assumption:
@@ -1359,17 +1359,17 @@ PlatformSdioCmd53ReadWriteByte(
 RT_STATUS
 PlatformSdioCmd53ReadWriteMDL(
 	PRT_SDIO_DEVICE	sdiodevice,
-	UCHAR			funcNum,	
+	UCHAR			funcNum,
 	PMDL			pmdl,
 	ULONG			byteCount,
 	ULONG			registerIndex,
-	BOOLEAN			writeToDevice,	
+	BOOLEAN			writeToDevice,
 	BOOLEAN			blockMode
 )
 {
 
 	SD_RW_EXTENDED_ARGUMENT extendedArgument;
-	PSDBUS_REQUEST_PACKET  psdrp;	
+	PSDBUS_REQUEST_PACKET  psdrp;
 	NTSTATUS	status = STATUS_UNSUCCESSFUL ;
 	RT_STATUS	rtstatus = RT_STATUS_FAILURE;
 	BOOLEAN		bSdBusReqSent = FALSE;
@@ -1387,11 +1387,11 @@ PlatformSdioCmd53ReadWriteMDL(
                                                  SDRT_5};
 
 	const SDCMD_DESCRIPTOR ReadIoExtendedDesc = {
-							SDCMD_IO_RW_EXTENDED, 
-							SDCC_STANDARD, 
-							SDTD_READ, 
-							SDTT_SINGLE_BLOCK, 
-							SDRT_5}; 									
+							SDCMD_IO_RW_EXTENDED,
+							SDCC_STANDARD,
+							SDTD_READ,
+							SDTT_SINGLE_BLOCK,
+							SDRT_5};
 
 	LARGE_INTEGER	StartTime, EndTime, Freq;
 	u1Byte			RecordIndex = sdiodevice->BusTimeRecordIndex;
@@ -1400,13 +1400,13 @@ PlatformSdioCmd53ReadWriteMDL(
 	// Return immediately if SDIO can NOT workig properly anymore.
 	//
 	if(RT_SDIO_CANNOT_IO(Adapter))
-		return rtstatus;			
+		return rtstatus;
 
 	//
 	// Now allocate a request packet for the arguments of the command.
-	//	
+	//
 	psdrp = ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(SDBUS_REQUEST_PACKET), '3278');
-	if(!psdrp) 
+	if(!psdrp)
 	{
 		RT_TRACE(COMP_IO, DBG_SERIOUS, ("PlatformSdioCmd53ReadWriteMDL(): Allocate sdrp fail!!\n"));
 		return rtstatus;
@@ -1419,17 +1419,17 @@ PlatformSdioCmd53ReadWriteMDL(
 	// Set up the argument and command descriptor.
 	//
 	extendedArgument.u.AsULONG = 0;
-	
+
 	if (blockMode)
 	{ // Block Mode.
 
 		extendedArgument.u.bits.OpCode  = 1; //Increment address
-		
-		extendedArgument.u.bits.Count = 
-			(byteCount/sdiodevice->SdioFuncBlockSize) + 
+
+		extendedArgument.u.bits.Count =
+			(byteCount/sdiodevice->SdioFuncBlockSize) +
 			((byteCount%sdiodevice->SdioFuncBlockSize?1:0));
-		
-		psdrp->Parameters.DeviceCommand.Length = 
+
+		psdrp->Parameters.DeviceCommand.Length =
 			(extendedArgument.u.bits.Count)*sdiodevice->SdioFuncBlockSize;
 	}
 	else
@@ -1438,17 +1438,17 @@ PlatformSdioCmd53ReadWriteMDL(
 			extendedArgument.u.bits.Count = 0;
 	else
 			extendedArgument.u.bits.Count = byteCount;
-		
+
 		psdrp->Parameters.DeviceCommand.Length = extendedArgument.u.bits.Count;
 	}
-	
+
 	extendedArgument.u.bits.Function = funcNum;
-	extendedArgument.u.bits.Address = registerIndex;	
-	
+	extendedArgument.u.bits.Address = registerIndex;
+
 	if (writeToDevice) {
         	extendedArgument.u.bits.WriteToDevice = 1;
         	psdrp->Parameters.DeviceCommand.CmdDesc  = WriteIoExtendedDesc;
-    	} 
+    	}
 	else {
         	psdrp->Parameters.DeviceCommand.CmdDesc  = ReadIoExtendedDesc;
     	}
@@ -1458,8 +1458,8 @@ PlatformSdioCmd53ReadWriteMDL(
 		extendedArgument.u.bits.BlockMode = blockMode;
        	psdrp->Parameters.DeviceCommand.CmdDesc.TransferType = SDTT_MULTI_BLOCK_NO_CMD12;
     	}
-		
-	psdrp->Parameters.DeviceCommand.Argument = extendedArgument.u.AsULONG;	
+
+	psdrp->Parameters.DeviceCommand.Argument = extendedArgument.u.AsULONG;
 
 	//
 	// <Roger_TODO> To make sure that only one request is pending in SDIO Host.
@@ -1471,16 +1471,16 @@ PlatformSdioCmd53ReadWriteMDL(
 
 	while(TRUE)
 	{
-		
-		Adapter->HalFunc.GetHwRegHandler(Adapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));	
-		
-		if(RT_SDIO_CANNOT_IO(Adapter) || 
+
+		Adapter->HalFunc.GetHwRegHandler(Adapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));
+
+		if(RT_SDIO_CANNOT_IO(Adapter) ||
 			(bMacPwrCtrlOn == FALSE))
 		{ // Driver is going to unload or power is going to turn off
 
 			NdisAcquireSpinLock( &(sdiodevice->IrpSpinLock) );
 			sdiodevice->SyncIoWaitingCount--;
-			NdisReleaseSpinLock( &(sdiodevice->IrpSpinLock) );		
+			NdisReleaseSpinLock( &(sdiodevice->IrpSpinLock) );
 			RT_TRACE(COMP_IO, DBG_LOUD, ("PlatformSdioCmd53ReadWriteMDL(): Return bMacPwrCtrlOn=%d\n", bMacPwrCtrlOn));
 			break;
 		}
@@ -1504,11 +1504,11 @@ PlatformSdioCmd53ReadWriteMDL(
 				StartTime = KeQueryPerformanceCounter(&Freq);
 				sdiodevice->SdBusSubmitTime[RecordIndex].AbTime = PlatformGetCurrentTime();
 				//--------------------------------------------
-			
+
 				//
 			    // Send the IO request down to the bus driver
 			    //
-				status = SdBusSubmitRequest(sdiodevice->Sdbusinterface.Context, psdrp);	
+				status = SdBusSubmitRequest(sdiodevice->Sdbusinterface.Context, psdrp);
 
 				// ----- For IO Working Time Measurement -----
 				EndTime = KeQueryPerformanceCounter(NULL);
@@ -1525,21 +1525,21 @@ PlatformSdioCmd53ReadWriteMDL(
 
 					if( status == STATUS_IO_TIMEOUT )
 					{
-						RT_TRACE(COMP_IO, DBG_WARNING, ("PlatformSdioCmd53ReadWriteMDL(): Offset(%#x) WriteOrRead(%d), STATUS_IO_TIMEOUT\n", 
+						RT_TRACE(COMP_IO, DBG_WARNING, ("PlatformSdioCmd53ReadWriteMDL(): Offset(%#x) WriteOrRead(%d), STATUS_IO_TIMEOUT\n",
 							registerIndex, writeToDevice));
 					}
 					else if( status == STATUS_CRC_ERROR )
-					{ 
-						RT_TRACE(COMP_IO, DBG_WARNING, ("PlatformSdioCmd53ReadWriteMDL(): Offset(%#x) WriteOrRead(%d), STATUS_CRC_ERROR\n", 
-							registerIndex, writeToDevice)); 				
+					{
+						RT_TRACE(COMP_IO, DBG_WARNING, ("PlatformSdioCmd53ReadWriteMDL(): Offset(%#x) WriteOrRead(%d), STATUS_CRC_ERROR\n",
+							registerIndex, writeToDevice));
 					}
 					else
 					{
-						RT_TRACE(COMP_IO, DBG_WARNING, ("PlatformSdioCmd53ReadWriteMDL(): Offset(%#x) WriteOrRead(%d) fail!!status(%#x)\n", 
+						RT_TRACE(COMP_IO, DBG_WARNING, ("PlatformSdioCmd53ReadWriteMDL(): Offset(%#x) WriteOrRead(%d) fail!!status(%#x)\n",
 								registerIndex, writeToDevice, status));
 						// 0xC000009C. STATUS_DEVICE_DATA_ERROR
 					}
-					
+
 					if(GlobalSdioDbg & SDIO_DBG_CMD)
 					{
 						RT_ASSERT(FALSE, ("Fail to submit CMD53 SD Bus request!! status(%x)\n", status));
@@ -1563,7 +1563,7 @@ PlatformSdioCmd53ReadWriteMDL(
 					{
 						break;
 					}
-					
+
 					delay_us(2);
 				}
 			}while(!NT_SUCCESS(status));
@@ -1575,8 +1575,8 @@ PlatformSdioCmd53ReadWriteMDL(
 			bSdBusReqSent = TRUE;
 			break;
 		}
-		else if(sdiodevice->nIrpPendingCnt == 1) 
-		{ // There is one IRP pending in SDIO host driver. 
+		else if(sdiodevice->nIrpPendingCnt == 1)
+		{ // There is one IRP pending in SDIO host driver.
 
 			KEVENT VoidEvent;
 			LARGE_INTEGER VoidEventWaitTime;
@@ -1584,7 +1584,7 @@ PlatformSdioCmd53ReadWriteMDL(
 
 			RT_TRACE(COMP_DBG, DBG_TRACE, ("***** SynIo is going to wait for a while *****\n"));
 
-			// SyncIo Method 2 		
+			// SyncIo Method 2
 			NdisReleaseSpinLock( &(sdiodevice->IrpSpinLock) );
 			VoidEventWaitStatus = KeWaitForSingleObject(&sdiodevice->SyncIoEvent, Suspended, KernelMode, FALSE, NULL);
 			if(VoidEventWaitStatus == STATUS_SUCCESS)
@@ -1594,11 +1594,11 @@ PlatformSdioCmd53ReadWriteMDL(
 			else
 			{
 				RT_ASSERT(FALSE, ("VoidEventWaitStatus: %x !!!\n", VoidEventWaitStatus));
-			}			
+			}
 		}
 		else
 		{ // Error condition.
-			RT_ASSERT(FALSE, ("PlatformSdioCmd52ReadWriteByte(): sdiodevice->nIrpPendingCnt: %d !!!\n", 
+			RT_ASSERT(FALSE, ("PlatformSdioCmd52ReadWriteByte(): sdiodevice->nIrpPendingCnt: %d !!!\n",
 				sdiodevice->nIrpPendingCnt));
 			NdisReleaseSpinLock( &(sdiodevice->IrpSpinLock) );
 			break;
@@ -1622,7 +1622,7 @@ PlatformSdioCmd53ReadWriteMDL(
 		else
 		{
 			SdioIOComplete(sdiodevice);
-			
+
 			//
 			// <Roger_TODO> We should perform necessary error handling here.
 			// e.g., Surprise removed or driver stopped control flag.
@@ -1635,17 +1635,17 @@ PlatformSdioCmd53ReadWriteMDL(
 
 	}
 
-	ExFreePoolWithTag(psdrp, '3278');		 
+	ExFreePoolWithTag(psdrp, '3278');
 
-	return rtstatus;		
+	return rtstatus;
 }
 
 
 
 //
-//	Description: 
-//		Schedule a serial IO_RW_DIRECT Command (CMD52) to read or write bytes within the total 128K 
-//		of register space in any I/O function, including the common I/O area(CIA). This command 
+//	Description:
+//		Schedule a serial IO_RW_DIRECT Command (CMD52) to read or write bytes within the total 128K
+//		of register space in any I/O function, including the common I/O area(CIA). This command
 //		reads or writes 1 byte using only 1 command/response pair.
 //
 //	Assumption:
@@ -1657,7 +1657,7 @@ RT_STATUS
 PlatformSdioCmd52ReadWrite(
 	PRT_SDIO_DEVICE	sdiodevice,
 	u1Byte		DeviceID,
-	UCHAR			funcNum,	
+	UCHAR			funcNum,
 	ULONG			byteCount,
 	ULONG			registerIndex,
 	BOOLEAN			writeToDevice,
@@ -1673,30 +1673,30 @@ PlatformSdioCmd52ReadWrite(
 
 	if(RT_SDIO_CANNOT_IO(pAdapter))
 		return status;
-	
+
 	if(IS_VENDOR_8723B_D_CUT(pAdapter))
 	{
 		if((DeviceID == WLAN_IOREG_DEVICE_ID) && (registerIndex == 0x948) && writeToDevice)
 		{
-			RT_TRACE(COMP_INIT, DBG_WARNING, ("Return ==> PlatformSdioCmd52ReadWrite(): Offset(%#x) WriteOrRead(%d), byteCount(%d), Data[0]=%p\n", registerIndex, writeToDevice, byteCount, (PUCHAR)buffer));	
+			RT_TRACE(COMP_INIT, DBG_WARNING, ("Return ==> PlatformSdioCmd52ReadWrite(): Offset(%#x) WriteOrRead(%d), byteCount(%d), Data[0]=%p\n", registerIndex, writeToDevice, byteCount, (PUCHAR)buffer));
 			return status;
 		}
 	}
-	
+
 	if( funcNum == sdiodevice->SdioFuncNum )
-		pAdapter->HalFunc.HalSdioGetCmdAddressHandler(pAdapter, DeviceID, registerIndex, &TargetAddr);	
-	
-	
+		pAdapter->HalFunc.HalSdioGetCmdAddressHandler(pAdapter, DeviceID, registerIndex, &TargetAddr);
+
+
 	for( i=0 ; i<byteCount ; i++ )
-	{	
+	{
 		status = PlatformSdioCmd52ReadWriteByte(
-							sdiodevice, 
-							funcNum, 							
-							(ULONG)TargetAddr+i, //Reg offset 							
+							sdiodevice,
+							funcNum,
+							(ULONG)TargetAddr+i, //Reg offset
 							(PUCHAR)buffer+i, //Data
 							writeToDevice);
 
-		if( status != RT_STATUS_SUCCESS )	
+		if( status != RT_STATUS_SUCCESS )
 		{
 			RT_TRACE(COMP_IO, DBG_WARNING, ("PlatformSdioCmd52ReadWrite(): Offset(%#x) WriteOrRead(%d) fail!!\n", TargetAddr, writeToDevice));
 
@@ -1705,18 +1705,18 @@ PlatformSdioCmd52ReadWrite(
 				sdiodevice->FailureCount++;
 				if(sdiodevice->FailureCount == 1) // To avoid infinite loop
 				{
-					//Check SD_CLK and Power OK 
-					RT_TRACE(COMP_INIT, DBG_LOUD, ("[DBG] Cmd52 R REG 0x0[31:0]: %#x, 0x100[31:0]: %#x,\n", 
+					//Check SD_CLK and Power OK
+					RT_TRACE(COMP_INIT, DBG_LOUD, ("[DBG] Cmd52 R REG 0x0[31:0]: %#x, 0x100[31:0]: %#x,\n",
 						PlatformEFSdioCmd52Read4Byte(pAdapter, WLAN_IOREG_DEVICE_ID, sdiodevice->SdioFuncNum, 0),
 						PlatformEFSdioCmd52Read4Byte(pAdapter, WLAN_IOREG_DEVICE_ID, sdiodevice->SdioFuncNum, 0x100)));
-					
+
 					//Check CMD53 and MAC power on
-					RT_TRACE(COMP_INIT, DBG_LOUD, ("[DBG] Cmd53 R REG 0x100[31:0]: %#x\n", 
+					RT_TRACE(COMP_INIT, DBG_LOUD, ("[DBG] Cmd53 R REG 0x100[31:0]: %#x\n",
 						PlatformEFSdioCmd53Read4Byte(pAdapter, WLAN_IOREG_DEVICE_ID, 0x100)));
-					
+
 					//Check CMD3 Write
-					PlatformEFSdioCmd53Write4Byte(pAdapter, WLAN_IOREG_DEVICE_ID, 0x1b8, 0x12345678);		 
-					RT_TRACE(COMP_INIT, DBG_LOUD, ("[DBG] Cmd53 W => Cmd52 R REG 0x1b8[31:0]: %#x\n", 
+					PlatformEFSdioCmd53Write4Byte(pAdapter, WLAN_IOREG_DEVICE_ID, 0x1b8, 0x12345678);
+					RT_TRACE(COMP_INIT, DBG_LOUD, ("[DBG] Cmd53 W => Cmd52 R REG 0x1b8[31:0]: %#x\n",
 						PlatformEFSdioCmd52Read4Byte(pAdapter, WLAN_IOREG_DEVICE_ID, sdiodevice->SdioFuncNum, 0x1b8)));
 				}
 
@@ -1743,14 +1743,14 @@ PlatformSdioCmd52ReadWrite(
 				RT_TRACE(COMP_IO, DBG_WARNING, ("0xC1(%#x)\n", PlatformEFSdioLocalCmd52Read2Byte(pAdapter, 0xc1)));
 				RT_TRACE(COMP_IO, DBG_WARNING, ("0x80(%#x)\n", PlatformEFSdioLocalCmd52Read4Byte(pAdapter, 0x80)));
 				pAdapter->bSurpriseRemoved = TRUE;
-			}			
-			break;		
+			}
+			break;
 		}
 		else
 		{
 			sdiodevice->FailureCount = 0;
 		}
-	}	
+	}
 
 	return status;
 }
@@ -1758,16 +1758,16 @@ PlatformSdioCmd52ReadWrite(
 
 
 	//
-//	Description: 
-//		Schedule IO_RW_DIRECT Command (CMD52) to read or write a single register within the total 128K 
-//		of register space in any I/O function, including the common I/O area(CIA). This command 
+//	Description:
+//		Schedule IO_RW_DIRECT Command (CMD52) to read or write a single register within the total 128K
+//		of register space in any I/O function, including the common I/O area(CIA). This command
 //		reads or writes 1 byte using only 1 command/response pair.
 //
 //	Assumption:
 //		Proper I/O bus domain address should be converted before calling this function.
 //
 //	2010.12.14, added by Roger.
-	//	
+	//
 RT_STATUS
 PlatformSdioCmd52ReadWriteByte(
 	PRT_SDIO_DEVICE	sdiodevice,
@@ -1794,20 +1794,20 @@ PlatformSdioCmd52ReadWriteByte(
 							SDRT_5};
 
 	const SDCMD_DESCRIPTOR WriteIoDirectDesc = {
-							SDCMD_IO_RW_DIRECT, 
-							SDCC_STANDARD, 
-							SDTD_WRITE, 
-							SDTT_CMD_ONLY, 
+							SDCMD_IO_RW_DIRECT,
+							SDCC_STANDARD,
+							SDTD_WRITE,
+							SDTT_CMD_ONLY,
 							SDRT_5};
 
 	LARGE_INTEGER	StartTime, EndTime, Freq;
 	u1Byte			RecordIndex = sdiodevice->BusTimeRecordIndex;
-	
+
 	RtlZeroMemory(&sdrp, sizeof(SDBUS_REQUEST_PACKET));
 	RtlZeroMemory(&directArgument, sizeof(SD_RW_DIRECT_ARGUMENT));
-	
-	
-	sdrp.RequestFunction = SDRF_DEVICE_COMMAND;	
+
+
+	sdrp.RequestFunction = SDRF_DEVICE_COMMAND;
 
 	directArgument.u.AsULONG = 0;
 	directArgument.u.bits.Address = registerIndex;
@@ -1817,11 +1817,11 @@ PlatformSdioCmd52ReadWriteByte(
         	directArgument.u.bits.WriteToDevice = 1;
         	directArgument.u.bits.Data = *data;
         	sdrp.Parameters.DeviceCommand.CmdDesc  = WriteIoDirectDesc;
-    	} 
+    	}
 	 else {
         	sdrp.Parameters.DeviceCommand.CmdDesc  = ReadIoDirectDesc;
     	}
-	
+
 	sdrp.Parameters.DeviceCommand.Argument = directArgument.u.AsULONG;
 
 	//
@@ -1834,13 +1834,13 @@ PlatformSdioCmd52ReadWriteByte(
 
 	while(TRUE)
 	{
-		
+
 		if(RT_SDIO_CANNOT_IO(Adapter))
 		{ // Driver is going to unload.
 
 			NdisAcquireSpinLock( &(sdiodevice->IrpSpinLock) );
 			sdiodevice->SyncIoWaitingCount--;
-			NdisReleaseSpinLock( &(sdiodevice->IrpSpinLock) );		
+			NdisReleaseSpinLock( &(sdiodevice->IrpSpinLock) );
 			break;
 		}
 
@@ -1855,14 +1855,14 @@ PlatformSdioCmd52ReadWriteByte(
 
 			RetryCnt = 0;
 			SDRPErrHandleType = HAL_GetSDRPErrorHandlingType(Adapter, registerIndex);
-			
+
 			do
 			{
 				// ----- For IO Working Time Measurement -----
 				StartTime = KeQueryPerformanceCounter(&Freq);
 				sdiodevice->SdBusSubmitTime[RecordIndex].AbTime = PlatformGetCurrentTime();
 				//--------------------------------------------
-			
+
 				//
 		    	// Send the IO request down to the bus driver
 		    	//
@@ -1883,20 +1883,20 @@ PlatformSdioCmd52ReadWriteByte(
 
 					if( status == STATUS_IO_TIMEOUT )
 					{
-						RT_TRACE(COMP_IO, DBG_WARNING, ("PlatformSdioCmd52ReadWriteByte(): registerIndex(%#x) WriteOrRead(%d) STATUS_IO_TIMEOUT\n", 
+						RT_TRACE(COMP_IO, DBG_WARNING, ("PlatformSdioCmd52ReadWriteByte(): registerIndex(%#x) WriteOrRead(%d) STATUS_IO_TIMEOUT\n",
 							registerIndex, writeToDevice));
 					}
 					else if( status == STATUS_CRC_ERROR )
 					{
-						RT_TRACE(COMP_IO, DBG_WARNING, ("PlatformSdioCmd52ReadWriteByte(): registerIndex(%#x) WriteOrRead(%d) STATUS_CRC_ERROR\n", 
+						RT_TRACE(COMP_IO, DBG_WARNING, ("PlatformSdioCmd52ReadWriteByte(): registerIndex(%#x) WriteOrRead(%d) STATUS_CRC_ERROR\n",
 							registerIndex, writeToDevice));
 					}
 					else
 					{
-						RT_TRACE(COMP_IO, DBG_WARNING, ("PlatformSdioCmd52ReadWriteByte(): Offset(%#x) WriteOrRead(%d) fail!!status(%#x)\n", 
+						RT_TRACE(COMP_IO, DBG_WARNING, ("PlatformSdioCmd52ReadWriteByte(): Offset(%#x) WriteOrRead(%d) fail!!status(%#x)\n",
 								registerIndex, writeToDevice, status));
 					}
-					
+
 					if(GlobalSdioDbg & SDIO_DBG_CMD)
 					{
 						RT_ASSERT(FALSE, ("Fail to submit CMD52 SD Bus request!! status(%x)\n", status));
@@ -1911,33 +1911,33 @@ PlatformSdioCmd52ReadWriteByte(
 					{
 						break;
 					}
-			
+
 					delay_us(2);
 				}
 			}while(!NT_SUCCESS(status));
-			
+
 			NdisAcquireSpinLock( &(sdiodevice->IrpSpinLock) );
 			RT_SDIO_DEC_CMD_REF(sdiodevice);
 			NdisReleaseSpinLock( &(sdiodevice->IrpSpinLock) );
 
 			bSdBusReqSent = TRUE;
-			
+
 			if (NT_SUCCESS(status)  && !writeToDevice) {
 		        	*data = sdrp.ResponseData.AsUCHAR[0];
 			}
 
 			break;
 		}
-		else if(sdiodevice->nIrpPendingCnt == 1) 
-		{ // There is one IRP pending in SDIO host driver. 
-		
+		else if(sdiodevice->nIrpPendingCnt == 1)
+		{ // There is one IRP pending in SDIO host driver.
+
 			KEVENT VoidEvent;
 			LARGE_INTEGER VoidEventWaitTime;
 			NTSTATUS VoidEventWaitStatus;
 
 			RT_TRACE(COMP_DBG, DBG_TRACE, ("***** SynIo is going to wait for a while *****\n"));
 
-			// SyncIo Method 2 		
+			// SyncIo Method 2
 			NdisReleaseSpinLock( &(sdiodevice->IrpSpinLock) );
 			VoidEventWaitStatus = KeWaitForSingleObject(&sdiodevice->SyncIoEvent, Suspended, KernelMode, FALSE, NULL);
 			if(VoidEventWaitStatus == STATUS_SUCCESS)
@@ -1947,17 +1947,17 @@ PlatformSdioCmd52ReadWriteByte(
 			else
 			{
 				RT_ASSERT(FALSE, ("VoidEventWaitStatus: %x !!!\n", VoidEventWaitStatus));
-			}			
+			}
 		}
 		else
 		{ // Error condition.
-			RT_ASSERT(FALSE, ("PlatformSdioCmd52ReadWriteByte(): sdiodevice->nIrpPendingCnt: %d !!!\n", 
+			RT_ASSERT(FALSE, ("PlatformSdioCmd52ReadWriteByte(): sdiodevice->nIrpPendingCnt: %d !!!\n",
 				sdiodevice->nIrpPendingCnt));
 			NdisReleaseSpinLock( &(sdiodevice->IrpSpinLock) );
 			break;
 		}
 	}
-	
+
 	if( bSdBusReqSent == TRUE )
 	{
 		NdisAcquireSpinLock( &(sdiodevice->IrpSpinLock) );
@@ -1975,7 +1975,7 @@ PlatformSdioCmd52ReadWriteByte(
 		else
 		{
 			SdioIOComplete(sdiodevice);
-			
+
 			//
 			// <Roger_TODO> We should perform necessary error handling here.
 			// e.g., Surprise removed or driver stopped control flag.
@@ -1984,19 +1984,19 @@ PlatformSdioCmd52ReadWriteByte(
 		}
 
 	}
-	
+
 	return rtstatus;
 }
 
 
 
 //
-//	Description: 
+//	Description:
 //		This routine is exported for specific I/O Bus Domain(Host) and Device ID.
 //		Host Address Mapping Range is 0x1025_0000~0x1027_FFFF.
 //
 //	Assumption:
-//		Proper I/O bus domain address should be converted before calling any 
+//		Proper I/O bus domain address should be converted before calling any
 //		IO_RW_DIRECT or IO_RW_EXTENDED Commands.
 //		PASSIVE_LEVEL
 //
@@ -2018,34 +2018,34 @@ PlatformSdioCmd52Read1Byte(
 	if(RT_SDIO_CANNOT_IO(pDefaultAdapter))
 		return 0xff;
 
-	if (KeGetCurrentIrql() > PASSIVE_LEVEL)	
-	{		
+	if (KeGetCurrentIrql() > PASSIVE_LEVEL)
+	{
 		RT_ASSERT(FALSE, ("PlatformSdioCmd52Read1Byte() in PASSIVE_LEVEL is not allowed!!!\n"));
-		return 0xff;		
+		return 0xff;
 	}
 	else
 	{
 		status = PlatformSdioCmd52ReadWrite(
-								sdiodevice, 
+								sdiodevice,
 								DeviceID,
-								FuncNum, 
-								1, 
-								(ULONG)offset, 
+								FuncNum,
+								1,
+								(ULONG)offset,
 								FALSE,
-								&Data);	
+								&Data);
 	}
 	return Data;
-	
+
 	}
 
 
 //
-//	Description: 
+//	Description:
 //		This routine is exported for specific I/O Bus Domain(Host) and Device ID.
 //		Host Address Mapping Range is 0x1025_0000~0x1027_FFFF.
 //
 //	Assumption:
-//		Proper I/O bus domain address should be converted before calling any 
+//		Proper I/O bus domain address should be converted before calling any
 //		IO_RW_DIRECT or IO_RW_EXTENDED Commands.
 //
 //	2010.12.10, added by Roger.
@@ -2066,33 +2066,33 @@ PlatformSdioCmd52Read2Byte(
 	if(RT_SDIO_CANNOT_IO(pDefaultAdapter))
 		return 0xffff;
 
-	if (KeGetCurrentIrql() > PASSIVE_LEVEL)	
+	if (KeGetCurrentIrql() > PASSIVE_LEVEL)
 	{
-		RT_ASSERT(FALSE, ("PlatformSdioCmd52Read2Byte() in PASSIVE_LEVEL is not allowed!!!\n"));		
+		RT_ASSERT(FALSE, ("PlatformSdioCmd52Read2Byte() in PASSIVE_LEVEL is not allowed!!!\n"));
 	}
 	else
-		{ 
+		{
 		status = PlatformSdioCmd52ReadWrite(
-									sdiodevice, 
+									sdiodevice,
 									DeviceID,
-									FuncNum, 
-									2, 
-									(ULONG)offset, 
+									FuncNum,
+									2,
+									(ULONG)offset,
 									FALSE,
-									&Data);	
+									&Data);
 		}
 	return Data;
-	
+
 	}
 
 
 	//
-//	Description: 
+//	Description:
 //		This routine is exported for specific I/O Bus Domain(Host) and Device ID.
 //		Host Address Mapping Range is 0x1025_0000~0x1027_FFFF.
 	//
 //	Assumption:
-//		Proper I/O bus domain address should be converted before calling any 
+//		Proper I/O bus domain address should be converted before calling any
 //		IO_RW_DIRECT or IO_RW_EXTENDED Commands.
 //		Called in PASSIVE_LEVEL
 //
@@ -2114,33 +2114,33 @@ PlatformSdioCmd52Read4Byte(
 	if(RT_SDIO_CANNOT_IO(pDefaultAdapter))
 		return 0xffffffff;
 
-	if (KeGetCurrentIrql() > PASSIVE_LEVEL)	
-	{		
-		RT_ASSERT(FALSE, ("PlatformSdioCmd52Read4Byte() in PASSIVE_LEVEL is not allowed!!!\n"));		
+	if (KeGetCurrentIrql() > PASSIVE_LEVEL)
+	{
+		RT_ASSERT(FALSE, ("PlatformSdioCmd52Read4Byte() in PASSIVE_LEVEL is not allowed!!!\n"));
 	}
 	else
 	{
 		status = PlatformSdioCmd52ReadWrite(
-									sdiodevice, 
+									sdiodevice,
 									DeviceID,
-									FuncNum, 
-									4, 
-									(ULONG)offset, 
+									FuncNum,
+									4,
+									(ULONG)offset,
 									FALSE,
-									&Data);	
+									&Data);
 	}
 	return Data;
-	
+
 }
 
 
 //
-//	Description: 
+//	Description:
 //		This routine is exported for specific I/O Bus Domain(Host) and Device ID.
 //		Host Address Mapping Range is 0x1025_0000~0x1027_FFFF.
 //
 //	Assumption:
-//		Proper I/O bus domain address should be converted before calling any 
+//		Proper I/O bus domain address should be converted before calling any
 //		IO_RW_DIRECT or IO_RW_EXTENDED Commands.
 //		PASSIVE_LEVEL
 //
@@ -2162,18 +2162,18 @@ PlatformSdioCmd52Write1Byte(
 	if(RT_SDIO_CANNOT_IO(pDefaultAdapter))
 		return;
 
-	if (KeGetCurrentIrql() > PASSIVE_LEVEL)	
-	{		
-		RT_ASSERT(FALSE, ("PlatformSdioCmd52Write1Byte() in PASSIVE_LEVEL is not allowed!!!\n"));		
+	if (KeGetCurrentIrql() > PASSIVE_LEVEL)
+	{
+		RT_ASSERT(FALSE, ("PlatformSdioCmd52Write1Byte() in PASSIVE_LEVEL is not allowed!!!\n"));
 	}
 	else
 	{
 		status = PlatformSdioCmd52ReadWrite(
-									sdiodevice, 
+									sdiodevice,
 									DeviceID,
-									FuncNum, 
-									1, 
-									(ULONG)offset, 
+									FuncNum,
+									1,
+									(ULONG)offset,
 									TRUE,
 									&data);
 	}
@@ -2181,12 +2181,12 @@ PlatformSdioCmd52Write1Byte(
 
 
 //
-//	Description: 
+//	Description:
 //		This routine is exported for specific I/O Bus Domain(Host) and Device ID.
 //		Host Address Mapping Range is 0x1025_0000~0x1027_FFFF.
 //
 //	Assumption:
-//		Proper I/O bus domain address should be converted before calling any 
+//		Proper I/O bus domain address should be converted before calling any
 //		IO_RW_DIRECT or IO_RW_EXTENDED Commands.
 //
 //	2010.12.10, added by Roger.
@@ -2207,31 +2207,31 @@ PlatformSdioCmd52Write2Byte(
 	if(RT_SDIO_CANNOT_IO(pDefaultAdapter))
 		return;
 
-	if (KeGetCurrentIrql() > PASSIVE_LEVEL)	
-	{ 
-		RT_ASSERT(FALSE, ("PlatformSdioCmd52Write2Byte() in PASSIVE_LEVEL is not allowed!!!\n"));		
+	if (KeGetCurrentIrql() > PASSIVE_LEVEL)
+	{
+		RT_ASSERT(FALSE, ("PlatformSdioCmd52Write2Byte() in PASSIVE_LEVEL is not allowed!!!\n"));
 	}
 	else
 	{
 		status = PlatformSdioCmd52ReadWrite(
-									sdiodevice, 
+									sdiodevice,
 									DeviceID,
-									FuncNum, 
-									2, 
-									(ULONG)offset, 
+									FuncNum,
+									2,
+									(ULONG)offset,
 									TRUE,
 									&data);
 	}
 }
 
-	
+
 	//
-//	Description: 
+//	Description:
 //		This routine is exported for specific I/O Bus Domain(Host) and Device ID.
 //		Host Address Mapping Range is 0x1025_0000~0x1027_FFFF.
 //
 //	Assumption:
-//		Proper I/O bus domain address should be converted before calling any 
+//		Proper I/O bus domain address should be converted before calling any
 //		IO_RW_DIRECT or IO_RW_EXTENDED Commands.
 //		PASSIVE_LEVEL
 	//
@@ -2253,18 +2253,18 @@ PlatformSdioCmd52Write4Byte(
 	if(RT_SDIO_CANNOT_IO(pDefaultAdapter))
 		return;
 
-	if (KeGetCurrentIrql() > PASSIVE_LEVEL)	
-	{		
-		RT_ASSERT(FALSE, ("PlatformSdioCmd52Write4Byte() in PASSIVE_LEVEL is not allowed!!!\n"));		
+	if (KeGetCurrentIrql() > PASSIVE_LEVEL)
+	{
+		RT_ASSERT(FALSE, ("PlatformSdioCmd52Write4Byte() in PASSIVE_LEVEL is not allowed!!!\n"));
 	}
 	else
 	{
 		status = PlatformSdioCmd52ReadWrite(
-									sdiodevice, 
+									sdiodevice,
 									DeviceID,
-									FuncNum, 
-									4, 
-									(ULONG)offset, 
+									FuncNum,
+									4,
+									(ULONG)offset,
 									TRUE,
 									&data);
 	}
@@ -2286,7 +2286,7 @@ PlatformAllocateSharedMemory(
 
 	if(pSharedMemory->VirtualAddress==NULL)
 		return RT_STATUS_FAILURE;
-	
+
 	pSharedMemory->Length=length;
 
 	NdisZeroMemory(pSharedMemory->VirtualAddress,length);
@@ -2305,7 +2305,7 @@ PlatformFreeSharedMemory(
 		return;
 
 	PlatformFreeMemory(
-		pSharedMemory->VirtualAddress, 
+		pSharedMemory->VirtualAddress,
 		pSharedMemory->Length);
 
 	pSharedMemory->VirtualAddress=NULL;
@@ -2334,7 +2334,7 @@ PlatformAllocateAlignedSharedMemory(
 		Adapter,
 		&pAlignedSharedMemory->OriginalSharedMemory,
 		length);
-	
+
 	if(status==RT_STATUS_SUCCESS)
 	{
 		pAlignedSharedMemory->PhysicalAddressHigh=pAlignedSharedMemory->OriginalSharedMemory.PhysicalAddressHigh;
@@ -2345,7 +2345,7 @@ PlatformAllocateAlignedSharedMemory(
 	}
 	else
 		pAlignedSharedMemory->VirtualAddress=NULL;
-	
+
 	return status;
 }
 
@@ -2379,7 +2379,7 @@ PlatformIndicateMediaStatus(
 	NDIS_LINK_STATE		LinkState;
 
 	//
-	// We DON'T indicate media status accroding to 
+	// We DON'T indicate media status accroding to
 	// document Native 802.11 Wireless Lan,
 	// section General Connection Operation Guidelines.
 	// 2007.08.06, by shien chang.
@@ -2390,7 +2390,7 @@ PlatformIndicateMediaStatus(
 		NDIS_OBJECT_TYPE_DEFAULT,
 		NDIS_LINK_STATE_REVISION_1,
 		sizeof(NDIS_LINK_STATE));
-	
+
 	if( mstatus == RT_MEDIA_CONNECT )
 	{
 		LinkState.MediaConnectState = MediaConnectStateConnected;
@@ -2403,15 +2403,15 @@ PlatformIndicateMediaStatus(
 	}
 	LinkState.MediaDuplexState = MediaDuplexStateHalf;
 
-	LinkState.RcvLinkSpeed = (MgntActQuery_RT_11N_USER_SHOW_RATES(pAdapter , pMgntInfo->bForcedShowRxRate, TRUE)/2)*1000000;	
-	LinkState.XmitLinkSpeed = (MgntActQuery_RT_11N_USER_SHOW_RATES(pAdapter , pMgntInfo->bForcedShowRxRate, FALSE)/2)*1000000;	
+	LinkState.RcvLinkSpeed = (MgntActQuery_RT_11N_USER_SHOW_RATES(pAdapter , pMgntInfo->bForcedShowRxRate, TRUE)/2)*1000000;
+	LinkState.XmitLinkSpeed = (MgntActQuery_RT_11N_USER_SHOW_RATES(pAdapter , pMgntInfo->bForcedShowRxRate, FALSE)/2)*1000000;
 
 	//RT_TRACE(COMP_INDIC, DBG_LOUD, ("PlatformIndicateMediaStatus  %d\n",LinkState.XmitLinkSpeed));
-	
+
 	LinkState.PauseFunctions = NdisPauseFunctionsUnsupported;
 	//LinkState.AutoNegotiationFlags = NDIS_LINK_STATE_DUPLEX_AUTO_NEGOTIATED;
 	LinkState.AutoNegotiationFlags = NDIS_LINK_STATE_RCV_LINK_SPEED_AUTO_NEGOTIATED ;
-	
+
 	N6IndicateStatus(
 					pAdapter,
 					NDIS_STATUS_LINK_STATE,
@@ -2426,14 +2426,14 @@ PlatformIndicateMediaStatus(
 
 NTSTATUS
 SdioAsynIORead(
-	PRT_SDIO_DEVICE	device, 
+	PRT_SDIO_DEVICE	device,
 	u2Byte			Count,
 	u2Byte			Index
 )
 {
-	PIO_STACK_LOCATION		pNextStack;    
-	NTSTATUS				NtStatus;    
-	PIRP						pIrp;    
+	PIO_STACK_LOCATION		pNextStack;
+	NTSTATUS				NtStatus;
+	PIRP						pIrp;
 
 	RT_ASSERT(FALSE, ("SdioAsynIORead()!!!\n"));
 
@@ -2447,19 +2447,19 @@ SdioAsynIORead(
 //
 NTSTATUS
 IssueIrpForAsynSdioIOWrite(
-	PRT_SDIO_DEVICE	device, 
+	PRT_SDIO_DEVICE	device,
 	u2Byte			Count,
 	u4Byte			Index,
 	PVOID			pOutRegisterData
 )
 {
-	PIRP		pIrp = NULL;  
-	PMDL 	pmdl = NULL;	 
-	PSDBUS_REQUEST_PACKET psdrp = NULL;	   	
+	PIRP		pIrp = NULL;
+	PMDL 	pmdl = NULL;
+	PSDBUS_REQUEST_PACKET psdrp = NULL;
 	SD_RW_EXTENDED_ARGUMENT 	extendedArgument;
-	PIO_STACK_LOCATION		pNextStack;			
-	NTSTATUS			NtStatus = STATUS_SUCCESS;    
-	
+	PIO_STACK_LOCATION		pNextStack;
+	NTSTATUS			NtStatus = STATUS_SUCCESS;
+
 	const SDCMD_DESCRIPTOR WriteIoExtendedDesc = {
 							SDCMD_IO_RW_EXTENDED,
                                                  SDCC_STANDARD,
@@ -2476,7 +2476,7 @@ IssueIrpForAsynSdioIOWrite(
 	pmdl = device->pAsynIoWriteMDL;
 
 	RtlZeroMemory(psdrp, sizeof(SDBUS_REQUEST_PACKET));
-	
+
 	RT_ASSERT(device->bAsynIoWritePending == FALSE, ("IssueIrpForAsynIOWrite(): bAsynIoWritePending: %x !!!", device->bAsynIoWritePending));
 	device->bAsynIoWritePending = TRUE;
 
@@ -2491,7 +2491,7 @@ IssueIrpForAsynSdioIOWrite(
 	// Allocate IRP
 	//
 	pIrp = IoAllocateIrp(device->NextDeviceStackSize, FALSE);
-	if(pIrp == NULL) 
+	if(pIrp == NULL)
 	{
 		NdisReleaseSpinLock( &(device->IrpSpinLock) );
 		return STATUS_INSUFFICIENT_RESOURCES;
@@ -2503,21 +2503,21 @@ IssueIrpForAsynSdioIOWrite(
 	//
 	psdrp->RequestFunction = SDRF_DEVICE_COMMAND;
 	psdrp->Parameters.DeviceCommand.CmdDesc = WriteIoExtendedDesc;
-	psdrp->Parameters.DeviceCommand.Length = Count;  	
-	
+	psdrp->Parameters.DeviceCommand.Length = Count;
+
 	extendedArgument.u.AsULONG = 0;
 	extendedArgument.u.bits.Count = Count;
 	extendedArgument.u.bits.Address = Index;
 	extendedArgument.u.bits.OpCode  = 1;
 	extendedArgument.u.bits.Function = device->SdioFuncNum;
 	extendedArgument.u.bits.WriteToDevice = TRUE;
-	
+
 
 	pNextStack = IoGetNextIrpStackLocation(pIrp);
 	RT_ASSERT(pNextStack != NULL, ("IssueIrpForAsynIOWrite(): pNextStack should not be NULL!!!\n"));
 	pNextStack->MajorFunction = IRP_MJ_INTERNAL_DEVICE_CONTROL;
 	pNextStack->Parameters.DeviceIoControl.IoControlCode = IOCTL_SD_SUBMIT_REQUEST;
-	pNextStack->Parameters.DeviceIoControl.Type3InputBuffer = psdrp;	 
+	pNextStack->Parameters.DeviceIoControl.Type3InputBuffer = psdrp;
 	pNextStack->Parameters.DeviceIoControl.OutputBufferLength = Count;
 
 	psdrp->Parameters.DeviceCommand.Argument = extendedArgument.u.AsULONG;
@@ -2526,44 +2526,44 @@ IssueIrpForAsynSdioIOWrite(
 	device->pAsynIoWriteIrp = pIrp;
 
 	NdisReleaseSpinLock( &(device->IrpSpinLock) );
-	
+
 	//
 	// Sends an asynchronous Secure Digital (SD) request to the bus driver interface.
-	//	
+	//
 	NtStatus = SdBusSubmitRequestAsync (
 							device->Sdbusinterface.Context,
 							psdrp,
 							pIrp,
 							&SdioAsynIOWriteComplete,
-							(PVOID)device);		
+							(PVOID)device);
 
-	if( NtStatus != STATUS_PENDING ) 
-		{ 
-	
+	if( NtStatus != STATUS_PENDING )
+		{
+
 		//
 		// <Roger_TODO> We should handle other SD Bus error status here to prevent SD Bus halted issue.
 		// 2010.12.30.
 		//
-		RT_TRACE(COMP_IO, DBG_SERIOUS, ("IssueIrpForAsynIOWrite(): SdBusSubmitRequestAsync failed!!! (0x%X)\n", NtStatus));		
-		}		
-	
+		RT_TRACE(COMP_IO, DBG_SERIOUS, ("IssueIrpForAsynIOWrite(): SdBusSubmitRequestAsync failed!!! (0x%X)\n", NtStatus));
+		}
+
 	return NtStatus;
 	}
 
 #if RTL8723_SDIO_IO_THREAD_ENABLE
 
-// 
-//	Description: 
-//		This routine just inserts the asynchronous IO Write Block(AWB) in busy queue, and then the AWB will be removed 
+//
+//	Description:
+//		This routine just inserts the asynchronous IO Write Block(AWB) in busy queue, and then the AWB will be removed
 //	and perform corresponding IO operation in specific IO processing thread.
 //
 //	2011.06.23, created by Roger.
 //
 VOID
 SdioAsynIOWriteEnqueue(
-	PRT_SDIO_DEVICE	device, 
+	PRT_SDIO_DEVICE	device,
 	u1Byte		DeviceID,
-	UCHAR		FuncNum,	
+	UCHAR		FuncNum,
 	u2Byte			Count,
 	u4Byte		Index,
 	PVOID			pOutRegisterData
@@ -2572,28 +2572,28 @@ SdioAsynIOWriteEnqueue(
 	PRT_AWB 	pAwb = NULL;
 	u4Byte		TargetAddr = Index;
 	PADAPTER	pAdapter = device->pAdapter;
-	NTSTATUS	NtStatus = STATUS_SUCCESS;    
+	NTSTATUS	NtStatus = STATUS_SUCCESS;
 	BOOLEAN		bMacPwrCtrlOn = FALSE;
 	BOOLEAN		bIoWriteEnqueue = FALSE;
 
-	
-	if(RT_SDIO_CANNOT_IO(pAdapter))
-		return;		
 
-	pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));	
+	if(RT_SDIO_CANNOT_IO(pAdapter))
+		return;
+
+	pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));
 
 	if(!bMacPwrCtrlOn)
 	{
 		RT_TRACE(COMP_IO, DBG_WARNING, ("SdioAsynIOWriteEnqueue(): power is off return!!\n"));
 		return;
 	        }
-	
+
 	PlatformAcquireSpinLock(pAdapter, RT_AWB_SPINLOCK);
-	
-	if(!RTIsListEmpty( &(device->AwbIdleQueue) )) 
+
+	if(!RTIsListEmpty( &(device->AwbIdleQueue) ))
 	{
 		pAwb = (PRT_AWB)RTRemoveHeadListWithCnt( &(device->AwbIdleQueue), &(device->NumIdleAwb));
-	
+
 		if(Count <= MAX_AWB_DATA_SIZE)
 		{
 			pAwb->Offset = TargetAddr;
@@ -2603,11 +2603,11 @@ SdioAsynIOWriteEnqueue(
 			PlatformMoveMemory((PVOID)(pAwb->DataBuf), pOutRegisterData, Count);
 			RTInsertTailListWithCnt(&(device->AwbWaitQueue), &(pAwb->List), &(device->NumWaitAwb));
 			bIoWriteEnqueue = TRUE;
-			
+
 			RT_TRACE(COMP_IO, DBG_TRACE, ("SdioAsynIOWriteEnqueue(): Offset(%#x), ByteCnt(%#x), NumIdleAwb(%d)\n", pAwb->Offset, pAwb->ByteCnt, device->NumIdleAwb));
-			RT_PRINT_DATA(COMP_IO, DBG_TRACE, "SdioAsynIOWriteEnqueue(): Buffer:\n", 
+			RT_PRINT_DATA(COMP_IO, DBG_TRACE, "SdioAsynIOWriteEnqueue(): Buffer:\n",
 				pAwb->DataBuf, pAwb->ByteCnt);
-	        }	
+	        }
 	        else
 		{
 			RT_ASSERT(FALSE, ("SdioAsynIOWriteEnqueue(): Invalid data size: %d for AWB, so this AsynIoWrite will be discard!!!\n", Count));
@@ -2617,7 +2617,7 @@ SdioAsynIOWriteEnqueue(
 	        }
 	else
 	{
-		RT_ASSERT(FALSE, ("SdioAsynIOWriteEnqueue(): No AWB in AwbIdleQueue NumIdleAwb(%d), so this AsynIoWrite will be discard!!!\n", 
+		RT_ASSERT(FALSE, ("SdioAsynIOWriteEnqueue(): No AWB in AwbIdleQueue NumIdleAwb(%d), so this AsynIoWrite will be discard!!!\n",
 			device->NumIdleAwb));
 	}
 
@@ -2632,16 +2632,16 @@ SdioAsynIOWriteEnqueue(
 #endif
 
 //
-//	Description: 
+//	Description:
 //		This routine performs asynchronous IO Write operation in DISPATCH_LEVLEL.
 //
 //	2011.01.17, created by Roger.
 //
 NTSTATUS
 SdioAsynIOWrite(
-	PRT_SDIO_DEVICE	device, 
+	PRT_SDIO_DEVICE	device,
 	u1Byte		DeviceID,
-	UCHAR		FuncNum,	
+	UCHAR		FuncNum,
 	u2Byte			Count,
 	u4Byte		Index,
 	PVOID			pOutRegisterData
@@ -2649,15 +2649,15 @@ SdioAsynIOWrite(
 {
 	u4Byte		TargetAddr = Index;
 	PADAPTER	pAdapter = device->pAdapter;
-	NTSTATUS			NtStatus = STATUS_SUCCESS;    
+	NTSTATUS			NtStatus = STATUS_SUCCESS;
 	BOOLEAN		bMacPwrCtrlOn;
 	u1Byte		FwPSState;
 
 
 	if(RT_SDIO_CANNOT_IO(pAdapter))
-		return NtStatus;		
+		return NtStatus;
 
-	pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));	
+	pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));
 
 	if(!bMacPwrCtrlOn)
 	{
@@ -2666,9 +2666,9 @@ SdioAsynIOWrite(
 	}
 
 	if(pAdapter->bFWReady)
-	{	
+	{
 		pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_FW_PS_STATE, &FwPSState);
-		if(IS_IN_LOW_POWER_STATE(pAdapter, FwPSState) && 
+		if(IS_IN_LOW_POWER_STATE(pAdapter, FwPSState) &&
 			!IS_SDIO_POWER_ON_IO_REG(DeviceID, Index))
 	{
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("Return----- SdioAsynIOWrite(): %#X\n", Index));
@@ -2692,19 +2692,19 @@ SdioAsynIOWrite(
 
 		// <RJ_TODO_8187B> Handle the failed if IssueIrpForAsynIOWrite failed.
 	}
-	else if(device->nIrpPendingCnt == 1) 
-	{ // There is one IRP pending in SDIO host driver. 
+	else if(device->nIrpPendingCnt == 1)
+	{ // There is one IRP pending in SDIO host driver.
 		PRT_AWB pAwb;
 
 		NdisReleaseSpinLock( &(device->IrpSpinLock) );
-		
+
 		RT_TRACE(COMP_DBG, DBG_TRACE, ("***** AsynIoWrite should be inserted to queue *****\n"));
 
 		PlatformAcquireSpinLock(pAdapter, RT_AWB_SPINLOCK);
-		if(!RTIsListEmpty( &(device->AwbIdleQueue) )) 
+		if(!RTIsListEmpty( &(device->AwbIdleQueue) ))
 		{
 			pAwb = (PRT_AWB)RTRemoveHeadListWithCnt( &(device->AwbIdleQueue), &(device->NumIdleAwb));
-		
+
 			if(Count <= MAX_AWB_DATA_SIZE)
 			{
 				pAwb->Offset = TargetAddr;
@@ -2752,7 +2752,7 @@ SdioIOComplete(
 
 	//RT_TRACE(COMP_DBG, DBG_TRACE, ("---> SdioIOComplete()\n"));
 
-	pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));	
+	pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_APFM_ON_MAC, (pu1Byte)(&bMacPwrCtrlOn));
 
 
 	NdisAcquireSpinLock( &(device->IrpSpinLock) );
@@ -2761,17 +2761,17 @@ SdioIOComplete(
 
 	if(device->nIrpPendingCnt == 0)
 	{ // No IRP pending in SDIO host driver.
-	
+
 		if((pAdapter->bDriverStopped == FALSE) && bMacPwrCtrlOn)
 		{
 #if RTL8723_SDIO_IO_THREAD_ENABLE
 			if(0)
 #else
 			if( !RTIsListEmpty( &(device->AwbWaitQueue) ) )
-#endif				
+#endif
 			{ // Handle the request in AsynIoWriteWaitQ.
 				PRT_AWB pAwb;
-				NTSTATUS NtStatus;    
+				NTSTATUS NtStatus;
 
 				device->nIrpPendingCnt++;
 				NdisReleaseSpinLock( &(device->IrpSpinLock) );
@@ -2788,7 +2788,7 @@ SdioIOComplete(
 				ReturnSdioAWB(device, pAwb);
 				PlatformReleaseSpinLock(pAdapter, RT_AWB_SPINLOCK);
 			}
-			// SyncIo Method 2.  
+			// SyncIo Method 2.
 			else if(device->SyncIoWaitingCount>0)
 			{ // If there is workitem waiting.
 				RT_TRACE(COMP_DBG, DBG_TRACE,("SdioIOComplete(): there is workitem is waiting...\n"));
@@ -2808,14 +2808,14 @@ SdioIOComplete(
 			while( !RTIsListEmpty(&(device->AwbWaitQueue)) && !bMacPwrCtrlOn)
 			{
 				PRT_AWB pAwb;
-				
-				RT_TRACE(COMP_INIT|COMP_IO|COMP_SEND, DBG_WARNING, ("SdioIOComplete(): power is off, and return AWB!!\n"));				
+
+				RT_TRACE(COMP_INIT|COMP_IO|COMP_SEND, DBG_WARNING, ("SdioIOComplete(): power is off, and return AWB!!\n"));
 				PlatformAcquireSpinLock(pAdapter, RT_AWB_SPINLOCK);
 				// Issue an IRP for AsynIo write.
 				pAwb = (PRT_AWB)RTRemoveHeadListWithCnt( &(device->AwbWaitQueue), &(device->NumWaitAwb));
 				// Return the AWB immediately
 				ReturnSdioAWB(device, pAwb);
-				PlatformReleaseSpinLock(pAdapter, RT_AWB_SPINLOCK);				
+				PlatformReleaseSpinLock(pAdapter, RT_AWB_SPINLOCK);
 			}
 #endif
 			if(device->SyncIoWaitingCount>0)
@@ -2845,7 +2845,7 @@ SdioIOComplete(
 	}
 
 
-// 
+//
 // Callback function of when an Asyn IO Write IRP completed.
 // 2010.12.30, by Roger.
 //
@@ -2856,9 +2856,9 @@ SdioAsynIOWriteComplete(
 	PVOID			Context
 )
 {
-	PRT_SDIO_DEVICE	device;    
+	PRT_SDIO_DEVICE	device;
 	PADAPTER		pAdapter;
-	
+
 	device = (PRT_SDIO_DEVICE)Context;
 	pAdapter = (PADAPTER)(device->pAdapter);
 
@@ -2871,39 +2871,39 @@ SdioAsynIOWriteComplete(
 		NdisSetEvent(&device->AllAsynIoIrpReturnedEvent);
 	}
 
-	switch(pIrp->IoStatus.Status)	
+	switch(pIrp->IoStatus.Status)
 	{
-		case STATUS_SUCCESS:	
+		case STATUS_SUCCESS:
 			RT_TRACE(COMP_IO, DBG_LOUD, ("SdioAsynIOWriteComplete(): STATUS_SUCCESS\n"));
 			break;
 
-		case STATUS_TIMEOUT:	
+		case STATUS_TIMEOUT:
 			if(device->bRegSurpriseRemovedEnable)
 				pAdapter->bSurpriseRemoved = TRUE;
 
 			RT_TRACE(COMP_IO, DBG_LOUD, ("SdioAsynIOWriteComplete(): STATUS_TIMEOUT\n"));
 			break;
 
-		case STATUS_PENDING:	
+		case STATUS_PENDING:
 			RT_TRACE(COMP_IO, DBG_LOUD, ("SdioAsynIOWriteComplete(): STATUS_PENDING\n"));
 			break;
 
-		case STATUS_UNSUCCESSFUL:	
+		case STATUS_UNSUCCESSFUL:
 			if(device->bRegSurpriseRemovedEnable)
 				pAdapter->bSurpriseRemoved = TRUE;
 
 			RT_TRACE(COMP_IO, DBG_LOUD, ("SdioAsynIOWriteComplete(): STATUS_UNSUCCESSFUL\n"));
 			break;
 
-		default:	
+		default:
 			RT_TRACE(COMP_IO, DBG_LOUD, ("SdioAsynIOWriteComplete(): Unknown: %x\n", pIrp->IoStatus.Status));
-			break;		
+			break;
 	}
 
 	IoFreeIrp(pIrp);
 
 	SdioIOComplete(device);
-	
+
 	return STATUS_MORE_PROCESSING_REQUIRED;
 }
 
@@ -2922,14 +2922,14 @@ RTsdioCancelAsynIoPendingIrp(
 	u1Byte				i;
 
 	if(device->bAsynIoWritePending)
-	{ 
+	{
 		// Cancel the IRP for AsynIO write request.
-		IoCancelIrp(device->pAsynIoWriteIrp);	
+		IoCancelIrp(device->pAsynIoWriteIrp);
 
 		// Wait until it completed by USB host driver.
 		NdisWaitEvent( &(device->AllAsynIoIrpReturnedEvent), 2000);
 
-		// Reset the event. 
+		// Reset the event.
 		NdisResetEvent(&(device->AllAsynIoIrpReturnedEvent));
 	}
 }
@@ -2970,19 +2970,19 @@ PrepareSdioAWBs(
 	//
 	// Allocate MDL for AsynIO Write buffer
 	//
-	device->pAsynIoWriteMDL = IoAllocateMdl((pu1Byte)device->AsynIoWriteDataBuf, MAX_AWB_DATA_SIZE , FALSE, FALSE, NULL);	
+	device->pAsynIoWriteMDL = IoAllocateMdl((pu1Byte)device->AsynIoWriteDataBuf, MAX_AWB_DATA_SIZE , FALSE, FALSE, NULL);
 	if(device->pAsynIoWriteMDL == NULL)
 		goto Error;
-	
+
 	MmBuildMdlForNonPagedPool(device->pAsynIoWriteMDL);
 
 	//
 	// Allocate SD Request Packet
 	//
 	device->pAsynIoWriteSdrp = (PSDBUS_REQUEST_PACKET)ExAllocatePool2(POOL_FLAG_NON_PAGED, sizeof(SDBUS_REQUEST_PACKET), '3278');
-  	if(device->pAsynIoWriteSdrp == NULL)	
+  	if(device->pAsynIoWriteSdrp == NULL)
   		goto Error;
-	
+
 	return TRUE;
 
 Error:
@@ -2998,7 +2998,7 @@ Error:
 
 BOOLEAN
 FreeSdioAWBs(
-	PRT_SDIO_DEVICE	device, 
+	PRT_SDIO_DEVICE	device,
 	BOOLEAN			bReset
 	)
 {
@@ -3006,7 +3006,7 @@ FreeSdioAWBs(
 	PADAPTER Adapter = (PADAPTER)device->pAdapter;
 
 	PlatformAcquireSpinLock(Adapter, RT_AWB_SPINLOCK);
-	while( !RTIsListEmpty(&(device->AwbWaitQueue))  ) 
+	while( !RTIsListEmpty(&(device->AwbWaitQueue))  )
 	{
 		pAwb = (PRT_AWB)RTRemoveHeadListWithCnt( &(device->AwbWaitQueue), &(device->NumWaitAwb));
 
@@ -3027,7 +3027,7 @@ FreeSdioAWBs(
 
 	device->pAsynIoWriteMDL = NULL;
 	device->pAsynIoWriteSdrp = NULL;
-	
+
 	return TRUE;
 }
 
@@ -3045,7 +3045,7 @@ ReturnSdioAWB(
 //	Description:
 //		Determine if we can send packet to specified QueueID.
 //		It return TRUE if then IRP pending in corresponding pipe > 1.
-//		Note that, this is platform dependent, the following implementation 
+//		Note that, this is platform dependent, the following implementation
 //		is  for WDM.
 //
 BOOLEAN
@@ -3069,14 +3069,14 @@ PlatformIsTxQueueAvailable(
 	RT_TRACE(COMP_SEND, DBG_TRACE, ("PlatformIsTxQueueAvailable(): QueueID(%d) IrpPendingCount(%d)\n", IdxQueue, nIrpPendingCount));
 
 	if(nIrpPendingCount == 1 && pTxQueue->bStalled == FALSE)
-	{		
+	{
 		return TRUE;
 	}
 	else
 	{
 		if(nIrpPendingCount >= MAX_NUM_REQUEST_PER_TX_QUEUE)
 		{
-			RT_TRACE(COMP_SEND, DBG_SERIOUS, ("PlatformIsTxQueueAvailable(): QueueID(%d) IrpPendingCount(%d) >= %d !!!\n", 
+			RT_TRACE(COMP_SEND, DBG_SERIOUS, ("PlatformIsTxQueueAvailable(): QueueID(%d) IrpPendingCount(%d) >= %d !!!\n",
 				IdxQueue, nIrpPendingCount, MAX_NUM_REQUEST_PER_TX_QUEUE));
 			return FALSE;
 		}
@@ -3130,7 +3130,7 @@ Return Value Description:
 	}
  }
 
- 
+
 extern PCHAR PlatformDevicePowerString(
     	DEVICE_POWER_STATE Type
     )
@@ -3181,11 +3181,11 @@ PlatformSdioEnableTxQueues(
 
 	if( Adapter->bSurpriseRemoved )
 		return;
-	
+
 	for ( i = 0; i < pDevice->RtNumTxQueue; i++ )
 	{
 		N6SdioStartTxQueue(Adapter, i);
-	}		
+	}
 }
 
 VOID
@@ -3216,41 +3216,41 @@ PlatformSdioWaitAllSDReqComplete(
 {
 
 	PRT_SDIO_DEVICE pDevice = GET_RT_SDIO_DEVICE(Adapter);
-	u1Byte	ChkCnt = 0;		
-	
+	u1Byte	ChkCnt = 0;
+
 	while(TRUE)
-	{			
-		NdisAcquireSpinLock( &(pDevice->IrpSpinLock) );		
+	{
+		NdisAcquireSpinLock( &(pDevice->IrpSpinLock) );
 		if(pDevice->nIrpPendingCnt >0)
-		{			
-			RT_TRACE(COMP_IO, DBG_TRACE, ("PlatformSdioWaitAllSDReqComplete(): wait for all nIrpPendingCnt returned (%d)\n", 
+		{
+			RT_TRACE(COMP_IO, DBG_TRACE, ("PlatformSdioWaitAllSDReqComplete(): wait for all nIrpPendingCnt returned (%d)\n",
 				pDevice->nIrpPendingCnt));
-			
+
 			NdisReleaseSpinLock( &(pDevice->IrpSpinLock) );
-			PlatformStallExecution(100); // Wait for all Rx operation is down.	
+			PlatformStallExecution(100); // Wait for all Rx operation is down.
 			ChkCnt++;
 			if ( ChkCnt>= 1000)
 			{
 				RT_TRACE(COMP_IO, DBG_TRACE, ("PlatformSdioWaitAllSDReqComplete(): Wait too long break!!\n"));
 				break;
-			}	
+			}
 		}
-		else		
+		else
 		{
 			NdisReleaseSpinLock( &(pDevice->IrpSpinLock) );
 			break;
 		}
 	}
-}	
+}
 
 
 VOID
 PlatformEnableNetworkMonitorMode(
 	IN	PADAPTER	Adapter
 	)
-{	
+{
 	PRT_NDIS_COMMON	pNdisCommon = Adapter->pNdisCommon;
-	pNdisCommon->dot11AutoConfigEnabled = FALSE;	// useless before ndis6	
+	pNdisCommon->dot11AutoConfigEnabled = FALSE;	// useless before ndis6
 }
 
 VOID
@@ -3259,8 +3259,8 @@ PlatformDisableNetworkMonitorMode(
 	)
 {
 	PRT_NDIS_COMMON	pNdisCommon = Adapter->pNdisCommon;
-	pNdisCommon->dot11AutoConfigEnabled = TRUE;	// useless before ndis6	
-	
+	pNdisCommon->dot11AutoConfigEnabled = TRUE;	// useless before ndis6
+
 }
 
 VOID
@@ -3270,7 +3270,7 @@ PlatformSetFwPsClkOffEvent(
 )
 {
 	PRT_SDIO_DEVICE sdiodevice = GET_RT_SDIO_DEVICE(Adapter);
-	
+
 	if(SetEvent)
 		NdisSetEvent(&sdiodevice->FwPsClockOffEvent);
 	else

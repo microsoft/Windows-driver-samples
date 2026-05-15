@@ -5,18 +5,18 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	HalComDef.h
-	
+
 Abstract:
 	Defined 92C/88E common data structure.
-	    
+
 Major Change History:
 	When       Who               What
 	---------- ---------------   -------------------------------
-	2011-12-13 Isaiah            Create.	
+	2011-12-13 Isaiah            Create.
 --*/
 
 /*--------------------------Define Parameters-------------------------------*/
-    
+
 
 
 //#pragma mark -- Chip specific. --
@@ -33,7 +33,7 @@ extern const char *const GLBwSrc[];
 
 //
 // 2011.01.06. Define new structure of chip version for RTL8723A and so on. Added by tynli.
-// Modify Manufacture and ROM version field, revised by Roger, 2012.11.01. 
+// Modify Manufacture and ROM version field, revised by Roger, 2012.11.01.
 //
 /*
      | BIT15:12        |  BIT11:9     | BIT 8:7        |  BIT6:4  |    BIT3    | BIT 2:0 |
@@ -108,14 +108,14 @@ extern const char *const GLBwSrc[];
  |-----------+-------------+-----------+-------------+-------------+----------------+---------+---------------+---------+---------|
  |  RESERVE  | CUT VERSION |  RESERVE  | ROM VERSION |  CHIP TYPE  | BT EXIST IN IC | RESERVE |  MANUFACTURE  | RF TYPE | IC NAME |
  |           |             |           |             | TEST/NORMAL |                |         | TSMC/UMC/SMIC |         |         |
-	
+
 */
 // Remaining the meaning corresponding to those value in each column we used before.
 // And below is those be added newly
 // [27:24] 	CUT VERSION: 	A-cut=0
 // [19:17] 	ROM VERSION
 // [16] 	CHIP TYPE:
-// [15] 	BT exist: 		No=0, Yes=1 
+// [15] 	BT exist: 		No=0, Yes=1
 // [13:12] 	MANUFACTURE: 	TSMC=0, UMC=1, SMIC=2
 // [11:8] 	RF TYPE: 		1T1R=0, 1T2R=1, 2T2R=2, 3T3R=3
 // [7:0] 	IC name: 		8703B=0x0B
@@ -145,7 +145,7 @@ extern const char *const GLBwSrc[];
 #define NORMAL_CHIP_v2			0x1
 
 // Cut Version
-#define A_CUT_VERSION_v2		0	
+#define A_CUT_VERSION_v2		0
 #define B_CUT_VERSION_v2		0x1
 #define C_CUT_VERSION_v2		0x2
 #define D_CUT_VERSION_v2		0x3
@@ -189,7 +189,7 @@ extern const char *const GLBwSrc[];
 #define SET_CVID_CHIP_TYPE(BUFFER, INPUT)	SFT_AND_SET_IN_CHIPVER(BUFFER, INPUT, 16)
 #define SET_CVID_CUT_VER(BUFFER, INPUT)		SFT_AND_SET_IN_CHIPVER(BUFFER, INPUT, 24)
 
-/*------------------------------ Chip/EFUSE Macro ----------------------------*/ 
+/*------------------------------ Chip/EFUSE Macro ----------------------------*/
 //#pragma mark -- Chip/EFUSE Macro. --
 //----------------------------------------------------------------------------
 #define IS_81XXC(version)				((GET_CVID_IC_TYPE(version) == 0)? TRUE : FALSE)
@@ -291,7 +291,7 @@ extern const char *const GLBwSrc[];
 #define IS_LEAVE_PS_BF_EN_NIC(_Adapter)		(((PHAL_DATA_TYPE)(_Adapter->HalData))->bLeavePsBeforeEnNic)
 
 
-#define WLAN_802_11N					0		
+#define WLAN_802_11N					0
 #define WLAN_802_11AC					1
 
 #define IS_DOT_11N_SERIES(_Adapter)			(((PHAL_DATA_TYPE)(_Adapter->HalData))->bNicWirelessMode == WLAN_802_11N)
@@ -323,7 +323,7 @@ extern const char *const GLBwSrc[];
 
 
 
-/*------------------------------ RTL81xxxDefCom.h Definiction -----------------------*/ 
+/*------------------------------ RTL81xxxDefCom.h Definiction -----------------------*/
 //Move 8192CDefCom.h/8188EDefCom.h to here.
 
 #define	HAL_DM_DIG_DISABLE					BIT0	// Disable Dig
@@ -338,12 +338,12 @@ extern const char *const GLBwSrc[];
 //	Queue mapping
 //
 //-----------------------------------------------------------
-#define BK_QUEUE						0		
-#define BE_QUEUE						1		
-#define VI_QUEUE						2		
-#define VO_QUEUE						3		
-#define BEACON_QUEUE					4		
-#define TXCMD_QUEUE					5		
+#define BK_QUEUE						0
+#define BE_QUEUE						1
+#define VI_QUEUE						2
+#define VO_QUEUE						3
+#define BEACON_QUEUE					4
+#define TXCMD_QUEUE					5
 #define MGNT_QUEUE						6
 #define HIGH_QUEUE						7
 #define HCCA_QUEUE						8
@@ -409,15 +409,15 @@ typedef enum _H2C_STATUS{
 
 #define MAX_H2C_QUEUE_NUM				64
 
-/*------------------------------ end of RTL81xxxDefCom.h Definiction -----------------------*/ 
+/*------------------------------ end of RTL81xxxDefCom.h Definiction -----------------------*/
 
 
 // For store intial value of BB register
 typedef struct _BB_INIT_REGISTER{
 	u2Byte	offset;
-	
+
 	u4Byte	value;
-	
+
 }BB_INIT_REGISTER, *PBB_INIT_REGISTER;
 
 
@@ -458,7 +458,7 @@ typedef struct _LOG_SYS_INTERRUPT
 	u4Byte	nISR_SPS_OCP;
 	u4Byte	nISR_RON;
 	u4Byte	nISR_PDN;
-	
+
 } LOG_SYS_INTERRUPT, *PLOG_SYS_INTERRUPT;
 
 
@@ -484,7 +484,7 @@ typedef struct _LOG_INTERRUPT
 	u4Byte	nISR_TXFOVW;
 	u4Byte	nISR_RXFOVW;
 	u4Byte	nISR_TXBCNOK;
-	u4Byte	nISR_TXBCNERR;	
+	u4Byte	nISR_TXBCNERR;
 	u4Byte	nISR_BCNERLY_INT;
 	u4Byte	nISR_C2HCMD;
 	u4Byte	nISR_CPWM1;
@@ -492,11 +492,11 @@ typedef struct _LOG_INTERRUPT
 	u4Byte	nISR_HSISR_IND;
 	u4Byte	nISR_GTINT3_IND;
 	u4Byte	nISR_GTINT4_IND;
-	u4Byte	nISR_PSTIMEOUT;	
-	u4Byte	nISR_OCPINT;	
-	u4Byte	nISR_ATIMEND;	
-	u4Byte	nISR_ATIMEND_E;	
-	u4Byte	nISR_CTWEND;	
+	u4Byte	nISR_PSTIMEOUT;
+	u4Byte	nISR_OCPINT;
+	u4Byte	nISR_ATIMEND;
+	u4Byte	nISR_ATIMEND_E;
+	u4Byte	nISR_CTWEND;
 	u4Byte	nISR_MCU_ERR; // For 8188ES only
 	u4Byte	nISR_BIT32_TOGGLE; // For 8188ES only
 	u4Byte	nIMR_C2HCMD;
@@ -513,7 +513,7 @@ HAL_SetBcnCtrlReg(
 	IN	u1Byte		SetBits,
 	IN	u1Byte		ClearBits
 	);
-VOID 
+VOID
 HAL_UpdateDefaultSetting(
 	IN	PADAPTER		pAdapter
 	);
@@ -571,5 +571,5 @@ HAL_DownloadRSVD_PostCfg(
 BOOLEAN IS_HAL_MAC_INIT(
 	IN PADAPTER Adapter
 );
-	
-#endif 
+
+#endif

@@ -12,7 +12,7 @@
 //
 //      <Scope><Object><Action><Modifier>
 //      <Scope><Object><Action>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -22,7 +22,7 @@
 //          }
 //       <Object>
 //          {
-//            ScenarioFastStreamInjection  - Function pertains to all of the Fast Stream Injection 
+//            ScenarioFastStreamInjection  - Function pertains to all of the Fast Stream Injection
 //                                              Scenarios
 //            RPC                          - Function is and RPC entry point.
 //          }
@@ -30,8 +30,8 @@
 //          {
 //            Add                          - Function adds objects
 //            Remove                       - Function removes objects
-//            Invoke                       - Function implements the scenario based on parameters 
-//                                              passed from the commandline interface 
+//            Invoke                       - Function implements the scenario based on parameters
+//                                              passed from the commandline interface
 //                                              (WFPSampler.exe).
 //          }
 //       <Modifier>
@@ -58,7 +58,7 @@
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
 //      December  13,   2013  -     1.1   -  Prune filters for enumeration and limit scenario to
-//                                              only the supported layers 
+//                                              only the supported layers
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,10 +66,10 @@
 
 /**
  @private_function="PrvScenarioFastStreamInjectionDeleteFwpmObjects"
- 
+
    Purpose:  Function that disables the SCENARIO_FAST_STREAM_INJECTION scenarios.               <br>
                                                                                                 <br>
-   Notes:    Scenario removes the filters using specified filtering conditions at the specified 
+   Notes:    Scenario removes the filters using specified filtering conditions at the specified
              layer. Associated callouts are removed as well.                                    <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -156,11 +156,11 @@ UINT32 PrvScenarioFastStreamInjectionDeleteFwpmObjects(_In_ const FWPM_FILTER* p
 
 /**
  @private_function="PrvScenarioFastStreamInjectionAddFwpmObjects"
- 
+
    Purpose:  Function that enables the SCENARIO_FAST_STREAM_INJECTION scenarios.                <br>
                                                                                                 <br>
-   Notes:    Scenario adds a filter using specified filtering conditions to the specified layer. 
-             This filter is associated with WFPSampler's default sublayer and provider.  The 
+   Notes:    Scenario adds a filter using specified filtering conditions to the specified layer.
+             This filter is associated with WFPSampler's default sublayer and provider.  The
              appropriate callout is then added and associated with the filter.                  <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -202,7 +202,7 @@ UINT32 PrvScenarioFastStreamInjectionAddFwpmObjects(_In_ const FWPM_FILTER* pFil
       if(filter.flags & FWPM_FILTER_FLAG_BOOTTIME ||
          filter.flags & FWPM_FILTER_FLAG_PERSISTENT)
          callout.flags = FWPM_CALLOUT_FLAG_PERSISTENT;
-    
+
       status = HlprFwpmEngineOpen(&engineHandle);
       HLPR_BAIL_ON_FAILURE(status);
 
@@ -238,8 +238,8 @@ UINT32 PrvScenarioFastStreamInjectionAddFwpmObjects(_In_ const FWPM_FILTER* pFil
 
 /**
  @scenario_function="ScenarioFastStreamInjectionRemove"
- 
-   Purpose:  Function that removes corresponding objects for a previously added 
+
+   Purpose:  Function that removes corresponding objects for a previously added
              SCENARIO_FAST_STREAM_INJECTION.                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -259,13 +259,13 @@ UINT32 ScenarioFastStreamInjectionRemove(_In_ const FWPM_FILTER* pFilter)
 
    Purpose:  Scenario which will blindly reinject the classified traffic.                       <br>
                                                                                                 <br>
-   Notes:    Adds a filter which references one of the 
+   Notes:    Adds a filter which references one of the
              WFPSAMPLER_CALLOUT_FAST_STREAM_INJECTION callouts for the provided layer.          <br>
                                                                                                 <br>
-             No data modification is made to the traffic, and checks are in place to prevent 
+             No data modification is made to the traffic, and checks are in place to prevent
              infinite reinjection of the traffic.                                               <br>
                                                                                                 <br>
-             Ideal usage is to implement in the presence of a 3rd party firewall to see how they 
+             Ideal usage is to implement in the presence of a 3rd party firewall to see how they
              coexist with another provider performing injection.                                <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -281,8 +281,8 @@ UINT32 ScenarioFastStreamInjectionAdd(_In_ const FWPM_FILTER* pFilter)
 
 /**
  @rpc_function="RPCInvokeScenarioFastStreamInjection"
- 
-   Purpose:  RPC exposed function used to dipatch the scenario routines for 
+
+   Purpose:  RPC exposed function used to dipatch the scenario routines for
              SCENARIO_FAST_STREAM_INJECTION.                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

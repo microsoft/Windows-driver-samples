@@ -12,7 +12,7 @@
 //
 //      <Scope><Object><Action><Modifier>
 //      <Scope><Object><Action>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -32,8 +32,8 @@
 //          {
 //            Add                         - Function adds objects
 //            Remove                      - Function removes objects
-//            Invoke                      - Function implements the scenario based on parameters 
-//                                             passed from the commandline interface 
+//            Invoke                      - Function implements the scenario based on parameters
+//                                             passed from the commandline interface
 //                                             (WFPSampler.exe).
 //          }
 //       <Modifier>
@@ -64,7 +64,7 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Prune filters for enumeration and handle WinBlue Fast 
+//      December  13,   2013  -     1.1   -  Prune filters for enumeration and handle WinBlue Fast
 //                                              layers.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,11 +73,11 @@
 
 /**
  @private_function="PrvScenarioBasicActionDeleteFwpmObjects"
- 
+
    Purpose:  Function that disables the SCENARIO_BASIC_ACTION_* scenarios.                      <br>
                                                                                                 <br>
-   Notes:    Scenario removes the filters using specified filtering conditions at the specified 
-             layer.  If no layer is provided, then a default layer is used. If associated, the 
+   Notes:    Scenario removes the filters using specified filtering conditions at the specified
+             layer.  If no layer is provided, then a default layer is used. If associated, the
              callout and provider contexts are removed as well.                                 <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -169,12 +169,12 @@ UINT32 PrvScenarioBasicActionDeleteFwpmObjects(_In_ const FWPM_FILTER* pFilter,
 
 /**
  @private_function="PrvScenarioBasicActionAddFwpmObjects"
- 
+
    Purpose:  Function that enables the SCENARIO_BASIC_ACTION_* scenarios.                       <br>
                                                                                                 <br>
-   Notes:    Scenario adds a filter using specified filtering conditions to the specified layer. 
-             If no layer is provided, then a default layer is used.  This filter is associated 
-             with WFPSampler's default sublayer and provider.  If required, the appropriate 
+   Notes:    Scenario adds a filter using specified filtering conditions to the specified layer.
+             If no layer is provided, then a default layer is used.  This filter is associated
+             with WFPSampler's default sublayer and provider.  If required, the appropriate
              callout and provider context is added and associated with the filter.              <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -229,7 +229,7 @@ UINT32 PrvScenarioBasicActionAddFwpmObjects(_In_ const FWPM_FILTER* pFilter,
 
    if(filter.action.type & FWP_ACTION_FLAG_CALLOUT)
    {
-      FWP_ACTION_TYPE newActionType = FWP_ACTION_CALLOUT_TERMINATING; 
+      FWP_ACTION_TYPE newActionType = FWP_ACTION_CALLOUT_TERMINATING;
 
       HLPR_NEW(pCallout,
                FWPM_CALLOUT);
@@ -362,8 +362,8 @@ UINT32 PrvScenarioBasicActionAddFwpmObjects(_In_ const FWPM_FILTER* pFilter,
 
 /**
  @scenario_function="ScenarioBasicActionBlockRemove"
- 
-   Purpose:  Function that removes corresponding objects for a previously added 
+
+   Purpose:  Function that removes corresponding objects for a previously added
              SCENARIO_BASIC_ACTION_BLOCK.                                                       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -381,11 +381,11 @@ UINT32 ScenarioBasicActionBlockRemove(_In_ const FWPM_FILTER* pFilter)
 
 /**
  @scenario_function="ScenarioBasicActionBlockAdd"
- 
+
    Purpose:  Scenario which will return FWP_ACTION_BLOCK.                                       <br>
                                                                                                 <br>
-   Notes:    Adds a filter. By default this will be a static terminating filter. If specified, 
-             this filter can be made to reference one of the 
+   Notes:    Adds a filter. By default this will be a static terminating filter. If specified,
+             this filter can be made to reference one of the
              WFPSAMPLER_CALLOUT_BASIC_ACTION_BLOCK callouts.                                    <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -402,8 +402,8 @@ UINT32 ScenarioBasicActionBlockAdd(_In_ const FWPM_FILTER* pFilter)
 
 /**
  @scenario_function="ScenarioBasicActionContinueRemove"
- 
-   Purpose:  Function that removes corresponding objects for a previously added 
+
+   Purpose:  Function that removes corresponding objects for a previously added
              SCENARIO_BASIC_ACTION_CONTINUE.                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -421,11 +421,11 @@ UINT32 ScenarioBasicActionContinueRemove(_In_ const FWPM_FILTER* pFilter)
 
 /**
  @scenario_function="ScenarioBasicActionContinueAdd"
- 
+
    Purpose:  Scenario which will return FWP_ACTION_CONTINUE.                                    <br>
                                                                                                 <br>
-   Notes:    Adds a filter. By default this will be a static terminating filter. If specified, 
-             this filter can be made to reference one of the 
+   Notes:    Adds a filter. By default this will be a static terminating filter. If specified,
+             this filter can be made to reference one of the
              WFPSAMPLER_CALLOUT_BASIC_ACTION_CONTINUE callouts.                                 <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -442,8 +442,8 @@ UINT32 ScenarioBasicActionContinueAdd(_In_ const FWPM_FILTER* pFilter)
 
 /**
  @scenario_function="ScenarioBasicActionPermitRemove"
- 
-   Purpose:  Function that removes corresponding objects for a previously added 
+
+   Purpose:  Function that removes corresponding objects for a previously added
              SCENARIO_BASIC_ACTION_PERMIT.                                                      <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -454,18 +454,18 @@ _Success_(return == NO_ERROR)
 UINT32 ScenarioBasicActionPermitRemove(_In_ const FWPM_FILTER* pFilter)
 {
    ASSERT(pFilter);
-   
+
    return PrvScenarioBasicActionDeleteFwpmObjects(pFilter,
                                                   FWP_ACTION_PERMIT);
 }
 
 /**
  @scenario_function="ScenarioBasicActionPermitAdd"
- 
+
    Purpose:  Scenario which will return FWP_ACTION_PERMIT.                                      <br>
                                                                                                 <br>
-   Notes:    Adds a filter. By default this will be a static terminating filter. If specified, 
-             this filter can be made to reference one of the 
+   Notes:    Adds a filter. By default this will be a static terminating filter. If specified,
+             this filter can be made to reference one of the
              WFPSAMPLER_CALLOUT_BASIC_ACTION_PERMIT callouts.                                   <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -482,8 +482,8 @@ UINT32 ScenarioBasicActionPermitAdd(_In_ const FWPM_FILTER* pFilter)
 
 /**
  @scenario_function="ScenarioBasicActionRandomRemove"
- 
-   Purpose:  Function that removes corresponding objects for a previously added 
+
+   Purpose:  Function that removes corresponding objects for a previously added
              SCENARIO_BASIC_ACTION_RANDOM.                                                      <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -494,21 +494,21 @@ _Success_(return == NO_ERROR)
 UINT32 ScenarioBasicActionRandomRemove(_In_ const FWPM_FILTER* pFilter)
 {
    ASSERT(pFilter);
-   
+
    return PrvScenarioBasicActionDeleteFwpmObjects(pFilter,
                                                   FWP_ACTION_CALLOUT_UNKNOWN);
 }
 
 /**
  @scenario_function="ScenarioBasicActionRandomAdd"
- 
-   Purpose:  Scenario which will randomly return FWP_ACTION_BLOCK, FWP_ACTION_CONTINUE, or 
+
+   Purpose:  Scenario which will randomly return FWP_ACTION_BLOCK, FWP_ACTION_CONTINUE, or
              FWP_ACTION_PERMIT.                                                                 <br>
                                                                                                 <br>
-   Notes:    Adds a filter which references one of the WFPSAMPLER_CALLOUT_BASIC_ACTION_RANDOM 
+   Notes:    Adds a filter which references one of the WFPSAMPLER_CALLOUT_BASIC_ACTION_RANDOM
              callouts for the provided layer.                                                   <br>
                                                                                                 <br>
-             The randomness of the action is configurable via the percentage values for this 
+             The randomness of the action is configurable via the percentage values for this
              scenario.                                                                          <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -527,8 +527,8 @@ UINT32 ScenarioBasicActionRandomAdd(_In_ const FWPM_FILTER* pFilter,
 
 /**
  @rpc_function="RPCInvokeScenarioBasicAction"
- 
-   Purpose:  RPC exposed function used to dipatch the scenario routines for 
+
+   Purpose:  RPC exposed function used to dipatch the scenario routines for
              SCENARIO_BASIC_ACTION_*.                                                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -600,7 +600,7 @@ error_status_t RPCInvokeScenarioBasicAction(/* [in] */ handle_t rpcBindingHandle
          }
          else
             status = ScenarioBasicActionRandomRemove(pFilter);
-         
+
          break;
       }
    }

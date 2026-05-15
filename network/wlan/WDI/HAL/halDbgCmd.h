@@ -4,36 +4,36 @@
  * Module:		hal90DbgCmd.h	(RTL8190  Header H File)
  *
  *
- * Note:		The header file records the command format between UI and 
+ * Note:		The header file records the command format between UI and
  *				driver. And necessary constant for debug command handler.
- *			
  *
- * Export:		
  *
- * Abbrev:			
+ * Export:
  *
- * History:		
- *	Data		Who		Remark 
+ * Abbrev:
+ *
+ * History:
+ *	Data		Who		Remark
  *	05/30/2007  MHC    	Create initial version.
- *	05/30/2007	MHC		1. Support debug command from UI. We define command 
+ *	05/30/2007	MHC		1. Support debug command from UI. We define command
  *						   format between driver and UI.
  *						2. We copy debug command definition from firmware.
  *	06/07/2007	MHC		We do not use MIPS GNU header file to support sprintf.
  *	06/08/2007	MHC		Add RX command format structure.
- *	06/11/2007	MHC		1. Copy debug command strcuture from MP UI. Programmer 
+ *	06/11/2007	MHC		1. Copy debug command strcuture from MP UI. Programmer
  *						   must main the table when they add command.
  *	06/15/2007	MHC		1. Define current debug command index and do test. We do
- *						   not need to send the header files to UI and UI can 
+ *						   not need to send the header files to UI and UI can
  *						   support the new command immediately.
- *						2. Add directory definition for driver. 
- *	07/13/2007	MHC		1. Define debug print macro which is controlled by 
+ *						2. Add directory definition for driver.
+ *	07/13/2007	MHC		1. Define debug print macro which is controlled by
  *						   different debug flag.
  *						2. Define different debug flag.
  *	07/31/2007	MHC		1. Add debug command to count ISR time.
  *	08/15/2007	MHC		Add debug command index for other commands.
  *	08/16/2007	MHC		Extern global variable and API for debug command betwen
  *						UI and firmware.
- * 
+ *
 ******************************************************************************/
  /* Check to see if the file has been included already.  */
 #ifndef	__HAL90_DEBUG_COMMAND_H__
@@ -61,7 +61,7 @@
 /*--------------------------Define Parameters-------------------------------*/
 
 
-/*------------------------------Define structure----------------------------*/ 
+/*------------------------------Define structure----------------------------*/
 typedef struct tag_Debug_CoMmanD
 {
     char	*name;				/* Command string */
@@ -70,31 +70,31 @@ typedef struct tag_Debug_CoMmanD
     int		directory;     		/* Directory */
     int		usage_counter; 		/* Usage counter for optimization */
     int		(*cmd_func)(IN	PADAPTER	pAdapter,
-    					IN	INT32		Cmd_Idx, 
-    					IN	INT32		Argc, 
-    					IN	INT8		*pArgs[]);    
+    					IN	INT32		Cmd_Idx,
+    					IN	INT32		Argc,
+    					IN	INT8		*pArgs[]);
     							/* Command function pointer */
 }DCMD_T;
 
 /* 2007/06/15 MH Define driver debug command's directory. */
 typedef enum tag_CMD_Directories
-{    
-	/* General command. */    
+{
+	/* General command. */
     COMMON = 1,
     DYNAMIC_SCHEME = 2,
 	//Add for 92S shared commands
 	CMD_92S = 3,
-    TX_PROCESS_CMD,    
+    TX_PROCESS_CMD,
     RX_PROCESS_CMD,
     SECURITY_CMD,
     /* Private command. You can add according your requirement. */
     PRIVATE = 11,
     MY_LOVELY_CMD,
     MY_DISLIKE_CMD,
-    
+
     /* Directory to display all command index. */
     CMD_INDEX_DISPLAY = 100,
-    
+
     /* Last directory definition. */
     OTHERS
 }DCMD_DIRECTORY_E;
@@ -126,11 +126,11 @@ typedef enum tag_DCMD_Scanf_Type_Definition
 #define		MAX_ARGV				16				// Only used here.
 typedef struct tag_Cmd_Format_UI_To_Driver
 {
-	INT32	Op;										/* Command packet type. */																			
+	INT32	Op;										/* Command packet type. */
 	INT32	Length;									/* Command packet length. */
-	INT32	Cmd_Idx;								/* Command index. */																				
-	INT32	Argc;									/* Argument counter. */																				
-	INT8	Argv[MAX_ARGC][MAX_ARGV];				/* Argument value array. */	
+	INT32	Cmd_Idx;								/* Command index. */
+	INT32	Argc;									/* Argument counter. */
+	INT8	Argv[MAX_ARGC][MAX_ARGV];				/* Argument value array. */
 }DCMD_TMSG_T, *PDCMD_TMSG_T;
 
 /* 2007/06/08 MH Define RX command format from driver to UI.  */
@@ -138,11 +138,11 @@ typedef struct tag_Cmd_Format_UI_To_Driver
 #define		RX_HEADER_SIZE			16				//OP+status+segment+length
 typedef struct tag_Cmd_Format_Driver_To_UI
 {
-	INT32	Op;										/* Command packet type. */																			
+	INT32	Op;										/* Command packet type. */
 	INT32	Status;									/* Command status0/1/2. */
-	INT32	Segment;								/* Command segment num. */																				
-	INT32	Length;									/* Return info size. */																				
-	INT8	ReturnInfo[MAX_RETURN_INFO_SIZE];		/* Argument value array. */	
+	INT32	Segment;								/* Command segment num. */
+	INT32	Length;									/* Return info size. */
+	INT8	ReturnInfo[MAX_RETURN_INFO_SIZE];		/* Argument value array. */
 }DCMD_RMSG_T;
 
 /* The debug command table is used for UI to do parser. */
@@ -152,10 +152,10 @@ typedef enum _DBG_DRIVER_CMD_INDEX{
 	DBG_CMD_REG_WRITE			= 2	,
 	DBG_CMD_ADAPTER_READ		= 3	,
 	DBG_CMD_ADAPTER_WRITE		= 4	,
-	DBG_CMD_RF_READ				= 5	,	
+	DBG_CMD_RF_READ				= 5	,
 	DBG_CMD_UI_DEBUG        	= 6 ,
 	DBG_CMD_FLAG_CTRL			= 7 ,
-	DBG_CMD_RF_WRITE			= 8	,	
+	DBG_CMD_RF_WRITE			= 8	,
 	DBG_CMD_REG_R_2BYTE			= 9 ,
 	DBG_CMD_REG_W_2BYTE			= 10,
 	DBG_CMD_REG_R_1BYTE			= 11,
@@ -197,7 +197,7 @@ typedef enum _DBG_CONTROL_TYPE
 	DBG_CTRL_BT_HCI_INFO				= 8,
 	DBG_CTRL_BT_HS_INFO				= 9,
 	DBG_CTRL_RESET_BT_DBG			= 10,
-	DBG_CTRL_BT_COEX_INFO			= 11,	
+	DBG_CTRL_BT_COEX_INFO			= 11,
 	DBG_CTRL_BT_LOGO_TEST			= 12,
 	DBG_CTRL_SEND_H2C				= 13,
 	DBG_CTRL_SET_EDCA				= 14,
@@ -254,7 +254,7 @@ typedef enum _DBG_CONTROL_TYPE
 // 2008/03/26 MH We define a simple tx command format for 92 series. No dbg support.
 typedef struct tag_Tx_Config_Cmd_Format
 {
-	UINT32	Op;										/* Command packet type. */																			
+	UINT32	Op;										/* Command packet type. */
 	UINT32	Length;									/* Command packet length. */
 	UINT32	Value;
 }DCMD_TXCMD_T, *PDCMD_TXCMD_T;
@@ -269,7 +269,7 @@ typedef enum _tag_TxCmd_Config_Index{
 	TXCMD_SET_TX_PWR_TRACKING			= 0xFF900005,
 	TXCMD_XXXX_CTRL,
 }DCMD_TXCMD_OP;
-/*------------------------------Define structure----------------------------*/ 
+/*------------------------------Define structure----------------------------*/
 
 
 /*------------------------Export global variable----------------------------*/
@@ -300,14 +300,14 @@ extern	u4Byte	usb_speed;
 extern	INT32	DCMD_Message_Handler_Tx(IN	PADAPTER	pAdapter,
 										IN	ULONG		length,
 										IN	PVOID	pBuffer);
-extern	INT32	DCMD_Message_Handler_Check(	IN 	ULONG	Length, 
-											OUT	PVOID	pBuffer, 
+extern	INT32	DCMD_Message_Handler_Check(	IN 	ULONG	Length,
+											OUT	PVOID	pBuffer,
 											OUT	ULONG	*pLength);
 extern	INT32	DCMD_Message_Handler_Rx(IN	INT32	DbgType,
-										IN 	ULONG	Length, 
-										OUT	PVOID	pBuffer, 
+										IN 	ULONG	Length,
+										OUT	PVOID	pBuffer,
 										OUT	ULONG	*pLength);
-extern	INT32	DCMD_Save_FW_Dbg_Info(	IN 	ULONG	Length, 
+extern	INT32	DCMD_Save_FW_Dbg_Info(	IN 	ULONG	Length,
 										IN	PVOID	pBuffer);
 
 

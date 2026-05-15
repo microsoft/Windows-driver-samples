@@ -6,23 +6,23 @@ Abstract:
 
    Transport Inspect Proxy Callout Driver Sample.
 
-   This sample callout driver intercepts all transport layer traffic (e.g. 
-   TCP, UDP, and non-error ICMP) sent to or receive from a (configurable) 
-   remote peer and queue them to a worker thread for out-of-band processing. 
-   The sample performs inspection of inbound and outbound connections as 
-   well as all packets belong to those connections.  In addition the sample 
-   demonstrates special considerations required to be compatible with Windows 
-   Vista and Windows Server 2008’s IpSec implementation.
+   This sample callout driver intercepts all transport layer traffic (e.g.
+   TCP, UDP, and non-error ICMP) sent to or receive from a (configurable)
+   remote peer and queue them to a worker thread for out-of-band processing.
+   The sample performs inspection of inbound and outbound connections as
+   well as all packets belong to those connections.  In addition the sample
+   demonstrates special considerations required to be compatible with Windows
+   Vista and Windows Server 2008ï¿½s IpSec implementation.
 
-   Inspection parameters are configurable via the following registry 
+   Inspection parameters are configurable via the following registry
    values --
 
    HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Inspect\Parameters
-      
+
     o  BlockTraffic (REG_DWORD) : 0 (permit, default); 1 (block)
-    o  RemoteAddressToInspect (REG_SZ) : literal IPv4/IPv6 string 
-                                                (e.g. “10.0.0.1”)
-   The sample is IP version agnostic. It performs inspection for 
+    o  RemoteAddressToInspect (REG_SZ) : literal IPv4/IPv6 string
+                                                (e.g. ï¿½10.0.0.1ï¿½)
+   The sample is IP version agnostic. It performs inspection for
    both IPv4 and IPv6 traffic.
 
 Environment:
@@ -54,7 +54,7 @@ Environment:
 #include <guiddef.h>
 
 
-// 
+//
 // Configurable parameters (addresses and ports are in host order)
 //
 
@@ -66,7 +66,7 @@ UINT8*   configInspectRemoteAddrV6 = NULL;
 IN_ADDR  remoteAddrStorageV4;
 IN6_ADDR remoteAddrStorageV6;
 
-// 
+//
 // Callout and sublayer GUIDs
 //
 
@@ -147,7 +147,7 @@ DEFINE_GUID(
     0xb9, 0x66, 0x96, 0x9f, 0x26, 0x58, 0x7f, 0x03
 );
 
-// 
+//
 // Callout driver global variables
 //
 
@@ -172,7 +172,7 @@ KEVENT gWorkerEvent;
 BOOLEAN gDriverUnloading = FALSE;
 void* gThreadObj;
 
-// 
+//
 // Callout driver implementation
 //
 
@@ -187,7 +187,7 @@ TLInspectLoadConfig(
    NTSTATUS status;
    DECLARE_CONST_UNICODE_STRING(valueName, L"RemoteAddressToInspect");
    DECLARE_UNICODE_STRING_SIZE(value, INET6_ADDRSTRLEN);
-   
+
    status = WdfRegistryQueryUnicodeString(key, &valueName, NULL, &value);
 
    if (NT_SUCCESS(status))
@@ -206,7 +206,7 @@ TLInspectLoadConfig(
 
       if (NT_SUCCESS(status))
       {
-         remoteAddrStorageV4.S_un.S_addr = 
+         remoteAddrStorageV4.S_un.S_addr =
             RtlUlongByteSwap(remoteAddrStorageV4.S_un.S_addr);
          configInspectRemoteAddrV4 = &remoteAddrStorageV4.S_un.S_un_b.s_b1;
       }
@@ -241,7 +241,7 @@ TLInspectAddFilter(
    NTSTATUS status = STATUS_SUCCESS;
 
    FWPM_FILTER filter = {0};
-   FWPM_FILTER_CONDITION filterConditions[3] = {0}; 
+   FWPM_FILTER_CONDITION filterConditions[3] = {0};
    UINT conditionIndex;
 
    filter.layerKey = *layerKey;
@@ -259,7 +259,7 @@ TLInspectAddFilter(
 
    if (remoteAddr != NULL)
    {
-      filterConditions[conditionIndex].fieldKey = 
+      filterConditions[conditionIndex].fieldKey =
          FWPM_CONDITION_IP_REMOTE_ADDRESS;
       filterConditions[conditionIndex].matchType = FWP_MATCH_EQUAL;
 
@@ -269,14 +269,14 @@ TLInspectAddFilter(
           IsEqualGUID(layerKey, &FWPM_LAYER_OUTBOUND_TRANSPORT_V4))
       {
          filterConditions[conditionIndex].conditionValue.type = FWP_UINT32;
-         filterConditions[conditionIndex].conditionValue.uint32 = 
+         filterConditions[conditionIndex].conditionValue.uint32 =
             *(UINT32*)remoteAddr;
       }
       else
       {
-         filterConditions[conditionIndex].conditionValue.type = 
+         filterConditions[conditionIndex].conditionValue.type =
             FWP_BYTE_ARRAY16_TYPE;
-         filterConditions[conditionIndex].conditionValue.byteArray16 = 
+         filterConditions[conditionIndex].conditionValue.byteArray16 =
             (FWP_BYTE_ARRAY16*)remoteAddr;
       }
 
@@ -303,9 +303,9 @@ TLInspectRegisterALEClassifyCallouts(
    )
 /* ++
 
-   This function registers callouts and filters at the following layers 
+   This function registers callouts and filters at the following layers
    to intercept inbound or outbound connect attempts.
-   
+
       FWPM_LAYER_ALE_AUTH_CONNECT_V4
       FWPM_LAYER_ALE_AUTH_CONNECT_V6
       FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4
@@ -348,7 +348,7 @@ TLInspectRegisterALEClassifyCallouts(
    calloutRegistered = TRUE;
 
    displayData.name = L"Transport Inspect ALE Classify Callout";
-   displayData.description = 
+   displayData.description =
       L"Intercepts inbound or outbound connect attempts";
 
    mCallout.calloutKey = *calloutKey;
@@ -371,7 +371,7 @@ TLInspectRegisterALEClassifyCallouts(
                L"Transport Inspect ALE Classify",
                L"Intercepts inbound or outbound connect attempts",
                (IsEqualGUID(layerKey, &FWPM_LAYER_ALE_AUTH_CONNECT_V4) ||
-                IsEqualGUID(layerKey, &FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4)) ? 
+                IsEqualGUID(layerKey, &FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4)) ?
                   configInspectRemoteAddrV4 : configInspectRemoteAddrV6,
                0,
                layerKey,
@@ -406,7 +406,7 @@ TLInspectRegisterTransportCallouts(
    )
 /* ++
 
-   This function registers callouts and filters that intercept transport 
+   This function registers callouts and filters that intercept transport
    traffic at the following layers --
 
       FWPM_LAYER_OUTBOUND_TRANSPORT_V4
@@ -463,7 +463,7 @@ TLInspectRegisterTransportCallouts(
                L"Transport Inspect Filter (Outbound)",
                L"Inspect inbound/outbound transport traffic",
                (IsEqualGUID(layerKey, &FWPM_LAYER_OUTBOUND_TRANSPORT_V4) ||
-                IsEqualGUID(layerKey, &FWPM_LAYER_INBOUND_TRANSPORT_V4))? 
+                IsEqualGUID(layerKey, &FWPM_LAYER_INBOUND_TRANSPORT_V4))?
                   configInspectRemoteAddrV4 : configInspectRemoteAddrV6,
                0,
                layerKey,
@@ -495,8 +495,8 @@ TLInspectRegisterCallouts(
    )
 /* ++
 
-   This function registers dynamic callouts and filters that intercept 
-   transport traffic at ALE AUTH_CONNECT/AUTH_RECV_ACCEPT and 
+   This function registers dynamic callouts and filters that intercept
+   transport traffic at ALE AUTH_CONNECT/AUTH_RECV_ACCEPT and
    INBOUND/OUTBOUND transport layers.
 
    Callouts and filters will be removed during DriverUnload.
@@ -533,14 +533,14 @@ TLInspectRegisterCallouts(
    }
    inTransaction = TRUE;
 
-   RtlZeroMemory(&TLInspectSubLayer, sizeof(FWPM_SUBLAYER)); 
+   RtlZeroMemory(&TLInspectSubLayer, sizeof(FWPM_SUBLAYER));
 
    TLInspectSubLayer.subLayerKey = TL_INSPECT_SUBLAYER;
    TLInspectSubLayer.displayData.name = L"Transport Inspect Sub-Layer";
-   TLInspectSubLayer.displayData.description = 
+   TLInspectSubLayer.displayData.description =
       L"Sub-Layer for use by Transport Inspect callouts";
    TLInspectSubLayer.flags = 0;
-   TLInspectSubLayer.weight = 0; // must be less than the weight of 
+   TLInspectSubLayer.weight = 0; // must be less than the weight of
                                  // FWPM_SUBLAYER_UNIVERSAL to be
                                  // compatible with Vista's IpSec
                                  // implementation.
@@ -720,7 +720,7 @@ TLInspectEvtDriverUnload(
    {
       KeSetEvent(
          &gWorkerEvent,
-         IO_NO_INCREMENT, 
+         IO_NO_INCREMENT,
          FALSE
          );
    }
@@ -843,7 +843,7 @@ DriverEntry(
       goto Exit;
    }
 
-   if ((configInspectRemoteAddrV4 == NULL) && 
+   if ((configInspectRemoteAddrV4 == NULL) &&
        (configInspectRemoteAddrV6 == NULL))
    {
       status = STATUS_DEVICE_CONFIGURATION_ERROR;
@@ -862,10 +862,10 @@ DriverEntry(
    }
 
    InitializeListHead(&gConnList);
-   KeInitializeSpinLock(&gConnListLock);   
+   KeInitializeSpinLock(&gConnListLock);
 
    InitializeListHead(&gPacketQueue);
-   KeInitializeSpinLock(&gPacketQueueLock);  
+   KeInitializeSpinLock(&gPacketQueueLock);
 
    KeInitializeEvent(
       &gWorkerEvent,
@@ -910,7 +910,7 @@ DriverEntry(
    ZwClose(threadHandle);
 
 Exit:
-   
+
    if (!NT_SUCCESS(status))
    {
       if (gEngineHandle != NULL)

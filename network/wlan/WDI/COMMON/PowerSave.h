@@ -6,24 +6,24 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	HalUsb.h
-	
+
 Abstract:
 	Prototype of HalUsbXXX() and related data structure.
-	    
+
 Major Change History:
 	When       Who               What
 	---------- ---------------   -------------------------------
 	2006-11-06 Rcnjko            Create.
-	
+
 --*/
 
 
 //================================================================================
-// Helper macros. 
+// Helper macros.
 //================================================================================
 #define IN_LEGACY_POWER_SAVE(__pStaQos) (((__pStaQos)->Curr4acUapsd & 0x0f) == 0)
 #define	GET_POWER_SAVE_CONTROL(_pMgntInfo)	((PRT_POWER_SAVE_CONTROL)(&((_pMgntInfo)->PowerSaveControl)))
-// 
+//
 // Get Wifi Mode Power Save, if it is true, follow PS-POLL or WMM APSD specification. Or use NULL-frame to
 // implement power save mode. By Bruce, 2008-09-17.
 //
@@ -49,7 +49,7 @@ Major Change History:
         #define IS_RTD3_SUPPORT(_pAdapter)	FALSE
         #define RTD3_GET_DEV_PWR_STATE PowerDeviceD0
 
-// Currently we support the machanism on 8723BS A to D-cut for Intel Baytrail-CR old BIOS behavior. 
+// Currently we support the machanism on 8723BS A to D-cut for Intel Baytrail-CR old BIOS behavior.
 // 2014.04.09 by tynli.
 #define IS_CARD_DISABLE_IN_FW_LOW_PWR_STATE(_pAdapter)	\
 	(GET_POWER_SAVE_CONTROL(&(_pAdapter->MgntInfo))->CardDisableInLowClk && IS_VENDOR_8723B_D_CUT_BEFORE(_pAdapter))
@@ -99,7 +99,7 @@ Major Change History:
 #define LPS_DISABLE_BT_COEX							BIT26
 #define LPS_DISABLE_DEVICE_DISCOVERY					BIT27
 //================================================================================
-// Variable Definition. 
+// Variable Definition.
 //================================================================================
 typedef enum _POWER_LEVEL_CONFIG
 {
@@ -130,9 +130,9 @@ typedef enum _POWER_POLICY_CONFIG
 
 
 //================================================================================
-// Callback routines of timers and workitems.  
+// Callback routines of timers and workitems.
 //================================================================================
-VOID 
+VOID
 OnMoreData(
 	IN PADAPTER		pAdapter
 	);

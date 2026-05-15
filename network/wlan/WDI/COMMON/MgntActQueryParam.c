@@ -26,26 +26,26 @@ u1Byte SS_Rate_Map_N_MCS7_Lv5[5][2]= {{40, MGN_MCS7}, {10, MGN_MCS6}, {8, MGN_MC
 u1Byte SS_Rate_Map_N_MCS7_Lv6[3][2]= {{20, MGN_MCS7}, {5, MGN_MCS6}, {2, MGN_MCS5}};
 
 // For rate display for 2T2R.
-u1Byte SS_Rate_Map_AC_2SS_MCS9[13][2]= {{50, MGN_VHT2SS_MCS9}, {47, MGN_VHT2SS_MCS8}, {44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {36, MGN_VHT2SS_MCS5}, {32, MGN_VHT2SS_MCS4}, {28, MGN_VHT1SS_MCS7}, {24, MGN_VHT1SS_MCS7},  {21, MGN_VHT1SS_MCS6}, {18, MGN_VHT1SS_MCS5}, {14, MGN_VHT1SS_MCS3}, {10, MGN_12M}, {0, MGN_6M}}; 
+u1Byte SS_Rate_Map_AC_2SS_MCS9[13][2]= {{50, MGN_VHT2SS_MCS9}, {47, MGN_VHT2SS_MCS8}, {44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {36, MGN_VHT2SS_MCS5}, {32, MGN_VHT2SS_MCS4}, {28, MGN_VHT1SS_MCS7}, {24, MGN_VHT1SS_MCS7},  {21, MGN_VHT1SS_MCS6}, {18, MGN_VHT1SS_MCS5}, {14, MGN_VHT1SS_MCS3}, {10, MGN_12M}, {0, MGN_6M}};
 // Lvl1 replace as original value.
-u1Byte SS_Rate_Map_AC_2SS_MCS9_Lv1[13][2]=  {{50, MGN_VHT2SS_MCS9}, {47, MGN_VHT2SS_MCS8}, {44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {36, MGN_VHT2SS_MCS4}, {32, MGN_VHT1SS_MCS6}, {28, MGN_VHT1SS_MCS4}, {24, MGN_VHT1SS_MCS3},  {21, MGN_VHT1SS_MCS2}, {18, MGN_VHT1SS_MCS1}, {14, MGN_VHT1SS_MCS0}, {10, MGN_12M}, {0, MGN_6M}}; 
-u1Byte SS_Rate_Map_AC_2SS_MCS9_Lv2[11][2]= {{50, MGN_VHT2SS_MCS9}, {47, MGN_VHT2SS_MCS8}, {44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {36, MGN_VHT2SS_MCS4}, {32, MGN_VHT1SS_MCS6}, {28, MGN_VHT1SS_MCS4}, {24, MGN_VHT1SS_MCS3},  {20, MGN_VHT1SS_MCS2}, {10, MGN_VHT1SS_MCS1}, {0, MGN_12M}}; 
-u1Byte SS_Rate_Map_AC_2SS_MCS9_Lv3[9][2]= {{50, MGN_VHT2SS_MCS9}, {47, MGN_VHT2SS_MCS8}, {44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {36, MGN_VHT2SS_MCS5}, {32, MGN_VHT1SS_MCS7}, {20, MGN_VHT1SS_MCS4}, {10, MGN_VHT1SS_MCS1},  {0, MGN_VHT1SS_MCS0}}; 
-u1Byte SS_Rate_Map_AC_2SS_MCS9_Lv4[7][2]= {{50, MGN_VHT2SS_MCS9}, {47, MGN_VHT2SS_MCS8}, {44, MGN_VHT2SS_MCS7}, {30, MGN_VHT2SS_MCS6}, {20, MGN_VHT2SS_MCS5}, {10, MGN_VHT1SS_MCS4}, {0, MGN_VHT1SS_MCS1}}; 
-u1Byte SS_Rate_Map_AC_2SS_MCS9_Lv5[5][2]= {{50, MGN_VHT2SS_MCS9}, {47, MGN_VHT2SS_MCS8}, {30, MGN_VHT2SS_MCS7}, {15, MGN_VHT2SS_MCS4}, {0, MGN_VHT1SS_MCS2}}; 
-u1Byte SS_Rate_Map_AC_2SS_MCS9_Lv6[5][2]= {{45, MGN_VHT2SS_MCS9}, {40, MGN_VHT2SS_MCS8}, {30, MGN_VHT2SS_MCS7}, {10, MGN_VHT2SS_MCS6}, {0, MGN_VHT2SS_MCS4}}; 
+u1Byte SS_Rate_Map_AC_2SS_MCS9_Lv1[13][2]=  {{50, MGN_VHT2SS_MCS9}, {47, MGN_VHT2SS_MCS8}, {44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {36, MGN_VHT2SS_MCS4}, {32, MGN_VHT1SS_MCS6}, {28, MGN_VHT1SS_MCS4}, {24, MGN_VHT1SS_MCS3},  {21, MGN_VHT1SS_MCS2}, {18, MGN_VHT1SS_MCS1}, {14, MGN_VHT1SS_MCS0}, {10, MGN_12M}, {0, MGN_6M}};
+u1Byte SS_Rate_Map_AC_2SS_MCS9_Lv2[11][2]= {{50, MGN_VHT2SS_MCS9}, {47, MGN_VHT2SS_MCS8}, {44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {36, MGN_VHT2SS_MCS4}, {32, MGN_VHT1SS_MCS6}, {28, MGN_VHT1SS_MCS4}, {24, MGN_VHT1SS_MCS3},  {20, MGN_VHT1SS_MCS2}, {10, MGN_VHT1SS_MCS1}, {0, MGN_12M}};
+u1Byte SS_Rate_Map_AC_2SS_MCS9_Lv3[9][2]= {{50, MGN_VHT2SS_MCS9}, {47, MGN_VHT2SS_MCS8}, {44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {36, MGN_VHT2SS_MCS5}, {32, MGN_VHT1SS_MCS7}, {20, MGN_VHT1SS_MCS4}, {10, MGN_VHT1SS_MCS1},  {0, MGN_VHT1SS_MCS0}};
+u1Byte SS_Rate_Map_AC_2SS_MCS9_Lv4[7][2]= {{50, MGN_VHT2SS_MCS9}, {47, MGN_VHT2SS_MCS8}, {44, MGN_VHT2SS_MCS7}, {30, MGN_VHT2SS_MCS6}, {20, MGN_VHT2SS_MCS5}, {10, MGN_VHT1SS_MCS4}, {0, MGN_VHT1SS_MCS1}};
+u1Byte SS_Rate_Map_AC_2SS_MCS9_Lv5[5][2]= {{50, MGN_VHT2SS_MCS9}, {47, MGN_VHT2SS_MCS8}, {30, MGN_VHT2SS_MCS7}, {15, MGN_VHT2SS_MCS4}, {0, MGN_VHT1SS_MCS2}};
+u1Byte SS_Rate_Map_AC_2SS_MCS9_Lv6[5][2]= {{45, MGN_VHT2SS_MCS9}, {40, MGN_VHT2SS_MCS8}, {30, MGN_VHT2SS_MCS7}, {10, MGN_VHT2SS_MCS6}, {0, MGN_VHT2SS_MCS4}};
 
 //(10以下請顯示6M in 5G)
-u1Byte SS_Rate_Map_AC_2SS_MCS7[12][2]= {{44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {36, MGN_VHT2SS_MCS5}, {32, MGN_VHT2SS_MCS4}, {28, MGN_VHT1SS_MCS5}, {24, MGN_VHT1SS_MCS4},  {21, MGN_VHT1SS_MCS3}, {18, MGN_VHT1SS_MCS2}, {14, MGN_VHT1SS_MCS1}, {10, MGN_VHT1SS_MCS0}, {0, MGN_6M}}; 
+u1Byte SS_Rate_Map_AC_2SS_MCS7[12][2]= {{44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {36, MGN_VHT2SS_MCS5}, {32, MGN_VHT2SS_MCS4}, {28, MGN_VHT1SS_MCS5}, {24, MGN_VHT1SS_MCS4},  {21, MGN_VHT1SS_MCS3}, {18, MGN_VHT1SS_MCS2}, {14, MGN_VHT1SS_MCS1}, {10, MGN_VHT1SS_MCS0}, {0, MGN_6M}};
 // Lvl1 replace as original value.
-u1Byte SS_Rate_Map_AC_2SS_MCS7_Lv1[12][2]= {{44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {36, MGN_VHT2SS_MCS4}, {32, MGN_VHT1SS_MCS6}, {28, MGN_VHT1SS_MCS4}, {24, MGN_VHT1SS_MCS3},  {21, MGN_VHT1SS_MCS2}, {18, MGN_VHT1SS_MCS1}, {14, MGN_VHT1SS_MCS0}, {10, MGN_12M}, {0, MGN_6M}}; 
-u1Byte SS_Rate_Map_AC_2SS_MCS7_Lv2[6][2]= {{44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {30, MGN_VHT2SS_MCS4}, {20, MGN_VHT1SS_MCS4}, {10, MGN_VHT1SS_MCS1}, {0, MGN_VHT1SS_MCS1}}; 
-u1Byte SS_Rate_Map_AC_2SS_MCS7_Lv3[5][2]= {{44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {30, MGN_VHT2SS_MCS4}, {15, MGN_VHT1SS_MCS3}, {0, MGN_VHT1SS_MCS1}}; 
-u1Byte SS_Rate_Map_AC_2SS_MCS7_Lv4[5][2]= {{44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {30, MGN_VHT2SS_MCS5}, {15, MGN_VHT1SS_MCS4}, {0, MGN_VHT1SS_MCS1}}; 
-u1Byte SS_Rate_Map_AC_2SS_MCS7_Lv5[5][2]= {{44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {27, MGN_VHT2SS_MCS6}, {15, MGN_VHT1SS_MCS5}, {0, MGN_VHT1SS_MCS1}}; 
-u1Byte SS_Rate_Map_AC_2SS_MCS7_Lv6[3][2]= {{36, MGN_VHT2SS_MCS7}, {20, MGN_VHT2SS_MCS6}, {0, MGN_VHT2SS_MCS4}}; 
+u1Byte SS_Rate_Map_AC_2SS_MCS7_Lv1[12][2]= {{44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {36, MGN_VHT2SS_MCS4}, {32, MGN_VHT1SS_MCS6}, {28, MGN_VHT1SS_MCS4}, {24, MGN_VHT1SS_MCS3},  {21, MGN_VHT1SS_MCS2}, {18, MGN_VHT1SS_MCS1}, {14, MGN_VHT1SS_MCS0}, {10, MGN_12M}, {0, MGN_6M}};
+u1Byte SS_Rate_Map_AC_2SS_MCS7_Lv2[6][2]= {{44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {30, MGN_VHT2SS_MCS4}, {20, MGN_VHT1SS_MCS4}, {10, MGN_VHT1SS_MCS1}, {0, MGN_VHT1SS_MCS1}};
+u1Byte SS_Rate_Map_AC_2SS_MCS7_Lv3[5][2]= {{44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {30, MGN_VHT2SS_MCS4}, {15, MGN_VHT1SS_MCS3}, {0, MGN_VHT1SS_MCS1}};
+u1Byte SS_Rate_Map_AC_2SS_MCS7_Lv4[5][2]= {{44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {30, MGN_VHT2SS_MCS5}, {15, MGN_VHT1SS_MCS4}, {0, MGN_VHT1SS_MCS1}};
+u1Byte SS_Rate_Map_AC_2SS_MCS7_Lv5[5][2]= {{44, MGN_VHT2SS_MCS7}, {40, MGN_VHT2SS_MCS6}, {27, MGN_VHT2SS_MCS6}, {15, MGN_VHT1SS_MCS5}, {0, MGN_VHT1SS_MCS1}};
+u1Byte SS_Rate_Map_AC_2SS_MCS7_Lv6[3][2]= {{36, MGN_VHT2SS_MCS7}, {20, MGN_VHT2SS_MCS6}, {0, MGN_VHT2SS_MCS4}};
 
-u1Byte SS_Rate_Map_AC_3SS_MCS9[12][2]= {{50, MGN_VHT3SS_MCS9}, {47, MGN_VHT3SS_MCS8}, {44, MGN_VHT3SS_MCS7}, {40, MGN_VHT3SS_MCS6}, {36, MGN_VHT3SS_MCS5}, {32, MGN_VHT3SS_MCS4}, {28, MGN_VHT3SS_MCS3}, {24, MGN_VHT3SS_MCS2}, {21, MGN_VHT3SS_MCS1}, {18, MGN_VHT3SS_MCS0}, {10, MGN_12M}, {0, MGN_6M}}; 
+u1Byte SS_Rate_Map_AC_3SS_MCS9[12][2]= {{50, MGN_VHT3SS_MCS9}, {47, MGN_VHT3SS_MCS8}, {44, MGN_VHT3SS_MCS7}, {40, MGN_VHT3SS_MCS6}, {36, MGN_VHT3SS_MCS5}, {32, MGN_VHT3SS_MCS4}, {28, MGN_VHT3SS_MCS3}, {24, MGN_VHT3SS_MCS2}, {21, MGN_VHT3SS_MCS1}, {18, MGN_VHT3SS_MCS0}, {10, MGN_12M}, {0, MGN_6M}};
 
 //(10以下請顯示6M in 5G)
 
@@ -69,17 +69,17 @@ u2Byte
 CONVERT_RATE	(
 	PADAPTER		Adapter,
 	u2Byte			MGN_RATE
-)	
+)
 {
 	u2Byte	RetValue = MGN_RATE;
-	
+
 	if(MGN_RATE >= MGN_VHT1SS_MCS0 && MGN_RATE <= MGN_VHT4SS_MCS9)
 		RetValue = VHTMcsToDataRate(Adapter, MGN_RATE);
 	else if(MGN_RATE >= MGN_MCS0 && MGN_RATE <= MGN_MCS31)
 		RetValue = HTMcsToDataRate(Adapter, MGN_RATE);
-	
+
 	return RetValue;
-}		
+}
 
 // Returns the current AP MAC address
 BOOLEAN
@@ -93,7 +93,7 @@ MgntActQuery_802_11_BSSID(
 	// <1>Set management bssid
 	CopyMem( bssidbuf, pMgntInfo->Bssid, 6 );
 
-	//TODO:	
+	//TODO:
 	return TRUE;
 }
 
@@ -135,7 +135,7 @@ MgntActQuery_802_11_ASSOCIATION_INFORMATION(
 
 	// Req_4. OffsetRequestIEs
 	// [WindowsDesignNoteForWPA2]
-	// - This field contains the offset in the buffer containing any variable length information elements from the association or reassociation request message. 
+	// - This field contains the offset in the buffer containing any variable length information elements from the association or reassociation request message.
 	// - During a query, this contains the information elements that were in the last association or reassociate request attempt. The request may succeed or fail.
 	pAssocInfo->OffsetRequestIEs = sizeof(NDIS_802_11_ASSOCIATION_INFORMATION);
 
@@ -149,32 +149,32 @@ MgntActQuery_802_11_ASSOCIATION_INFORMATION(
 	if(	(pMgntInfo->State_AsocService == STATE_Asoc_Idle && (pMgntInfo->mAssoc || pMgntInfo->mIbss ))		||
 		(pMgntInfo->State_AsocService == STATE_Wait_Asoc_Response ||  pMgntInfo->State_AsocService == STATE_Wait_Reasoc_Response))
 	{
-		// IE_1. Last SSID in Association Request 				
+		// IE_1. Last SSID in Association Request
 		pDest[0] = (u1Byte)EID_SsId;
 		pDest[1] = (u1Byte)pMgntInfo->Ssid.Length;
-		
+
 		PlatformMoveMemory((pu1Byte)pDest + 2,
-			&pMgntInfo->Ssid.Octet[0], 
+			&pMgntInfo->Ssid.Octet[0],
 			pMgntInfo->Ssid.Length);
 		pDest = (pu1Byte)pDest + (2 + pMgntInfo->Ssid.Length);
 		pAssocInfo->RequestIELength += (2 + pMgntInfo->Ssid.Length);
-					
-		// IE_2. Last Supported Rate in Association Request 
+
+		// IE_2. Last Supported Rate in Association Request
 		pDest[0] = EID_SupRates;
 		pDest[1] = (u1Byte)pMgntInfo->Regdot11OperationalRateSet.Length;
 		PlatformMoveMemory((pu1Byte)pDest + 2,
-			pMgntInfo->Regdot11OperationalRateSet.Octet, 
+			pMgntInfo->Regdot11OperationalRateSet.Octet,
 			pMgntInfo->Regdot11OperationalRateSet.Length);
 		pDest += (2 + pMgntInfo->Regdot11OperationalRateSet.Length);
 		pAssocInfo->RequestIELength += (2 + pMgntInfo->Regdot11OperationalRateSet.Length);
 
-		// IE_3. Last RSNIE in Association Request 	
+		// IE_3. Last RSNIE in Association Request
 		if( pSecInfo->SecLvl > RT_SEC_LVL_NONE )
 		{
 			pDest[0] = ( pSecInfo->SecLvl == RT_SEC_LVL_WPA )? EID_Vendor : EID_WPA2;
-			pDest[1] = (u1Byte)pSecInfo->RSNIE.Length;		
+			pDest[1] = (u1Byte)pSecInfo->RSNIE.Length;
 			PlatformMoveMemory((pu1Byte)pDest + 2,
-				pSecInfo->RSNIE.Octet, 
+				pSecInfo->RSNIE.Octet,
 				pSecInfo->RSNIE.Length);
 			pDest += (2 + pSecInfo->RSNIE.Length);
 			pAssocInfo->RequestIELength += (2 + pSecInfo->RSNIE.Length);
@@ -217,19 +217,19 @@ MgntActQuery_802_11_ASSOCIATION_INFORMATION(
 
 		// Rsp_4. OffsetResponseIEs
 		// [WindowsDesignNoteForWPA2]
-		// - This field contains the offset in the buffer containing any variable length information elements from the association or reassociation response message. 
+		// - This field contains the offset in the buffer containing any variable length information elements from the association or reassociation response message.
 		// - During a query, this contains the information elements that were in the last association or reassociate response.
-		pAssocInfo->OffsetResponseIEs = sizeof(NDIS_802_11_ASSOCIATION_INFORMATION) + pAssocInfo->RequestIELength;  
+		pAssocInfo->OffsetResponseIEs = sizeof(NDIS_802_11_ASSOCIATION_INFORMATION) + pAssocInfo->RequestIELength;
 
 		CCX_AppendAssocRspCCKMIE(Adapter, pDest, &(pAssocInfo->ResponseIELength));
 
-	}												  	
-	
+	}
+
 	return TRUE;
 }
 
 
-// Returns the SSID with which the NIC is associated. 
+// Returns the SSID with which the NIC is associated.
 // The driver returns 0 SSIDLength if the NIC is not associated with any SSID.
 BOOLEAN
 MgntActQuery_802_11_SSID(
@@ -257,7 +257,7 @@ MgntActQuery_802_11_SSID(
 
 
 
-//	Description: 
+//	Description:
 //		Return the current transmit power level in dBm.
 //
 s4Byte
@@ -265,14 +265,14 @@ MgntActQuery_TX_POWER_DBM(
 	PADAPTER		Adapter
 )
 {
-	PMGNT_INFO		pMgntInfo = &Adapter->MgntInfo;	
+	PMGNT_INFO		pMgntInfo = &Adapter->MgntInfo;
 	s4Byte			powerlevel;
 
 	Adapter->HalFunc.GetTxPowerLevelHandler( Adapter, &powerlevel );
-	
+
 	//
 	// Get the min power in dbm. By Bruce, 2009-04-07.
-	// Because we may not really update the Tx Power from the CCX Cell Power IE, we shall compare the 
+	// Because we may not really update the Tx Power from the CCX Cell Power IE, we shall compare the
 	// client configured power and cell power to get the min power returned to UI.
 	//
 	// Compare with the Client Configured Power
@@ -301,7 +301,7 @@ MgntActQuery_802_11_INFRASTRUCTURE_MODE(
 	{
 		return RT_JOIN_NETWORKTYPE_ADHOC;
 	}
-	else 	
+	else
 	{
 		return (RT_JOIN_NETWORKTYPE)(Adapter->MgntInfo.Regdot11networktype);
 	}
@@ -346,7 +346,7 @@ MgntActQuery_802_11_SUPPORTED_RATES(
 	}
 	else{
 		return FALSE;
-	}	
+	}
 
 	return TRUE;
 }
@@ -363,7 +363,7 @@ MgntActQuery_802_11_BSSID_LIST(
 	u4Byte		i=0;
 	BOOLEAN		matchFound = FALSE;
 	PRT_WLAN_BSS		pBSSDesc = NULL;
-		
+
 	u1Byte	Rssibuf[MAX_BSS_DESC];
 	u4Byte	idxBuf[MAX_BSS_DESC];
 
@@ -397,7 +397,7 @@ MgntActQuery_802_11_BSSID_LIST(
 	//
 	//
 	// This part of copying WLAN BSS from NumBssDesc4Query may conflict with that
-	// in ScanComplete(), so that there would be no consistency between  "NumBssDesc4Query" 
+	// in ScanComplete(), so that there would be no consistency between  "NumBssDesc4Query"
 	// and "NumBssDesc". After that, some BSS we access with incorrect length infomation will
 	// access the invlaid memory or make system crash.
 	// By Bruce, 2008-05-29.
@@ -411,8 +411,8 @@ MgntActQuery_802_11_BSSID_LIST(
 		pMgntInfo->NumBssDesc4Query = tmpNumBssDesc;
 
 		//
-		// Roger, 071203: We should redirect the Octet pointer to the new destination. 
-		// Rcnjko, 080201: We'd better use the macro CopyWlanBss() to duplicate 
+		// Roger, 071203: We should redirect the Octet pointer to the new destination.
+		// Rcnjko, 080201: We'd better use the macro CopyWlanBss() to duplicate
 		// RT_WLAN_BSS objects to handle OCTET_STRING copy issues.
 		//
 		for(i = 0; i < tmpNumBssDesc; i ++)
@@ -439,7 +439,7 @@ MgntActQuery_802_11_BSSID_LIST(
 		Rssibuf[i]= pBSSDesc[i].RSSI;
 		idxBuf[i] = (u2Byte)i;
 	}
-	//Select sort for rssi. 
+	//Select sort for rssi.
 	for(idx=0;idx<pBssidList->NumberOfItems;idx++)
 	{
 		MaxRSSI =0;
@@ -451,8 +451,8 @@ MgntActQuery_802_11_BSSID_LIST(
 				MaxRSSI = Rssibuf[a];
 				findidx =a;
 			}
-		}	
-		 
+		}
+
 		Rssibuf[findidx] =Rssibuf[idx];
 		Rssibuf[idx] = MaxRSSI;
 		tmpidx = idxBuf[findidx];
@@ -464,7 +464,7 @@ MgntActQuery_802_11_BSSID_LIST(
 	{
 		CopyWlanBss(&pBssidList->pbssidentry[i], &pBSSDesc[idxBuf[i]]);
 	}
-	
+
 	PlatformReleaseSpinLock(Adapter, RT_SCAN_SPINLOCK);
 
 	// An workaround to prevent that we show empty SSID for the AP we've associated.
@@ -481,11 +481,11 @@ MgntActQuery_802_11_BSSID_LIST(
 				PlatformCompareMemory(pBssidList->pbssidentry[i].bdBssIdBuf, pMgntInfo->Bssid, 6) == 0 )
 			{
 				bCurrApFound = TRUE;
-				pBssdesc = &(pBssidList->pbssidentry[i]); 
+				pBssdesc = &(pBssidList->pbssidentry[i]);
 				break;
 			}
 		}
-		
+
 		if(bCurrApFound == TRUE && pBssdesc != NULL)
 		{
 			if(BeHiddenSsid(pBssdesc->bdSsIdBuf, pBssdesc->bdSsIdLen))
@@ -529,7 +529,7 @@ MgntActQuery_802_11_ENCRYPTION_STATUS(
 )
 {
 	*pEncAlgorithm = Adapter->MgntInfo.SecurityInfo.PairwiseEncAlgorithm;
-	
+
 	return TRUE;
 }
 
@@ -546,10 +546,10 @@ MgntActQuery_802_11_ENCRYPTION_KEY(
 {
 	*KeyLength = Adapter->MgntInfo.SecurityInfo.KeyLen[KeyIndex];
 	*KeyLength  = (*KeyLength<32)? *KeyLength :32;
-	
-	PlatformMoveMemory( 
+
+	PlatformMoveMemory(
 			KeyMaterial,
-			Adapter->MgntInfo.SecurityInfo.KeyBuf[KeyIndex], 
+			Adapter->MgntInfo.SecurityInfo.KeyBuf[KeyIndex],
 			*KeyLength
 			);
 
@@ -587,9 +587,9 @@ MgntActQuery_802_11_TX_RATES(
 	else if(IS_WIRELESS_MODE_B(Adapter))
 		rate = MGN_11M; // 11 M
 	else if(IS_WIRELESS_MODE_AC(Adapter))
-		rate = VHTMcsToDataRate(Adapter, pMgntInfo->VHTHighestOperaRate); 
+		rate = VHTMcsToDataRate(Adapter, pMgntInfo->VHTHighestOperaRate);
 	else if(IS_WIRELESS_MODE_N(Adapter))
-		rate = HTMcsToDataRate(Adapter, pMgntInfo->HTHighestOperaRate); 
+		rate = HTMcsToDataRate(Adapter, pMgntInfo->HTHighestOperaRate);
 	else
 		rate = MGN_1M; // 1 M
 
@@ -647,7 +647,7 @@ MgntActQuery_802_11_RX_RATES(
 			rate = VHTMcsToDataRate(Adapter, MGN_VHT1SS_MCS9);
 	}
 	else
-		rate = MGN_1M; // 1 M				
+		rate = MGN_1M; // 1 M
 
 	return rate;
 }
@@ -663,8 +663,8 @@ MgntActQuery_802_11_WIRELESS_MODE(
 
 BOOLEAN
 MgntActQuery_802_11_RETRY_LIMIT(
-	PADAPTER Adapter, 
-	pu2Byte ShortRetryLimit, 
+	PADAPTER Adapter,
+	pu2Byte ShortRetryLimit,
 	pu2Byte LongRetryLimit
 )
 {
@@ -684,7 +684,7 @@ MgntActQuery_MultiDomainImp(
 )
 {
 	//
-	// TODO: Implemented. 
+	// TODO: Implemented.
 	//
 	return FALSE;
 }
@@ -707,7 +707,7 @@ MgntActQuery_StrictlyOrderedImp(
 )
 {
 	//
-	// TODO: Implement it if necessary. 
+	// TODO: Implement it if necessary.
 	//
 	return FALSE;
 }
@@ -718,7 +718,7 @@ MgntActQuery_ShortRetryLimit(
 )
 {
 	//
-	// TODO: Implement it. 
+	// TODO: Implement it.
 	//
 	return 7;
 }
@@ -729,7 +729,7 @@ MgntActQuery_LongRetryLimit(
 )
 {
 	//
-	// TODO: Implement it. 
+	// TODO: Implement it.
 	//
 	return 7;
 }
@@ -740,7 +740,7 @@ MgntActQuery_MaxTxMsduLifeTime(
 )
 {
 	//
-	// TODO: use it to timeout MSDU in wait queue. 
+	// TODO: use it to timeout MSDU in wait queue.
 	//
 	return 512;
 }
@@ -768,10 +768,10 @@ MgntActQuery_ExcludedMacAddressList(
 	u4Byte		BytesNeeded = (pMgntInfo->ExcludedMacAddrListLength) * 6;
 
 	PlatformZeroMemory(pMacAddrList, BufLength);
-	
+
 	if (BytesNeeded > BufLength)
 	{
-		return 0;	
+		return 0;
 	}
 
 	PlatformMoveMemory(
@@ -791,9 +791,9 @@ MgntActQuery_ChannelList(
 
 	// Reconstruct channel list so that channel info modified during customized scan (or other function) could be recovered.
 	RtActChannelList(Adapter, RT_CHNL_LIST_ACTION_CONSTRUCT, NULL, NULL);
-	
+
 	RtActChannelList(Adapter, RT_CHNL_LIST_ACTION_GET_CHANNEL_LIST, NULL, (&pChannelList));
-	
+
 	return pChannelList;
 }
 
@@ -851,7 +851,7 @@ MgntActQuery_DrvLogTypeList(
 			{ // This is an unexpted condition and might cause buffer overflow.
 				RT_ASSERT(FALSE, ("MgntActQuery_DrvLogTypeList(): check g_LogTypes[%ld].Description!!!\n", idx));
 
-				g_LogTypes[idx].Description[DescLen] = 0; 
+				g_LogTypes[idx].Description[DescLen] = 0;
 				break;
 			}
 		}
@@ -870,8 +870,8 @@ MgntActQuery_DrvLogTypeList(
 			pEntry->MaxLogCountPwr = g_LogTypes[idx].MaxLogCountPwr;
 			pEntry->DescLen = DescLen + 1; // 1 is for EOS.
 			PlatformMoveMemory(
-				pEntry->Description, 
-				g_LogTypes[idx].Description, 
+				pEntry->Description,
+				g_LogTypes[idx].Description,
 				pEntry->DescLen);
 
 			*pBytesWritten += EntrySize;
@@ -883,7 +883,7 @@ MgntActQuery_DrvLogTypeList(
 			bResult = FALSE;
 		}
 	}
-	
+
 	return bResult;
 
 #endif
@@ -944,7 +944,7 @@ MgntActQuery_DrvLogAttrList(
 			{ // This is an unexpted condition and might cause buffer overflow.
 				RT_ASSERT(FALSE, ("MgntActQuery_DrvLogAttrList(): check g_LogAttributes[%ld].Description!!!\n", idx));
 
-				g_LogAttributes[idx].Description[DescLen] = 0; 
+				g_LogAttributes[idx].Description[DescLen] = 0;
 				break;
 			}
 		}
@@ -963,8 +963,8 @@ MgntActQuery_DrvLogAttrList(
 			pEntry->Type = g_LogAttributes[idx].Type;
 			pEntry->DescLen = DescLen + 1; // 1 is for EOS.
 			PlatformMoveMemory(
-				pEntry->Description, 
-				g_LogAttributes[idx].Description, 
+				pEntry->Description,
+				g_LogAttributes[idx].Description,
 				pEntry->DescLen);
 
 			*pBytesWritten += EntrySize;
@@ -976,7 +976,7 @@ MgntActQuery_DrvLogAttrList(
 			bResult = FALSE;
 		}
 	}
-	
+
 	return bResult;
 
 #endif
@@ -1010,12 +1010,12 @@ MgntActQuery_DrvLogDataList(
 	//
 	// Figure out max entry size.
 	//
-	// 070305, rcnjko: I use a max estimation instead of 
-	// figure out exact size of the each entry to reduce 
-	// computation overhead. Besides, I assume UI can cover 
+	// 070305, rcnjko: I use a max estimation instead of
+	// figure out exact size of the each entry to reduce
+	// computation overhead. Besides, I assume UI can cover
 	// this assumption easily.
 	//
-	static u4Byte MaxEntrySize = sizeof(DRV_LOG_DATA_IMP_T); 
+	static u4Byte MaxEntrySize = sizeof(DRV_LOG_DATA_IMP_T);
 
 	//
 	// Check minimal buffer size required.
@@ -1031,7 +1031,7 @@ MgntActQuery_DrvLogDataList(
 	if(eLogType >= LTYPE_TOTAL_COUNT)
 	{
 		return FALSE;
-	}	
+	}
 
 	//
 	// Enumerate into each entry and fill up if we have enough space.
@@ -1053,7 +1053,7 @@ MgntActQuery_DrvLogDataList(
 					pEntry) )
 			{
 				//
-				// Now, we can get exact entry size and apply it 
+				// Now, we can get exact entry size and apply it
 				// to fill up *pBytesNeeded and *pBytesWritten.
 				//
 				EntrySize = sizeof(DRV_LOG_DATA_T) - sizeof(pEntry->Buffer[0]) + pEntry->BufferLenUsed;
@@ -1062,7 +1062,7 @@ MgntActQuery_DrvLogDataList(
 				*pBytesWritten += EntrySize;
 				pEntry = (PDRV_LOG_DATA_T)((pu1Byte)(pEntry->Buffer) + pEntry->BufferLenUsed);
 				pBuffer->Count++;
-			}	
+			}
 			else
 			{ // No more log available.
 				break;
@@ -1073,13 +1073,13 @@ MgntActQuery_DrvLogDataList(
 			*pBytesNeeded += MaxEntrySize;
 		}
 	}
-	
+
 	return TRUE;
 #endif
 }
 
 
-u1Byte    
+u1Byte
 DecorateTxRateBySingalStrength(
 	u4Byte	SignalStrength,
 	u1Byte	*SS_Rate_Map,
@@ -1087,7 +1087,7 @@ DecorateTxRateBySingalStrength(
 )
 {
 	int index = 0;
-	
+
 	for(index=0; index<(MapSize*2); index+=2)
 	{
 		if(SignalStrength > SS_Rate_Map[index])
@@ -1104,9 +1104,9 @@ DecorateTxRateBySingalStrength(
 //	Return 11N Tx rate to let Normal User.
 //	2008-04-14  by Jacken
 //
-u2Byte    
-MgntActQuery_RT_11N_USER_SHOW_RATES(   
-	PADAPTER		Adapter , 
+u2Byte
+MgntActQuery_RT_11N_USER_SHOW_RATES(
+	PADAPTER		Adapter ,
 	BOOLEAN			TxorRx,          //FALSE:Tx   TRUE:Rx
 	BOOLEAN			bLinkStateRx
 )
@@ -1117,7 +1117,7 @@ MgntActQuery_RT_11N_USER_SHOW_RATES(
 	u4Byte		Sgstrength;
 	HAL_DATA_TYPE *pHalData = GET_HAL_DATA(Adapter);
 
-	
+
 	// Forced data rate: Tx rate is forced to a constant value.
 	if(pMgntInfo->ForcedDataRate != 0)
 	{
@@ -1128,7 +1128,7 @@ MgntActQuery_RT_11N_USER_SHOW_RATES(
 	{
 		return CONVERT_RATE(Adapter,  pHalData->CurrentRARate);
 	}
-	
+
 	if(!TxorRx) // Tx rate
 	{//This value is also refresh in dm_CheckStatistics() every 2 seconds.
 		// 1 == TxRateTypeCurrent
@@ -1140,7 +1140,7 @@ MgntActQuery_RT_11N_USER_SHOW_RATES(
 		// 2 == TxRateTypeStartRate
 		else if(pMgntInfo->OSTxRateDisplayType == 2)
 		{
-			// Report initial rate in HW. 
+			// Report initial rate in HW.
 			return CONVERT_RATE(Adapter, Adapter->TxStats.CurrentInitTxRate);
 		}
 	}
@@ -1149,7 +1149,7 @@ MgntActQuery_RT_11N_USER_SHOW_RATES(
 	if(pMgntInfo->bForcedShowRateStill == TRUE)
 		Sgstrength = 100;
 	else if (ACTING_AS_AP(Adapter))
-		Sgstrength = 100;	
+		Sgstrength = 100;
 	else
 		Sgstrength = GET_UNDECORATED_AVERAGE_RSSI(Adapter);
 
@@ -1164,7 +1164,7 @@ MgntActQuery_RT_11N_USER_SHOW_RATES(
 	else if(IS_WIRELESS_MODE_N_24G(Adapter) || IS_WIRELESS_MODE_N_5G(Adapter))
 	{
 		BOOLEAN		bMaxRateMcs15;
-		
+
 		// Determine the max rate for N mode.
 		if(	(rftype==RF_1T1R)  ||
 			((!TxorRx) && (rftype==RF_1T2R)) ||
@@ -1176,57 +1176,57 @@ MgntActQuery_RT_11N_USER_SHOW_RATES(
 
 		if(rftype == RF_3T3R)
 		{
-			rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS23, sizeof(SS_Rate_Map_N_MCS23)/2); 
+			rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS23, sizeof(SS_Rate_Map_N_MCS23)/2);
 		}
 		else if(rftype == RF_2T4R || rftype == RF_2T3R)
 		{
-			rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS23, sizeof(SS_Rate_Map_N_MCS23)/2); 
+			rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS23, sizeof(SS_Rate_Map_N_MCS23)/2);
 		}
 		else if(bMaxRateMcs15)
 		{
 			if (pMgntInfo->bRegLinkSpeedLevel == 0)
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS15, sizeof(SS_Rate_Map_N_MCS15)/2); 
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS15, sizeof(SS_Rate_Map_N_MCS15)/2);
 			else if (pMgntInfo->bRegLinkSpeedLevel == 12)
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS15_Lv1, sizeof(SS_Rate_Map_N_MCS15_Lv1)/2); 
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS15_Lv1, sizeof(SS_Rate_Map_N_MCS15_Lv1)/2);
 			else if (pMgntInfo->bRegLinkSpeedLevel == 14)
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS15_Lv2, sizeof(SS_Rate_Map_N_MCS15_Lv2)/2); 
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS15_Lv2, sizeof(SS_Rate_Map_N_MCS15_Lv2)/2);
 			else if (pMgntInfo->bRegLinkSpeedLevel == 16)
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS15_Lv3, sizeof(SS_Rate_Map_N_MCS15_Lv3)/2); 
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS15_Lv3, sizeof(SS_Rate_Map_N_MCS15_Lv3)/2);
 			else if (pMgntInfo->bRegLinkSpeedLevel == 18)
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS15_Lv4, sizeof(SS_Rate_Map_N_MCS15_Lv4)/2); 
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS15_Lv4, sizeof(SS_Rate_Map_N_MCS15_Lv4)/2);
 			else if (pMgntInfo->bRegLinkSpeedLevel == 20)
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS15_Lv5, sizeof(SS_Rate_Map_N_MCS15_Lv5)/2); 
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS15_Lv5, sizeof(SS_Rate_Map_N_MCS15_Lv5)/2);
 			else if (pMgntInfo->bRegLinkSpeedLevel == 24)
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS15_Lv6, sizeof(SS_Rate_Map_N_MCS15_Lv6)/2); 
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS15_Lv6, sizeof(SS_Rate_Map_N_MCS15_Lv6)/2);
 			else
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS15, sizeof(SS_Rate_Map_N_MCS15)/2); 
-		}		
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS15, sizeof(SS_Rate_Map_N_MCS15)/2);
+		}
 		else
 		{
 			if (pMgntInfo->bRegLinkSpeedLevel == 0)
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS7, sizeof(SS_Rate_Map_N_MCS7)/2); 
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS7, sizeof(SS_Rate_Map_N_MCS7)/2);
 			else if (pMgntInfo->bRegLinkSpeedLevel == 12)
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS7_Lv1, sizeof(SS_Rate_Map_N_MCS7_Lv1)/2); 
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS7_Lv1, sizeof(SS_Rate_Map_N_MCS7_Lv1)/2);
 			else if (pMgntInfo->bRegLinkSpeedLevel == 14)
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS7_Lv2, sizeof(SS_Rate_Map_N_MCS7_Lv2)/2); 
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS7_Lv2, sizeof(SS_Rate_Map_N_MCS7_Lv2)/2);
 			else if (pMgntInfo->bRegLinkSpeedLevel == 16)
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS7_Lv3, sizeof(SS_Rate_Map_N_MCS7_Lv3)/2); 
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS7_Lv3, sizeof(SS_Rate_Map_N_MCS7_Lv3)/2);
 			else if (pMgntInfo->bRegLinkSpeedLevel == 18)
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS7_Lv4, sizeof(SS_Rate_Map_N_MCS7_Lv4)/2); 
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS7_Lv4, sizeof(SS_Rate_Map_N_MCS7_Lv4)/2);
 			else if (pMgntInfo->bRegLinkSpeedLevel == 20)
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS7_Lv5, sizeof(SS_Rate_Map_N_MCS7_Lv5)/2); 
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS7_Lv5, sizeof(SS_Rate_Map_N_MCS7_Lv5)/2);
 			else if (pMgntInfo->bRegLinkSpeedLevel == 24)
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS7_Lv6, sizeof(SS_Rate_Map_N_MCS7_Lv6)/2); 
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS7_Lv6, sizeof(SS_Rate_Map_N_MCS7_Lv6)/2);
 			else
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS7, sizeof(SS_Rate_Map_N_MCS7)/2); 
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_N_MCS7, sizeof(SS_Rate_Map_N_MCS7)/2);
 		}
-	}						
+	}
 	else if(IS_WIRELESS_MODE_AC(Adapter))
 	{
 		if(rftype == RF_1T1R)
 		{
 			if(pMgntInfo->VHTHighestOperaRate < MGN_VHT1SS_MCS9)
-				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_1SS_MCS7, sizeof(SS_Rate_Map_AC_1SS_MCS7)/2); 
+				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_1SS_MCS7, sizeof(SS_Rate_Map_AC_1SS_MCS7)/2);
 			else
 				rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_1SS_MCS9, sizeof(SS_Rate_Map_AC_1SS_MCS9)/2);
 		}
@@ -1235,49 +1235,49 @@ MgntActQuery_RT_11N_USER_SHOW_RATES(
 			if(pMgntInfo->VHTHighestOperaRate < MGN_VHT2SS_MCS9)
 			{
 				if (pMgntInfo->bRegLinkSpeedLevel == 0)
-					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS7, sizeof(SS_Rate_Map_AC_2SS_MCS7)/2); 
+					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS7, sizeof(SS_Rate_Map_AC_2SS_MCS7)/2);
 				else if (pMgntInfo->bRegLinkSpeedLevel == 12)
-					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS7_Lv1, sizeof(SS_Rate_Map_AC_2SS_MCS7_Lv1)/2); 
+					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS7_Lv1, sizeof(SS_Rate_Map_AC_2SS_MCS7_Lv1)/2);
 				else if (pMgntInfo->bRegLinkSpeedLevel == 14)
-					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS7_Lv2, sizeof(SS_Rate_Map_AC_2SS_MCS7_Lv2)/2); 
+					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS7_Lv2, sizeof(SS_Rate_Map_AC_2SS_MCS7_Lv2)/2);
 				else if (pMgntInfo->bRegLinkSpeedLevel == 16)
-					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS7_Lv3, sizeof(SS_Rate_Map_AC_2SS_MCS7_Lv3)/2); 
+					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS7_Lv3, sizeof(SS_Rate_Map_AC_2SS_MCS7_Lv3)/2);
 				else if (pMgntInfo->bRegLinkSpeedLevel == 18)
-					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS7_Lv4, sizeof(SS_Rate_Map_AC_2SS_MCS7_Lv4)/2); 
+					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS7_Lv4, sizeof(SS_Rate_Map_AC_2SS_MCS7_Lv4)/2);
 				else if (pMgntInfo->bRegLinkSpeedLevel == 20)
-					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS7_Lv5, sizeof(SS_Rate_Map_AC_2SS_MCS7_Lv5)/2); 
+					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS7_Lv5, sizeof(SS_Rate_Map_AC_2SS_MCS7_Lv5)/2);
 				else if (pMgntInfo->bRegLinkSpeedLevel == 24)
-					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS7_Lv6, sizeof(SS_Rate_Map_AC_2SS_MCS7_Lv6)/2); 
+					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS7_Lv6, sizeof(SS_Rate_Map_AC_2SS_MCS7_Lv6)/2);
 				else
-					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS7, sizeof(SS_Rate_Map_AC_2SS_MCS7)/2); 
+					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS7, sizeof(SS_Rate_Map_AC_2SS_MCS7)/2);
 			}
 			else
 			{
 				if (pMgntInfo->bRegLinkSpeedLevel == 0)
-					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS9, sizeof(SS_Rate_Map_AC_2SS_MCS9)/2); 
+					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS9, sizeof(SS_Rate_Map_AC_2SS_MCS9)/2);
 				else if (pMgntInfo->bRegLinkSpeedLevel == 12)
-					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS9_Lv1, sizeof(SS_Rate_Map_AC_2SS_MCS9_Lv1)/2); 
+					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS9_Lv1, sizeof(SS_Rate_Map_AC_2SS_MCS9_Lv1)/2);
 				else if (pMgntInfo->bRegLinkSpeedLevel == 14)
-					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS9_Lv2, sizeof(SS_Rate_Map_AC_2SS_MCS9_Lv2)/2); 
+					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS9_Lv2, sizeof(SS_Rate_Map_AC_2SS_MCS9_Lv2)/2);
 				else if (pMgntInfo->bRegLinkSpeedLevel == 16)
-					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS9_Lv3, sizeof(SS_Rate_Map_AC_2SS_MCS9_Lv3)/2); 
+					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS9_Lv3, sizeof(SS_Rate_Map_AC_2SS_MCS9_Lv3)/2);
 				else if (pMgntInfo->bRegLinkSpeedLevel == 18)
-					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS9_Lv4, sizeof(SS_Rate_Map_AC_2SS_MCS9_Lv4)/2); 
+					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS9_Lv4, sizeof(SS_Rate_Map_AC_2SS_MCS9_Lv4)/2);
 				else if (pMgntInfo->bRegLinkSpeedLevel == 20)
-					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS9_Lv5, sizeof(SS_Rate_Map_AC_2SS_MCS9_Lv5)/2); 
+					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS9_Lv5, sizeof(SS_Rate_Map_AC_2SS_MCS9_Lv5)/2);
 				else if (pMgntInfo->bRegLinkSpeedLevel == 24)
-					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS9_Lv6, sizeof(SS_Rate_Map_AC_2SS_MCS9_Lv6)/2); 
+					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS9_Lv6, sizeof(SS_Rate_Map_AC_2SS_MCS9_Lv6)/2);
 				else
-					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS9, sizeof(SS_Rate_Map_AC_2SS_MCS9)/2); 
+					rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_2SS_MCS9, sizeof(SS_Rate_Map_AC_2SS_MCS9)/2);
 			}
-		}	
+		}
 		else if(rftype == RF_3T3R)
 		{
-			rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_3SS_MCS9, sizeof(SS_Rate_Map_AC_3SS_MCS9)/2); 
+			rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_3SS_MCS9, sizeof(SS_Rate_Map_AC_3SS_MCS9)/2);
 		}
 		else if(rftype == RF_2T4R || rftype == RF_2T3R)
 		{
-			rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_3SS_MCS9, sizeof(SS_Rate_Map_AC_3SS_MCS9)/2); 
+			rate = DecorateTxRateBySingalStrength(Sgstrength, (pu1Byte)SS_Rate_Map_AC_3SS_MCS9, sizeof(SS_Rate_Map_AC_3SS_MCS9)/2);
 		}
 	}
 	else
@@ -1287,14 +1287,14 @@ MgntActQuery_RT_11N_USER_SHOW_RATES(
 	if(IS_WIRELESS_MODE_N_24G(Adapter) || IS_WIRELESS_MODE_N_5G(Adapter))
 	{
 		if(rate > pMgntInfo->HTHighestOperaRate && pMgntInfo->HTHighestOperaRate != 0)
-		{			
-			rate = pMgntInfo->HTHighestOperaRate;	
+		{
+			rate = pMgntInfo->HTHighestOperaRate;
 		}
 	}
 	else if(IS_WIRELESS_MODE_AC(Adapter))
 	{
 		if(rate > pMgntInfo->VHTHighestOperaRate && pMgntInfo->VHTHighestOperaRate != 0)
-			rate = pMgntInfo->VHTHighestOperaRate;	
+			rate = pMgntInfo->VHTHighestOperaRate;
 	}
 	else
 	{
@@ -1307,7 +1307,7 @@ MgntActQuery_RT_11N_USER_SHOW_RATES(
 		if(rate < pHalData->CurrentRARate)
 			rate = pHalData->CurrentRARate;
 	}
-	
+
 	return CONVERT_RATE(Adapter, rate);
 }
 
@@ -1330,20 +1330,20 @@ MgntActQuery_AdditionalBeaconIE(
 		if (*pAdditionalIEBufLen < pMgntInfo->AdditionalBeaconIESize)
 		{
 			*pAdditionalIEBufLen = pMgntInfo->AdditionalBeaconIESize;
-			bResult = FALSE;			
+			bResult = FALSE;
 			break;
 		}
 
-		PlatformMoveMemory(pAdditionalIEBuf, 
-			pMgntInfo->AdditionalBeaconIEData, 
+		PlatformMoveMemory(pAdditionalIEBuf,
+			pMgntInfo->AdditionalBeaconIEData,
 			pMgntInfo->AdditionalBeaconIESize);
 
 		bResult = TRUE;
-				
+
 	} while(FALSE);
 
 	return bResult;
-	
+
 }
 
 //
@@ -1359,7 +1359,7 @@ MgntActQuery_AdditionalProbeRspIE(
 {
 	PMGNT_INFO 	pMgntInfo = &Adapter->MgntInfo;
 	BOOLEAN 	bResult = FALSE;
-	
+
 	do
 	{
 		if (*pAdditionalIEBufLen < pMgntInfo->AdditionalResponseIESize)
@@ -1369,16 +1369,16 @@ MgntActQuery_AdditionalProbeRspIE(
 			break;
 		}
 
-		PlatformMoveMemory(pAdditionalIEBuf, 
-			pMgntInfo->AdditionalResponseIEData, 
+		PlatformMoveMemory(pAdditionalIEBuf,
+			pMgntInfo->AdditionalResponseIEData,
 			pMgntInfo->AdditionalResponseIESize);
 
 		bResult = TRUE;
-		
+
 	} while(FALSE);
 
 	return bResult;
-	
+
 }
 
 RT_AP_TYPE
@@ -1388,12 +1388,12 @@ MgntActQuery_ApType(
 {
 	if(pAdapter == NULL)
 		return RT_AP_TYPE_NONE;
-	else 
+	else
 		return pAdapter->MgntInfo.ApType;
 }
 
 
-#if (P2P_SUPPORT == 1)	
+#if (P2P_SUPPORT == 1)
 P2P_ROLE
 MgntActQuery_P2PMode(
 	IN	PADAPTER		Adapter
@@ -1422,29 +1422,29 @@ MgntActQuery_P2PScanList(
 
 	BytesNeeded = pP2PInfo->ScanList4QuerySize* sizeof(P2P_DEVICE_DISCRIPTOR) + sizeof(u4Byte);
 
-	if(*pBufLen < BytesNeeded) 
+	if(*pBufLen < BytesNeeded)
 	{
-		RT_TRACE(COMP_P2P, DBG_LOUD, 
+		RT_TRACE(COMP_P2P, DBG_LOUD,
 			("MgntActQuery_P2PScanList(): bytes needed: %u, given: %u\n", BytesNeeded, *pBufLen));
 		// Prefast warning C6328: Size mismatch ignore
 #pragma warning (disable: 6328)
-		RT_TRACE(COMP_P2P, DBG_LOUD, 
-			("MgntActQuery_P2PScanList(): sizeof ClientInfoDesc: %u, ScanListSize: %u\n", 
+		RT_TRACE(COMP_P2P, DBG_LOUD,
+			("MgntActQuery_P2PScanList(): sizeof ClientInfoDesc: %u, ScanListSize: %u\n",
 			sizeof(P2P_CLIENT_INFO_DISCRIPTOR), pP2PInfo->ScanList4QuerySize));
 		*pBufLen = BytesNeeded;
 		return FALSE;
 	}
 
 	*((pu4Byte)pBuf) = pP2PInfo->ScanList4QuerySize;
-	PlatformMoveMemory(pBuf + sizeof(u4Byte), 
-		pP2PInfo->ScanList4Query, 
+	PlatformMoveMemory(pBuf + sizeof(u4Byte),
+		pP2PInfo->ScanList4Query,
 		pP2PInfo->ScanList4QuerySize * sizeof(P2P_DEVICE_DISCRIPTOR));
 	*pBufLen = BytesNeeded;
 
-	RT_TRACE(COMP_P2P, DBG_LOUD, 
-		("MgntActQuery_P2PScanList(): %u items indicated\n", 
+	RT_TRACE(COMP_P2P, DBG_LOUD,
+		("MgntActQuery_P2PScanList(): %u items indicated\n",
 		pP2PInfo->ScanList4QuerySize));
-	
+
 	return TRUE;
 }
 
@@ -1472,8 +1472,8 @@ MgntActQuery_P2PSelfDeviceDescriptor(
 // Return:
 //	Return RT_STATUS_SUCCESS if the parsing succeeds.
 // Remark:
-//	Enumerates each channel in channel entery list in P2PInfo of the adapter. Duplicated channels 
-//	are filtered out. 
+//	Enumerates each channel in channel entery list in P2PInfo of the adapter. Duplicated channels
+//	are filtered out.
 //
 RT_STATUS
 MgntActQuery_P2PChannelList(
@@ -1489,13 +1489,13 @@ MgntActQuery_P2PChannelList(
 	if(ChannelListBufLen < 1) return RT_STATUS_RESOURCE;
 
 	*pChennelListLen = 0;
-	
+
 	for(i = 0; i < pP2PInfo->ChannelEntryList.regClasses; i++) // foreach regulatory class
 	{
 		for(j = 0; j < pP2PInfo->ChannelEntryList.regClass[i].channels; j++) // foreach channels we support in the regulatory class
 		{
 			u1Byte curChannel = pP2PInfo->ChannelEntryList.regClass[i].channel[j];
-			
+
 			if(*pChennelListLen > ChannelListBufLen)
 			{
 				return RT_STATUS_RESOURCE;
@@ -1508,12 +1508,12 @@ MgntActQuery_P2PChannelList(
 			// Add the channel
 			pChannelList[(*pChennelListLen)++] = curChannel;
 
-			RT_TRACE(COMP_P2P, DBG_LOUD, 
+			RT_TRACE(COMP_P2P, DBG_LOUD,
 				("MgntActQuery_P2PChannelList: add channel: %u, %4s: %4u, %4s: %4u\n", k,
 				"reg", pP2PInfo->ChannelEntryList.regClass[i].regClass, "ch", curChannel));
-		} 
+		}
 	}
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -1527,7 +1527,7 @@ MgntActQuery_P2PListenChannel(
 	*pListenChannel = pP2PInfo->ListenChannel;
 	return;
 }
-#endif	// #if (P2P_SUPPORT == 1)	
+#endif	// #if (P2P_SUPPORT == 1)
 
 #if (WPS_SUPPORT == 1)
 u4Byte
@@ -1542,7 +1542,7 @@ MgntActQuery_WPS_Information(
 	u1Byte				BytesNeeded = 3;
 	u1Byte				queryInfo = pSimpleConfig->InfoCtrl;
 	u4Byte				BytesCopied = 0;
-	
+
 	if(pSimpleConfig->WpsIeVersion < SUPPORT_WPS_INFO_VERSION)
 	{
 		RT_TRACE(COMP_WPS, DBG_LOUD, ("MgntActQuery_WPS_Information(): Not support this version!\n"));
@@ -1569,7 +1569,7 @@ MgntActQuery_WPS_Information(
 			RT_TRACE(COMP_WPS, DBG_LOUD, ("MgntActQuery_WPS_Information(): unspecified query information!\n"));
 			break;
 	}
-	
+
 	End:
 		return BytesCopied;
 }

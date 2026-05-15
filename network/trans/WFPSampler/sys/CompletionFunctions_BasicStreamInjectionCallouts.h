@@ -6,7 +6,7 @@
 //      CompletionFunctions_BasicStreamInjectionCallouts.h
 //
 //   Abstract:
-//      This module contains WFP Completion functions for injecting packets back into the stream 
+//      This module contains WFP Completion functions for injecting packets back into the stream
 //         using the clone / block / inject method.
 //
 //   Author:

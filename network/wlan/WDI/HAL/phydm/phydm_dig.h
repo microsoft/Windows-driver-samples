@@ -1,7 +1,7 @@
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
- *                                        
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
@@ -17,7 +17,7 @@
  *
  *
  ******************************************************************************/
- 
+
 #ifndef	__PHYDMDIG_H__
 #define    __PHYDMDIG_H__
 
@@ -34,7 +34,7 @@ typedef struct _Dynamic_Initial_Gain_Threshold_
 
 	u1Byte		Dig_Enable_Flag;
 	u1Byte		Dig_Ext_Port_Stage;
-	
+
 	int		   	RssiLowThresh;
 	int		    	RssiHighThresh;
 
@@ -120,7 +120,7 @@ typedef enum tag_Dynamic_Init_Gain_Operation_Type_Definition
 	DIG_TYPE_RX_GAIN_MIN	= 3,
 	DIG_TYPE_RX_GAIN_MAX	= 4,
 	DIG_TYPE_ENABLE 		= 5,
-	DIG_TYPE_DISABLE 		= 6,	
+	DIG_TYPE_DISABLE 		= 6,
 	DIG_OP_TYPE_MAX
 }DM_DIG_OP_E;
 
@@ -143,7 +143,7 @@ typedef enum tag_DIG_EXT_PORT_ALGO_Definition
 
 typedef enum tag_DIG_Connect_Definition
 {
-	DIG_STA_DISCONNECT = 0,	
+	DIG_STA_DISCONNECT = 0,
 	DIG_STA_CONNECT = 1,
 	DIG_STA_BEFORE_CONNECT = 2,
 	DIG_MultiSTA_DISCONNECT = 3,
@@ -247,7 +247,7 @@ ODM_ChangeDynamicInitGainThresh(
 
 VOID
 ODM_Write_DIG(
-	IN		PVOID					pDM_VOID, 	
+	IN		PVOID					pDM_VOID,
 	IN		u1Byte					CurrentIGI
 	);
 
@@ -264,7 +264,7 @@ odm_DIGInit(
 	IN		PVOID					pDM_VOID
 	);
 
-VOID	
+VOID
 odm_DIG(
 	IN		PVOID					pDM_VOID
 	);
@@ -274,7 +274,7 @@ odm_DIGbyRSSI_LPS(
 	IN		PVOID					pDM_VOID
 	);
 
-VOID 
+VOID
 odm_FalseAlarmCounterStatistics(
 	IN		PVOID					pDM_VOID
 	);
@@ -287,14 +287,14 @@ odm_PauseCCKPacketDetection(
 	IN		u1Byte					CCKPDThreshold
 	);
 
-VOID 
+VOID
 odm_CCKPacketDetectionThresh(
 	IN		PVOID					pDM_VOID
 	);
 
-VOID 
+VOID
 ODM_Write_CCK_CCA_Thres(
-	IN		PVOID					pDM_VOID, 
+	IN		PVOID					pDM_VOID,
 	IN		u1Byte					CurCCK_CCAThres
 	);
 

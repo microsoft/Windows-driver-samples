@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Object><Action>
-//  
+//
 //      i.e.
 //
 //       KrnlHlprWorkItemQueue
@@ -54,7 +54,7 @@
 
 /**
  @kernel_helper_function="KrnlHlprRedirectDataPurge"
- 
+
    Purpose:  Cleanup a REDIRECT_DATA object.                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -69,13 +69,13 @@ _IRQL_requires_same_
 inline VOID KrnlHlprRedirectDataPurge(_Inout_ REDIRECT_DATA* pRedirectData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprRedirectDataPurge()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pRedirectData);
 
    if(pRedirectData->pWritableLayerData)
@@ -107,19 +107,19 @@ inline VOID KrnlHlprRedirectDataPurge(_Inout_ REDIRECT_DATA* pRedirectData)
                  sizeof(REDIRECT_DATA));
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprRedirectDataPurge()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprRedirectDataDestroy"
- 
+
    Purpose:  Cleanup and free a REDIRECT_DATA object.                                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -135,13 +135,13 @@ _Success_(*ppRedirectData == 0)
 VOID KrnlHlprRedirectDataDestroy(_Inout_ REDIRECT_DATA** ppRedirectData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprRedirectDataDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppRedirectData);
 
    if(*ppRedirectData)
@@ -153,20 +153,20 @@ VOID KrnlHlprRedirectDataDestroy(_Inout_ REDIRECT_DATA** ppRedirectData)
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprRedirectDataDestroy()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprRedirectDataPopulate"
- 
-   Purpose:  Populates a REDIRECT_DATA object with the classifyHandle and the writable layer 
+
+   Purpose:  Populates a REDIRECT_DATA object with the classifyHandle and the writable layer
              data pointer.                                                                      <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -186,13 +186,13 @@ NTSTATUS KrnlHlprRedirectDataPopulate(_Inout_ REDIRECT_DATA* pRedirectData,
                                       _In_opt_ HANDLE redirectHandle)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprRedirectDataPopulate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pRedirectData);
    NT_ASSERT(pClassifyContext);
    NT_ASSERT(pFilter);
@@ -252,21 +252,21 @@ NTSTATUS KrnlHlprRedirectDataPopulate(_Inout_ REDIRECT_DATA* pRedirectData,
       KrnlHlprRedirectDataPurge(pRedirectData);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprRedirectDataPopulate() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprRedirectDataCreate"
- 
-   Purpose:  Allocates and populates a REDIRECT_DATA object with the classifyHandle and the 
+
+   Purpose:  Allocates and populates a REDIRECT_DATA object with the classifyHandle and the
              writable layer data pointer.                                                       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -288,13 +288,13 @@ NTSTATUS KrnlHlprRedirectDataCreate(_Outptr_ REDIRECT_DATA** ppRedirectData,
                                     _In_opt_ HANDLE redirectHandle)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprRedirectDataCreate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppRedirectData);
    NT_ASSERT(pClassifyContext);
    NT_ASSERT(pFilter);
@@ -317,7 +317,7 @@ NTSTATUS KrnlHlprRedirectDataCreate(_Outptr_ REDIRECT_DATA** ppRedirectData,
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// *ppRedirectData initialized with call to HLPR_NEW & KrnlHlprRedirectDataPopulate 
+#pragma warning(disable: 6001) /// *ppRedirectData initialized with call to HLPR_NEW & KrnlHlprRedirectDataPopulate
 
    if(status != STATUS_SUCCESS &&
       *ppRedirectData)
@@ -326,14 +326,14 @@ NTSTATUS KrnlHlprRedirectDataCreate(_Outptr_ REDIRECT_DATA** ppRedirectData,
 #pragma warning(pop)
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprRedirectDataCreate() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 

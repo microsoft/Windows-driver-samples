@@ -113,19 +113,19 @@ CCX_VerifyRxMFP_MHDRIE(
 //------------------------------------------------------------------------------
 // Layer 2 roaming routines.
 //------------------------------------------------------------------------------
-VOID 
+VOID
 CCX_ClearAdjacentApReport(
 	IN PADAPTER		pAdapter
 	);
 
-VOID 
+VOID
 CCX_UpdateAdjacentApReport(
 	IN PADAPTER		pAdapter
 	);
 
 VOID
 CCX_SendAdjacentApReport(
-	IN PADAPTER		pAdapter 
+	IN PADAPTER		pAdapter
 	);
 
 unsigned int
@@ -169,10 +169,10 @@ CCX_TryToRoam(
 
 VOID
 CCX_SendNeighborPoll(
-	IN PADAPTER		pAdapter 
+	IN PADAPTER		pAdapter
 	);
 //------------------------------------------------------------------------------
-// Link Test. 
+// Link Test.
 //------------------------------------------------------------------------------
 u4Byte
 CCX_OnLinkTestRequest(
@@ -233,7 +233,7 @@ VOID
 CCX_AddLinkTestReply(
 	IN	PADAPTER				Adapter,
 	IN	u2Byte					SeqNo,
-	IN	u2Byte					FrameNumber	
+	IN	u2Byte					FrameNumber
 	);
 
 PRT_LT_REP_RETRY
@@ -351,7 +351,7 @@ CCX_FlushAllTs(
 //------------------------------------------------------------------------------
 
 //
-//Description: 
+//Description:
 //			Follow an SSIDInfo to Construct BSS
 //Input	     :
 //			pSSIDInfo  : an SSID entry of SSIDL
@@ -374,8 +374,8 @@ CCX_GetSSIDLToBssList(
 
 
 //
-// Description: 
-//		Constr New Beacon for Indic to WZC to Pass check 
+// Description:
+//		Constr New Beacon for Indic to WZC to Pass check
 //
 // Input	     :
 //			pSSIDInfo  : an SSID entry of SSIDL ( Connect SSID name  )
@@ -447,7 +447,7 @@ CCX_ConstructQosDELTSPacket(
 	OUT POCTET_STRING	osDelTs
 	);
 
-VOID 
+VOID
 CCX_MgntLinkKeepAlive(
 	IN	PADAPTER	pAdapter
 	);
@@ -493,7 +493,7 @@ BOOLEAN
 CCX_QosReturnAllPendingTxMsdu(
 	IN	PADAPTER			Adapter
 	);
-	
+
 BOOLEAN
 CCX_ParseRfd(
 	IN	PADAPTER			Adapter,
@@ -701,7 +701,7 @@ CCX_AppendAssocRspCCKMIE(
 #define CCX_SetCCKMTimeStamp(Adapter, TimeStamp)
 #define CCX_MlmeAssociateRequest(Adapter)								(FALSE)
 #define CCX_CellPowerLimit(Adapter, channel, rate, pTxPower)
-#define CCX_UpdateUsedTime(Adapter)		
+#define CCX_UpdateUsedTime(Adapter)
 #define	CCX_SSIDLUpdateJoinBss(_pAdapter, _pRfd, pBssDesc)				(RT_STATUS_NOT_SUPPORT)
 #define	CCX_AppendAssocReqCCKMIE(_pAdapter, _pBuffer, _pOutputLen)		(RT_STATUS_NOT_SUPPORT)
 #define	CCX_AppendAssocRspCCKMIE(_pAdapter, _pBuffer, _pOutputLen)		(RT_STATUS_NOT_SUPPORT)

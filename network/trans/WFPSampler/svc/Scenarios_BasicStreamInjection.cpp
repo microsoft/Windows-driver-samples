@@ -12,7 +12,7 @@
 //
 //      <Scope><Object><Action><Modifier>
 //      <Scope><Object><Action>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -22,7 +22,7 @@
 //          }
 //       <Object>
 //          {
-//            ScenarioBasicStreamInjection - Function pertains to all of the Basic Stream Injection 
+//            ScenarioBasicStreamInjection - Function pertains to all of the Basic Stream Injection
 //                                              Scenarios
 //            RPC                          - Function is and RPC entry point.
 //          }
@@ -30,8 +30,8 @@
 //          {
 //            Add                          - Function adds objects
 //            Remove                       - Function removes objects
-//            Invoke                       - Function implements the scenario based on parameters 
-//                                              passed from the commandline interface 
+//            Invoke                       - Function implements the scenario based on parameters
+//                                              passed from the commandline interface
 //                                              (WFPSampler.exe).
 //          }
 //       <Modifier>
@@ -58,7 +58,7 @@
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
 //      December  13,   2013  -     1.1   -  Prune filters for enumeration and limit scenario to
-//                                              only the supported layers 
+//                                              only the supported layers
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,10 +66,10 @@
 
 /**
  @private_function="PrvScenarioBasicStreamInjectionDeleteFwpmObjects"
- 
+
    Purpose:  Function that disables the SCENARIO_BASIC_STREAM_INJECTION scenarios.              <br>
                                                                                                 <br>
-   Notes:    Scenario removes the filters using specified filtering conditions at the specified 
+   Notes:    Scenario removes the filters using specified filtering conditions at the specified
              layer.  Associated callouts and provider contexts are removed as well.             <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -164,12 +164,12 @@ UINT32 PrvScenarioBasicStreamInjectionDeleteFwpmObjects(_In_ const FWPM_FILTER* 
 
 /**
  @private_function="PrvScenarioBasicPacketInjectionAddFwpmObjects"
- 
+
    Purpose:  Function that enables the SCENARIO_BASIC_STREAM_INJECTION scenarios.               <br>
                                                                                                 <br>
    Notes:    Scenario adds a filter using specified filtering conditions to the specified layer.
-             This filter is associated with WFPSampler's default sublayer and provider.  The 
-             appropriate callout and provider context is then added and associated with the 
+             This filter is associated with WFPSampler's default sublayer and provider.  The
+             appropriate callout and provider context is then added and associated with the
              filter.                                                                            <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -272,8 +272,8 @@ UINT32 PrvScenarioBasicStreamInjectionAddFwpmObjects(_In_ const FWPM_FILTER* pFi
 
 /**
  @scenario_function="ScenarioBasicStreamInjectionRemove"
- 
-   Purpose:  Function that removes corresponding objects for a previously added 
+
+   Purpose:  Function that removes corresponding objects for a previously added
              SCENARIO_BASIC_STREAM_INJECTION.                                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -290,15 +290,15 @@ UINT32 ScenarioBasicStreamInjectionRemove(_In_ const FWPM_FILTER* pFilter)
 
 /**
  @scenario_function="ScenarioBasicStreamInjectionAdd"
- 
+
    Purpose:  Scenario which will blindly reinject the classified stream data.                   <br>
                                                                                                 <br>
-   Notes:    Adds a filter which references one of the 
+   Notes:    Adds a filter which references one of the
              WFPSAMPLER_CALLOUT_BASIC_STREAM_INJECTION callouts for the provided layer.         <br>
                                                                                                 <br>
              No data modification is made to the data                                           <br>
                                                                                                 <br>
-             Ideal usage is to implement in the presence of a 3rd party firewall to see how they 
+             Ideal usage is to implement in the presence of a 3rd party firewall to see how they
              coexist with another provider performing stream injection.                         <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -316,8 +316,8 @@ UINT32 ScenarioBasicStreamInjectionAdd(_In_ const FWPM_FILTER* pFilter,
 
 /**
  @rpc_function="RPCInvokeScenarioBasicStreamInjection"
- 
-   Purpose:  RPC exposed function used to dipatch the scenario routines for 
+
+   Purpose:  RPC exposed function used to dipatch the scenario routines for
              SCENARIO_BASIC_STREAM_INJECTION.                                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

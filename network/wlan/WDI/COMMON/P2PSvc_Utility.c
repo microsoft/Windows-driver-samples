@@ -17,7 +17,7 @@ P2PSvc_AllocMem(
 	)
 {
 	RT_STATUS								rtStatus = RT_STATUS_SUCCESS;
-	
+
 	rtStatus = PlatformAllocateMemory(Adapter, ppPtr, len);
 	if(RT_STATUS_SUCCESS == rtStatus) gP2PSvcMemAllocCount++;
 	else rtStatus = RT_STATUS_RESOURCE;
@@ -37,13 +37,13 @@ P2PSvc_FreeMem(
 
 RT_STATUS
 P2PSvc_GetAdvSvcByAdvId(
-	IN  PP2PSVC_INFO					pP2PSvcInfo, 
+	IN  PP2PSVC_INFO					pP2PSvcInfo,
 	IN  u4Byte							advId,
 	OUT PP2PSVC_REQ_INFO_ENTRY 			*ppAdvSvcEntry
 	)
 {
 	RT_STATUS							rtStatus = RT_STATUS_SUCCESS;
-	
+
 	do
 	{
 		PRT_LIST_ENTRY 					pEntry = NULL;
@@ -52,7 +52,7 @@ P2PSvc_GetAdvSvcByAdvId(
 		{
 			PP2PSVC_REQ_INFO_ENTRY		pInfoEntry = (PP2PSVC_REQ_INFO_ENTRY)pEntry;
 			PRT_OBJECT_HEADER			pObj = NULL;
-				
+
 			pObj = P2PSvc_GetParam(&pInfoEntry->objList, P2PSVC_OBJ_HDR_ID_DATA_ADV_ID, 0);
 			if(sizeof(u4Byte) != pObj->Length) {rtStatus = RT_STATUS_INVALID_LENGTH; break;}
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("compare peer adv-id(%u) with self (%u)\n", advId, *(pu4Byte)pObj->Value));
@@ -84,7 +84,7 @@ P2PSvc_GetP2PAttr(
 	RT_STATUS								status = RT_STATUS_SUCCESS;
 	u1Byte									*pos = NULL;
 	u1Byte									*end = NULL;
-	
+
 	posAttr->Length = 0;
 	posAttr->Octet = NULL;
 
@@ -100,7 +100,7 @@ P2PSvc_GetP2PAttr(
 			RT_PRINT_DATA(COMP_P2P, DBG_WARNING, "rx invalid attribute\n", posP2PAttrs->Octet, posP2PAttrs->Length);
 			break;
 		}
-		
+
 		// Parse the attribute
 		if(attrId == pos[0])
 		{
@@ -133,10 +133,10 @@ P2PSvc_Indicate(
 	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("indicate a buf with length: %u\n", bufLen));
 		RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "indicated data:\n", pvBuf, bufLen);
-		
-		if(RT_STATUS_SUCCESS != (rtStatus = PlatformIndicateCustomStatus(pP2PSvcInfo->pAdapter, 
-												RT_CUSTOM_EVENT_P2P_SVC, 
-												RT_CUSTOM_INDI_TARGET_IHV, 
+
+		if(RT_STATUS_SUCCESS != (rtStatus = PlatformIndicateCustomStatus(pP2PSvcInfo->pAdapter,
+												RT_CUSTOM_EVENT_P2P_SVC,
+												RT_CUSTOM_INDI_TARGET_IHV,
 												pvBuf, bufLen)
 										)
 			)
@@ -172,23 +172,23 @@ P2PSvc_IndicateFrameSent(
 				+ (RT_OBJECT_HEADER_SIZE + 6)
 				+ (RT_OBJECT_HEADER_SIZE + attrLen)
 				;
-		
+
 
 		if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_AllocMem(pP2PSvcInfo->pAdapter, &pBuf, reqBufSize)))
 		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] Failed to allocate memory for pBuff\n"));
 			break;
 		}
-		
+
 		pObjList = (PP2PSVC_OBJ_LIST)pBuf;
 		P2PSVC_OBJ_LIST_INIT(pObjList, RT_OB_HDR_TYPE_DATA, id, P2PSVC_MIN_SUPPORT_VER);
 
 		P2PSvc_MakeDevAddrObj(pObjList, peerMac);
 		P2PSvc_MakeP2PAttrsObj(pObjList, attrLen, pAttrs);
-		
-		if(RT_STATUS_SUCCESS != (rtStatus = PlatformIndicateCustomStatus(pP2PSvcInfo->pAdapter, 
-												RT_CUSTOM_EVENT_P2P_SVC, 
-												RT_CUSTOM_INDI_TARGET_IHV, 
+
+		if(RT_STATUS_SUCCESS != (rtStatus = PlatformIndicateCustomStatus(pP2PSvcInfo->pAdapter,
+												RT_CUSTOM_EVENT_P2P_SVC,
+												RT_CUSTOM_INDI_TARGET_IHV,
 												pObjList, reqBufSize)
 										)
 			)
@@ -220,7 +220,7 @@ P2PSvc_Notify(
 	u4Byte									reqBufSize = 0;
 
 	do
-	{	
+	{
 		PP2PSVC_OBJ_LIST					pObjList = NULL;
 
 		reqBufSize = 0;
@@ -231,13 +231,13 @@ P2PSvc_Notify(
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] Failed to allocate memory for pBuff\n"));
 			break;
 		}
-		
+
 		pObjList = (PP2PSVC_OBJ_LIST)pBuf;
 		P2PSVC_OBJ_LIST_INIT(pObjList, RT_OB_HDR_TYPE_DATA, id, P2PSVC_MIN_SUPPORT_VER);
-		
-		if(RT_STATUS_SUCCESS != (rtStatus = PlatformIndicateCustomStatus(pP2PSvcInfo->pAdapter, 
-												RT_CUSTOM_EVENT_P2P_SVC, 
-												RT_CUSTOM_INDI_TARGET_IHV, 
+
+		if(RT_STATUS_SUCCESS != (rtStatus = PlatformIndicateCustomStatus(pP2PSvcInfo->pAdapter,
+												RT_CUSTOM_EVENT_P2P_SVC,
+												RT_CUSTOM_INDI_TARGET_IHV,
 												pObjList, reqBufSize)
 										)
 			)
@@ -284,7 +284,7 @@ P2PSvc_MatchSubstring(
 	u4Byte 									targetIdx = 0;
 	u4Byte 									patternIdx = 0;
 	BOOLEAN 									bMatch = FALSE;
-	
+
 	if(targetBufLen < patternBufLen) return FALSE;
 
 	while(targetIdx < targetBufLen && patternIdx < patternBufLen)
@@ -300,7 +300,7 @@ P2PSvc_MatchSubstring(
 			patternIdx = 0;
 		}
 	}
-	
+
 	if(patternIdx == patternBufLen)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("match, idx: %u\n", patternIdx));
@@ -339,11 +339,11 @@ P2PSvc_GetDevNameFromDevInfoAttr(
 			rtStatus = RT_STATUS_INVALID_DATA;
 			break;
 		}
-		
-		RT_PRINT_DATA(COMP_P2P, DBG_TRACE, 
-			"P2PSvc_GetDevNameFromDevInfoAttr(): osDevInfo:\n", 
+
+		RT_PRINT_DATA(COMP_P2P, DBG_TRACE,
+			"P2PSvc_GetDevNameFromDevInfoAttr(): osDevInfo:\n",
 			osDevInfo.Octet, osDevInfo.Length);
-		
+
 		offsetNSecDevTypes = 6 + 2 + 8;
 
 		if (osDevInfo.Octet != NULL)
@@ -351,8 +351,8 @@ P2PSvc_GetDevNameFromDevInfoAttr(
 			nSecDevTypes = *(pu1Byte)(osDevInfo.Octet + offsetNSecDevTypes);
 		}
 		offsetDevName = offsetNSecDevTypes + 1 + (8 * nSecDevTypes) + 2 + 2;
-		
-		if(osDevInfo.Length < offsetDevName + 1) 
+
+		if(osDevInfo.Length < offsetDevName + 1)
 		{
 			rtStatus = RT_STATUS_INVALID_DATA;
 			break;
@@ -363,16 +363,16 @@ P2PSvc_GetDevNameFromDevInfoAttr(
 			rtStatus = RT_STATUS_INVALID_DATA;
 			break;
 		}
-		
+
 		devNameLen = osDevInfo.Length - (6 + 2 + 8 + 1 + 8 * nSecDevTypes + 2 + 2);
-		
+
 		posDevName->Octet = osDevInfo.Octet + offsetDevName;
 		posDevName->Length = devNameLen;
-		
+
 	}while(FALSE);
 
 	return rtStatus;
-	
+
 }
 
 #endif // #if (P2PSVC_SUPPORT == 1)

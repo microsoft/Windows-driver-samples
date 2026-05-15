@@ -4,9 +4,9 @@ Copyright (c) 2003 Realtek Semiconductor Corporation
 
 Module Name:
 	N6Sdio_main.c
-	
+
 Abstract:
-	This is an NDIS miniport driver can interface with a SDIO device. 
+	This is an NDIS miniport driver can interface with a SDIO device.
 	Added by Roger, 2010.12.15.
 
 --*/
@@ -67,18 +67,18 @@ static MP_REG_ENTRY NICRegTable[] = {
 	{NDIS_STRING_CONST("LedCtrl"),				0,NdisParameterInteger,	MP_OFFSET(bRegLedCtrl),			MP_SIZE(bRegLedCtrl),					0,					0,		8},
 	//----------------------------------------------------------------------------
 	// Number of Bulk in issued at initialization, 2006.02.09, by rcnjko.
-	{NDIS_STRING_CONST("MaxBulkInCnt"),	0,NdisParameterInteger,	MP_OFFSET(nMaxBulkInCnt),		MP_SIZE(nMaxBulkInCnt),			32,					1,		63}, // 1 ~ number of RFD allocated. 	
+	{NDIS_STRING_CONST("MaxBulkInCnt"),	0,NdisParameterInteger,	MP_OFFSET(nMaxBulkInCnt),		MP_SIZE(nMaxBulkInCnt),			32,					1,		63}, // 1 ~ number of RFD allocated.
 	//----------------------------------------------------------------------------
 
-	{NDIS_STRING_CONST("EnableUsbSS"),	0,NdisParameterInteger,	MP_OFFSET(RegUsbSS),		MP_SIZE(RegUsbSS),			0,					0,		1}, // 0: disable, 1: enable. 
+	{NDIS_STRING_CONST("EnableUsbSS"),	0,NdisParameterInteger,	MP_OFFSET(RegUsbSS),		MP_SIZE(RegUsbSS),			0,					0,		1}, // 0: disable, 1: enable.
 	//
 	// 2011/09/07 MH Add for different channel plan tx power offset.
-	// Middle offset is for ETSI europe low is for MKK/Korea. 
+	// Middle offset is for ETSI europe low is for MKK/Korea.
 	//
 	{NDIS_STRING_CONST("GainOffsetFCCLow"),	0,NdisParameterInteger,	MP_OFFSET(RegGainOffsetFCCLow),		MP_SIZE(RegGainOffsetFCCLow),	0x00000000,      0x0,       0xFFFFFFFF}, // 0x0~0xF.
 	{NDIS_STRING_CONST("GainOffsetFCC"),		0,NdisParameterInteger,	MP_OFFSET(RegGainOffsetFCC),		MP_SIZE(RegGainOffsetFCC),		0x00000000,      0x0,       0xFFFFFFFF}, // 0x0~0xF.
 	{NDIS_STRING_CONST("GainOffsetFCCHigh"),	0,NdisParameterInteger,	MP_OFFSET(RegGainOffsetFCCHigh),		MP_SIZE(RegGainOffsetFCCHigh),	0x00000000,      0x0,       0xFFFFFFFF}, // 0x0~0xF.
-	
+
 	{NDIS_STRING_CONST("GainOffsetMKKLow"),	0,NdisParameterInteger,	MP_OFFSET(RegGainOffsetMKKLow),		MP_SIZE(RegGainOffsetMKKLow),	0x00000000,      0x0,       0xFFFFFFFF}, // 0x0~0xF.
 	{NDIS_STRING_CONST("GainOffsetMKK"),		0,NdisParameterInteger,	MP_OFFSET(RegGainOffsetMKK),		MP_SIZE(RegGainOffsetMKK),		0x00000000,      0x0,       0xFFFFFFFF}, // 0x0~0xF.
 	{NDIS_STRING_CONST("GainOffsetMKKHigh"),	0,NdisParameterInteger,	MP_OFFSET(RegGainOffsetMKKHigh),		MP_SIZE(RegGainOffsetMKKHigh),	0x00000000,      0x0,       0xFFFFFFFF}, // 0x0~0xF.
@@ -88,11 +88,11 @@ static MP_REG_ENTRY NICRegTable[] = {
 	{NDIS_STRING_CONST("GainOffsetETSIHigh"),	0,NdisParameterInteger,	MP_OFFSET(RegGainOffsetETSIHigh),		MP_SIZE(RegGainOffsetETSIHigh),	0x00000000,      0x0,       0xFFFFFFFF}, // 0x0~0xF.
 
 	//
-	// 2011/11/25 MH Add for Sercom requirement temporarily.	
+	// 2011/11/25 MH Add for Sercom requirement temporarily.
 	//
 	{NDIS_STRING_CONST("InPipeCnt"),	0,NdisParameterInteger,	MP_OFFSET(RegInPipeCnt),		MP_SIZE(RegInPipeCnt),	1,      0x0,       0x5}, // 0x0~0x5.
 	//----------------------------------------------------------------------------
-	
+
 	//
 	// 2015/03/26 TzuHang Add to control SDIO bus speed SDR25 support or not (SDR25 = 50MHz), 0: not supported SDR25 (25MHz), 1: supported SDR25 (50MHz)
 	{NDIS_STRING_CONST("SdioBusSDR25"),	0,NdisParameterInteger,	MP_OFFSET(bRegSdioSpeedSDR25),		MP_SIZE(bRegSdioSpeedSDR25),	1,      0x0,       0x1},
@@ -110,7 +110,7 @@ NDIS_STATUS
 DriverEntry(
 	IN PDRIVER_OBJECT  pDriverObject,
 	IN PUNICODE_STRING RegistryPath
-	) 
+	)
 {
 	NDIS_STATUS								Status = NDIS_STATUS_SUCCESS;
 	NDIS_MINIPORT_DRIVER_CHARACTERISTICS	MChars;
@@ -127,7 +127,7 @@ DriverEntry(
 #endif
 
 #if SOFTWARE_TRACE_LOGGING
-	// In DriverEntry or DLLMain, register the TraceLogging provider 
+	// In DriverEntry or DLLMain, register the TraceLogging provider
 	// No need to check for errors. If this call fails all subsequent TraceLogging calls automatically become no-ops.
 	TraceLoggingRegister(g_hProvider);
 
@@ -152,7 +152,7 @@ DriverEntry(
 	RtlCopyUnicodeString(&dest , RegistryPath);
 	DBG_RecordSvnVersion();
 
-	do 
+	do
 	{
 #if USE_WDF_SDIO
 		//
@@ -168,7 +168,7 @@ DriverEntry(
 					pDriverObject,
 					RegistryPath,
 					WDF_NO_OBJECT_ATTRIBUTES,
-					&config,                
+					&config,
 					&hDriver); //vm control
 		if(!NT_SUCCESS(ntStatus))
 		{
@@ -176,8 +176,8 @@ DriverEntry(
 			Status = NDIS_STATUS_FAILURE;
 			break;
 		}
-#endif 
-		
+#endif
+
 		NdisZeroMemory(&MChars, sizeof(NDIS_MINIPORT_DRIVER_CHARACTERISTICS));
 		NdisVersion = NdisGetVersion();
 
@@ -187,7 +187,7 @@ DriverEntry(
 			// WDI driver need at least NDIS 6.50
 			//
 			RT_TRACE_F(COMP_INIT, DBG_LOUD, ("Ndis 6.5 configuration\n"));
-			
+
 			//
 			// Set the type and version of this structure
 			//
@@ -197,10 +197,10 @@ DriverEntry(
 
 			//
 			// Version
-			//	
+			//
 			// The version of the NDIS library. Current version is 6.50.
-			MChars.MajorNdisVersion = NDIS_MAJOR_VERSION;	
-			MChars.MinorNdisVersion = NDIS_MINOR_VERSION_5;		
+			MChars.MajorNdisVersion = NDIS_MAJOR_VERSION;
+			MChars.MinorNdisVersion = NDIS_MINOR_VERSION_5;
 
 		}
 		else
@@ -214,7 +214,7 @@ DriverEntry(
 		}
 
 		// Reserved for the version number of the driver.
-		MChars.MajorDriverVersion = DRIVER_MAJOR_VERSION;	
+		MChars.MajorDriverVersion = DRIVER_MAJOR_VERSION;
 		MChars.MinorDriverVersion = DRIVER_MINOR_VERSION;
 
 		Status = WDI_Initialize(pDriverObject, RegistryPath, &MChars);
@@ -225,7 +225,7 @@ DriverEntry(
 			RT_TRACE(COMP_INIT, DBG_SERIOUS, ("Failed to register miniport with NDIS. Status = 0x%x\n", Status));
 			break;
 		}
-		RTInitializeListHead(&GlobalAdapterList);	
+		RTInitializeListHead(&GlobalAdapterList);
 
 	}while (FALSE);
 
@@ -242,7 +242,7 @@ DriverEntry(
 
 		TraceLoggingUnregister(g_hProvider);
 #endif
-		
+
 #if WPP_SOFTWARE_TRACE
 		WPP_CLEANUP(pDriverObject);
 #endif
@@ -260,7 +260,7 @@ DriverEntry(
 
 	return Status;
 }
-	
+
 
 RT_STATUS
 N6sdioAllocateAdapterSketchAndStoreHandle(
@@ -274,11 +274,11 @@ N6sdioAllocateAdapterSketchAndStoreHandle(
 	PRT_NDIS6_COMMON	pNdisCommon = NULL;
 
 
-	
+
 	// Allocate the adapter structure.
 	status = PlatformAllocateMemory(
-			NULL, 
-			(PVOID*)&Adapter, 
+			NULL,
+			(PVOID*)&Adapter,
 			sizeof(ADAPTER)
 		);
 	if (status != RT_STATUS_SUCCESS)
@@ -293,8 +293,8 @@ N6sdioAllocateAdapterSketchAndStoreHandle(
 
 	// Allocate RT_NDIS6_COMMON.
 	status = PlatformAllocateMemory(
-			NULL, 
-			(PVOID)&(pNdisCommon), 
+			NULL,
+			(PVOID)&(pNdisCommon),
 			sizeof(RT_NDIS6_COMMON)
 		);
 	if (status != RT_STATUS_SUCCESS)
@@ -492,7 +492,7 @@ N6SdioCleanUpInitializedResourcesEx(
     if(isAllocMem)
         NicIFFreeMemory(Adapter);
 
-    if(isN62CInit)    
+    if(isN62CInit)
         NDIS_6_2_FREE_EXTENSION_COMPONENT(Adapter);
 
     if(isSdioTxRes)
@@ -518,7 +518,7 @@ N6SdioCleanUpInitializedResourcesEx(
     {
         N6CFreeSpinLocks(Adapter);
         N6DeInitTimerSync(Adapter);
-        NdisOIDHistoryDeInit(Adapter);	
+        NdisOIDHistoryDeInit(Adapter);
     }
 
     if(isAllocAdapter)
@@ -539,7 +539,7 @@ N6SdioCleanUpInitializedResources(
 	)
 {
 	PRT_SDIO_DEVICE	device = GET_RT_SDIO_DEVICE(Adapter);
-	
+
 	switch (ResType)
 	{
 	case InitRM_AllocAdapter:
@@ -549,9 +549,9 @@ N6SdioCleanUpInitializedResources(
 		N6SdioFreeRxNetBufferListPool(Adapter);
 		break;
 	case InitRM_SpinLock:
-		NdisFreeSpinLock( &(device->IrpSpinLock) );	
+		NdisFreeSpinLock( &(device->IrpSpinLock) );
 		N6CFreeSpinLocks(Adapter);
-		NdisOIDHistoryDeInit(Adapter);	
+		NdisOIDHistoryDeInit(Adapter);
 		break;
 	case InitRM_AWBs:
 		FreeSdioAWBs(device, FALSE);
@@ -564,7 +564,7 @@ N6SdioCleanUpInitializedResources(
 		NicIFFreeMemory(Adapter);
 		break;
 	case InitRM_SdioInit:
-		
+
 #if USE_WDF_SDIO
 		WdfSdio_Halt(Adapter);
 #else
@@ -578,8 +578,8 @@ N6SdioCleanUpInitializedResources(
 	case InitRM_AllocNWifi:
 		N6SdioFreeNative80211MIBs(Adapter);
 		break;
-	case InitRM_AllocSdioRes:		
-		N6SdioFreeRes(Adapter);		
+	case InitRM_AllocSdioRes:
+		N6SdioFreeRes(Adapter);
 		break;
 	case InitRM_BTIODevice:
 		N6C_DeregisterIoDevice(Adapter);
@@ -599,8 +599,8 @@ N6sdioSetMiniportAttributes(
 	IN	NDIS_HANDLE		MiniportAdapterHandle
 	)
 {
-	NDIS_MINIPORT_ADAPTER_ATTRIBUTES    MiniportAttributes; 
-	
+	NDIS_MINIPORT_ADAPTER_ATTRIBUTES    MiniportAttributes;
+
 	PlatformZeroMemory(&MiniportAttributes, sizeof(NDIS_MINIPORT_ADAPTER_ATTRIBUTES));
 
 	N6_ASSIGN_OBJECT_HEADER(
@@ -611,8 +611,8 @@ N6sdioSetMiniportAttributes(
 		);
 
 	MiniportAttributes.RegistrationAttributes.MiniportAdapterContext = Adapter;
-	MiniportAttributes.RegistrationAttributes.AttributeFlags = 
-		NDIS_MINIPORT_ATTRIBUTES_SURPRISE_REMOVE_OK | 
+	MiniportAttributes.RegistrationAttributes.AttributeFlags =
+		NDIS_MINIPORT_ATTRIBUTES_SURPRISE_REMOVE_OK |
 		NDIS_MINIPORT_ATTRIBUTES_NDIS_WDM |
 		NDIS_MINIPORT_ATTRIBUTES_NO_PAUSE_ON_SUSPEND;
 
@@ -636,8 +636,8 @@ N6SdioFill80211PhyAttributes(
 	PDOT11_PHY_ATTRIBUTES	pPhyAttributes;
 	ULONG	i, index;
 	UCHAR	rate;
-	
-	for (i=0, pPhyAttributes = pDot11Attributes->SupportedPhyAttributes ; 
+
+	for (i=0, pPhyAttributes = pDot11Attributes->SupportedPhyAttributes ;
 		i<pDot11Attributes->NumSupportedPhys ;
 		i++,pPhyAttributes++)
 	{
@@ -665,8 +665,8 @@ N6SdioFill80211PhyAttributes(
 			break;
 
 		case dot11_phy_type_ofdm:
-			pPhyAttributes->OFDMAttributes.uFrequencyBandsSupported = 
-					DOT11_FREQUENCY_BANDS_LOWER | 
+			pPhyAttributes->OFDMAttributes.uFrequencyBandsSupported =
+					DOT11_FREQUENCY_BANDS_LOWER |
 					DOT11_FREQUENCY_BANDS_MIDDLE;
 			break;
 
@@ -685,13 +685,13 @@ N6SdioFill80211PhyAttributes(
 		}
 
 		// Tx Power Level.
-		pPhyAttributes->uNumberSupportedPowerLevels = 
+		pPhyAttributes->uNumberSupportedPowerLevels =
 			pNdisCommon->dot11SupportedPowerLevels.uNumOfSupportedPowerLevels;
 		PlatformMoveMemory(
 			pPhyAttributes->TxPowerLevels,
 			pNdisCommon->dot11SupportedPowerLevels.uTxPowerLevelValues,
 			sizeof(pPhyAttributes->TxPowerLevels));
-	
+
 		// Data Rate.
 		PlatformMoveMemory(
 			&(pPhyAttributes->SupportedDataRatesValue),
@@ -740,7 +740,7 @@ N6SdioFillHwRxFilterCapabilities(
 	pRxFilterCapabilities->EnabledFilterTypes = NDIS_RECEIVE_FILTER_PACKET_COALESCING_FILTERS_ENABLED;
 
 	pRxFilterCapabilities->SupportedQueueProperties = NDIS_RECEIVE_FILTER_PACKET_COALESCING_SUPPORTED_ON_DEFAULT_QUEUE;
-	
+
 	pRxFilterCapabilities->SupportedFilterTests = NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_EQUAL_SUPPORTED |
 											NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_MASK_EQUAL_SUPPORTED|
 											NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_NOT_EQUAL_SUPPORTED; //0;
@@ -749,33 +749,33 @@ N6SdioFillHwRxFilterCapabilities(
 											NDIS_RECEIVE_FILTER_IPV4_HEADER_SUPPORTED|
 											NDIS_RECEIVE_FILTER_IPV6_HEADER_SUPPORTED|
 											NDIS_RECEIVE_FILTER_UDP_HEADER_SUPPORTED);
-	
+
 	pRxFilterCapabilities->SupportedMacHeaderFields = NDIS_RECEIVE_FILTER_MAC_HEADER_DEST_ADDR_SUPPORTED|
 											NDIS_RECEIVE_FILTER_MAC_HEADER_PROTOCOL_SUPPORTED|
 											NDIS_RECEIVE_FILTER_MAC_HEADER_PACKET_TYPE_SUPPORTED;
-	
+
 	pRxFilterCapabilities->SupportedARPHeaderFields = NDIS_RECEIVE_FILTER_ARP_HEADER_OPERATION_SUPPORTED|
 												NDIS_RECEIVE_FILTER_ARP_HEADER_SPA_SUPPORTED|
 												NDIS_RECEIVE_FILTER_ARP_HEADER_TPA_SUPPORTED ;
-	
+
 	pRxFilterCapabilities->SupportedIPv4HeaderFields = NDIS_RECEIVE_FILTER_IPV4_HEADER_PROTOCOL_SUPPORTED;
-	
+
 	pRxFilterCapabilities->SupportedIPv6HeaderFields = NDIS_RECEIVE_FILTER_IPV6_HEADER_PROTOCOL_SUPPORTED;
-	
+
 	pRxFilterCapabilities->SupportedUdpHeaderFields = NDIS_RECEIVE_FILTER_UDP_HEADER_DEST_PORT_SUPPORTED;
-	
-	pRxFilterCapabilities->MaxFieldTestsPerPacketCoalescingFilter = 5; // should be >= 5 
-	
+
+	pRxFilterCapabilities->MaxFieldTestsPerPacketCoalescingFilter = 5; // should be >= 5
+
 	pRxFilterCapabilities->MaxPacketCoalescingFilters = 10; // should be >= 10
 	//pRxFilterCapabilities->NidsReserved = 0;
 #else
 	pRxFilterCapabilities->EnabledFilterTypes = 0;
 
 	pRxFilterCapabilities->SupportedQueueProperties = 0;
-	
+
 	pRxFilterCapabilities->SupportedFilterTests = NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_EQUAL_SUPPORTED |
 											NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_MASK_EQUAL_SUPPORTED;
-	
+
 	pRxFilterCapabilities->SupportedMacHeaderFields = NDIS_RECEIVE_FILTER_MAC_HEADER_DEST_ADDR_SUPPORTED|
 											NDIS_RECEIVE_FILTER_MAC_HEADER_PROTOCOL_SUPPORTED;
 #endif
@@ -831,7 +831,7 @@ N6SdioSetHardwareAssistAttributes(
 #if NDIS_SUPPORT_NDIS630
 	else if(pNdisCommon->NdisVersion <= NDIS_VERSION_BASE_6_40)
 	{
-	
+
 		N6_ASSIGN_OBJECT_HEADER(
 			HardwareAssistAttributes.Header,
 			NDIS_OBJECT_TYPE_MINIPORT_ADAPTER_HARDWARE_ASSIST_ATTRIBUTES,
@@ -873,7 +873,7 @@ N6SdioSetHardwareAssistAttributes(
 	// Ok, now register the attributes.
 	//
 	ndisStatus = NdisMSetMiniportAttributes(Adapter->pNdisCommon->hNdisAdapter,
-										(PNDIS_MINIPORT_ADAPTER_ATTRIBUTES)&HardwareAssistAttributes);	
+										(PNDIS_MINIPORT_ADAPTER_ATTRIBUTES)&HardwareAssistAttributes);
 
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioSetHardwareAssistAttributes(): ndisStatus: %#X\n", ndisStatus));
 
@@ -888,8 +888,8 @@ N6SdioUpdateDefaultSetting(
 	IN	PADAPTER		pAdapter
 	)
 {
-	HAL_DATA_TYPE	*pHalData	= GET_HAL_DATA(pAdapter);	
-	
+	HAL_DATA_TYPE	*pHalData	= GET_HAL_DATA(pAdapter);
+
 	HalSdioUdtDefSet(pAdapter);
 }
 
@@ -946,41 +946,41 @@ Return Value:
 #endif
 
 	BOOLEAN				bMemoryInitialized = FALSE;
-	
+
 	RT_TRACE(COMP_INIT, DBG_LOUD, (" ==> N6SdioInitialize(1)\n"));
-	
+
 	// Invoke resource checking mechanism.
 	INIT_RES_MON_OBJ(ResMonObj);
-	
+
 	//1 Allocate memory to store usbdevice information.
 
 	// Allocate ADAPTER structure
 	ndisStatus = N6sdioAllocateAdapter(&Adapter, MiniportAdapterHandle);
-	if( ndisStatus != NDIS_STATUS_SUCCESS ) 
+	if( ndisStatus != NDIS_STATUS_SUCCESS )
 		goto error;
 
 	ADD_RES_TO_MON(ResMonObj, InitRM_AllocAdapter); // Add to resource monitor.
 
 	sdiodevice = GET_RT_SDIO_DEVICE(Adapter);
 	sdiodevice->pAdapter = Adapter;
-	
+
 	pMgntInfo = &(Adapter->MgntInfo);
 	pNdisCommon = Adapter->pNdisCommon;
 	pNdisCommon->NdisVersion  = NdisGetVersion();
-	
+
 	if(pNdisCommon->NdisVersion >= NDIS_VERSION_BASE_6_50)
 		pNdisCommon->NdisVersion = NDIS_VERSION_BASE_6_50;
-	
+
 	NdisMGetDeviceProperty(MiniportAdapterHandle,
-						&(sdiodevice->pPhysDevObj), // PhysicalDeviceObject 
-						&(sdiodevice->FunctionalDeviceObject), // FunctionalDeviceObject 
+						&(sdiodevice->pPhysDevObj), // PhysicalDeviceObject
+						&(sdiodevice->FunctionalDeviceObject), // FunctionalDeviceObject
 						&(sdiodevice->pSdioDevObj), // NextDeviceObject
 						NULL,
 						NULL);
 
 	sdiodevice->Sdbusinterface.Size = sizeof(SDBUS_INTERFACE_STANDARD);
 	sdiodevice->Sdbusinterface.Version = SDBUS_INTERFACE_VERSION;
-	sdiodevice->NextDeviceStackSize = (CHAR)sdiodevice->pSdioDevObj->StackSize + 1; 	
+	sdiodevice->NextDeviceStackSize = (CHAR)sdiodevice->pSdioDevObj->StackSize + 1;
 
 	//2 Save the related NDIS handles
 	sdiodevice->hNdisAdapter = MiniportAdapterHandle;
@@ -1011,7 +1011,7 @@ Return Value:
 		ndisStatus = NDIS_STATUS_FAILURE;
 		goto error;
 	}
-#endif	
+#endif
 
 
 	//
@@ -1019,7 +1019,7 @@ Return Value:
 	//
 	PlatformInitializeSemaphore(&sdiodevice->TxSemaphore, 0);
 
-#if RTL8723_SDIO_IO_THREAD_ENABLE 
+#if RTL8723_SDIO_IO_THREAD_ENABLE
 
 	//
 	// Allocate IO semaphore before create corresponding IO Handling thread.
@@ -1033,7 +1033,7 @@ Return Value:
 	//
 	N6InitTimerSync(Adapter);
 
-	
+
 	// Allocate spin lock.
 	N6CInitializeSpinLocks(Adapter);
 
@@ -1049,21 +1049,21 @@ Return Value:
 
 	//----------------------------------------------------------------------------
 	// Initialize variables related to New IO method, 2005.01.06, by rcnjko.
-	// 
+	//
 	NdisAllocateSpinLock( &(sdiodevice->IrpSpinLock) );
-	NdisOIDHistoryInit(Adapter);	
+	NdisOIDHistoryInit(Adapter);
 	ADD_RES_TO_MON(ResMonObj, InitRM_SpinLock); // Add to resource monitor.
 
 #if (RK_PLATFORM_SUPPORT == 1)
 	PlatformInitializeMutex(&sdiodevice->RxHandleIntMutex);
 #endif
 
-	// SyncIo Method 2.  
+	// SyncIo Method 2.
 	KeInitializeEvent( &(sdiodevice->SyncIoEvent), NotificationEvent, TRUE);
-	
+
 	if (WAPI_QuerySetVariable(Adapter, WAPI_QUERY, WAPI_VAR_WAPISUPPORT, 0))
 		pNdisCommon->MaxPktSize=NIC_MAX_PACKET_SIZE;
-	
+
 	sdiodevice->nIrpPendingCnt = 0;
 	RTInitializeListHead( &(sdiodevice->AwbIdleQueue) );
 	RTInitializeListHead( &(sdiodevice->AwbWaitQueue) );
@@ -1071,34 +1071,34 @@ Return Value:
 	PrepareSdioAWBs(sdiodevice);
 
 	ADD_RES_TO_MON(ResMonObj, InitRM_AWBs); // Add to resource monitor.
-	
-	//2Init Event for canceling Asyn_Io pending IRP when unload	
+
+	//2Init Event for canceling Asyn_Io pending IRP when unload
 	NdisInitializeEvent(&sdiodevice->AllAsynIoIrpReturnedEvent);
 
-	//2Init Event for all SDIO cmd52/cmd53 returned when unload	
+	//2Init Event for all SDIO cmd52/cmd53 returned when unload
 	NdisInitializeEvent(&sdiodevice->AllSdioCmdReturnedEvent);
-	
+
 	NdisInitializeEvent(&sdiodevice->FwPsClockOffEvent);
 	NdisInitializeEvent(&sdiodevice->AllSdioRxTransCompleteEvent);
-	
+
 	N6WdmSdio_Enable(Adapter);
-	
+
 	sdiodevice->AsynIoIrpPendingCount++;
-	
+
 	// Read the registry parameters
 	ndisStatus= N6SdioReadRegParameters(sdiodevice);
-	if (ndisStatus != NDIS_STATUS_SUCCESS) 
+	if (ndisStatus != NDIS_STATUS_SUCCESS)
 	{
 		RT_TRACE(COMP_INIT, DBG_SERIOUS, ("N6SdioReadRegParameters(X): Read Registry Parameter Failed!\n"));
 		goto error;
-	} 
+	}
 
 	//
-	// <Roger_Notes> We set default hardware type to unknown type to associate common NIC handler first and 
+	// <Roger_Notes> We set default hardware type to unknown type to associate common NIC handler first and
 	// then re-assign correct HW type association handler when the type is recognized.
 	// 2011.12.30.
 	//
-	ndisStatus = NicIFAssociateNIC(Adapter, HARDWARE_TYPE_MAX);	
+	ndisStatus = NicIFAssociateNIC(Adapter, HARDWARE_TYPE_MAX);
 
 #if USE_WDF_SDIO
 	if( !NT_SUCCESS(WdfSdio_Initialize(Adapter) ))
@@ -1118,46 +1118,46 @@ Return Value:
 		RT_TRACE(COMP_INIT, DBG_SERIOUS, ("MiniportInitialize(X): N6WdmSdio_Initialize() failed!\n") );
 		goto error;
 	}
-	
+
 #endif
 
 	if(Adapter->HardwareType == HARDWARE_TYPE_MAX)
 		HAL_ReadTypeID(Adapter);
-	
+
 	HAL_SetInterfaceIndex(Adapter, 0);
 
 	// We should set the correct hardware type to the following function
-	ndisStatus = NicIFAssociateNIC(Adapter, Adapter->HardwareType);	
-	if (ndisStatus != NDIS_STATUS_SUCCESS) 
+	ndisStatus = NicIFAssociateNIC(Adapter, Adapter->HardwareType);
+	if (ndisStatus != NDIS_STATUS_SUCCESS)
 	{
 		RT_TRACE(COMP_INIT, DBG_SERIOUS, ("NicIFAssociateNIC Failed!\n"));
 		goto error;
-	} 
+	}
 	else
 	{
 		NicIFInitResource(Adapter);
 	}
-	
+
 	ADD_RES_TO_MON(ResMonObj, InitRM_AsocNIC); // Add to resource monitor.
 
 
-	// 
+	//
 	// Update NDIS6 common setting as user specifed to Adapter, MgntInfo, and HalData.
 	//
 	N6UpdateDefaultSetting(Adapter);
 
 	Dot11_UpdateDefaultSetting(Adapter);
-	
+
 	N6SdioUpdateDefaultSetting(Adapter);
 
 	//
 	// Initialize SDIO Data transfer related Tx context buffer.
 	//
-	if( !NT_SUCCESS(N6SdioInitTxQueue(Adapter) ) ) 
-		goto error;	
+	if( !NT_SUCCESS(N6SdioInitTxQueue(Adapter) ) )
+		goto error;
 
 	ADD_RES_TO_MON(ResMonObj, InitRM_SdioTxRes); // Add to resource monitor.
-	
+
 	//
 	// Set SDIO Tx queue mapping
 	//
@@ -1173,7 +1173,7 @@ Return Value:
 	N6WdmSdioTx_Enable(Adapter);
 
 	ADD_RES_TO_MON(ResMonObj, InitRM_SdioInit); // Add to resource monitor.
-		
+
 	// Read adapter information such as MAC address from EEPROM
 	NicIFReadAdapterInfo(Adapter);
 	HT_UpdateDefaultSetting(Adapter);
@@ -1200,16 +1200,16 @@ Return Value:
 	// Support WoW for future use. Added by Roger, 2008.12.30.
 	//
 	Adapter->HalFunc.SetHalDefVarHandler(Adapter, HAL_DEF_WOWLAN, &(sdiodevice->bSupportRemoteWakeUp));
-	
+
 	// Settings for HctTest.
 	if(Adapter->bInHctTest)
 	{
-	
+
 		// For NDIS6 DOT11_STATISTICS test, we must open CRC, ICV error.
 		// Revise this handler for DTM test, 2008.12.16, added by Roger.
 		Adapter->HalFunc.AllowErrorPacketHandler(Adapter, TRUE, FALSE);
 	}
-	
+
 	//
 	// For usb selective suspend configuration. Added by Roger, 2010.04.16.
 	//
@@ -1218,19 +1218,19 @@ Return Value:
 	//
 	// 2011/09/07 MH Add TX power for different channel plan.
 	//
-	RT_TRACE(COMP_INIT, DBG_LOUD, 
-	("power offset MKK = %08x/%08x/%08x ETSI = %08x/%08x/%08x\n", 
+	RT_TRACE(COMP_INIT, DBG_LOUD,
+	("power offset MKK = %08x/%08x/%08x ETSI = %08x/%08x/%08x\n",
 	sdiodevice->RegGainOffsetMKKLow, sdiodevice->RegGainOffsetMKK, sdiodevice->RegGainOffsetMKKHigh,
 	sdiodevice->RegGainOffsetETSILow, sdiodevice->RegGainOffsetETSI, sdiodevice->RegGainOffsetETSIHigh));
 
 	Adapter->HalFunc.SetHalDefVarHandler(Adapter, HAL_DEF_GAIN_OFFSET_FCC_LOW, &(sdiodevice->RegGainOffsetFCCLow));
 	Adapter->HalFunc.SetHalDefVarHandler(Adapter, HAL_DEF_GAIN_OFFSET_FCC, &(sdiodevice->RegGainOffsetFCC));
 	Adapter->HalFunc.SetHalDefVarHandler(Adapter, HAL_DEF_GAIN_OFFSET_FCC_HIGH, &(sdiodevice->RegGainOffsetFCCHigh));
-	
+
 	Adapter->HalFunc.SetHalDefVarHandler(Adapter, HAL_DEF_GAIN_OFFSET_MKK_LOW, &(sdiodevice->RegGainOffsetMKKLow));
 	Adapter->HalFunc.SetHalDefVarHandler(Adapter, HAL_DEF_GAIN_OFFSET_MKK, &(sdiodevice->RegGainOffsetMKK));
 	Adapter->HalFunc.SetHalDefVarHandler(Adapter, HAL_DEF_GAIN_OFFSET_MKK_HIGH, &(sdiodevice->RegGainOffsetMKKHigh));
-	
+
 	Adapter->HalFunc.SetHalDefVarHandler(Adapter, HAL_DEF_GAIN_OFFSET_ETSI_LOW, &(sdiodevice->RegGainOffsetETSILow));
 	Adapter->HalFunc.SetHalDefVarHandler(Adapter, HAL_DEF_GAIN_OFFSET_ETSI, &(sdiodevice->RegGainOffsetETSI));
 	Adapter->HalFunc.SetHalDefVarHandler(Adapter, HAL_DEF_GAIN_OFFSET_ETSI_HIGH, &(sdiodevice->RegGainOffsetETSIHigh));
@@ -1238,24 +1238,24 @@ Return Value:
 	//
 	// 2011/11/25 MH Add for Sercom requirement temporarily.
 	//
-	//usbdevice->RegInPipeCnt; Need not assign to mgnt structure, we need to 
-	
-			
+	//usbdevice->RegInPipeCnt; Need not assign to mgnt structure, we need to
+
+
 	// For PSP XLink mode, 2006.09.04, by shien chang.
 	if(pMgntInfo->bPSPXlinkMode)
 	{
-		// Update ReceiveConfig variable. 
+		// Update ReceiveConfig variable.
 		Adapter->HalFunc.AllowAllDestAddrHandler(Adapter, TRUE, FALSE);
 	}
 
-	// 
+	//
 	// <Roger_Notes> In this time we shall NOT allocate TxRx corresponding resources here
 	// temporarily for 92CU on Vista or later, 2010.01.21.
-	// 2010.07.01 hpfan: allocate memory for shorten prepending time is NOT used. 
+	// 2010.07.01 hpfan: allocate memory for shorten prepending time is NOT used.
 	if(ACTING_AS_AP(Adapter) || !pMgntInfo->bRegVelocity|| pMgntInfo->RegPreInitMem)
 	{
 		ndisStatus=NicIFAllocateMemory(Adapter);
-	
+
 		if(ndisStatus!=NDIS_STATUS_SUCCESS)
 		{
 			RT_TRACE(COMP_INIT, DBG_SERIOUS, ("NicIFAllocateMemory failed\n"));
@@ -1267,8 +1267,8 @@ Return Value:
 	}
 
 	//
-	// A miniport driver must call the NdisMSetMiniportAttributes function from its 
-	// MiniportInitializeEx function to identify a context area for miniport adapter to NDIS, 
+	// A miniport driver must call the NdisMSetMiniportAttributes function from its
+	// MiniportInitializeEx function to identify a context area for miniport adapter to NDIS,
 	// and to provide NDIS with information about the miniport adapter.
 	//
 	ndisStatus= N6sdioSetMiniportAttributes(Adapter, MiniportAdapterHandle);
@@ -1280,11 +1280,11 @@ Return Value:
 
 
 	N6SdioAllocRes(Adapter);
-	
+
 	ADD_RES_TO_MON(ResMonObj, InitRM_AllocSdioRes); // Add Usb related resource monitoring.
 
 	sdiodevice->CurrentPowerState = NdisDeviceStateD0;
-	
+
 	//InitializAdapter and PHY Configuration.
 	ADAPTER_SET_STATUS_FLAG(Adapter, ADAPTER_STATUS_FIRST_INIT);
 	ndisStatus = NicIFInitializeAdapter(Adapter);
@@ -1297,7 +1297,7 @@ Return Value:
 
 	//
 	// HCT12.0 2c_AddressChange.
-	// Note that, Adapter->CurrentAddress and Adapter->PermanentAddress had been  
+	// Note that, Adapter->CurrentAddress and Adapter->PermanentAddress had been
 	// set up in NicIFInitializeAdapter().
 	//
 	if(pNdisCommon->bOverrideAddress)
@@ -1319,11 +1319,11 @@ Return Value:
 		RT_TRACE(COMP_INIT, DBG_SERIOUS, ("N6SdioAllocateNative80211MIBs failed\n"));
 		goto error;
 	}
-	
+
 	ADD_RES_TO_MON(ResMonObj, InitRM_AllocNWifi); // Add to resource monitor.
-	
+
 	N6InitializeNative80211MIBs(Adapter);
-	
+
 	//
 	// Set General Attribute, 2006.10.05, by shien chang.
 	//
@@ -1371,7 +1371,7 @@ Return Value:
 	//
 	ndisStatus = PoRegisterPowerSettingCallback(
 			NULL,
-			(LPGUID)(&PowerSetting_GUID), 
+			(LPGUID)(&PowerSetting_GUID),
 			(PPOWER_SETTING_CALLBACK)&N6SdioPowerSettingCallback,
 			(PVOID)Adapter,
 			&pNdisCommon->N6PowerSettingHandle
@@ -1380,11 +1380,11 @@ Return Value:
 	{
 		RT_TRACE(COMP_INIT, DBG_SERIOUS, ("Failed to register miniport with NDIS. Status = 0x%x\n", ndisStatus ));
 		goto error;
-	}		
+	}
 
 	ndisStatus = PoRegisterPowerSettingCallback(
 			NULL,
-			(LPGUID)(&WLANPowerMode_GUID), 
+			(LPGUID)(&WLANPowerMode_GUID),
 			(PPOWER_SETTING_CALLBACK)&N6SdioWLANPowerModeCallback,
 			(PVOID)Adapter,
 			&pNdisCommon->N6WLANPowerModeHandle
@@ -1393,7 +1393,7 @@ Return Value:
 	{
 		RT_TRACE(COMP_INIT, DBG_SERIOUS, ("Failed to register miniport with NDIS. Status = 0x%x\n", ndisStatus));
 		goto error;
-	}		
+	}
 
 	N6CInitThread((PVOID)Adapter);
 
@@ -1417,18 +1417,18 @@ Return Value:
 	if(pMgntInfo->bWiFiConfg || Adapter->bInHctTest)
 		Adapter->HalFunc.HalRxAggrHandler(Adapter, FALSE);
 
-	// It should be called iff everything, especially security related, are initialized properly. 
+	// It should be called iff everything, especially security related, are initialized properly.
 	// 2005.01.24, by rcnjko.
-	//N6RestoreLastInitSetting(Adapter);	
+	//N6RestoreLastInitSetting(Adapter);
 
 	//This is sw initialize ready.
 	Adapter->bSWInitReady=TRUE;
 
-	if(NDIS_STATUS_SUCCESS == ndisStatus) 
+	if(NDIS_STATUS_SUCCESS == ndisStatus)
 	{
 		// After this adapter is initialzied ready, insert this adapter to the list.
 		INSERT_GLOBAL_ADAPTER_LIST(Adapter);
-		
+
 		//
 		// Register the Device object for this adapter!
 		// Note:
@@ -1436,30 +1436,30 @@ Return Value:
 		//	effect on the status for Miniportinitialize.
 		// 	So, the resiteration process should be placed in the success location of Initialization.
 		// By Bruce, 2011-07-07.
-		//	
+		//
 		if(RT_STATUS_SUCCESS != (RtStatus = N6C_RegisterIoDevice(Adapter)))
 		{
 			RT_TRACE_F(COMP_INIT, DBG_LOUD, ("N6C_RegisterIoDevice() failed for status = %d\n", RtStatus));
 		}
 	}
-	
+
 	//This is sw initialize ready.
 	if(!Adapter->bHWInitReady)
 		PlatformScheduleWorkItem(&(pNdisCommon->InitializeAdapterWorkItem));
 
 	NicIFClearInterrupt(Adapter);
-	NicIFEnableInterrupt(Adapter);		
+	NicIFEnableInterrupt(Adapter);
 
 	//
-	// Mark the miniport driver as paused state. 
+	// Mark the miniport driver as paused state.
 	// Note that, please keep this action as last one in MiniportInitializeEx().
 	//
 	N6C_SET_MP_DRIVER_STATE(Adapter, MINIPORT_PAUSED);
 
 	Adapter->initfinish = TRUE;
-	Adapter->bInitComplete = TRUE;	
+	Adapter->bInitComplete = TRUE;
 	DrvIFIndicateCurrentPhyStatus(Adapter);
-	
+
 	return ndisStatus;
 
 error:
@@ -1471,10 +1471,10 @@ error:
 
 //
 //	Description:
-//		Prepare SDIO data transfer related NonPaged memory Pool for SDIO Asyn Extension CMD 
+//		Prepare SDIO data transfer related NonPaged memory Pool for SDIO Asyn Extension CMD
 //	use in the future.
 //
-//	2011.01.19, added by Roger. 
+//	2011.01.19, added by Roger.
 //
 NTSTATUS
 N6SdioInitTxQueue(
@@ -1483,59 +1483,59 @@ N6SdioInitTxQueue(
 {
 	NTSTATUS 	ntStatus = STATUS_SUCCESS;
 	PRT_SDIO_DEVICE	pDevice = GET_RT_SDIO_DEVICE(Adapter);
-	PRT_SDIO_TX_QUEUE	pTxQueue = NULL;		
+	PRT_SDIO_TX_QUEUE	pTxQueue = NULL;
 	u4Byte	 QueueIdx = 0;
 
-	pDevice->RtNumTxQueue = SDIO_MAX_TX_QUEUE; // TX_HIQ, TX_MIQ and TX_LOQ	  
+	pDevice->RtNumTxQueue = SDIO_MAX_TX_QUEUE; // TX_HIQ, TX_MIQ and TX_LOQ
 
 	// Initialize the contexts in Tx Queue.
 	pDevice->RtTxQueue =
 		(PRT_SDIO_TX_QUEUE)ExAllocatePool2(POOL_FLAG_NON_PAGED, SDIO_MAX_TX_QUEUE*sizeof(RT_SDIO_TX_QUEUE), '3278' );
 
-	if (pDevice->RtTxQueue != NULL) 
+	if (pDevice->RtTxQueue != NULL)
 	{
 
 		for (QueueIdx=0; QueueIdx<SDIO_MAX_TX_QUEUE; QueueIdx++) //about TxQueue
 		{
-			pTxQueue= &(pDevice->RtTxQueue[QueueIdx]);				
+			pTxQueue= &(pDevice->RtTxQueue[QueueIdx]);
 			pTxQueue->TransferType = SDIO_TRANSFER_TX;
 			RTInitializeListHead(&(pTxQueue->ContextBusyList));
 			pTxQueue->IrpPendingCount = 0;
 
 			//Init Event for canceling Tx/Rx pending IRP when unload.
-			NdisInitializeEvent(&(pTxQueue->AllIrpReturnedEvent));								
+			NdisInitializeEvent(&(pTxQueue->AllIrpReturnedEvent));
 		}
 	}
 	else
-	{					
+	{
 		ntStatus = STATUS_INSUFFICIENT_RESOURCES;
 		goto Error;
-	}			
-	
+	}
+
 	return ntStatus;
 
 Error:
 	if(pDevice->RtTxQueue != NULL)
 	{
-		ExFreePoolWithTag(pDevice->RtTxQueue, '3278' );		
+		ExFreePoolWithTag(pDevice->RtTxQueue, '3278' );
 	}
-	
+
 	return ntStatus;
 }
 
 
 //
 //	Description:
-//		Dump IO bus related properties and configurations for debugging. 
+//		Dump IO bus related properties and configurations for debugging.
 //	Common I/O Area(CIA) in function 0:
 //		- Card Common Control Registers(CCCR)
 //		- Function Basic Registers(FBR)
 //		- Card Information Structure(CIS)
 //
 //	Assumption:
-//		 A Secure Digital (SD) card bus interface has been initialized.	
+//		 A Secure Digital (SD) card bus interface has been initialized.
 //
-//	2011.03.15, added by Roger. 
+//	2011.03.15, added by Roger.
 //
 RT_STATUS
 N6SdioDumpDeviceProperty(
@@ -1544,10 +1544,10 @@ N6SdioDumpDeviceProperty(
 {
 	int	Idx = 0;
 	u1Byte	Data;
-	NTSTATUS ntStatus = STATUS_SUCCESS;	
+	NTSTATUS ntStatus = STATUS_SUCCESS;
 	RT_STATUS	rtstatus = RT_STATUS_SUCCESS;
-	
-	
+
+
 	//
 	// Retrieve CCCR info
 	//
@@ -1556,7 +1556,7 @@ N6SdioDumpDeviceProperty(
 		for(Idx=SDIO_CCCR_BEGIN; Idx<=SDIO_CCCR_END; Idx++)
 		{
 			ntStatus = PlatformSdioCmd52ReadWrite(
-									pDevice, 
+									pDevice,
 									SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 									0, //Function Number
 									1, //Byte Count
@@ -1565,7 +1565,7 @@ N6SdioDumpDeviceProperty(
 									&Data);
 
 			RT_TRACE(COMP_INIT, DBG_LOUD, ("SDIO CCCR[%#x]:%x\n", Idx, Data));
-			
+
 			if (!NT_SUCCESS(ntStatus))
 			{
 				RT_TRACE(COMP_INIT, DBG_WARNING, ("Get CCCR[%#x] fail!! status(%#x)\n", Idx, ntStatus));
@@ -1583,7 +1583,7 @@ N6SdioDumpDeviceProperty(
 		for(Idx=SDIO_FBR_FUNC1_BEGIN; Idx<=SDIO_FBR_FUNC1_END; Idx++)
 		{
 			ntStatus = PlatformSdioCmd52ReadWrite(
-									pDevice, 
+									pDevice,
 									SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 									0, //Function Number
 									1, //Byte Count
@@ -1592,14 +1592,14 @@ N6SdioDumpDeviceProperty(
 									&Data);
 
 			RT_TRACE(COMP_INIT, DBG_LOUD, ("SDIO FBR[%#x]:%x\n", Idx, Data));
-			
+
 			if (!NT_SUCCESS(ntStatus))
 			{
 				RT_TRACE(COMP_INIT, DBG_WARNING, ("Get FBR[%#x] fail!! status(%#x)\n", Idx, ntStatus));
 				return RT_STATUS_FAILURE;
 			}
 		}
-	}		
+	}
 
 
 	//
@@ -1607,11 +1607,11 @@ N6SdioDumpDeviceProperty(
 	//
 	if(GlobalSdioDbg & SDIO_DBG_CIS)
 	{
-		
+
 		for(Idx=SDIO_CIS_BEGIN; Idx<=SDIO_CIS_END; Idx++)
 		{
 			ntStatus = PlatformSdioCmd52ReadWrite(
-									pDevice, 
+									pDevice,
 									SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 									0, //Function Number
 									1, //Byte Count
@@ -1620,7 +1620,7 @@ N6SdioDumpDeviceProperty(
 									&Data);
 
 			RT_TRACE(COMP_INIT, DBG_LOUD, ("SDIO CIS[%#x]:%x\n", Idx, Data));
-			
+
 			if (!NT_SUCCESS(ntStatus))
 			{
 				RT_TRACE(COMP_INIT, DBG_WARNING, ("Get CIS[%#x] fail!! status(%#x)\n", Idx, ntStatus));
@@ -1650,9 +1650,9 @@ N6SdioDumpDeviceProperty(
 //		return: RT_STATUS
 //
 //	Assumption:
-//		 A Secure Digital (SD) card bus interface has been initialized.	
+//		 A Secure Digital (SD) card bus interface has been initialized.
 //
-//	2011.03.17, created by Roger. 
+//	2011.03.17, created by Roger.
 //
 RT_STATUS
 N6SdioFindCisTuple(
@@ -1660,7 +1660,7 @@ N6SdioFindCisTuple(
 	IN 	u1Byte	Tuple,
 	IN OUT 	pu4Byte	pTupleScanAddress,
 	OUT 	pu1Byte	pBuffer,
-	IN OUT 	pu1Byte	pLength	
+	IN OUT 	pu1Byte	pLength
 	)
 {
 	u4Byte	scanStart = *pTupleScanAddress;
@@ -1673,16 +1673,16 @@ N6SdioFindCisTuple(
 		return RT_STATUS_FAILURE;
 
 	while (TRUE) {
-	 	
+
             	//Check for end
 		if (scanStart > SDIO_CIS_END) {
 	       	status = RT_STATUS_FAILURE;
 	            	break;
 	       }
-		
-		//Get the code		
+
+		//Get the code
 		status = PlatformSdioCmd52ReadWrite(
-									pDevice, 
+									pDevice,
 									SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 									0, //Function Number
 									1, //Byte Count
@@ -1692,39 +1692,39 @@ N6SdioFindCisTuple(
 		if ( status != RT_STATUS_SUCCESS ) {
 		    break;
 		}
-		
+
 		if (CISTPL_END == tupleCode) {
 			//found the end
 		    	status = RT_STATUS_FAILURE;
 		    	break;
 		}
-		
+
 		// Bump past tuple code
 		scanStart++;
-		
+
 		//Get the tuple link value
 		status = PlatformSdioCmd52ReadWrite(
-									pDevice, 
+									pDevice,
 									SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 									0, //Function Number
 									1, //Byte Count
 									(ULONG)scanStart, //Offset
 									FALSE, //Read operation
 									&tupleLink);
-		
+
 		if ( status != RT_STATUS_SUCCESS ) {
 		    break;
 		}
 
 		//Bump past tuple link
 		scanStart++;
-		
+
 		//Check tuple we just found
-		if (tupleCode == Tuple) {		
+		if (tupleCode == Tuple) {
 
 			RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioFindCisTuple(): Tuple:0x%2.2X Found at Address:0x%X, TupleLink:0x%X \n",
 				Tuple, (scanStart - 2), tupleLink));
-			
+
 			if (tupleLink != CISTPL_LINK_END) {
 				//return the next scan address to the caller
 			    	*pTupleScanAddress = scanStart + tupleLink;
@@ -1733,16 +1733,16 @@ N6SdioFindCisTuple(
 			    	*pTupleScanAddress = 0xFFFFFFFF;
 			}
 
-			//Go get the tuple		
+			//Go get the tuple
 			status = PlatformSdioCmd52ReadWrite(
-									pDevice, 
+									pDevice,
 									SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 									0, //Function Number
 									MIN(*pLength,tupleLink), //Byte Count
 									(ULONG)scanStart, //Offset
 									FALSE, //Read operation
 									pBuffer);
-			
+
 			if (status == RT_STATUS_SUCCESS) {
 				//Set the actual return length
 			    	*pLength = MIN(*pLength,tupleLink);
@@ -1754,56 +1754,56 @@ N6SdioFindCisTuple(
 		//Increment past this entire tuple
 		scanStart += tupleLink;
 	}
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
 
 //
 //	Description:
-//		The Card Information Structure provides more complete information about the card 
-//	and the individual functions. The CIS is the common area to read information about all I/O 
-//	functions that exist in a card. The design is based on the PC Card16 design standardized by 
+//		The Card Information Structure provides more complete information about the card
+//	and the individual functions. The CIS is the common area to read information about all I/O
+//	functions that exist in a card. The design is based on the PC Card16 design standardized by
 //	PCMCIA. All cards that support I/O shall have a common CIS and a CIS for each function.
 //
 //	Assumption:
-//		 A Secure Digital (SD) card bus interface has been initialized.	
+//		 A Secure Digital (SD) card bus interface has been initialized.
 //
-//	2011.03.16, created by Roger. 
+//	2011.03.16, created by Roger.
 //
 RT_STATUS
 N6SdioQueryCISArea(
 	IN PRT_SDIO_DEVICE	pDevice
 )
 {
-	RT_STATUS rtStatus = RT_STATUS_SUCCESS;	
+	RT_STATUS rtStatus = RT_STATUS_SUCCESS;
 	PADAPTER	pAdapter = pDevice->pAdapter;
-	u1Byte	CisBuffer[3];	
+	u1Byte	CisBuffer[3];
 	u4Byte	tplAddr = 0;
 	u1Byte	Length = 0;
-	
+
 
 	//
 	// This 3-byte pointer points to the start of the card's common CIS. The common CIS
-	// contains information relation to the entire card. A card common CIS is mandatory for 
+	// contains information relation to the entire card. A card common CIS is mandatory for
 	// all SDIO cards. This pointer is stored in little-endian format (LSB first).
 	//
 	rtStatus = PlatformSdioCmd52ReadWrite(
-									pDevice, 
+									pDevice,
 									SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 									0, //Function Number
 									3, //Byte Count
 									(ULONG)SDIO_CCCR_COMMON_CIS_PTR, //Offset
 									FALSE, //Read operation
 									CisBuffer);
-	
+
 	// This is Endian-Safe
 	pDevice->SdioCommonCISPtr = EF4Byte(((u4Byte)CisBuffer[0]) |
                                                 (((u4Byte)CisBuffer[1]) << 8) |
                                                 (((u4Byte)CisBuffer[2]) << 16));
 
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioQueryCISArea(): SdioCommonCISPtr(%#x)\n", pDevice->SdioCommonCISPtr));
-	
+
 	PlatformZeroMemory(&pDevice->Sdiomanfid, sizeof(pDevice->Sdiomanfid));
 	Length = sizeof(pDevice->Sdiomanfid);
 	tplAddr = RT_GET_SDIO_COMMON_CISPTR(pDevice);
@@ -1815,14 +1815,14 @@ N6SdioQueryCISArea(
                                    &tplAddr,
                                    (pu1Byte)&pDevice->Sdiomanfid,
                                    &Length);
-	
-	if ( rtStatus != RT_STATUS_SUCCESS ) 
-	{	       
-		RT_TRACE(COMP_INIT, DBG_WARNING, ("SDIO Bus Driver: Failed to get MANFID tuple error:%d \n", rtStatus));	      
-	} 
-	else 
+
+	if ( rtStatus != RT_STATUS_SUCCESS )
 	{
-	
+		RT_TRACE(COMP_INIT, DBG_WARNING, ("SDIO Bus Driver: Failed to get MANFID tuple error:%d \n", rtStatus));
+	}
+	else
+	{
+
 		//save this off so that it can be copied into each SDIO Func's SDDEVICE structure
 		pDevice->SDIO_ManufacturerCode =
 		                            EF2Byte(pDevice->Sdiomanfid.ManufacturerCode);
@@ -1855,24 +1855,24 @@ N6SdioQueryCISArea(
 		else if(pDevice->SDIO_ManufacturerInfo == HAL_HW_SDIO_8703BS_PID)
 			pAdapter->HardwareType = HARDWARE_TYPE_RTL8703BS;
 		else if(pDevice->SDIO_ManufacturerInfo == HAL_HW_SDIO_8821BS_PID)
-			pAdapter->HardwareType = HARDWARE_TYPE_RTL8821BS;		
+			pAdapter->HardwareType = HARDWARE_TYPE_RTL8821BS;
 		else
 		{
-			RT_TRACE(COMP_INIT, DBG_WARNING, ("N6SdioQueryCISArea(): Invalid MANFINFO!!"));				
-			pAdapter->HardwareType = HARDWARE_TYPE_MAX;				
-		}	
+			RT_TRACE(COMP_INIT, DBG_WARNING, ("N6SdioQueryCISArea(): Invalid MANFINFO!!"));
+			pAdapter->HardwareType = HARDWARE_TYPE_MAX;
+		}
 #endif
 
 		pAdapter->HalFunc.SetHwRegHandler(pAdapter, HW_VAR_VID, (pu1Byte)&pDevice->SDIO_ManufacturerCode);
 		pAdapter->HalFunc.SetHwRegHandler(pAdapter, HW_VAR_PID, (pu1Byte)&pDevice->SDIO_ManufacturerInfo);
 
-		RT_TRACE(COMP_INIT, DBG_LOUD, ("SDIO MANFCODE:0x%X, MANFINFO:0x%X \n",			
+		RT_TRACE(COMP_INIT, DBG_LOUD, ("SDIO MANFCODE:0x%X, MANFINFO:0x%X \n",
 			pDevice->SDIO_ManufacturerCode,
-			pDevice->SDIO_ManufacturerInfo));	   
+			pDevice->SDIO_ManufacturerInfo));
 	}
-	
+
 	RT_TRACE(COMP_INIT, DBG_WARNING, ("N6Sdio(): SDIO_ManufacturerInfo(%#x)\n", pDevice->SDIO_ManufacturerInfo));
-	RT_TRACE(COMP_INIT, DBG_WARNING, ("N6SdioQueryCISArea(): HardwareType(%#x)\n", pAdapter->HardwareType));		
+	RT_TRACE(COMP_INIT, DBG_WARNING, ("N6SdioQueryCISArea(): HardwareType(%#x)\n", pAdapter->HardwareType));
 
 	return rtStatus;
 
@@ -1892,13 +1892,13 @@ N6SdioConfigureBusCLKByWorkAround(
 	IN PRT_SDIO_DEVICE	pDevice
 )
 {
-	NTSTATUS ntStatus		= STATUS_SUCCESS;	
+	NTSTATUS ntStatus		= STATUS_SUCCESS;
 	RT_STATUS	status		= RT_STATUS_FAILURE;
 	u1Byte 		Data=0;
 	u4Byte		SdioBusClk=0;
-	
+
 	status = PlatformSdioCmd52ReadWrite(
-							pDevice, 
+							pDevice,
 							SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 							0, //Function Number
 							1, //Byte Count
@@ -1906,7 +1906,7 @@ N6SdioConfigureBusCLKByWorkAround(
 							FALSE, //Read operation
 							&Data);
 
-	if(status != RT_STATUS_SUCCESS){ 
+	if(status != RT_STATUS_SUCCESS){
 		RT_TRACE_F(COMP_INIT, DBG_LOUD, ("Read SDIO CCCR[0x13] Property FAIL!!\n"));
 		return STATUS_SUCCESS; //do not cause init fail
 	}
@@ -1924,8 +1924,8 @@ N6SdioConfigureBusCLKByWorkAround(
 			ntStatus = PlatformSdioSetProperty(pDevice,
 							SDP_BUS_CLOCK,
 							&SdioBusClk,
-							sizeof(SdioBusClk));  
-			if(!NT_SUCCESS(ntStatus)){ 
+							sizeof(SdioBusClk));
+			if(!NT_SUCCESS(ntStatus)){
 				RT_TRACE_F(COMP_INIT, DBG_LOUD, ("Set SDP_BUS_CLOCK Property FAIL!!\n"));
 				return STATUS_SUCCESS; //do not cause init fail
 			}
@@ -1935,7 +1935,7 @@ N6SdioConfigureBusCLKByWorkAround(
 			//
 			Data |= BIT1; //[3:1] BSS
 			status = PlatformSdioCmd52ReadWrite(
-									pDevice, 
+									pDevice,
 									SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 									0, //Function Number
 									1, //Byte Count
@@ -1944,7 +1944,7 @@ N6SdioConfigureBusCLKByWorkAround(
 									&Data);
 
 
-			if(status != RT_STATUS_SUCCESS){ 
+			if(status != RT_STATUS_SUCCESS){
 				RT_TRACE_F(COMP_INIT, DBG_LOUD,("Write SDIO CCCR[0x13] Property FAIL!!\n"));
 				return STATUS_SUCCESS; //do not cause init fail
 			}
@@ -1955,24 +1955,24 @@ N6SdioConfigureBusCLKByWorkAround(
 			Data = 0;
 			delay_ms(10);
 			status = PlatformSdioCmd52ReadWrite(
-							pDevice, 
+							pDevice,
 							SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 							0, //Function Number
 							1, //Byte Count
 							(ULONG)0x13, //Offset
 							FALSE, //Read operation
 							&Data);
-			
+
 			RT_TRACE(COMP_INIT, DBG_LOUD, (">>>>>>>>>>>> 3 SDIO CCCR[0x13]:%x\n", Data));
 
-			if(status != RT_STATUS_SUCCESS){ 
+			if(status != RT_STATUS_SUCCESS){
 				RT_TRACE_F(COMP_INIT, DBG_LOUD, ("3 SDIO CCCR[0x13] Property FAIL!!\n"));
 				return STATUS_SUCCESS; //do not cause init fail
 			}
-			// End of To be removed ...	
+			// End of To be removed ...
 
 			pDevice->bSdioBusClkRaised = TRUE;
-			
+
 		}
 	}
 	return STATUS_SUCCESS;
@@ -1989,13 +1989,13 @@ N6SdioConfigureBusCLK_SDR12(
 	IN PRT_SDIO_DEVICE	pDevice
 )
 {
-	NTSTATUS 	ntStatus	= STATUS_SUCCESS;	
+	NTSTATUS 	ntStatus	= STATUS_SUCCESS;
 	RT_STATUS	status		= RT_STATUS_FAILURE;
 	u1Byte 		Data		= 0;
 	u4Byte		SdioBusClk	= 0;
-	
+
 	status = PlatformSdioCmd52ReadWrite(
-							pDevice, 
+							pDevice,
 							SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 							0, //Function Number
 							1, //Byte Count
@@ -2003,7 +2003,7 @@ N6SdioConfigureBusCLK_SDR12(
 							FALSE, //Read operation
 							&Data);
 
-	if(status != RT_STATUS_SUCCESS){ 
+	if(status != RT_STATUS_SUCCESS){
 		RT_TRACE_F(COMP_INIT, DBG_LOUD, ("Read SDIO CCCR[0x13] Property FAIL!!\n"));
 		return STATUS_SUCCESS; //do not cause init fail
 	}
@@ -2017,9 +2017,9 @@ N6SdioConfigureBusCLK_SDR12(
 	ntStatus = PlatformSdioSetProperty(pDevice,
 						SDP_BUS_CLOCK,
 						&SdioBusClk,
-						sizeof(SdioBusClk));  
-					
-	if(!NT_SUCCESS(ntStatus)){ 
+						sizeof(SdioBusClk));
+
+	if(!NT_SUCCESS(ntStatus)){
 		RT_TRACE_F(COMP_INIT, DBG_LOUD, ("Set SDP_BUS_CLOCK Property FAIL!!\n"));
 		return STATUS_SUCCESS; //do not cause init fail
 	}
@@ -2029,7 +2029,7 @@ N6SdioConfigureBusCLK_SDR12(
 	//
 	Data &= ~(BIT1|BIT2); //[3:1] BSS
 	status = PlatformSdioCmd52ReadWrite(
-							pDevice, 
+							pDevice,
 							SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 							0, //Function Number
 							1, //Byte Count
@@ -2037,7 +2037,7 @@ N6SdioConfigureBusCLK_SDR12(
 							TRUE, //Write operation
 							&Data);
 
-	if(status != RT_STATUS_SUCCESS){ 
+	if(status != RT_STATUS_SUCCESS){
 		RT_TRACE_F(COMP_INIT, DBG_LOUD,("Write SDIO CCCR[0x13] Property FAIL!!\n"));
 		return STATUS_SUCCESS; //do not cause init fail
 	}
@@ -2048,47 +2048,47 @@ N6SdioConfigureBusCLK_SDR12(
 	Data = 0;
 	delay_ms(10);
 	status = PlatformSdioCmd52ReadWrite(
-					pDevice, 
+					pDevice,
 					SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 					0, //Function Number
 					1, //Byte Count
 					(ULONG)0x13, //Offset
 					FALSE, //Read operation
 					&Data);
-		
+
 	RT_TRACE(COMP_INIT, DBG_LOUD, (">>>>>>>>>>>> 3 SDIO CCCR[0x13]:%x\n", Data));
 
-	if(status != RT_STATUS_SUCCESS){ 
+	if(status != RT_STATUS_SUCCESS){
 		RT_TRACE_F(COMP_INIT, DBG_LOUD, ("3 SDIO CCCR[0x13] Property FAIL!!\n"));
 		return STATUS_SUCCESS; //do not cause init fail
 	}
-	
+
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("Done Set SDIO clk to SDR12\n"));
-	
-	// End of To be removed ...	
+
+	// End of To be removed ...
 	return STATUS_SUCCESS;
 }
 
 
 //
 //	Description:
-//		Configure/Retrieve SDIO bus related properties and configurations. 
+//		Configure/Retrieve SDIO bus related properties and configurations.
 //	Common I/O Area(CIA) in function 0:
 //		- Card Common Control Registers(CCCR)
 //		- Function Basic Registers(FBR)
 //		- Card Information Structure(CIS)
 //
 //	Assumption:
-//		 A Secure Digital (SD) card bus interface has been initialized.	
+//		 A Secure Digital (SD) card bus interface has been initialized.
 //
-//	2010.12.09, added by Roger. 
+//	2010.12.09, added by Roger.
 //
 NTSTATUS
 N6SdioConfigureDevice(
 	IN PRT_SDIO_DEVICE	pDevice
 )
 {
-	NTSTATUS 	ntStatus = STATUS_SUCCESS;	
+	NTSTATUS 	ntStatus = STATUS_SUCCESS;
 	RT_STATUS	rtstatus = RT_STATUS_SUCCESS;
 	BOOLEAN		bEnableInt = FALSE;
 	u1Byte		IENx 	= 0;
@@ -2103,30 +2103,30 @@ N6SdioConfigureDevice(
 								pDevice,
        							SDP_FUNCTION_NUMBER,
                          		&pDevice->SdioFuncNum,
-                         		sizeof(pDevice->SdioFuncNum));	
-    if(!NT_SUCCESS(ntStatus)){ 
+                         		sizeof(pDevice->SdioFuncNum));
+    if(!NT_SUCCESS(ntStatus)){
 		return ntStatus;
-	}		
+	}
 
-	
+
 	//
 	// Query SDIO Card Information Structure
 	//
 	rtstatus = N6SdioQueryCISArea(pDevice);
-	if(rtstatus != RT_STATUS_SUCCESS){ 
+	if(rtstatus != RT_STATUS_SUCCESS){
 			return STATUS_UNSUCCESSFUL;
 	}
 
-	
+
 	//
 	// Dump SDIO IO Bus related information if needed.
 	//
 	rtstatus = N6SdioDumpDeviceProperty(pDevice);
-	if(rtstatus != RT_STATUS_SUCCESS){ 
+	if(rtstatus != RT_STATUS_SUCCESS){
 			return STATUS_UNSUCCESSFUL;
 	}
 
-	
+
 	//
 	// Get Driver Version
 	//
@@ -2134,24 +2134,24 @@ N6SdioConfigureDevice(
 								pDevice,
 		       					SDP_BUS_DRIVER_VERSION,
 		                     	&pDevice->SdioBusDriverVer,
-		                     	sizeof(pDevice->SdioBusDriverVer));    	
-	if(!NT_SUCCESS(ntStatus)){ 
+		                     	sizeof(pDevice->SdioBusDriverVer));
+	if(!NT_SUCCESS(ntStatus)){
 		return ntStatus;
 	}
 
 
 	//
-	// Read CCCRx Format Version Number and SDIOx Specification Revision Number. 
+	// Read CCCRx Format Version Number and SDIOx Specification Revision Number.
 	//
 	ntStatus = PlatformSdioCmd52ReadWrite(
-								pDevice, 
+								pDevice,
 								SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 								0, //Function Number
 								1, //Byte Count
 								(ULONG)SDIO_CCCRx_SDIOx, //Offset
 								FALSE, //Read operation
 								&pDevice->SdioRevNum);
-	
+
 	if (!NT_SUCCESS(ntStatus))
 	{
 		RT_TRACE(COMP_INIT, DBG_WARNING, ("Get SDIO_CCCRx_SDIOx failed:%x\n", ntStatus));
@@ -2163,7 +2163,7 @@ N6SdioConfigureDevice(
 	// Retrieve SD Format Version Number.
 	//
 	ntStatus = PlatformSdioCmd52ReadWrite(
-								pDevice, 
+								pDevice,
 								SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 								0, //Function Number
 								1, //Byte Count
@@ -2179,8 +2179,8 @@ N6SdioConfigureDevice(
 	if( pDevice->SdioBusDriverVer >= SDBUS_DRIVER_VERSION_2 &&
 		((pDevice->SdioRevNum & 0x0f) >= 0x02) &&  // CCCR v2.0
 		((pDevice->SdioRevNum & 0xf0) >= 0x30)) // SDIO v2.0
-	{ 		
-	
+	{
+
 		u2Byte	SdioFuncBlockSize = SDIO_BUS_SIZE;
 
 
@@ -2191,8 +2191,8 @@ N6SdioConfigureDevice(
 									pDevice,
 	       							SDP_FUNCTION_INT_ENABLE,
 	                         		&bEnableInt,
-	                         		sizeof(bEnableInt));	
-	    if(!NT_SUCCESS(ntStatus)){ 
+	                         		sizeof(bEnableInt));
+	    if(!NT_SUCCESS(ntStatus)){
 			return ntStatus;
 		}
 
@@ -2206,24 +2206,24 @@ N6SdioConfigureDevice(
 							pDevice,
 		       				SDP_FUNCTION_INT_ENABLE,
 		                         		&bEnableInt,
-		                         		sizeof(bEnableInt));	
-		    	if(!NT_SUCCESS(ntStatus)){ 
+		                         		sizeof(bEnableInt));
+		    	if(!NT_SUCCESS(ntStatus)){
 					return ntStatus;
 			}
 		}
-		
+
 		//
 		// Read CCCR interrupt
 		//
 		ntStatus = PlatformSdioCmd52ReadWrite(
-									pDevice, 
+									pDevice,
 									SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 									0, //Function Number
 									1, //Byte Count
 									(ULONG)SDIO_CCCR_IENx, //Offset
 									FALSE, //Read operation
-									&IENx);	
-		
+									&IENx);
+
 		if (!NT_SUCCESS(ntStatus))
 		{
 			RT_TRACE(COMP_INIT, DBG_WARNING, ("Get REG_CCCR_IENx failed:%x\n", ntStatus));
@@ -2235,32 +2235,32 @@ N6SdioConfigureDevice(
 		{
 			//
 			// Set SDIO Driving capabilities
-			// NOTICE:  If the host driving is too weak to reach here, 
+			// NOTICE:  If the host driving is too weak to reach here,
 			// 			this function will be no-use.
 			//
 			u1bData = 0;
 			rtstatus = PlatformSdioCmd52ReadWrite(
-										pDevice, 
+										pDevice,
 										WLAN_IOREG_DEVICE_ID, //Device ID
 										1, //Function Number
 										1, //Byte Count
 										(ULONG)0x74, //Offset
 										FALSE, //Read operation
-										&u1bData);	
+										&u1bData);
 
 			u1bData &= ~((BIT5)|(BIT6)|(BIT7));
 			u1bData |= (pDevice->RegSdioDriving) << 5;
 
 			RT_TRACE(COMP_INIT, DBG_LOUD, ("Set SDIO Driving to: %#x\n", u1bData));
-			
+
 			rtstatus = PlatformSdioCmd52ReadWrite(
-										pDevice, 
+										pDevice,
 										WLAN_IOREG_DEVICE_ID, //Device ID
 										1, //Function Number
 										1, //Byte Count
 										(ULONG)0x74, //Offset
 										TRUE, //Write operation
-										&u1bData);	
+										&u1bData);
 
 			if (rtstatus != RT_STATUS_SUCCESS)
 			{
@@ -2275,8 +2275,8 @@ N6SdioConfigureDevice(
 		ntStatus = PlatformSdioGetProperty(pDevice,
 			   			SDP_BUS_WIDTH,
 			                 	&pDevice->SdioBusWidth,
-			                 	sizeof(pDevice->SdioBusWidth));  
-		if(!NT_SUCCESS(ntStatus)){ 
+			                 	sizeof(pDevice->SdioBusWidth));
+		if(!NT_SUCCESS(ntStatus)){
 				return ntStatus;
 		}
 
@@ -2292,8 +2292,8 @@ N6SdioConfigureDevice(
 		ntStatus = PlatformSdioGetProperty(pDevice,
 			   			SDP_BUS_CLOCK,
 			                	&pDevice->SdioBusClk,
-			                	sizeof(pDevice->SdioBusClk));  
-		if(!NT_SUCCESS(ntStatus)){ 
+			                	sizeof(pDevice->SdioBusClk));
+		if(!NT_SUCCESS(ntStatus)){
 				return ntStatus;
 		}
 
@@ -2304,11 +2304,11 @@ N6SdioConfigureDevice(
 		ntStatus = PlatformSdioGetProperty(pDevice,
 			   			SDP_HOST_BLOCK_LENGTH,
 			                 	&pDevice->SdioHostBlockSize,
-			                	sizeof(pDevice->SdioHostBlockSize)); 
-		if(!NT_SUCCESS(ntStatus)){ 
+			                	sizeof(pDevice->SdioHostBlockSize));
+		if(!NT_SUCCESS(ntStatus)){
 				return ntStatus;
 		}
-				
+
 
 		//
 		// Set SDIO Function Block Size
@@ -2317,7 +2317,7 @@ N6SdioConfigureDevice(
 			       		SDP_FUNCTION_BLOCK_LENGTH,
 			                     &SdioFuncBlockSize,
 			                     sizeof(SdioFuncBlockSize));
-		if(!NT_SUCCESS(ntStatus)){ 
+		if(!NT_SUCCESS(ntStatus)){
 				return ntStatus;
 		}
 
@@ -2329,30 +2329,30 @@ N6SdioConfigureDevice(
 						SDP_FUNCTION_BLOCK_LENGTH,
 			                 	&pDevice->SdioFuncBlockSize,
 			                	sizeof(pDevice->SdioFuncBlockSize));
-		if(!NT_SUCCESS(ntStatus)){ 
+		if(!NT_SUCCESS(ntStatus)){
 				return ntStatus;
 		}
 
 		if(pDevice->SdioFuncBlockSize != SDIO_BUS_SIZE)
 			return STATUS_UNSUCCESSFUL;
-		
+
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("==================SDIO Bus Info==================\n"));
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioConfigureDevice(): SdioFuncBlockSize(%d)\n", pDevice->SdioFuncBlockSize));
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioConfigureDevice(): SdioHostBlockSize(%d)\n", pDevice->SdioHostBlockSize));
-		RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioConfigureDevice(): SdioBusClk(%d)\n", pDevice->SdioBusClk));	
+		RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioConfigureDevice(): SdioBusClk(%d)\n", pDevice->SdioBusClk));
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioConfigureDevice(): SdioBusWidth(%d)\n", pDevice->SdioBusWidth));
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioConfigureDevice(): SdioFuncNum(%d)\n", pDevice->SdioFuncNum));
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioConfigureDevice(): SdioBusDriverVer(%d)\n", pDevice->SdioBusDriverVer));
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioConfigureDevice(): SdioRevNum(%d)\n", pDevice->SdioRevNum));
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioConfigureDevice(): SdioFormatVer(%d)\n", pDevice->SdioFormatVer));
-		RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioConfigureDevice(): CCCR IENx(%#x)\n", IENx));		
+		RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioConfigureDevice(): CCCR IENx(%#x)\n", IENx));
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioConfigureDevice(): Function Interrupt Enable(%d)\n", bEnableInt));
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("=================================================\n"));
 
 	}
 	else
-	{ 
-		ntStatus = STATUS_UNSUCCESSFUL;		
+	{
+		ntStatus = STATUS_UNSUCCESSFUL;
 	}
 
 	return ntStatus;
@@ -2419,9 +2419,9 @@ Return Value:
 
 	// To make sure that we will NOT fail to indicate phy status during initialization process.
 	//DrvIFIndicateCurrentPhyStatus(pAdapter);
-	
+
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("<== MiniportRestart(), DriverState(%d)\n", N6C_GET_MP_DRIVER_STATE(pAdapter)));
-	
+
 	return NDIS_STATUS_SUCCESS;
 }
 
@@ -2482,7 +2482,7 @@ NOTE: A miniport can't fail the pause request
 {
 	PADAPTER pAdapter = (PADAPTER)MiniportAdapterContext;
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
-	
+
 	N6C_MP_DRIVER_STATE CurrDriverState;
 
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("==> MiniportPause(), DriverState(%d)\n", N6C_GET_MP_DRIVER_STATE(pAdapter)));
@@ -2490,9 +2490,9 @@ NOTE: A miniport can't fail the pause request
 	//
 	// Mark the miniport driver as pausing state to reject tx/rx request.
 	//
-	
+
 	if(pAdapter->MgntInfo.NdisVersion < RT_NDIS_VERSION_6_20)
-	{	
+	{
 	CurrDriverState = N6C_GET_MP_DRIVER_STATE(pAdapter);
 	RT_ASSERT(	(CurrDriverState < MINIPORT_PAUSED ||
 				CurrDriverState > MINIPORT_PAUSING),
@@ -2521,7 +2521,7 @@ NOTE: A miniport can't fail the pause request
 
 		while(pTargetAdapter != NULL)
 		{
-			N62CHelperHandleMiniportPause(pTargetAdapter, MiniportPauseParameters); 
+			N62CHelperHandleMiniportPause(pTargetAdapter, MiniportPauseParameters);
 			pTargetAdapter = GetNextExtAdapter(pTargetAdapter);
 		}
 	}
@@ -2576,16 +2576,16 @@ Return Value:
 	{
 		//
 		// Halt H/W.
-		// 060118, rcnjko: 
+		// 060118, rcnjko:
 		// We must do it for Vista DTM will shutdown DUT machine before starting NDISTEST6.5.
-		// Otherwise, 87B F/W will default setting to respond what Host controler query 
-		// which might different with the one in EEPROM, and therefore, 
+		// Otherwise, 87B F/W will default setting to respond what Host controler query
+		// which might different with the one in EEPROM, and therefore,
 		// NDISTEST 6.5 won't select the devise to test.
 		//
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("calling NicIFHaltAdapter() by N6SdioShutdown()......\n"));
 
 		Adapter->bDriverShutdown = TRUE;
-		
+
 {
 		PADAPTER pAdapter =GetNextExtAdapter(pDefaultAdapter);
 		while(pAdapter != NULL)
@@ -2598,10 +2598,10 @@ Return Value:
 		}
 }
 
-		//		
+		//
 		// 2010/09/02 MH Before halt adapter, we need to leave ips/lps mode. Otherwise, selective suspend
 		// power save level will be limited by IPS flag RT_RF_OFF_LEVL_HALT_NIC(add by Tynli at 2010/03)
-		// 88/92C HW constraint, we can not use HW automatic shutdown sequence. According to Scoot and 
+		// 88/92C HW constraint, we can not use HW automatic shutdown sequence. According to Scoot and
 		// Alfred's suggestion (amil at 2010/09/02), if 8051 is alive and we try to close or reset clock. MAC hardware
 		// handshake may fail and 8051 can not access MAC register. It will produce many error condition.
 		// We need to close 8051 and execute firmware self reset to prevent HW power domain error.
@@ -2609,11 +2609,11 @@ Return Value:
 		LeaveAllPowerSaveMode(Adapter);
 
 		// Leave HW 32K CLK
-		if(RT_IN_PS_LEVEL(Adapter, RT_RF_OFF_LEVEL_FW_IPS_32K) && 
+		if(RT_IN_PS_LEVEL(Adapter, RT_RF_OFF_LEVEL_FW_IPS_32K) &&
 			!(IS_CARD_DISABLE_IN_FW_LOW_PWR_STATE(Adapter)))
 		{
 			u1Byte FwPSState;
-			
+
 			RT_CLEAR_PS_LEVEL(Adapter, RT_RF_OFF_LEVEL_FW_IPS_32K); // To prevent from clock off again
 			if(pDefaultAdapter->bFWReady)
 			{
@@ -2683,7 +2683,7 @@ Return Value:
 	u8Byte	CurrentTime;
 
 	RT_TRACE(COMP_INIT, DBG_LOUD, (" ==> N6SdioPnPEventNotify()\n"));
-	
+
 	switch(NetDevicePnPEvent->DevicePnPEvent)
 	{
 	case NdisDevicePnPEventSurpriseRemoved:
@@ -2698,7 +2698,7 @@ Return Value:
 			PlatformReleaseMutex(&device->RxHandleIntMutex);
 #endif
 
-#if RTL8723_SDIO_IO_THREAD_ENABLE 
+#if RTL8723_SDIO_IO_THREAD_ENABLE
 			// Release IO semaphore before cancel corresponding IO thread.
 			PlatformReleaseSemaphore(&device->IOSemaphore);
 #endif
@@ -2710,7 +2710,7 @@ Return Value:
 				RT_CUSTOM_INDI_TARGET_IRP,
 				NULL,
 				0);
-			
+
 			N6SdioReturnAllPendingTxPackets(Adapter);
 
 			if(OS_SUPPORT_WDI(Adapter))
@@ -2733,8 +2733,8 @@ Return Value:
 			{
 				CurrentTime = PlatformGetCurrentTime();
 				NdisWaitEvent(&device->SetPnpChkForHangEvent, RT_CHECK_FOR_HANG_PERIOD*1000);
-				RT_TRACE(COMP_INIT, DBG_TRACE, ("N6SdioPnPEventNotify(): Time spent %I64d us\n", 
-					PlatformGetCurrentTime()-CurrentTime));				
+				RT_TRACE(COMP_INIT, DBG_TRACE, ("N6SdioPnPEventNotify(): Time spent %I64d us\n",
+					PlatformGetCurrentTime()-CurrentTime));
 			}
 			break;
 
@@ -2743,15 +2743,15 @@ Return Value:
 			RT_TRACE(COMP_INIT, DBG_LOUD, ("NdisDevicePnPEventPowerProfileChanged- PowerProfile(%d)\n",pPSC->PowerProfile));
 			N6SdioPowerSettingChangeNotify(Adapter);
 			break;
-	
+
 	case NdisDevicePnPEventQueryStopped:
-	case NdisDevicePnPEventStopped:          
+	case NdisDevicePnPEventStopped:
 
 	case NdisDevicePnPEventQueryRemoved:
-	case NdisDevicePnPEventRemoved:     
+	case NdisDevicePnPEventRemoved:
 	default:
 			RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioPnPEventNotify: unknown PnP event %x \n", NetDevicePnPEvent->DevicePnPEvent));
-			break;         
+			break;
     }
 	RT_TRACE(COMP_INIT, DBG_LOUD, (" <== N6SdioPnPEventNotify()\n"));
 	return;
@@ -2766,28 +2766,28 @@ N6SdioPowerSettingCallback(
 	)
 {
 	PADAPTER     		Adapter = (PADAPTER) MiniportAdapterContext;
-	NDIS_STATUS 	Status = STATUS_INVALID_PARAMETER;    
+	NDIS_STATUS 	Status = STATUS_INVALID_PARAMETER;
 	GUID			PowerSetting_GUID = GUID_ACTIVE_POWERSCHEME;//GUID_POWERSCHEME_PERSONALITY;
 	GUID			MaxPowerSaving_GUID = GUID_MAX_POWER_SAVINGS;
 	GUID			TypicalPowerSaving_GUID = GUID_TYPICAL_POWER_SAVINGS;
 	GUID			MinPowerSaving_GUID = GUID_MIN_POWER_SAVINGS;
 
 	if( 	IsEqualGUID((LPGUID)(&PowerSetting_GUID), SettingGuid)
-        	&& (ValueLength == sizeof(GUID)) && Value != NULL ) 
+        	&& (ValueLength == sizeof(GUID)) && Value != NULL )
         {
        	PMGNT_INFO		pMgntInfo=&(Adapter->MgntInfo);
 		PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 
         	if(IsEqualGUID((LPGUID)&MaxPowerSaving_GUID,(LPGUID)Value) )
         	 	  pPSC->PowerSetting = POWERGUID_MAX_POWER_SAVINGS;
-		else if(IsEqualGUID((LPGUID)&TypicalPowerSaving_GUID,(LPGUID)Value)) 
+		else if(IsEqualGUID((LPGUID)&TypicalPowerSaving_GUID,(LPGUID)Value))
             		 pPSC->PowerSetting = POWERGUID_TYPICAL_POWER_SAVINGS;
 		else if(IsEqualGUID((LPGUID)&MinPowerSaving_GUID,(LPGUID)Value) )
 			 pPSC->PowerSetting = POWERGUID_MIN_POWER_SAVINGS;
-		
-		RT_TRACE(COMP_POWER, DBG_LOUD, ("%s PowerSetting(%d)\n", __FUNCTION__, pPSC->PowerSetting));	
-		
-		N6SdioPowerSettingChangeNotify(Adapter);	
+
+		RT_TRACE(COMP_POWER, DBG_LOUD, ("%s PowerSetting(%d)\n", __FUNCTION__, pPSC->PowerSetting));
+
+		N6SdioPowerSettingChangeNotify(Adapter);
 		 Status = STATUS_SUCCESS;
         }
 	return Status;
@@ -2802,35 +2802,35 @@ N6SdioWLANPowerModeCallback(
 	)
 {
 	PADAPTER     		Adapter = (PADAPTER) MiniportAdapterContext;
-	NDIS_STATUS 	Status = STATUS_INVALID_PARAMETER;    
+	NDIS_STATUS 	Status = STATUS_INVALID_PARAMETER;
 	GUID			WLANPowerMode_GUID = GUID_WLAN_POWER_MODE;
 	u1Byte			WLAN_Maximum_Performance[16] =
-	{0x4f,0x16,0xab,0xc1,0x4f,0x83,0x3d,0x46, 0x85, 0x44, 0xa4, 0x0e, 0x93, 0xab, 0x54, 0x72}; 
+	{0x4f,0x16,0xab,0xc1,0x4f,0x83,0x3d,0x46, 0x85, 0x44, 0xa4, 0x0e, 0x93, 0xab, 0x54, 0x72};
 	u1Byte			WLAN_Low_Power_Saving[16] =
-	{0xcb,0xbc,0x7c,0x78,0x4b,0xcd,0x76,0x47,0x8b, 0xe5, 0x5f, 0x8a, 0xe4, 0x72, 0x6f, 0x2b}; 
+	{0xcb,0xbc,0x7c,0x78,0x4b,0xcd,0x76,0x47,0x8b, 0xe5, 0x5f, 0x8a, 0xe4, 0x72, 0x6f, 0x2b};
 	u1Byte			WLAN_Medium_Power_Saving[16] =
 	{0x12,0xe4,0x28,0x67,0xd1,0x40,0xb0,0x4a,0x8d, 0x15, 0xf3, 0xc5, 0x6f, 0x30, 0x3e, 0xb5};
 	u1Byte			WLAN_Maximum_Power_Saving[16] =
 	{0x0F,0xDC,0x12,0xE0,0x97,0x83,0xB5,0x46,0xA0, 0x60, 0x0D, 0xE8, 0x4F, 0x96, 0x38, 0x8E};
 
 	if( IsEqualGUID((LPGUID)(&WLANPowerMode_GUID), SettingGuid)
-        	&& (ValueLength == sizeof(GUID)) && Value != NULL ) 
+        	&& (ValueLength == sizeof(GUID)) && Value != NULL )
         {
        	PMGNT_INFO		pMgntInfo=&(Adapter->MgntInfo);
 		PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 
         	if(PlatformCompareMemory(WLAN_Maximum_Power_Saving, Value, ValueLength)==0)
         	 	  pPSC->PowerMode = POWER_SAVING_MAXIMUM_LEVEL;
-		else if(PlatformCompareMemory(WLAN_Medium_Power_Saving, Value, ValueLength)==0) 
+		else if(PlatformCompareMemory(WLAN_Medium_Power_Saving, Value, ValueLength)==0)
             		 pPSC->PowerMode = POWER_SAVING_MAX_PSP;
 		else if(PlatformCompareMemory(WLAN_Low_Power_Saving, Value, ValueLength)==0)
 			 pPSC->PowerMode = POWER_SAVING_FAST_PSP;
 		else if(PlatformCompareMemory(WLAN_Maximum_Performance, Value, ValueLength)==0)
 			 pPSC->PowerMode = POWER_SAVING_NO_POWER_SAVING;
 
-		RT_TRACE(COMP_POWER, DBG_LOUD, ("%s PowerMode(%d)\n", __FUNCTION__, pPSC->PowerMode));	
-		
-		N6SdioPowerSettingChangeNotify(Adapter);	
+		RT_TRACE(COMP_POWER, DBG_LOUD, ("%s PowerMode(%d)\n", __FUNCTION__, pPSC->PowerMode));
+
+		N6SdioPowerSettingChangeNotify(Adapter);
 		 Status = STATUS_SUCCESS;
         }
 	return Status;
@@ -2846,11 +2846,11 @@ N6SdioPowerSettingChangeNotify(
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 
 	RT_TRACE(COMP_POWER, DBG_LOUD, ("N6SdioPowerSettingChangeNotify()\n"));
-	
+
 	Adapter->HalFunc.UpdateIPSStatusHandler(Adapter, pNdisCommon->RegInactivePsMode);
 	Adapter->HalFunc.UpdateLPSStatusHandler(Adapter, pNdisCommon->RegLeisurePsMode, pNdisCommon->RegPowerSaveMode);
-		
-	RT_TRACE(	COMP_POWER, DBG_LOUD, ("%s : PowerPolicy %d bInactivePs=%d bLeisurePS=%d  <==\n", 
+
+	RT_TRACE(	COMP_POWER, DBG_LOUD, ("%s : PowerPolicy %d bInactivePs=%d bLeisurePS=%d  <==\n",
 				__FUNCTION__, pPSC->PowerPolicy, pPSC->bInactivePs, pPSC->bLeisurePs));
 }
 
@@ -2898,14 +2898,14 @@ Return Value:
 	BOOLEAN			bCanceled;
 	PHAL_DATA_TYPE pHalData=GET_HAL_DATA(Adapter);
 	PRT_SDIO_DEVICE sdiodevice = GET_RT_SDIO_DEVICE(Adapter);
-	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);	
+	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 
 	RT_TRACE(COMP_INIT, DBG_LOUD, (" ==> N6SdioHalt()\n"));
 
 	NDBG_Halt(Adapter);
-	
+
 	Adapter->bDriverIsGoingToUnload = TRUE;
-	
+
 	{
 		PADAPTER pAdapter = GetNextExtAdapter(pDefaultAdapter);
 		while(pAdapter != NULL)
@@ -2925,7 +2925,7 @@ Return Value:
 	N6C_DeregisterIoDevice(Adapter);
 
 	REMOVE_GLOBAL_ADAPTER_LIST(Adapter);
-	
+
 	if(ACTING_AS_AP(pDefaultAdapter))
 	{
 		AP_DisassociateAllStation(pDefaultAdapter, unspec_reason);
@@ -2945,7 +2945,7 @@ Return Value:
 		!IS_CARD_DISABLE_IN_FW_LOW_PWR_STATE(Adapter))
 	{
 		u1Byte FwPSState;
-		
+
 		RT_CLEAR_PS_LEVEL(Adapter, RT_RF_OFF_LEVEL_FW_IPS_32K); // To prevent from setting clock off again
 		if(pDefaultAdapter->bFWReady)
 		{
@@ -2960,7 +2960,7 @@ Return Value:
 
 	NicIFClearInterrupt(Adapter);
 
-	//sync with pcie,wait for RF change complete 
+	//sync with pcie,wait for RF change complete
 	PlatformAcquireSpinLock(Adapter,RT_RF_STATE_SPINLOCK);
 	while( pMgntInfo->RFChangeInProgress)
 	{
@@ -2969,11 +2969,11 @@ Return Value:
 		RT_TRACE(COMP_POWER,DBG_LOUD,
 			("RF is in progress, need to wait until rf chang is done.\n"));
 		delay_ms(1);
-		
+
 		PlatformAcquireSpinLock(Adapter,RT_RF_STATE_SPINLOCK);
-	}	
+	}
 	PlatformReleaseSpinLock(Adapter,RT_RF_STATE_SPINLOCK);
-	
+
 	//
 	// 2010/08/13 MH We need to move the flag setting after LeaveAllPowerSaveMode().
 	// Otherwise, we may not leave IPS and call NicIFHaltAdapter. This will block the halt sequence
@@ -2985,7 +2985,7 @@ Return Value:
 	// Halt H/W.
 	//
 	NicIFHaltAdapter(Adapter, FALSE);
-	
+
 	Adapter->HalFunc.WaitForH2CQueueEmptyHandler(Adapter);
 
 	if(((pMgntInfo->RfOffReason & (RF_CHANGE_BY_IPS|RF_CHANGE_BY_SW|RF_CHANGE_BY_HW)) &&
@@ -3004,13 +3004,13 @@ Return Value:
 			SetFwPSRFOffLowPower(Adapter);
 		}
 	}
-	
+
 	if(device->bSdioBusClkRaised)
 	{
 		N6SdioConfigureBusCLK_SDR12(device);
 	}
 
-	// <NOTE> We MUST perform necessary IO before setting bDriverStopped and bSurpriseRemoved flags, 
+	// <NOTE> We MUST perform necessary IO before setting bDriverStopped and bSurpriseRemoved flags,
 	// since we will reject further Sync IO in RTusbCallUSBD() if bDriverStopped || bSurpriseRemoved.
 	// 2005.01.13, by rcnjko.
 	Adapter->bDriverStopped = TRUE;
@@ -3018,12 +3018,12 @@ Return Value:
 	//
 	// Mark the miniport driver as halted state.
 	//
-//	RT_ASSERT( (N6C_GET_MP_DRIVER_STATE(Adapter) == MINIPORT_PAUSED), 
+//	RT_ASSERT( (N6C_GET_MP_DRIVER_STATE(Adapter) == MINIPORT_PAUSED),
 //		("MiniportHalt(): DriverState(%d) != PAUSED !!!\n", N6C_GET_MP_DRIVER_STATE(Adapter)));
 	N6C_SET_MP_DRIVER_STATE(Adapter, MINIPORT_HALTED);
 
-	// SyncIo Method 2.  
-	// We must wake up the workitems waiting for SyncIo event before, 
+	// SyncIo Method 2.
+	// We must wake up the workitems waiting for SyncIo event before,
 	// waiting all workitem completed. 2005.01.06, by rcnjko.
 	if(device->SyncIoWaitingCount>0)
 	{ // If there is workitem waiting.
@@ -3054,7 +3054,7 @@ Return Value:
 	// RemoveAllTS must call here!!
 	// This function shall be called before MPShutdown().
 	// For Traffic Stream. Remove all TS before HALT
-	
+
 	NicIFDisableInterrupt(Adapter);
 	RemoveAllTS(Adapter);
 	ReleaseAllTSTimer(Adapter);
@@ -3063,7 +3063,7 @@ Return Value:
 
 	// Free native 802.11 MIBs, 2006.10.10, by shien chang.
 	N6SdioFreeNative80211MIBs(Adapter);
-	
+
 #if USE_WDF_SDIO
 	WdfSdio_Disable(Adapter);
 #else
@@ -3080,7 +3080,7 @@ Return Value:
 	// Free Tx semaphore.
 	PlatformFreeSemaphore(&device->TxSemaphore);
 
-#if RTL8723_SDIO_IO_THREAD_ENABLE 
+#if RTL8723_SDIO_IO_THREAD_ENABLE
 	// Release IO semaphore before cancel corresponding IO thread.
 	PlatformReleaseSemaphore(&device->IOSemaphore);
 
@@ -3101,8 +3101,8 @@ Return Value:
 	}
 
 	//----------------------------------------------------------------------------
-	// NOTE! Adapter is released in N6SdioFreeAll(), 
-	// so, we MUST NOT access Adapter after it. 2006.03.08, by rcnjko. 
+	// NOTE! Adapter is released in N6SdioFreeAll(),
+	// so, we MUST NOT access Adapter after it. 2006.03.08, by rcnjko.
 	//----------------------------------------------------------------------------
 	N6SdioFreeAll( Adapter );
 #if (WPP_SOFTWARE_TRACE == 0)
@@ -3115,7 +3115,7 @@ Return Value:
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("  RTL_P2P_FreeMemory_count = %"i64fmt"d\n",RTL_P2P_FreeMemory_count));
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("  RTL_P2P_AllocateMemory_Len = %"i64fmt"d\n",RTL_P2P_AllocateMemory_Len));
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("  RTL_P2P_FreeMemory_Len = %"i64fmt"d\n",RTL_P2P_FreeMemory_Len));
-#endif	
+#endif
 	RT_TRACE(COMP_INIT, DBG_LOUD, (" <== N6SdioHalt()\n"));
 	return;
 }
@@ -3154,14 +3154,14 @@ Return Value:
 --*/
 {
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("==> N6SdioUnload()\n"));
-	
+
 	UNREFERENCED_PARAMETER(DriverObject);
 
 #if USE_WDF_SDIO
 	WdfDriverMiniportUnload(WdfGetDriver());
-#endif	
+#endif
 
-#if (WDI_SUPPORT == 1)	
+#if (WDI_SUPPORT == 1)
     if(NdisGetVersion() >= NDIS_VERSION_BASE_6_50)
     {
         WDI_DeInitialize(GlobalRtDriverContext.NdisContext.Ndis6MiniportDriverHandle);
@@ -3173,7 +3173,7 @@ Return Value:
 	}
 
 	GlobalRtDriverContext.NdisContext.Ndis6MiniportDriverHandle = NULL;
-	
+
 	RT_ASSERT(RTIsListEmpty(&(GlobalRtDriverContext.AdapterList)), ("GlobalRtDriverContext.AdapterList is not empty!\n"));
 	RT_ASSERT(RTIsListEmpty(&(GlobalRtDriverContext.NdisContext.IoDeviceList)), ("IoDevice List is not empty!\n"));
 	PLATFORM_FREE_RT_SPINLOCK(GlobalRtDriverContext.ContextLock);
@@ -3186,11 +3186,11 @@ Return Value:
 	RtDbgDeinitSpinlock();
 
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("<== N6SdioUnload()\n"));
-	
+
 #if SOFTWARE_TRACE_LOGGING
 	TraceLoggingUnregister(g_hProvider);
 #endif
-	
+
 #if WPP_SOFTWARE_TRACE
 	WPP_CLEANUP(DriverObject);
 #endif
@@ -3209,29 +3209,29 @@ Routine Description:
     NDIS calls a miniport driver's MiniportOidRequest function to send an OID
     request to the driver. These OID requests are serialized so the
     MiniportOidRequest function is not called until the pending OID request
-    has completed. MiniportOidRequest can be called at either IRQL 
-    PASSIVE_LEVEL or IRQL DISPATCH_LEVEL. 
-    
-    If the MiniportOidRequest function returns NDIS_STATUS_PENDING, 
+    has completed. MiniportOidRequest can be called at either IRQL
+    PASSIVE_LEVEL or IRQL DISPATCH_LEVEL.
+
+    If the MiniportOidRequest function returns NDIS_STATUS_PENDING,
     the miniport driver must subsequently call the NdisMOidRequestComplete
-    function to complete the request. NdisMOidRequestComplete can be called 
-    at either IRQL DISPATCH_LEVEL or IRQL PASSIVE_LEVEL. 
+    function to complete the request. NdisMOidRequestComplete can be called
+    at either IRQL DISPATCH_LEVEL or IRQL PASSIVE_LEVEL.
 
 Arguments:
 
     MiniportAdapterContext  Pointer to the adapter structure
     NdisRequest             Pointer to NDIS_OID_REQUEST
-    
+
 Return Value:
-    
+
     NDIS_STATUS_SUCCESS
     NDIS_STATUS_NOT_SUPPORTED
     NDIS_STATUS_BUFFER_TOO_SHORT
-    
+
 --*/
 {
 	PADAPTER		Adapter = (PADAPTER)MiniportAdapterContext;
-	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);	
+	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);
 	PADAPTER		pTargetAdapter = GetAdapterByPortNum(Adapter, (u1Byte)NdisRequest->PortNumber);
 	NDIS_STATUS		ndisStatus=NDIS_STATUS_NOT_RECOGNIZED;
 	u2Byte			i;
@@ -3255,7 +3255,7 @@ Return Value:
 
 		if( NDIS_STATUS_NOT_RECOGNIZED == ndisStatus )
 		{
-			if(!N6_INIT_READY(Adapter))		
+			if(!N6_INIT_READY(Adapter))
 			{
 				if(	(NdisRequest->RequestType==NdisRequestMethod|| NdisRequest->RequestType==NdisRequestSetInformation) &&
 					(NdisRequest->DATA.QUERY_INFORMATION.Oid==OID_DOT11_SCAN_REQUEST)	)
@@ -3281,7 +3281,7 @@ Return Value:
 			}
 
 			ndisStatus = N6CProcessOidRequest(Adapter, NdisRequest, FALSE);
-		}		
+		}
 	}while(FALSE);
 
 	if(OS_SUPPORT_WDI(Adapter))
@@ -3311,7 +3311,7 @@ Return Value:
 			NdisOIDHistoryUpdate(Adapter, NdisRequest, RT_OID_HISTORY_PENDING);
 			PlatformReleaseSpinLock(Adapter, RT_PENDED_OID_SPINLOCK);
 
-			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("N6SdioOidRequest(): Pend this OID(%p, ID =0x%08X)\n", 
+			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("N6SdioOidRequest(): Pend this OID(%p, ID =0x%08X)\n",
 				Adapter->pNdisCommon->PendedRequest, NdisRequest->DATA.METHOD_INFORMATION.Oid));
 			break;
 
@@ -3326,7 +3326,7 @@ Return Value:
 
 	if( irql < DISPATCH_LEVEL ){
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("N6SdioOidRequest(): Restore IRQL!!\n"));
-		KeLowerIrql(irql);	
+		KeLowerIrql(irql);
 	}
 
 	return ndisStatus;
@@ -3342,9 +3342,9 @@ N6SdioCancelOidRequest(
 Routine Description:
 
 	An NDIS 6.0 miniport driver must provide a MiniportCancelOidRequest
-	function if it pends any OID request. MiniportCancelOidRequest 
-	is called when NDIS or an overlying driver calls NdisCancelOidRequest 
-	or NdisFCancelOidRequest. If the miniport driver finds the OID 
+	function if it pends any OID request. MiniportCancelOidRequest
+	is called when NDIS or an overlying driver calls NdisCancelOidRequest
+	or NdisFCancelOidRequest. If the miniport driver finds the OID
 	request to be cancelled in its queue, it should complete the OID request
 	by calling NdisMOidRequestComplete with NDIS_STATUS_REQUEST_ABORTED.
 
@@ -3352,9 +3352,9 @@ Arguments:
 
 	MiniportAdapterContext  Pointer to the adapter structure
 	RequestId               Specify the request to be cancelled.
-    
+
 Return Value:
-    
+
 --*/
 {
 	// TODO: Implement It!
@@ -3372,7 +3372,7 @@ Routine Description:
 
 	MiniportSetOptions function is called by NDIS to ask the
 	miniport driver to register its optional handlers.
-	A miniport driver must call NdisSetOptionalHandler 
+	A miniport driver must call NdisSetOptionalHandler
 	from its MiniportSetOptions function to register its
 	optional handlers with NDIS.
 
@@ -3428,8 +3428,8 @@ N6SdioSendNetBufferLists(
 	//
 	if( N6SDIO_CANNOT_TX(Adapter) )
 	{
-		RT_TRACE(COMP_SEND, DBG_LOUD, 
-			("N6SdioSendNetBufferLists(): drop packet for N6SDIO_CANNOT_TX(), bDriverStopped(%d) or bSurpriseRemoved(%d)!\n", 
+		RT_TRACE(COMP_SEND, DBG_LOUD,
+			("N6SdioSendNetBufferLists(): drop packet for N6SDIO_CANNOT_TX(), bDriverStopped(%d) or bSurpriseRemoved(%d)!\n",
 			Adapter->bDriverStopped, Adapter->bSurpriseRemoved));
 		if(N6C_GET_MP_DRIVER_STATE(Adapter) <= MINIPORT_PAUSING)
 		{// Indicate pause state while we're in pause state. added by Roger, 2008.03.13.
@@ -3490,7 +3490,7 @@ N6SdioSendNetBufferLists(
 		NET_BUFFER_LIST_NEXT_NBL(pCurrNetBufferList) = NULL;
 
 		//
-		// Initialize reference count as (#NB + 1) to prevent this 
+		// Initialize reference count as (#NB + 1) to prevent this
 		// NBL being completed before end of N6SdioSendSingleNetBufferList().
 		//
 		NetBufferCount = 0;
@@ -3509,7 +3509,7 @@ N6SdioSendNetBufferLists(
 
 			N6CAddNblWaitQueue(
 				&pNdisCommon->TxNBLWaitQueue,
-				pCurrNetBufferList, 
+				pCurrNetBufferList,
 				FALSE); // bToHead.
 		}
 	}
@@ -3529,7 +3529,7 @@ N6SdioSendNetBufferLists(
 		PlatformSetTimer(Adapter, &(pNdisCommon->N6CSendSingleNetBufferListTimer),0);
 		return;
 	}
-	
+
 	if(PlatformAtomicExchange(&Adapter->IntrNBLRefCount, TRUE)==TRUE)
 		return;
 
@@ -3545,16 +3545,16 @@ N6SdioSendNetBufferLists(
 				PlatformReleaseSpinLock(Adapter, RT_BUFFER_SPINLOCK);
 				break;
 			}
-			
+
 			if(!pNdisCommon->bReleaseNblWaitQueueInProgress)
 			{
 				pCurrNetBufferList = N6CGetHeadNblWaitQueue(pNdisCommon->TxNBLWaitQueue);
 				PlatformReleaseSpinLock(Adapter, RT_BUFFER_SPINLOCK);
-				
+
 				RT_TRACE(COMP_SEND, DBG_TRACE, ("N6SdioSendNetBufferLists(): N6SdioSendSingleNetBufferList pCurrNetBufferList(%p)\n", pCurrNetBufferList));
 				if (!N6SdioSendSingleNetBufferList(
-					Adapter, 
-					pCurrNetBufferList, 
+					Adapter,
+					pCurrNetBufferList,
 					TRUE) )
 				{
 					RT_TRACE(COMP_SEND, DBG_TRACE, ("N6SdioSendSingleNetBufferList() returns FALSE\n"));
@@ -3566,7 +3566,7 @@ N6SdioSendNetBufferLists(
 				PlatformReleaseSpinLock(Adapter, RT_BUFFER_SPINLOCK);
 			}
 		}
-		
+
 	}
 
 	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
@@ -3581,7 +3581,7 @@ N6SdioSendNetBufferLists(
 //		Process each NB in the NBL.
 //
 //	Output:
-//		Return FALSE if we can send this NBL and had put it into 
+//		Return FALSE if we can send this NBL and had put it into
 //		wait queue if necessary, TRUE otherwise.
 //
 //	Assumption:
@@ -3612,7 +3612,7 @@ N6SdioSendSingleNetBufferList(
 	//RT_TRACE(COMP_SEND, DBG_LOUD, ("N6SdioSendSingleNetBufferList(), start to process pNetBufferList=0x%x\n", (u4Byte)pNetBufferList));
 	//
 	// Because we'll release TX lock before doing scatter/gather operation,
-	// we use SendingNetBufferList to prevent out of order. 
+	// we use SendingNetBufferList to prevent out of order.
 	//
 	// Prefast warning ignore for false positive
 #pragma warning( disable:6271 )
@@ -3622,7 +3622,7 @@ N6SdioSendSingleNetBufferList(
 	//
 	// Parse per-NBL information.
 	//
-	pDot11SendContext = (PDOT11_EXTSTA_SEND_CONTEXT) NET_BUFFER_LIST_INFO(pNetBufferList, MediaSpecificInformation);   
+	pDot11SendContext = (PDOT11_EXTSTA_SEND_CONTEXT) NET_BUFFER_LIST_INFO(pNetBufferList, MediaSpecificInformation);
 	switch( pDot11SendContext->usExemptionActionType )
 	{
 	case DOT11_EXEMPT_NO_EXEMPTION :
@@ -3661,7 +3661,7 @@ N6SdioSendSingleNetBufferList(
 		pCurrNetBuffer = pNextNetBuffer)
 	{
 		pNextNetBuffer = NET_BUFFER_NEXT_NB(pCurrNetBuffer);
-		
+
 		if(!pNdisCommon->RegNblRacingWA)
 		{
 			if(pNextNetBuffer == NULL)
@@ -3681,7 +3681,7 @@ N6SdioSendSingleNetBufferList(
 			//	PlatformAcquireSpinLock(Adapter, RT_BUFFER_SPINLOCK);
 			//	N6CAddNblWaitQueue(
 			//		pNdisCommon,
-			//		pNetBufferList, 
+			//		pNetBufferList,
 			//		TRUE); // bToHead.
 			//	PlatformReleaseSpinLock(Adapter, RT_BUFFER_SPINLOCK);
 			//}
@@ -3714,8 +3714,8 @@ N6SdioSendSingleNetBufferList(
 			//
 			// Add per-NBL info into TCB.
 			//
-			pTcb->priority = Priority;  // Qos information. 2007.01.05, by shien chang.	
-			pTcb->EncInfo.ExemptionActionType = ExemptionActionType; // by CCW. 
+			pTcb->priority = Priority;  // Qos information. 2007.01.05, by shien chang.
+			pTcb->EncInfo.ExemptionActionType = ExemptionActionType; // by CCW.
 
 			GetDefaultAdapter(Adapter)->MgntInfo.OutstandingNdisPackets++;
 			//
@@ -3737,7 +3737,7 @@ N6SdioSendSingleNetBufferList(
 #if 1
 			if(N6SdioGetPacketBuffers(Adapter, pCurrNetBuffer, pTcb) &&
 				!Adapter->bInHctTest && !pMgntInfo->RegTxMode)
-			{ 
+			{
 				//
 				// Set up TCB.
 				//
@@ -3773,7 +3773,7 @@ N6SdioSendSingleNetBufferList(
 					{
 						//
 						// Complete the NB ASAP to enhance throughput for some application, such as iPerf.
-						// Note that, we can complete the NB here because it 
+						// Note that, we can complete the NB here because it
 						// had been coalesced in PreTransmitTCB().
 						//
 						RT_NBL_DECREASE_REF_CNT(pNetBufferList);
@@ -3784,9 +3784,9 @@ N6SdioSendSingleNetBufferList(
 				else
 				{
 					//
-					// 07525, rcnjko: 
+					// 07525, rcnjko:
 					// AP_PS_SendPacket() will queue the packet to send in proper queue if necessary.
-					// So, we must gurantee the buffers referenced in the TCB is still valid, 
+					// So, we must gurantee the buffers referenced in the TCB is still valid,
 					// that is, not yet compelted to upper layer.
 					//
 					NicIFSendPacket(Adapter, pTcb);
@@ -3814,7 +3814,7 @@ N6SdioSendSingleNetBufferList(
 	//
 	// Case 2: we are here if all NBs in the NBL had been processed.
 	//
-	
+
 	if(bFromQueue)
 	{
 		PNET_BUFFER_LIST pTmpNBL;
@@ -3826,8 +3826,8 @@ N6SdioSendSingleNetBufferList(
 		PlatformAcquireSpinLock(Adapter, RT_BUFFER_SPINLOCK);
 		pTmpNBL = N6CRemoveNblWaitQueue(&pNdisCommon->TxNBLWaitQueue, TRUE);
 		PlatformReleaseSpinLock(Adapter, RT_BUFFER_SPINLOCK);
-		RT_ASSERT(pTmpNBL == pNetBufferList, 
-			("N6SdioSendSingleNetBufferList(): pTmpNBL(%p) != pNetBufferList(%p)!!!\n", 
+		RT_ASSERT(pTmpNBL == pNetBufferList,
+			("N6SdioSendSingleNetBufferList(): pTmpNBL(%p) != pNetBufferList(%p)!!!\n",
 			pTmpNBL, pNetBufferList));
 	}
 
@@ -3842,15 +3842,15 @@ N6SdioSendSingleNetBufferList(
 		// Compelete the NBL if required.
 		//
 		RT_ASSERT( NET_BUFFER_LIST_NEXT_NBL(pNetBufferList) == NULL,
-			("N6SdioSendSingleNetBufferList(): pNBL(%p) is not a single one!!!\n", pNetBufferList));	
+			("N6SdioSendSingleNetBufferList(): pNBL(%p) is not a single one!!!\n", pNetBufferList));
 
 		{
 			PNET_BUFFER_LIST	pCurrNetBufferList, pNextNetBufferList;
 			if(RT_NBL_GET_REF_CNT(pNetBufferList) == 0)
-			{			
+			{
 				GetDefaultAdapter(Adapter)->MgntInfo.OutstandingNdisPackets--;
 				GetDefaultAdapter(Adapter)->MgntInfo.CompleteFlag = 0;
-			
+
 				PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 			                // Complete each NB as success.
 					for(pCurrNetBufferList = pNetBufferList;
@@ -3902,7 +3902,7 @@ N6SdioGetPacketBuffers(
 	OUT	PRT_TCB			pTcb
 	)
 {
-	ULONG			i,index;   
+	ULONG			i,index;
 	UINT			MdlCount;
 	PMDL			pCurrMdl, pMdlToMap;
 	PMDL 			pNextMdl = NULL;
@@ -3939,17 +3939,17 @@ N6SdioGetPacketBuffers(
 	{
 		MaxAvailableBufferCount = MAX_PER_PACKET_PHYSICAL_BUF_NUM-1;
 	}
-	
+
 	if (MdlCount > MaxAvailableBufferCount)
 	{
 		return FALSE;
 	}
 
 	PacketLength = NET_BUFFER_DATA_LENGTH(pNetBuffer);
-	
+
 	pTcb->PacketLength=PacketLength;
 
-	//2 Assign header buffer	
+	//2 Assign header buffer
 	// Prefast warning C30030: Warning: Allocating executable memory via specifying a MM_PAGE_PRIORITY type without a bitwise OR with MdlMappingNoExecute
 	// False positive and safe here, disable the warning
 #pragma warning( disable:30030 )
@@ -4030,20 +4030,20 @@ N6SdioGetPacketBuffers(
 		index=1;
 		pMdlToMap = NDIS_MDL_LINKAGE( NET_BUFFER_CURRENT_MDL(pNetBuffer) );
 	}
-	
+
 	RemainMdlLength=PacketLength;
 	for(i=0; i < index; i++)
 	{
 		RemainMdlLength -= pTcb->BufferList[i].Length;
 	}
-	
+
 	//2 Get Virtual buffer list
 	for (pCurrMdl = pMdlToMap;
 		pCurrMdl != NULL;
 		pCurrMdl = pNextMdl)
 	{
 		pNextMdl = NDIS_MDL_LINKAGE(pCurrMdl);
-		
+
 		// Prefast warning C30030: Warning: Allocating executable memory via specifying a MM_PAGE_PRIORITY type without a bitwise OR with MdlMappingNoExecute
 		// False positive and safe here, disable the warning
 #pragma warning( disable:30030 )
@@ -4053,7 +4053,7 @@ N6SdioGetPacketBuffers(
 		BufLen = (pCurrMdl == NET_BUFFER_CURRENT_MDL(pNetBuffer)) ?
 				MmGetMdlByteCount(pCurrMdl)-NET_BUFFER_CURRENT_MDL_OFFSET(pNetBuffer) :
 				MmGetMdlByteCount(pCurrMdl);
-				
+
 		pTcb->BufferList[index].VirtualAddress = ptr;
 		if(RemainMdlLength < BufLen )
 		{
@@ -4067,10 +4067,10 @@ N6SdioGetPacketBuffers(
 		}
 		pTcb->BufferCount++;
 		index++;
-		
+
 		if( RemainMdlLength <= 0 )
 			break;
-		
+
 	}
 
 	RT_ASSERT(pTcb->BufferCount<=(MAX_PER_PACKET_PHYSICAL_BUF_NUM+2),("Too many physical memory fragment !!\n"));
@@ -4121,7 +4121,7 @@ N6SdioSendCoalescedNetBuffer(
 		N6CopyPacket(pNetBuffer, pBuf, &PktLength);
 
 		//
-		// Complete the NB and related resource since we 
+		// Complete the NB and related resource since we
 		// had copy everything need into TCB.
 		//
 		PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
@@ -4134,8 +4134,8 @@ N6SdioSendCoalescedNetBuffer(
 
 		pTcb->Header[0].Length = (PktLength >= sMacHdrLng) ? sMacHdrLng : PktLength;
 		PlatformMoveMemory(
-				pTcb->Header[0].VirtualAddress, 
-				pBuf->Buffer.VirtualAddress, 
+				pTcb->Header[0].VirtualAddress,
+				pBuf->Buffer.VirtualAddress,
 				pTcb->Header[0].Length);
 		pTcb->BufferList[0] = pTcb->Header[0];
 		pTcb->BufferCount = 1;
@@ -4194,7 +4194,7 @@ N6SdioReturnAllPendingTxPackets(
 
 	PlatformAcquireSpinLock(pAdapter, RT_TX_SPINLOCK);
 
-	if(N6SDIO_INC_TX_RESET_COUNT(pDevice) == 1) // At most one thread is working here. 
+	if(N6SDIO_INC_TX_RESET_COUNT(pDevice) == 1) // At most one thread is working here.
 	{
 		RT_TRACE(COMP_SEND, DBG_LOUD, ("N6SdioReturnAllPendingTxPackets(): 1st thread enter here....\n"));
 
@@ -4203,9 +4203,9 @@ N6SdioReturnAllPendingTxPackets(
 		//
 		for( QueueID = LOW_QUEUE; QueueID < MAX_TX_QUEUE; QueueID++ )
 		{
-			while(	!RTIsListEmpty(&pAdapter->TcbBusyQueue[QueueID])	
-					|| !RTIsListEmpty(&pAdapter->TcbWaitQueue[QueueID])	
-					|| !RTIsListEmpty(&pAdapter->TcbAggrQueue[QueueID])	
+			while(	!RTIsListEmpty(&pAdapter->TcbBusyQueue[QueueID])
+					|| !RTIsListEmpty(&pAdapter->TcbWaitQueue[QueueID])
+					|| !RTIsListEmpty(&pAdapter->TcbAggrQueue[QueueID])
 					)
 			{
 				if(!RTIsListEmpty(&pAdapter->TcbBusyQueue[QueueID]))
@@ -4250,7 +4250,7 @@ N6SdioReturnAllPendingTxPackets(
 				{
 					pDevice->bWaitingSendingNBL = TRUE;
 					PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
-		
+
 					RT_TRACE(COMP_SEND, DBG_LOUD, ("N6SdioReturnAllPendingTxPackets(): wait SendingNetBufferList...\n"));
 					// Preafast warning C28121 : The function 'NdisWaitEvent' is not permitted to be called at the current IRQ level.
 					// Prefast warning C28156: The actual IRQL 2 is inconsistent with the required IRQL 0
@@ -4259,14 +4259,14 @@ N6SdioReturnAllPendingTxPackets(
 #pragma warning( disable:28156 )
 					NdisWaitEvent(&(pDevice->evtSendingNBLCompleted), 0);
 					NdisResetEvent(&(pDevice->evtSendingNBLCompleted));
-		
+
 					PlatformAcquireSpinLock(pAdapter, RT_TX_SPINLOCK);
 				}
 				RT_ASSERT(pDevice->SendingNetBufferList == NULL, ("SendingNetBufferList(%p) should be NULL!!!\n", pDevice->SendingNetBufferList));
 
 				//
 				// Remove pending NBLs in wait queue.
-				// Note that, we must make sure: 
+				// Note that, we must make sure:
 				// 1. SendingNetBufferList is NULL.
 				// 2. No one can call N6SdioSendSingleNetBufferList() now.
 				// 3. All TCB and related resource are completed.
@@ -4287,8 +4287,8 @@ N6SdioReturnAllPendingTxPackets(
 					PlatformReleaseSpinLock(pAdapter, RT_BUFFER_SPINLOCK);
 
 					NdisMSendNetBufferListsComplete(
-						pDevice->hNdisAdapter, 
-						pNetBufferList, 
+						pDevice->hNdisAdapter,
+						pNetBufferList,
 						((OldIrql==DISPATCH_LEVEL) ? NDIS_SEND_COMPLETE_FLAGS_DISPATCH_LEVEL : 0));
 
 					PlatformAcquireSpinLock(pAdapter, RT_BUFFER_SPINLOCK);
@@ -4305,7 +4305,7 @@ N6SdioReturnAllPendingTxPackets(
 
 	N6SDIO_DEC_TX_RESET_COUNT(pDevice);
 
-	PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);	
+	PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 
 	{
 		if(pAdapter == GetDefaultAdapter(pAdapter))
@@ -4322,7 +4322,7 @@ N6SdioReturnAllPendingTxPackets(
 					N6SdioReturnAllPendingTxPackets(pTargetAdapter);
 					pTargetAdapter = GetNextExtAdapter(pTargetAdapter);
 				}
-				
+
 			}
 		}
 	}
@@ -4337,7 +4337,7 @@ N6SdioCancelSend(
  /**
  * This function is called by NDIS to cancel any NBL that have
  * not yet been sent and which correspond to CancelId passed in.
- * 
+ *
  * \param MiniportAdapterContext    The context for this miniport
  * \param CancelId                  Packets with this Id will be cancelled
  * \sa MPSendPackets
@@ -4347,14 +4347,14 @@ N6SdioCancelSend(
 	PRT_SDIO_DEVICE	device = GET_RT_SDIO_DEVICE(Adapter);
 
 	RT_TRACE(COMP_DBG, DBG_LOUD, (" ==> N6SdioCancelSend()\n"));
-	
+
 
 	RT_TRACE(COMP_DBG, DBG_LOUD, (" <== N6SdioCancelSend()\n"));
 	return;
 }
 
 
-VOID 
+VOID
 N6SdioReturnNetBufferLists(
 	IN  NDIS_HANDLE         MiniportAdapterContext,
 	IN  PNET_BUFFER_LIST    NetBufferLists,
@@ -4363,7 +4363,7 @@ N6SdioReturnNetBufferLists(
 /**
  * This function is called by NDIS when the protocol above returns NetBufferLists
  * previously indicated by this miniport.
- * 
+ *
  * \param MiniportAdapterContext    The adapter context for this miniport
  * \param NetBufferLists            The NBLs that was previously indicated to NDIS
  * \param ReturnFlags               Flags for return information (dispatch level, etc)
@@ -4385,7 +4385,7 @@ N6SdioReturnNetBufferLists(
 		pNextNetBufferList = NET_BUFFER_LIST_NEXT_NBL(pCurrNetBufferList);
 
 		pRfd = MP_GET_PACKET_RFD(pCurrNetBufferList);
-		
+
 		//
 		// Free MDL.
 		//
@@ -4402,8 +4402,8 @@ N6SdioReturnNetBufferLists(
 		//
 		pRecvContext = (PDOT11_EXTSTA_RECV_CONTEXT)NET_BUFFER_LIST_INFO(pCurrNetBufferList, MediaSpecificInformation);
 		PlatformFreeMemory(pRecvContext, sizeof(DOT11_EXTSTA_RECV_CONTEXT));
-		
-		NdisFreeNetBufferList(pCurrNetBufferList);	
+
+		NdisFreeNetBufferList(pCurrNetBufferList);
 
 		PlatformAcquireSpinLock(Adapter, RT_RX_REF_CNT_SPINLOCK);
 		RT_DEC_RCV_REF(GetDefaultAdapter(Adapter));
@@ -4418,20 +4418,20 @@ N6SdioReturnNetBufferLists(
 	}
 
 	//
-	// Signal the AllPacketReturnedEvent if all packet are returned. 
+	// Signal the AllPacketReturnedEvent if all packet are returned.
 	// 2007.01.19, by shien chang.
 	//
 	if (Count == 0)
 	{
 		NdisSetEvent(&pNdisCommon->AllPacketReturnedEvent);
 
-		if(Adapter->MgntInfo.NdisVersion >= RT_NDIS_VERSION_6_20)		
+		if(Adapter->MgntInfo.NdisVersion >= RT_NDIS_VERSION_6_20)
 		{
 			PADAPTER pTempAdapter = GetFirstExtAdapter(Adapter);
 			while(pTempAdapter != NULL)
 			{
 				NdisSetEvent(&pTempAdapter->pNdisCommon->AllPacketReturnedEvent);
-				pTempAdapter = GetNextExtAdapter(pTempAdapter);				
+				pTempAdapter = GetNextExtAdapter(pTempAdapter);
 
 			}
 
@@ -4521,7 +4521,7 @@ WatchDogTimerCallback(
 	if(!Adapter->bHWInitReady)
 	{
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioCheckForHang(): bHWInitReady FALSE\n"));
-	
+
 		pDefaultAdapter->MgntInfo.WatchDogReturnFlag = FALSE;
 
 		if(Adapter->MgntInfo.bSetWatchDogTimerByDriver)
@@ -4533,9 +4533,9 @@ WatchDogTimerCallback(
 	}
 
 	//
-	// <Roger_Notes> Signal corresponding event when checkforhang routine is called after PnP action. 
+	// <Roger_Notes> Signal corresponding event when checkforhang routine is called after PnP action.
 	// 2009.09.30.
-	// 
+	//
 	if(!device->bChkForHangAfterPnP)
 	{
 		RT_TRACE(COMP_POWER, DBG_LOUD, ("N6SdioCheckForHang(): Signal SetPnpChkForHangEvent!!\n"));
@@ -4549,9 +4549,9 @@ WatchDogTimerCallback(
 		N6SdioReturnAllPendingTxPackets(Adapter);
 
 		// Release Tx Queue buffered context if needed. added by Roger, 2012.04.17.
-		N6SdioReleaseTxQueuePending(Adapter);	
+		N6SdioReleaseTxQueuePending(Adapter);
 	}
-	
+
 
 	if(Adapter->NdisSdioDev.NdisStatusIndicateCount < MAX_NDIS_STATUS_REPORT_TIME)
 	{
@@ -4561,7 +4561,7 @@ WatchDogTimerCallback(
 			)
 		{
 			NicIFSetLinkStatus( Adapter, RT_MEDIA_DISCONNECT );
-			Adapter->NdisSdioDev.NdisStatusIndicateCount = 0;			
+			Adapter->NdisSdioDev.NdisStatusIndicateCount = 0;
 		}
 	}
 
@@ -4633,20 +4633,20 @@ Note:
 
 	if(!Adapter->bHWInitReady)
 		return NDIS_STATUS_SUCCESS;
-	
+
 
 	//
-	// <Roger_Notes> We complete any pending OID requests. 
-	// NDIS will submit no further OID requests to the miniport driver for the NIC 
+	// <Roger_Notes> We complete any pending OID requests.
+	// NDIS will submit no further OID requests to the miniport driver for the NIC
 	// being reset until the reset operation has finished.
 	// In this case, we cancel all pending SetPower OIDs to prevent unexpect blocking IRPs
-	// due to MiniportQueryInformation, MiniportSetInformation function seem to have timed out. 
+	// due to MiniportQueryInformation, MiniportSetInformation function seem to have timed out.
 	// 2008.03.13.
 	//
 	// Complete the pended OID and return aborted caused by reset request. By Bruce, 2008-10-29.
-	
+
 	N6CompletePendedOID(
-		Adapter, 
+		Adapter,
 		RT_PENDED_OID_DONT_CARE,
 		NDIS_STATUS_REQUEST_ABORTED);
 
@@ -4727,7 +4727,7 @@ N6SdioAllocateNative80211MIBs(
 			pNdisCommon->pDot11PhyMIBs = NULL;
 		}
 	}
-	
+
 	return ndisStatus;
 }
 
@@ -4752,8 +4752,8 @@ N6SdioFreeNative80211MIBs(
 			pNdisCommon->pDot11PhyMIBs,
 			sizeof(NIC_PHY_MIB) * NATIVE_802_11_MAX_NUM_PHY_TYPES
 			);
-	}	
-	
+	}
+
 	if(pNdisCommon->dot11IbssParams.AdditionalIEData)
 	{
 		PlatformFreeMemory(pNdisCommon->dot11IbssParams.AdditionalIEData, pNdisCommon->dot11IbssParams.AdditionalIESize);
@@ -4786,7 +4786,7 @@ MPFragPhysicalBuffer(
 }
 
 
-NDIS_STATUS 
+NDIS_STATUS
 N6SdioReadRegParameters(
 	IN  PRT_SDIO_DEVICE		device
 	)
@@ -4805,9 +4805,9 @@ Return Value:
 
     NDIS_STATUS_SUCCESS
     NDIS_STATUS_FAILURE
-    NDIS_STATUS_RESOURCES                                       
+    NDIS_STATUS_RESOURCES
 
---*/    
+--*/
 {
 	NDIS_STATUS		Status = NDIS_STATUS_SUCCESS;
 	NDIS_HANDLE		ConfigurationHandle;
@@ -4897,7 +4897,7 @@ Return Value:
 			}
 			else
 			{
-				CopyFromUnicodeToOS( 
+				CopyFromUnicodeToOS(
 					pointer,
 					(NDIS_STRING *)(UINT_PTR)pRegEntry->Default,
 					((NDIS_STRING *)(UINT_PTR)pRegEntry->Default)->Length/2 );
@@ -4931,23 +4931,23 @@ Return Value:
 }
 
 
-VOID 
-N6SdioFreeTxQueueRes( 
+VOID
+N6SdioFreeTxQueueRes(
 	IN PADAPTER		pAdapter
 )
 {
 	PRT_SDIO_DEVICE	pDevice = GET_RT_SDIO_DEVICE(pAdapter);
 
 	// Free Rt TxQueues
-	if(pDevice->RtTxQueue) 
+	if(pDevice->RtTxQueue)
 	{
       		ExFreePoolWithTag(pDevice->RtTxQueue, '3278' );
        	pDevice->RtTxQueue = NULL;
 	}
 }
 
-VOID 
-N6SdioDereferInterface( 
+VOID
+N6SdioDereferInterface(
 	IN PRT_SDIO_DEVICE		pDevice
 )
 {
@@ -4965,8 +4965,8 @@ N6SdioDereferInterface(
 }
 
 
-VOID 
-N6SdioFreeDevice( 
+VOID
+N6SdioFreeDevice(
 	IN PRT_SDIO_DEVICE		pDevice
 )
 {
@@ -4998,7 +4998,7 @@ N6SdioFreeDevice(
 			(pDevice->Sdbusinterface.Context);
 		RtlZeroMemory(&pDevice->Sdbusinterface, sizeof(SDBUS_INTERFACE_STANDARD));
 	}
-	
+
 }
 
 VOID
@@ -5017,12 +5017,12 @@ N6SdioFreeAll(
 	PRT_SDIO_DEVICE	device = GET_RT_SDIO_DEVICE(Adapter);
 
 	// Release all we do during initialization
-	
+
 	//
 	// All packets queued in the driver are returned (to the upper layer). By Bruce, 2008-11-28.
 	//
 	ReleaseDataFrameQueued(Adapter);
-	
+
 	// Wait for All Timer Callback Completion (Including Extension Port) ----
 	N6WaitTimerSync(Adapter);
 	// ----------------------------------------------------------
@@ -5030,36 +5030,36 @@ N6SdioFreeAll(
 	// Free All Ndis 6.20+ Component ---------------------
 	NDIS_6_2_FREE_EXTENSION_COMPONENT(Adapter);
 	// -----------------------------------------------
-	
+
 	NicIFDeInitResource(Adapter);
 
 	NicIFFreeMemory((PADAPTER)Adapter);
 	NicIFDisassociateNIC((PADAPTER)Adapter);
 
 	//
-	// 070307, rcnjko: 
-	// We MUST free USB pipes after NicIFDisassociateNIC() 
-	// because some workitem are still working and manipulate 
-	// USB pipes until NicIFDisassociateNIC() is finished, 
+	// 070307, rcnjko:
+	// We MUST free USB pipes after NicIFDisassociateNIC()
+	// because some workitem are still working and manipulate
+	// USB pipes until NicIFDisassociateNIC() is finished,
 	// e.g. GPIOChangeRFWorkItem.
 	//
 	N6SdioFreeDevice(device);
 
 	// Free spin lock.
 	// <RJ_NOTE> We free spin locks here because NicIFFreeMemory() still use TX and RX spin locks. 2006.03.08, by rcnjko.
-	NdisFreeSpinLock( &(device->IrpSpinLock) );	
+	NdisFreeSpinLock( &(device->IrpSpinLock) );
 	N6CFreeSpinLocks(Adapter);
 
 	// Free the Timer Synchronization Mechanism ---------
 	N6DeInitTimerSync(Adapter);
 	// ---------------------------------------------
-	
-	NdisOIDHistoryDeInit(Adapter);	
+
+	NdisOIDHistoryDeInit(Adapter);
 
 	// Free the PortCommonInfo -----------------------
 	PortCommonInfoFreeMemory(Adapter);
 	// --------------------------------------------
-	
+
 	// Free the memory block allocated for ADAPTER, RT_NDIS6_COMMON and so on.
 	N6FreeAdapter((PADAPTER)Adapter);
 
@@ -5074,7 +5074,7 @@ N6SdioAllocateRxNetBufferListPool(
 	NET_BUFFER_LIST_POOL_PARAMETERS	NBLPoolParameters;
 	PRT_SDIO_DEVICE	device = GET_RT_SDIO_DEVICE(Adapter);
 	NDIS_HANDLE		NBLPoolHandle = NULL;
-	
+
 	PlatformZeroMemory(&NBLPoolParameters, sizeof(NET_BUFFER_LIST_POOL_PARAMETERS));
 
 	N6_ASSIGN_OBJECT_HEADER(
@@ -5082,7 +5082,7 @@ N6SdioAllocateRxNetBufferListPool(
 		NDIS_OBJECT_TYPE_DEFAULT,
 		NET_BUFFER_LIST_POOL_PARAMETERS_REVISION_1,
 		sizeof(NET_BUFFER_LIST_POOL_PARAMETERS));
-	
+
 	NBLPoolParameters.ProtocolId = 0;
 	NBLPoolParameters.fAllocateNetBuffer = TRUE;
 	NBLPoolParameters.ContextSize = 0;
@@ -5107,7 +5107,7 @@ N6SdioFreeRxNetBufferListPool(
 	)
 {
 	NDIS_HANDLE		NBLPoolHandle = Adapter->NdisSdioDev.RxNetBufferListPool;
-	
+
     if(NBLPoolHandle)
     {
         RT_TRACE(COMP_INIT, DBG_LOUD, ("N6SdioFreeRxNetBufferListPool +1\n"));
@@ -5136,7 +5136,7 @@ N6SdioDisableDeviceInterrupt(
 	PRT_SDIO_DEVICE	pDevice = GET_RT_SDIO_DEVICE(Adapter);
 	BOOLEAN			bEnableInt;
 	NTSTATUS 		ntStatus = STATUS_SUCCESS;
-	
+
 	//
 	// Read interrupt property from current function.
 	//
@@ -5144,8 +5144,8 @@ N6SdioDisableDeviceInterrupt(
 					pDevice,
 					SDP_FUNCTION_INT_ENABLE,
 					&bEnableInt,
-					sizeof(bEnableInt));	
-		if(!NT_SUCCESS(ntStatus)){ 
+					sizeof(bEnableInt));
+		if(!NT_SUCCESS(ntStatus)){
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("Cannot get property SDP_FUNCTION_INT_ENABLE\n"));
 			 //return ntStatus;
 	}
@@ -5160,8 +5160,8 @@ N6SdioDisableDeviceInterrupt(
 						pDevice,
 						SDP_FUNCTION_INT_ENABLE,
 						&bEnableInt,
-						sizeof(bEnableInt));	
-			if(!NT_SUCCESS(ntStatus)){ 
+						sizeof(bEnableInt));
+			if(!NT_SUCCESS(ntStatus)){
 				RT_TRACE(COMP_POWER, DBG_LOUD, ("Cannot set property SDP_FUNCTION_INT_ENABLE\n"));
 				//return ntStatus;
 			}
@@ -5169,14 +5169,14 @@ N6SdioDisableDeviceInterrupt(
 
 	//
 	// Instruct the SD bus driver to stop forwarding device interrupt.
-	// 
+	//
 	bEnableInt = FALSE;
 	ntStatus = PlatformSdioSetProperty(
 					pDevice,
 					SDP_SET_CARD_INTERRUPT_FORWARD,
 					&bEnableInt,
-					sizeof(bEnableInt));	
-		if(!NT_SUCCESS(ntStatus)){ 
+					sizeof(bEnableInt));
+		if(!NT_SUCCESS(ntStatus)){
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("Cannot set property SDP_SET_CARD_INTERRUPT_FORWARD\n"));
 			//return ntStatus;
 		}
@@ -5201,18 +5201,18 @@ N6SdioEnableDeviceInterrupt(
 
 	//
 	// Instruct the SD bus driver to forward interrupts to our miniport driver.
-	// 
-	bEnableInt = TRUE; 
+	//
+	bEnableInt = TRUE;
 	ntStatus = PlatformSdioSetProperty(
 					pDevice,
 					SDP_SET_CARD_INTERRUPT_FORWARD,
 					&bEnableInt,
-					sizeof(bEnableInt));	
-	if(!NT_SUCCESS(ntStatus)){ 
+					sizeof(bEnableInt));
+	if(!NT_SUCCESS(ntStatus)){
 		RT_TRACE(COMP_POWER, DBG_LOUD, ("Cannot set property SDP_SET_CARD_INTERRUPT_FORWARD\n"));
 		//return ntStatus;
 	}
-	
+
 	//
 	// Read interrupt property from current function.
 	//
@@ -5220,12 +5220,12 @@ N6SdioEnableDeviceInterrupt(
 					pDevice,
 					SDP_FUNCTION_INT_ENABLE,
 								&bEnableInt,
-								sizeof(bEnableInt));	
-		if(!NT_SUCCESS(ntStatus)){ 
+								sizeof(bEnableInt));
+		if(!NT_SUCCESS(ntStatus)){
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("Cannot get property SDP_FUNCTION_INT_ENABLE\n"));
 			 //return ntStatus;
 	}
-	
+
 	//
 	// Set interrupt property from current function.
 	//
@@ -5236,8 +5236,8 @@ N6SdioEnableDeviceInterrupt(
 						pDevice,
 						SDP_FUNCTION_INT_ENABLE,
 									&bEnableInt,
-									sizeof(bEnableInt));	
-			if(!NT_SUCCESS(ntStatus)){ 
+									sizeof(bEnableInt));
+			if(!NT_SUCCESS(ntStatus)){
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("Cannot set property SDP_FUNCTION_INT_ENABLE\n"));
 				//return ntStatus;
 		}
@@ -5264,7 +5264,7 @@ N6Sdio_Mgnt_SetPower(
 {
 	PMGNT_INFO					pMgntInfo = &(Adapter->MgntInfo);
 	PADAPTER					pDefaultAdapter = GetDefaultAdapter(Adapter);
-	
+
 	NDIS_STATUS					Status = NDIS_STATUS_SUCCESS;
 	PRT_SDIO_DEVICE				pDevice = GET_RT_SDIO_DEVICE(Adapter);
 	PRT_NDIS6_COMMON			pNdisCommon = Adapter->pNdisCommon;
@@ -5276,7 +5276,7 @@ N6Sdio_Mgnt_SetPower(
 	BOOLEAN 					bSupportRemoteWakeUp, bEnableWoLCapabilities;
 	PRT_POWER_SAVE_CONTROL		pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 	BOOLEAN 					bResult = FALSE;
-	
+
 	LARGE_INTEGER	StartTime, EndTime;
 	LARGE_INTEGER	Freq;
 
@@ -5287,7 +5287,7 @@ N6Sdio_Mgnt_SetPower(
 		RT_TRACE(COMP_POWER, DBG_LOUD, ("Set OID_PNP_SET_POWER: inavalid InformationBufferLength(%d), BytesNeeded is %d\n", InformationBufferLength, *BytesNeeded) );
 		return Status;
 	}
-	
+
 	NewPowerState = *((NDIS_DEVICE_POWER_STATE*)InformationBuffer);
 	Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_WOWLAN , &bSupportRemoteWakeUp);
 	bEnableWoLCapabilities = MgntIsWoWLANCapabilityEnable(Adapter);
@@ -5307,19 +5307,19 @@ N6Sdio_Mgnt_SetPower(
 		return Status;
 	}
 
-	
+
 	// For Working Time Calculation
 	Adapter->bCtrlPnPTime = TRUE;
 	Adapter->PnPTotalTime.QuadPart = 0;
 	Adapter->PnPIOTime.QuadPart = 0;
 	pDevice->PnPSdBusWorkTime.QuadPart = 0;
-				
+
 	StartTime = KeQueryPerformanceCounter(&Freq);
 	//
-	
+
 	// 2010/08/11 MH Add to protect USB minicard selective suspend HW radio detection test
 	pMgntInfo->bSetPnpPwrInProgress = TRUE;
-	
+
 	if(NewPowerState == NdisDeviceStateD0)
 	{ // Wake up.
 
@@ -5334,12 +5334,12 @@ N6Sdio_Mgnt_SetPower(
 
 		Adapter->bInSetPower = TRUE;
 
-		MgntStopBeacon(Adapter);		
+		MgntStopBeacon(Adapter);
 
 		if(pMgntInfo->bPreTransPnP)
 		{
 			//
-			// <Roger_Notes> We need to complete this OID request with pending status immediately to shorten the 
+			// <Roger_Notes> We need to complete this OID request with pending status immediately to shorten the
 			// power transition latency caused by the device resumption operation in OID_PNP_SET_POWER handling.
 			// 2014.05.09.
 			//
@@ -5348,7 +5348,7 @@ N6Sdio_Mgnt_SetPower(
 			bResult = PlatformScheduleWorkItem( &(pDevice->PnpWorkItem) );
 
 			if(bResult == FALSE)
-			{				
+			{
 				pMgntInfo->bSetPnpPwrInProgress = FALSE;
 				Status= NDIS_STATUS_SUCCESS;
 			}
@@ -5359,11 +5359,11 @@ N6Sdio_Mgnt_SetPower(
 		{
 			if(NDIS_CURRENT_IRQL() > PASSIVE_LEVEL)
 			{
-				// Schedule a workitem to do necessary tasks before entering sleep state. 
+				// Schedule a workitem to do necessary tasks before entering sleep state.
 				// The OID will be completed until these tasks finished.
 				RT_TRACE(COMP_POWER, DBG_LOUD, ("N6Sdio_Mgnt_SetPower(): IRQL > PASSIVE. Call workitem!!!\n"));
 				bResult = PlatformScheduleWorkItem( &(pDevice->PnpWorkItem) );
-				if(bResult == FALSE){				
+				if(bResult == FALSE){
 					pMgntInfo->bSetPnpPwrInProgress = FALSE;
 					Status= NDIS_STATUS_SUCCESS;
 				}
@@ -5389,14 +5389,14 @@ N6Sdio_Mgnt_SetPower(
 			PMGNT_INFO		pExtMgntInfo = NULL;
 			PMGNT_INFO		pDefaultMgntInfo = &pDefaultAdapter->MgntInfo;
 
-			pDefaultMgntInfo->bDriverIsGoingToSleep = TRUE; 
-		
+			pDefaultMgntInfo->bDriverIsGoingToSleep = TRUE;
+
 			while(pExtAdapter != NULL)
 			{
 				pExtMgntInfo = &pExtAdapter->MgntInfo;
-			
-				pExtMgntInfo->bDriverIsGoingToSleep = TRUE; 
-				
+
+				pExtMgntInfo->bDriverIsGoingToSleep = TRUE;
+
 				pExtAdapter = GetNextExtAdapter(pExtAdapter);
 			}
 		}
@@ -5417,7 +5417,7 @@ N6Sdio_Mgnt_SetPower(
 			pPSC->bPnpEnterD2 = TRUE;
 			pPSC->PnpSleepEnterD2Cnt++;
 		}
-		
+
 		pPSC->LastPnpSleepTime = PlatformGetCurrentTime();
 
 		// Cancel watchdog workitem
@@ -5428,28 +5428,28 @@ N6Sdio_Mgnt_SetPower(
 			PlatformStopWorkItem( &(pHalData->RtCheckForHangWorkItem) );
 		}
 #endif
-		
+
 		if( !Adapter->bInHctTest )
 		{	// Those in vWifi mode now disassociate all STA before sleep, and will be reset after waking up.
-		
+
 			PADAPTER pTargetAdapter = GetDefaultAdapter(Adapter);
-				
+
 			while(pTargetAdapter != NULL)
 			{
 				if(MgntActQuery_ApType(pTargetAdapter) == RT_AP_TYPE_VWIFI_AP)
 				{
 					AP_DisassociateAllStation(pTargetAdapter, unspec_reason);
 					SecSetSwEncryptionDecryption(pTargetAdapter, FALSE, FALSE);
-		
+
 					RT_TRACE(COMP_AP, DBG_LOUD,("vWifi mode on Port: %d disassociates all STA.\n", pTargetAdapter->pNdis62Common->PortNumber));
-				}		
-		
+				}
+
 					pTargetAdapter = GetNextExtAdapter(pTargetAdapter);
 			}
 		}
 		else
 		{	// For OS before Win7 still go turning OFF directly.
-			NDIS_6_2_AP_CLEAR_BEFORE_SLEEP(Adapter);	
+			NDIS_6_2_AP_CLEAR_BEFORE_SLEEP(Adapter);
 		}
 
 #if P2P_SUPPORT == 1
@@ -5459,7 +5459,7 @@ N6Sdio_Mgnt_SetPower(
 			{// Doing P2P Device Discovery
 				P2PScanListCeaseScan(GET_P2P_INFO(Adapter));
 				P2PDeviceDiscoveryComplete(GET_P2P_INFO(Adapter), TRUE); // P2P State is restored in this function.
-			}			
+			}
 		}
 
 #if (MULTIPORT_SUPPORT == 1)
@@ -5467,7 +5467,7 @@ N6Sdio_Mgnt_SetPower(
 		{
 			(GET_P2P_INFO(GetFirstDevicePort(Adapter)))->uListenStateDiscoverability = 0;
 		}
-#endif		
+#endif
 #endif
 		//
 		// Stop scan, roaming and link operation.
@@ -5481,12 +5481,12 @@ N6Sdio_Mgnt_SetPower(
 			PlatformCancelTimer(Adapter, &pMgntInfo->ScanTimer);
 			{
 				PADAPTER pLoopAdapter = GetDefaultAdapter(Adapter);
-			
+
 				while(pLoopAdapter)
 				{
 					pLoopAdapter->MgntInfo.bScanInProgress = FALSE;
 					pLoopAdapter->MgntInfo.bDualModeScanStep = 0;
-					
+
 					pLoopAdapter = GetNextExtAdapter(pLoopAdapter);
 				}
 			}
@@ -5498,20 +5498,20 @@ N6Sdio_Mgnt_SetPower(
 					DrvIFIndicateRoamingStart(Adapter);
 				else
 					DrvIFIndicateConnectionStart(Adapter);
-				
+
 				DrvIFIndicateAssociationStart(Adapter);
 				DrvIFIndicateAssociationComplete(Adapter, RT_STATUS_FAILURE);
-				
+
 				if(MgntRoamingInProgress(pMgntInfo))
 					DrvIFIndicateRoamingComplete(Adapter, RT_STATUS_FAILURE);
 				else
-					DrvIFIndicateConnectionComplete(Adapter, RT_STATUS_FAILURE);		
-				MgntActSet_802_11_DISASSOCIATE( Adapter, unspec_reason);	
-			}			
+					DrvIFIndicateConnectionComplete(Adapter, RT_STATUS_FAILURE);
+				MgntActSet_802_11_DISASSOCIATE( Adapter, unspec_reason);
+			}
 		}
 
 		MgntResetRoamingState(pMgntInfo);
-				
+
 		//MgntDisconnectAP(Adapter , unspec_reason);
 		if(Adapter->MgntInfo.bMediaConnect || pMgntInfo->bIbssStarter)
 		{
@@ -5521,27 +5521,27 @@ N6Sdio_Mgnt_SetPower(
 
 			//save SSID
 			savedssid.Octet = ssidbuf;
-			CopySsidOS(savedssid, Adapter->MgntInfo.Ssid);	
+			CopySsidOS(savedssid, Adapter->MgntInfo.Ssid);
 			CopyMem(bssidbuf,Adapter->MgntInfo.Bssid, 6);
 
 			//Add for DTM 1.0c test.
 			if(!pMgntInfo->bHiddenSSIDEnable)
-				MgntRemoveSsidsToScan(Adapter, Adapter->MgntInfo.Ssid);			
+				MgntRemoveSsidsToScan(Adapter, Adapter->MgntInfo.Ssid);
 
 			//
 			// CCW: don't indicae dissociation event on infra. mode client.
 			// 070125, rcnjko: don't indicate disassociation event
-			//		
+			//
 
 			if(!bEnableWoLCapabilities ||
-				(pPSC->FSSDetection && (!pPSC->bSetPMParameters || (pPSC->bSetPMParameters && !pPSC->bOSSupportProtocolOffload)))) 
+				(pPSC->FSSDetection && (!pPSC->bSetPMParameters || (pPSC->bSetPMParameters && !pPSC->bOSSupportProtocolOffload))))
 			{	// Do not disasso to AP when WoWLAN. by tynli.
-			
+
 				if( Adapter->MgntInfo.OpMode == RT_OP_MODE_INFRASTRUCTURE )
 				{
 					Adapter->pNdisCommon->bDissociateBeforeSleep = TRUE;
 				}
-			
+
 				MgntActSet_802_11_DISASSOCIATE(Adapter , unspec_reason);
 				Adapter->pNdisCommon->bPnpKeepConnectToAP = FALSE;
 
@@ -5559,7 +5559,7 @@ N6Sdio_Mgnt_SetPower(
 			}
 
 			//restore SSID
-			CopySsidOS(Adapter->MgntInfo.Ssid, savedssid);	
+			CopySsidOS(Adapter->MgntInfo.Ssid, savedssid);
 			CopyMem(Adapter->MgntInfo.Bssid, bssidbuf, 6);
 		}
 		else
@@ -5568,9 +5568,9 @@ N6Sdio_Mgnt_SetPower(
 		}
 
 		{
-			//PADAPTER pTargetAdapter = 
-			//	MgntActQuery_ApType(GetDefaultAdapter(Adapter)) == RT_AP_TYPE_VWIFI_AP ? 
-			//	GetDefaultAdapter(Adapter) : 
+			//PADAPTER pTargetAdapter =
+			//	MgntActQuery_ApType(GetDefaultAdapter(Adapter)) == RT_AP_TYPE_VWIFI_AP ?
+			//	GetDefaultAdapter(Adapter) :
 			//	(MgntActQuery_ApType(ADJUST_TO_ADAPTIVE_ADAPTER(Adapter, FALSE)) == RT_AP_TYPE_VWIFI_AP ? ADJUST_TO_ADAPTIVE_ADAPTER(Adapter, FALSE) : NULL);
 
 			PADAPTER pTargetAdapter = GetDefaultAdapter(Adapter);
@@ -5581,7 +5581,7 @@ N6Sdio_Mgnt_SetPower(
 				{
 					// stop beaconing. for NDISTest preview 3 SoftAP_Power_ext.
 					PMGNT_INFO pTargetMgntInfo = &pTargetAdapter->MgntInfo;
-				
+
 					MgntStopBeacon(pTargetAdapter);
 
 					// Configure the HW to be No Link.
@@ -5589,22 +5589,22 @@ N6Sdio_Mgnt_SetPower(
 					Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_MEDIA_STATUS, (pu1Byte)(&pTargetMgntInfo->OpMode));
 					pTargetMgntInfo->OpMode = RT_OP_MODE_AP;
 				}
-				
+
 				pTargetAdapter = GetNextExtAdapter(pTargetAdapter);
 			}
 		}
-			
+
 		pDevice->CurrentPowerState = NewPowerState;
 		Adapter->bInSetPower = TRUE;
 
 		if(NDIS_CURRENT_IRQL() > PASSIVE_LEVEL)
 		{
-			// Schedule a workitem to do necessary tasks before entering sleep state. 
+			// Schedule a workitem to do necessary tasks before entering sleep state.
 			// The OID will be completed until these tasks finished.
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("N6Sdio_Mgnt_SetPower(): IRQL > PASSIVE. Call workitem!!!\n"));
 			bResult = PlatformScheduleWorkItem( &(pDevice->PnpWorkItem) );
 
-			if(bResult == FALSE){				
+			if(bResult == FALSE){
 				pMgntInfo->bSetPnpPwrInProgress = FALSE;
 				Status= NDIS_STATUS_SUCCESS;
 			}
@@ -5620,37 +5620,37 @@ N6Sdio_Mgnt_SetPower(
 			Status= NDIS_STATUS_SUCCESS;
 		}
 	}
-	else 
+	else
 	{ // Otherwise.
 		RT_TRACE(COMP_POWER, DBG_LOUD, ("Set OID_PNP_SET_POWER should not reach here: Current: %d to New: %d\n", pDevice->CurrentPowerState, NewPowerState));
 
 		Status = NDIS_STATUS_SUCCESS;
 	}
 
-	// For Working Time Calculation 		
+	// For Working Time Calculation
 	EndTime = KeQueryPerformanceCounter(NULL);
 	Adapter->bCtrlPnPTime = FALSE;
-	
+
 	Adapter->PnPTotalTime.QuadPart = (EndTime.QuadPart - StartTime.QuadPart) * 1000000;
 	Adapter->PnPTotalTime.QuadPart = Adapter->PnPTotalTime.QuadPart / Freq.QuadPart;
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("[PnP Time] Wake Up Total Cost Time: %llu us\n", Adapter->PnPTotalTime.QuadPart));
-	
+
 	Adapter->PnPIOTime.QuadPart = Adapter->PnPIOTime.QuadPart * 1000000;
 	Adapter->PnPIOTime.QuadPart = Adapter->PnPIOTime.QuadPart / Freq.QuadPart;
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("[PnP Time] IO Cost Time: %llu us\n", Adapter->PnPIOTime.QuadPart));
-	
+
 	pDevice->PnPSdBusWorkTime.QuadPart = pDevice->PnPSdBusWorkTime.QuadPart * 1000000;
 	pDevice->PnPSdBusWorkTime.QuadPart = pDevice->PnPSdBusWorkTime.QuadPart / Freq.QuadPart;
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("[PnP Time] SdBus Submit Cost Time: %llu us\n", pDevice->PnPSdBusWorkTime.QuadPart));
 	//
 
 	*BytesRead = InformationBufferLength;
-	
+
 	return  Status;
 }
 
-//@@@ 
-// 
+//@@@
+//
 // Callback function of the workitem PnpWorkitem
 // 20061205 pnp work item for wake up from s3 mode
 //by David
@@ -5666,9 +5666,9 @@ PnpWorkItemCallback(
 	PRT_POWER_SAVE_CONTROL	pPSC 			= GET_POWER_SAVE_CONTROL(&(Adapter->MgntInfo));
 	PRT_NDIS_COMMON			pNdisCommon 	= Adapter->pNdisCommon;
 	PMGNT_INFO				pMgntInfo		= &Adapter->MgntInfo;
-	PRT_NLO_INFO			pNLOInfo 		= &(pMgntInfo->NLOInfo);		
+	PRT_NLO_INFO			pNLOInfo 		= &(pMgntInfo->NLOInfo);
 	BOOLEAN					bWakeReconnect	= TRUE;
-	BOOLEAN 				bMacPwrCtrlOn;	
+	BOOLEAN 				bMacPwrCtrlOn;
 	BOOLEAN 				bSupportRemoteWakeUp;
 	BOOLEAN					bEnableWoLCapabilities;
 	RT_RF_POWER_STATE 		rfState;
@@ -5677,17 +5677,17 @@ PnpWorkItemCallback(
 
 	Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_WOWLAN , &bSupportRemoteWakeUp);
 	bEnableWoLCapabilities = MgntIsWoWLANCapabilityEnable(Adapter);
-	
+
 	if(pDevice->CurrentPowerState == NdisDeviceStateD0)
-	{ // wake up. 
-		
+	{ // wake up.
+
 		//
 		// <Roger_Notes> Reset corresponding PnP event to monitor MiniportCheckForHang routine.
 		// 2009.09.30.
 		//
 		pDevice->bChkForHangAfterPnP = FALSE;
 		NdisResetEvent(&pDevice->SetPnpChkForHangEvent);
-	
+
 		{
 			PADAPTER pExtAdapter = GetNextExtAdapter(pDefaultAdapter);
 			PMGNT_INFO		pExtMgntInfo = NULL;
@@ -5698,16 +5698,16 @@ PnpWorkItemCallback(
 			pDefaultAdapter->bEnterPnpSleep = FALSE;
 			pDefaultAdapter->bWakeFromPnpSleep = TRUE;
 			pDefaultAdapter->bDriverIsGoingToPnpSetPowerSleep = FALSE;
-		
+
 			while(pExtAdapter != NULL)
 			{
 				pExtMgntInfo = &pExtAdapter->MgntInfo;
 				pExtPSC = GET_POWER_SAVE_CONTROL(pExtMgntInfo);
-			
+
 				pExtAdapter->bEnterPnpSleep = FALSE;
 				pExtAdapter->bWakeFromPnpSleep = TRUE;
 				pExtAdapter->bDriverIsGoingToPnpSetPowerSleep = FALSE;
-				
+
 				pExtAdapter = GetNextExtAdapter(pExtAdapter);
 			}
 		}
@@ -5719,7 +5719,7 @@ PnpWorkItemCallback(
 		// before the system sets OID_PNP_CAPABILITIES to put the device to low PS state, it will
 		// set OID_PM_PARAMETERS first. In order to seperate FSS mode from S3/S4/Selective suspend
 		// mode, we use "bSetPMParameters" flag to decide some behaviors. 2012.09.13, by tynli.
-		pPSC->bSetPMParameters = FALSE; 
+		pPSC->bSetPMParameters = FALSE;
 
 		RT_ENABLE_SDIO_TRANSFERS(Adapter);
 
@@ -5742,7 +5742,7 @@ PnpWorkItemCallback(
 		N6WdmSdioTx_Enable(Adapter);
 #endif
 		N6SdioDummyIO(pDevice);
-		
+
 		// Control SDIO Clock rate settings
 		if(pDevice->bRegSdioSpeedSDR25)
 		{
@@ -5754,13 +5754,13 @@ PnpWorkItemCallback(
 			N6SdioEnableDeviceInterrupt(Adapter);
 		}
 
-	
+
 		//
 		// 070106, rcnjko:
 		// Re-initialize H/W for USB Bus is suspend.
 		// Besides, we also issue bulk IN transfers at InitializeAdapterHandler().
 		//
-		// <tynli_note> On Intel Bay Trail low power platform, "D2 -> D0 -> miniport shutdown" function will be 
+		// <tynli_note> On Intel Bay Trail low power platform, "D2 -> D0 -> miniport shutdown" function will be
 		// called by user initialiated Restart. It has site effect to 8723BS card lost issue. So this is a work around
 		// to add the condition to prevent from acting HaltAdapter in PNP D2 and D0 under Restart flow. 2013.11.18.
 		if((pMgntInfo->bIntelPatchPNP && !pMgntInfo->bReceiveSystemPSOID) || (!pMgntInfo->bIntelPatchPNP))
@@ -5779,7 +5779,7 @@ PnpWorkItemCallback(
 		if(pMgntInfo->bRegPnpKeepLink)
 		{
 			if((Adapter->MgntInfo.bMediaConnect && (Adapter->bReInitHW || pPSC->WakeUpReason == WOL_REASON_AP_LOST ||
-				pPSC->WakeUpReason == WOL_REASON_DISASSOC ||pPSC->WakeUpReason == WOL_REASON_DEAUTH)) || 
+				pPSC->WakeUpReason == WOL_REASON_DISASSOC ||pPSC->WakeUpReason == WOL_REASON_DEAUTH)) ||
 				(!Adapter->pNdisCommon->bPnpKeepConnectToAP))
 			{
 				pMgntInfo->bPerformPnpReconnect = TRUE;
@@ -5788,8 +5788,8 @@ PnpWorkItemCallback(
 			{
 				pMgntInfo->bPerformPnpReconnect = FALSE;
 			}
-	
-			RT_TRACE(COMP_POWER, DBG_LOUD, ("PnPSetPower(): bPerformPnpReconnect=%d, bReInitHW=%d\n", 
+
+			RT_TRACE(COMP_POWER, DBG_LOUD, ("PnPSetPower(): bPerformPnpReconnect=%d, bReInitHW=%d\n",
 				pMgntInfo->bPerformPnpReconnect, Adapter->bReInitHW));
 		}
 		else
@@ -5798,26 +5798,26 @@ PnpWorkItemCallback(
 		}
 
 		if(bSupportRemoteWakeUp) // Need to be set before N6RestoreLastInitSettingAterWakeUP().
-		{							
+		{
 			Adapter->HalFunc.EnableHWSecCfgHandler(Adapter); //For HW Security. by tynli. 2009.06.24.
-		}	
-		
+		}
+
 
 		PlatformSetCheckForHangTimer(Adapter);
 
 		PlatformStartWorkItem(&(Adapter->pPortCommonInfo->pPortHelper->CreateDeleteMacWorkitem));
-		
+
 		{
 			PADAPTER pTargetAdapter = GetDefaultAdapter(Adapter);
 
 			while(pTargetAdapter != NULL)
 			{
 				pTargetAdapter->bInitializeInProgress = FALSE;
-				
+
 				pTargetAdapter = GetNextExtAdapter(pTargetAdapter);
 			}
 		}
-		
+
 		//ADJUST_TO_ADAPTIVE_ADAPTER(Adapter, FALSE)->bInitializeInProgress=FALSE;
 		//pDefaultAdapter->bInitializeInProgress=FALSE;
 
@@ -5826,7 +5826,7 @@ PnpWorkItemCallback(
 		if( !Adapter->bInHctTest )
 		{
 			PADAPTER pTargetAdapter = GetDefaultAdapter(Adapter);
-				
+
 			while(pTargetAdapter != NULL)
 			{
 				RT_TRACE(COMP_AP, DBG_LOUD, ("Adapter on Port: %d, APType: %d\n", pTargetAdapter->pNdis62Common->PortNumber, MgntActQuery_ApType(pTargetAdapter)));
@@ -5836,11 +5836,11 @@ PnpWorkItemCallback(
 					pTargetAdapter->bvWifiStopBeforeSleep = TRUE;
 					N62CApIndicateStopAp(pTargetAdapter);
 				}
-					
+
 				pTargetAdapter = GetNextExtAdapter(pTargetAdapter);
 			}
 		}
-		
+
 		Adapter->pNdisCommon->bWakeupAutoLinkInProgressing = TRUE;
 
 		if(pMgntInfo->bPerformPnpReconnect)
@@ -5849,7 +5849,7 @@ PnpWorkItemCallback(
 		}
 		N6RestoreLastInitSettingAterWakeUP(Adapter);
 
-		// Indicate disassociation state when RF is off becuase we do not disconnect before sleep in WoWLAN mode.		
+		// Indicate disassociation state when RF is off becuase we do not disconnect before sleep in WoWLAN mode.
 		// 2011.10.27. by tynli.
 		Adapter->HalFunc.GetHwRegHandler(Adapter, HW_VAR_RF_STATE, (pu1Byte)(&rfState));
 		if(rfState == eRfOff)
@@ -5859,13 +5859,13 @@ PnpWorkItemCallback(
 				DrvIFIndicateDisassociation(Adapter, unspec_reason, pMgntInfo->Bssid);
 			}
 			pNdisCommon->bWakeupAutoLinkInProgressing = FALSE;
-		}	
+		}
 
 		if(OS_SUPPORT_WDI(Adapter))
 		{
 		pNdisCommon->bWakeupAutoLinkInProgressing = FALSE;
 			// TODO: WoWLAN
-		
+
 			// TODO: NLO
 		}
 		else if(pNdisCommon->bWakeupAutoLinkInProgressing)
@@ -5874,7 +5874,7 @@ PnpWorkItemCallback(
 			{
 				ULONG i = 0;
 				BOOLEAN bTargetInNLO = FALSE;
-				
+
 				if(Adapter->MgntInfo.bMediaConnect || pNdisCommon->bDissociateBeforeSleep)
 				{
 					for(i=0; i<pNLOInfo->NumDot11OffloadNetwork; i++)
@@ -5900,7 +5900,7 @@ PnpWorkItemCallback(
 							{
 								RT_TRACE(COMP_POWER, DBG_LOUD, ("PnpSetPower()	try to connect to %s\n", Adapter->MgntInfo.Ssid.Octet));
 
-								// Set Roam flag 
+								// Set Roam flag
 								MgntLinkStatusSetRoamingState(Adapter, 0, RT_ROAMING_BY_SLEEP, ROAMINGSTATE_SCANNING);
 
 								DrvIFIndicateRoamingStart(Adapter);
@@ -5934,7 +5934,7 @@ PnpWorkItemCallback(
 				// to the expected AP by indicating NDIS_STATUS_DOT11_OFFLOAD_NETWORK_STATUS_CHANGED
 				// to declare that NLO scan is finished.
 				if((pNLOInfo->NumDot11OffloadNetwork != 0) && (!Adapter->MgntInfo.bMediaConnect) &&
-					(!pNdisCommon->bDissociateBeforeSleep)) 
+					(!pNdisCommon->bDissociateBeforeSleep))
 				{
 					// We should execute scan here because after indicating NDIS_STATUS_DOT11_OFFLOAD_NETWORK_STATUS_CHANGED,
 					// OS will not set scan request OID (different with msdn's mention) and then query BSS list OID. So if we
@@ -5957,11 +5957,11 @@ PnpWorkItemCallback(
 					}
 					else*/
 					{
-						if((!ACTING_AS_AP(Adapter) || (!IsExtAPModeExist(Adapter) && bEnableWoLCapabilities)) 
+						if((!ACTING_AS_AP(Adapter) || (!IsExtAPModeExist(Adapter) && bEnableWoLCapabilities))
 							&& (pMgntInfo->Ssid.Length != 0) && !(IsSSIDDummy(pMgntInfo->Ssid)) && pMgntInfo->bPerformPnpReconnect
 							)
 						{
-							RT_TRACE(COMP_POWER, DBG_LOUD, ("PnpSetPower()	try to connect to %s ACTING_AS_AP(Adapter)	%d IsExtAPModeExist(Adapter) %d\n", 
+							RT_TRACE(COMP_POWER, DBG_LOUD, ("PnpSetPower()	try to connect to %s ACTING_AS_AP(Adapter)	%d IsExtAPModeExist(Adapter) %d\n",
 									Adapter->MgntInfo.Ssid.Octet, ACTING_AS_AP(Adapter) , IsExtAPModeExist(Adapter)));
 							bWakeReconnect = TRUE;
 						}
@@ -5972,7 +5972,7 @@ PnpWorkItemCallback(
 
 						if(bWakeReconnect)
 						{
-							// Set Roam flag 
+							// Set Roam flag
 							MgntLinkStatusSetRoamingState(Adapter, 0, RT_ROAMING_BY_SLEEP, ROAMINGSTATE_SCANNING);
 
 							pNdisCommon->PNPconnentCout = 0;
@@ -5989,7 +5989,7 @@ PnpWorkItemCallback(
 							pNdisCommon->bDissociateBeforeSleep = FALSE;
 
 							//
-							// <tynli_note> If we keep connection after PNP resumption, we should reset Rx TS to avoid 
+							// <tynli_note> If we keep connection after PNP resumption, we should reset Rx TS to avoid
 							// packet droped by the sequence number is over Rx reorder window size because we will not
 							// update the Rx TS sequence number during PNP sleep stage. 2015.01.22.
 							//
@@ -6012,7 +6012,7 @@ PnpWorkItemCallback(
 			RT_TRACE(COMP_POWER, DBG_LOUD, ("	Start check for hang workitem\n"));
 			PlatformStartWorkItem( &(pHalData->RtCheckForHangWorkItem) );
 		}
-#endif		
+#endif
 	}
 	else if(pDevice->CurrentPowerState > NdisDeviceStateD0)
 	{ // sleep.
@@ -6022,24 +6022,24 @@ PnpWorkItemCallback(
 				RT_CUSTOM_INDI_TARGET_IRP,
 				NULL,
 				0);
-		
+
 	{
 		PADAPTER pExtAdapter = GetNextExtAdapter(pDefaultAdapter);
 		PMGNT_INFO		pExtMgntInfo = NULL;
 		PMGNT_INFO		pDefaultMgntInfo = &pDefaultAdapter->MgntInfo;
 
-		pDefaultMgntInfo->bStartApDueToWakeup=TRUE;	
+		pDefaultMgntInfo->bStartApDueToWakeup=TRUE;
 
 		pDefaultAdapter->bEnterPnpSleep = TRUE;
-	
+
 		while(pExtAdapter != NULL)
 		{
 			pExtMgntInfo = &pExtAdapter->MgntInfo;
-		
-			pExtMgntInfo->bStartApDueToWakeup=TRUE;	
+
+			pExtMgntInfo->bStartApDueToWakeup=TRUE;
 
 			pExtAdapter->bEnterPnpSleep = TRUE;
-			
+
 			pExtAdapter = GetNextExtAdapter(pExtAdapter);
 		}
 	}
@@ -6050,38 +6050,38 @@ PnpWorkItemCallback(
 
 		//Moved to PNP wake flow. 2013.04.
 		//MgntLinkStatusSetRoamingState(Adapter, 0, RT_ROAMING_BY_SLEEP, ROAMINGSTATE_SCANNING);
-		
+
 		// 20100721 Joseph: Modified for Velocity Suspend test.
 		// Reset IPS state only.
 		// Since NIC is going to Halt for sleep, driver does not need to initialize the HW again.
 		// This shall be revised in the future and also take NIC Disable/Radio-off into consideration.
 		if((!bSupportRemoteWakeUp) &&
 			(pPSC->IPSState==eIPSDozed) &&
-			/*(pPSC->RegRfPsLevel & RT_RF_OFF_LEVL_HALT_NIC) &&*/ 
+			/*(pPSC->RegRfPsLevel & RT_RF_OFF_LEVL_HALT_NIC) &&*/
 			RT_IN_PS_LEVEL(Adapter, RT_RF_OFF_LEVL_HALT_NIC))
 		{
 			LPSLeaveAndCheckReady(Adapter);
 
-			NicIFDisableInterrupt(Adapter); 
-		
+			NicIFDisableInterrupt(Adapter);
+
 			pPSC->eInactivePowerState = eRfOn;
 			pPSC->IPSState = eIPSAwake;
 			pMgntInfo->RfOffReason &= (~RF_CHANGE_BY_IPS);
 		}
 		else
 		{
-			LeaveAllPowerSaveMode(Adapter);		
+			LeaveAllPowerSaveMode(Adapter);
 		}
 		NicIFClearInterrupt(Adapter);
-		
-		// Recover the BW to 40MHz for a specific case. To see the description of 
+
+		// Recover the BW to 40MHz for a specific case. To see the description of
 		// function HTRecoverBWTo40MHz().  2012.12.20, by tynli.
-		if(bSupportRemoteWakeUp && 
+		if(bSupportRemoteWakeUp &&
 			(Adapter->MgntInfo.OpMode == RT_OP_MODE_INFRASTRUCTURE))
 		{
 			HTRecoverBWTo40MHz(Adapter);
 		}
-		
+
 		PlatformAcquireSpinLock(Adapter,RT_RF_STATE_SPINLOCK);
 		while( pMgntInfo->RFChangeInProgress)
 		{
@@ -6090,9 +6090,9 @@ PnpWorkItemCallback(
 			RT_TRACE(COMP_POWER,DBG_LOUD,
 				("RF is in progress, need to wait until rf chang is done.\n"));
 			delay_ms(1);
-			
+
 			PlatformAcquireSpinLock(Adapter,RT_RF_STATE_SPINLOCK);
-		}	
+		}
 		PlatformReleaseSpinLock(Adapter,RT_RF_STATE_SPINLOCK);
 //		Adapter->bDriverIsGoingToPnpSetPowerSleep = TRUE;
 
@@ -6103,9 +6103,9 @@ PnpWorkItemCallback(
 			PRT_SECURITY_T	pSecInfo = &(Adapter->MgntInfo.SecurityInfo);
 			u1Byte	KeyIndex;
 			u1Byte CAM_CONST_BROAD[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-			
+
 			Adapter->bHWSecurityInWoL = TRUE;
-			
+
 			Adapter->HalFunc.EnableHWSecCfgHandler(Adapter);
 
 			if(pSecInfo->PairwiseEncAlgorithm == RT_ENC_ALG_WEP40 ||
@@ -6115,19 +6115,19 @@ PnpWorkItemCallback(
 				{
 					if(pSecInfo->KeyLen[KeyIndex] != 0)
 					{
-						Adapter->HalFunc.SetKeyHandler(Adapter, 
-								KeyIndex, 
-								CAM_CONST_BROAD, 
-								FALSE, 
-								pSecInfo->PairwiseEncAlgorithm, 
-								TRUE, 
+						Adapter->HalFunc.SetKeyHandler(Adapter,
+								KeyIndex,
+								CAM_CONST_BROAD,
+								FALSE,
+								pSecInfo->PairwiseEncAlgorithm,
+								TRUE,
 								FALSE);
 					}
 				}
 			}
 			else if( pSecInfo->PairwiseEncAlgorithm != RT_ENC_ALG_NO_CIPHER )
 			{	//Set group key for other encrypyion mode (TKIP, AES)
-				Adapter->HalFunc.SetKeyHandler(Adapter, 
+				Adapter->HalFunc.SetKeyHandler(Adapter,
 							pSecInfo->GroupTransmitKeyIdx, //KeyIndex,
 							CAM_CONST_BROAD,
 							TRUE, //IsGroup,
@@ -6146,12 +6146,12 @@ PnpWorkItemCallback(
 		while(pExtAdapter != NULL)
 		{
 			pExtAdapter->bDriverIsGoingToPnpSetPowerSleep = TRUE;
-			
+
 			pExtAdapter = GetNextExtAdapter(pExtAdapter);
 		}
 }
 
-		// <tynli_note> On Intel Bay Trail low power platform, "D2 -> D0 -> miniport shutdown" function will be 
+		// <tynli_note> On Intel Bay Trail low power platform, "D2 -> D0 -> miniport shutdown" function will be
 		// called by user initialiated Restart. It has site effect to 8723BS card lost issue. So this is a work around
 		// to add the condition to prevent from acting HaltAdapter in PNP D2 and D0 under Restart flow. 2013.11.18.
 		if((pMgntInfo->bIntelPatchPNP && !pMgntInfo->bReceiveSystemPSOID) || (!pMgntInfo->bIntelPatchPNP))
@@ -6205,17 +6205,17 @@ PnpWorkItemCallback(
 #if USE_WDF_SDIO
 		WdfSdio_Disable(Adapter);
 #else
-		N6WdmSdio_Disable(Adapter);	
+		N6WdmSdio_Disable(Adapter);
 #endif
 
 		//
-		// 070531, rcnjko: although NDIS6 had made driver stack go to paused state 
+		// 070531, rcnjko: although NDIS6 had made driver stack go to paused state
 		// before sleeping, it is safer to return pending tx to upper layer.
 		//
 		N6SdioReturnAllPendingTxPackets(Adapter);
 
 		// Release Tx Queue buffered context if needed. added by Roger, 2014.04.29.
-		N6SdioReleaseTxQueuePending(Adapter);	
+		N6SdioReleaseTxQueuePending(Adapter);
 
 		// 2011/08/23 MH For check for hang test only. Prevent check for HANG IQK write incorrect BB register under
 		// RF off state.
@@ -6228,7 +6228,7 @@ PnpWorkItemCallback(
 		PlatformStopWorkItem(&(Adapter->pPortCommonInfo->pPortHelper->CreateDeleteMacWorkitem));
 
 		//
-		// As devices enter low power states, the driver managing the devices should cancel any programmed timers. 
+		// As devices enter low power states, the driver managing the devices should cancel any programmed timers.
 		// Added by Roger, 2016.01.18
 		//
 		if(Adapter->MgntInfo.RegSuspendTimerInLowPwr){
@@ -6241,14 +6241,14 @@ PnpWorkItemCallback(
 			PMGNT_INFO		pExtMgntInfo = NULL;
 			PMGNT_INFO		pDefaultMgntInfo = &pDefaultAdapter->MgntInfo;
 
-			pDefaultMgntInfo->bDriverIsGoingToSleep = FALSE; 
-		
+			pDefaultMgntInfo->bDriverIsGoingToSleep = FALSE;
+
 			while(pExtAdapter != NULL)
 			{
 				pExtMgntInfo = &pExtAdapter->MgntInfo;
-			
-				pExtMgntInfo->bDriverIsGoingToSleep = FALSE; 
-				
+
+				pExtMgntInfo->bDriverIsGoingToSleep = FALSE;
+
 				pExtAdapter = GetNextExtAdapter(pExtAdapter);
 			}
 		}
@@ -6259,12 +6259,12 @@ PnpWorkItemCallback(
 	{
 		RT_TRACE(COMP_POWER, DBG_WARNING, ("PnpWorkItemCallback(): unexpected CurrentPowerState: %#X\n", pDevice->CurrentPowerState));
 	}
-	
+
 	if(pMgntInfo->bPreTransPnP)
-	{	
+	{
 		if(pDevice->CurrentPowerState == NdisDeviceStateD0)
-		{// wake up. 
-		
+		{// wake up.
+
 			//MultiPortSetAllPortsHWReadyStatus(Adapter, TRUE);
 
 			//
@@ -6276,8 +6276,8 @@ PnpWorkItemCallback(
 			{
 				PlatformReleaseSpinLock(Adapter, RT_PENDED_OID_SPINLOCK);
 				RT_TRACE(COMP_POWER, DBG_LOUD, ("PnpWorkItemCallback(): Complete Pended OID for PnP!!\n"));
-				N6CompletePendedOID(Adapter, RT_PENDED_OID_PNP, 
-					N6SdioOidRequest((NDIS_HANDLE)Adapter, pNdisCommon->PendedRequest));	
+				N6CompletePendedOID(Adapter, RT_PENDED_OID_PNP,
+					N6SdioOidRequest((NDIS_HANDLE)Adapter, pNdisCommon->PendedRequest));
 			}
 			else
 			{
@@ -6286,7 +6286,7 @@ PnpWorkItemCallback(
 		}
 		else if(pDevice->CurrentPowerState > NdisDeviceStateD0)
 		{// Sleep
-		
+
 			N6CompletePendedOID(
 				Adapter,
 				RT_PENDED_OID_PNP,
@@ -6302,7 +6302,7 @@ PnpWorkItemCallback(
 		N6CompletePendedOID(Adapter, RT_PENDED_OID_PNP, NDIS_STATUS_SUCCESS);
 	}
 
-	Adapter->bInSetPower = FALSE;	
+	Adapter->bInSetPower = FALSE;
 	pMgntInfo->bSetPnpPwrInProgress = FALSE;
 
 	RT_TRACE(COMP_POWER, DBG_LOUD, ("<----- PnpWorkItemCallback() return ndis_status_success\n"));
@@ -6326,7 +6326,7 @@ FillPnpCapabilities(
 	PMGNT_INFO  		pMgntInfo = &pAdapter->MgntInfo;
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
 
-	
+
 	pAdapter->HalFunc.GetHalDefVarHandler(pAdapter, HAL_DEF_WOWLAN , &bSupportRemoteWakeUp);
 	PlatformZeroMemory(pPnpCapabilities, sizeof(NDIS_PNP_CAPABILITIES));
 
@@ -6348,7 +6348,7 @@ FillPnpCapabilities(
 		pPnpCapabilities->WakeUpCapabilities.MinLinkChangeWakeUp    = NdisDeviceStateUnspecified;
 		if(pPSC->WoWLANMode == eWakeOnMagicPacketOnly)	//by tynli.
 			pPnpCapabilities->WakeUpCapabilities.MinPatternWakeUp       = NdisDeviceStateUnspecified;
-		else if (pPSC->WoWLANMode == eWakeOnPatternMatchOnly)	
+		else if (pPSC->WoWLANMode == eWakeOnPatternMatchOnly)
 			pPnpCapabilities->WakeUpCapabilities.MinMagicPacketWakeUp	= NdisDeviceStateUnspecified;
 
 	}
@@ -6385,7 +6385,7 @@ FillPmCapabilities(
 
 	bEnableWoLCapabilities = MgntIsWoWLANCapabilityEnable(pAdapter);
 	PlatformZeroMemory(pPmCapabilities, sizeof(NDIS_PM_CAPABILITIES));
-	
+
 #if NDIS_SUPPORT_NDIS630
 	pPmCapabilities->Header.Type = NDIS_OBJECT_TYPE_DEFAULT;
 	pPmCapabilities->Header.Revision = NDIS_PM_CAPABILITIES_REVISION_2;
@@ -6399,7 +6399,7 @@ FillPmCapabilities(
 #if POWER_MAN
 	if(bEnableWoLCapabilities)
 	{
-		RT_TRACE(COMP_POWER, DBG_LOUD, 
+		RT_TRACE(COMP_POWER, DBG_LOUD,
 			("FillPmCapabilities(): support Win7 wake-on-lan (%d)\n", pPSC->WoWLANMode));
 
 		//
@@ -6413,13 +6413,13 @@ FillPmCapabilities(
 		// We should not enable NDIS_PM_WOL_EAPOL_REQUEST_ID_MESSAGE_SUPPORTED
 		// when supporting GTK rekey offload or the upper layer will not send GTK offload OID to our driver.
 		// 2012.02.22. by tynli.
-		pPmCapabilities->SupportedWoLPacketPatterns = 
+		pPmCapabilities->SupportedWoLPacketPatterns =
 						(NDIS_PM_WOL_MAGIC_PACKET_SUPPORTED|
 						NDIS_PM_WOL_BITMAP_PATTERN_SUPPORTED|
 						NDIS_PM_WOL_EAPOL_REQUEST_ID_MESSAGE_SUPPORTED|
-						NDIS_PM_WOL_IPV4_TCP_SYN_SUPPORTED|	
-						NDIS_PM_WOL_IPV6_TCP_SYN_SUPPORTED|						
-						NDIS_PM_WOL_IPV4_DEST_ADDR_WILDCARD_SUPPORTED|						
+						NDIS_PM_WOL_IPV4_TCP_SYN_SUPPORTED|
+						NDIS_PM_WOL_IPV6_TCP_SYN_SUPPORTED|
+						NDIS_PM_WOL_IPV4_DEST_ADDR_WILDCARD_SUPPORTED|
 						NDIS_PM_WOL_IPV6_DEST_ADDR_WILDCARD_SUPPORTED);
 		pPmCapabilities->NumTotalWoLPatterns = MAX_SUPPORT_WOL_PATTERN_NUM(pAdapter);
 		pPmCapabilities->MaxWoLPatternSize = MAX_WOL_PATTERN_SIZE;
@@ -6449,14 +6449,14 @@ FillPmCapabilities(
 		pPmCapabilities->MinLinkChangeWakeUp	= NdisDeviceStateUnspecified;
 		if(pPSC->WoWLANMode == eWakeOnMagicPacketOnly)	//by tynli.
 			pPmCapabilities->MinPatternWakeUp		= NdisDeviceStateUnspecified;
-		else if (pPSC->WoWLANMode == eWakeOnPatternMatchOnly)	
+		else if (pPSC->WoWLANMode == eWakeOnPatternMatchOnly)
 			pPmCapabilities->MinMagicPacketWakeUp	= NdisDeviceStateUnspecified;
-	
+
 		//
 		// Set new attributes for Win8
 		//
 #if NDIS_SUPPORT_NDIS630
-		// Temporarily mark some attributes because we cannot support now. 
+		// Temporarily mark some attributes because we cannot support now.
 		// They will be enable in the feature. 2012.03.12. by tynli.
 		pPmCapabilities->SupportedWakeUpEvents = 0
 			/*NDIS_PM_WAKE_ON_MEDIA_DISCONNECT_SUPPORTED |
@@ -6487,7 +6487,7 @@ FillPmCapabilities(
 //
 // 	Description:
 // 		Allocate N6 Usb related resources(e.g., Fix InOut pipe fix workitems).
-//		
+//
 //	Created by Roger, 2009.04.30.
 //
 VOID
@@ -6497,11 +6497,11 @@ N6SdioAllocRes(
 {
 
 	PRT_SDIO_DEVICE	device = GET_RT_SDIO_DEVICE(Adapter);
-		
+
 #if POWER_MAN
 	PlatformInitializeWorkItem(
 		Adapter,
-		&(device->PnpWorkItem), 
+		&(device->PnpWorkItem),
 		(RT_WORKITEM_CALL_BACK)PnpWorkItemCallback,
 		(PVOID)Adapter,
 		"PnpWorkItem");
@@ -6512,7 +6512,7 @@ N6SdioAllocRes(
 //
 // 	Description:
 // 		Free N6 Usb related resources(e.g., Fix InOut pipe fix workitems).
-//		
+//
 //	Created by Roger, 2009.04.30.
 //
 VOID
@@ -6521,14 +6521,14 @@ N6SdioFreeRes(
 	)
 {
 	PRT_SDIO_DEVICE	device = GET_RT_SDIO_DEVICE(Adapter);
-	
+
 	PlatformFreeWorkItem( &(device->PnpWorkItem));
 }
 
 
 //
 //	Description:
-//		Cancel IRP pending to of specified Tx Queue and 
+//		Cancel IRP pending to of specified Tx Queue and
 //		wait until all outstanding request completed.
 //
 VOID
@@ -6540,10 +6540,10 @@ N6SdioStopTxQueue(
 	PRT_SDIO_DEVICE		pDevice = GET_RT_SDIO_DEVICE(pAdapter);
 	PRT_SDIO_TX_QUEUE	pTxQueue = NULL;
 
-	RT_ASSERT(nTxQueueIdx >= 0 && nTxQueueIdx < pDevice->RtNumTxQueue, 
+	RT_ASSERT(nTxQueueIdx >= 0 && nTxQueueIdx < pDevice->RtNumTxQueue,
 		("RTsdioStartTxQueue(): nTxQueueIdx(%d) shall falls in [0,%d)\n",
 		nTxQueueIdx, pDevice->RtNumTxQueue));
-	
+
 	pTxQueue = &(pDevice->RtTxQueue[nTxQueueIdx]);
 
 	PlatformAcquireSpinLock(pAdapter, RT_TX_SPINLOCK);
@@ -6551,7 +6551,7 @@ N6SdioStopTxQueue(
 	if(!pTxQueue->bEnabled)
 	{
 		PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
-		return;	
+		return;
 	}
 	else
 	{
@@ -6582,10 +6582,10 @@ N6SdioStartTxQueue(
 	PRT_SDIO_DEVICE		pDevice = GET_RT_SDIO_DEVICE(pAdapter);
 	PRT_SDIO_TX_QUEUE	pTxQueue = NULL;
 
-	RT_ASSERT(nTxQueueIdx >= 0 && nTxQueueIdx < pDevice->RtNumTxQueue, 
+	RT_ASSERT(nTxQueueIdx >= 0 && nTxQueueIdx < pDevice->RtNumTxQueue,
 		("RTsdioStartTxQueue(): nTxQueueIdx(%d) shall falls in [0,%d)\n",
 		nTxQueueIdx, pDevice->RtNumTxQueue));
-	
+
 	pTxQueue = &(pDevice->RtTxQueue[nTxQueueIdx]);
 
 	PlatformAcquireSpinLock(pAdapter, RT_TX_SPINLOCK);
@@ -6602,10 +6602,10 @@ N6SdioStartTxQueue(
 
 //
 // 	Description:
-// 		Query current SD bus operating clock after resumption especially for the case of FSS 
-//	mode and configure corresponding clock rate to fix mismatched phase modulation for 
+// 		Query current SD bus operating clock after resumption especially for the case of FSS
+//	mode and configure corresponding clock rate to fix mismatched phase modulation for
 //	SD request packets
-//		
+//
 //	Created by Roger, 2015.03.24.
 //
 RT_STATUS
@@ -6618,20 +6618,20 @@ N6SdioSyncCurrentSdBusClk(
 	u1Byte 		Data=0;
 	u4Byte		SdioBusClk=0;
 
-	
+
 	ntstatus = PlatformSdioGetProperty(pDevice,
 			   			SDP_BUS_CLOCK,
 			                	&SdioBusClk,
-			                	sizeof(SdioBusClk)); 
-	
-	if(!NT_SUCCESS(ntstatus)){ 
+			                	sizeof(SdioBusClk));
+
+	if(!NT_SUCCESS(ntstatus)){
 		return status;
-	}	
+	}
 
 	// Configuration for SDIO v2.0
 	Data |= ((SdioBusClk == 50000) ? BIT1:0); // Set BIT1 for 50MHz operation clock
 	status = PlatformSdioCmd52ReadWrite(
-								pDevice, 
+								pDevice,
 								SDIO_WITHOUT_REF_DEVICE_ID, //Device ID
 								0, //Function Number
 								1, //Byte Count
@@ -6639,16 +6639,16 @@ N6SdioSyncCurrentSdBusClk(
 								TRUE, //Write operation
 								&Data);
 
-	if(status != RT_STATUS_SUCCESS){ 
+	if(status != RT_STATUS_SUCCESS){
 		return status;
 	}
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
 //
 // 	Description:
-//		Dummy I/O is to distingush who sends the Bus I/O. (Driver? Host?) Those 
+//		Dummy I/O is to distingush who sends the Bus I/O. (Driver? Host?) Those
 //	I/O before this Dummy I/O are sent by Host, and those after it are sent by
 //	driver.
 //
@@ -6666,15 +6666,15 @@ N6SdioDummyIO(
 	//
 	Data = 0x10; // Dummy
 	status = PlatformSdioCmd52ReadWrite(
-							pDevice, 
+							pDevice,
 							SDIO_LOCAL_DEVICE_ID, //Device ID
 							1, //Function Number
 							1, //Byte Count
 							(ULONG)0x0, //Offset
 							TRUE, //Write operation
 							&Data);
-		
-	if(status != RT_STATUS_SUCCESS){ 
+
+	if(status != RT_STATUS_SUCCESS){
 		RT_TRACE_F(COMP_INIT, DBG_LOUD,("Write SDIO Dummy I/O FAIL!!\n"));
-	}	
+	}
 }

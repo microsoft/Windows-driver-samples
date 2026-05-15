@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //
 //       NotifyAdvancedNotification
@@ -31,12 +31,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "Framework_WFPSamplerCalloutDriver.h"  /// . 
+#include "Framework_WFPSamplerCalloutDriver.h"  /// .
 #include "NotifyFunctions_AdvancedCallouts.tmh" /// $(OBJ_PATH)\$(O)\
 
 /**
  @private_function="PrvAdvancedNotificationWorkItemRoutine"
- 
+
    Purpose:  Traces the appropriate notification event.                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -50,13 +50,13 @@ VOID PrvAdvancedNotificationWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
                                             _Inout_opt_ PVOID pContext)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PrvAdvancedNotificationWorkItemRoutine()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(pDeviceObject);
 
    NT_ASSERT(pContext);
@@ -141,19 +141,19 @@ VOID PrvAdvancedNotificationWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PrvAdvancedNotificationWorkItemRoutine()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @notify_function="NotifyAdvancedNotification"
- 
+
    Purpose:  Traces the notification event.                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

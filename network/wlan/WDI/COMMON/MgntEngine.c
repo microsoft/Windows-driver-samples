@@ -168,7 +168,7 @@ DFS_OnBeacon_Bss(
 
 //
 //	Description:
-//		Add new STA of the IBSS and indicate association start, 
+//		Add new STA of the IBSS and indicate association start,
 //		association complete events for it.
 //
 BOOLEAN
@@ -186,16 +186,16 @@ AsocEntry_AddIbssPeerSta(
 	BOOLEAN bAMSDUTestChk;
 	HAL_DATA_TYPE				*pHalData = GET_HAL_DATA(pAdapter);
 	PDM_ODM_T					pDM_Odm = &pHalData->DM_OutSrc;
-	
+
 	//
-	// Add the STA into table and indicate association related event 
+	// Add the STA into table and indicate association related event
 	// if this is the 1st time we hear Beacon from this STA.
 	//
 	if(AsocEntry_GetEntry(pMgntInfo, pTaddr) !=  NULL)
 	{
 		return FALSE;
 	}
-	
+
 	AsocEntry_AddStation(pAdapter, pTaddr, OPEN_SYSTEM);
 	pEntry = AsocEntry_GetEntry(pMgntInfo, pTaddr);
 	if(pEntry != NULL)
@@ -206,7 +206,7 @@ AsocEntry_AddIbssPeerSta(
 		pEntry->AID = AsocEntry_AssignAvailableAID(pMgntInfo, pTaddr);
 		pEntry->IOTPeer = pBssDesc->Vender;
 		pEntry->AssociatedMacId = (u1Byte) MacIdRegisterMacIdForAssociatedID(pAdapter, MAC_ID_OWNER_AD_HOC, pEntry->AID);
-		
+
 		//YJ, add for TX RPT, 111213
 		if(pMgntInfo->MaxMACID < pEntry->AssociatedMacId)
 		{
@@ -221,7 +221,7 @@ AsocEntry_AddIbssPeerSta(
 		//
 		pEntry->bdSupportRateEXLen = pBssDesc->bdSupportRateEXLen;
 		CopyMem(pEntry->bdSupportRateEXBuf, pBssDesc->bdSupportRateEXBuf, pEntry->bdSupportRateEXLen);
-	
+
 		//
 		// Get highest supported rate of the STA.
 		//
@@ -254,7 +254,7 @@ AsocEntry_AddIbssPeerSta(
 		{
 			pEntry->WirelessMode = WIRELESS_MODE_A;
 		}
-		
+
 		// Update HT related information
 		if(pHTInfo->bCurrentHTSupport && pBssDesc->BssHT.bdSupportHT)
 		{
@@ -263,7 +263,7 @@ AsocEntry_AddIbssPeerSta(
 			// Use tx adsud for 11n adhoc mode
 			if(pMgntInfo->SecurityInfo.PairwiseEncAlgorithm == RT_ENC_ALG_NO_CIPHER)
 			{
-				
+
 				bAMSDUTestChk = FALSE;
 				pAdapter->HalFunc.GetHwRegHandler(pAdapter, HW_VAR_AMSDU_TEST_SETTING, (pu1Byte)(&bAMSDUTestChk));
 				if(bAMSDUTestChk)
@@ -272,7 +272,7 @@ AsocEntry_AddIbssPeerSta(
 						pEntry->IOTAction = HT_IOT_ACT_AMSDU_ENABLE;
 					else if(pHTInfo->ForcedAMSDUMode == HT_AMSDU_WITHIN_AMPDU)
 						pEntry->IOTAction = HT_IOT_ACT_AMSDU_AMPDU;
-					else 
+					else
 						pEntry->IOTAction = 0;
 				}
 			}
@@ -288,7 +288,7 @@ AsocEntry_AddIbssPeerSta(
 			if(pVHTInfo->bCurrentVHTSupport && pBssDesc->BssVHT.bdSupportVHT)
 			{
 				pu1Byte pVHTCapEle = (pu1Byte)pBssDesc->BssVHT.bdVHTCapBuf;
-		
+
 				pEntry->VHTInfo.bEnableVHT = TRUE;
 				if(pEntry->WirelessMode == WIRELESS_MODE_N_5G)
 					pEntry->WirelessMode = WIRELESS_MODE_AC_5G;
@@ -301,11 +301,11 @@ AsocEntry_AddIbssPeerSta(
 
 		// Porting from AP_OnAsocReq() to initialize the protection mechnism in IBSS mode.
 		// These part is lost before. 2010.11.02. Added by tynli.
-		// Enable protection mode and Disable short slot time if an [B-mode STA joined] or[ G-mode Connect to Soft N AP]		
+		// Enable protection mode and Disable short slot time if an [B-mode STA joined] or[ G-mode Connect to Soft N AP]
 		if(pEntry->WirelessMode == WIRELESS_MODE_B)
 		{
 			ActUpdate_ProtectionMode(pAdapter, TRUE);
-			
+
 			if(pEntry->WirelessMode == WIRELESS_MODE_B)
 				pMgntInfo->mCap &= (~cShortSlotTime);
 			else
@@ -318,7 +318,7 @@ AsocEntry_AddIbssPeerSta(
 			pEntry->IOTPeer == HT_IOT_PEER_REALTEK_JAGUAR_CCUTAP)
 		{
 			u2Byte JaguarPatch = (HT_IOT_PEER_REALTEK_JAGUAR_CCUTAP << 8) | (RT_MEDIA_CONNECT);
-			pAdapter->HalFunc.SetHwRegHandler(pAdapter, HW_VAR_JAGUAR_PATCH, (pu1Byte)(&JaguarPatch)); 
+			pAdapter->HalFunc.SetHwRegHandler(pAdapter, HW_VAR_JAGUAR_PATCH, (pu1Byte)(&JaguarPatch));
 		}
 
 		// Update the Operation mode field in HT Info element.
@@ -332,7 +332,7 @@ AsocEntry_AddIbssPeerSta(
 					pHTInfo->CurrentOpMode = HT_OPMODE_40MHZ_PROTECT;
 				else
 					pHTInfo->CurrentOpMode = HT_OPMODE_NO_PROTECT;
-					
+
 			}
 		}
 
@@ -346,7 +346,7 @@ AsocEntry_AddIbssPeerSta(
 		else
 		{
 			pAdapter->HalFunc.UpdateHalRATRTableHandler(
-									pAdapter, 
+									pAdapter,
 									&pMgntInfo->dot11OperationalRateSet,
 									pMgntInfo->dot11HTOperationalRateSet,pEntry);
 		}
@@ -378,7 +378,7 @@ OnBeacon_Scan(
 }
 
 
-void 
+void
 ChangeRsnIEOnSameBssid(
 	PADAPTER		Adapter,
 	PRT_RFD			pRfd,
@@ -390,8 +390,8 @@ ChangeRsnIEOnSameBssid(
 	OCTET_STRING	mmpdu;
 	u1Byte	*pCurr;
 	u1Byte	count;
-	u1Byte	PairwiseCipherCount = 0;	
-				
+	u1Byte	PairwiseCipherCount = 0;
+
 	mmpdu.Octet = pRfd->Buffer.VirtualAddress;
 	mmpdu.Length = pRfd->PacketLength;
 
@@ -416,7 +416,7 @@ ChangeRsnIEOnSameBssid(
 	RT_PRINT_DATA(COMP_INDIC, DBG_LOUD,  " Change :\n" , RSNIE.Octet , RSNIE.Length);
 	pCurr = RSNIE.Octet;
 
-	// SKIP Head 
+	// SKIP Head
 	if( pMgntInfo->SecurityInfo.SecLvl == RT_SEC_LVL_WPA)
 	{
 		pCurr+=4;
@@ -458,31 +458,31 @@ OnBeacon_Join(
 	PRT_RFD			pRfd
 )
 {
-	PMGNT_INFO		pMgntInfo=&Adapter->MgntInfo;	
+	PMGNT_INFO		pMgntInfo=&Adapter->MgntInfo;
 	PRT_WLAN_BSS	pBssDesc = NULL; // Reduce stack size
 
 	if(RT_DRIVER_STOP(Adapter))
 	{
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("Driver is going to stop \n"));
-		return;		
+		return;
 	}
 
 	pMgntInfo->LinkDetectInfo.OnBeaconJoinCnt_OnBeacon_Join++;	//cosa add for debug.
 
 	pBssDesc = &pMgntInfo->bssDesc_OnBeacon;
-	
+
 	GetValueFromBeaconOrProbeRsp( Adapter, pRfd, pBssDesc, FALSE);
 
 	RT_PRINT_ADDR(COMP_MLME|COMP_BEACON, DBG_TRACE, "===> OnBeacon_Join():", pBssDesc->bdBssIdBuf);
 	RT_TRACE(COMP_MLME, DBG_TRACE, ("OnBeacon_Join(): channel  = %d\n", pBssDesc->ChannelNumber));
 
 	//
-	// 061026, Rcnjko: 
+	// 061026, Rcnjko:
 	// 1. 8186 doesn't include Realtek CAP IE in ProbeRsp and therefore we
-	// determine bRealtekCapType1Exist   here instead of SetupJoinInfraInfo. 
-	// 2. awlays keep Realtek CAP IE. We might use it 
+	// determine bRealtekCapType1Exist   here instead of SetupJoinInfraInfo.
+	// 2. awlays keep Realtek CAP IE. We might use it
 	// for 8186 Auto Turbo mode or other compatibility issue.
-	// 3. 8186 include this IE in Beacon when its Turbo Mode is configured 
+	// 3. 8186 include this IE in Beacon when its Turbo Mode is configured
 	// as "Auto" or "Always".
 	// Added by Roger, 2006.12.08.
 	//
@@ -491,7 +491,7 @@ OnBeacon_Join(
 
 	if(pMgntInfo->OpMode == RT_OP_MODE_INFRASTRUCTURE)
 	{ // Infra-structure mode.
-		// For Hidden AP and EzConfig AP, their beacons won't contain the SSID 
+		// For Hidden AP and EzConfig AP, their beacons won't contain the SSID
 		// we want, and therefore, either BSSID or SSID matched is acceptable.
 		// 2004.11.18, by rcnjko.
 		if( PlatformCompareMemory( pMgntInfo->Bssid, pBssDesc->bdBssIdBuf, 6) != 0 ) // BSSID mismatched
@@ -515,8 +515,8 @@ OnBeacon_Join(
 	}
 
 	CopyWlanBss(&(pMgntInfo->targetBSS), pBssDesc);
-	
-	RT_PRINT_ADDR(COMP_MLME|COMP_BEACON, DBG_LOUD, "===> OnBeacon_Join():", pBssDesc->bdBssIdBuf);	
+
+	RT_PRINT_ADDR(COMP_MLME|COMP_BEACON, DBG_LOUD, "===> OnBeacon_Join():", pBssDesc->bdBssIdBuf);
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("OnBeacon_Join(): channel  = %d\n", pBssDesc->ChannelNumber));
 
 	//Update Dtim period.
@@ -528,13 +528,13 @@ OnBeacon_Join(
 	{
 		pMgntInfo->ListenInterval = pMgntInfo->dot11DtimPeriod;
 	}
-	
+
 	// Update beacon and peer information, 2006.11.14, by shien chang.
 	MgntUpdateAsocInfo(Adapter, UpdateAsocBeacon, pRfd->Buffer.VirtualAddress, pRfd->PacketLength);
 	MgntUpdateAsocInfo(Adapter, UpdateAsocPeerAddr, pBssDesc->bdMacAddressBuf, 6);
 
 	CCX_SSIDLUpdateJoinBss(Adapter, pRfd, pBssDesc);
-	
+
 	pMgntInfo->TSFValue = pBssDesc->bdTstamp; // by tynli.
 
 	//Set state_Synchronization_Sta
@@ -542,7 +542,7 @@ OnBeacon_Join(
 	{
 		// For receiving beacon and preventing wrong restoration in ScanComplete() -------------------------------------
 		pMgntInfo->state_Synchronization_Sta = pMgntInfo->state_Synchronization_Sta_BeforeScan = STATE_Bss;
-		RT_TRACE_F(COMP_SCAN, DBG_LOUD, ("Set Port (%d) pMgntInfo->state_Synchronization_Sta = %d\n", 
+		RT_TRACE_F(COMP_SCAN, DBG_LOUD, ("Set Port (%d) pMgntInfo->state_Synchronization_Sta = %d\n",
 				GET_PORT_NUMBER(Adapter), Adapter->MgntInfo.state_Synchronization_Sta)
 			);
 		// ---------------------------------------------------------------------------------------------------
@@ -551,9 +551,9 @@ OnBeacon_Join(
 	{
 		if(pMgntInfo->pHTInfo->bCurrentHTSupport == TRUE)
 		{
-			OCTET_STRING	pduOS; 
+			OCTET_STRING	pduOS;
 			FillOctetString(pduOS, pMgntInfo->AsocInfo.Beacon, (u2Byte)pMgntInfo->AsocInfo.BeaconLength);
-			HTOnAssocRsp(Adapter, pduOS);	
+			HTOnAssocRsp(Adapter, pduOS);
 
 			if(pMgntInfo->pVHTInfo->bCurrentVHTSupport)
 				VHTOnAssocRsp(Adapter, pduOS);
@@ -563,7 +563,7 @@ OnBeacon_Join(
 		else
 		{
 			PlatformZeroMemory(pMgntInfo->dot11HTOperationalRateSet, 16);
-			CHNL_SetBwChnl(Adapter, pMgntInfo->dot11CurrentChannelNumber, CHANNEL_WIDTH_20, EXTCHNL_OFFSET_NO_EXT);	
+			CHNL_SetBwChnl(Adapter, pMgntInfo->dot11CurrentChannelNumber, CHANNEL_WIDTH_20, EXTCHNL_OFFSET_NO_EXT);
 		}
 
 		if(MgntResetOrPnPInProgress(Adapter))
@@ -571,16 +571,16 @@ OnBeacon_Join(
 			RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress case IBSS\n"));
 			return;
 		}
-		
+
 		//
-		// 061205, rcnjko: Add new STA of the IBSS and indicate association start, 
+		// 061205, rcnjko: Add new STA of the IBSS and indicate association start,
 		// association complete events for it.
 		//
 		if(AsocEntry_AddIbssPeerSta(Adapter, pBssDesc))
 		{
 			// Preprocessing for association operation. 2006.11.14, by shien chang.
 			DrvIFIndicateAssociationStart(Adapter);
-		
+
 			// Postprocessing for association operation. 2006.11.14, by shien chang.
 			DrvIFIndicateAssociationComplete(Adapter, RT_STATUS_SUCCESS);
 		}
@@ -592,9 +592,9 @@ OnBeacon_Join(
 			RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress case IBSS 2\n"));
 			return;
 		}
-		
+
 		// <Roger_Notes> Sync from 91su branch, 2009.04.27.
-		if( !pMgntInfo->bInToSleep && 
+		if( !pMgntInfo->bInToSleep &&
 			!MgntRoamingInProgress(pMgntInfo) && pMgntInfo->RequestFromUplayer)
 			DrvIFIndicateConnectionComplete(Adapter, RT_STATUS_SUCCESS);
 		else if(MgntRoamingInProgress(pMgntInfo))
@@ -602,10 +602,10 @@ OnBeacon_Join(
 			MgntRoamComplete(Adapter, MlmeStatus_success);
 		}
 
-		pMgntInfo->bInToSleep = FALSE;	
+		pMgntInfo->bInToSleep = FALSE;
 		pMgntInfo->state_Synchronization_Sta = STATE_Ibss_Idle;
 
-		Adapter->HalFunc.LedControlHandler(Adapter, LED_CTL_LINK); 	
+		Adapter->HalFunc.LedControlHandler(Adapter, LED_CTL_LINK);
 	}
 	else
 	{
@@ -638,9 +638,9 @@ OnBeacon_Bss(
 	PMGNT_INFO		pMgntInfo=&Adapter->MgntInfo;
 	PRT_WLAN_BSS	pBssDesc = NULL;
 	pu1Byte			pbssid = pRfd->Buffer.VirtualAddress + 16;
-		
+
 	pMgntInfo->LinkDetectInfo.OnBeaconBssCnt_OnBeacon_Bss++;	//cosa add for debug
-	
+
 	if( pMgntInfo->mAssoc == FALSE )
 		return;
 
@@ -653,13 +653,13 @@ OnBeacon_Bss(
 
 	pBssDesc = &pMgntInfo->bssDesc_OnBeacon;
 
-	
+
 
 	if(pDefaultAdapter->MgntInfo.RegMultiChannelFcsMode == MULTICHANNEL_FCS_SUPPORT_GO)
 	{
 		u8Byte		u8APTsf = 0;
 		u8Byte		uCurrentTsf = 0;
-				
+
 		u8APTsf = GET_BEACON_PROBE_RSP_TIME_STAMP_HIGH(pRfd->Buffer.VirtualAddress);
 		u8APTsf <<= 32;
 		u8APTsf |= GET_BEACON_PROBE_RSP_TIME_STAMP_LOW(pRfd->Buffer.VirtualAddress);
@@ -676,11 +676,11 @@ OnBeacon_Bss(
 
 // We should not compare SSID for Hidden AP case. 2005.04.14, by rcnjko.
 //	// Check SSID.
-//	if( !CompareSSID(bssDesc.bdSsIdBuf, bssDesc.bdSsIdLen, pMgntInfo->Ssid.Octet, pMgntInfo->Ssid.Length) ) 
+//	if( !CompareSSID(bssDesc.bdSsIdBuf, bssDesc.bdSsIdLen, pMgntInfo->Ssid.Octet, pMgntInfo->Ssid.Length) )
 //	{
 //		// SSID mismatched.
 //		return;
-//	}	
+//	}
 //
 
 	// Filter beacon from IBSS, 2006.11.22, by shien chang.
@@ -699,9 +699,9 @@ OnBeacon_Bss(
 	{
 		pMgntInfo->ListenInterval = pMgntInfo->dot11DtimPeriod;
 	}
-	
+
 	// Update beacon informaton, 2006.11.14, by shien chang.
-	// Just Update on Join step !! 
+	// Just Update on Join step !!
 	//MgntUpdateAsocInfo(Adapter, UpdateAsocBeacon, pRfd->Buffer.VirtualAddress, pRfd->PacketLength);
 
 	// For WMM QoS Info Field update (WMM Power Save Mode). Annie, 2005-11-14.
@@ -761,7 +761,7 @@ OnBeacon_Bss(
 	{
 		// I don't want to enter original 8187 turbo mechanism in this case. Added by Roger, 2006.12.07.
 		// Still need to check the MgntActSet_EnterTurboModeByStyle function(should be moved!!).
-		
+
 		RT_ASSERT( (!pMgntInfo->bSupportTurboMode), ("OnBeacon_Bss(): bSupportTurboMode is TRUE in 8186 Auto Turbo Mdoe!!!\n") );
 
 		if(  GET_RTIE_CAPABILITY_TURBO_MODE(&(pBssDesc->RealtekCap) ) )
@@ -770,22 +770,22 @@ OnBeacon_Bss(
 			PRT_TURBO_CA	pTurboCa = &(pMgntInfo->TurboChannelAccess);
 
 			// For debug, added by Roger, 2006.12.11.
-			RT_TRACE(COMP_MLME, DBG_TRACE, 
+			RT_TRACE(COMP_MLME, DBG_TRACE,
 					("OnBeacon_Bss(): Auto Turbo Mode by 8186.\n"));
-			RT_TRACE(COMP_MLME, DBG_TRACE, 
+			RT_TRACE(COMP_MLME, DBG_TRACE,
 					("OnBeacon_Bss():bEnterTurbo = %d, pTurboCa->bEnabled = %d\n",bEnterTurbo, pTurboCa->bEnabled));
 
 			if( bEnterTurbo != pTurboCa->bEnabled )
-			{					
+			{
 				// For debug, added by Roger, 2006.12.11.
-				RT_TRACE(COMP_MLME, DBG_TRACE, 
+				RT_TRACE(COMP_MLME, DBG_TRACE,
 					("OnBeacon_Bss(): Enter Turbo Mode by 8186.\n"));
 				//Modefied by Roger, 2006.12.07.
 				MgntActSet_EnterTurboMode( Adapter, bEnterTurbo );
 			}
 		}
 	}
-	
+
 	//-------------------------------------------------------------------------
 
 	MgntLinkStatusUpdateRxBeacon( Adapter );
@@ -802,7 +802,7 @@ OnBeacon_Ibss(
 )
 {
 	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);
-	OCTET_STRING	pduOS; 
+	OCTET_STRING	pduOS;
 	PRT_WLAN_BSS	pBssDesc = NULL;
 	pu1Byte			pbssid, pTaddr;
 	PRT_WLAN_STA	pEntry;
@@ -820,7 +820,7 @@ OnBeacon_Ibss(
 	if(RT_DRIVER_STOP(Adapter))
 	{
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("Driver is going to stop \n"));
-		return;		
+		return;
 	}
 
 	pMgntInfo->LinkDetectInfo.OnBeaconIbssCnt_OnBeacon_Ibss++;	//cosa add for debug
@@ -828,13 +828,13 @@ OnBeacon_Ibss(
 	FillOctetString(pduOS, pRfd->Buffer.VirtualAddress, pRfd->PacketLength);
 	pbssid = Frame_Addr3(pduOS);
 	pTaddr = Frame_Addr2(pduOS);
-		
+
 	// Skip it if we are not in IBSS mode.
 	if( pMgntInfo->mIbss == FALSE )
 	{
 		return;
 	}
-	
+
 	bssDescTmp = BssDescDupSource( Adapter, pRfd );
 
 	pBssDesc = &pMgntInfo->bssDesc_OnBeacon;
@@ -864,7 +864,7 @@ OnBeacon_Ibss(
 	{
 		return;
 	}
-	
+
 	if(pChnlListEntry->ExInfo & CHANNEL_EXINFO_NO_IBSS_JOIN)
 	{
 		return;
@@ -891,7 +891,7 @@ OnBeacon_Ibss(
 	{
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress \n"));
 		return;
-	}	
+	}
 
 	// Check BSSID.
 	if( PlatformCompareMemory( pMgntInfo->Bssid, pbssid, 6) == 0 )
@@ -904,15 +904,15 @@ OnBeacon_Ibss(
 
 		pEntry = AsocEntry_GetEntry(pMgntInfo, pTaddr);
 		if(pEntry != NULL)
-		{ 
-			// Update information about this STA. 
+		{
+			// Update information about this STA.
 			AsocEntry_UpdateTimeStamp(pEntry);
 		}
 		else
-		{ 
+		{
 
 			RT_TRACE_F(COMP_MLME, DBG_LOUD, ("MgntUpdateAsocInfo"));
-		
+
 			MgntUpdateAsocInfo(Adapter, UpdateAsocPeerAddr, pTaddr, 6); // 061204, rcnjko: this is a MUST before indicating association related event.
 
 			if(MgntResetOrPnPInProgress(Adapter))
@@ -920,9 +920,9 @@ OnBeacon_Ibss(
 				RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress case 2\n"));
 				return;
 			}
-			
+
 			//
-			// 061205, rcnjko: Add new STA of the IBSS and indicate association start, 
+			// 061205, rcnjko: Add new STA of the IBSS and indicate association start,
 			// association complete events for it.
 			//
 			if(AsocEntry_AddIbssPeerSta(Adapter, pBssDesc))
@@ -932,13 +932,13 @@ OnBeacon_Ibss(
 
 				// Postprocessing for association operation. 2006.11.14, by shien chang.
 				DrvIFIndicateAssociationComplete(Adapter, RT_STATUS_SUCCESS);
-				Adapter->HalFunc.LedControlHandler(Adapter, LED_CTL_LINK); 
+				Adapter->HalFunc.LedControlHandler(Adapter, LED_CTL_LINK);
 			}
 		}
-		// Fixed by CCW, Bruce It will cause beacon channel number error when media connect 
+		// Fixed by CCW, Bruce It will cause beacon channel number error when media connect
 		if( !pMgntInfo->bMediaConnect )
 		{
-			MgntIndicateMediaStatus( Adapter, RT_MEDIA_CONNECT, GENERAL_INDICATE );		
+			MgntIndicateMediaStatus( Adapter, RT_MEDIA_CONNECT, GENERAL_INDICATE );
 		}
 		else
 		{
@@ -966,13 +966,13 @@ OnBeacon_Ibss(
 				GetValueFromBeaconOrProbeRsp( Adapter, pRfd, bssDescTmp, FALSE);
 
 				// Determine the receiving packet type for BSS weighting.
-				bssDescTmp->BssPacketType |= 
+				bssDescTmp->BssPacketType |=
 					(PacketGetType(mmpdu) == Type_Probe_Rsp) ? BSS_PKT_PROBE_RSP : BSS_PKT_BEACON;
 
 				CopyWlanBss(pMgntInfo->bssDesc4Query+pMgntInfo->NumBssDesc, pMgntInfo->bssDesc+pMgntInfo->NumBssDesc);
-				pMgntInfo->NumBssDesc += 1;			
+				pMgntInfo->NumBssDesc += 1;
 				pMgntInfo->NumBssDesc4Query = pMgntInfo->NumBssDesc;
-		
+
 			}while(0);
 		}
 	}
@@ -993,7 +993,7 @@ OnBeacon_Ibss(
 			pMgntInfo->JoinAction = RT_JOIN_IBSS;
 
 			pMgntInfo->bInToSleep = TRUE;
-			
+
 			JoinRequest( Adapter, pMgntInfo->JoinAction, pBssDesc );
 		}
 	}
@@ -1009,7 +1009,7 @@ OnBeacon(
 {
 	PMGNT_INFO      pMgntInfo = &Adapter->MgntInfo;
 	OCTET_STRING	osMpdu =  {pRfd->Buffer.VirtualAddress, pRfd->PacketLength};
-	
+
 	RT_TRACE(COMP_RECV, DBG_TRACE,("OnBeacon!!!\n"));
 
 	pMgntInfo->LinkDetectInfo.OnBeaconCnt_OnBeacon++;	//cosa add for debug.
@@ -1060,14 +1060,14 @@ OnBeacon(
 	return TRUE;
 }
 
-VOID 
+VOID
 OnProbeRsp(
 	PADAPTER		Adapter,
 	PRT_RFD			pRfd
 )
 {
 	OCTET_STRING	osMpdu = {NULL, 0};
-		
+
 	if(Adapter->MgntInfo.state_Synchronization_Sta == STATE_Join_Wait_Beacon)
 	{
 		RT_TRACE( COMP_MLME , DBG_LOUD , ( " Used ProbeRsp to Join!! \n" ) );
@@ -1101,9 +1101,9 @@ OnAuth_even(
 	if(RT_DRIVER_STOP(Adapter))
 	{
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("Driver is going to stop \n"));
-		return FALSE; 	
+		return FALSE;
 	}
-	
+
 //Check Bssid
 	if( PlatformCompareMemory( pMgntInfo->Bssid, Frame_Addr3( authpdu ), 6 ) != 0 ){
 		return FALSE;
@@ -1129,7 +1129,7 @@ OnAuth_even(
 				//TODO: Need to check source address??
 
 				if( Frame_AuthStatusCode(authpdu) != StatusCode_success ){
-					
+
 					//
 					// <Roger_Notes> If Responding station does NOT support the specified WEP Auth,
 					// we shall NOT retry the same WEP Auth algorithm any more.
@@ -1137,10 +1137,10 @@ OnAuth_even(
 					//
 					if((Frame_AuthStatusCode(authpdu) == StatusCode_notsupport_authalg) &&
 						(pMgntInfo->SecurityInfo.AuthMode != RT_802_11AuthModeAutoSwitch) &&
-						(pMgntInfo->SecurityInfo.PairwiseEncAlgorithm == RT_ENC_ALG_WEP40 || 
+						(pMgntInfo->SecurityInfo.PairwiseEncAlgorithm == RT_ENC_ALG_WEP40 ||
 					 	pMgntInfo->SecurityInfo.PairwiseEncAlgorithm == RT_ENC_ALG_WEP104))
 					{
-						pMgntInfo->AuthRetryCount = RT_AUTH_RETRY_LIMIT;				
+						pMgntInfo->AuthRetryCount = RT_AUTH_RETRY_LIMIT;
 					}
 					pMgntInfo->State_AuthReqService = STATE_Auth_Req_Idle;
 					MlmeAuthenticateRequest_Confirm(Adapter, MlmeStatus_refused);
@@ -1152,17 +1152,17 @@ OnAuth_even(
 				//Check Auth algorithm
 				auth_alg = (AUTH_ALGORITHM)Frame_AuthAlgorithmNum(authpdu);
 				if( ((pMgntInfo->AuthReq_auAlg == OPEN_SYSTEM)
-					&& (auth_alg == OPEN_SYSTEM ) )|| 
+					&& (auth_alg == OPEN_SYSTEM ) )||
 					( (auth_alg == NETWORK_EAP) &&  Adapter->MgntInfo.bNETWORKEAP)) //For NETWORK EAP
 				{
 					pMgntInfo->State_AuthReqService = STATE_Auth_Req_Idle;
 					MlmeAuthenticateRequest_Confirm(Adapter, MlmeStatus_success);
-				}			
+				}
 				else if( (pMgntInfo->AuthReq_auAlg == SHARED_KEY)
 					&& (auth_alg == SHARED_KEY) )
 				{
 					OCTET_STRING	AuthChallengetext;
-							
+
 					// Cancel AuthTimer
 					PlatformCancelTimer( Adapter, &pMgntInfo->AuthTimer );
 
@@ -1178,7 +1178,7 @@ OnAuth_even(
 				else if(AUTH_ALG_FT == auth_alg)
 				{
 					RT_STATUS	rtStatus = RT_STATUS_SUCCESS;
-					
+
 					pMgntInfo->State_AuthReqService = STATE_Auth_Req_Idle;
 					FtUpdateEntryInfo(Adapter, FT_WAIT_OS_DECISION, pMgntInfo->Bssid, NULL, 0);
 					// Indicate to WDI to request the association request information for FT
@@ -1193,9 +1193,9 @@ OnAuth_even(
 				else{
 					pMgntInfo->State_AuthReqService = STATE_Auth_Req_Idle;
 					RT_TRACE(COMP_MLME, DBG_LOUD, ("Mismatch auth_alg: %#X\n", auth_alg));
-					MlmeAuthenticateRequest_Confirm(Adapter, MlmeStatus_invalid);					
+					MlmeAuthenticateRequest_Confirm(Adapter, MlmeStatus_invalid);
 				}
-				
+
 			}
 			break;
 
@@ -1212,7 +1212,7 @@ OnAuth_even(
 				{
 					pMgntInfo->State_AuthReqService = STATE_Auth_Req_Idle;
 					RT_TRACE(COMP_INIT, DBG_LOUD,("Mismatch auth_alg\n"));
-					MlmeAuthenticateRequest_Confirm(Adapter, MlmeStatus_invalid);				
+					MlmeAuthenticateRequest_Confirm(Adapter, MlmeStatus_invalid);
 					return FALSE;
 				}
 
@@ -1234,7 +1234,7 @@ OnAuth_even(
 	}
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("<====OnAuth_even(): State_AuthReqService %d \n", pMgntInfo->State_AuthReqService));
-	
+
 //Check Status Code
 	return TRUE;
 }
@@ -1276,9 +1276,9 @@ OnAssocRsp(
 	if(RT_DRIVER_STOP(Adapter))
 	{
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("Driver is going to stop \n"));
-		return FALSE;		
+		return FALSE;
 	}
- 
+
 	asocpdu.Octet = pRfd->Buffer.VirtualAddress;
 	asocpdu.Length = pRfd->PacketLength;
 
@@ -1287,13 +1287,13 @@ OnAssocRsp(
 	//2004/08/23, kcwu, for ndtest
 	pMgntInfo->RspCapability = Frame_AssocCap(asocpdu);
 	pMgntInfo->RspStatusCode = Frame_AssocStatusCode(asocpdu);
-	pMgntInfo->RspAssociationID = Frame_AssocAID(asocpdu);	
+	pMgntInfo->RspAssociationID = Frame_AssocAID(asocpdu);
 
 	if(MgntResetOrPnPInProgress(Adapter))
 	{
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress \n"));
 		return FALSE;
-	}	
+	}
 
 	switch( pMgntInfo->State_AsocService )
 	{
@@ -1308,7 +1308,7 @@ OnAssocRsp(
 					MgntUpdateAsocInfo(Adapter, UpdateAsocPeerAddr, pMgntInfo->Bssid, 6);
 					MgntUpdateAsocInfo(Adapter, UpdateAsocResp, asocpdu.Octet, asocpdu.Length);
 					MgntUpdateAsocInfo(Adapter, UpdateFlagReAsocResp, (UCHAR*)&FlagReAsoc, sizeof(BOOLEAN));
-					
+
 					RT_TRACE(COMP_MLME, DBG_LOUD, ("OnAssocRsp(): STATE_Wait_Asoc_Response => RspStatusCode: %d, RspAssociationID: %d\n", pMgntInfo->RspStatusCode, pMgntInfo->RspAssociationID));
 					MlmeAssociateConfirm( Adapter, pRfd, &asocpdu, FALSE, MlmeStatus_success );
 				}
@@ -1344,9 +1344,9 @@ OnReAssocRsp(
 	if(RT_DRIVER_STOP(Adapter))
 	{
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("Driver is going to stop \n"));
-		return FALSE;		
+		return FALSE;
 	}
- 
+
 	Reasocpdu.Octet = pRfd->Buffer.VirtualAddress;
 	Reasocpdu.Length = pRfd->PacketLength;
 
@@ -1376,7 +1376,7 @@ OnReAssocRsp(
 					MgntUpdateAsocInfo(Adapter, UpdateAsocPeerAddr, pMgntInfo->Bssid, 6);
 					MgntUpdateAsocInfo(Adapter, UpdateAsocResp, Reasocpdu.Octet, Reasocpdu.Length);
 					MgntUpdateAsocInfo(Adapter, UpdateFlagReAsocResp, (UCHAR*)&FlagReAsoc, sizeof(BOOLEAN));
-					
+
 					RT_TRACE(COMP_MLME, DBG_LOUD, ("OnReAssocRsp(): STATE_Wait_Reasoc_Response => RspStatusCode: %d, RspAssociationID: %d\n", Frame_AssocStatusCode(Reasocpdu), Frame_AssocAID(Reasocpdu)));
 					MlmeAssociateConfirm( Adapter, pRfd, &Reasocpdu, TRUE, MlmeStatus_success );
 				}
@@ -1410,11 +1410,11 @@ OnDisassoc(
 	if(RT_DRIVER_STOP(Adapter))
 	{
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("Driver is going to stop \n"));
-		return FALSE;		
+		return FALSE;
 	}
 
 	pMgntInfo->LinkDetectInfo.OnDisassocCnt++;	//cosa add for debug
-	
+
 	disassocpdu.Octet = pRfd->Buffer.VirtualAddress;
 	disassocpdu.Length = pRfd->PacketLength;
 
@@ -1438,7 +1438,7 @@ OnDisassoc(
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress \n"));
 		return FALSE;
 	}
-	
+
 	disassocReason = Frame_DeassocReasonCode(disassocpdu);
 
 	if(!ACTING_AS_AP(Adapter))
@@ -1447,13 +1447,13 @@ OnDisassoc(
 		{
 			u1Byte			tmp_ssid[256];
 			u2Byte			tmp_len = pMgntInfo->Ssid.Length;
-			
+
 			if(!pMgntInfo->bMediaConnect || pMgntInfo->bDisconnectRequest)
 			{
 				RT_TRACE_F(COMP_MLME, DBG_LOUD, ("bMediaConnect %d bDisconnectRequest %d \n", pMgntInfo->bMediaConnect, pMgntInfo->bDisconnectRequest));
 				return FALSE;
 			}
-			
+
 			RT_TRACE(COMP_MLME, DBG_LOUD, ("OnDisassoc in STA mode (mAssoc%d, mIbss:%d)\n", pMgntInfo->mAssoc, pMgntInfo->mIbss));
 			RT_PRINT_ADDR(COMP_MLME, DBG_LOUD, "OnDisassoc from\n", disassocSta);
 
@@ -1496,11 +1496,11 @@ OnDisassoc(
 			DrvIFIndicateConnectionComplete(Adapter, RT_STATUS_FAILURE);
 			RT_TRACE(COMP_MLME, DBG_LOUD, ("OnDisassoc(): ReasonCode = %X\n", Frame_DeassocReasonCode(disassocpdu)));
 			DrvIFIndicateDisassociation(Adapter, Frame_DeassocReasonCode(disassocpdu), pMgntInfo->Bssid);
-			
+
 			//2004/08/23, kcwu, the ssid should be retained
 			PlatformMoveMemory(tmp_ssid, pMgntInfo->Ssid.Octet, pMgntInfo->Ssid.Length);
 			tmp_len = pMgntInfo->Ssid.Length;
-			
+
 			ResetMgntVariables( Adapter );
 
 			//Fix WPA WPA2 issue , New key will set after re-handshaking, by CCW 20070521
@@ -1509,7 +1509,7 @@ OnDisassoc(
 				BOOLEAN		bCCX8021xenable = FALSE;
 
 				CCX_QueryCCKMSupport(Adapter, &bCCX8021xenable, &bAPSuportCCKM);
-				
+
 				if(   pMgntInfo->SecurityInfo.AuthMode > RT_802_11AuthModeAutoSwitch ||
 					(bAPSuportCCKM && bCCX8021xenable) )  // In CCKM mode will Clear key
 				{
@@ -1522,7 +1522,7 @@ OnDisassoc(
 			pMgntInfo->Ssid.Length = tmp_len;
 			Adapter->HalFunc.SetHwRegHandler( Adapter, HW_VAR_BSSID, pMgntInfo->Bssid );
 			Adapter->HalFunc.SetHwRegHandler( Adapter, HW_VAR_MEDIA_STATUS, (pu1Byte)(&pMgntInfo->OpMode) );
-	
+
 			// Start Roaming and do not indicate status to OS (XP), so we still keep connected until retry failed. By Bruce, 2008-08-16.
 			// CCW said: we must indicate DISCONNECT when received DEAUTH frme include 4-way timeout. 2008-11-24
 			if( pMgntInfo->mDeauthCount > 2 || pMgntInfo->IndicateByDeauth)
@@ -1540,7 +1540,7 @@ OnDisassoc(
 				RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress case 2\n"));
 				return FALSE;
 			}
-			
+
 			if( OS_SUPPORT_WDI(Adapter) == FALSE)
 			{
 				// Roaming, 2006.12.07, by shien chang.
@@ -1557,12 +1557,12 @@ OnDisassoc(
 					{
 						if(MgntResetOrPnPInProgress(Adapter))
 						{
-							RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress case 3\n"));				
+							RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress case 3\n"));
 							return FALSE;
 						}
 						MgntRoamComplete(Adapter, MlmeStatus_refused); // Roam failed.
 					}
-				}		
+				}
 			}
 		}
 	}
@@ -1576,11 +1576,11 @@ OnDisassoc(
 			if(pEntry != NULL)
 			{
 				// Added by Annie, 2005-07-12.
-				if( pMgntInfo->SecurityInfo.AuthMode == RT_802_11AuthModeWPAPSK 
+				if( pMgntInfo->SecurityInfo.AuthMode == RT_802_11AuthModeWPAPSK
 					||pMgntInfo->SecurityInfo.AuthMode == RT_802_11AuthModeWPA2PSK
 					||pMgntInfo->SecurityInfo.AuthMode == RT_802_11AuthModeWPA)
 					Authenticator_StateINITIALIZE( Adapter, pEntry );
-					
+
 				//
 				// <Roger_Notes> We should complete all SendNBLs before NDIS_STATUS_DOT11_DISASSOCIATION status is indicated
 				// to prevent MiniportReturnNetBufferLists routine will be called in the same thread context and Rx deadlock in N6PciReturnNetBufferLists
@@ -1588,18 +1588,18 @@ OnDisassoc(
 				// 2013.06.26.
 				//
 				AsocEntry_BecomeDisassoc(Adapter, pEntry);
-					
+
 				if(MgntActQuery_ApType(Adapter) == RT_AP_TYPE_IBSS_EMULATED
 				|| MgntActQuery_ApType(Adapter) == RT_AP_TYPE_LINUX)
 				{
-					MgntUpdateAsocInfo(Adapter, UpdateDeauthAddr, disassocSta, 6); 
+					MgntUpdateAsocInfo(Adapter, UpdateDeauthAddr, disassocSta, 6);
 					DrvIFIndicateDisassociation(Adapter, Frame_DeassocReasonCode(disassocpdu), disassocSta);
 				}
 				else if(MgntActQuery_ApType(Adapter) == RT_AP_TYPE_VWIFI_AP)
 				{
 					pMgntInfo->pCurrentSta = pEntry;
 					RT_TRACE(COMP_MLME, DBG_LOUD, ("OnDisassoc(): on VWIFI_AP ReasonCode = %X\n", Frame_DeassocReasonCode(disassocpdu)));
-					
+
 					DrvIFIndicateIncommingAssociationComplete(Adapter, Frame_DeassocReasonCode(disassocpdu));
 					DrvIFIndicateDisassociation(Adapter, Frame_DeassocReasonCode(disassocpdu), disassocSta);
 				}
@@ -1609,7 +1609,7 @@ OnDisassoc(
 	}
 
 	RemovePeerTS(Adapter, Frame_pSaddr(disassocpdu));
-	
+
 	return TRUE;
 }
 
@@ -1621,12 +1621,12 @@ OnDeauth(
 	IN	PRT_RFD			pRfd
 	)
 {
-	PMGNT_INFO		pMgntInfo=&Adapter->MgntInfo;	
+	PMGNT_INFO		pMgntInfo=&Adapter->MgntInfo;
 	OCTET_STRING	deauthpdu;
 	pu1Byte			deauBssid;
 	u1Byte			QueueID;
 	PRT_TCB			pTcb = NULL;
-	
+
 	pu1Byte			deauSta;
  	u1Byte			tmp_ssid[256];
 	u2Byte			tmp_len = pMgntInfo->Ssid.Length;
@@ -1635,18 +1635,18 @@ OnDeauth(
 	if(RT_DRIVER_STOP(Adapter))
 	{
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("Driver is going to stop \n"));
-		return FALSE;		
+		return FALSE;
 	}
 
  	pMgntInfo->LinkDetectInfo.OnDeauthCnt++;	//cosa add for debug
- 
+
 	deauthpdu.Octet = pRfd->Buffer.VirtualAddress;
 	deauthpdu.Length = pRfd->PacketLength;
 
 	deauBssid = Frame_pBssid(deauthpdu);
-	deauSta = Frame_Addr2(deauthpdu);	
+	deauSta = Frame_Addr2(deauthpdu);
 
-	if(!IsDefaultAdapter(Adapter)&& 
+	if(!IsDefaultAdapter(Adapter)&&
 		!ACTING_AS_AP(Adapter) )
 	{
 		// Is it possible failing into this condition???? Neo Test 123
@@ -1670,16 +1670,16 @@ OnDeauth(
 	{
 		RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress \n"));
 		return FALSE;
-	}	
+	}
 
 	//RT_PRINT_DATA(COMP_MLME, DBG_LOUD, "deauth:\n", deauthpdu.Octet, deauthpdu.Length);
 
 	if( !ACTING_AS_AP(Adapter))
 	{ // STA mode.
 
-		if( !MacAddr_isBcst(deauBssid)&&((PlatformCompareMemory( pMgntInfo->Bssid, deauBssid, 6 ) == 0) 
+		if( !MacAddr_isBcst(deauBssid)&&((PlatformCompareMemory( pMgntInfo->Bssid, deauBssid, 6 ) == 0)
 			|| MgntIsMacAddrGroup( pMgntInfo->Bssid )))
-		{ 
+		{
 			switch(pMgntInfo->OpMode)
 			{
 				case RT_OP_MODE_IBSS:
@@ -1688,7 +1688,7 @@ OnDeauth(
 						RT_TRACE_F(COMP_MLME, DBG_LOUD, ("bMediaConnect %d bDisconnectRequest %d \n", pMgntInfo->bMediaConnect, pMgntInfo->bDisconnectRequest));
 						break;
 					}
-					
+
 					RT_PRINT_ADDR(COMP_MLME, DBG_LOUD, "OnDeauth in IBSS by deauSta: \n", deauSta);
 
 					pEntry = AsocEntry_GetEntry(pMgntInfo, deauSta);
@@ -1697,12 +1697,12 @@ OnDeauth(
 						RT_TRACE(COMP_MLME, DBG_LOUD, ("OnDeauth in IBSS receive duplicate deauth \n"));
 						break;
 					}
-					
+
 					//
-					// We have to indicate the address of leaving peer STA to upper layer. 
+					// We have to indicate the address of leaving peer STA to upper layer.
 					// for example, authenticator/supplicant.
 					//
-					MgntUpdateAsocInfo(Adapter, UpdateDeauthAddr, deauSta, 6); 
+					MgntUpdateAsocInfo(Adapter, UpdateDeauthAddr, deauSta, 6);
 					DrvIFIndicateDisassociation(Adapter, Frame_DeauthReasonCode(deauthpdu), deauSta);
 
 					//
@@ -1713,7 +1713,7 @@ OnDeauth(
 					// 2008.08.05, haich.
 					//
 					//if(Adapter->bInHctTest == TRUE)
-#if 0				
+#if 0
 					{
 						static u1Byte DummySta[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
 
@@ -1735,10 +1735,10 @@ OnDeauth(
 				default:
 					if(!pMgntInfo->bMediaConnect || pMgntInfo->bDisconnectRequest)
 					{
-						RT_TRACE_F(COMP_MLME, DBG_LOUD, ("bMediaConnect %d bDisconnectRequest %d \n", pMgntInfo->bMediaConnect, pMgntInfo->bDisconnectRequest));				
+						RT_TRACE_F(COMP_MLME, DBG_LOUD, ("bMediaConnect %d bDisconnectRequest %d \n", pMgntInfo->bMediaConnect, pMgntInfo->bDisconnectRequest));
 						break;
 					}
-					
+
 					RT_PRINT_ADDR(COMP_MLME, DBG_LOUD, "OnDeauth in infra-BSS by deauSta: \n", deauSta);
 					RT_TRACE(COMP_MLME, DBG_LOUD, ("OnDeauth() reason %d\n",Frame_DeauthReasonCode(deauthpdu)));
 
@@ -1774,19 +1774,19 @@ OnDeauth(
 
 					if(MgntResetOrPnPInProgress(Adapter))
 					{
-						RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress case 2\n"));				
+						RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress case 2\n"));
 						return FALSE;
 					}
-					
+
 					// 2006.11.15, by shien chang.
 					DrvIFIndicateAssociationComplete(Adapter, RT_STATUS_FAILURE);
 					DrvIFIndicateConnectionComplete(Adapter, RT_STATUS_FAILURE);
 					DrvIFIndicateDisassociation(Adapter, Frame_DeauthReasonCode(deauthpdu), pMgntInfo->Bssid);
-					
+
 					//2004/08/23, kcwu, the ssid should be retained
 					PlatformMoveMemory(tmp_ssid, pMgntInfo->Ssid.Octet, pMgntInfo->Ssid.Length);
 					tmp_len = pMgntInfo->Ssid.Length;
-		
+
 					if(GET_TDLS_ENABLED(pMgntInfo))
 						TDLS_Stop(Adapter);
 
@@ -1801,7 +1801,7 @@ OnDeauth(
 					{
 						MgntIndicateMediaStatus( Adapter, RT_MEDIA_DISCONNECT, FORCE_NO_INDICATE);
 					}
-					
+
 					ResetMgntVariables( Adapter );
 
 					//Fix WPA WPA2 issue , New key will set after re-handshaking, by CCW 20070521
@@ -1810,7 +1810,7 @@ OnDeauth(
 						BOOLEAN		bCCX8021xenable = FALSE;
 
 						CCX_QueryCCKMSupport(Adapter, &bCCX8021xenable, &bAPSuportCCKM);
-						
+
 						if(   pMgntInfo->SecurityInfo.AuthMode > RT_802_11AuthModeAutoSwitch ||
 							(bAPSuportCCKM && bCCX8021xenable) )  // In CCKM mode will Clear key
 						{
@@ -1826,10 +1826,10 @@ OnDeauth(
 
 					if(MgntResetOrPnPInProgress(Adapter))
 					{
-						RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress case 3\n"));				
+						RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress case 3\n"));
 						return FALSE;
 					}
-				
+
 					if( OS_SUPPORT_WDI(Adapter) == FALSE )
 					{
 						// Roaming, 2006.12.07, by shien chang.
@@ -1856,16 +1856,16 @@ OnDeauth(
 							{
 								if(MgntResetOrPnPInProgress(Adapter))
 								{
-									RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress MgntRoamRetry FAIL\n"));				
+									RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress MgntRoamRetry FAIL\n"));
 									return FALSE;
-								}	
+								}
 								MgntRoamComplete(Adapter, MlmeStatus_refused); // Roam failed.
-							}						
+							}
 						}
-					}	
-				
+					}
+
 					//do not send buffered packets while STA is deauthed by AP.
-					PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);		
+					PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
 					for(QueueID = 0; QueueID < MAX_TX_QUEUE; QueueID++)
 					{
 						// 2004.08.11, revised by rcnjko.
@@ -1885,19 +1885,19 @@ OnDeauth(
 						}
 					}
 					PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
-						
+
 					break;
-			}	
+			}
 		}
 	}
 	else
 	{ // AP mode.
-		if( PlatformCompareMemory( pMgntInfo->Bssid, deauBssid, 6 ) == 0) 
+		if( PlatformCompareMemory( pMgntInfo->Bssid, deauBssid, 6 ) == 0)
 		{
 			if(	MgntActQuery_ApType(Adapter) == RT_AP_TYPE_IBSS_EMULATED
 				|| MgntActQuery_ApType(Adapter) == RT_AP_TYPE_LINUX)
 			{
-				MgntUpdateAsocInfo(Adapter, UpdateDeauthAddr, deauSta, 6); 
+				MgntUpdateAsocInfo(Adapter, UpdateDeauthAddr, deauSta, 6);
 				pEntry = AsocEntry_GetEntry(pMgntInfo, deauSta);
 				if( pEntry != NULL )
 					DrvIFIndicateDisassociation(Adapter, Frame_DeauthReasonCode(deauthpdu), deauSta);
@@ -1912,7 +1912,7 @@ OnDeauth(
 						RT_TRACE_F(COMP_AP, DBG_LOUD, ("AP_DisassociateStation in progress\n"));
 						return TRUE;
 					}
-				
+
 					DrvIFIndicateIncommingAssociationComplete(Adapter, Frame_DeauthReasonCode(deauthpdu));
 					if(pMgntInfo->pCurrentSta->bAssociated)
 					{
@@ -1928,13 +1928,13 @@ OnDeauth(
 						MacIdDeregisterSpecificMacId(Adapter, pMgntInfo->pCurrentSta->AssociatedMacId);
 
 						RT_TRACE(COMP_MLME, DBG_LOUD, ("OnDeauth(): ReasonCode = %X\n", Frame_DeauthReasonCode(deauthpdu)));
-						
+
 						DrvIFIndicateDisassociation(Adapter, Frame_DeauthReasonCode(deauthpdu), pMgntInfo->pCurrentSta->MacAddr);
-					}					
+					}
 				}
 			}
 			RT_TRACE_F(COMP_AP, DBG_LOUD, ("AsocEntry_RemoveStation case 2\n"));
-			
+
 			AsocEntry_RemoveStation(Adapter, deauSta);
 		}
 	}
@@ -1970,9 +1970,9 @@ OnProbeReq(
 	do
 	{
 		//3 //Note, the sequence of conditions are very important.
-		// Skip ProbeReq if SSID is neither any nor our SSID. 
+		// Skip ProbeReq if SSID is neither any nor our SSID.
 		ssidToScan = PacketGetElement(mmpdu, EID_SsId, OUI_SUB_DONT_CARE, OUI_SUBTYPE_DONT_CARE );
-		
+
 		// Check if this packet should be handled by P2P
 		if(RT_STATUS_SUCCESS != P2P_OnProbeReq(Adapter, pRfd, &mmpdu))
 		{
@@ -1981,13 +1981,13 @@ OnProbeReq(
 		}
 
 		// Skip ProbeReq if we are not in AP mode or we are not a coordinator of IBSS mode.
-		if( !(ACTING_AS_AP(Adapter)) && 
+		if( !(ACTING_AS_AP(Adapter)) &&
 			!(pMgntInfo->mIbss && !pMgntInfo->mDisable && pMgntInfo->bIbssCoordinator) )
 		{
 			break;
 		}
 
-		// Skip ProbeReq if we are scanning. 
+		// Skip ProbeReq if we are scanning.
 		if( pMgntInfo->bScanInProgress && (Adapter->MgntInfo.dot11CurrentChannelNumber != RT_GetChannelNumber(Adapter)))
 		{
 			// RT_PRINT_ADDR(COMP_MLME, DBG_LOUD, "OnProbeReq(): Skip by ScanInProgress, Addr = ", SrcAddr);
@@ -2014,9 +2014,9 @@ OnProbeReq(
 			// RT_PRINT_ADDR(COMP_MLME, DBG_LOUD, "OnProbeReq(): Skip by P2P_IsGoAcceptProbeReq == BEACON_STOP, Addr = ", SrcAddr);
 		}
 
-		// Skip ProbeReq if SSID is neither any nor our SSID. 
+		// Skip ProbeReq if SSID is neither any nor our SSID.
 		if( ssidToScan.Length > 0 && EqualOS(ssidToScan, pMgntInfo->Ssid) == FALSE)
-			break;		
+			break;
 	}while(FALSE);
 
 	if(bSentProbRsp)
@@ -2024,12 +2024,12 @@ OnProbeReq(
 		// Send ProbeRsp to respond the ProbeReq received.
 		SendProbeRsp(Adapter, SrcAddr, IsSSIDAny(ssidToScan), pRfd, &mmpdu);
 	}
-	
+
 	return TRUE;
 }
 
 
-VOID 
+VOID
 MlmeDeauthenticateRequest(
 	PADAPTER		Adapter,
 	pu1Byte			auSta,
@@ -2050,7 +2050,7 @@ MlmeDeauthenticateRequest(
 		u1Byte		i;
 
 		DrvIFIndicateDisassociation(Adapter, unspec_reason, pMgntInfo->Bssid);
-		
+
 		pMgntInfo->mAssoc = FALSE;
 		pMgntInfo->AsocTimestamp = 0;
 		for(i=0;i<6;i++)  pMgntInfo->Bssid[i] = 0x22;	//0x11;	// Modified to 0x22 by Annie, I don't want it set addr[0] BIT0. 2006-05-04.
@@ -2077,7 +2077,7 @@ MlmeDisassociateRequest(
 
 	RemovePeerTS(Adapter, asSta);
 
-	if(!ACTING_AS_AP(Adapter))	
+	if(!ACTING_AS_AP(Adapter))
 	{
 		if(pMgntInfo->RoamingState == ROAMINGSTATE_IDLE)
 			SendDisassociation( Adapter, asSta, asRsn );
@@ -2096,13 +2096,13 @@ MlmeDisassociateRequest(
 
 		if(!MgntRoamingInProgress(pMgntInfo))
 			MgntIndicateMediaStatus( Adapter, RT_MEDIA_DISCONNECT, GENERAL_INDICATE );
-		
+
 		pMgntInfo->mAssoc = FALSE;
 		pMgntInfo->AsocTimestamp = 0;
 		for(i=0;i<6;i++)  pMgntInfo->Bssid[i] = 0x22;
 		pMgntInfo->OpMode = RT_OP_MODE_NO_LINK;
 		Adapter->HalFunc.SetHwRegHandler( Adapter, HW_VAR_MEDIA_STATUS, (pu1Byte)(&pMgntInfo->OpMode) );
-		
+
 		if(pMgntInfo->RoamingState == ROAMINGSTATE_IDLE)
 			MgntIndicateMediaStatus( Adapter, RT_MEDIA_DISCONNECT, GENERAL_INDICATE );
 
@@ -2157,7 +2157,7 @@ OnCls2err(
 
 		// 5. Remove whole entry.
 		RT_TRACE_F(COMP_AP, DBG_LOUD, ("AsocEntry_RemoveStation case 3\n"));
-		
+
 		AsocEntry_RemoveStation( Adapter, auSta );
 	}
 	else
@@ -2165,7 +2165,7 @@ OnCls2err(
 		//MlmeDeauthenticateRequest(Adapter, auSta, class2_err);
 	}
 
-	RT_TRACE( COMP_RECV, DBG_LOUD, (" <== OnCls2err()\n") );	
+	RT_TRACE( COMP_RECV, DBG_LOUD, (" <== OnCls2err()\n") );
 }
 
 
@@ -2245,7 +2245,7 @@ OnAction(
 
 	//
 	// Note:
-	//	Most types of action frame are issued for the specified BSS (depend on BSSID), but some like 
+	//	Most types of action frame are issued for the specified BSS (depend on BSSID), but some like
 	//	measurement pilot of Public Action frame similar to a subset of a beacon is allowed to receive
 	//	for any station when performing a scan process.
 	//	If anyone implements such action frames, we shall not check the BSSID here. By Bruce, 2009-07-17.
@@ -2273,13 +2273,13 @@ OnAction(
 			rtStatus = ActionFrameCmd[idx].CmdHandler(pAdapter, pRfd, posMpdu);
 			if(RT_STATUS_SUCCESS != rtStatus)
 			{
-				RT_TRACE_F(COMP_MLME, DBG_WARNING, 
+				RT_TRACE_F(COMP_MLME, DBG_WARNING,
 						("[WARNING] Execute %s with status = %d\n",  ActionFrameCmd[idx].Name, rtStatus));
 			}
 			break;
 		}
-	}	
-	
+	}
+
 	return rtStatus;
 }
 
@@ -2445,7 +2445,7 @@ EncapDataFrame_ParsePkt(
 			rtStatus = EncapDataFrameCmd[idx].CmdHandler(pAdapter, pRfd, &osMpdu, contentOffset);
 			if(RT_STATUS_SUCCESS != rtStatus)
 			{
-				RT_TRACE_F(COMP_MLME, DBG_WARNING, 
+				RT_TRACE_F(COMP_MLME, DBG_WARNING,
 						("[WARNING] Execute %s with status = %d\n",  EncapDataFrameCmd[idx].Name, rtStatus));
 			}
 			break;
@@ -2466,15 +2466,15 @@ CopyWlanBss(
 	FillOctetString((dest)->IE, (dest)->IEBuf, (src)->IE.Length);
 
 #if (WPS_SUPPORT == 1)
-	FillOctetString((dest)->bdSimpleConfIE, (dest)->bdSimpleConfIEBuf, (src)->bdSimpleConfIE.Length);		
-	FillOctetString((dest)->osBeaconWcnIe, (dest)->BeaconWcnIeBuf, (src)->osBeaconWcnIe.Length);	
-	FillOctetString((dest)->osProbeRspWcnIe, (dest)->ProbeRspWcnIeBuf, (src)->osProbeRspWcnIe.Length);	
+	FillOctetString((dest)->bdSimpleConfIE, (dest)->bdSimpleConfIEBuf, (src)->bdSimpleConfIE.Length);
+	FillOctetString((dest)->osBeaconWcnIe, (dest)->BeaconWcnIeBuf, (src)->osBeaconWcnIe.Length);
+	FillOctetString((dest)->osProbeRspWcnIe, (dest)->ProbeRspWcnIeBuf, (src)->osProbeRspWcnIe.Length);
 #endif
-	FillOctetString((dest)->bdCountryIE, (dest)->bdCountryIEBuf, (src)->bdCountryIE.Length);	
-	FillOctetString((dest)->BssQos.bdWMMIE, (dest)->BssQos.bdWMMIEBuf, (src)->BssQos.bdWMMIE.Length);	
-	FillOctetString((dest)->WpaIe, (dest)->WpaIeBuf, (src)->WpaIe.Length);	
-	FillOctetString((dest)->RsnIe, (dest)->RsnIeBuf, (src)->RsnIe.Length);		
-	FillOctetString((dest)->osWmmAcParaIE, (dest)->WmmAcParaBuf, (src)->osWmmAcParaIE.Length);	
+	FillOctetString((dest)->bdCountryIE, (dest)->bdCountryIEBuf, (src)->bdCountryIE.Length);
+	FillOctetString((dest)->BssQos.bdWMMIE, (dest)->BssQos.bdWMMIEBuf, (src)->BssQos.bdWMMIE.Length);
+	FillOctetString((dest)->WpaIe, (dest)->WpaIeBuf, (src)->WpaIe.Length);
+	FillOctetString((dest)->RsnIe, (dest)->RsnIeBuf, (src)->RsnIe.Length);
+	FillOctetString((dest)->osWmmAcParaIE, (dest)->WmmAcParaBuf, (src)->osWmmAcParaIE.Length);
 	FillOctetString((dest)->osPowerConstraintIe, (dest)->PowerConstraintBuf, (src)->osPowerConstraintIe.Length);
 }
 

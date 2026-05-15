@@ -72,11 +72,11 @@ N6SdioWdi_TaskOpen(
 	_In_  PADAPTER			pAdapter,
 	_In_  PNDIS_MINIPORT_INIT_PARAMETERS      MiniportInitParameters
 	);
-	
+
 NDIS_STATUS
 N6SdioWdi_TaskClose(
 	_In_  PADAPTER			pAdapter
-	);	
+	);
 
 NDIS_STATUS
 N6SdioWdi_AdapterCapabilities(

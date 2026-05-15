@@ -6,20 +6,20 @@
 //      CompletionFunctions_BasicStreamInjectionCallouts.cpp
 //
 //   Abstract:
-//      This module contains WFP Completion functions for injecting packets back into the stream 
+//      This module contains WFP Completion functions for injecting packets back into the stream
 //         using the clone / block / inject method.
 //
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //       CompleteBasicStreamInjection
 //
 //       <Module>
 //          Complete                           - Function is an FWPS_INJECT_COMPLETE function.
 //       <Scenario>
-//          BasicStreamInjection               - Function demonstrates the clone / block / inject 
+//          BasicStreamInjection               - Function demonstrates the clone / block / inject
 //                                               model.
 //
 //      <Object><Action>
@@ -47,7 +47,7 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense 
+//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,13 +64,13 @@ VOID BasicStreamInjectionCompletionDataDestroy(_Inout_ BASIC_STREAM_INJECTION_CO
                                                _In_ BOOLEAN override)                                             /* FALSE */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> BasicStreamInjectionCompletionDataDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppCompletionData);
    NT_ASSERT(*ppCompletionData);
 
@@ -99,7 +99,7 @@ VOID BasicStreamInjectionCompletionDataDestroy(_Inout_ BASIC_STREAM_INJECTION_CO
    KeReleaseSpinLock(&(pCompletionData->spinLock),
                      originalIRQL);
 
-   /// Stream indicated each individual NBL from a chain, so wait until the last NBL is indicated 
+   /// Stream indicated each individual NBL from a chain, so wait until the last NBL is indicated
    /// before removing the completionData.
    if(pCompletionData->refCount == 0 ||
       override)
@@ -109,13 +109,13 @@ VOID BasicStreamInjectionCompletionDataDestroy(_Inout_ BASIC_STREAM_INJECTION_CO
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- BasicStreamInjectionCompletionDataDestroy()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
@@ -127,13 +127,13 @@ VOID NTAPI CompleteBasicStreamInjection(_In_ VOID* pContext,
                                         _In_ BOOLEAN dispatchLevel)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> CompleteBasicStreamInjection()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(dispatchLevel);
 
    NT_ASSERT(pContext);
@@ -151,12 +151,12 @@ VOID NTAPI CompleteBasicStreamInjection(_In_ VOID* pContext,
    BasicStreamInjectionCompletionDataDestroy((BASIC_STREAM_INJECTION_COMPLETION_DATA**)&pContext);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- CompleteBasicStreamInjection()\n");
 
 #endif /// DBG
-   
+
    return;
 }

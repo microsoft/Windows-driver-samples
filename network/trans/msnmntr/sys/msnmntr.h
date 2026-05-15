@@ -9,7 +9,7 @@ Abstract:
 Environment:
 
     Kernel mode
-    
+
 --*/
 
 #pragma once
@@ -35,21 +35,21 @@ MonitorCoInitialize(_Inout_ DEVICE_OBJECT* deviceObject);
 void
 MonitorCoUninitialize(void);
 
-NTSTATUS 
+NTSTATUS
 MonitorCoRegisterCallouts(_Inout_ void* deviceObject);
 
-NTSTATUS 
+NTSTATUS
 MonitorCoUnregisterCallouts(void);
 
-NTSTATUS 
+NTSTATUS
 MonitorCoSetApplication(
    _In_reads_(size) wchar_t*    fileName,
    _In_ ULONG size);
 
-NTSTATUS 
+NTSTATUS
 MonitorCoEnableMonitoring(
    _In_   MONITOR_SETTINGS* monitorSettings);
 
-void 
+void
 MonitorCoDisableMonitoring(void);
 

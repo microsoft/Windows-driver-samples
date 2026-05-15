@@ -82,7 +82,7 @@ N6CQuery_DOT11_POWER_MGMT_REQUEST(
 	IN	PADAPTER						Adapter,
 	OUT	pu4Byte							pPowerSaveLevel
 );
-	
+
 NDIS_STATUS
 N6CQuery_DOT11_EXCLUDED_MAC_ADDRESS_LIST(
 	IN	PADAPTER						Adapter,
@@ -116,7 +116,7 @@ N6CQuery_DOT11_CURRENT_OPERATION_MODE(
 	OUT	PVOID							InformationBuffer,
 	IN	ULONG							InformationBufferLength,
 	OUT	PULONG							BytesWritten,
-	OUT	PULONG							BytesNeeded	
+	OUT	PULONG							BytesNeeded
 );
 
 NDIS_STATUS
@@ -178,7 +178,7 @@ N6CQuery_DOT11_RTBSS_OPERATING_PHYID(
 	IN	PADAPTER						Adapter,
 	IN	PVOID 					pRtBss
 );
-	
+
 NDIS_STATUS
 N6CQuery_DOT11_DESIRED_PHY_LIST(
 	IN	PADAPTER						Adapter,
@@ -283,7 +283,7 @@ N6CQuery_DOT11_MULTICAST_LIST(
 
 BOOLEAN
 N6CQuery_DOT11_NIC_POWER_STATE(
-	IN	PADAPTER	pAdapter	
+	IN	PADAPTER	pAdapter
 );
 
 NDIS_STATUS

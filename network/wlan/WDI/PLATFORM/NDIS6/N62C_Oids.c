@@ -1,27 +1,27 @@
 #include "Mp_Precomp.h"
 
-/* We use this OID table structure to check if the OID is supported at this point & what the 
+/* We use this OID table structure to check if the OID is supported at this point & what the
  * size should
  */
 typedef struct PORT_QUERY_SET_OID_ENTRY {
     NDIS_OID                    Oid;                // Oid value
-    
+
     BOOLEAN                     InitSettable:1;     // Settable in Init state (for atleast one op mode)
-    
+
     BOOLEAN                     OpSettable:1;       // Settable in Op state (for atleast one op mode)
-    
+
     BOOLEAN                     Queryable:1;        // Queryable in Init/Op state
-    
+
     BOOLEAN                     ExtSTASupported:1;  // Valid in ExtSTA
-    
+
     BOOLEAN                     ExtAPSupported:1;   // Valid in ExtAP
-    
+
     BOOLEAN                     NetmonSupported:1;  // Valid in Netmon mode
 
     BOOLEAN                     PhySpecific:1;      // Is this OID only acceptable for certain phys
 
     ULONG                       MinBufferSize;      // Minimum size required for the buffer (query & set)
-    
+
 } PORT_QUERY_SET_OID_ENTRY, * PPORT_QUERY_SET_OID_ENTRY;
 
 
@@ -599,7 +599,7 @@ PORT_QUERY_SET_OID_ENTRY OidQuerySetTable[] = {
         sizeof(DOT11_DIVERSITY_SELECTION_RX_LIST)   // MinBufferSize
     },
     {
-        OID_DOT11_DIVERSITY_SUPPORT,                // Oid: dot11DiversitySupport 
+        OID_DOT11_DIVERSITY_SUPPORT,                // Oid: dot11DiversitySupport
         FALSE,                                      // InitSettable
         FALSE,                                      // OpSettable
         TRUE,                                       // Queryable
@@ -1360,7 +1360,7 @@ PORT_QUERY_SET_OID_ENTRY OidQuerySetTable[] = {
         FALSE,                                      // PhySpecific
         0                                           // MinBufferSize
     },
-/*    
+/*
     {
 	OID_DOT11_AP_BEACON_MODE,                 // Oid
 	TRUE,                                       // InitSettable
@@ -1372,7 +1372,7 @@ PORT_QUERY_SET_OID_ENTRY OidQuerySetTable[] = {
 	FALSE,                                      // PhySpecific
 	sizeof(BOOLEAN)                       // MinBufferSize
     },
-*/    
+*/
     {
 	OID_DOT11_ASSOCIATION_PARAMS,                 // Oid
 	TRUE,                                       // InitSettable
@@ -1462,7 +1462,7 @@ PORT_QUERY_SET_OID_ENTRY OidQuerySetTable[] = {
 	sizeof(NDIS_PM_PROTOCOL_OFFLOAD) 			// MinBufferSize
     },
 
-    
+
 	{
 	OID_RECEIVE_FILTER_SET_FILTER, 					// Oid
 	TRUE,										// InitSettable
@@ -1473,7 +1473,7 @@ PORT_QUERY_SET_OID_ENTRY OidQuerySetTable[] = {
 	FALSE,										// NetmonSupported
 	FALSE,										// PhySpecific
 	sizeof(NDIS_RECEIVE_FILTER_PARAMETERS) 			// MinBufferSize
-    },	
+    },
     {
 	OID_RECEIVE_FILTER_CLEAR_FILTER,						// Oid
 	TRUE,										// InitSettable
@@ -1550,7 +1550,7 @@ N62CValidateOIDCorrectness(
 		case EXTSTA_PORT:
 		if (!oidTableEntry->ExtSTASupported)
 		{
-			RT_TRACE((COMP_OID_QUERY | COMP_OID_SET), DBG_SERIOUS, 
+			RT_TRACE((COMP_OID_QUERY | COMP_OID_SET), DBG_SERIOUS,
 				("OID 0x%08x not supported in ExtSTA mode\n", oid));
 			return NDIS_STATUS_INVALID_STATE;
 		}
@@ -1573,7 +1573,7 @@ N62CValidateOIDCorrectness(
 		// Currently we assume this is AP mode
 		if (!oidTableEntry->ExtAPSupported)
 		{
-			RT_TRACE((COMP_OID_QUERY | COMP_OID_SET), DBG_SERIOUS, 
+			RT_TRACE((COMP_OID_QUERY | COMP_OID_SET), DBG_SERIOUS,
 				("OID 0x%08x not supported in ExtAP mode\n", oid));
 			return NDIS_STATUS_INVALID_STATE;
 		}
@@ -1601,7 +1601,7 @@ N62CValidateOIDCorrectness(
 			{// INIT_STATE
 				if (!oidTableEntry->InitSettable)
 				{
-					RT_TRACE(COMP_OID_QUERY | COMP_OID_SET, DBG_LOUD,  
+					RT_TRACE(COMP_OID_QUERY | COMP_OID_SET, DBG_LOUD,
 						("Set of OID 0x%08x not supported in INIT state.\n", oid));
 					return NDIS_STATUS_INVALID_STATE;
 				}
@@ -1610,7 +1610,7 @@ N62CValidateOIDCorrectness(
 			{// OP_STATE
 				if (!oidTableEntry->OpSettable)
 				{
-					RT_TRACE(COMP_OID_QUERY | COMP_OID_SET, DBG_LOUD,  
+					RT_TRACE(COMP_OID_QUERY | COMP_OID_SET, DBG_LOUD,
 						("Set of OID 0x%08x not supported in OP state.\n", oid));
 					return NDIS_STATUS_INVALID_STATE;
 				}
@@ -1638,11 +1638,11 @@ N62CValidateOIDCorrectness(
 
 			// Larger of the two buffer lengths
 			infoBufferLength = MAX(NdisRequest->DATA.METHOD_INFORMATION.InputBufferLength,
-			NdisRequest->DATA.METHOD_INFORMATION.OutputBufferLength);            
+			NdisRequest->DATA.METHOD_INFORMATION.OutputBufferLength);
 			break;
 
 		default:
-			RT_TRACE(COMP_OID_QUERY | COMP_OID_SET, DBG_LOUD,  
+			RT_TRACE(COMP_OID_QUERY | COMP_OID_SET, DBG_LOUD,
 					("NDIS_OID_REQUEST contains unknown request type %d\n", NdisRequest->RequestType)
 				);
 			return NDIS_STATUS_NOT_SUPPORTED;
@@ -1658,7 +1658,7 @@ N62CValidateOIDCorrectness(
 
 		if(pTargetAdapter->bInHctTest)
 			currentPhy = dot11_phy_type_erp;
-		else	
+		else
 			currentPhy=pNdisCommon->pDot11SelectedPhyMIB->PhyType; //dot11_phy_type_erp; //temp add by Maddest
 
 		switch (oid)
@@ -1672,7 +1672,7 @@ N62CValidateOIDCorrectness(
 			case OID_DOT11_SHORT_SLOT_TIME_OPTION_IMPLEMENTED:
 				if (currentPhy != dot11_phy_type_erp)
 				{
-					RT_TRACE(COMP_OID_QUERY | COMP_OID_SET, DBG_LOUD, ("OID 0x%08x only valid on ERP phy. Current phy type is %d\n", 
+					RT_TRACE(COMP_OID_QUERY | COMP_OID_SET, DBG_LOUD, ("OID 0x%08x only valid on ERP phy. Current phy type is %d\n",
 					oid,
 					currentPhy));
 					return NDIS_STATUS_INVALID_DATA;
@@ -1685,7 +1685,7 @@ N62CValidateOIDCorrectness(
 			case OID_DOT11_CHANNEL_AGILITY_ENABLED:
 				if ((currentPhy != dot11_phy_type_erp) && (currentPhy != dot11_phy_type_hrdsss))
 				{
-					RT_TRACE(COMP_OID_QUERY | COMP_OID_SET, DBG_LOUD, ("OID 0x%08x only valid on ERP or HRDSS phy. Current phy type is %d\n", 
+					RT_TRACE(COMP_OID_QUERY | COMP_OID_SET, DBG_LOUD, ("OID 0x%08x only valid on ERP or HRDSS phy. Current phy type is %d\n",
 					oid,
 					currentPhy));
 
@@ -1700,7 +1700,7 @@ N62CValidateOIDCorrectness(
 			case OID_DOT11_ED_THRESHOLD:
 				if ((currentPhy != dot11_phy_type_erp) && (currentPhy != dot11_phy_type_hrdsss) && (currentPhy != dot11_phy_type_dsss))
 				{
-					RT_TRACE(COMP_OID_QUERY | COMP_OID_SET, DBG_LOUD, ("OID 0x%08x only valid on ERP, HRDSS or DSS phy. Current phy type is %d\n", 
+					RT_TRACE(COMP_OID_QUERY | COMP_OID_SET, DBG_LOUD, ("OID 0x%08x only valid on ERP, HRDSS or DSS phy. Current phy type is %d\n",
 					oid,
 					currentPhy));
 
@@ -1712,18 +1712,18 @@ N62CValidateOIDCorrectness(
 			case OID_DOT11_CURRENT_FREQUENCY:
 				if ((currentPhy != dot11_phy_type_ofdm) && (currentPhy != dot11_phy_type_ht ))
 				{
-					RT_TRACE(COMP_OID_QUERY | COMP_OID_SET, DBG_LOUD, ("OID 0x%08x only valid on OFDM phy. Current phy type is %d\n", 
+					RT_TRACE(COMP_OID_QUERY | COMP_OID_SET, DBG_LOUD, ("OID 0x%08x only valid on OFDM phy. Current phy type is %d\n",
 					oid,
 					currentPhy));
 
 					return NDIS_STATUS_INVALID_DATA;
 				}
-			
+
 			default:
 				break;
 		}
 	}
-	
+
 	return NDIS_STATUS_SUCCESS;
 }
 
@@ -1735,7 +1735,7 @@ N62C_OID_DOT11_INCOMING_ASSOCIATION_DECISION(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -1756,7 +1756,7 @@ N62C_OID_DOT11_INCOMING_ASSOCIATION_DECISION(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N62C_SET_OID_DOT11_INCOMING_ASSOCIATION_DECISION(
@@ -1767,7 +1767,7 @@ N62C_OID_DOT11_INCOMING_ASSOCIATION_DECISION(
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesRead,
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesNeeded
 					);
-				
+
 				break;
 
 			// Method
@@ -1792,7 +1792,7 @@ N62C_OID_DOT11_WPS_ENABLED(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -1817,10 +1817,10 @@ N62C_OID_DOT11_WPS_ENABLED(
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
-						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded
 					);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N62C_SET_OID_DOT11_WPS_ENABLED(
@@ -1831,7 +1831,7 @@ N62C_OID_DOT11_WPS_ENABLED(
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesRead,
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesNeeded
 					);
-				
+
 				break;
 
 			// Method
@@ -1856,7 +1856,7 @@ N62C_OID_DOT11_ADDITIONAL_IE(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -1881,10 +1881,10 @@ N62C_OID_DOT11_ADDITIONAL_IE(
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
-						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded
 					);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N62C_SET_OID_DOT11_ADDITIONAL_IE(
@@ -1895,7 +1895,7 @@ N62C_OID_DOT11_ADDITIONAL_IE(
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesRead,
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesNeeded
 					);
-				
+
 				break;
 
 			// Method
@@ -1920,7 +1920,7 @@ N62C_OID_DOT11_ENUM_PEER_INFO(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -1945,10 +1945,10 @@ N62C_OID_DOT11_ENUM_PEER_INFO(
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
-						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded
 					);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
@@ -1976,7 +1976,7 @@ N62C_OID_DOT11_AVAILABLE_CHANNEL_LIST(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2001,10 +2001,10 @@ N62C_OID_DOT11_AVAILABLE_CHANNEL_LIST(
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
-						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded
 					);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
@@ -2032,7 +2032,7 @@ N62C_OID_DOT11_AVAILABLE_FREQUENCY_LIST(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2057,10 +2057,10 @@ N62C_OID_DOT11_AVAILABLE_FREQUENCY_LIST(
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
-						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded
 					);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
@@ -2088,7 +2088,7 @@ N62C_OID_DOT11_START_AP_REQUEST(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2109,7 +2109,7 @@ N62C_OID_DOT11_START_AP_REQUEST(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N62C_SET_OID_DOT11_START_AP_REQUEST(
@@ -2120,7 +2120,7 @@ N62C_OID_DOT11_START_AP_REQUEST(
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesRead,
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesNeeded
 					);
-				
+
 				break;
 
 			// Method
@@ -2145,7 +2145,7 @@ N62C_OID_DOT11_DISASSOCIATE_PEER_REQUEST(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2166,7 +2166,7 @@ N62C_OID_DOT11_DISASSOCIATE_PEER_REQUEST(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N62C_SET_OID_DOT11_DISASSOCIATE_PEER_REQUEST(
@@ -2177,7 +2177,7 @@ N62C_OID_DOT11_DISASSOCIATE_PEER_REQUEST(
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesRead,
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesNeeded
 					);
-				
+
 				break;
 
 			// Method
@@ -2202,7 +2202,7 @@ N62C_OID_PM_GET_PROTOCOL_OFFLOAD(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2215,7 +2215,7 @@ N62C_OID_PM_GET_PROTOCOL_OFFLOAD(
 			RT_TRACE((COMP_OID_SET | COMP_OID_QUERY), DBG_LOUD, ("%s: State Error!\n", __FUNCTION__));
 			break;
 		}
-		
+
 		switch (NdisRequest->RequestType)
 		{
 			// Query
@@ -2223,7 +2223,7 @@ N62C_OID_PM_GET_PROTOCOL_OFFLOAD(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
@@ -2240,7 +2240,7 @@ N62C_OID_PM_GET_PROTOCOL_OFFLOAD(
 						NdisRequest->DATA.METHOD_INFORMATION.MethodId,
 						(PULONG)&NdisRequest->DATA.METHOD_INFORMATION.BytesWritten,
 						(PULONG)&NdisRequest->DATA.METHOD_INFORMATION.BytesRead,
-						(PULONG)&NdisRequest->DATA.METHOD_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.METHOD_INFORMATION.BytesNeeded
 					);
 				break;
 
@@ -2261,7 +2261,7 @@ N62C_OID_DOT11_ASSOCIATION_PARAMS(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2282,7 +2282,7 @@ N62C_OID_DOT11_ASSOCIATION_PARAMS(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N62C_SET_OID_DOT11_ASSOCIATION_PARAMS(
@@ -2293,7 +2293,7 @@ N62C_OID_DOT11_ASSOCIATION_PARAMS(
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesRead,
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesNeeded
 					);
-				
+
 				break;
 
 			// Method
@@ -2318,7 +2318,7 @@ N62C_OID_PM_ADD_WOL_PATTERN(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2339,7 +2339,7 @@ N62C_OID_PM_ADD_WOL_PATTERN(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N62C_SET_OID_PM_ADD_WOL_PATTERN(
@@ -2350,7 +2350,7 @@ N62C_OID_PM_ADD_WOL_PATTERN(
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesRead,
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesNeeded
 					);
-				
+
 				break;
 
 			// Method
@@ -2375,7 +2375,7 @@ N62C_OID_PM_REMOVE_WOL_PATTERN(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2396,7 +2396,7 @@ N62C_OID_PM_REMOVE_WOL_PATTERN(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N62C_SET_OID_PM_REMOVE_WOL_PATTERN(
@@ -2407,7 +2407,7 @@ N62C_OID_PM_REMOVE_WOL_PATTERN(
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesRead,
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesNeeded
 					);
-				
+
 				break;
 
 			// Method
@@ -2432,7 +2432,7 @@ N62C_OID_PM_PARAMETERS(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2457,10 +2457,10 @@ N62C_OID_PM_PARAMETERS(
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
-						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded
 					);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N62C_SET_OID_PM_PARAMETERS(
@@ -2471,7 +2471,7 @@ N62C_OID_PM_PARAMETERS(
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesRead,
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesNeeded
 					);
-				
+
 				break;
 
 			// Method
@@ -2496,7 +2496,7 @@ N62C_OID_PM_ADD_PROTOCOL_OFFLOAD(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2517,7 +2517,7 @@ N62C_OID_PM_ADD_PROTOCOL_OFFLOAD(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD(
@@ -2528,7 +2528,7 @@ N62C_OID_PM_ADD_PROTOCOL_OFFLOAD(
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesRead,
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesNeeded
 					);
-				
+
 				break;
 
 			// Method
@@ -2553,7 +2553,7 @@ N62C_OID_PM_REMOVE_PROTOCOL_OFFLOAD(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2574,7 +2574,7 @@ N62C_OID_PM_REMOVE_PROTOCOL_OFFLOAD(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N62C_SET_OID_PM_REMOVE_PROTOCOL_OFFLOAD(
@@ -2585,7 +2585,7 @@ N62C_OID_PM_REMOVE_PROTOCOL_OFFLOAD(
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesRead,
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesNeeded
 					);
-				
+
 				break;
 
 			// Method
@@ -2611,7 +2611,7 @@ N62C_OID_PM_ADD_PROTOCOL_OFFLOAD_LIST(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2634,7 +2634,7 @@ N62C_OID_PM_ADD_PROTOCOL_OFFLOAD_LIST(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N62C_SET_OID_PM_ADD_PROTOCOL_OFFLOAD_LIST(
@@ -2645,7 +2645,7 @@ N62C_OID_PM_ADD_PROTOCOL_OFFLOAD_LIST(
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesRead,
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesNeeded
 					);
-				
+
 				break;
 
 			// Method
@@ -2671,7 +2671,7 @@ N62C_OID_GEN_INTERRUPT_MODERATION(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2696,10 +2696,10 @@ N62C_OID_GEN_INTERRUPT_MODERATION(
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
-						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded
 					);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
@@ -2727,7 +2727,7 @@ N62C_OID_PACKET_COALESCING_FILTER_MATCH_COUNT(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2752,10 +2752,10 @@ N62C_OID_PACKET_COALESCING_FILTER_MATCH_COUNT(
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
-						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded
 					);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
@@ -2784,7 +2784,7 @@ N62C_OID_RECEIVE_FILTER_CLEAR_FILTER(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2805,7 +2805,7 @@ N62C_OID_RECEIVE_FILTER_CLEAR_FILTER(
 			case NdisRequestQueryStatistics:
 				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				ndisStatus = N62C_SET_OID_RECEIVE_FILTER_CLEAR_FILTER(
@@ -2816,7 +2816,7 @@ N62C_OID_RECEIVE_FILTER_CLEAR_FILTER(
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesRead,
 						(PULONG)&NdisRequest->DATA.SET_INFORMATION.BytesNeeded
 					);
-				
+
 				break;
 
 			// Method
@@ -2841,7 +2841,7 @@ N62C_OID_RECEIVE_FILTER_SET_FILTER(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2860,7 +2860,7 @@ N62C_OID_RECEIVE_FILTER_SET_FILTER(
 			case NdisRequestQueryInformation:
 			case NdisRequestQueryStatistics:
 			case NdisRequestSetInformation:
-				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;				
+				ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
 				break;
 
 			// Method
@@ -2874,7 +2874,7 @@ N62C_OID_RECEIVE_FILTER_SET_FILTER(
 						NdisRequest->DATA.METHOD_INFORMATION.MethodId,
 						(PULONG)&NdisRequest->DATA.METHOD_INFORMATION.BytesWritten,
 						(PULONG)&NdisRequest->DATA.METHOD_INFORMATION.BytesRead,
-						(PULONG)&NdisRequest->DATA.METHOD_INFORMATION.BytesNeeded				
+						(PULONG)&NdisRequest->DATA.METHOD_INFORMATION.BytesNeeded
 					);
 				break;
 
@@ -2895,7 +2895,7 @@ N62C_OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2920,10 +2920,10 @@ N62C_OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES(
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
-						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded
 					);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				break;
@@ -2950,7 +2950,7 @@ N62C_OID_RECEIVE_FILTER_CURRENT_CAPABILITIES(
 )
 {
 	NDIS_STATUS ndisStatus = NDIS_STATUS_INVALID_OID;
-	
+
 	// Adapter selection
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PADAPTER pTargetAdapter = GetAdapterByPortNum(pAdapter, (u1Byte)NdisRequest->PortNumber);
@@ -2975,10 +2975,10 @@ N62C_OID_RECEIVE_FILTER_CURRENT_CAPABILITIES(
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer,
 						NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength,
 						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesWritten,
-						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded 
+						(PULONG)&NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded
 					);
 				break;
-			
+
 			// Set
 			case NdisRequestSetInformation:
 				break;

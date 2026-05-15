@@ -51,7 +51,7 @@ typedef struct _RT_SUPPORT_TCPOFFLOAD_CAP{
 
 
 //  IPv4 used Tx : bit1 , Rx : bit2
-//  IPv6 used Tx : bit5 , Rx : bit6 
+//  IPv6 used Tx : bit5 , Rx : bit6
 typedef enum _RT_SUPPORT_TCPOFFLOAD_MODE{
 		TCPOFFLOAD_DISAB				= 0x00,
 		TCPOFFLOAD_IPV4_TX			= 0x01,
@@ -88,7 +88,7 @@ typedef enum _RT_TCPOFFLOAD_TX_MODE{
 		((_pSetSupTCPCap)->IPV6Send.IpOptionsSupported == 1 )		||	\
 		((_pSetSupTCPCap)->IPV6Send.TcpOptionsSupported == 1)			\
 	)
-	
+
 #define 	TCPOFFLOAD_SUPPORT_IPV4(_pSetSupTCPCap)				\
 	(															\
 		((_pSetSupTCPCap)->IPV4Recv.IpOptionsSupported == 1 )		||	\
@@ -154,4 +154,4 @@ typedef enum _RT_TCPOFFLOAD_TX_MODE{
 		((_pSetSupTCPCap)->IPV6Recv.TcpChecksum == 1)			||	\
 		((_pSetSupTCPCap)->IPV6Recv.UdpChecksum == 1)				\
 	)
-#endif 
+#endif

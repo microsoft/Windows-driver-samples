@@ -50,7 +50,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_CLOSE_HANDLE"
- 
+
    Purpose:  Close a standard handle and set to 0.                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -66,7 +66,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_CLOSE_SERVICE_HANDLE"
- 
+
    Purpose:  Close a service handle and set to 0.                                               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -82,7 +82,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_DELETE"
- 
+
    Purpose:  Free memory allocated with new and set the pointer to 0.                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -98,7 +98,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_DELETE_ARRAY"
- 
+
    Purpose:  Free memory allocated with new[] and set the pointer to 0.                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -114,7 +114,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_NEW"
- 
+
    Purpose:  Allocate memory with new and zero out its contents.                                <br>
                                                                                                 <br>
    Notes:    Caller responsible for freeing allocated memory using macro HLPR_DELETE.           <br>
@@ -133,7 +133,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_NEW_ARRAY"
- 
+
    Purpose:  Allocate memory with new[] and zero out its contents.                              <br>
                                                                                                 <br>
    Notes:    Caller responsible for freeing allocated memory using macro HLPR_DELETE_ARRAY.     <br>
@@ -168,7 +168,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_NEW_CASTED_ARRAY"
- 
+
    Purpose:  Allocate memory with new[] while casting the pointer, and zero out its contents.   <br>
                                                                                                 <br>
    Notes:    Caller responsible for freeing allocated memory using macro HLPR_DELETE_ARRAY.     <br>
@@ -203,7 +203,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_BAIL_LABEL"
- 
+
    Purpose:  Tag for the cleanup and exit portion of the function.                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -215,7 +215,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /*
  @macro="HLPR_BAIL_LABEL_2"
- 
+
    Purpose:  Tag for the cleanup and exit portion of the function.                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -227,7 +227,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_BAIL_ON_FAILURE_WITH_LABEL"
- 
+
    Purpose:  Jump in the code's execution to the provided tag if an error occurs.               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -240,7 +240,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_BAIL_ON_FAILURE"
- 
+
    Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL tag if an error occurs.   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -253,7 +253,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_BAIL_ON_FAILURE_2"
- 
+
    Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL_2 tag if an error occurs. <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -266,7 +266,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_BAIL_ON_ALLOC_FAILURE_WITH_LABEL"
- 
+
    Purpose:  Jump in the code's execution path to the provided tag if memory allocation fails.  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -283,8 +283,8 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_BAIL_ON_ALLOC_FAILURE"
- 
-   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL tag if memory allocation 
+
+   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL tag if memory allocation
              fails.                                                                             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -298,8 +298,8 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_BAIL_ON_ALLOC_FAILURE_2"
- 
-   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL_2 tag if memory allocation 
+
+   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL_2 tag if memory allocation
              fails.                                                                             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -313,8 +313,8 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_BAIL_ON_NULL_POINTER"
- 
-   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL tag if the pointer is 
+
+   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL tag if the pointer is
              NULL.                                                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -327,8 +327,8 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_BAIL_ON_NULL_POINTER_2"
- 
-   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL_2 tag if the pointer is 
+
+   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL_2 tag if the pointer is
              NULL.                                                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -341,8 +341,8 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_BAIL_ON_NULL_POINTER_WITH_STATUS"
- 
-   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL tag if the pointer is 
+
+   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL tag if the pointer is
              NULL.                                                                              <br>
                                                                                                 <br>
    Notes:    Status is set to ERROR_OUTOFMEMORY.                                                <br>
@@ -358,8 +358,8 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_BAIL_ON_NULL_POINTER_WITH_STATUS_2"
- 
-   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL_2 tag if the pointer is 
+
+   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL_2 tag if the pointer is
              NULL.                                                                              <br>
                                                                                                 <br>
    Notes:    Status is set to ERROR_OUTOFMEMORY.                                                <br>
@@ -375,7 +375,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_BAIL_WITH_LABEL"
- 
+
    Purpose:  Jump in the code's execution path to the provided tag.                             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -387,7 +387,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_BAIL"
- 
+
    Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL tag.                      <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -399,7 +399,7 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
 
 /**
  @macro="HLPR_BAIL_2"
- 
+
    Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL_2 tag.                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

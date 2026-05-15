@@ -6,13 +6,13 @@
 //      Scenarios_AppContainers.cpp
 //
 //   Abstract:
-//      This module contains functions which prepares and sends data for the APPLICATION_CONTAINER 
+//      This module contains functions which prepares and sends data for the APPLICATION_CONTAINER
 //      scenario implementation.
 //
 //   Naming Convention:
 //
 //      <Scope><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -26,10 +26,10 @@
 //          }
 //       <Action>
 //          {
-//            Execute              - Function packages data and invokes RPC to the WFPSampler 
+//            Execute              - Function packages data and invokes RPC to the WFPSampler
 //                                      service.
 //            Log                  - Function writes to the console.
-//            Parse                - Function pulls data into the required format from the provided 
+//            Parse                - Function pulls data into the required format from the provided
 //                                      data.
 //          }
 //       <Modifier>
@@ -59,7 +59,7 @@
 
 /**
  @private_function="PrvAppContainerScenarioParseDataForModifiers"
- 
+
    Purpose:  Parse the command line parameters for any scenario modifiers such as:              <br>
                 trust Windows Service Hardening        (-trustWSH)                              <br>
                 add own filters for containers         (-distrustWSH)                           <br>
@@ -148,7 +148,7 @@ UINT32 PrvAppContainerScenarioParseDataForModifiers(_In_reads_(stringCount) PCWS
 /**
  @scenario_function="AppContainerScenarioExecute"
 
-   Purpose:  Gather and package data neccessary to setup the APPLICATION_CONTAINER scenario, 
+   Purpose:  Gather and package data neccessary to setup the APPLICATION_CONTAINER scenario,
              then invoke RPC to implement the scenario in the WFPSampler service.               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -196,7 +196,7 @@ UINT32 AppContainerScenarioExecute(_In_reads_(stringCount) PCWSTR* ppCLPStrings,
 
 /**
  @public_function="AppContainerScenarioLogHelp"
- 
+
    Purpose:  Log usage information to the console for the APP_CONTAINER scenario.               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

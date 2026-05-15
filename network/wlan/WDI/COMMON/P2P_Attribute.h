@@ -1,10 +1,10 @@
 //---------------------------------------------------------------------------
 //
 // Copyright (c) 2014 Realtek Semiconductor, Inc. All rights reserved.
-// 
+//
 //---------------------------------------------------------------------------
 // Description:
-//		
+//
 //
 
 #ifndef __INC_P2P_ATTRIBUTE_H
@@ -47,7 +47,7 @@ P2PAttr_Make_GoIntent(
 	IN  u1Byte					intent
 	);
 
-VOID 
+VOID
 P2PAttr_Make_ConfigTimeout(
 	IN  FRAME_BUF				*pBuf,
 	IN  u1Byte 					goTimeout,
@@ -62,20 +62,20 @@ P2PAttr_Make_ListenChannel(
 	IN  u1Byte					channel
 	);
 
-VOID 
+VOID
 P2PAttr_Make_GroupBssid(
 	IN  FRAME_BUF				*pBuf,
 	IN  const pu1Byte			grpBssid
 	);
 
-VOID 
+VOID
 P2PAttr_Make_ExtListenTiming(
 	IN  FRAME_BUF				*pBuf,
 	IN  u2Byte					period,
 	IN  u2Byte					interval
 	);
 
-VOID 
+VOID
 P2PAttr_Make_IntendedIntfAddr(
 	IN  FRAME_BUF				*pBuf,
 	IN  const pu1Byte			intfAddr
@@ -102,7 +102,7 @@ P2PAttr_Make_ChannelList(
 	IN  const P2P_CHANNELS		*channels
 	);
 
-VOID 
+VOID
 P2PAttr_Make_Noa(
 	IN  FRAME_BUF 				*pBuf,
 	IN  u1Byte					noaIEIndex,
@@ -137,7 +137,7 @@ P2PAttr_Make_GroupInfo(
 	IN  const RT_WLAN_STA		*pCliList
 	);
 
-VOID 
+VOID
 P2PAttr_Make_GroupId(
 	IN  FRAME_BUF				*pBuf,
 	IN  const pu1Byte			grpDevAddr,
@@ -145,7 +145,7 @@ P2PAttr_Make_GroupId(
 	IN  u1Byte					grpSsidLen
 	);
 
-VOID 
+VOID
 P2PAttr_Make_Interface(
 	IN  FRAME_BUF				*pBuf,
 	IN  const pu1Byte			devAddr,
@@ -161,7 +161,7 @@ P2PAttr_Make_OperatingChannel(
 	IN  u1Byte					channel
 	);
 
-VOID 
+VOID
 P2PAttr_Make_InvitationFlags(
 	IN  FRAME_BUF				*pBuf,
 	IN  u1Byte					flags

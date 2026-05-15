@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //
 // Copyright (c) 2014 Realtek Semiconductor, Inc. All rights reserved.
-// 
+//
 //------------------------------------------------------------------------------
 //
 // Description:
@@ -24,7 +24,7 @@ typedef struct _P2P_MESSAGE
 	u1Byte			bssid[6];
 
 	u1Byte			*devAddr;
-	
+
 	/* IE raw data */
 	FRAME_BUF		p2pAttributes;			// concatenated P2P attributes
 	FRAME_BUF		wpsAttributes;			// concatenated WPS attributes
@@ -37,53 +37,53 @@ typedef struct _P2P_MESSAGE
 	/* P2P IE, pointers into the raw IE data */
 	const u1Byte	*_status;
 	u1Byte			status;
-	
+
 	const u1Byte	*_minorReasonCode;
 	u1Byte			minorReasonCode;
-	
+
 	const u1Byte	*_capability;
 	u1Byte			grpCap;
 	u1Byte			devCap;
-	
+
 	const u1Byte	*_devId;
 	const u1Byte	*devIdDevAddr;
-	
+
 	const u1Byte	*_goIntent;
 	u1Byte			goIntent;
-	
+
 	const u1Byte	*_configTimeout;
 	u1Byte			goConfigTimeout;
 	u1Byte			cliConfigTimeout;
-	
+
 	const u1Byte	*_listenChannel;
 	u1Byte			listenChannel;
-	
+
 	const u1Byte	*_grpBssid;
 	const u1Byte	*grpBssid;
-	
+
 	const u1Byte	*_extListenTiming;
 	u2Byte			extListenPeriod;
 	u2Byte			extListenInterval;
-	
+
 	const u1Byte	*_intendedIntfAddr;
 	const u1Byte	*intfAddr;
-	
+
 	const u1Byte	*_manageability;
 	u1Byte			manageability;
-	
+
 	const u1Byte	*_channelList;
 	u2Byte			channelListLen;
 	const u1Byte	*channelListCountry;
 	u2Byte			channelEntryListLen;
 	const u1Byte	*channelEntryList;
-	
+
 	const u1Byte	*_noa;
 	u2Byte			noaLen;
 	u1Byte			noaIndex;
 	u1Byte			noaCtWindowAndOppPsParam;
 	u2Byte			noaDescriptorLen;
 	const u1Byte	*noaDescriptors;
-	
+
 	const u1Byte	*_devInfo;
 	const u1Byte	*devInfoDevAddr;
 	u2Byte			configMethod;
@@ -92,24 +92,24 @@ typedef struct _P2P_MESSAGE
 	const u1Byte	*secDevTypeList;
 	u1Byte			devNameLen;
 	const u1Byte	*devName;
-	
+
 	const u1Byte	*_grpInfo;
 	u2Byte			cliInfoDescListLen;
 	const u1Byte	*cliInfoDescList;
-	
+
 	const u1Byte	*_grpId;
 	const u1Byte	*grpDevAddr;
 	u1Byte			grpSsidLen;
 	const u1Byte	*grpSsid;
-	
+
 	const u1Byte	*_intf;
 	const u1Byte	*intfDevAddr;
 	u1Byte			intfAddrCount;
 	const u1Byte	*intfAddrList;
-	
+
 	const u1Byte	*_opChannel;
 	u1Byte			opChannel;
-	
+
 	const u1Byte	*_invitationFlags;
 	u1Byte			invitationFlags;
 
@@ -118,18 +118,18 @@ typedef struct _P2P_MESSAGE
 	u2Byte			svcHashLen;
 	u2Byte			svcHashNum;
 	const u1Byte	*svcHashList;
-	
+
 	const u1Byte	*_sessionInfoDataInfo;
 	u2Byte			sessionInfoLen;
 	const u1Byte	*sessionInfo;
-	
+
 	const u1Byte	*_connCap;
 	u1Byte			connCap;
-	
+
 	const u1Byte	*_advId;
 	u4Byte			advId;
 	const u1Byte	*svcMac;
-	
+
 	const u1Byte	*_advSvc;
 	u2Byte			advSvcLen;
 	u2Byte			advSvcNum;
@@ -137,8 +137,8 @@ typedef struct _P2P_MESSAGE
 	const u1Byte	*_sessionId;
 	u4Byte			sessionId;
 	const u1Byte	*sessionMac;
-	
-	const u1Byte	*_featureCap;			
+
+	const u1Byte	*_featureCap;
 	u2Byte			featureCap;
 
 	/* WPS IE */
@@ -147,19 +147,19 @@ typedef struct _P2P_MESSAGE
 
 	const u1Byte	*_wpsDevName;
 	u2Byte			wpsDevNameLen;
-	
+
 	const u1Byte	*_wpsDevPasswordId;		// Device password id
 	u2Byte			wpsDevPasswordId;
-	
+
 	const u1Byte	*_wpsManufacturer;		// WPS manufacturer
 	u2Byte			wpsManufacturerLen;
-	
+
 	const u1Byte	*_wpsModelName;			// WPS model name
 	u2Byte			wpsModelNameLen;
-	
+
 	const u1Byte	*_wpsModelNumber;		// WPS model number
 	u2Byte			wpsModelNumberLen;
-	
+
 	const u1Byte	*_wpsSerialNumber;		// WPS serial number
 	u2Byte			wpsSerialNumberLen;
 
@@ -169,7 +169,7 @@ typedef struct _P2P_MESSAGE
 	const u1Byte	*_wpsSecDevTypeList;
 	u2Byte 			wpsSecDevTypeListLen;
 	u1Byte			wpsSecDevTypeNum;		// Number of secondary device type
-	
+
 	const u1Byte	*_wpsUuidE;
 	u2Byte			wpsUuidELen;
 
@@ -186,12 +186,12 @@ typedef struct _P2P_MESSAGE
 	/* Debug */
 	u4Byte			dbgLevel;
 	RT_STATUS		rtStatus;
-	
+
 }P2P_MESSAGE;
 
 #define P2P_MAX_DEV_LIST				256
 #define P2P_MAX_P2P_DEV_INFO_POOL_ENTRIES 32
-#define P2P_MAX_FRAME_POOL_ENTRIES		256	
+#define P2P_MAX_FRAME_POOL_ENTRIES		256
 #define P2P_MAX_FRAME_BUF_SIZE 			640
 #define P2P_MAX_MSG_POOL_ENTRIES		32
 
@@ -222,8 +222,8 @@ typedef enum _P2P_FRAME_TYPE
 typedef struct _P2P_FRAME_INFO
 {
 	RT_LIST_ENTRY		list;
-	
-	// Contains the raw frame 
+
+	// Contains the raw frame
 	u2Byte				frameLen;
 	u1Byte				frame[P2P_MAX_FRAME_BUF_SIZE];
 	P2P_FRAME_TYPE 		type;
@@ -262,7 +262,7 @@ typedef struct _P2P_DEV_LIST_ENTRY
 {
 	RT_LIST_ENTRY		list;
 
-	// TA from the received frame, if from a P2P Device, it is the Device 
+	// TA from the received frame, if from a P2P Device, it is the Device
 	// Address, otherwise it is either the Interface Address or the BSSID
 	u1Byte				mac[6];
 

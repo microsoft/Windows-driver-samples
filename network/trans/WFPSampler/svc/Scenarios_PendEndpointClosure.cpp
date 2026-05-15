@@ -12,7 +12,7 @@
 //
 //      <Scope><Object><Action><Modifier>
 //      <Scope><Object><Action>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -22,7 +22,7 @@
 //          }
 //       <Object>
 //          {
-//            ScenarioPendEndpointClosure - Function pertains to all of the Pend Endpoint Closure 
+//            ScenarioPendEndpointClosure - Function pertains to all of the Pend Endpoint Closure
 //                                             Scenarios.
 //            RPC                         - Function is and RPC entry point.
 //          }
@@ -31,13 +31,13 @@
 //            Add                         - Function adds objects.
 //            Remove                      - Function removes objects.
 //            Invoke                      - Function implements the scenario based on parameters
-//                                             passed from the commandline interface 
+//                                             passed from the commandline interface
 //                                                (WFPSampler.exe).
 //          }
 //       <Modifier>
 //          {
 //            FwpmObjects                 - Function acts on WFP objects.
-//            ScenarioPendEndpointClosure - Function pertains to all of the Pend Endpoint Closure 
+//            ScenarioPendEndpointClosure - Function pertains to all of the Pend Endpoint Closure
 //                                           Scenarios.
 //          }
 //
@@ -66,10 +66,10 @@
 
 /**
  @private_function="PrvScenarioPendEndpointClosureDeleteFwpmObjects"
- 
+
    Purpose:  Function that disables the SCENARIO_PEND_ENDPOINT_CLOSURE scenarios.               <br>
                                                                                                 <br>
-   Notes:    Scenario removes the filters using specified filtering conditions at the specified 
+   Notes:    Scenario removes the filters using specified filtering conditions at the specified
              layer.  The associated callout and provider contexts are removed as well.          <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -164,11 +164,11 @@ UINT32 PrvScenarioPendEndpointClosureDeleteFwpmObjects(_In_ const FWPM_FILTER* p
 
 /**
  @private_function="PrvScenarioPendEndpointClosureAddFwpmObjects"
- 
+
    Purpose:  Function that enables the SCENARIO_PEND_ENDPOINT_CLOSURE scenarios.                <br>
                                                                                                 <br>
-   Notes:    Scenario adds a filter using specified filtering conditions to the specified layer. 
-             This filter is associated with WFPSampler's default sublayer and provider.  The 
+   Notes:    Scenario adds a filter using specified filtering conditions to the specified layer.
+             This filter is associated with WFPSampler's default sublayer and provider.  The
              appropriate callout and provider context is added and associated with the filter.  <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -264,8 +264,8 @@ UINT32 PrvScenarioPendEndpointClosureAddFwpmObjects(_In_ const FWPM_FILTER* pFil
 
 /**
  @scenario_function="ScenarioPendEndpointClosureRemove"
- 
-   Purpose:  Function that removes corresponding objects for a previously added 
+
+   Purpose:  Function that removes corresponding objects for a previously added
              SCENARIO_PEND_ENDPOINT_CLOSURE.                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -282,10 +282,10 @@ UINT32 ScenarioPendEndpointClosureRemove(_In_ const FWPM_FILTER* pFilter)
 
 /**
  @scenario_function="ScenarioPendEndpointClosureAdd"
- 
+
    Purpose:  Scenario which will delay the endpoint from from closing.                          <br>
                                                                                                 <br>
-   Notes:    Adds a filter which references one of the 
+   Notes:    Adds a filter which references one of the
              WFPSAMPLER_CALLOUT_PEND_ENDPOINT_CLOSURE callouts for the provided layer.          <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -303,8 +303,8 @@ UINT32 ScenarioPendEndpointClosureAdd(_In_ const FWPM_FILTER* pFilter,
 
 /**
  @rpc_function="RPCInvokeScenarioPendEndpointClosure"
- 
-   Purpose:  RPC exposed function used to dipatch the scenario routines for 
+
+   Purpose:  RPC exposed function used to dipatch the scenario routines for
              SCENARIO_PEND_ENDPOINT_CLOSURE.                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -351,11 +351,11 @@ error_status_t RPCInvokeScenarioPendEndpointClosure(/* [in] */ handle_t rpcBindi
 
 /**
  @rpc_function="RPCInvokeScenarioBasicAction"
- 
-   Purpose:  RPC exposed function used to dipatch the scenario routines for 
+
+   Purpose:  RPC exposed function used to dipatch the scenario routines for
              SCENARIO_APP_CONTAINER.                                                            <br>
                                                                                                 <br>
-   Notes:    This particular function is only a stub for RPC on downlevel SKUs (Windows 7 and 
+   Notes:    This particular function is only a stub for RPC on downlevel SKUs (Windows 7 and
              below).                                                                            <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>

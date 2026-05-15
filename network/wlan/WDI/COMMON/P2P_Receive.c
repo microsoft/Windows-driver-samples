@@ -27,21 +27,21 @@ p2p_validate_Beacon(
 	)
 {
 	BOOLEAN 					bValid = FALSE;
-	
+
 	do
 	{
 		if(!FrameBuf_Length(&msg->p2pAttributes))
 		{
 			break;
 		}
-		
-		if(!msg->_devId) 
+
+		if(!msg->_devId)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dev id attr\n"));
 			break;
 		}
 
-		if(!msg->_capability) 
+		if(!msg->_capability)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no capability attr\n"));
 			break;
@@ -66,8 +66,8 @@ p2p_validate_ProbeReq(
 		{
 			break;
 		}
-		
-		if(!msg->_capability) 
+
+		if(!msg->_capability)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no capability attr\n"));
 			break;
@@ -78,10 +78,10 @@ p2p_validate_ProbeReq(
 			// PF #2, some vender don't send ProbeReq with op channel
 			// do not filter
 		}
-		
+
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 
@@ -98,14 +98,14 @@ p2p_validate_ProbeRsp(
 		{
 			break;
 		}
-		
-		if(!msg->_capability) 
+
+		if(!msg->_capability)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no capability attr\n"));
 			break;
 		}
-		
-		if(!msg->_devInfo) 
+
+		if(!msg->_devInfo)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dev info attr\n"));
 			break;
@@ -119,7 +119,7 @@ p2p_validate_ProbeRsp(
 
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 
@@ -132,13 +132,13 @@ p2p_validate_AssocReq(
 
 	do
 	{
-		if(!msg->_capability) 
+		if(!msg->_capability)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no capability attr\n"));
 			break;
 		}
-		
-		if(!msg->_devInfo) 
+
+		if(!msg->_devInfo)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dev info attr\n"));
 			break;
@@ -146,7 +146,7 @@ p2p_validate_AssocReq(
 
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 
@@ -159,21 +159,21 @@ p2p_validate_AssocRsp(
 
 	do
 	{
-		/*if(!msg->_status) 
+		/*if(!msg->_status)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no status attr\n"));
 			break;
 		}*/
-			
-		/*if(!msg->_capability) 
+
+		/*if(!msg->_capability)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no capability attr\n"));
 			break;
 		}*/
-	
+
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 
@@ -183,18 +183,18 @@ p2p_validate_Deauth(
 	)
 {
 	BOOLEAN 					bValid = FALSE;
-	
+
 	do
 	{
-		/*if(!msg->_minorReasonCode) 
+		/*if(!msg->_minorReasonCode)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no minor reason code attr\n"));
 			break;
 		}*/
-	
+
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 
@@ -212,50 +212,50 @@ p2p_validate_GoNegReq(
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dialog token\n"));
 			break;
 		}
-		
-		if(!msg->_capability) 
+
+		if(!msg->_capability)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no capability attr\n"));
 			break;
 		}
 
-		if(!msg->_goIntent) 
+		if(!msg->_goIntent)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no go intent attr\n"));
 			break;
 		}
 
-		if(!msg->_configTimeout) 
+		if(!msg->_configTimeout)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no config timeout attr\n"));
 			break;
 		}
 
-		if(!msg->_listenChannel) 
+		if(!msg->_listenChannel)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no listen channel attr\n"));
 			break;
 		}
 
-		if(!msg->_intendedIntfAddr) 
+		if(!msg->_intendedIntfAddr)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no intended interface address attr\n"));
 			break;
 		}
 
-		if(!msg->_channelList) 
+		if(!msg->_channelList)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no channel list attr\n"));
 			break;
 		}
 
-		if(!msg->_devInfo) 
+		if(!msg->_devInfo)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dev info attr\n"));
 			break;
 		}
 
-		if(!msg->_opChannel) 
+		if(!msg->_opChannel)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no op channel attr\n"));
 			break;
@@ -266,10 +266,10 @@ p2p_validate_GoNegReq(
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no WPS device password id attr\n"));
 			break;
 		}
-	
+
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 
@@ -290,20 +290,20 @@ p2p_validate_GoNegRsp(
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dialog token\n"));
 			break;
 		}
-		
-		if(!msg->_status) 
+
+		if(!msg->_status)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no status attr\n"));
 			break;
 		}
 
-		if(!msg->_capability) 
+		if(!msg->_capability)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no capability attr\n"));
 			break;
 		}
 
-		if(!msg->_goIntent) 
+		if(!msg->_goIntent)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no go intent attr\n"));
 			break;
@@ -311,19 +311,19 @@ p2p_validate_GoNegRsp(
 
 		go = p2p_go_det(info->GOIntent, msg->goIntent);
 
-		if(!msg->_intendedIntfAddr) 
+		if(!msg->_intendedIntfAddr)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no intended interface address attr\n"));
 			break;
 		}
 
-		if(!msg->_channelList) 
+		if(!msg->_channelList)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no channel list attr\n"));
 			break;
 		}
 
-		if(!msg->_devInfo) 
+		if(!msg->_devInfo)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dev info attr\n"));
 			break;
@@ -346,10 +346,10 @@ p2p_validate_GoNegRsp(
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("status is success but no WPS device password id attr\n"));
 			break;
 		}
-	
+
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 
@@ -368,20 +368,20 @@ p2p_validate_GoNegConfirm(
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dialog token\n"));
 			break;
 		}
-		
-		if(!msg->_status) 
+
+		if(!msg->_status)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no status attr\n"));
 			break;
 		}
 
-		if(!msg->_capability) 
+		if(!msg->_capability)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no capability attr\n"));
 			break;
 		}
 
-		if(!msg->_channelList) 
+		if(!msg->_channelList)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no channel list attr\n"));
 			break;
@@ -393,15 +393,15 @@ p2p_validate_GoNegConfirm(
 			break;
 		}
 
-		if(!msg->_opChannel) 
+		if(!msg->_opChannel)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no op channel attr\n"));
 			break;
 		}
-	
+
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 
@@ -420,14 +420,14 @@ p2p_validate_InvitationReq(
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dialog token\n"));
 			break;
 		}
-		
-		if(!msg->_configTimeout) 
+
+		if(!msg->_configTimeout)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no config timeout attr\n"));
 			break;
 		}
 
-		if(!msg->_grpId) 
+		if(!msg->_grpId)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no group id attr\n"));
 			break;
@@ -441,31 +441,31 @@ p2p_validate_InvitationReq(
 			break;
 		}
 
-		if(!msg->_channelList) 
+		if(!msg->_channelList)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no channel list attr\n"));
 			break;
 		}
 
-		if(!msg->_devInfo) 
+		if(!msg->_devInfo)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dev info attr\n"));
 			break;
 		}
 
-		if(!msg->_grpId) 
+		if(!msg->_grpId)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no group id attr\n"));
 			break;
 		}
 
-		if(!msg->_opChannel && P2P_GO == invitorRole) 
+		if(!msg->_opChannel && P2P_GO == invitorRole)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no op channel attr when invitor role is GO\n"));
 			break;
 		}
 
-		if(!msg->_invitationFlags) 
+		if(!msg->_invitationFlags)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no invitation flags attr\n"));
 			break;
@@ -473,7 +473,7 @@ p2p_validate_InvitationReq(
 
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 
@@ -492,14 +492,14 @@ p2p_validate_InvitationRsp(
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dialog token\n"));
 			break;
 		}
-		
-		if(!msg->_status) 
+
+		if(!msg->_status)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no status attr\n"));
 			break;
 		}
 
-		if(!msg->_channelList) 
+		if(!msg->_channelList)
 		{
 			// Although the channel list attribute is mandatory for the successful case of
 			// invitation response, actually the information is not important because the
@@ -520,10 +520,10 @@ p2p_validate_InvitationRsp(
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no group bssid attr when invitor role is GO\n"));
 			break;
 		}
-	
+
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 
@@ -541,22 +541,22 @@ p2p_validate_DevDiscReq(
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dialog token\n"));
 			break;
 		}
-		
-		if(!msg->_devId) 
+
+		if(!msg->_devId)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no device id attr\n"));
 			break;
 		}
 
-		if(!msg->_grpId) 
+		if(!msg->_grpId)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no group id attr\n"));
 			break;
 		}
-	
+
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 
@@ -574,16 +574,16 @@ p2p_validate_DevDiscRsp(
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dialog token\n"));
 			break;
 		}
-		
-		if(!msg->_status) 
+
+		if(!msg->_status)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no status attr\n"));
 			break;
 		}
-	
+
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 
@@ -601,14 +601,14 @@ p2p_validate_PDReq(
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dialog token\n"));
 			break;
 		}
-		
-		if(!msg->_capability) 
+
+		if(!msg->_capability)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no capability attr\n"));
 			break;
 		}
 
-		if(!msg->_devInfo) 
+		if(!msg->_devInfo)
 		{
 			//RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dev info attr\n"));
 			//break;
@@ -623,10 +623,10 @@ p2p_validate_PDReq(
 		}
 
 		// TODO: if this is a PD req to join our GO, group id is mandatory
-	
+
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 
@@ -644,16 +644,16 @@ p2p_validate_PDRsp(
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dialog token\n"));
 			break;
 		}
-		
+
 		if(!msg->_wpsConfigMethods)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no WPS config method attr\n"));
 			break;
 		}
-	
+
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 
@@ -671,16 +671,16 @@ p2p_validate_PresenceReq(
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dialog token\n"));
 			break;
 		}
-		
+
 		if(!msg->_noa)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no noa attr\n"));
 			break;
 		}
-	
+
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 
@@ -698,8 +698,8 @@ p2p_validate_PresenceRsp(
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dialog token\n"));
 			break;
 		}
-		
-		if(!msg->_status) 
+
+		if(!msg->_status)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no status attr\n"));
 			break;
@@ -710,10 +710,10 @@ p2p_validate_PresenceRsp(
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no noa attr\n"));
 			break;
 		}
-	
+
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 
@@ -731,13 +731,13 @@ p2p_validate_GoDiscoverabilityReq(
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("no dialog token\n"));
 			break;
 		}
-	
+
 	// Thter is no Elements field in a GO Discoverability Request frame
 
-	
+
 		bValid = TRUE;
 	}while(FALSE);
-	
+
 	return bValid;
 }
 

@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //
 //       NotifyPendNotification
@@ -19,7 +19,7 @@
 //       <Module>
 //          Notify               -     Function is an FWPS_CALLOUT_NOTIFY_FN
 //       <Scenario>
-//          PendNotification     -     Function demonstates use of notifications for callouts 
+//          PendNotification     -     Function demonstates use of notifications for callouts
 //                                        pending authorization or endpoint closure requests.
 //
 //   Author:
@@ -28,7 +28,7 @@
 //   Revision History:
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
-//      December  13,   2013  -     1.1   -  Creation 
+//      December  13,   2013  -     1.1   -  Creation
 //                                          (replaces NotifyFuncitons_PendAuthorizationCallouts.cpp)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@
 
 /**
  @private_function="PrvPendNotificationWorkItemRoutine"
- 
+
    Purpose:  Traces the appropriate notification event.                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -52,13 +52,13 @@ VOID PrvPendNotificationWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
                                         _Inout_opt_ PVOID pContext)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PrvPendNotificationWorkItemRoutine()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(pDeviceObject);
 
    NT_ASSERT(pContext);
@@ -96,7 +96,7 @@ VOID PrvPendNotificationWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
             pCallout->applicableLayer != FWPM_LAYER_ALE_AUTH_CONNECT_V4 &&
             pCallout->applicableLayer != FWPM_LAYER_ALE_AUTH_CONNECT_V6 &&
             pCallout->applicableLayer != FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 &&
-            pCallout->applicableLayer != FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 
+            pCallout->applicableLayer != FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6
 
 #if(NTDDI_VERSION >= NTDDI_WIN7)
 
@@ -175,19 +175,19 @@ VOID PrvPendNotificationWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PrvPendNotificationWorkItemRoutine()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @notify_function="NotifyPendNotification"
- 
+
    Purpose:  Traces the notification event.                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

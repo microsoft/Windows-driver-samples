@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Object><Action>
-//  
+//
 //      i.e.
 //
 //       KrnlHlprDPCQueue
@@ -47,7 +47,7 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Add support for serializing asynchronous 
+//      December  13,   2013  -     1.1   -  Add support for serializing asynchronous
 //                                              FWPM_LAYER_STREAM injections
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@
 
 /**
  @kernel_helper_function="KrnlHlprDPCDataPurge"
- 
+
    Purpose:  Cleanup a DPC_DATA object.                                                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -98,7 +98,7 @@ VOID KrnlHlprDPCDataPurge(_Inout_ DPC_DATA* pDPCData)
 
 /**
  @kernel_helper_function="KrnlHlprDPCDataDestroy"
- 
+
    Purpose:  Cleanup and free a DPC_DATA object.                                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -144,8 +144,8 @@ VOID KrnlHlprDPCDataDestroy(_Inout_ DPC_DATA** ppDPCData)
 
 /**
  @kernel_helper_function="KrnlHlprDPCDataPopulate"
- 
-   Purpose:  Populates a DPC_DATA object with the classifyData, injectionData, and context 
+
+   Purpose:  Populates a DPC_DATA object with the classifyData, injectionData, and context
              supplied.                                                                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -161,13 +161,13 @@ VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
                                     _In_opt_ VOID* pContext)                 /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprDPCDataPopulate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pDPCData);
    NT_ASSERT(pClassifyData);
 
@@ -176,19 +176,19 @@ VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
    pDPCData->pContext       = pContext;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprDPCDataPopulate()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprDPCDataPopulate"
- 
+
    Purpose:  Populates a DPC_DATA object with the classifyData, pendData, and context supplied. <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -204,13 +204,13 @@ VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
                                     _In_opt_ VOID* pContext)           /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprDPCDataPopulate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pDPCData);
    NT_ASSERT(pClassifyData);
    NT_ASSERT(pPendData);
@@ -220,20 +220,20 @@ VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
    pDPCData->pContext      = pContext;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprDPCDataPopulate()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprDPCDataPopulate"
- 
-   Purpose:  Populates a DPC_DATA object with the classifyData, redirectData, and context 
+
+   Purpose:  Populates a DPC_DATA object with the classifyData, redirectData, and context
              supplied.                                                                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -249,13 +249,13 @@ VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
                                     _In_opt_ VOID* pContext)           /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprDPCDataPopulate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pDPCData);
    NT_ASSERT(pClassifyData);
    NT_ASSERT(pRedirectData);
@@ -265,19 +265,19 @@ VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
    pDPCData->pContext      = pContext;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprDPCDataPopulate()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprDPCDataPopulate"
- 
+
    Purpose:  Populates a DPC_DATA object with the notifyData and context supplied.              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -292,13 +292,13 @@ VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
                                     _In_opt_ VOID* pContext)       /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprDPCDataPopulate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pDPCData);
    NT_ASSERT(pNotifyData);
 
@@ -306,19 +306,19 @@ VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
    pDPCData->pContext    = pContext;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprDPCDataPopulate()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprDPCDataPopulate"
- 
+
    Purpose:  Populates a DPC_DATA object with the pendData, and context supplied.               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -359,8 +359,8 @@ VOID KrnlHlprDPCDataPopulate(_Inout_ DPC_DATA* pDPCData,
 
 /**
  @kernel_helper_function="KrnlHlprDPCDataCreate"
- 
-   Purpose:  Allocates and populates a DPC_DATA object with the KDPC, classifyData, 
+
+   Purpose:  Allocates and populates a DPC_DATA object with the KDPC, classifyData,
              injectionData, and context supplied.                                               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -381,13 +381,13 @@ NTSTATUS KrnlHlprDPCDataCreate(_Outptr_ DPC_DATA** ppDPCData,
                                _In_opt_ VOID* pContext)                 /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprDPCDataCreate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppDPCData);
    NT_ASSERT(pClassifyData);
    NT_ASSERT(pInjectionData);
@@ -411,21 +411,21 @@ NTSTATUS KrnlHlprDPCDataCreate(_Outptr_ DPC_DATA** ppDPCData,
       KrnlHlprDPCDataDestroy(ppDPCData);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprDPCDataCreate() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprDPCDataCreate"
- 
-   Purpose:  Allocates and populates a DPC_DATA object with the KDPC, classifyData, pendData, 
+
+   Purpose:  Allocates and populates a DPC_DATA object with the KDPC, classifyData, pendData,
              and context supplied.                                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -446,13 +446,13 @@ NTSTATUS KrnlHlprDPCDataCreate(_Outptr_ DPC_DATA** ppDPCData,
                                _In_opt_ VOID* pContext)                 /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprDPCDataCreate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppDPCData);
    NT_ASSERT(pClassifyData);
    NT_ASSERT(pPendData);
@@ -476,21 +476,21 @@ NTSTATUS KrnlHlprDPCDataCreate(_Outptr_ DPC_DATA** ppDPCData,
       KrnlHlprDPCDataDestroy(ppDPCData);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprDPCDataCreate() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprDPCDataCreate"
- 
-   Purpose:  Allocates and populates a DPC_DATA object with the KDPC, classifyData, 
+
+   Purpose:  Allocates and populates a DPC_DATA object with the KDPC, classifyData,
              redirectData, and context supplied.                                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -511,13 +511,13 @@ NTSTATUS KrnlHlprDPCDataCreate(_Outptr_ DPC_DATA** ppDPCData,
                                _In_opt_ VOID* pContext)                 /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprDPCDataCreate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppDPCData);
    NT_ASSERT(pClassifyData);
    NT_ASSERT(pRedirectData);
@@ -541,21 +541,21 @@ NTSTATUS KrnlHlprDPCDataCreate(_Outptr_ DPC_DATA** ppDPCData,
       KrnlHlprDPCDataDestroy(ppDPCData);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprDPCDataCreate() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprDPCDataCreate"
- 
-   Purpose:  Allocates and populates a DPC_DATA object with the notifyData, KDPC, and context 
+
+   Purpose:  Allocates and populates a DPC_DATA object with the notifyData, KDPC, and context
              supplied.                                                                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -575,13 +575,13 @@ NTSTATUS KrnlHlprDPCDataCreate(_Outptr_ DPC_DATA** ppDPCData,
                                _In_opt_ VOID* pContext)                 /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprDPCDataCreate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppDPCData);
    NT_ASSERT(pNotifyData);
 
@@ -603,21 +603,21 @@ NTSTATUS KrnlHlprDPCDataCreate(_Outptr_ DPC_DATA** ppDPCData,
       KrnlHlprDPCDataDestroy(ppDPCData);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprDPCDataCreate() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprDPCDataCreate"
- 
-   Purpose:  Allocates and populates a DPC_DATA object with the KDPC, pendData, and context 
+
+   Purpose:  Allocates and populates a DPC_DATA object with the KDPC, pendData, and context
              supplied.                                                                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -678,7 +678,7 @@ NTSTATUS KrnlHlprDPCDataCreate(_Outptr_ DPC_DATA** ppDPCData,
 
 /**
  @kernel_helper_function="KrnlHlprDPCQueue"
- 
+
    Purpose:  Queue a DPC for later execution at DISPATCH_LEVEL.                                 <br>
                                                                                                 <br>
    Notes:    Data is expected to be obtained by other means (i.e. LIST_ENTRY)                   <br>
@@ -696,13 +696,13 @@ NTSTATUS KrnlHlprDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
                           _In_ BOOLEAN forceProcessor)    /* FALSE */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprDPCQueue()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pDPCFn);
 
    NTSTATUS  status   = STATUS_SUCCESS;
@@ -729,7 +729,7 @@ NTSTATUS KrnlHlprDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pDPCData initialized with call to HLPR_NEW 
+#pragma warning(disable: 6001) /// pDPCData initialized with call to HLPR_NEW
 
    if(status != STATUS_SUCCESS &&
       pDPCData)
@@ -738,21 +738,21 @@ NTSTATUS KrnlHlprDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
 #pragma warning(pop)
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprDPCQueue() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 
 /**
  @kernel_helper_function="KrnlHlprDPCQueue"
- 
+
    Purpose:  Queue a DPC for later execution at DISPATCH_LEVEL.                                 <br>
                                                                                                 <br>
    Notes:    INJECTION_DATA specific.                                                           <br>
@@ -807,7 +807,7 @@ NTSTATUS KrnlHlprDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pDPCData initialized with call to KrnlHlprDPCDataCreate 
+#pragma warning(disable: 6001) /// pDPCData initialized with call to KrnlHlprDPCDataCreate
 
    if(status != STATUS_SUCCESS &&
       pDPCData)
@@ -829,7 +829,7 @@ NTSTATUS KrnlHlprDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
 
 /**
  @kernel_helper_function="KrnlHlprDPCQueue"
- 
+
    Purpose:  Queue a DPC for later execution at DISPATCH_LEVEL.                                 <br>
                                                                                                 <br>
    Notes:    PEND_DATA specific.                                                                <br>
@@ -885,7 +885,7 @@ NTSTATUS KrnlHlprDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pDPCData initialized with call to KrnlHlprDPCDataCreate 
+#pragma warning(disable: 6001) /// pDPCData initialized with call to KrnlHlprDPCDataCreate
 
    if(status != STATUS_SUCCESS &&
       pDPCData)
@@ -907,7 +907,7 @@ NTSTATUS KrnlHlprDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
 
 /**
  @kernel_helper_function="KrnlHlprDPCQueue"
- 
+
    Purpose:  Queue a DPC for later execution at DISPATCH_LEVEL.                                 <br>
                                                                                                 <br>
    Notes:    REDIRECT_DATA specific.                                                            <br>
@@ -934,7 +934,7 @@ NTSTATUS KrnlHlprDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
               " ---> KrnlHlprDPCQueue()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pDPCFn);
    NT_ASSERT(pClassifyData);
    NT_ASSERT(pRedirectData);
@@ -963,8 +963,8 @@ NTSTATUS KrnlHlprDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pDPCData initialized with call to KrnlHlprDPCDataCreate 
-   
+#pragma warning(disable: 6001) /// pDPCData initialized with call to KrnlHlprDPCDataCreate
+
       if(status != STATUS_SUCCESS &&
          pDPCData)
          KrnlHlprDPCDataDestroy(&pDPCData);
@@ -985,7 +985,7 @@ NTSTATUS KrnlHlprDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
 
 /**
  @kernel_helper_function="KrnlHlprDPCQueue"
- 
+
    Purpose:  Queue a DPC for later execution at DISPATCH_LEVEL.                                 <br>
                                                                                                 <br>
    Notes:    NOTIFY_DATA specific.                                                              <br>
@@ -1060,7 +1060,7 @@ NTSTATUS KrnlHlprDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
 
 /**
  @kernel_helper_function="KrnlHlprDPCQueue"
- 
+
    Purpose:  Queue a DPC for later execution at DISPATCH_LEVEL.                                 <br>
                                                                                                 <br>
    Notes:    PEND_DATA specific.                                                                <br>
@@ -1113,7 +1113,7 @@ NTSTATUS KrnlHlprDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pDPCData initialized with call to KrnlHlprDPCDataCreate 
+#pragma warning(disable: 6001) /// pDPCData initialized with call to KrnlHlprDPCDataCreate
 
    if(status != STATUS_SUCCESS &&
       pDPCData)
@@ -1140,7 +1140,7 @@ NTSTATUS KrnlHlprDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
 
 /**
  @kernel_helper_function="KrnlHlprThreadedDPCQueue"
- 
+
    Purpose:  Queue a threaded DPC for later execution at either PASSIVE_LEVEL or DISPATCH_LEVEL.<br>
                                                                                                 <br>
    Notes:    Data is expected to be obtained by other means (i.e. LIST_ENTRY)                   <br>
@@ -1196,7 +1196,7 @@ NTSTATUS KrnlHlprThreadedDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pDPCData initialized with call to HLPR_NEW 
+#pragma warning(disable: 6001) /// pDPCData initialized with call to HLPR_NEW
 
    if(status != STATUS_SUCCESS &&
       pDPCData)
@@ -1219,7 +1219,7 @@ NTSTATUS KrnlHlprThreadedDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
 
 /**
  @kernel_helper_function="KrnlHlprThreadedDPCQueue"
- 
+
    Purpose:  Queue a threaded DPC for later execution at either PASSIVE_LEVEL or DISPATCH_LEVEL.<br>
                                                                                                 <br>
    Notes:    INJECTION_DATA specific.                                                           <br>
@@ -1279,7 +1279,7 @@ NTSTATUS KrnlHlprThreadedDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pDPCData initialized with call to KrnlHlprDPCDataCreate 
+#pragma warning(disable: 6001) /// pDPCData initialized with call to KrnlHlprDPCDataCreate
 
    if(status != STATUS_SUCCESS &&
       pDPCData)
@@ -1301,7 +1301,7 @@ NTSTATUS KrnlHlprThreadedDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
 
 /**
  @kernel_helper_function="KrnlHlprThreadedDPCQueue"
- 
+
    Purpose:  Queue a threaded DPC for later execution at either PASSIVE_LEVEL or DISPATCH_LEVEL.<br>
                                                                                                 <br>
    Notes:    PEND_DATA specific.                                                                <br>
@@ -1362,7 +1362,7 @@ NTSTATUS KrnlHlprThreadedDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pDPCData initialized with call to KrnlHlprDPCDataCreate 
+#pragma warning(disable: 6001) /// pDPCData initialized with call to KrnlHlprDPCDataCreate
 
    if(status != STATUS_SUCCESS &&
       pDPCData)
@@ -1384,7 +1384,7 @@ NTSTATUS KrnlHlprThreadedDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
 
 /**
  @kernel_helper_function="KrnlHlprThreadedDPCQueue"
- 
+
    Purpose:  Queue a threaded DPC for later execution at either PASSIVE_LEVEL or DISPATCH_LEVEL.<br>
                                                                                                 <br>
    Notes:    REDIRECT_DATA specific.                                                            <br>
@@ -1468,7 +1468,7 @@ NTSTATUS KrnlHlprThreadedDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
 
 /**
  @kernel_helper_function="KrnlHlprThreadedDPCQueue"
- 
+
    Purpose:  Queue a threaded DPC for later execution at either PASSIVE_LEVEL or DISPATCH_LEVEL.<br>
                                                                                                 <br>
    Notes:    NOTIFY_DATA specific.                                                              <br>
@@ -1549,7 +1549,7 @@ NTSTATUS KrnlHlprThreadedDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
 
 /**
  @kernel_helper_function="KrnlHlprThreadedDPCQueue"
- 
+
    Purpose:  Queue a threaded DPC for later execution at either PASSIVE_LEVEL or DISPATCH_LEVEL.<br>
                                                                                                 <br>
    Notes:    PEND_DATA specific.                                                                <br>
@@ -1607,7 +1607,7 @@ NTSTATUS KrnlHlprThreadedDPCQueue(_In_ KDEFERRED_ROUTINE* pDPCFn,
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pDPCData initialized with call to KrnlHlprDPCDataCreate 
+#pragma warning(disable: 6001) /// pDPCData initialized with call to KrnlHlprDPCDataCreate
 
    if(status != STATUS_SUCCESS &&
       pDPCData)

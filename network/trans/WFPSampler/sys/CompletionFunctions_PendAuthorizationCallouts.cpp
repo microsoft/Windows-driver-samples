@@ -6,20 +6,20 @@
 //      CompletionFunctions_PendAuthorizationCallouts.cpp
 //
 //   Abstract:
-//      This module contains WFP Completion functions for pended authorizations that inject data 
+//      This module contains WFP Completion functions for pended authorizations that inject data
 //         back into the data path.
 //
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //       CompleteBasicPacketInjection
 //
 //       <Module>
 //          Complete                        - Function is an FWPS_INJECT_COMPLETE function.
 //       <Scenario>
-//          PendAuthorization               - Function demonstrates the clone / block / inject 
+//          PendAuthorization               - Function demonstrates the clone / block / inject
 //                                               model for pended items.
 //
 //      <Object><Action>
@@ -47,17 +47,17 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense and 
+//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense and
 //                                              enhance traces.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "Framework_WFPSamplerCalloutDriver.h"               /// . 
+#include "Framework_WFPSamplerCalloutDriver.h"               /// .
 #include "CompletionFunctions_PendAuthorizationCallouts.tmh" /// $(OBJ_PATH)\$(O)\
 
 /**
  @private_function="PendAuthorizationCompletionDataDestroy"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -74,13 +74,13 @@ VOID PendAuthorizationCompletionDataDestroy(_Inout_ PEND_AUTHORIZATION_COMPLETIO
                                             _In_ BOOLEAN override)                                         /* FALSE */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PendAuthorizationCompletionDataDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppCompletionData);
    NT_ASSERT(*ppCompletionData);
 
@@ -126,19 +126,19 @@ VOID PendAuthorizationCompletionDataDestroy(_Inout_ PEND_AUTHORIZATION_COMPLETIO
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PendAuthorizationCompletionDataDestroy()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @completion_function="CompletePendAuthorization"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

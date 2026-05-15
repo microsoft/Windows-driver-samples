@@ -7,7 +7,7 @@ Module Name:
 
 Abstract:
     Contains Port specific defines
-    
+
 Revision History:
       When        What
     ----------    ----------------------------------------------
@@ -40,7 +40,7 @@ typedef struct _MP_PORT            MP_PORT, *PMP_PORT;
 // If any of these flags are set, we cannot scan
 #define MP_PORT_CANNOT_SCAN_MASK        (MP_PORT_PAUSED | MP_PORT_PAUSING | MP_PORT_HALTING | \
                                             MP_PORT_IN_RESET)
-    
+
 #define MP_SET_PORT_STATUS(_Port, _Flag)    \
     ((_Port->Status) |= (_Flag))
 
@@ -60,7 +60,7 @@ typedef struct _MP_PORT            MP_PORT, *PMP_PORT;
 #define HELPER_PORT_PORT_NUMBER     0xFFFFFFFF
 #define MP_MAX_NUMBER_OF_PORT   	  0x8
 
-// 0x05 is enough: ExtSTA + ExtAP + ExtDevice + ExtRoleGO + ExtRoleClient  
+// 0x05 is enough: ExtSTA + ExtAP + ExtDevice + ExtRoleGO + ExtRoleClient
 #define MP_DEFAULT_NUMBER_OF_PORT 0x5
 
 
@@ -123,11 +123,11 @@ N62CDeinitPacketQueue(
 typedef struct _PORT_HELPER
 {
 
-	RT_WORK_ITEM			CreateDeleteMacWorkitem;	
+	RT_WORK_ITEM			CreateDeleteMacWorkitem;
 	RT_TIMER				CreateDeleteMacTimer;
 	BOOLEAN					bCreateMac;
-	BOOLEAN					bDeleteMac;	
-	PDOT11_MAC_INFO			pCreateDot11MacInfo;       
+	BOOLEAN					bDeleteMac;
+	PDOT11_MAC_INFO			pCreateDot11MacInfo;
 	PNDIS_OID_REQUEST		pCreateDeleteOID;
 } PORT_HELPER, *PPORT_HELPER;
 
@@ -135,8 +135,8 @@ typedef struct _RT_NDIS62_COMMON
 {
 
 	MP_PORT_OP_STATE	CurrentOpState;	   	// Indicate to Win7.
-	MP_PORT_TYPE 		PortType;   			// Used by Port, ChildPort & MP	
-	NDIS_PORT_NUMBER	PortNumber; 		// NDIS allocate port number	
+	MP_PORT_TYPE 		PortType;   			// Used by Port, ChildPort & MP
+	NDIS_PORT_NUMBER	PortNumber; 		// NDIS allocate port number
 	BOOLEAN				bWPSEnable;		// AP Port for OID_DOT11_WPS_ENABLED
 	BOOLEAN				bIsDot11PhyIdSet[MAX_PHY_ID];
 	BOOLEAN				bDot11SetPhyIdReady;
@@ -165,7 +165,7 @@ typedef struct _MP_HELPER_REG_INFO
     ULONG                       ScanRescheduleTime; // MP_SCAN_RESCHEDULE_TIME_MS
 
     ULONG                       InterScanTime;      // MP_INTER_SCAN_TIME
-    
+
 } MP_HELPER_REG_INFO, *PMP_HELPER_REG_INFO;
 
 
@@ -199,8 +199,8 @@ typedef struct _MP_PORT_REG_INFO
 /**
  * State read from the registry
  */
-typedef struct _STA_REG_INFO 
-{ 
+typedef struct _STA_REG_INFO
+{
     /** Max number of adhoc station entries to maintain */
     ULONG                       AdhocStationMaxCount;
 
@@ -218,36 +218,36 @@ typedef struct _STA_REG_INFO
 
 typedef struct _STA_ADHOC_STA_INFO
 {
-    /** 
+    /**
      * Linked list of discovered access points
-     * This list must not be modified/read without acquiring the 
+     * This list must not be modified/read without acquiring the
      * ListLock
      */
     LIST_ENTRY                  StaList;
     ULONG                       StaCount;
     ULONG                       DeauthStaCount;
 
-    /** 
-     * Lock we need before we adding/removing entries from the 
+    /**
+     * Lock we need before we adding/removing entries from the
      * discovered AP list. This will be acquired for read by
-     * routines that are not modifying the chain and acquired 
+     * routines that are not modifying the chain and acquired
      * for write by routines that will be removing entries or
      * adding entries to the chain
      */
      // TODO: Win 7
-   // MP_READ_WRITE_LOCK          StaListLock; 
+   // MP_READ_WRITE_LOCK          StaListLock;
 
-    /** 
-     * Lock for changing state, protecting connection variables, etc. 
+    /**
+     * Lock for changing state, protecting connection variables, etc.
      *
-     * When acquiring both this lock and StaListLock, StaListLock 
+     * When acquiring both this lock and StaListLock, StaListLock
      * must be acquired FIRST to ensure consistency throughout the code
      * and avoid deadlock
      */
     NDIS_SPIN_LOCK              StaInfoLock;
 
     ULONG                       AdHocState;
-    
+
     /** Watchdog timer used in AdHoc mode */
     NDIS_HANDLE                 WatchdogTimer;
     LONG                        TimerCounter;
@@ -271,7 +271,7 @@ typedef struct _STA_ADHOC_STA_INFO
  * is updated on OIDs request from the OS. One place this
  * is used is for selecting the access points for making a conneciton
  */
-typedef struct _STA_CURRENT_CONFIG 
+typedef struct _STA_CURRENT_CONFIG
 {
     /** BSS type configured by the OS */
     DOT11_BSS_TYPE              BSSType;
@@ -300,15 +300,15 @@ typedef struct _STA_CURRENT_CONFIG
     ULONG                       PMKIDCount;
 
     /** Currently enabled authentication algorithm */
-    DOT11_AUTH_ALGORITHM        AuthAlgorithm;  
+    DOT11_AUTH_ALGORITHM        AuthAlgorithm;
 
     /** Currently enabled unicast cipher algorithm */
-    DOT11_CIPHER_ALGORITHM      UnicastCipherAlgorithm;  
+    DOT11_CIPHER_ALGORITHM      UnicastCipherAlgorithm;
 
     /** Currently enabled multicast cipher algorithm */
     DOT11_CIPHER_ALGORITHM      MulticastCipherAlgorithmList[STA_MULTICAST_CIPHER_MAX_COUNT];
     ULONG                       MulticastCipherAlgorithmCount;
-    DOT11_CIPHER_ALGORITHM      MulticastCipherAlgorithm;  
+    DOT11_CIPHER_ALGORITHM      MulticastCipherAlgorithm;
 
     /** Current setting of unreachable detection threshold */
     ULONG                       UnreachableDetectionThreshold;
@@ -340,7 +340,7 @@ typedef struct _STA_CURRENT_CONFIG
 
     /** Current hidden OID setting */
     BOOLEAN                     HiddenNetworkEnabled;
-    
+
     /** check for use protection bit in beacon ERP IE after a successful connection or scan */
     BOOLEAN                     CheckForProtectionInERP;
 }STA_CURRENT_CONFIG, *PSTA_CURRENT_CONFIG;
@@ -352,7 +352,7 @@ typedef struct _STA_CURRENT_CONFIG
  * receive handler. A linked list of these entries is maintained
  * by the station to keep track of the discovered BSS
  */
-typedef struct _MP_BSS_ENTRY 
+typedef struct _MP_BSS_ENTRY
 {
     /** List entry linkage */
     LIST_ENTRY                  Link;
@@ -381,7 +381,7 @@ typedef struct _MP_BSS_ENTRY
     ULONG                       LinkQuality;
 
     ULONG                       ChannelCenterFrequency;
-    
+
     DOT11_BSS_TYPE              Dot11BSSType;
 
     DOT11_MAC_ADDRESS           Dot11BSSID;
@@ -395,11 +395,11 @@ typedef struct _MP_BSS_ENTRY
     ULONGLONG                   HostTimestamp;
 
     DOT11_CAPABILITY            Dot11Capability;
-    
+
     ULONG                       MaxBeaconFrameSize;
     PUCHAR                      pDot11BeaconFrame;      // Beacon frame starting after management header
     ULONG                       BeaconFrameSize;
-    
+
     PUCHAR                      pDot11InfoElemBlob;     // Pointer to the information elements in the beacon frame
     ULONG                       InfoElemBlobSize;       // Length of information element blob
 
@@ -409,22 +409,22 @@ typedef struct _MP_BSS_ENTRY
                                             // separately since probe buffer may get overwritten
                                             // by beacons and we may lose the SSID from probe
 
-    /** 
-     * The OS needs to be given the association request 
-     * packet information on a association completion. This 
+    /**
+     * The OS needs to be given the association request
+     * packet information on a association completion. This
      * information is cached in this structure
      */
-    __field_ecount(AssocRequestLength) 
+    __field_ecount(AssocRequestLength)
     PUCHAR                      pAssocRequest;
     USHORT                      AssocRequestLength;     // Includes header
 
-    /** 
+    /**
      * The OS needs to be given the association response
-     * packet information on a association completion. This 
+     * packet information on a association completion. This
      * information is cached in this structure
      */
     USHORT                      AssocResponseLength;    // Includes header
-    __field_ecount(AssocResponseLength) 
+    __field_ecount(AssocResponseLength)
     PUCHAR                      pAssocResponse;
 
     /** Association ID */
@@ -436,9 +436,9 @@ typedef struct _MP_BSS_ENTRY
     /** Timestamp when we obtained the association */
     LARGE_INTEGER               AssociationUpTime;
 
-    /** 
+    /**
      * Cost for roaming purpose. A lower number is better. We dont
-     * rank of APs based on this, but use higher number this for rejecting 
+     * rank of APs based on this, but use higher number this for rejecting
      * some AP
      */
     LONG                        AssocCost;
@@ -474,7 +474,7 @@ typedef struct _MP_BSS_DESCRIPTION
 
     /* When true the hardware wont beacon */
     BOOLEAN         NoBeaconMode;
-    
+
     ULONG           PhyId;
     UCHAR           Channel;    // Valid only if it is non-zero
 
@@ -488,11 +488,11 @@ typedef struct _MP_BSS_DESCRIPTION
  */
 typedef struct _STA_INFRA_CONNECT_CONTEXT
 {
-    /** 
+    /**
      * Used to keep track of number of asynchronous functions pending to
-     * complete the connection attempt. This is used in CONN_STATE_IN_RESET 
+     * complete the connection attempt. This is used in CONN_STATE_IN_RESET
      * to wait for the connection process to complete before reseting the
-     * adapter. Reset waits for this to go to zero. This structure is 
+     * adapter. Reset waits for this to go to zero. This structure is
      * modified using interlocked operations.
      */
     LONG                        AsyncFuncCount;
@@ -503,19 +503,19 @@ typedef struct _STA_INFRA_CONNECT_CONTEXT
      * routines
      */
     NDIS_MUTEX                  DisconnectGate;
-    
-    /** 
-     * Lock for changing state, protecting connection variables, etc. 
+
+    /**
+     * Lock for changing state, protecting connection variables, etc.
      * This is used for connecting and during scanning
      *
-     * When acquiring both this lock and lock on the AP entry, the AP entry 
+     * When acquiring both this lock and lock on the AP entry, the AP entry
      * lock must be acquired second to ensure consistency throughout the code
      * and avoid deadlock
      */
     NDIS_SPIN_LOCK              Lock;
 
-    /** 
-     * Current association state of the station. This variable is 
+    /**
+     * Current association state of the station. This variable is
      * normally modified by the various association routines. The Reset/Disconnect
      * routines will modify this once they are sure no association routine is using
      * this. The Connect routine would initialize this. This is modified
@@ -528,17 +528,17 @@ typedef struct _STA_INFRA_CONNECT_CONTEXT
      */
     USHORT                      DeAuthReason;
 
-    /** 
-     * This field is only meaningful when AssociateState is 
-     * ASSOC_STATE_WAITING_FOR_AUTHENTICATE. It specifies the sequence 
+    /**
+     * This field is only meaningful when AssociateState is
+     * ASSOC_STATE_WAITING_FOR_AUTHENTICATE. It specifies the sequence
      * number of the authenticate response we are expecting.
      */
     USHORT                      ExpectedAuthSeqNumber;
 
-    /** 
-     * Tracks whether or not we are allowed to connect. This is only 
+    /**
+     * Tracks whether or not we are allowed to connect. This is only
      * modified by the Connect/Reset/Disconnect routines. The various
-     * functions that handle associate would read this to check if they 
+     * functions that handle associate would read this to check if they
      * should continue with the association. This is modified
      * with the Lock held
      */
@@ -549,13 +549,13 @@ typedef struct _STA_INFRA_CONNECT_CONTEXT
      * etc in the middle of a connect.
      */
     STA_CONNECT_STATE           PreviousConnectState;
-    
-    /** 
-     * BSSEntry that we are currently using for association, are associated with. 
+
+    /**
+     * BSSEntry that we are currently using for association, are associated with.
      * This is modified with the Lock held
      */
     PMP_BSS_ENTRY              ActiveAP;
-    
+
     /**
      * The candidate access points we will attempt to associate with.
      */
@@ -573,13 +573,13 @@ typedef struct _STA_INFRA_CONNECT_CONTEXT
      */
     PUCHAR                      pAssocFailBuffer;
 
-    /** 
+    /**
      * Timer object used when waiting for authentication process to complete.
      * The timer will be set when the authentication process begins
      */
     NDIS_HANDLE                 Timer_AuthenticateTimeout;
 
-    /** 
+    /**
      * Timer object used when waiting for association process to complete.
      * The timer will be set when the association process begins
      */
@@ -595,7 +595,7 @@ typedef struct _STA_INFRA_CONNECT_CONTEXT
 }STA_INFRA_CONNECT_CONTEXT, *PSTA_INFRA_CONNECT_CONTEXT;
 
 /**
- * State we maintain for holding 
+ * State we maintain for holding
  */
 typedef struct _STA_SCAN_CONTEXT
 {
@@ -621,7 +621,7 @@ typedef struct _STA_SCAN_CONTEXT
      * periodic scans shouldnt happen
      */
     ULONG                       PeriodicScanDisableCount;
-    
+
     /**
      * Number of times that the periodic scan timer has run, but
      * did has not done any scanning
@@ -647,9 +647,9 @@ typedef struct _STA_SCAN_CONTEXT
      */
     BOOLEAN                     MustRoam;
 
-    /** 
+    /**
      * This is generally true and we would be adding the SSID of the network in
-     * our probe requests. When we go to sleep, this becomes false, causing us to 
+     * our probe requests. When we go to sleep, this becomes false, causing us to
      * stop putting the SSID in our probe requests until we wake up
      */
     BOOLEAN                     SSIDInProbeRequest;
@@ -657,7 +657,7 @@ typedef struct _STA_SCAN_CONTEXT
 }STA_SCAN_CONTEXT, *PSTA_SCAN_CONTEXT;
 
 typedef struct _STA_PMKID_CACHE {
-    
+
     /** The time at which we checked for PMKID candidate */
     ULONGLONG                   CheckingTime;
 
@@ -677,7 +677,7 @@ typedef struct _STA_STATS
 {
     ULONGLONG                   ullUcastWEPExcludedCount;
     ULONGLONG                   ullMcastWEPExcludedCount;
-    
+
 }STA_STATS, *PSTA_STATS;
 
 /*
@@ -689,7 +689,7 @@ typedef struct _MP_MINIPORT_PAUSE_PARAMETERS
 {
     /** The pause parameters provided by NDIS */
     PNDIS_MINIPORT_PAUSE_PARAMETERS NdisParameters;
-    
+
     /** The event that is fired when the pause is completed */
     NDIS_EVENT              CompleteEvent;
 
@@ -701,7 +701,7 @@ typedef struct _MP_NDIS_RESET_PARAMETERS
 {
     PBOOLEAN                AddressingReset;
 
-    NDIS_STATUS             ResetStatus;    
+    NDIS_STATUS             ResetStatus;
 
     /** The event that is fired when the reset is completed */
     NDIS_EVENT              CompleteEvent;
@@ -713,7 +713,7 @@ typedef struct _MP_POWER_PARAMETERS
 {
     /** The device state to transition to */
     NDIS_DEVICE_POWER_STATE NewDeviceState;
-    
+
     /** The event that is fired when the oid processing is completed */
     NDIS_EVENT              CompleteEvent;
 
@@ -838,14 +838,14 @@ N62CStaInitializePort(
     IN  PVOID			RegistryInformation
     );
 
-NDIS_STATUS 
+NDIS_STATUS
 N62CStaOidHandler(
 	IN  PADAPTER			pAdapter,
 	IN  PMP_PORT                Port,
 	IN  PNDIS_OID_REQUEST       OidRequest
 	);
 
-NDIS_STATUS 
+NDIS_STATUS
 N62CStaSendEventHandler(
     IN  PMP_PORT                Port,
     //IN  PMP_TX_MSDU             PacketList,
@@ -903,7 +903,7 @@ N62CGetPortTypeByOpMode(
 //NDIS_STATUS
 //N62CSetCurrentPortOperationMode(
 //	IN  PADAPTER				pAdapter,
-//	IN  PNDIS_OID_REQUEST   	NdisRequest	
+//	IN  PNDIS_OID_REQUEST   	NdisRequest
 //	);
 
 NDIS_STATUS
@@ -940,6 +940,6 @@ NDIS_STATUS
 N62CChangePortTypeByOpMode(
 	IN  PADAPTER			pAdapter,
 	IN	PDOT11_CURRENT_OPERATION_MODE dot11OpMode
-);	
+);
 
 #endif //_N62_PORT__H

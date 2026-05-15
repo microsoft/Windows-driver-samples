@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //
 //       ClassifyPendEndpointClosure
@@ -19,7 +19,7 @@
 //       <Module>
 //          Classify               -       Function is an FWPS_CALLOUT_CLASSIFY_FN.
 //          Perform                -       Function executes the desired scenario.
-//          Trigger                -       Function queues a worker thread for later execution of 
+//          Trigger                -       Function queues a worker thread for later execution of
 //                                            the the scenario.
 //       <Scenario>
 //          PendEndpointClosure    -       Function demonstates pending endpoint closure requests.
@@ -53,8 +53,8 @@
 
 /**
  @private_function="PerformPendEndpointClosure"
- 
-   Purpose:  Waits for the specified delay, then completes the pended classify, and frees the 
+
+   Purpose:  Waits for the specified delay, then completes the pended classify, and frees the
              memory.                                                                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -68,13 +68,13 @@ _Success_(return == STATUS_SUCCESS)
 NTSTATUS PerformPendEndpointClosure(_Inout_ PEND_DATA** ppPendData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PerformPendEndpointClosure()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(*ppPendData);
    NT_ASSERT((*ppPendData)->pPendEndpointClosureData);
 
@@ -118,7 +118,7 @@ NTSTATUS PerformPendEndpointClosure(_Inout_ PEND_DATA** ppPendData)
 
 /**
  @private_function="PendEndpointClosureDeferredProcedureCall"
- 
+
    Purpose:  Invokes the appropriate private routine to complete the pended classify.           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -134,13 +134,13 @@ VOID PendEndpointClosureDeferredProcedureCall(_In_ KDPC* pDPC,
                                               _In_opt_ PVOID pArg2)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PendEndpointClosureDeferredProcedureCall()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(pDPC);
    UNREFERENCED_PARAMETER(pContext);
    UNREFERENCED_PARAMETER(pArg2);
@@ -172,14 +172,14 @@ VOID PendEndpointClosureDeferredProcedureCall(_In_ KDPC* pDPC,
               " <--- PendEndpointClosureDeferredProcedureCall()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @private_function="PendEndpointClosureWorkItemRoutine"
- 
-   Purpose:  Invokes the appropriate private routine to complete the pended classify at 
+
+   Purpose:  Invokes the appropriate private routine to complete the pended classify at
              PASSIVE_LEVEL.                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -193,13 +193,13 @@ VOID PendEndpointClosureWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
                                         _In_opt_ PVOID pContext)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> PendEndpointClosureWorkItemRoutine()\n");
 
 #endif /// DBG
-   
+
    UNREFERENCED_PARAMETER(pDeviceObject);
 
    NT_ASSERT(pContext);
@@ -222,19 +222,19 @@ VOID PendEndpointClosureWorkItemRoutine(_In_ PDEVICE_OBJECT pDeviceObject,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- PendEndpointClosureWorkItemRoutine()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @private_function="TriggerPendEndpointClosure"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -249,16 +249,16 @@ NTSTATUS TriggerPendEndpointClosure(_Inout_ PEND_DATA* pPendData,
                                     _In_ PC_PEND_ENDPOINT_CLOSURE_DATA* pPCData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> TriggerPendEndpointClosure()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pPendData);
    NT_ASSERT(pPCData);
- 
+
    NTSTATUS status        = STATUS_SUCCESS;
 
    if(pPCData->useWorkItems ||
@@ -293,11 +293,11 @@ NTSTATUS TriggerPendEndpointClosure(_Inout_ PEND_DATA* pPendData,
 
 /**
  @classify_function="ClassifyPendEndpointClosure"
- 
-   Purpose:  Classify Function which will pend an endpoint closure request.  If there is 
+
+   Purpose:  Classify Function which will pend an endpoint closure request.  If there is
              appropriate flowContext, te request will be pended, and then exit, requiring a call
-             to the FlowDeleteFn to perform the pend completion.  Otherwise a worker thread is 
-             queued, and a will wait for the specified milliseconds before the pend is 
+             to the FlowDeleteFn to perform the pend completion.  Otherwise a worker thread is
+             queued, and a will wait for the specified milliseconds before the pend is
              completed.                                                                         <br>
                                                                                                 <br>
    Notes:    Applies to the following layers:                                                   <br>

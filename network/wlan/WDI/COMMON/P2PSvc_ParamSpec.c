@@ -10,20 +10,20 @@
 //		This table defines the parameters of the supported actions.
 //		The table is used for validating action request from upper layer.
 //
-P2PSVC_ACTION_SPEC_ENTRY lP2PSvcActionSpecTab[] = 
+P2PSVC_ACTION_SPEC_ENTRY lP2PSvcActionSpecTab[] =
 {
 	{
 		P2PSVC_OBJ_HDR_ID_ACT_ENABLE,
-		{	
+		{
 			P2PSVC_OBJ_HDR_ID_DATA_BENABLE,
 			//-----------------------------------
 			P2PSVC_OBJ_HDR_ID_DATA_UNKNOWN // sentinel
 		}
 	},
-	
+
 	{
 		P2PSVC_OBJ_HDR_ID_ACT_SEEK,
-		{	
+		{
 			P2PSVC_OBJ_HDR_ID_DATA_SEARCH_ID,
 			P2PSVC_OBJ_HDR_ID_DATA_SVC_NAME,
 			P2PSVC_OBJ_HDR_ID_DATA_SVC_NAME_HASH,
@@ -36,7 +36,7 @@ P2PSVC_ACTION_SPEC_ENTRY lP2PSvcActionSpecTab[] =
 
 	{
 		P2PSVC_OBJ_HDR_ID_ACT_CANCEL_SEEK,
-		{	
+		{
 			P2PSVC_OBJ_HDR_ID_DATA_SEARCH_ID,
 			//-----------------------------------
 			P2PSVC_OBJ_HDR_ID_DATA_UNKNOWN // sentinel
@@ -84,7 +84,7 @@ P2PSVC_ACTION_SPEC_ENTRY lP2PSvcActionSpecTab[] =
 			P2PSVC_OBJ_HDR_ID_DATA_DEV_ADDR,
 			P2PSVC_OBJ_HDR_ID_DATA_SVC_NAME_HASH,
 			P2PSVC_OBJ_HDR_ID_DATA_ADV_ID,
-			P2PSVC_OBJ_HDR_ID_DATA_SESSION_INFO, 
+			P2PSVC_OBJ_HDR_ID_DATA_SESSION_INFO,
 			P2PSVC_OBJ_HDR_ID_DATA_NETWORK_ROLE,
 			//-----------------------------------
 			P2PSVC_OBJ_HDR_ID_DATA_UNKNOWN // sentinel
@@ -108,7 +108,7 @@ P2PSVC_ACTION_SPEC_ENTRY lP2PSvcActionSpecTab[] =
 			P2PSVC_OBJ_HDR_ID_DATA_UNKNOWN // sentinel
 		}
 	},
-	
+
 	//----------------------------------------------
 	{
 		P2PSVC_OBJ_HDR_ID_ACT_UNKNOWN,
@@ -119,7 +119,7 @@ P2PSVC_ACTION_SPEC_ENTRY lP2PSvcActionSpecTab[] =
 	},
 };
 
-P2PSVC_PARAM_SPEC_ENTRY lP2PSvcParamSpecTab[] = 
+P2PSVC_PARAM_SPEC_ENTRY lP2PSvcParamSpecTab[] =
 {
 	{P2PSVC_OBJ_HDR_ID_DATA_BENABLE, 			sizeof(BOOLEAN), 	sizeof(BOOLEAN)},
 	{P2PSVC_OBJ_HDR_ID_DATA_SVC_NAME, 			1, 					255},
@@ -160,7 +160,7 @@ P2PSvc_GetParamSpec(
 {
 	u4Byte 									paramSpecIdx = 0;
 	PP2PSVC_PARAM_SPEC_ENTRY			pParamSpec = NULL;
-	
+
 	for(paramSpecIdx = 0; P2PSVC_OBJ_HDR_ID_DATA_UNKNOWN != lP2PSvcParamSpecTab[paramSpecIdx].paramId; paramSpecIdx++)
 	{
 		if(actId == lP2PSvcParamSpecTab[paramSpecIdx].paramId)
@@ -178,7 +178,7 @@ P2PSvc_GetParamSpec(
 // Description:
 //		Validate if the input buffer contains an object with obj list as its payload
 //
-RT_STATUS 
+RT_STATUS
 P2PSvc_ValidateReqInfo(
 	IN  PVOID								infoBuf,
 	IN  u4Byte								inBufLen,
@@ -209,7 +209,7 @@ P2PSvc_ValidateReqInfo(
 
 		// Check if the in buf is large enough to hold the data whose length is declared in the obj header
 		pObjHdr = (PRT_OBJECT_HEADER)(infoBuf);
-		
+
 		if(inBufLen < bytesNeeded + pObjHdr->Length)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] in buf is not large enough to hold the value, value len: %u, inbuf len: %u!\n", pObjHdr->Length, inBufLen));
@@ -227,7 +227,7 @@ P2PSvc_ValidateReqInfo(
 			break;
 		}
 
-		// Validate the obj hdr of the info list		
+		// Validate the obj hdr of the info list
 		if(P2PSVC_OBJ_HDR_ID_DATA_OBJ_LIST != pObjList->hdr.Id)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] payload is not an obj list, its id is: %u\n", pObjList->hdr.Id));
@@ -237,9 +237,9 @@ P2PSvc_ValidateReqInfo(
 
 		// Check if the objs in the obj list has valid length
 		for(objIter = 0; objIter < pObjList->nObjs; objIter++)
-		{	
+		{
 			PRT_OBJECT_HEADER pCurObj = NULL;
-			
+
 			// Check we can read the obj hdr of the current obj
 			if(inBufLen < bytesNeeded + pObjList->ObjTab[objIter] + RT_OBJECT_HEADER_SIZE)
 			{
@@ -299,13 +299,13 @@ P2PSvc_ValidateActionParam(
 	)
 {
 	RT_STATUS								rtStatus = RT_STATUS_SUCCESS;
-	
+
 
 	int										actSpecIdx = 0;
 	int										nParams = 0;
 	int										paramIdx = 0;
 	PP2PSVC_ACTION_SPEC_ENTRY 				pActSpec = NULL;
-	
+
 	do
 	{
 		// Search table
@@ -317,7 +317,7 @@ P2PSvc_ValidateActionParam(
 				break;
 			}
 		}
-		
+
 		RT_ASSERT(pActSpec, ("p2psvc_AddSeekInfo(): Spec of P2PSVC_OBJ_HDR_ID_ACT_SEEK not specified in the action spec table\n"));
 
 		// Count # of parameters
@@ -332,7 +332,7 @@ P2PSvc_ValidateActionParam(
 			u4Byte					objIter = 0;
 			PRT_OBJECT_HEADER		pCurObj = NULL;
 			u4Byte 					nOccurrence = 0;
-			
+
 			for(objIter = 0; objIter < pObjList->nObjs; objIter++)
 			{
 				pCurObj = P2PSVC_OBJ_LIST_GET_OBJ(pObjList, objIter);
@@ -345,7 +345,7 @@ P2PSvc_ValidateActionParam(
 				rtStatus = RT_STATUS_INVALID_PARAMETER;
 				break;
 			}
-			else if(1 < nOccurrence 
+			else if(1 < nOccurrence
 				&& P2PSVC_OBJ_HDR_ID_DATA_UNKNOWN != pActSpec->paramList[paramIdx]
 				)
 			{
@@ -385,11 +385,11 @@ P2PSvc_ValidateParamContent(
 	u4Byte									objIter = 0;
 	u4Byte									paramSpecIdx = 0;
 	PP2PSVC_PARAM_SPEC_ENTRY			pParamSpec = NULL;
-	
+
 	do
 	{
 		u4Byte valLen = 0;
-		
+
 		for(objIter = 0, pParamSpec = NULL; NULL != (pCurObj = P2PSVC_OBJ_LIST_GET_OBJ(pObjList, objIter)); objIter++)
 		{
 			valLen = pCurObj->Length;
@@ -409,7 +409,7 @@ P2PSvc_ValidateParamContent(
 				break;
 			}
 		}
-		
+
 		if(RT_STATUS_SUCCESS != rtStatus)
 		{
 			break;
@@ -489,9 +489,9 @@ P2PSvc_UpdateParam(
 			rtStatus = RT_STATUS_INVALID_DATA;
 			break;
 		}
-		
+
 		PlatformMoveMemory(pObj->Value, pBuf, bufLen);
-		
+
 	}while(FALSE);
 
 	return rtStatus;

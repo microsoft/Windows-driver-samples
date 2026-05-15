@@ -36,7 +36,7 @@ void ConfigureTxpowerTrack_8723B(
 void DoIQK_8723B(
 	PVOID		pDM_VOID,
 	u1Byte 		DeltaThermalIndex,
-	u1Byte		ThermalValue,	
+	u1Byte		ThermalValue,
 	u1Byte 		Threshold
 	);
 
@@ -50,8 +50,8 @@ ODM_TxPwrTrackSetPwr_8723B(
 
 //1 7.	IQK
 
-void	
-PHY_IQCalibrate_8723B(	
+void
+PHY_IQCalibrate_8723B(
 #if (DM_ODM_SUPPORT_TYPE & ODM_AP)
 	IN PDM_ODM_T		pDM_Odm,
 #else
@@ -72,7 +72,7 @@ ODM_SetIQCbyRFpath(
 //
 // LC calibrate
 //
-void	
+void
 PHY_LCCalibrate_8723B(
 	IN PDM_ODM_T		pDM_Odm
 );
@@ -80,15 +80,15 @@ PHY_LCCalibrate_8723B(
 //
 // AP calibrate
 //
-void	
-PHY_APCalibrate_8723B(		
+void
+PHY_APCalibrate_8723B(
 #if (DM_ODM_SUPPORT_TYPE & ODM_AP)
 	IN PDM_ODM_T		pDM_Odm,
 #else
 	IN	PADAPTER	pAdapter,
 #endif
 							IN 	s1Byte		delta);
-void	
+void
 PHY_DigitalPredistortion_8723B(		IN	PADAPTER	pAdapter);
 
 
@@ -124,8 +124,8 @@ _PHY_MACSettingCalibration_8723B(
 	IN	PADAPTER	pAdapter,
 #endif
 	IN	pu4Byte		MACReg,
-	IN	pu4Byte		MACBackup	
+	IN	pu4Byte		MACBackup
 	);
-							
-#endif	// #ifndef __HAL_PHY_RF_8188E_H__								
+
+#endif	// #ifndef __HAL_PHY_RF_8188E_H__
 

@@ -65,7 +65,7 @@ extern "C"
 
 /**
  @macro="htonl"
- 
+
    Purpose:  Convert ULONG in Host Byte Order to Network Byte Order.                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -80,7 +80,7 @@ extern "C"
 
 /**
  @macro="htons"
- 
+
    Purpose:  Convert USHORT in Host Byte Order to Network Byte Order.                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -93,7 +93,7 @@ extern "C"
 
 /**
  @macro="ntohl"
- 
+
    Purpose:  Convert ULONG in Network Byte Order to Host Byte Order.                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -108,7 +108,7 @@ extern "C"
 
 /**
  @macro="ntohs"
- 
+
    Purpose:  Convert USHORT in Network Byte Order to Host Byte Order.                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -122,7 +122,7 @@ extern "C"
 
 /**
  @macro="HLPR_CLOSE_HANDLE"
- 
+
    Purpose:  Close a standard handle and set to 0.                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -138,7 +138,7 @@ extern "C"
 
 /**
  @macro="HLPR_REG_CLOSE_KEY"
- 
+
    Purpose:  Close a registry handle and set to 0.                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -154,7 +154,7 @@ extern "C"
 
 /**
  @macro="HLPR_DELETE"
- 
+
    Purpose:  Free memory allocated with ExAllocatePoolZero and set the pointer to 0.            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -171,7 +171,7 @@ extern "C"
 
 /**
  @macro="HLPR_DELETE_ARRAY"
- 
+
    Purpose:  Free memory allocated with ExAllocatePoolZero and set the pointer to 0.            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -183,8 +183,8 @@ extern "C"
 
 /**
  @macro="HLPR_NEW"
- 
-   Purpose:  Allocate memory from NonPaged Pool with ExAllocatePoolZero and initialize it's 
+
+   Purpose:  Allocate memory from NonPaged Pool with ExAllocatePoolZero and initialize it's
              contents with 0's.                                                                 <br>
                                                                                                 <br>
    Notes:    Caller responsible for freeing allocated memory using macro HLPR_DELETE.           <br>
@@ -206,8 +206,8 @@ extern "C"
 
 /**
  @macro="HLPR_NEW_ARRAY"
- 
-   Purpose:  Allocate memory from NonPaged Pool with ExAllocatePoolZero and initialize it's 
+
+   Purpose:  Allocate memory from NonPaged Pool with ExAllocatePoolZero and initialize it's
              contents with 0's.                                                                 <br>
                                                                                                 <br>
    Notes:    Caller responsible for freeing allocated memory using macro HLPR_DELETE_ARRAY.     <br>
@@ -242,8 +242,8 @@ extern "C"
 
 /**
  @macro="HLPR_NEW_CASTED_ARRAY"
- 
-   Purpose:  Allocate memory from NonPaged Pool with ExAllocatePoolZero and initialize it's 
+
+   Purpose:  Allocate memory from NonPaged Pool with ExAllocatePoolZero and initialize it's
              contents with 0's.                                                                 <br>
                                                                                                 <br>
    Notes:    Caller responsible for freeing allocated memory using macro HLPR_DELETE_ARRAY.     <br>
@@ -278,8 +278,8 @@ extern "C"
 
 /**
  @macro="HLPR_NEW"
- 
-   Purpose:  Allocate memory from NonPaged Pool with ExAllocatePoolZero and leave it's 
+
+   Purpose:  Allocate memory from NonPaged Pool with ExAllocatePoolZero and leave it's
              contents as is.                                                                    <br>
                                                                                                 <br>
    Notes:    Caller responsible for freeing allocated memory using macro HLPR_DELETE.           <br>
@@ -298,7 +298,7 @@ extern "C"
 
 /**
  @macro="HLPR_BAIL_LABEL"
- 
+
    Purpose:  Tag for the cleanup and exit portion of the function.                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -310,7 +310,7 @@ extern "C"
 
 /**
  @macro="HLPR_BAIL_LABEL"
- 
+
    Purpose:  Tag for the cleanup and exit portion of the function.                              <br>
                                                                                                 <br>
    Notes:    Used when there can be more than 1 jump in code.                                   <br>
@@ -322,7 +322,7 @@ extern "C"
 
 /**
  @macro="HLPR_BAIL_ON_FAILURE_WITH_LABEL"
- 
+
    Purpose:  Jump in the code's execution to the provided label if an error occurs.             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -343,7 +343,7 @@ extern "C"
 
 /**
  @macro="HLPR_BAIL_ON_FAILURE"
- 
+
    Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL label if an error occurs. <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -355,8 +355,8 @@ extern "C"
 
 /**
  @macro="HLPR_BAIL_ON_FAILURE_2"
- 
-   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL_2 label if an error 
+
+   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL_2 label if an error
              occurs.                                                                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -368,8 +368,8 @@ extern "C"
 
 /**
  @macro="HLPR_BAIL_ON_ALLOC_FAILURE"
- 
-   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL label if memory allocation 
+
+   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL label if memory allocation
              fails.                                                                             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -381,8 +381,8 @@ extern "C"
 
 /**
  @macro="HLPR_BAIL_ON_ALLOC_FAILURE_2"
- 
-   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL_2 label if memory 
+
+   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL_2 label if memory
              allocation fails.                                                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -394,7 +394,7 @@ extern "C"
 
 /**
  @macro="HLPR_BAIL_WITH_LABEL"
- 
+
    Purpose:  Jump in the code's execution path to the provided label.                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -406,7 +406,7 @@ extern "C"
 
 /**
  @macro="HLPR_BAIL"
- 
+
    Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL label.                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -418,7 +418,7 @@ extern "C"
 
 /**
  @macro="HLPR_BAIL_2"
- 
+
    Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL_2 label.                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -430,8 +430,8 @@ extern "C"
 
 /**
  @macro="HLPR_BAIL_ON_NULL_POINTER"
- 
-   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL label if the pointer is 
+
+   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL label if the pointer is
              NULL.                                                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -444,8 +444,8 @@ extern "C"
 
 /**
  @macro="HLPR_BAIL_ON_NULL_POINTER_WITH_STATUS"
- 
-   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL label if the pointer is 
+
+   Purpose:  Jump in the code's execution path to the HLPR_BAIL_LABEL label if the pointer is
              NULL.                                                                              <br>
                                                                                                 <br>
    Notes:    Status is set to STATUS_INVALID_ADDRESS.                                           <br>

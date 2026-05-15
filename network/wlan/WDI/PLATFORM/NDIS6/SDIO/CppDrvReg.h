@@ -36,7 +36,7 @@
   #define KNDIS_CHARS_PTFIELD_v3(Char, Field)	Char.Ndis40Chars.Ndis30Chars.Field
   #define KNDIS_CHARS_PTFIELD_v4(Char, Field)	Char.Ndis40Chars.Field
   #define KNDIS_CHARS_PTFIELD_v5(Char, Field)	Char.Field
- #endif 
+ #endif
 
  // v6 (TBD)
  // ...

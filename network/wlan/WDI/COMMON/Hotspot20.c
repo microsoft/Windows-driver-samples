@@ -15,11 +15,11 @@ GAS_OnInitReq(
 {
 	RT_STATUS	RtStatus = RT_STATUS_SUCCESS;
 	pu1Byte		pOUI = NULL;
-	
+
 	FunctionIn(COMP_MLME);
 
 	PlatformIndicateActionFrame(pAdapter, (PVOID)posMpdu);
-	
+
 	pOUI = Frame_GAS_QueryReq_OUI(*posMpdu);
 	RT_PRINT_DATA(COMP_MLME, DBG_LOUD, ("GAS Initial request: "), pOUI, 3);
 	if( PlatformCompareMemory(pOUI, WFA_OUI, SIZE_OUI) == 0 )
@@ -47,7 +47,7 @@ GAS_OnInitRsp(
 {
 	RT_STATUS	RtStatus = RT_STATUS_SUCCESS;
 	pu1Byte		pOUI = NULL;
-	
+
 	FunctionIn(COMP_MLME);
 
 	PlatformIndicateActionFrame(pAdapter, (PVOID)posMpdu);
@@ -57,7 +57,7 @@ GAS_OnInitRsp(
 	if( PlatformCompareMemory(pOUI, WFA_OUI, SIZE_OUI) == 0 )
 	{
 		pOUI = Frame_GAS_QueryRsp_Type(*posMpdu);
-		
+
 		if(0x09 == *pOUI)
 			P2P_OnSDRsp(pAdapter, pRfd, posMpdu);
 	}
@@ -65,7 +65,7 @@ GAS_OnInitRsp(
 	{
 		RT_TRACE(COMP_MLME, DBG_WARNING, ("No matched OUI: %2x:%2x:%2x\n", pOUI[0], pOUI[1], pOUI[2]));
 	}
-	
+
 	FunctionOut(COMP_MLME);
 	return RtStatus;
 }
@@ -79,16 +79,16 @@ GAS_OnComebackReq(
 {
 	RT_STATUS	RtStatus = RT_STATUS_SUCCESS;
 	pu1Byte		pOUI = NULL;
-	
+
 	FunctionIn(COMP_MLME);
 
 	PlatformIndicateActionFrame(pAdapter, (PVOID)posMpdu);
-	
+
 	pOUI = Frame_GAS_ComebackRsp_OUI(*posMpdu);
 	if( PlatformCompareMemory(pOUI, WFA_OUI, SIZE_OUI) == 0 )
 	{
 		pOUI = Frame_GAS_ComebackRsp_Type(*posMpdu);
-		
+
 		if(0x09 == *pOUI)
 			P2P_OnSDComebackReq(pAdapter, pRfd, posMpdu);
 	}
@@ -96,7 +96,7 @@ GAS_OnComebackReq(
 	{
 		RT_TRACE(COMP_MLME, DBG_WARNING, ("No matched OUI: %2x:%2x:%2x\n", pOUI[0], pOUI[1], pOUI[2]));
 	}
-	
+
 	FunctionOut(COMP_MLME);
 	return RtStatus;
 }
@@ -110,16 +110,16 @@ GAS_OnComebackRsp(
 {
 	RT_STATUS	RtStatus = RT_STATUS_SUCCESS;
 	pu1Byte		pOUI = NULL;
-	
+
 	FunctionIn(COMP_MLME);
 
 	PlatformIndicateActionFrame(pAdapter, (PVOID)posMpdu);
-	
+
 	pOUI = Frame_GAS_ComebackRsp_OUI(*posMpdu);
 	if( PlatformCompareMemory(pOUI, WFA_OUI, SIZE_OUI) == 0 )
 	{
 		pOUI = Frame_GAS_ComebackRsp_Type(*posMpdu);
-		
+
 		if(0x09 == *pOUI)
 			P2P_OnSDComebackRsp(pAdapter, pRfd, posMpdu);
 	}
@@ -127,7 +127,7 @@ GAS_OnComebackRsp(
 	{
 		RT_TRACE(COMP_MLME, DBG_WARNING, ("No matched OUI: %2x:%2x:%2x\n", pOUI[0], pOUI[1], pOUI[2]));
 	}
-	
+
 	FunctionOut(COMP_MLME);
 	return RtStatus;
 }

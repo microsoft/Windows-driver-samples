@@ -6,9 +6,9 @@ Module Name:
     PrecompInc.h
 
 Abstract:
-    Header fils to include. Note that, this file is only intend to 
+    Header fils to include. Note that, this file is only intend to
 	be included by Precomp.h
-    
+
 Major Change History:
       When        Who	What
     ----------	------	----------------------------------------------
@@ -49,7 +49,7 @@ Notes:
 #include "HashTable.h"
 
 
-//Isaiah for MacOS 
+//Isaiah for MacOS
 #ifndef	_MACHINE_ENDIAN_H
 #define	__MACHINE_LITTLE_ENDIAN	1234	/* LSB first: i386, vax */
 #define	__MACHINE_BIG_ENDIAN	4321	/* MSB first: 68000, ibm, net, ppc */
@@ -62,11 +62,11 @@ Notes:
 
 //
 // Platform dependent header files.
-//	
+//
 	#ifndef	BYTE_ORDER
 	#define BYTE_ORDER	__MACHINE_LITTLE_ENDIAN
 	#endif
-	
+
 	#define USE_WORKITEM 1
 
 	// This flag shall only be turned on for DTM testing.
@@ -80,10 +80,10 @@ Notes:
 		#define POWER_MAN	1
 
 		//
-		// <Roger_Notes> For SDIO compilation consideration, we should incluede system initguid.h header first before ntddsd.h is included 
+		// <Roger_Notes> For SDIO compilation consideration, we should incluede system initguid.h header first before ntddsd.h is included
 		// to prevent unresolved external symbol _GUID_SDBUS_INTERFACE_STANDARD error occurs in linking process.
 		// 2012.01.17.
-		//		
+		//
 		#include <ndis.h>
 		#include <windef.h>
 		#include <usbdi.h>
@@ -121,7 +121,7 @@ Notes:
 		#include "WDI_Common.h"
 
 		#include "ntintsafe.h"
-		#include "N62C_def.h"	
+		#include "N62C_def.h"
 		#include "N62C_Init.h"
 		#include "N62C_Port.h"
 		#include "N62C_QueryOid.h"
@@ -130,11 +130,11 @@ Notes:
 		#include "N62C_QuerySetOid.h"
 		#include "N62C_AP_Def.h"
 		#include "N62C_AP.h"
-		
+
 		#include "N63C_SendAction.h"
 		#include "N63C_Oids.h"
-	
-	
+
+
 		#include "WDI_def.h"
 		#include "N6Sdio_WdiMain.h"
 		#include "WDI_SendAction.h"
@@ -142,9 +142,9 @@ Notes:
 		#include "WDI_Extension.h"
 		#include "WDI_Xlat.h"
 
-	
+
 	#include "Ndis_OID.h"
-	
+
 	#include <Ntstrsafe.h>
 
 #define	MS_SUPPORT		0
@@ -318,7 +318,7 @@ Notes:
 // For ODM structure, we need to move HAL interace.h to lower position. Because
 // it need to use odm structure declared in odm.h
 //
-		
+
 	#include "PlatformSdio.h"
 
 
@@ -334,7 +334,7 @@ Notes:
 
 #include "HalPhyRf_WIN.h"
 //#include "HalPhyRf_8188e_WIN.h"
-//#include "HalPhyRf_8812A_WIN.h"	
+//#include "HalPhyRf_8812A_WIN.h"
 //#include "HalPhyRf_8821A_WIN.h"
 //#include "HalPhyRf_8821B.h"
 //#include "HalPhyRf_8192e_WIN.h"

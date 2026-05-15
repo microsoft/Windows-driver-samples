@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -70,7 +70,7 @@ static const GUID NULL_GUID = {0};
 
 /**
  @helper_function="HlprGUIDPurge"
- 
+
    Purpose:  Cleanup a GUID.                                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -88,7 +88,7 @@ VOID HlprGUIDPurge(_Inout_ GUID* pGUID)
 
 /**
  @helper_function="HlprGUIDDestroy"
- 
+
    Purpose:  Cleanup and free a GUID.                                                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -111,7 +111,7 @@ VOID HlprGUIDDestroy(_Inout_ GUID** ppGUID)
 
 /**
  @helper_function="HlprGUIDPopulate"
- 
+
    Purpose: Populate a GUID with a random value.                                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -151,7 +151,7 @@ UINT32 HlprGUIDPopulate(_Inout_ GUID* pGUID)
 
 /**
  @helper_function="HlprGUIDCreate"
- 
+
    Purpose:  Allocate and populate a GUID with a random value.                                  <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -197,7 +197,7 @@ UINT32 HlprGUIDCreate(_Outptr_ GUID** ppGUID)
 
 /**
  @helper_function="HlprGUIDDestroyString"
- 
+
    Purpose:  Cleanup and free a string representing a GUID.                                     <br>
                                                                                                 <br>
    Notes:    Use if string was allocated by HlprGUIDCreateString().                             <br>
@@ -227,10 +227,10 @@ UINT32 HlprGUIDDestroyString(_Inout_ PWSTR* ppGUIDString)
 
 /**
  @helper_function="HlprGUIDCreateString"
- 
+
    Purpose:  Allocate and populate a string representing the provided GUID.                     <br>
                                                                                                 <br>
-   Notes:    The caller is responsible for freeing the allocated memory using 
+   Notes:    The caller is responsible for freeing the allocated memory using
              HlprGUIDDestroyString().                                                           <br>
                                                                                                 <br>
    MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/AA379352.aspx                              <br>

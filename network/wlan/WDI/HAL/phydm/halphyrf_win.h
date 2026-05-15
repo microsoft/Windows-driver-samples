@@ -17,10 +17,10 @@
  *
  *
  ******************************************************************************/
- 
+
  #ifndef __HAL_PHY_RF_H__
  #define __HAL_PHY_RF_H__
- 
+
 typedef enum _SPUR_CAL_METHOD {
 	PLL_RESET,
 	AFE_PHASE_SEL
@@ -41,13 +41,13 @@ typedef VOID  	(*FuncSwing)(PDM_ODM_T, pu1Byte*, pu1Byte*, pu1Byte*, pu1Byte*);
 typedef VOID	(*FuncSwing8814only)(PDM_ODM_T, pu1Byte*, pu1Byte*, pu1Byte*, pu1Byte*);
 
 typedef struct _TXPWRTRACK_CFG {
-	u1Byte 		SwingTableSize_CCK;	
+	u1Byte 		SwingTableSize_CCK;
 	u1Byte 		SwingTableSize_OFDM;
 	u1Byte 		Threshold_IQK;
-	u1Byte 		Threshold_DPK;	
+	u1Byte 		Threshold_DPK;
 	u1Byte 		AverageThermalNum;
 	u1Byte 		RfPathCount;
-	u4Byte 		ThermalRegAddr;	
+	u4Byte 		ThermalRegAddr;
 	FuncSetPwr 	ODM_TxPwrTrackSetPwr;
 	FuncIQK 	DoIQK;
 	FuncLCK		PHY_LCCalibrate;
@@ -55,7 +55,7 @@ typedef struct _TXPWRTRACK_CFG {
 	FuncSwing8814only	GetDeltaSwingTable8814only;
 } TXPWRTRACK_CFG, *PTXPWRTRACK_CFG;
 
-VOID 
+VOID
 ConfigureTxpowerTrack(
 	IN 	PDM_ODM_T		pDM_Odm,
 	OUT	PTXPWRTRACK_CFG	pConfig
@@ -83,9 +83,9 @@ ODM_TXPowerTrackingCallback_ThermalMeter(
 
 VOID
 ODM_ResetIQKResult(
-	IN PDM_ODM_T	pDM_Odm 
+	IN PDM_ODM_T	pDM_Odm
 );
-u1Byte 
+u1Byte
 ODM_GetRightChnlPlaceforIQK(
     IN u1Byte chnl
 );
@@ -93,6 +93,6 @@ ODM_GetRightChnlPlaceforIQK(
 VOID odm_IQCalibrate(IN	PDM_ODM_T	pDM_Odm);
 VOID phydm_rf_init(	IN		PDM_ODM_T		pDM_Odm);
 VOID phydm_rf_watchdog(	IN		PDM_ODM_T		pDM_Odm);
-								
+
 #endif	// #ifndef __HAL_PHY_RF_H__
 

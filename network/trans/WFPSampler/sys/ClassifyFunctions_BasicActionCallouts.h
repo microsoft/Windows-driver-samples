@@ -6,7 +6,7 @@
 //      ClassifyFunctions_BasicActionCallouts.h
 //
 //   Abstract:
-//      This module contains prototypes of WFP Classify functions for returning the simple actions 
+//      This module contains prototypes of WFP Classify functions for returning the simple actions
 //         FWP_ACTION_BLOCK, FWP_ACTION_CONTINUE, and FWP_ACTION_PERMIT.
 //
 //   Author:

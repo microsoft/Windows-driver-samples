@@ -19,7 +19,7 @@ DefragReset(
 	)
 {
 	u2Byte	i;
-	
+
 	for(i=0;i<MAX_DEFRAG_PEER;i++)
 	{
 		if(Adapter->DefragArray[i].bUsed)
@@ -47,7 +47,7 @@ DefragAddRFD(
 	 *				2. Fragment number is not zero
 	 *			The RFD passed in will be queued or freed after this function call.
 	 *			ICV should be removed before this function.
-	 *			
+	 *
 	 *	Return:	NULL, if no MSDU is complete
 	 *			RFD list, if one MSDU is complete
 	 *
@@ -76,14 +76,14 @@ DefragAddRFD(
 		{
 			// No free entry, do age function and try again
 			DefragAge(
-				Adapter->DefragArray, 
+				Adapter->DefragArray,
 				MAX_DEFRAG_PEER,
 				PlatformGetCurrentTime(),
 				Adapter);
 
 			pEntry=DefragFindFreeEntry(Adapter->DefragArray, 	MAX_DEFRAG_PEER);
 		}
-		
+
 		if(pEntry==NULL)
 		{
 			// If we stall can not get a free entry, knock out the least rescent used (LRU)
@@ -95,9 +95,9 @@ DefragAddRFD(
 			pEntry=DefragFindFreeEntry(Adapter->DefragArray, 	MAX_DEFRAG_PEER);
 
 			RT_ASSERT(pEntry!=NULL, ("DefragAddRFD(): pEntry should not be NULL.\n"));
-			
+
 		}
-		
+
 			DefragEntrySetRFD(
 				pEntry,
 				pRfd,
@@ -105,12 +105,12 @@ DefragAddRFD(
 				TID,
 				SeqNum,
 				FragNum);
-			
+
 	}
 	else
 	{	// 2~ frag
 		pEntry=DefragSearch(
-			Adapter->DefragArray, 
+			Adapter->DefragArray,
 			MAX_DEFRAG_PEER,
 			pSenderAddr,
 			TID,
@@ -139,14 +139,14 @@ DefragAddRFD(
 			}
 			//2 Remove header and MPDU head overhead (ex. IV)
 			MAKE_RFD_OFFSET_AT_FRONT(pRfd, sMacHdrLng + QosCtrlLen + HTCLen + EncryptionOverhead)		// Add QosCtrlLen; Modified by Annie, 2006-01-09.
-		
+
 			DefragEntryAddRFD(pEntry, pRfd, FragNum);
 			if(!bMoreFrag)
 			{	//2 This MSDU is complete, return it
 				pRetRfd=pEntry->pRfdHead;
 				pEntry->bUsed=FALSE;
 			}
-		}	
+		}
 	}
 	return pRetRfd;
 }
@@ -163,7 +163,7 @@ DefragInit(
 	)
 {
 	u2Byte	i;
-	
+
 	for(i=0;i<Size;i++)
 	{
 		pDefragArray[i].bUsed=FALSE;
@@ -181,7 +181,7 @@ DefragSearch(
 	)
 {
 	u2Byte	i;
-	
+
 	for(i=0;i<Size;i++)
 	{
 		if(!pDefragArray[i].bUsed)
@@ -194,7 +194,7 @@ DefragSearch(
 			)
 		{
 			return &pDefragArray[i];
-		}	
+		}
 	}
 
 	return NULL;
@@ -208,7 +208,7 @@ DefragRemoveOldest(
 	u2Byte			i;
 	u2Byte			Oldest_Frag = MAX_DEFRAG_PEER;
 	PDEFRAG_ENTRY	pDefragArray = Adapter->DefragArray;
-	
+
 	for(i=0; i<MAX_DEFRAG_PEER; i++)
 	{
 		if(!pDefragArray[i].bUsed)
@@ -219,11 +219,11 @@ DefragRemoveOldest(
 			Oldest_Frag = i;
 			continue;
 		}
-				
+
 		if( pDefragArray[Oldest_Frag].usMaxLifeTimeStamp > pDefragArray[i].usMaxLifeTimeStamp )
 		{
 			Oldest_Frag = i;
-		}	
+		}
 	}
 
 	if( Oldest_Frag != MAX_DEFRAG_PEER )
@@ -237,7 +237,7 @@ DefragFindFreeEntry(
 	)
 {
 	u2Byte	i;
-	
+
 	for(i=0;i<Size;i++)
 	{
 		if(!pDefragArray[i].bUsed)
@@ -256,7 +256,7 @@ DefragAge(
 	)
 {
 	u2Byte	i;
-	
+
 	for(i=0;i<Size;i++)
 	{
 		if(!pDefragArray[i].bUsed)
@@ -274,7 +274,7 @@ DefragEntrySetRFD(
 	pu1Byte			pSenderAddr,
 	u1Byte			TID,
 	u2Byte			SeqNum,
-	u1Byte			FragNum	
+	u1Byte			FragNum
 	)
 {
 	RT_ASSERT(FragNum==0, ("DefragEntrySetRFD() with nonzero FragNum !!\n"));
@@ -294,11 +294,11 @@ VOID
 DefragEntryAddRFD(
 	PDEFRAG_ENTRY	pEntry,
 	PRT_RFD			pRfd,
-	u1Byte			FragNum	
+	u1Byte			FragNum
 	)
 {
 	RT_ASSERT(FragNum==(pEntry->LastFragNum+1), ("DefragEntryAddRFD() with wrong FragNum !!\n"));
-	
+
 	pEntry->LastFragNum=FragNum;
 
 	// Increment fragment counter
@@ -306,10 +306,10 @@ DefragEntryAddRFD(
 
 	// Add packet length
 	pEntry->pRfdHead->PacketLength+=pRfd->FragLength;
-	
+
 	// Update arrival time
 	pEntry->usLastArriveTimeStamp=PlatformGetCurrentTime();
-	
+
 	// Insert to tail
 	pEntry->pRfdTail->NextRfd=pRfd;
 	pEntry->pRfdTail=pRfd;
@@ -318,7 +318,7 @@ DefragEntryAddRFD(
 VOID
 DefragEntryFree(
 	PDEFRAG_ENTRY	pEntry,
-	PADAPTER		Adapter	
+	PADAPTER		Adapter
 	)
 {
 	ReturnRFDList(Adapter, (PRT_RFD)pEntry->pRfdHead);
@@ -333,7 +333,7 @@ DefragRecycleRFD(
 	// There may be many ways to recycle RFDs.
 	// Now we only free the LRU RFDs in DefragArray. 2006.07.25, by shien chang.
 	PADAPTER pAdapter;
-	pAdapter = GetDefaultAdapter(Adapter);	
+	pAdapter = GetDefaultAdapter(Adapter);
 	DefragFreeLRUEntry(pAdapter->DefragArray, MAX_DEFRAG_PEER, pAdapter);
 }
 
@@ -362,7 +362,7 @@ DefragFreeLRUEntry(
 		{
 			if (!pDefragArray[i].bUsed)
 				continue;
-		
+
 			if (pDefragArray[i].usLastArriveTimeStamp < pDefragArray[target].usLastArriveTimeStamp)
 				target = i;
 		}

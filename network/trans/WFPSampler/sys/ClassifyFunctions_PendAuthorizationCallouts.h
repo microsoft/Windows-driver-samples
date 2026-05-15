@@ -6,7 +6,7 @@
 //      ClassifyFunctions_PendAuthorizationCallouts.h
 //
 //   Abstract:
-//      This module contains prototypes of WFP Classify functions for pending and completing 
+//      This module contains prototypes of WFP Classify functions for pending and completing
 //         authorizations
 //
 //   Author:

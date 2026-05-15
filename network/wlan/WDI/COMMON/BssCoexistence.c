@@ -12,7 +12,7 @@ BSS_ParsingOBSSInfoElement(
 	PRT_WLAN_BSS	pBssDesc
 	)
 {
-	pBssDesc->BssHT.OBSSScanInterval = 
+	pBssDesc->BssHT.OBSSScanInterval =
 	GET_OBSS_PARAM_ELE_SCAN_INTERVAL(osFrame.Octet);
 }
 
@@ -23,7 +23,7 @@ BSS_ParsingBSSCoexistElement(
 	PRT_WLAN_BSS	pBssDesc
 	)
 {
-	pBssDesc->BssHT.bdOBSSExemption = 
+	pBssDesc->BssHT.bdOBSSExemption =
 	GET_BSS_COEXISTENCE_ELE_OBSS_EXEMPTION_GRT(osFrame.Octet);
 }
 
@@ -39,7 +39,7 @@ BSS_AppendExentedCapElement(
 	u1Byte					InfoContent[8] = {0};
 
 	FillOctetString(Info, InfoContent, sizeof(InfoContent));
-	
+
 	if(pHTInfo->bBssCoexist)
 	{
 		SET_EXT_CAPABILITY_ELE_BSS_COEXIST(InfoContent, 1);
@@ -75,7 +75,7 @@ BSS_AppendBSSCoexistReportElement(
 	// to allocate two layers pointer for array ICS[255][15]. To simplize the problem. We will only
 	// support one dimenssion arry to simulate 2/3/.. layer array as below.
 	//
-	
+
 	pGenBufICS = GetGenTempBuffer (Adapter, 255*15);
 	//ICS = (u1Byte **)pGenBufICS->Buffer.Ptr;
 	ICS = (u1Byte *)pGenBufICS->Buffer.Ptr;
@@ -84,7 +84,7 @@ BSS_AppendBSSCoexistReportElement(
 	for (i=0; i<pMgntInfo->NumBssDesc4Query; i++)
 	{
 		pRtBss = pMgntInfo->bssDesc4Query+i;
-		
+
 		if(pRtBss->BssHT.bdSupportHT == FALSE)
 		{
 			//ICS[pRtBss->RegulatoryClass][pRtBss->ChannelNumber]=1;
@@ -114,13 +114,13 @@ BSS_AppendBSSCoexistReportElement(
 					{
 						SET_BSS_INTOLERANT_ELE_CHANNEL(InfoContent+k, j);
 						k++;
-					}	
-				}	
-			}	
+					}
+				}
+			}
 			FillOctetString(Info, InfoContent, 2+k-1);
 			//PRINT_DATA("", Info.Octet, Info.Length);
 			PacketMakeElement(posFrame, EID_BSSIntolerantChlReport, Info);
-		}			
+		}
 	}
 	ReturnGenTempBuffer (Adapter, pGenBufICS);
 }
@@ -145,11 +145,11 @@ ConstructBSSCoexistPacket(
 	*pLength = 0;
 
 	ConstructMaFrameHdr(
-					Adapter, 
-					Adapter->MgntInfo.Bssid, 
-					ACT_CAT_PUBLIC, 
-					ACT_PUBLIC_BSSCOEXIST, 
-					&osBSSCOEXISTFrame);	
+					Adapter,
+					Adapter->MgntInfo.Bssid,
+					ACT_CAT_PUBLIC,
+					ACT_PUBLIC_BSSCOEXIST,
+					&osBSSCOEXISTFrame);
 
 	if(IS_WIRELESS_MODE_5G(Adapter))
 	{
@@ -159,17 +159,17 @@ ConstructBSSCoexistPacket(
 	{
 		SET_BSS_COEXISTENCE_ELE_FORTY_INTOLERANT(InfoContent, pHTInfo->b40Intolerant);
 	}
-	
+
 	if(TE_B)
 		SET_BSS_COEXISTENCE_ELE_20_WIDTH_REQ(InfoContent, 1);
-	
+
 	FillOctetString(Info, InfoContent, 1);
-	PacketMakeElement(&osBSSCOEXISTFrame, EID_BSSCoexistence, Info);	
+	PacketMakeElement(&osBSSCOEXISTFrame, EID_BSSCoexistence, Info);
 
 	if(TE_A)
 		BSS_AppendBSSCoexistReportElement(Adapter, &osBSSCOEXISTFrame);
 
-	*pLength = osBSSCOEXISTFrame.Length;	
+	*pLength = osBSSCOEXISTFrame.Length;
 }
 
 
@@ -189,8 +189,8 @@ SendBSSCoexistPacket(
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 	{
 		ConstructBSSCoexistPacket(
-				Adapter, 
-				pBuf->Buffer.VirtualAddress, 
+				Adapter,
+				pBuf->Buffer.VirtualAddress,
 				&pTcb->PacketLength,
 				TE_A,
 				TE_B
@@ -199,8 +199,8 @@ SendBSSCoexistPacket(
 		if(pTcb->PacketLength != 0)
 			MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
-	
-	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);	
+
+	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 }
 
 RT_STATUS
@@ -245,7 +245,7 @@ BSS_OnScanComplete(
 		for (i=0; i<pMgntInfo->NumBssDesc4Query; i++)
 		{
 			pRtBss = pMgntInfo->bssDesc4Query+i;
-			
+
 			if(pRtBss->BssHT.bdSupportHT == FALSE)
 				TE_A = TRUE;
 			else if(pRtBss->BssHT.bd40Intolerant == TRUE)
@@ -254,16 +254,16 @@ BSS_OnScanComplete(
 			if(TE_A && TE_B)
 				break;
 		}
-		
+
 		pHTInfo->IdleOBSSScanCnt = 0;
 		curSystemTimeUs = PlatformGetCurrentTime();
 
 		// Check the conditions and the interval to send the report (we don't send the report repeatly as soon)
 		if((TE_A || TE_B) &&
-			(0 == pHTInfo->lastTimeSentObssRptUs || 
+			(0 == pHTInfo->lastTimeSentObssRptUs ||
 			((curSystemTimeUs - pHTInfo->lastTimeSentObssRptUs) > ((pHTInfo->CurOBSSScanInterval * 2 / 3) * 1000000))))
-		{			
-			RT_TRACE_F(COMP_HT, DBG_LOUD, 
+		{
+			RT_TRACE_F(COMP_HT, DBG_LOUD,
 				("SendBSSCoexistPacket() TE_A(%d), TE_B(%d), (curSystemTimeUs - pHTInfo->lastTimeSentObssRptUs) = %d \n", TE_A, TE_B, (u4Byte)(curSystemTimeUs - pHTInfo->lastTimeSentObssRptUs)));
 			pHTInfo->lastTimeSentObssRptUs = curSystemTimeUs;
 			SendBSSCoexistPacket(Adapter, TE_A, TE_B);
@@ -293,17 +293,17 @@ BSS_IdleScanWatchDog(
 	PRT_HIGH_THROUGHPUT		pHTInfo = GET_HT_INFO(pMgntInfo);
 	u2Byte					ObssScanInterfaval = 0;
 
-	// Only collect information to associated ap 
+	// Only collect information to associated ap
 	if(!pMgntInfo->mAssoc)
 		return;
-	
+
 	// Only sent message to FC HT AP
 	if(pHTInfo->bCurrentHTSupport == FALSE)
 		return;
 	// We are not in 40MHz
 	else if(!CHNL_RUN_ABOVE_40MHZ(pMgntInfo))
 		return;
-	else if(pHTInfo->bBssCoexist == FALSE || pHTInfo->bPeerBssCoexistence == FALSE) 
+	else if(pHTInfo->bBssCoexist == FALSE || pHTInfo->bPeerBssCoexistence == FALSE)
 		return;
 	else if(pHTInfo->bCurOBSSScanExemptionGrt == TRUE)
 		return;
@@ -311,7 +311,7 @@ BSS_IdleScanWatchDog(
 		return;
 	else if(pMgntInfo->LinkDetectInfo.bHigherBusyTraffic)
 		return;
-	
+
 	// We don't want the scan interval too small.
 	// By Bruce, 2011-07-28.
 	if(pHTInfo->CurOBSSScanInterval < RT_OBSS_MIN_TRIGGER_SCAN_INTERVAL)
@@ -325,7 +325,7 @@ BSS_IdleScanWatchDog(
 	{
 		RT_TRACE_F(COMP_HT, DBG_LOUD, ("Reaches the OBSS scan interval, start to scan....\n"));
 		pHTInfo->IdleOBSSScanCnt = 0;
-		
+
 		MgntActSet_802_11_BSSID_LIST_SCAN(pAdapter);
 	}
 }

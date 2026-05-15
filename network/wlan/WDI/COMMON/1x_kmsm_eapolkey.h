@@ -2,10 +2,10 @@
 
 Module Name:
 	1x_kmsm_eapolkey.h
-	
+
 Abstract:
-	1. EAPOL-Key related data structures and helper macros.	
-	2. Declare helper functinos defined in 1x_kmsm_perf.c, 1x_kmsm_hmac.c. 
+	1. EAPOL-Key related data structures and helper macros.
+	2. Declare helper functinos defined in 1x_kmsm_perf.c, 1x_kmsm_hmac.c.
 
 --*/
 
@@ -40,13 +40,13 @@ typedef unsigned long u4Byte;
 //------------------------------------------------------------------------------
 // From 1x_type.h, 2005.06.30, by rcnjko.
 //------------------------------------------------------------------------------
-typedef union _OCTET8_INTEGER {  
+typedef union _OCTET8_INTEGER {
 	u8Byte QuadPart;
 
-	struct {    
-		u4Byte LowPart;    
-		u4Byte HighPart;  
-	};  
+	struct {
+		u4Byte LowPart;
+		u4Byte HighPart;
+	};
 } OCTET8_INTEGER, *POCTET8_INTEGER;
 
 
@@ -80,10 +80,10 @@ typedef enum     { type_Group = 0, type_Pairwise = 1 } KeyType;
 typedef enum     { type_4way2nd = 0, type_4way4th = 1, type_2way2nd = 2, type_unknow=3 } MsgType;		// Added by Annie, 2005-07-11.
 
 /*-----------------------------------------------------------------------------
- Network and machine byte oder conversion 
+ Network and machine byte oder conversion
 	Macro definition
--------------------------------------------------------------------------------*/	
-// <RJ_TODO> The translations below are not endian-free. 
+-------------------------------------------------------------------------------*/
+// <RJ_TODO> The translations below are not endian-free.
 #define long2net(l,c)    (*((c) )=(unsigned char)(((l)>>24)&0xff), \
                          *((c)+1)=(unsigned char)(((l)>>16)&0xff), \
 						 *((c)+2)=(unsigned char)(((l)>> 8)&0xff), \
@@ -102,7 +102,7 @@ typedef enum     { type_4way2nd = 0, type_4way4th = 1, type_2way2nd = 2, type_un
 
 #define lint2net(l,c)	(long2net(l.HighPart, c) , long2net(l.LowPart, c+4))
 #define net2lint(c,l)	(net2long(c, l.HighPart) , net2long(c+4, l.LowPart))
-	
+
 /*-----------------------------------------------------------------------------
  LargeInteger
 	Inline Function definition
@@ -266,12 +266,12 @@ typedef struct _KDE_IE_STRUCT
 {
 	u1Byte  IEType;	// ID = 0xDD
 	u1Byte  IELen;
-	u1Byte  OUI[3];      // 0x00-0x0F-0xAC 
+	u1Byte  OUI[3];      // 0x00-0x0F-0xAC
 	u1Byte  Datatype; // 0x01
 	u1Byte  KID;
 	u1Byte  Reserved;
 	u1Byte  GTK[1];
-	
+
 }KDE_STRUCT,*PKDE_STRUCT;
 
 #ifdef REMOVE_PACK
@@ -410,7 +410,7 @@ __inline int Message_EqualReplayCounter(OCTET8_INTEGER li1, OCTET_STRING f)
 {
 	OCTET8_INTEGER li2;
 	Message_ReplayCounter_OC2LI(f, &li2);
-	if(li1.HighPart == li2.HighPart && li1.LowPart == 
+	if(li1.HighPart == li2.HighPart && li1.LowPart ==
 li2.LowPart)
 		return 1;
 	else
@@ -421,7 +421,7 @@ li2.LowPart)
 	f is the replay counter from EAPOL-KEY message
 ---------------------------------------------------------------------------------------------*/
 static
-__inline int Message_SmallerEqualReplayCounter(OCTET8_INTEGER li1, OCTET_STRING f) 
+__inline int Message_SmallerEqualReplayCounter(OCTET8_INTEGER li1, OCTET_STRING f)
 //f<li1
 {
 	OCTET8_INTEGER li2;
@@ -503,21 +503,21 @@ BOOLEAN	CheckEapolMIC(
 void EncEapolKeyData(
 	PADAPTER		Adapter,
 	OCTET_STRING	EapolKeyMsg,
-	pu1Byte			pKEK, 
+	pu1Byte			pKEK,
 	int				nKEKLen);
 
 
 
-void 
-CalcCCKMRequestIEMIC( 
-	OCTET_STRING MICdata , 
-	u1Byte *KRK , 
+void
+CalcCCKMRequestIEMIC(
+	OCTET_STRING MICdata ,
+	u1Byte *KRK ,
 	u1Byte *outdata );
 
 void
-CalcCCKMRequestIEMICV2( 
-	OCTET_STRING MICdata , 
-	u1Byte *KRK , 
+CalcCCKMRequestIEMICV2(
+	OCTET_STRING MICdata ,
+	u1Byte *KRK ,
 	u1Byte *outdata );
 
 /*
@@ -533,11 +533,11 @@ void CalcGTK(
 
 int DecGTK(
 	PADAPTER		Adapter,
-	OCTET_STRING 	EAPOLMsgRecvd, 
-	u1Byte 			*kek, 
-	int	 			keklen, 
-	int 			keylen, 
-	u1Byte 			*kout);	
+	OCTET_STRING 	EAPOLMsgRecvd,
+	u1Byte 			*kek,
+	int	 			keklen,
+	int 			keylen,
+	u1Byte 			*kout);
 
 
 //------------------------------------------------------------------------

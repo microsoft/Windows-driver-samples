@@ -113,7 +113,7 @@ typedef struct _CCX_ADAPTER_INFO
 {
     CCXGUID                     guid;                   //Guid which identifies the WLAN adapter
     CCXUINT8                    ccxVer;                 //Version of CCX the adapter supports
-} CCX_ADAPTER_INFO, *PCCX_ADAPTER_INFO;  
+} CCX_ADAPTER_INFO, *PCCX_ADAPTER_INFO;
 
 typedef enum _CCX_AUTH_RESULT
 {
@@ -218,7 +218,7 @@ typedef struct _TX_CHARACTERISTICS
     CCXUINT32               frequency;
     CCXUINT16               numMPDU;
     CCXUINT32               dataRate;
-    CCXUINT64               tsf;       
+    CCXUINT64               tsf;
     CCXUINT8                retryCount;
 } TX_CHARACTERISTICS, *PTX_CHARACTERISTICS;
 
@@ -280,7 +280,7 @@ typedef struct _CCX_EAP_RESULTS
     PCCXUINT8               pMPPRecvKey;
 } CCX_EAP_RESULTS, *PCCX_EAP_RESULTS;
 
-//Why nic is roaming                      
+//Why nic is roaming
 typedef enum _CCX_TRANS_REASON
 {
     CCX_TRANS_UNSPECIFIED,                    // 0
@@ -291,9 +291,9 @@ typedef enum _CCX_TRANS_REASON
     CCX_TRANS_FIRST_ASSOCIATION,              // 5
     CCX_TRANS_INTO_WLAN,                      // 6
     CCX_TRANS_OUT_OF_WLAN,                    // 7
-    CCX_TRANS_BETTER_AP_FOUND,                // 8   
+    CCX_TRANS_BETTER_AP_FOUND,                // 8
     CCX_TRANS_AP_DISASSOCIATED,               // 9
-    CCX_TRANS_FAILED_8021X_EAP_AUTHEN,        // 10   
+    CCX_TRANS_FAILED_8021X_EAP_AUTHEN,        // 10
     CCX_TRANS_FAILED_8021X_4WAY_HANDSHAKE,    // 11
     CCX_TRANS_REPLAY_COUNTER_FAILURES,        // 12
     CCX_TRANS_MIC_DATA_FAILURES,              // 13
@@ -450,7 +450,7 @@ typedef struct _CCX_STATUS_ADAPTER_CONFIG
 
 typedef struct _CCX_STATUS_EAP_AUTHENTICATED
 {
-    CCX_802_11_MAC_ADDRESS          ccxBSSID;    
+    CCX_802_11_MAC_ADDRESS          ccxBSSID;
     CCX_EAP_RESULTS                 ccxEapKeys;
 
 } CCX_STATUS_EAP_AUTHENTICATED, *PCCX_STATUS_EAP_AUTHENTICATED;
@@ -459,7 +459,7 @@ typedef struct _CCX_STATUS_EAP_AUTHENTICATED
 typedef struct _CCX_STATUS_PMKID_LIST
 {
     CCXUINT32                       uPMKIDListSize;
-    CCXUINT32                       uPMKIDListOffset;   
+    CCXUINT32                       uPMKIDListOffset;
 } CCX_STATUS_PMKID_LIST, *PCCX_STATUS_PMKID_LIST;
 
 
@@ -482,18 +482,18 @@ typedef struct _CCX_STATUS_DIAG_DATA
 // Here we define the predefine Parameter in ccxRM.h in Vsita CCX Header file
 //
 //--------------------------------------------------------------------
-// 
+//
 // Measurement report mode field bit definitions.
-// 
+//
 typedef enum _CCX_RM_RESULT {
     CCX_RM_RESULT_ACCEPTED = 0,
     CCX_RM_RESULT_INCAPABLE,
     CCX_RM_RESULT_REFUSED
 } CCX_RM_RESULT, *PCCX_RM_RESULT;
 
-// 
+//
 // Measurement type definitions (used for both requests and reports).
-// 
+//
 typedef enum _CCX_RM_TYPE {
     CCX_RM_TYPE_CHANNEL_LOAD = 1,
     CCX_RM_TYPE_NOISE_HISTOGRAM,
@@ -501,9 +501,9 @@ typedef enum _CCX_RM_TYPE {
     CCX_RM_TYPE_FRAME
 } CCX_RM_TYPE, *PCCX_RM_TYPE;
 
-// 
+//
 // Scan mode definitions for beacon request element
-// 
+//
 typedef enum _CCX_RM_SCAN_MODE {
     CCX_RM_MODE_PASSIVE = 0,
     CCX_RM_MODE_ACTIVE,
@@ -519,20 +519,20 @@ typedef struct _CCX_RM_REQUEST {
 } CCX_RM_REQUEST, *PCCX_RM_REQUEST;
 
 //------------------------------------------------------------------------------
-// Header struct for RM request 
+// Header struct for RM request
 //------------------------------------------------------------------------------
 typedef struct _CCX_RM_REQ_IE_HDR {
-    CCXUINT16               Token; 
+    CCXUINT16               Token;
     CCX_RM_TYPE             Type;
 } CCX_RM_REQ_IE_HDR, *PCCX_RM_REQ_IE_HDR;
 
 //------------------------------------------------------------------------------
-// The RM requests 
+// The RM requests
 //------------------------------------------------------------------------------
 typedef struct _CCX_RM_CCA_REQ_IE {
     CCX_RM_REQ_IE_HDR       Header;         // type 1
     CCXUINT8                Channel;
-    CCXUINT16               Duration;       
+    CCXUINT16               Duration;
 } CCX_RM_CCA_REQ_IE, *PCCX_RM_CCA_REQ_IE;
 
 typedef struct _CCX_RM_RPI_REQ_IE {
@@ -594,9 +594,9 @@ typedef struct _CCX_RM_BEACON_RPT_IE {
     CCXUINT16               Duration;
 } CCX_RM_BEACON_RPT_IE, *PCCX_RM_BEACON_RPT_IE;
 
-// 
+//
 // Frame report data
-// 
+//
 typedef struct _CCX_RM_FRAME_RPT_QUAD {
     CCX_802_11_MAC_ADDRESS  SA;
     CCX_802_11_MAC_ADDRESS  BSSID;
@@ -643,7 +643,7 @@ typedef struct _CCX_STA_STATS_GRP_2 {
 // Here we define the predefine Parameter in ccxDiag.h in Vsita CCX Header file
 //
 //--------------------------------------------------------------------
-typedef struct _CCX_FRAME_LOGGING_MODE 
+typedef struct _CCX_FRAME_LOGGING_MODE
 {
     CCXBOOLEAN                      bEnabled;
 } CCX_FRAME_LOGGING_MODE, *PCCX_FRAME_LOGGING_MODE;
@@ -722,7 +722,7 @@ typedef struct _CCX_NOTIFY_DIAG_MSG
 {
     DIAG_NOTIFICATION_ID            msgId;
     CCXUINT32                       msgLen;
-    CCXUINT32                       msgOffset; 
+    CCXUINT32                       msgOffset;
 } CCX_NOTIFY_DIAG_MSG, *PCCX_NOTIFY_DIAG_MSG;
 
 //--------------------------------------------------------------------
@@ -733,8 +733,8 @@ typedef struct _CCX_NOTIFY_DIAG_MSG
 
 // Index values for neighbor list entry subelements
 // These are used to index into the subElemOffset array to retreive the
-//       data offsets for each subelement type.  
-// Note: These values do not match the subelement type values used in the 
+//       data offsets for each subelement type.
+// Note: These values do not match the subelement type values used in the
 //       TLV's received in the IAPP message.
 typedef enum _CCX_NL_SUBELEM_INDEX
 {
@@ -776,7 +776,7 @@ typedef struct _CCX_NL_SUBELEM_ACE
     CCXUINT8 loadFactor;
 } CCX_NL_SUBELEM_ACE, *PCCX_NL_SUBELEM_ACE;
 
-// Neighbor list entry format.  
+// Neighbor list entry format.
 //  This is the format of the data for each entry in the neighbor list
 typedef struct _CCX_NL_ELEMENT
 {
@@ -786,10 +786,10 @@ typedef struct _CCX_NL_ELEMENT
     CCXUINT8                channelBand;    // channel band being used by AP
     CCX_PHY_TYPE            phyType;        // phy type of AP
 
-                                // subelem offsets are the offset from the start of this structure 
-                                //  where the data for each subelement type is located.  Each 
-                                //  subelement's data is formatted in it's struct type defined 
-                                //  below.  If the offset for a subelement is 0, there is no 
+                                // subelem offsets are the offset from the start of this structure
+                                //  where the data for each subelement type is located.  Each
+                                //  subelement's data is formatted in it's struct type defined
+                                //  below.  If the offset for a subelement is 0, there is no
                                 //  data for that particular subelement.
     CCXUINT32               subElemOffset[CCX_NL_SUBELEM_INDEX_MAX];
 } CCX_NL_ELEMENT, *PCCX_NL_ELEMENT;
@@ -938,7 +938,7 @@ typedef struct _IHV_SET_INFO
 // Note - This definition machtes the CCX_REQUEST_DATA's QUERY_INFO structure
 //---------------------------------------------------------------------------
 typedef struct _IHV_QUERY_INFO
-{   
+{
     UINT32                  Oid;
     UINT32                  BytesWritten;
     UINT32                  BytesNeeded;
@@ -977,7 +977,7 @@ typedef struct _IHV_CCX_PACKET {
 //---------------------------------------------------------------------------
 typedef struct _TLV_STRUCT
 {
-    ULONG                   type;   
+    ULONG                   type;
     ULONG                   length;
     PVOID                   value;
 } TLV_STRUCT, *PTLV_STRUCT;
@@ -989,19 +989,19 @@ typedef DOT11_EXTSTA_RECV_CONTEXT   IHV_RX_CHARACTERISTICS, *PIHV_RX_CHARACTERIS
 
 //---------------------------------------------------------------------------
 // Completion reason codes for packets passed from IHV service to driver for transmission.
-// 
+//
 //  IHV_TX_COMPL_REASON_SUCCESS
 //      -packet was successfully sent
-// 
-//  IHV_TX_COMPL_REASON_FAILED           
+//
+//  IHV_TX_COMPL_REASON_FAILED
 //      -MPSendNetBufferLists() failed to submit the packet for transmission
-// 
-//  IHV_TX_COMPL_REASON_CANCELLED   
+//
+//  IHV_TX_COMPL_REASON_CANCELLED
 //      -send was cancelled due to pause, reset, surprise removal.
-// 
-//  IHV_TX_COMPL_REASON_NDIS_CANCELLED   
+//
+//  IHV_TX_COMPL_REASON_NDIS_CANCELLED
 //      -send was cancelled due to NDIS calling MPCancelSendNetBufferLists()
-// 
+//
 //  IHV_TX_COMPL_REASON_ADAPTER_NOT_READY
 //      -MPSendNetBufferLists() determined that it could not perform the send.
 //       i.e. MP_ADAPTER_CANNOT_SEND_PACKETS() macro returns TRUE.
@@ -1019,7 +1019,7 @@ typedef DOT11_EXTSTA_RECV_CONTEXT   IHV_RX_CHARACTERISTICS, *PIHV_RX_CHARACTERIS
 //---------------------------------------------------------------------------
 // Transmit characteristics
 //---------------------------------------------------------------------------
-typedef struct _IHV_TX_CHARACTERISTICS 
+typedef struct _IHV_TX_CHARACTERISTICS
 {
     HANDLE      hSrvLibCompletion;
     ULONG       txFlags;
@@ -1045,15 +1045,15 @@ typedef struct _STA_EAP_SESSION {
                                                 //unencrypted
 } STA_EAP_SESSION, *PEAP_SESSION;
 
-// 
+//
 // Maximum number of request element we allow in a single request.
-// 
+//
 #define MAX_RM_REQUEST_ELEMENTS    16
 
 //
 // MFP MIB variables.
 //
-typedef struct _MFP_MIB_VARS 
+typedef struct _MFP_MIB_VARS
 {
     LONG   dot11RSNAMgmtStatsTKIPICVErrors;
     LONG   dot11RSNAMgmtStatsTKIPLocalMICFailures;
@@ -1084,7 +1084,7 @@ typedef struct _STA_CCX_RM_CONTEXT {
     LONG                timerSync;
     ULONG               rmReqLen;
     PUCHAR              rmReq;
-    
+
     ULONG               beaconCount;    // temporary
     ULONG               probeCount;     // temporary
     ULONG               frameCount;     // temporary
@@ -1096,7 +1096,7 @@ typedef struct _STA_CCX_RM_CONTEXT {
 /**
  * Maintains CCX diagnostics context
  */
-typedef struct _STA_CCX_DIAG_CONTEXT 
+typedef struct _STA_CCX_DIAG_CONTEXT
 {
 //    PDIAG_CONTROLS  DiagCapCtl;             // Various settings for diag/capture mode Mark For Compile
     BOOLEAN         diagMode;               // if TRUE then diag mode is enabled.
@@ -1106,12 +1106,12 @@ typedef struct _STA_CCX_DIAG_CONTEXT
 /**
  * Maintains CCX MFP context
  */
-typedef struct _STA_CCX_MFP_CONTEXT 
+typedef struct _STA_CCX_MFP_CONTEXT
 {
     BOOLEAN             mfpActive;              // if TRUE then protect/validate class 3 management frames.
     ULONGLONG           mfpReplayCounter;       // watch for management frame replays
     MFP_MIB_VARS        mfpStats;               // MFP related counters.
-//    DOT11_MGMT_HEADER   fragHeader;             // store header from first fragment so we can MFP validate 
+//    DOT11_MGMT_HEADER   fragHeader;             // store header from first fragment so we can MFP validate
                                                 //    subsequent fragments against it.
 //    PDOT11_MGMT_HEADER  pFirstFragHeader;       // non-NULL when there are more frags of an MSDU to come.
 } STA_CCX_MFP_CONTEXT, *PSTA_CCX_MFP_CONTEXT;
@@ -1119,11 +1119,11 @@ typedef struct _STA_CCX_MFP_CONTEXT
 /**
  * Maintains CCX diagnostics context
  */
-typedef struct _STA_CCX_ASSOC_CONTEXT 
+typedef struct _STA_CCX_ASSOC_CONTEXT
 {
     BOOLEAN			Assoc_OID_Set;				//For set oid by DLL and go Normal assoc process
     NDIS_MINIPORT_TIMER OKToAssocTimeoutTimer;  // timer to timeout OK to assoc event from IHV service.
-    LONG                OKToAssocTimerSync;     // 
+    LONG                OKToAssocTimerSync;     //
     ULONG               AssocReqIESize;         // size of AssocReqIE buffer.
     PUCHAR              AssocReqIE;             // array of IE to include in association request.
     ULONG               txPowerLevel;           // Power level controlled by the AP.
@@ -1132,7 +1132,7 @@ typedef struct _STA_CCX_ASSOC_CONTEXT
 /**
  * Maintains roam context
  */
-typedef struct _STA_CCX_ROAM_CONTEXT 
+typedef struct _STA_CCX_ROAM_CONTEXT
 {
     BOOLEAN                 roamingActive;          // are we actively roaming?
     ULONG                   txFailsInRow;           // counter tracking successive TX failures
@@ -1155,21 +1155,21 @@ typedef struct _IAPP_NET_BUFFER_QUEUE {
     PNET_BUFFER_LIST  FreeTxNBL;
     UINT              FreeTxNBLCount;
     NDIS_SPIN_LOCK    TxQlock;
- 
+
     PADAPTER          pAdapter;
 } IAPP_BUFQUEUE, *PIAPP_BUFQUEUE;
 
 /**
  * Maintains all CCX station specific state information
  */
-typedef struct _Cisco_CCX_CONTEXT 
+typedef struct _Cisco_CCX_CONTEXT
 {
 
     STA_EAP_SESSION         eapSession;             // Structure containing info about EAP session
 
     PIAPP_BUFQUEUE          RecycleQueue;           // used for pool of unused NET_BUFFER_LISTS (IAPP handling)
 
-    STA_CCX_ASSOC_CONTEXT   AssocContext;           // context infor for association 
+    STA_CCX_ASSOC_CONTEXT   AssocContext;           // context infor for association
 
     STA_CCX_DIAG_CONTEXT    DiagContext;            // context info for diagnostics
 

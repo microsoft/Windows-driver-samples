@@ -38,7 +38,7 @@ typedef enum	_REG_WEP_STATUS
 // For 818x UI, 2004.11.30, by rcnjko.
 typedef enum REG_EncryptionAlgorithm
 {
-	REG_WEP_Encryption,		// 0	
+	REG_WEP_Encryption,		// 0
 	REG_TKIP_Encryption,	// 1
 	REG_TKIPv2_Encryption,	// 2
 	REG_AESWRAP_Encryption,	// 3
@@ -62,18 +62,18 @@ typedef	enum	_REG_NETWORK_INFRA
 typedef	struct _ADAPTER	ADAPTER, *PADAPTER;
 
 NDIS_STATUS
-CopyFromUnicodeToOS( 
+CopyFromUnicodeToOS(
 	UCHAR			*pointer,
 	UNICODE_STRING	*uniStr,
 	USHORT			copyLen);
 
 NDIS_STATUS
-CopyFromUnicodeToString( 
+CopyFromUnicodeToString(
 	UCHAR			*pointer,
 	UNICODE_STRING	*uniStr,
 	USHORT			copyLen);
 
-int 
+int
 TranslateNdisPsToRtPs(
 	IN	NDIS_802_11_POWER_MODE	ndisPsMode);
 
@@ -98,7 +98,7 @@ N6UpdateDefaultSetting(
 	IN	PADAPTER		pAdapter);
 
 
-VOID 
+VOID
 N6RestoreLastInitSetting(
 	IN	PADAPTER		pAdapter);
 

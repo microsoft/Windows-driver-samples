@@ -5,7 +5,7 @@
 #if (P2P_SUPPORT == 1)
 #if (P2PSVC_SUPPORT == 1)
 
-static P2PSVC_CONN_CAP_MAP_ENTRY P2PSvcConnCapMap[] = 
+static P2PSVC_CONN_CAP_MAP_ENTRY P2PSvcConnCapMap[] =
 {
 	// requesting NEW
 	{
@@ -57,21 +57,21 @@ static P2PSVC_CONN_CAP_MAP_ENTRY P2PSvcConnCapMap[] =
 		P2PSVC_CONN_CAP_BMP_NONE,								// X
 		"ERROR:Do not support Cli/Cli"
 	},
-	
+
 	{
 		P2PSVC_CONN_CAP_BMP_CLI,
 		P2PSVC_CONN_CAP_BMP_GO,									// we have existing group
 		P2PSVC_CONN_CAP_BMP_GO,									// initor shall join the existing group
 		"Peer shall join our existing group"
 	},
-	
+
 	{
 		P2PSVC_CONN_CAP_BMP_CLI,								// initor can be either GO or Cli
 		P2PSVC_CONN_CAP_BMP_NEW | P2PSVC_CONN_CAP_BMP_GO,		// we have existing grpup
 		P2PSVC_CONN_CAP_BMP_GO,									// initor shall join the existing group
 		"Peer shall join our existing group"
 	},
-	
+
 	{
 		P2PSVC_CONN_CAP_BMP_CLI,								// initor can be either GO or Cli
 		P2PSVC_CONN_CAP_BMP_CLI | P2PSVC_CONN_CAP_BMP_GO,		// we have existing grpup and can join a group
@@ -214,7 +214,7 @@ p2psvc_GetP2PStatusFromAttrs(
 		{
 			break;
 		}
-		
+
 		if(osStatus.Octet != NULL)
 			p2pStatus = (P2P_STATUS_CODE)(*(pu1Byte)osStatus.Octet);
 	}
@@ -237,7 +237,7 @@ p2psvc_GetConnCapFromAttrs(
 		{
 			break;
 		}
-		
+
 		if(osConnCap.Octet != NULL)
 			connCap = *(pu1Byte)osConnCap.Octet;
 	}while(FALSE);
@@ -289,7 +289,7 @@ p2psvc_GetGroupInfoFromP2PAttrs(
 		// group id, [grpDevAddr(6), grpSsid(n)]
 		if(!P2PSvc_GetP2PAttr(posP2PAttrs, P2P_ATTR_GROUP_ID, 6 + 1, &osGrpId))
 		{
-			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] no P2P GroupID attr (ID: %u) in PD req/rsp\n", 
+			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] no P2P GroupID attr (ID: %u) in PD req/rsp\n",
 				P2P_ATTR_GROUP_ID));
 			*pBadReason = P2PSVC_REASON_MISS_ATTR_GRP_ID;
 			rtStatus = RT_STATUS_INVALID_DATA;
@@ -299,7 +299,7 @@ p2psvc_GetGroupInfoFromP2PAttrs(
 		// intended intf addr
 		if(!P2PSvc_GetP2PAttr(posP2PAttrs, P2P_ATTR_INTENDED_INTERFACE_ADDRESS, 6, &osIntfAddr))
 		{
-			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] no P2P IntfAddr attr (ID: %u) in PD req/rsp\n", 
+			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] no P2P IntfAddr attr (ID: %u) in PD req/rsp\n",
 				P2P_ATTR_INTENDED_INTERFACE_ADDRESS));
 			*pBadReason = P2PSVC_REASON_MISS_ATTR_INTF_ADDR;
 			rtStatus = RT_STATUS_INVALID_DATA;
@@ -309,7 +309,7 @@ p2psvc_GetGroupInfoFromP2PAttrs(
 		// op channel, [countryStr(3), regClass(1), chnl(1)]
 		if(!P2PSvc_GetP2PAttr(posP2PAttrs, P2P_ATTR_OP_CHANNEL, 3 + 1 + 1, &osOpChnl))
 		{
-			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] no P2P OpChannel attr (ID: %u) in PD req/rsp\n", 
+			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] no P2P OpChannel attr (ID: %u) in PD req/rsp\n",
 				P2P_ATTR_OP_CHANNEL));
 			*pBadReason = P2PSVC_REASON_MISS_ATTR_OP_CHNL;
 			rtStatus = RT_STATUS_INVALID_DATA;
@@ -326,7 +326,7 @@ p2psvc_GetGroupInfoFromP2PAttrs(
 				*((pu1Byte)(osOpChnl.Octet + 3 + 1)), 		// opChnl
 				pGrpInfo);
 		}
-		
+
 	}while(FALSE);
 
 	return rtStatus;
@@ -345,7 +345,7 @@ p2psvc_Init_PDSessionInfo(
 	)
 {
 	PP2P_INFO							pP2PInfo = GET_P2P_INFO(pP2PSvcInfo->pAdapter);
-	
+
 	PlatformZeroMemory(pPDEntry, sizeof(P2PSVC_PD_ENTRY));
 
 	RTInitializeListHead(&pPDEntry->List);
@@ -369,17 +369,17 @@ p2psvc_Init_PDSessionInfo(
 	{
 		UCHAR							ssidBuf[32] = {0};
 		UCHAR							ssidLen = 0;
-		
+
 		P2PSvc_DeterminePDSessionGOSsid(pP2PSvcInfo, ssidBuf, &ssidLen);
-			
-		p2psvc_FillGroupInfo(pP2PInfo->DeviceAddress, 
-			pP2PInfo->InterfaceAddress, 
-			ssidLen, 
-			ssidBuf, 
-			pP2PInfo->OperatingChannel, 
+
+		p2psvc_FillGroupInfo(pP2PInfo->DeviceAddress,
+			pP2PInfo->InterfaceAddress,
+			ssidLen,
+			ssidBuf,
+			pP2PInfo->OperatingChannel,
 			&pPDEntry->selfGrpInfo);
 	}
-	
+
 	return;
 }
 
@@ -415,7 +415,7 @@ p2psvc_New_InitorPDSessionInfo(
 	do
 	{
 		PRT_OBJECT_HEADER				pObj = NULL;
-		
+
 		u4Byte							sessionId = 0;
 		pu1Byte							peerDevAddr = NULL;
 		u4Byte							advId = 0;
@@ -445,11 +445,11 @@ p2psvc_New_InitorPDSessionInfo(
 
 		//4 Init base class
 		p2psvc_Init_PDSessionInfo(pP2PSvcInfo,
-			&pEntry->super, 
-			TRUE, 
-			sessionId, 
-			peerDevAddr, 
-			advId, 
+			&pEntry->super,
+			TRUE,
+			sessionId,
+			peerDevAddr,
+			advId,
 			pP2PSvcInfo->connCap,
 			pP2PSvcInfo->connCap);
 
@@ -481,7 +481,7 @@ p2psvc_Del_InitorPDSessionEntry(
 
 	objListLen = P2PSVC_OBJ_LIST_LEN(&pInitorPDEntry->objList);
 	totalLen = FIELD_OFFSET(P2PSVC_INITOR_PD_ENTRY, objList) + objListLen;
-	
+
 	P2PSvc_FreeMem(pInitorPDEntry, totalLen);
 }
 
@@ -525,17 +525,17 @@ p2psvc_New_RspdorPDSessionInfo(
 		pAutoAcceptObj  = P2PSvc_GetParam(&pAdvSvcInfoEntry->objList, P2PSVC_OBJ_HDR_ID_DATA_SVC_AUTO_ACCEPT, 0);
 		pSvcStatusObj 	= P2PSvc_GetParam(&pAdvSvcInfoEntry->objList, P2PSVC_OBJ_HDR_ID_DATA_SVC_STATUS, 0);
 		pAdvIdObj 		= P2PSvc_GetParam(&pAdvSvcInfoEntry->objList, P2PSVC_OBJ_HDR_ID_DATA_ADV_ID, 0);
-		
+
 		if(NULL == pSvcNameObj
 			|| NULL == pAutoAcceptObj
 			|| NULL == pSvcStatusObj
 			|| NULL == pAdvIdObj
 			)
 		{
-			rtStatus = RT_STATUS_INVALID_DATA; 
+			rtStatus = RT_STATUS_INVALID_DATA;
 			break;
 		}
-		
+
 		//4 Get info form peer PD req
 
 		// Get peer connCap
@@ -578,7 +578,7 @@ p2psvc_New_RspdorPDSessionInfo(
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + 2); 								// peer config method
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + posPDReqP2PAttrs->Length);		// P2P attrs in the PD req
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + sizeof(BOOLEAN));				// bDeferred
-		
+
 		//4 Alloc mem
 		if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_AllocMem(pP2PSvcInfo->pAdapter, &pEntry, reqBufSize)))
 		{
@@ -631,9 +631,9 @@ p2psvc_New_RspdorPDSessionInfo(
 		pEntry->fopdRspStatus = P2P_STATUS_MAX;
 		pEntry->fopdRspConnCap = 0;
 
-		P2PSVC_OBJ_LIST_INIT(&pEntry->objList, 
-			RT_OB_HDR_TYPE_DATA, 
-			P2PSVC_OBJ_HDR_ID_INDIC_RSPDOR_ON_PD_REQ, 
+		P2PSVC_OBJ_LIST_INIT(&pEntry->objList,
+			RT_OB_HDR_TYPE_DATA,
+			P2PSVC_OBJ_HDR_ID_INDIC_RSPDOR_ON_PD_REQ,
 			P2PSVC_MIN_SUPPORT_VER);
 
 		P2PSvc_MakeUserAcceptedObj(&pEntry->objList, FALSE);
@@ -669,11 +669,11 @@ p2psvc_Del_RspdorPDSessionEntry(
 
 	objListLen = P2PSVC_OBJ_LIST_LEN(&pRspdorPDEntry->objList);
 	totalLen = FIELD_OFFSET(P2PSVC_RSPDOR_PD_ENTRY, objList) + objListLen;
-	
+
 	P2PSvc_FreeMem(pRspdorPDEntry, totalLen);
 }
 
-RT_STATUS 
+RT_STATUS
 p2psvc_GetPDRequestedSvc(
 	IN  PP2PSVC_INFO					pP2PSvcInfo,
 	IN  POCTET_STRING					posP2PAttrs,
@@ -688,7 +688,7 @@ p2psvc_GetPDRequestedSvc(
 		OCTET_STRING					osAdvId = {NULL, 0};
 		u4Byte							peerReqAdvId = 0;
 		PP2PSVC_REQ_INFO_ENTRY 			pAdvSvcEntry = NULL;
-	
+
 		// Get peer requested adv-id
 		if(!P2PSvc_GetP2PAttr(posP2PAttrs, P2P_ATTR_ADV_ID_INFO, 4 + 6, &osAdvId))
 		{
@@ -698,10 +698,10 @@ p2psvc_GetPDRequestedSvc(
 
 		if(osAdvId.Octet != NULL)
 			peerReqAdvId = *((pu4Byte)osAdvId.Octet);
-		
+
 		if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_GetAdvSvcByAdvId(pP2PSvcInfo, peerReqAdvId, &pAdvSvcEntry)))
 		{
-			break;	
+			break;
 		}
 
 		if(ppInfoEntry) *ppInfoEntry = pAdvSvcEntry;
@@ -712,7 +712,7 @@ p2psvc_GetPDRequestedSvc(
 	return rtStatus;
 }
 
-BOOLEAN 
+BOOLEAN
 p2psvc_GetAdvSvcAvailability(
 	IN  PP2PSVC_INFO					pP2PSvcInfo,
 	IN  PP2PSVC_REQ_INFO_ENTRY			pInfoEntry
@@ -740,7 +740,7 @@ p2psvc_GetAdvSvcAvailability(
 		}
 
 		break;
-		
+
 	}while(FALSE);
 
 	return bAvailable;
@@ -769,7 +769,7 @@ p2psvc_MatchAdvId(
 			RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "posP2PAttrs:\n", posP2PAttrs->Octet, posP2PAttrs->Length);
 			break;
 		}
-		
+
 		if (osAdvId.Octet != NULL)
 		{
 			peerAdvId = *(pu4Byte)osAdvId.Octet;
@@ -810,7 +810,7 @@ p2psvc_IndicateRxBadPD(
 	{
 		u4Byte							indicId = 0;
 		PP2PSVC_OBJ_LIST				pObjList = NULL;
-		
+
 		if(bInitor)
 		{
 			indicId = (bReq)
@@ -829,7 +829,7 @@ p2psvc_IndicateRxBadPD(
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + 6);								// peer dev-addr
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + sizeof(P2PSVC_REASON));			// PDRsp status code
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + posP2PAttrs->Length);			// P2P attrs in PD rsp
-		
+
 		if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_AllocMem(pP2PSvcInfo->pAdapter, &pBuf, reqBufSize)))
 		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] Failed to allocate memory for pBuf\n"));
@@ -837,20 +837,20 @@ p2psvc_IndicateRxBadPD(
 		}
 
 		PlatformZeroMemory(pBuf, reqBufSize);
-		
+
 		pObjList = (PP2PSVC_OBJ_LIST)pBuf;
 
 		// Fill obj list
-		P2PSVC_OBJ_LIST_INIT(pObjList, 
-			RT_OB_HDR_TYPE_DATA, 
-			indicId, 
+		P2PSVC_OBJ_LIST_INIT(pObjList,
+			RT_OB_HDR_TYPE_DATA,
+			indicId,
 			P2PSVC_MIN_SUPPORT_VER);
 
 		P2PSvc_MakeDevAddrObj(pObjList, pPeerDevAddr);
 		P2PSvc_MakeReasonObj(pObjList, reason);
 		P2PSvc_MakeP2PAttrsObj(pObjList, posP2PAttrs->Length, posP2PAttrs->Octet);
-		
-		P2PSvc_Indicate(pP2PSvcInfo, reqBufSize, pBuf);		
+
+		P2PSvc_Indicate(pP2PSvcInfo, reqBufSize, pBuf);
 	}while(FALSE);
 
 	if(pBuf) P2PSvc_FreeMem(pBuf, reqBufSize);
@@ -900,7 +900,7 @@ p2psvc_IndicateInitorOnPDRsp(
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + posP2PAttrs->Length);				// P2P attrs in PD rsp
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + sizeof(u4Byte));						// session-id
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + osDevName.Length);					// dev-name
-		
+
 		if(P2P_STATUS_SUCCESS == pInitorPDEntry->super.status)
 		{
 			reqBufSize += (RT_OBJECT_HEADER_SIZE + sizeof(BOOLEAN));				// bPersistent
@@ -910,7 +910,7 @@ p2psvc_IndicateInitorOnPDRsp(
 			reqBufSize += (RT_OBJECT_HEADER_SIZE + pConnTopology->grpInfo.ssidLen);	// SSID
 			reqBufSize += (RT_OBJECT_HEADER_SIZE + sizeof(u1Byte));					// opChnl
 		}
-		
+
 		if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_AllocMem(pP2PSvcInfo->pAdapter, &pBuf, reqBufSize)))
 		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] Failed to allocate memory for pBuf\n"));
@@ -918,13 +918,13 @@ p2psvc_IndicateInitorOnPDRsp(
 		}
 
 		PlatformZeroMemory(pBuf, reqBufSize);
-		
+
 		pObjList = (PP2PSVC_OBJ_LIST)pBuf;
 
 		// Fill obj list
-		P2PSVC_OBJ_LIST_INIT(pObjList, 
-			RT_OB_HDR_TYPE_DATA, 
-			P2PSVC_OBJ_HDR_ID_INDIC_INITOR_ON_PD_RSP, 
+		P2PSVC_OBJ_LIST_INIT(pObjList,
+			RT_OB_HDR_TYPE_DATA,
+			P2PSVC_OBJ_HDR_ID_INDIC_INITOR_ON_PD_RSP,
 			P2PSVC_MIN_SUPPORT_VER);
 
 		P2PSvc_MakeDevAddrObj(pObjList, pInitorPDEntry->super.peerDevAddr);
@@ -934,7 +934,7 @@ p2psvc_IndicateInitorOnPDRsp(
 		P2PSvc_MakeP2PAttrsObj(pObjList, posP2PAttrs->Length, posP2PAttrs->Octet);
 		P2PSvc_MakeSessionIdObj(pObjList, pPDEntry->sessionId);
 		P2PSvc_MakeDevNameObj_FromDevNameOctet(pObjList, osDevName);
-		
+
 		if(P2P_STATUS_SUCCESS == pInitorPDEntry->super.status)
 		{
 			P2PSvc_MakeIsPersistentObj(pObjList, pConnTopology->bPersistent);
@@ -944,8 +944,8 @@ p2psvc_IndicateInitorOnPDRsp(
 			P2PSvc_MakeSsidObj(pObjList, pConnTopology->grpInfo.ssidLen, pConnTopology->grpInfo.ssidBuf);
 			P2PSvc_MakeOpChannelObj(pObjList, pConnTopology->grpInfo.opChnl);
 		}
-		
-		P2PSvc_Indicate(pP2PSvcInfo, reqBufSize, pBuf);		
+
+		P2PSvc_Indicate(pP2PSvcInfo, reqBufSize, pBuf);
 	}while(FALSE);
 
 	if(pBuf) P2PSvc_FreeMem(pBuf, reqBufSize);
@@ -994,7 +994,7 @@ p2psvc_IndicateInitorOnFOPDReq(
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + 2);										// config method in PD req
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + posP2PAttrs->Length);					// P2P attrs in FOPD req
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + osDevName.Length);						// dev-name
-		
+
 		if(P2P_STATUS_SUCCESS == pInitorPDEntry->super.status)
 		{
 			reqBufSize += (RT_OBJECT_HEADER_SIZE + sizeof(BOOLEAN));					// bPersistent
@@ -1004,7 +1004,7 @@ p2psvc_IndicateInitorOnFOPDReq(
 			reqBufSize += (RT_OBJECT_HEADER_SIZE + pConnTopology->grpInfo.ssidLen);		// SSID
 			reqBufSize += (RT_OBJECT_HEADER_SIZE + sizeof(u1Byte));						// opChnl
 		}
-		
+
 		if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_AllocMem(pP2PSvcInfo->pAdapter, &pBuf, reqBufSize)))
 		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] Failed to allocate memory for pBuf\n"));
@@ -1012,7 +1012,7 @@ p2psvc_IndicateInitorOnFOPDReq(
 		}
 
 		PlatformZeroMemory(pBuf, reqBufSize);
-		
+
 		pObjList = (PP2PSVC_OBJ_LIST)pBuf;
 
 		// Prefast warning
@@ -1020,9 +1020,9 @@ p2psvc_IndicateInitorOnFOPDReq(
 		RT_ASSERT(pInitorPDEntry->super.bDeferred, ("%s(): initor recv PD req but bDeferred is not set\n"));
 
 		// Fill obj list
-		P2PSVC_OBJ_LIST_INIT(pObjList, 
-			RT_OB_HDR_TYPE_DATA, 
-			P2PSVC_OBJ_HDR_ID_INDIC_INITOR_ON_FOPD_REQ, 
+		P2PSVC_OBJ_LIST_INIT(pObjList,
+			RT_OB_HDR_TYPE_DATA,
+			P2PSVC_OBJ_HDR_ID_INDIC_INITOR_ON_FOPD_REQ,
 			P2PSVC_MIN_SUPPORT_VER);
 
 		P2PSvc_MakeDevAddrObj(pObjList, pInitorPDEntry->super.peerDevAddr);
@@ -1042,9 +1042,9 @@ p2psvc_IndicateInitorOnFOPDReq(
 			P2PSvc_MakeSsidObj(pObjList, pConnTopology->grpInfo.ssidLen, pConnTopology->grpInfo.ssidBuf);
 			P2PSvc_MakeOpChannelObj(pObjList, pConnTopology->grpInfo.opChnl);
 		}
-		
+
 		P2PSvc_Indicate(pP2PSvcInfo, reqBufSize, pBuf);
-		
+
 	}while(FALSE);
 
 	if(pBuf) P2PSvc_FreeMem(pBuf, reqBufSize);
@@ -1085,7 +1085,7 @@ p2psvc_IndicateRspdorOnFOPDRsp(
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + sizeof(BOOLEAN));						// bDeferred
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + 2);										// config method from the intial PD req
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + posP2PAttrs->Length);					// P2P attrs in FOPD rsp
-		
+
 		if(P2P_STATUS_SUCCESS == pRspdorPDEntry->super.status)
 		{
 			reqBufSize += (RT_OBJECT_HEADER_SIZE + sizeof(BOOLEAN));					// bPersistent
@@ -1095,7 +1095,7 @@ p2psvc_IndicateRspdorOnFOPDRsp(
 			reqBufSize += (RT_OBJECT_HEADER_SIZE + pConnTopology->grpInfo.ssidLen);		// SSID
 			reqBufSize += (RT_OBJECT_HEADER_SIZE + sizeof(u1Byte));						// opChnl
 		}
-		
+
 		if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_AllocMem(pP2PSvcInfo->pAdapter, &pBuf, reqBufSize)))
 		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] Failed to allocate memory for pBuf\n"));
@@ -1105,15 +1105,15 @@ p2psvc_IndicateRspdorOnFOPDRsp(
 		PlatformZeroMemory(pBuf, reqBufSize);
 
 		pObjList = (PP2PSVC_OBJ_LIST)pBuf;
-	
+
 		// Prefast warning
 #pragma warning( disable:6063 )
 		RT_ASSERT(pRspdorPDEntry->super.bDeferred, ("%s(): rspdor recv PD rsp but bDeferred is not set\n"));
 
 		// Fill obj list
-		P2PSVC_OBJ_LIST_INIT(pObjList, 
-			RT_OB_HDR_TYPE_DATA, 
-			P2PSVC_OBJ_HDR_ID_INDIC_RSPDOR_ON_FOPD_RSP, 
+		P2PSVC_OBJ_LIST_INIT(pObjList,
+			RT_OB_HDR_TYPE_DATA,
+			P2PSVC_OBJ_HDR_ID_INDIC_RSPDOR_ON_FOPD_RSP,
 			P2PSVC_MIN_SUPPORT_VER);
 
 		P2PSvc_MakeDevAddrObj(pObjList, pRspdorPDEntry->super.peerDevAddr);
@@ -1121,7 +1121,7 @@ p2psvc_IndicateRspdorOnFOPDRsp(
 		P2PSvc_MakeConfigMethodObj(pObjList, pRspdorPDEntry->configMethod);
 		P2PSvc_MakeDeferredObj(pObjList, pRspdorPDEntry->super.bDeferred);
 		P2PSvc_MakeP2PAttrsObj(pObjList, posP2PAttrs->Length, posP2PAttrs->Octet);
-		
+
 		if(P2P_STATUS_SUCCESS == pRspdorPDEntry->super.status)
 		{
 			P2PSvc_MakeIsPersistentObj(pObjList, pConnTopology->bPersistent);
@@ -1131,7 +1131,7 @@ p2psvc_IndicateRspdorOnFOPDRsp(
 			P2PSvc_MakeSsidObj(pObjList, pConnTopology->grpInfo.ssidLen, pConnTopology->grpInfo.ssidBuf);
 			P2PSvc_MakeOpChannelObj(pObjList, pConnTopology->grpInfo.opChnl);
 		}
-		
+
 		P2PSvc_Indicate(pP2PSvcInfo, reqBufSize, pBuf);
 
 	}while(FALSE);
@@ -1176,7 +1176,7 @@ p2psvc_IndicateRspdorOnPDReq(
 		{
 			FillOctetString(osDevName, NULL, 0);
 		}
-		
+
 		// Eval size of buf required
 		reqBufSize = 0;
 		reqBufSize += P2PSVC_OBJ_LIST_LEN(&pRspdorPDEntry->objList);
@@ -1187,7 +1187,7 @@ p2psvc_IndicateRspdorOnPDReq(
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + 6);										// sessionMac
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + osSessionInfoDataInfo.Length);			// session-info-data-info
 		reqBufSize += (RT_OBJECT_HEADER_SIZE + osDevName.Length);						// dev-name
-		
+
 		if(P2P_STATUS_SUCCESS == pRspdorPDEntry->super.status)
 		{
 			reqBufSize += (RT_OBJECT_HEADER_SIZE + sizeof(BOOLEAN));					// bPersistent
@@ -1197,7 +1197,7 @@ p2psvc_IndicateRspdorOnPDReq(
 			reqBufSize += (RT_OBJECT_HEADER_SIZE + pConnTopology->grpInfo.ssidLen);		// SSID
 			reqBufSize += (RT_OBJECT_HEADER_SIZE + sizeof(u1Byte));						// opChnl
 		}
-		
+
 		// Alloc mem
 		if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_AllocMem(pP2PSvcInfo->pAdapter, &pBuf, reqBufSize)))
 		{
@@ -1221,7 +1221,7 @@ p2psvc_IndicateRspdorOnPDReq(
 		P2PSvc_MakeDevAddrObj(pObjList, pRspdorPDEntry->super.peerDevAddr);
 		P2PSvc_MakeSessionInfoDataInfoObj(pObjList, osSessionInfoDataInfo);
 		P2PSvc_MakeDevNameObj_FromDevNameOctet(pObjList, osDevName);
-		
+
 		if(P2P_STATUS_SUCCESS == pRspdorPDEntry->super.status)
 		{
 			P2PSvc_MakeIsPersistentObj(pObjList, pConnTopology->bPersistent);
@@ -1235,7 +1235,7 @@ p2psvc_IndicateRspdorOnPDReq(
 		if(P2P_STATUS_SUCCESS != (rtStatus = P2PSvc_Indicate(pP2PSvcInfo, reqBufSize, pObjList)))
 		{
 			break;
-		
+
 		}
 	}while(FALSE);
 
@@ -1316,7 +1316,7 @@ p2psvc_ValidateConnCapComination(
 
 	}while(FALSE);
 
-	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("reqConnCap: %u, rspConnCap: %u, bValid: %u\n", 
+	RT_TRACE_F(COMP_P2P, DBG_LOUD, ("reqConnCap: %u, rspConnCap: %u, bValid: %u\n",
 		reqConnCap, rspConnCap, bValid));
 
 	return bValid;
@@ -1330,7 +1330,7 @@ p2psvc_IsWscPinCollector(
 	BOOLEAN								bWscPinCollector = FALSE;
 
 	RT_ASSERT(pPDEntry->bDone, ("%s(): try to determine WSC PIN collector when PD is not yet done\n", __FUNCTION__));
-	
+
 	do
 	{
 		if(pPDEntry->bInitor)
@@ -1358,7 +1358,7 @@ p2psvc_IsWfdsDefaultPinUsed(
 	BOOLEAN								bWfdsDefaultPinUsed = FALSE;
 
 	RT_ASSERT(pPDEntry->bDone, ("%s(): try to determine WSC PIN collector when PD is not yet done\n", __FUNCTION__));
-	
+
 	do
 	{
 		if(pPDEntry->bInitor)
@@ -1400,13 +1400,13 @@ p2psvc_AccessTopology_InitorImmediate(
 		//
 
 		pPDEntry->connTopology.bInitor = TRUE;
-		
+
 		switch(pPDEntry->connCap)
 		{
 		default:
 			rtStatus = RT_STATUS_INVALID_DATA;
 			break;
-			
+
 		case P2PSVC_CONN_CAP_BMP_NEW:
 			// Peer agreed to form a new group
 			pPDEntry->connTopology.bPersistent = FALSE;
@@ -1421,7 +1421,7 @@ p2psvc_AccessTopology_InitorImmediate(
 			{
 				pPDEntry->connTopology.connAction = P2PSVC_CONN_METHOD_WAIT_NEGO;
 			}
-			
+
 			break;
 
 		case P2PSVC_CONN_CAP_BMP_CLI:
@@ -1442,11 +1442,11 @@ p2psvc_AccessTopology_InitorImmediate(
 			{// start auto GO
 				pPDEntry->connTopology.connAction = P2PSVC_CONN_METHOD_AUTO_GO;
 
-				p2psvc_FillGroupInfo(pPDEntry->selfGrpInfo.grpDevAddr, 
-					pPDEntry->selfGrpInfo.grpIntfAddr, 
-					pPDEntry->selfGrpInfo.ssidLen, 
-					pPDEntry->selfGrpInfo.ssidBuf, 
-					pPDEntry->selfGrpInfo.opChnl, 
+				p2psvc_FillGroupInfo(pPDEntry->selfGrpInfo.grpDevAddr,
+					pPDEntry->selfGrpInfo.grpIntfAddr,
+					pPDEntry->selfGrpInfo.ssidLen,
+					pPDEntry->selfGrpInfo.ssidBuf,
+					pPDEntry->selfGrpInfo.opChnl,
 					&pPDEntry->connTopology.grpInfo);
 			}
 			else
@@ -1455,7 +1455,7 @@ p2psvc_AccessTopology_InitorImmediate(
 				rtStatus = RT_STATUS_INVALID_DATA;
 				break;
 			}
-			
+
 			break;
 
 		case P2PSVC_CONN_CAP_BMP_GO:
@@ -1475,11 +1475,11 @@ p2psvc_AccessTopology_InitorImmediate(
 				rtStatus = RT_STATUS_INVALID_DATA;
 				break;
 			}
-				
+
 			break;
 		}
 
-		if(RT_STATUS_SUCCESS != rtStatus) 
+		if(RT_STATUS_SUCCESS != rtStatus)
 		{
 			break;
 		}
@@ -1518,7 +1518,7 @@ p2psvc_AccessTopology_InitorDeferred(
 		default:
 			rtStatus = RT_STATUS_INVALID_DATA;
 			break;
-			
+
 		case P2PSVC_CONN_CAP_BMP_NEW:
 			// To form a new group
 			pPDEntry->connTopology.bPersistent = FALSE;
@@ -1530,11 +1530,11 @@ p2psvc_AccessTopology_InitorDeferred(
 			{
 				pPDEntry->connTopology.connAction = P2PSVC_CONN_METHOD_WAIT_NEGO;
 			}
-			else 
+			else
 			{
 				pPDEntry->connTopology.connAction = P2PSVC_CONN_METHOD_INIT_NEGO;
 			}
-				
+
 			break;
 
 		case P2PSVC_CONN_CAP_BMP_CLI:
@@ -1560,17 +1560,17 @@ p2psvc_AccessTopology_InitorDeferred(
 				pPDEntry->connTopology.connAction = P2PSVC_CONN_METHOD_AUTO_GO;
 			}
 
-			p2psvc_FillGroupInfo(pPDEntry->selfGrpInfo.grpDevAddr, 
-					pPDEntry->selfGrpInfo.grpIntfAddr, 
-					pPDEntry->selfGrpInfo.ssidLen, 
-					pPDEntry->selfGrpInfo.ssidBuf, 
-					pPDEntry->selfGrpInfo.opChnl, 
+			p2psvc_FillGroupInfo(pPDEntry->selfGrpInfo.grpDevAddr,
+					pPDEntry->selfGrpInfo.grpIntfAddr,
+					pPDEntry->selfGrpInfo.ssidLen,
+					pPDEntry->selfGrpInfo.ssidBuf,
+					pPDEntry->selfGrpInfo.opChnl,
 					&pPDEntry->connTopology.grpInfo);
-			
+
 			break;
 		}
 
-		if(RT_STATUS_SUCCESS != rtStatus) 
+		if(RT_STATUS_SUCCESS != rtStatus)
 		{
 			break;
 		}
@@ -1602,13 +1602,13 @@ p2psvc_AccessTopology_RspdorImmediate(
 		// from self PD rsp, the P2P attrs are also from PD req.
 		//
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("pdRspConnCap: %u\n", pRspdorPDEntry->pdRspConnCap));
-		
+
 		switch(pRspdorPDEntry->pdRspConnCap)
 		{
 		default:
 			rtStatus = RT_STATUS_INVALID_DATA;
 			break;
-			
+
 		case P2PSVC_CONN_CAP_BMP_NEW:
 			// To form a new group
 			pPDEntry->connTopology.bPersistent = FALSE;
@@ -1620,11 +1620,11 @@ p2psvc_AccessTopology_RspdorImmediate(
 			{
 				pPDEntry->connTopology.connAction = P2PSVC_CONN_METHOD_WAIT_NEGO;
 			}
-			else 
+			else
 			{
 				pPDEntry->connTopology.connAction = P2PSVC_CONN_METHOD_INIT_NEGO;
 			}
-			
+
 			break;
 
 		case P2PSVC_CONN_CAP_BMP_CLI:
@@ -1649,17 +1649,17 @@ p2psvc_AccessTopology_RspdorImmediate(
 				pPDEntry->connTopology.connAction = P2PSVC_CONN_METHOD_AUTO_GO;
 			}
 
-			p2psvc_FillGroupInfo(pPDEntry->selfGrpInfo.grpDevAddr, 
-					pPDEntry->selfGrpInfo.grpIntfAddr, 
-					pPDEntry->selfGrpInfo.ssidLen, 
-					pPDEntry->selfGrpInfo.ssidBuf, 
-					pPDEntry->selfGrpInfo.opChnl, 
+			p2psvc_FillGroupInfo(pPDEntry->selfGrpInfo.grpDevAddr,
+					pPDEntry->selfGrpInfo.grpIntfAddr,
+					pPDEntry->selfGrpInfo.ssidLen,
+					pPDEntry->selfGrpInfo.ssidBuf,
+					pPDEntry->selfGrpInfo.opChnl,
 					&pPDEntry->connTopology.grpInfo);
-			
+
 			break;
 		}
 
-		if(RT_STATUS_SUCCESS != rtStatus) 
+		if(RT_STATUS_SUCCESS != rtStatus)
 		{
 			break;
 		}
@@ -1698,7 +1698,7 @@ p2psvc_AccessTopology_RspdorDeferred(
 		default:
 			rtStatus = RT_STATUS_INVALID_DATA;
 			break;
-			
+
 		case P2PSVC_CONN_CAP_BMP_NEW:
 			// Peer agreed to form a new group
 			pPDEntry->connTopology.bPersistent = FALSE;
@@ -1710,11 +1710,11 @@ p2psvc_AccessTopology_RspdorDeferred(
 			{
 				pPDEntry->connTopology.connAction = P2PSVC_CONN_METHOD_INIT_NEGO;
 			}
-			else 
+			else
 			{
 				pPDEntry->connTopology.connAction = P2PSVC_CONN_METHOD_WAIT_NEGO;
 			}
-			
+
 			break;
 
 		case P2PSVC_CONN_CAP_BMP_CLI:
@@ -1733,11 +1733,11 @@ p2psvc_AccessTopology_RspdorDeferred(
 			{
 				pPDEntry->connTopology.connAction = P2PSVC_CONN_METHOD_AUTO_GO;
 
-				p2psvc_FillGroupInfo(pPDEntry->selfGrpInfo.grpDevAddr, 
-					pPDEntry->selfGrpInfo.grpIntfAddr, 
-					pPDEntry->selfGrpInfo.ssidLen, 
-					pPDEntry->selfGrpInfo.ssidBuf, 
-					pPDEntry->selfGrpInfo.opChnl, 
+				p2psvc_FillGroupInfo(pPDEntry->selfGrpInfo.grpDevAddr,
+					pPDEntry->selfGrpInfo.grpIntfAddr,
+					pPDEntry->selfGrpInfo.ssidLen,
+					pPDEntry->selfGrpInfo.ssidBuf,
+					pPDEntry->selfGrpInfo.opChnl,
 					&pPDEntry->connTopology.grpInfo);
 			}
 			else
@@ -1746,7 +1746,7 @@ p2psvc_AccessTopology_RspdorDeferred(
 				rtStatus = RT_STATUS_INVALID_DATA;
 				break;
 			}
-			
+
 			break;
 
 		case P2PSVC_CONN_CAP_BMP_GO:
@@ -1760,7 +1760,7 @@ p2psvc_AccessTopology_RspdorDeferred(
 			break;
 		}
 
-		if(RT_STATUS_SUCCESS != rtStatus) 
+		if(RT_STATUS_SUCCESS != rtStatus)
 		{
 			break;
 		}
@@ -1810,7 +1810,7 @@ p2psvc_AccessConnectability(
 		{
 			reqConnCap = pPDEntry->pdReqConnCap;
 		}
-		
+
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("req: %u, self: %u\n", reqConnCap, selfConnCap));
 
 		if(0 == reqConnCap)
@@ -1818,8 +1818,8 @@ p2psvc_AccessConnectability(
 			break;
 		}
 
-		for(connCapMapIdx = 0, pConnCapEntry = NULL; 
-			P2PSVC_CONN_CAP_BMP_NONE != P2PSvcConnCapMap[connCapMapIdx].reqConnCap; 
+		for(connCapMapIdx = 0, pConnCapEntry = NULL;
+			P2PSVC_CONN_CAP_BMP_NONE != P2PSvcConnCapMap[connCapMapIdx].reqConnCap;
 			connCapMapIdx++
 			)
 		{
@@ -1828,7 +1828,7 @@ p2psvc_AccessConnectability(
 			// Match conn cap entry
 			if(P2PSvcConnCapMap[connCapMapIdx].reqConnCap != reqConnCap) continue;
 			if(P2PSvcConnCapMap[connCapMapIdx].selfConnCap != selfConnCap) continue;
-			
+
 			pConnCapEntry = &(P2PSvcConnCapMap[connCapMapIdx]);
 			break;
 		}
@@ -1850,9 +1850,9 @@ p2psvc_AccessConnectability(
 		*pRspConnCap = pConnCapEntry->rspConnCap;
 		*pPDRspStatus = P2P_STATUS_SUCCESS;
 		bConnectable = TRUE;
-		
+
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Connectable, msg: %s\n", pConnCapEntry->pDesc));
-		
+
 	}while(FALSE);
 
 	P2PSVC_FUNC_OUT(DBG_LOUD, bConnectable);
@@ -1868,14 +1868,14 @@ p2psvc_GetCorrespondingConfigMethod(
 	u2Byte 								cm = 0;
 
 	P2PSVC_FUNC_IN(DBG_LOUD);
-	
-	if((u2Byte)P2P_WPS_CONFIG_METHODS_DISPLAY == cm) 
+
+	if((u2Byte)P2P_WPS_CONFIG_METHODS_DISPLAY == cm)
 		cm = (u2Byte)P2P_WPS_CONFIG_METHODS_KEYPAD;
-	else if((u2Byte)P2P_WPS_CONFIG_METHODS_KEYPAD == cm) 
+	else if((u2Byte)P2P_WPS_CONFIG_METHODS_KEYPAD == cm)
 		cm = (u2Byte)P2P_WPS_CONFIG_METHODS_DISPLAY;
-	else if((u2Byte)P2P_WPS_CONFIG_METHODS_PUSHBUTTON == cm) 
+	else if((u2Byte)P2P_WPS_CONFIG_METHODS_PUSHBUTTON == cm)
 		cm = (u2Byte)P2P_WPS_CONFIG_METHODS_PUSHBUTTON;
-	else if((u2Byte)P2P_WPS_CONFIG_METHODS_SVC_DEFAULT_PIN == cm) 
+	else if((u2Byte)P2P_WPS_CONFIG_METHODS_SVC_DEFAULT_PIN == cm)
 		cm = (u2Byte)P2P_WPS_CONFIG_METHODS_SVC_DEFAULT_PIN;
 	else
 	{
@@ -1908,7 +1908,7 @@ P2PSvc_DeterminePDSessionGOSsid(
 	pu1Byte								pRandField = NULL;
 
 	PP2P_INFO							pP2PInfo = GET_P2P_INFO(pP2PSvcInfo->pAdapter);
-	
+
 
 	*pSsidLen = 0;
 
@@ -1919,19 +1919,19 @@ P2PSvc_DeterminePDSessionGOSsid(
 	// Random chars
 	PlatformMoveMemory(ssidBuf + (*pSsidLen), p2pRandomChars, sizeof(p2pRandomChars));
 	*pSsidLen += sizeof(p2pRandomChars);
-	
+
 	// SSID Postfix, optional
 	if(pP2PInfo->SSIDPostfixLen)
 	{
 		PlatformMoveMemory(ssidBuf + (*pSsidLen), pP2PInfo->SSIDPostfixBuf, pP2PInfo->SSIDPostfixLen);
 		*pSsidLen += (pP2PInfo->SSIDPostfixLen);
 	}
-	
+
 	// Display result
 	RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "P2PSvc_DeterminePDSessionGOSsid():\n", ssidBuf, *pSsidLen);
-	
+
 	return;
-	
+
 }
 
 PP2PSVC_OBJ_LIST
@@ -1960,9 +1960,9 @@ P2PSvc_Free_PDSessionListEntry(
 	)
 {
 	P2PSVC_FUNC_IN(DBG_LOUD);
-	
+
 	RTRemoveEntryListWithCnt((PRT_LIST_ENTRY)pPDEntry, pListCnt);
-				
+
 	if(pPDEntry->bInitor)
 	{
 		p2psvc_Del_InitorPDSessionEntry((PP2PSVC_INITOR_PD_ENTRY)pPDEntry);
@@ -1984,12 +1984,12 @@ P2PSvc_Free_PDSessionList(
 	)
 {
 	P2PSVC_FUNC_IN(DBG_LOUD);
-	
+
 	while(RTIsListNotEmpty(pListHead))
 	{
 		PVOID 							pEntry = NULL;
 		PP2PSVC_PD_ENTRY 				pPDEntry = NULL;
-		
+
 		pEntry = RTGetHeadList(pListHead);
 		pPDEntry = (PP2PSVC_PD_ENTRY)pEntry;
 
@@ -2022,7 +2022,7 @@ P2PSvc_PDSessionInProgress(
 		if(!RTIsListEmpty(&pP2PSvcInfo->pdSessionList))
 		{
 			PP2PSVC_PD_ENTRY 			pPDEntry = NULL;
-			
+
 			pPDEntry = (PP2PSVC_PD_ENTRY)RTGetHeadList(&pP2PSvcInfo->pdSessionList);
 
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("There's an outstanding PD session\n"));
@@ -2041,9 +2041,9 @@ P2PSvc_PDSessionInProgress(
 	return bPDSessionInProgress;
 }
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_AddPDInitorData(
-	IN  PADAPTER						pAdapter, 
+	IN  PADAPTER						pAdapter,
 	IN  PVOID							infoBuf,
 	IN  u4Byte							inBufLen,
 	IN  u4Byte							outBufLen
@@ -2057,7 +2057,7 @@ P2PSvc_AddPDInitorData(
 	P2PSVC_CHECK_NULL(pAdapter);
 
 	if(!pP2PSvcInfo->bEnabled) return RT_STATUS_INVALID_STATE;
-	
+
 	P2PSVC_FUNC_IN(DBG_LOUD);
 
 	do
@@ -2091,7 +2091,7 @@ P2PSvc_AddPDInitorData(
 }
 
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_AddPDRspdorData(
 	IN  PP2PSVC_INFO					pP2PSvcInfo,
 	IN  pu1Byte							devAddr,
@@ -2105,19 +2105,19 @@ P2PSvc_AddPDRspdorData(
 
 
 	if(!pP2PSvcInfo->bEnabled) return RT_STATUS_INVALID_STATE;
-	
+
 	P2PSVC_FUNC_IN(DBG_LOUD);
 
 	do
 	{
 		PP2PSVC_REQ_INFO_ENTRY			pAdvSvcInfoEntry = NULL;
 		u4Byte							peerReqAdvId = 0;
-		BOOLEAN							bSvcAvailable = FALSE;		
+		BOOLEAN							bSvcAvailable = FALSE;
 
 		//4 Get requested svc
-		rtStatus = p2psvc_GetPDRequestedSvc(pP2PSvcInfo, 
-							posP2PAttrs, 
-							&pAdvSvcInfoEntry, 
+		rtStatus = p2psvc_GetPDRequestedSvc(pP2PSvcInfo,
+							posP2PAttrs,
+							&pAdvSvcInfoEntry,
 							&peerReqAdvId);
 		if(RT_STATUS_SUCCESS != rtStatus)
 		{
@@ -2143,11 +2143,11 @@ P2PSvc_AddPDRspdorData(
 		}
 
 		//4 New a rspdor PD session
-		rtStatus = p2psvc_New_RspdorPDSessionInfo(pP2PSvcInfo, 
-							devAddr, 
-							pAdvSvcInfoEntry, 
-							posP2PAttrs, 
-							configMethod, 
+		rtStatus = p2psvc_New_RspdorPDSessionInfo(pP2PSvcInfo,
+							devAddr,
+							pAdvSvcInfoEntry,
+							posP2PAttrs,
+							configMethod,
 							&badPDReqReason,
 							&pPDRspdorEntry);
 		if(RT_STATUS_SUCCESS != rtStatus)
@@ -2171,12 +2171,12 @@ P2PSvc_AddPDRspdorData(
 		else
 		{// immediate rsp
 			BOOLEAN 					bConnectable = FALSE;
-			
-			bConnectable = p2psvc_AccessConnectability(pP2PSvcInfo, 
-				&pPDRspdorEntry->super,  
+
+			bConnectable = p2psvc_AccessConnectability(pP2PSvcInfo,
+				&pPDRspdorEntry->super,
 				&pPDRspdorEntry->pdRspConnCap,		// connCap to be used in responding PD rsp
 				&pPDRspdorEntry->pdRspStatus);		// status to be used in responding PD rsp
-			
+
 			p2psvc_Set_PDResult(&pPDRspdorEntry->super, pPDRspdorEntry->pdRspStatus, pPDRspdorEntry->pdRspConnCap);
 
 			if(bConnectable)
@@ -2190,12 +2190,12 @@ P2PSvc_AddPDRspdorData(
 			}
 		}
 
-		//4 Add record to the list. Note: If not deferred, the entry will be freed later after PD rsp is sent, 
+		//4 Add record to the list. Note: If not deferred, the entry will be freed later after PD rsp is sent,
 		//4 see P2PSvc_MakeRspdorPDRspIE()
-		RTInsertTailListWithCnt(&pP2PSvcInfo->pdSessionList, 
-			&pPDRspdorEntry->super.List, 
+		RTInsertTailListWithCnt(&pP2PSvcInfo->pdSessionList,
+			&pPDRspdorEntry->super.List,
 			&pP2PSvcInfo->pdSessionListCnt);
-		
+
 		//4 Indicate (after status is updated)
 		if(bSvcAvailable)
 		{// if svc not available, don't bother user
@@ -2218,7 +2218,7 @@ RT_STATUS
 P2PSvc_RspdorSetFOPDReq(
 	IN  PP2PSVC_INFO					pP2PSvcInfo,
 	IN  PP2PSVC_PD_ENTRY 				pPDEntry,
-	IN  BOOLEAN							bAccepted	
+	IN  BOOLEAN							bAccepted
 	)
 {
 	RT_STATUS							rtStatus = RT_STATUS_SUCCESS;
@@ -2227,19 +2227,19 @@ P2PSvc_RspdorSetFOPDReq(
 	do
 	{
 		PP2PSVC_RSPDOR_PD_ENTRY 		pRspdorPDEntry = (PP2PSVC_RSPDOR_PD_ENTRY)pPDEntry;
-		
-		P2PSvc_UpdateParam(&pRspdorPDEntry->objList, 
-			P2PSVC_OBJ_HDR_ID_DATA_USER_ACCEPTED, 
+
+		P2PSvc_UpdateParam(&pRspdorPDEntry->objList,
+			P2PSVC_OBJ_HDR_ID_DATA_USER_ACCEPTED,
 			0, sizeof(bAccepted), &bAccepted);
 
-		pRspdorPDEntry->fopdReqStatus = (bAccepted) 
-								? (P2P_STATUS_SUCCESS_ACCEPTED_BY_USER) 
+		pRspdorPDEntry->fopdReqStatus = (bAccepted)
+								? (P2P_STATUS_SUCCESS_ACCEPTED_BY_USER)
 								: (P2P_STATUS_FAIL_REJECTED_BY_USER);
-		
-		pRspdorPDEntry->fopdReqConnCap = (bAccepted) 
-								? (pP2PSvcInfo->connCap) 
+
+		pRspdorPDEntry->fopdReqConnCap = (bAccepted)
+								? (pP2PSvcInfo->connCap)
 								: (P2PSVC_CONN_CAP_BMP_NONE);
-		
+
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("bUserAccepted set to: %u\n", bAccepted));
 	}while(FALSE);
 
@@ -2265,14 +2265,14 @@ P2PSvc_InitorOnPDRsp(
 	PP2PSVC_INITOR_PD_ENTRY				pInitorPDEntry = (PP2PSVC_INITOR_PD_ENTRY)pPDEntry;
 
 	P2PSVC_FUNC_IN(DBG_LOUD);
-	
+
 	do
 	{
 		P2P_STATUS_CODE					pdRspStatus = P2P_STATUS_MAX;
 		u1Byte							pdRspConnCap = 0;
 
 		if(!eqMacAddr(devAddr, pInitorPDEntry->super.peerDevAddr))
-		{// not from the peer 
+		{// not from the peer
 			// Don't set rtStatus so session won't be freed
 			break;
 		}
@@ -2328,11 +2328,11 @@ P2PSvc_InitorOnPDRsp(
 		pInitorPDEntry->pdRspRxTime = PlatformGetCurrentTime();
 		pInitorPDEntry->pdRspStatus = pdRspStatus;
 		pInitorPDEntry->pdRspConnCap = pdRspConnCap;
-		
+
 		if(!pInitorPDEntry->super.bDeferred)
 		{// immediate rsp, no further frame exchg
 			p2psvc_Set_PDResult(&pInitorPDEntry->super, pdRspStatus, pdRspConnCap);
-			
+
 			if(P2P_STATUS_SUCCESS == pdRspStatus)
 			{// immediate success
 				rtStatus = p2psvc_AccessTopology_InitorImmediate(pP2PSvcInfo, pPDEntry, posP2PAttrs);
@@ -2344,7 +2344,7 @@ P2PSvc_InitorOnPDRsp(
 			else
 			{// PD explicitly failed
 				RT_TRACE_F(COMP_P2P, DBG_LOUD, ("PD rsp status: %u\n", pdRspStatus));
-			}			
+			}
 		}
 
 		//4 Indicate on PD rsp
@@ -2395,14 +2395,14 @@ P2PSvc_InitorOnFOPDReq(
 	BOOLEAN 							bToSendFOPDRsp = FALSE;
 
 	P2PSVC_FUNC_IN(DBG_LOUD);
-	
+
 	do
 	{
 		P2P_STATUS_CODE					fopdReqStatus = P2P_STATUS_MAX;
 		u1Byte							fopdReqConnCap = 0;
 
 		if(!eqMacAddr(devAddr, pInitorPDEntry->super.peerDevAddr))
-		{// not from the peer 
+		{// not from the peer
 			// Don't set rtStatus so session won't be freed
 			break;
 		}
@@ -2455,15 +2455,15 @@ P2PSvc_InitorOnFOPDReq(
 		pInitorPDEntry->fopdReqConnCap = fopdReqConnCap;
 
 		//4 Check if rejected by peer user, if rejected, FOPD rsp shall not be sent
-		
+
 		if(P2P_STATUS_SUCCESS_ACCEPTED_BY_USER == fopdReqStatus)
 		{
 			BOOLEAN 					bConnectable = FALSE;
-			
+
 			bToSendFOPDRsp = TRUE;
-			bConnectable = p2psvc_AccessConnectability(pP2PSvcInfo, 
+			bConnectable = p2psvc_AccessConnectability(pP2PSvcInfo,
 									&pInitorPDEntry->super,
-									&pInitorPDEntry->fopdRspConnCap, 
+									&pInitorPDEntry->fopdRspConnCap,
 									&pInitorPDEntry->fopdRspStatus);
 
 			p2psvc_Set_PDResult(&pInitorPDEntry->super, pInitorPDEntry->fopdRspStatus, pInitorPDEntry->fopdRspConnCap);
@@ -2530,12 +2530,12 @@ P2PSvc_RspdorOnFOPDRsp(
 	PP2PSVC_RSPDOR_PD_ENTRY				pRspdorPDEntry = (PP2PSVC_RSPDOR_PD_ENTRY)pPDEntry;
 
 	P2PSVC_FUNC_IN(DBG_LOUD);
-	
+
 	do
 	{
 		P2P_STATUS_CODE					fopdRspStatus = P2P_STATUS_MAX;
 		u1Byte							fopdRspConnCap = 0;
-		
+
 		PP2PSVC_OBJ_LIST				pObjList = NULL;
 
 		if(!eqMacAddr(devAddr, pRspdorPDEntry->super.peerDevAddr))
@@ -2589,7 +2589,7 @@ P2PSvc_RspdorOnFOPDRsp(
 		{
 			fopdRspConnCap = P2PSVC_CONN_CAP_BMP_NONE;
 		}
-		
+
 		pRspdorPDEntry->fopdRspRxTime = PlatformGetCurrentTime();
 		pRspdorPDEntry->fopdRspStatus = fopdRspStatus;
 		pRspdorPDEntry->fopdRspConnCap = fopdRspConnCap;
@@ -2604,10 +2604,10 @@ P2PSvc_RspdorOnFOPDRsp(
 				break;
 			}
 		}
-		
+
 		// Indicate
 		p2psvc_IndicateRspdorOnFOPDRsp(pP2PSvcInfo, &pRspdorPDEntry->super, fopdRspStatus, posP2PAttrs);
-		
+
 		if(P2P_STATUS_SUCCESS == fopdRspStatus)
 		{// PD succeeded
 			P2PSvc_PDSessionSucceeded(pP2PSvcInfo, pPDEntry);
@@ -2635,7 +2635,7 @@ RT_STATUS
 P2PSvc_InitorOnSendPDReqFailure(
 	IN  PP2PSVC_INFO					pP2PSvcInfo,
 	IN  PP2PSVC_PD_ENTRY 				pPDEntry,
-	IN  u1Byte							p2pStatus	
+	IN  u1Byte							p2pStatus
 	)
 {
 	RT_STATUS							rtStatus = RT_STATUS_SUCCESS;
@@ -2648,7 +2648,7 @@ P2PSvc_InitorOnSendPDReqFailure(
 		reqBufSize = 0
 			+ P2PSVC_OBJ_LIST_LEN(P2PSvc_Get_PDEntryObjList(pPDEntry)) 		// the whole objs in PD session
 			+ (RT_OBJECT_HEADER_SIZE + sizeof(P2P_STATUS_CODE));			// the status code
-		
+
 		if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_AllocMem(pP2PSvcInfo->pAdapter, &pBuf, reqBufSize)))
 		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] Failed to allocate memory for pBuf\n"));
@@ -2658,19 +2658,19 @@ P2PSvc_InitorOnSendPDReqFailure(
 		pObjList = (PP2PSVC_OBJ_LIST)pBuf;
 
 		PlatformMoveMemory(pBuf, P2PSvc_Get_PDEntryObjList(pPDEntry), P2PSVC_OBJ_LIST_LEN(P2PSvc_Get_PDEntryObjList(pPDEntry)));
-		
+
 		if(0 == P2PSvc_MakeP2PStatusObj(pObjList, p2pStatus))
 		{
-			rtStatus = RT_STATUS_INVALID_DATA; 
+			rtStatus = RT_STATUS_INVALID_DATA;
 			break;
 		}
 
 		pObjList->hdr.Id = P2PSVC_OBJ_HDR_ID_INDIC_INITOR_PD_REQ_SEND_FAILED;
-		
+
 		P2PSvc_Indicate(pP2PSvcInfo, reqBufSize, pBuf);
-		
+
 		P2PSvc_PDSessionFailed(pP2PSvcInfo, pPDEntry);
-		
+
 	}while(FALSE);
 
 	if(pBuf) P2PSvc_FreeMem(pBuf, reqBufSize);
@@ -2682,7 +2682,7 @@ RT_STATUS
 P2PSvc_RspdorOnSendFOPDReqFailure(
 	IN  PP2PSVC_INFO					pP2PSvcInfo,
 	IN  PP2PSVC_PD_ENTRY				pPDEntry,
-	IN  u1Byte							p2pStatus	
+	IN  u1Byte							p2pStatus
 	)
 {
 	RT_STATUS							rtStatus = RT_STATUS_SUCCESS;
@@ -2696,7 +2696,7 @@ P2PSvc_RspdorOnSendFOPDReqFailure(
 		reqBufSize = 0
 						+ P2PSVC_OBJ_LIST_LEN(P2PSvc_Get_PDEntryObjList(pPDEntry)) 		// the whole objs in PD session
 						+ (RT_OBJECT_HEADER_SIZE + sizeof(P2P_STATUS_CODE));			// the status code
-		
+
 		if(RT_STATUS_SUCCESS != (rtStatus = P2PSvc_AllocMem(pP2PSvcInfo->pAdapter, &pBuf, reqBufSize)))
 		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("[WARNING] Failed to allocate memory for pBuf\n"));
@@ -2712,15 +2712,15 @@ P2PSvc_RspdorOnSendFOPDReqFailure(
 			// invalidate the prev status obj if exist
 			pStatusObj->Id = P2PSVC_OBJ_HDR_ID_DATA_UNKNOWN;
 		}
-		
+
 		if(0 == P2PSvc_MakeP2PStatusObj(pObjList, p2pStatus))
 		{
-			rtStatus = RT_STATUS_INVALID_DATA; 
+			rtStatus = RT_STATUS_INVALID_DATA;
 			break;
 		}
 
 		pObjList->hdr.Id = P2PSVC_OBJ_HDR_ID_INDIC_RSPDOR_FOPD_REQ_SEND_FAILED;
-		
+
 		P2PSvc_Indicate(pP2PSvcInfo, reqBufSize, pBuf);
 
 		// NOT to free the PD session because there may be a retry for sending FOPD req
@@ -2729,7 +2729,7 @@ P2PSvc_RspdorOnSendFOPDReqFailure(
 		// If sending FOPD req failed in the end, it shall be recycled in when P2PDisconnect or
 		// P2PSvc_PDSessionAgeFunc is called.
 		//P2PSvc_PDSessionFailed(pP2PSvcInfo, pPDEntry);
-		
+
 	}while(FALSE);
 
 	if(pBuf) P2PSvc_FreeMem(pBuf, reqBufSize);
@@ -2752,10 +2752,10 @@ P2PSvc_IsLegacyPD(
 	do
 	{
 		OCTET_STRING					osAdvId = {NULL, 0};
-	
+
 		// If PD req does not contain adv-id attr, it should be from a legacy P2P Device
-		bLegacyPD = (P2PSvc_GetP2PAttr(posP2PAttrs, P2P_ATTR_ADV_ID_INFO, 4 + 6, &osAdvId)) 
-						? (FALSE) 
+		bLegacyPD = (P2PSvc_GetP2PAttr(posP2PAttrs, P2P_ATTR_ADV_ID_INFO, 4 + 6, &osAdvId))
+						? (FALSE)
 						: (TRUE);
 
 		if(bLegacyPD)
@@ -2768,7 +2768,7 @@ P2PSvc_IsLegacyPD(
 	}while(FALSE);
 
 	P2PSVC_FUNC_OUT(DBG_LOUD, rtStatus);
-	
+
 	return bLegacyPD;
 }
 
@@ -2799,12 +2799,12 @@ P2PSvc_PDSessionAgeFunc(
 {
 	PRT_LIST_ENTRY						pListHead = &pP2PSvcInfo->pdSessionList;
 	PRT_LIST_ENTRY 						pEntry = RTGetHeadList(&pP2PSvcInfo->pdSessionList);
-	
+
 	while(pEntry != pListHead)
 	{
 		PP2PSVC_PD_ENTRY 				pPDEntry = (PP2PSVC_PD_ENTRY)pEntry;
 		PRT_LIST_ENTRY 					pForeEntry = RTNextEntryList(pEntry);
-		
+
 		if(P2PSVC_TIMEOUT_PD_SESSION_TIMEOUT_uS < PlatformGetCurrentTime() - pPDEntry->createTime)
 		{
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("Timeout an old PD session\n"));

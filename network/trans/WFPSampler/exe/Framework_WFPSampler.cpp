@@ -6,13 +6,13 @@
 //      Framework_WFPSampler.cpp
 //
 //   Abstract:
-//      This module contains functions which form the entry point to our client program 
+//      This module contains functions which form the entry point to our client program
 //         WFPSampler.Exe.
 //
 //   Naming Convention:
 //
 //      <Scope><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -72,7 +72,7 @@ typedef enum WFPSAMPLER_FLOW_CONTROL_
 
 /**
  @private_function="PrvFlowControlGet"
- 
+
    Purpose:  Parse the command line parameters for any flow control commands such as:           <br>
                 help (-?) (?) (-help)                                                           <br>
                                                                                                 <br>
@@ -107,7 +107,7 @@ WFPSAMPLER_FLOW_CONTROL PrvFlowControlGet(_In_reads_(stringCount) PCWSTR* ppCLPS
 
          break;
       }
-      /// This is used for testing purposes only.  Generally we should not be touching any other 
+      /// This is used for testing purposes only.  Generally we should not be touching any other
       /// provider's WFP objects, and is grounds for failure in the Hardware Certification Kit.
       else if(HlprStringsAreEqual(ppCLPStrings[stringIndex],
                                   L"-clean") ||
@@ -125,7 +125,7 @@ WFPSAMPLER_FLOW_CONTROL PrvFlowControlGet(_In_reads_(stringCount) PCWSTR* ppCLPS
 
 /**
  @private_function="PrvScenarioDispatcher"
- 
+
    Purpose:  Route the provider scenario to the appropriate Scenario implementation.            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -282,7 +282,7 @@ UINT32 PrvScenarioDispatcher(_In_ WFPSAMPLER_SCENARIO scenario,
 
 /**
  @private_function="PrvScenarioGet"
- 
+
    Purpose:  Parse the command line parameters for the scenario (-s ).                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -375,17 +375,17 @@ WFPSAMPLER_SCENARIO PrvScenarioGet(_In_reads_(stringCount) PCWSTR* ppCLPStrings,
 
 /**
  @private_function="PrvCleanPolicy"
- 
+
    Purpose:  Remove all WFP objects based on the passed in scope.                               <br>
-               default   -   cleanup all WFPSampler objects except WFPSAMPLER_SUBLAYER and 
+               default   -   cleanup all WFPSampler objects except WFPSAMPLER_SUBLAYER and
                                 WFPSAMPLER_PROVIDER.                                            <br>
-               firewall  -   cleanup all WFP objects from the non-usermode layers except those 
-                                that are built-in, the WFPSAMPLER_SUBLAYER, and the 
+               firewall  -   cleanup all WFP objects from the non-usermode layers except those
+                                that are built-in, the WFPSAMPLER_SUBLAYER, and the
                                 WFPSAMPLER_PROVIDER.                                            <br>
-               all       -   cleanup all WFP objects except those that are built-in, the 
+               all       -   cleanup all WFP objects except those that are built-in, the
                                 WFPSAMPLER_SUBLAYER, and the WFPSAMPLER_PROVIDER.               <br>
                                                                                                 <br>
-   Notes:    All and firewall are meant for testing purposes only.  Doing this in a commercial 
+   Notes:    All and firewall are meant for testing purposes only.  Doing this in a commercial
              product is grounds for failure in the Microsoft Hardware Certification Kit.        <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -693,7 +693,7 @@ UINT32 PrvCleanPolicy(_In_reads_(stringCount) PCWSTR* ppCLPStrings,
 
 /**
  @private_function="PrvLogUsage"
- 
+
    Purpose:  Log usage information to the console.                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -792,11 +792,11 @@ VOID PrvLogUsage(_In_ UINT32 scenario)
          {
 
 #if(NTDDI_VERSION >= NTDDI_WIN7)
-            
+
             PendEndpointClosureScenarioLogHelp();
-            
+
 #else
-            
+
             wprintf(L"\n\t\t\t PEND_ENDPOINT_CLOSURE scenario is not supported on this version of Windows \n");
 
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
@@ -855,7 +855,7 @@ VOID PrvLogUsage(_In_ UINT32 scenario)
 /**
  @framework_function="wmain"
 
-   Purpose:  Entry point for WFPSampler.Exe.  Accepts multiple parameters which are parsed and 
+   Purpose:  Entry point for WFPSampler.Exe.  Accepts multiple parameters which are parsed and
              dispatched to the rest of the program.                                             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

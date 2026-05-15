@@ -6,20 +6,20 @@
 //      CompletionFunctions_ProxyCallouts.cpp
 //
 //   Abstract:
-//      This module contains WFP Completion functions for proxied connections using the injection 
+//      This module contains WFP Completion functions for proxied connections using the injection
 //         clone / drop / modify /inject model.
 //
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //       CompleteProxyInjection
 //
 //       <Module>
 //          Complete                     - Function is an FWPS_INJECT_COMPLETE function.
 //       <Scenario>
-//          ProxyInjection               - Function demonstrates the clone / block / modify / inject 
+//          ProxyInjection               - Function demonstrates the clone / block / modify / inject
 //                                            model for proxying.
 //
 //      <Object><Action>
@@ -47,17 +47,17 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense and 
+//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense and
 //                                              enhance traces.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "Framework_WFPSamplerCalloutDriver.h"   /// . 
+#include "Framework_WFPSamplerCalloutDriver.h"   /// .
 #include "CompletionFunctions_ProxyCallouts.tmh" /// $(OBJ_PATH)\$(O)\
 
 /**
  @private_function="ProxyCompletionDataDestroy"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -73,13 +73,13 @@ _Success_(*ppCompletionData == 0)
 VOID ProxyCompletionDataDestroy(_Inout_ PROXY_COMPLETION_DATA** ppCompletionData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> ProxyCompletionDataDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppCompletionData);
    NT_ASSERT(*ppCompletionData);
 
@@ -113,19 +113,19 @@ VOID ProxyCompletionDataDestroy(_Inout_ PROXY_COMPLETION_DATA** ppCompletionData
                WFPSAMPLER_CALLOUT_DRIVER_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- ProxyCompletionDataDestroy()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @completion_function="CompleteProxyInjection"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

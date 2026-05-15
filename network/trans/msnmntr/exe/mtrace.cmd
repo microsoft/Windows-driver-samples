@@ -59,8 +59,8 @@ if /i "%TR_MODULE%"=="MONITOR" (
       echo.
       echo Error: Notify component does not support this trace detail.
       goto :show_usage_MsnMntrNotify
-   )   
-   
+   )
+
 ) else if /i "%TR_MODULE%"=="CONTROL" (
    set TR_GUID={eab718af-52de-477c-874d-cb49746bb131}
    set TR_MODULE=MsnMntrCtl
@@ -100,7 +100,7 @@ if /i "%TR_MODULE%"=="MONITOR" (
       echo.
       echo Error: Init component does not support this trace detail.
       goto :show_usage_MsnMntrInit
-   )  
+   )
 
 ) else (
    echo.
@@ -209,7 +209,7 @@ goto :eof
    echo    9   Display all trace events
    echo        Select a component to see individual supported tracing levels.
    call :show_usage_footer
-   
+
    goto :eof
 
 :show_usage_MsnMntrMonitor
@@ -219,7 +219,7 @@ goto :eof
    echo    2   Layer notifications
    echo    9   Display all trace events
    call :show_usage_footer
-   
+
    goto :eof
 
 :show_usage_MsnMntrNotify
@@ -232,7 +232,7 @@ goto :eof
    call :show_usage_footer
 
    goto :eof
-   
+
 :show_usage_MsnMntrCtl
    call :show_usage_header
    echo    0   Initialization
@@ -242,7 +242,7 @@ goto :eof
    call :show_usage_footer
 
    goto :eof
-   
+
 :show_usage_MsnMntrInit
    call :show_usage_header
    echo    0   Initialization
@@ -251,12 +251,12 @@ goto :eof
    call :show_usage_footer
 
    goto :eof
-   
+
 :show_usage_header
    echo.
    echo Usage: monitor_trace COMPONENT LEVEL VERB
    echo.
-   echo Components: 
+   echo Components:
    echo    MONITOR, NOTIFY, CONTROL and INIT
    echo.
    echo Trace detail:

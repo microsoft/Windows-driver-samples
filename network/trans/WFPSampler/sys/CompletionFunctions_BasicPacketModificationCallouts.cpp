@@ -6,20 +6,20 @@
 //      CompletionFunctions_BasicPacketInjectionCallouts.cpp
 //
 //   Abstract:
-//      This module contains WFP Completion functions for injecting packets back into the data path 
+//      This module contains WFP Completion functions for injecting packets back into the data path
 //         using the clone / block / inject method for modified NBLs.
 //
 //   Naming Convention:
 //
 //      <Module><Scenario>
-//  
+//
 //      i.e.
 //       CompleteBasicPacketModification
 //
 //       <Module>
 //          Complete                           - Function is an FWPS_INJECT_COMPLETE function.
 //       <Scenario>
-//          BasicPacketModification            - Function demonstrates the clone / block / inject 
+//          BasicPacketModification            - Function demonstrates the clone / block / inject
 //                                                model for modified NBLs.
 //
 //      <Object><Action>
@@ -29,7 +29,7 @@
 //
 //       <Object>
 //        {
-//          BasicPacketModificationCompletionData - pertains to 
+//          BasicPacketModificationCompletionData - pertains to
 //                                                     BASIC_PACKET_MODIFICATION_COMPLETION_DATA.
 //        }
 //       <Action>
@@ -48,17 +48,17 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense and 
+//      December  13,   2013  -     1.1   -  Enhance function declaration for IntelliSense and
 //                                              enhance traces.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "Framework_WFPSamplerCalloutDriver.h"                     /// . 
+#include "Framework_WFPSamplerCalloutDriver.h"                     /// .
 #include "CompletionFunctions_BasicPacketModificationCallouts.tmh" /// $(OBJ_PATH)\$(O)\
 
 /**
  @private_function="BasicPacketModificationCompletionDataDestroy"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -75,13 +75,13 @@ VOID BasicPacketModificationCompletionDataDestroy(_Inout_ BASIC_PACKET_MODIFICAT
                                                   _In_ BOOLEAN override)                                                /* FALSE */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> BasicPacketModificationCompletionDataDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppCompletionData);
    NT_ASSERT(*ppCompletionData);
 
@@ -129,19 +129,19 @@ VOID BasicPacketModificationCompletionDataDestroy(_Inout_ BASIC_PACKET_MODIFICAT
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- BasicPacketModificationCompletionDataDestroy()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @completion_function="CompleteBasicPacketModification"
- 
+
    Purpose:                                                                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

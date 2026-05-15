@@ -33,7 +33,7 @@ Environment:
 #include "notify.h"
 
 //
-// Software Tracing Definitions 
+// Software Tracing Definitions
 //
 #define WPP_CONTROL_GUIDS \
     WPP_DEFINE_CONTROL_GUID(MsnMntrCtl,(eab718af, 52de, 477c, 874d, cb49746bb131),  \
@@ -53,11 +53,11 @@ MonitorCtlDriverInit(
 
 Routine Description:
 
-   Initializes the request queue for our driver.  This is how 
+   Initializes the request queue for our driver.  This is how
    DeviceIoControl requests are sent to KMDF drivers.
 
 Arguments:
-   
+
    [in]  WDFDEVICE* pDevice - Our device.
 
 --*/
@@ -133,7 +133,7 @@ MonitorEvtDeviceControl (
       case MONITOR_IOCTL_DISABLE_MONITOR:
       {
          status = STATUS_SUCCESS;
-         
+
          MonitorCoDisableMonitoring();
 
          break;

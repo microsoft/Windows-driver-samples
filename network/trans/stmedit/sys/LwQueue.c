@@ -40,7 +40,7 @@ LwInitializeQueue(
         ExAllocatePool2(
             POOL_FLAG_NON_PAGED, IoSizeofWorkItem(), STMEDIT_TAG_LQWI);
 
-    if (Queue->WorkItem == NULL) 
+    if (Queue->WorkItem == NULL)
 	{
         return STATUS_INSUFFICIENT_RESOURCES;
     }
@@ -62,7 +62,7 @@ LwUninitializeQueue(
 	{
         return;
     }
-    
+
     Queue->Initialized = FALSE;
 
     IoUninitializeWorkItem(Queue->WorkItem);
@@ -131,7 +131,7 @@ LwEnqueue(
     Queue->Tail->Next = Entry;
     Queue->Tail = Entry;
 
-    if (!Queue->WorkerScheduled) 
+    if (!Queue->WorkerScheduled)
 	{
         Queue->WorkerScheduled = TRUE;
 
@@ -161,7 +161,7 @@ LwDequeueAll(
     Queue->Head->Next = NULL;
     Queue->Tail = Queue->Head;
 
-    if (Entry == NULL) 
+    if (Entry == NULL)
 	{
         Queue->WorkerScheduled = FALSE;
     }

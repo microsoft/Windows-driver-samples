@@ -6,13 +6,13 @@
 //      Scenarios_BasicStreamInjection.cpp
 //
 //   Abstract:
-//      This module contains functions which prepares and sends data for the BASIC_STREAM_INJECTION 
+//      This module contains functions which prepares and sends data for the BASIC_STREAM_INJECTION
 //         scenario implementation.
 //
 //   Naming Convention:
 //
 //      <Scope><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -22,20 +22,20 @@
 //          }
 //       <Object>
 //          {
-//            BasicStreamInjectionScenario - Function pertains to the Basic Stream Injection 
+//            BasicStreamInjectionScenario - Function pertains to the Basic Stream Injection
 //                                              Scenario.
 //          }
 //       <Action>
 //          {
-//            Execute                      - Function packages data and invokes RPC to the 
+//            Execute                      - Function packages data and invokes RPC to the
 //                                              WFPSampler service.
 //            Log                          - Function writes to the console.
-//            Parse                        - Function pulls data into the required format from the 
+//            Parse                        - Function pulls data into the required format from the
 //                                              provided data.
 //          }
 //       <Modifier>
 //          {
-//            Help                         - Function provides context sensitive help for the 
+//            Help                         - Function provides context sensitive help for the
 //                                              scenario.
 //            InjectionData                - Function acts on the PC_BASIC_STREAM_INJECTION_DATA.
 //          }
@@ -62,7 +62,7 @@
 
 /**
  @private_function="PrvBasicStreamInjectionScenarioParseInjectionData"
- 
+
    Purpose:  Parse the command line parameters for implementing stream injection such as:       <br>
                 Perform the injection inline (from within the classify)    (-in)                <br>
                 Use threaded DPCs for out of band (asynchronous)           (-tdpc)              <br>
@@ -106,20 +106,20 @@ UINT32 PrvBasicStreamInjectionScenarioParseInjectionData(_In_reads_(stringCount)
                              ppCLPStrings[stringIndex]))
       {
          pPCBasicStreamInjectionData->useThreadedDPC = TRUE;
-      
+
          found++;
-      
+
          continue;
       }
-      
+
       /// Work Items
       if(HlprStringsAreEqual(L"-wi",
                              ppCLPStrings[stringIndex]))
       {
          pPCBasicStreamInjectionData->useWorkItems = TRUE;
-      
+
          found++;
-      
+
          continue;
       }
    }
@@ -130,7 +130,7 @@ UINT32 PrvBasicStreamInjectionScenarioParseInjectionData(_In_reads_(stringCount)
 /**
  @scenario_function="BasicStreamInjectionScenarioExecute"
 
-   Purpose:  Gather and package data neccessary to setup the BASIC_STREAM_INJECTION scenario, 
+   Purpose:  Gather and package data neccessary to setup the BASIC_STREAM_INJECTION scenario,
              then invoke RPC to implement the scenario in the WFPSampler service.               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -201,7 +201,7 @@ UINT32 BasicStreamInjectionScenarioExecute(_In_reads_(stringCount) PCWSTR* ppCLP
 
 /**
  @public_function="BasicStreamInjectionScenarioLogHelp"
- 
+
    Purpose:  Log usage information for the BASIC_STREAM_INJECTION scenario to the console.      <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

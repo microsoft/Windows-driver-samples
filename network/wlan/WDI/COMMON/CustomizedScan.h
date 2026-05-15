@@ -1,10 +1,10 @@
 //---------------------------------------------------------------------------
 //
 // Copyright (c) 2014 Realtek Semiconductor, Inc. All rights reserved.
-// 
+//
 //---------------------------------------------------------------------------
 // Description:
-//		
+//
 //
 
 #ifndef __INC_CUSTOMIZED_SCAN_H
@@ -77,7 +77,7 @@ VOID
 CustomScan_ScanByTimerCb(
 	IN  VOID					*pInfo
 	);
-	
+
 BOOLEAN
 CustomScan_ConstructScanListCb(
 	IN  VOID					*pInfo,
@@ -312,7 +312,7 @@ CustomScan_AcquireCurCtx(
 	);
 
 VOID
-CustomScan_ReleaseCurCtx(	
+CustomScan_ReleaseCurCtx(
 	IN  VOID					*pInfo
 	);
 

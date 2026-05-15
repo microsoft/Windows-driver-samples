@@ -40,13 +40,13 @@ typedef HRESULT (APIENTRY *UnregisterPageProc) (
 #pragma warning (push)
 #pragma warning (disable:6262)
 
-HRESULT 
+HRESULT
 CRegHelper::RegisterServer ()
 {
    HRESULT hr = S_OK;
-   wchar_t  wszModule[_MAX_PATH] = {0};  
+   wchar_t  wszModule[_MAX_PATH] = {0};
    DWORD result = 0;
-   
+
    result = GetModuleFileName(g_hInst, wszModule, ARRAY_SIZE(wszModule));
 
     if (result == 0)
@@ -67,7 +67,7 @@ CRegHelper::RegisterServer ()
    FAILHR(SetKeyAndValue(wszCLSIDKey, NULL, CLSID_CALLBACK_FRIENDLY_NAME));
    // set the server path.
    FAILHR(SetKeyAndValue(wszCLSIDKey, INPROCSERVER32, wszModule));
-   
+
    // add the threading model information.
    hr = StringCchPrintfW(wszInprocKey, MAX_LENGTH + 2,  L"%s\\%s", wszCLSIDKey, INPROCSERVER32);
    if(FAILED(hr))
@@ -75,19 +75,19 @@ CRegHelper::RegisterServer ()
    	 hr = S_FALSE;
 	 return hr;
    }
-   
+
    FAILHR(SetRegValue(wszInprocKey, THREADINGMODEL, FREETHREADING));
 
    // register the extension UI wizard page
-   HINSTANCE hinstLib = LoadLibrary(TEXT("connect.dll")); 
-   if (hinstLib != NULL) 
+   HINSTANCE hinstLib = LoadLibrary(TEXT("connect.dll"));
+   if (hinstLib != NULL)
    {
-      
+
        // get the export function used for registering
-       RegisterPageWithPageProc registerPageWithPageProc = 
+       RegisterPageWithPageProc registerPageWithPageProc =
            (RegisterPageWithPageProc) GetProcAddress(hinstLib, (LPCSTR)("RegisterPageWithPage"));
 
-       if (NULL != registerPageWithPageProc) 
+       if (NULL != registerPageWithPageProc)
        {
             hr = (registerPageWithPageProc) (NULL,                      // stand alone page (no parent)
                                              &GUID_SAMPLE_IHVUI_CLSID,  // clsid of the extension UI wizard page
@@ -95,10 +95,10 @@ CRegHelper::RegisterServer ()
                                              CLSID_CALLBACK_FRIENDLY_NAME,  // friendly name
                                              0x2,                       // allow duplicate instances
                                              0,                         // no user flags
-                                             NULL);                     // no command line 
+                                             NULL);                     // no command line
        }
 
-       FreeLibrary(hinstLib); 
+       FreeLibrary(hinstLib);
    }
 
    return hr;
@@ -108,7 +108,7 @@ CRegHelper::RegisterServer ()
 //
 // UnRegisterServer - Register the COM Server by creating required keys
 //
-HRESULT 
+HRESULT
 CRegHelper::UnregisterServer()
 {
     HRESULT hr = S_OK;
@@ -120,7 +120,7 @@ CRegHelper::UnregisterServer()
     StringCchCatW(wszCLSIDKey, MAX_LENGTH,  L"\\");
     StringCchCatW(wszCLSIDKey, MAX_LENGTH,  CLSIDSTR_CALLBACK);
     StringCchCatW(wszCLSIDKey, MAX_LENGTH,  L"\\");
-    StringCchCatW(wszCLSIDKey, MAX_LENGTH,  INPROCSERVER32);  
+    StringCchCatW(wszCLSIDKey, MAX_LENGTH,  INPROCSERVER32);
 
 
     // delete the sub key of the Class ID key
@@ -134,24 +134,24 @@ CRegHelper::UnregisterServer()
     FAILHR(DeleteKey(wszCLSIDKey));
 
     // unregister the extension UI wizard page
-    HINSTANCE hinstLib = LoadLibrary(TEXT("connect.dll")); 
-    if (hinstLib != NULL) 
+    HINSTANCE hinstLib = LoadLibrary(TEXT("connect.dll"));
+    if (hinstLib != NULL)
     {
-    
+
         // get the export function used for unregistering
-        UnregisterPageProc unregisterPageProc = 
+        UnregisterPageProc unregisterPageProc =
             (UnregisterPageProc) GetProcAddress(hinstLib, (LPCSTR)("UnregisterPage"));
 
-        if (NULL != unregisterPageProc) 
+        if (NULL != unregisterPageProc)
         {
              hr = (unregisterPageProc) (&GUID_SAMPLE_IHVUI_CLSID,  // clsid of the extension UI wizard page
                                         FALSE);                    // already unregistered from COM
         }
 
-        FreeLibrary(hinstLib); 
+        FreeLibrary(hinstLib);
     }
 
-    return hr;   
+    return hr;
 
 }
 
@@ -159,7 +159,7 @@ CRegHelper::UnregisterServer()
 //	Set an entry in the registry of the form:
 //			HKEY_CLASSES_ROOT\wszKey\wszSubkey = wszValue
 //
-BOOL 
+BOOL
 CRegHelper::SetKeyAndValue(
     const wchar_t* pwszKey,
     const wchar_t* pwszSubkey,
@@ -181,41 +181,41 @@ CRegHelper::SetKeyAndValue(
 
    // create the registry key.
    if (RegCreateKeyEx(
-           HKEY_CLASSES_ROOT, 
-           wszRegKey, 
-           0, 
+           HKEY_CLASSES_ROOT,
+           wszRegKey,
+           0,
            NULL,
-           REG_OPTION_NON_VOLATILE, 
-           KEY_ALL_ACCESS, 
+           REG_OPTION_NON_VOLATILE,
+           KEY_ALL_ACCESS,
            NULL,
-           &hKey, 
+           &hKey,
            NULL) == ERROR_SUCCESS)
    {
       // set the value (if there is one).
       if (pwszValue != NULL)
       {
          RegSetValueEx(
-            hKey, 
-            NULL, 
-            0, 
-            REG_SZ, 
+            hKey,
+            NULL,
+            0,
+            REG_SZ,
             (BYTE *)pwszValue,
             (DWORD) ((wcslen(pwszValue) + 1) * sizeof (wchar_t))
             );
    	}
-		
-      RegCloseKey(hKey);	
-		
-      return TRUE;
-   }	
 
-   return FALSE;	
+      RegCloseKey(hKey);
+
+      return TRUE;
+   }
+
+   return FALSE;
 }
 
 //
 // SetRegValue - Open the key, create a new keyword and value pair under it.
 //
-BOOL 
+BOOL
 CRegHelper::SetRegValue(
     const wchar_t* pwszKeyName,
     const wchar_t* pwszKeyword,
@@ -226,25 +226,25 @@ CRegHelper::SetRegValue(
 
    // create the registration key.
    if (RegCreateKeyEx(
-           HKEY_CLASSES_ROOT, 
-           pwszKeyName, 
-           0, 
+           HKEY_CLASSES_ROOT,
+           pwszKeyName,
+           0,
            NULL,
-           REG_OPTION_NON_VOLATILE, 
-           KEY_ALL_ACCESS, 
+           REG_OPTION_NON_VOLATILE,
+           KEY_ALL_ACCESS,
            NULL,
-           &hKey, 
+           &hKey,
            NULL) == ERROR_SUCCESS)
    {
       // set the value (if there is one).
       if (pwszValue != NULL)
       {
          RegSetValueEx(
-             hKey, 
-             pwszKeyword, 
-             0, 
-             REG_SZ, 
-             (BYTE *)pwszValue, 
+             hKey,
+             pwszKeyword,
+             0,
+             REG_SZ,
+             (BYTE *)pwszValue,
              (DWORD) ((wcslen(pwszValue) + 1) * sizeof (wchar_t))
              );
       }
@@ -263,11 +263,11 @@ CRegHelper::SetRegValue(
 //	Delete an entry in the registry of the form:
 //			HKEY_CLASSES_ROOT\wszKey\wszSubkey = wszValue
 //
-BOOL 
+BOOL
 CRegHelper::DeleteKey(const wchar_t* pwszSubkey)
 {
    DWORD result = 0;
-   
+
    if (pwszSubkey != NULL)
    {
       // delete the registry key.

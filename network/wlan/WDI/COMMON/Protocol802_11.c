@@ -4,7 +4,7 @@
 #include "Protocol802_11.tmh"
 #endif
 
-static u2Byte sPacketIEOffsetTable[] = 
+static u2Byte sPacketIEOffsetTable[] =
 {
 	sMacHdrLng + 4, 		//SubType_Asoc_Req		= 0,
 	sMacHdrLng + 6, 		//SubType_Asoc_Rsp		= 1,
@@ -14,7 +14,7 @@ static u2Byte sPacketIEOffsetTable[] =
 	sMacHdrLng + 12, 		//SubType_Probe_Rsp	= 5,
 	0, 					// rsvd				= 6, 	x
 	0, 					// rsvd				= 7,	 x
-	sMacHdrLng + 12, 		//SubType_Beacon		= 8, 
+	sMacHdrLng + 12, 		//SubType_Beacon		= 8,
 	0, 					//SubType_Atim			= 9, 	x
 	0, 					//SubType_Disasoc		= 10, 	x
 	sMacHdrLng + 6, 		//SubType_Auth			= 11,
@@ -182,7 +182,7 @@ PKT_PATTERN_MAP	PktActPatternsMap[] =
 
 // 802.11 Action Frame IE offset
 PKT_IE_OFFSET_MAP	ActPktIeOffsetMap[] =
-{	
+{
 	// Qos (0x1)
 	{ACT_PKT_QOS_ADDTSREQ, (sMacHdrLng + 3)},
 	{ACT_PKT_QOS_ADDTSRSP, (sMacHdrLng + 5)},
@@ -211,7 +211,7 @@ PKT_IE_OFFSET_MAP	ActPktIeOffsetMap[] =
 	{ACT_PKT_P2P_PRESENCE_REQ, (sMacHdrLng + 7)},
 	{ACT_PKT_P2P_PRESENCE_RSP, (sMacHdrLng + 7)},
 	{ACT_PKT_P2P_GO_DISCOVERABILITY_REQ, (sMacHdrLng + 7)},
-	
+
 	// ===== Insert new item above this line =====
 	{ACT_PKT_TYPE_UNKNOWN, 0}
 };
@@ -273,7 +273,7 @@ EqualOS(
 		return FALSE;
 
 	if( os1.Length==0 )
-		return FALSE;		
+		return FALSE;
 
 	return (PlatformCompareMemory(os1.Octet,os2.Octet,os1.Length)==0) ? TRUE:FALSE;
 }
@@ -285,7 +285,7 @@ IsSSIDAny(
 	)
 {
 	BOOLEAN retValue = FALSE;
-	
+
 	if(ssid.Length == 0)	// a kind of "ANY SSID"
 		retValue =  TRUE;
 	else if(ssid.Length == 3)
@@ -296,7 +296,7 @@ IsSSIDAny(
 		retValue =  TRUE;
 	}
 
-	return retValue;	
+	return retValue;
 }
 
 
@@ -339,12 +339,12 @@ IsSSIDNdisTest(
 	{
 		return TRUE;
 	}
-	
+
 	if(	(ssid.Length >= 8) &&
 		(	(ssid.Octet[0]=='N' || ssid.Octet[0]=='n') &&
 			(ssid.Octet[1]=='D' || ssid.Octet[1]=='d') &&
-			(ssid.Octet[2]=='I' || ssid.Octet[2]=='i') &&	 	
-			(ssid.Octet[3]=='S' || ssid.Octet[2]=='s') && 
+			(ssid.Octet[2]=='I' || ssid.Octet[2]=='i') &&
+			(ssid.Octet[3]=='S' || ssid.Octet[2]=='s') &&
 			(ssid.Octet[4]=='T' || ssid.Octet[2]=='t') &&
 			(ssid.Octet[5]=='E' || ssid.Octet[2]=='e') &&
 			(ssid.Octet[6]=='S' || ssid.Octet[2]=='s') &&
@@ -356,14 +356,14 @@ IsSSIDNdisTest(
 	{
 		return FALSE;
 	}
-	
+
 }
 
 //
 // Description:
 //		Checks whether a packet contains any invalid IE.
 //		Implemented based on PacketGetElement().
-// 
+//
 // 2008.12.32, haich
 //
 BOOLEAN
@@ -383,7 +383,7 @@ PacketCheckIEValidity(
 	{
 		if(sMacHdrLng > packet.Length)
 		{// not able to get packet type
-			RT_TRACE(COMP_SCAN, DBG_LOUD, 
+			RT_TRACE(COMP_SCAN, DBG_LOUD,
 				("PacketCheckIEValidity(): sMacHdrLng(%u) > packet.Length (%u)\n", sMacHdrLng, packet.Length));
 			bRet = FALSE;
 			break;
@@ -391,17 +391,17 @@ PacketCheckIEValidity(
 
 		if(!IsMgntFrame(packet.Octet))
 		{// not a mangaement frame
-			RT_TRACE(COMP_SCAN, DBG_LOUD, 
+			RT_TRACE(COMP_SCAN, DBG_LOUD,
 				("PacketCheckIEValidity(): frame type: %u\n", Frame_Type(packet)));
 			bRet = FALSE;
 			break;
 		}
 
 		PacketSubType = Frame_Subtype(packet);
-		
+
 		if(PacketSubType > 12)
 		{// beyond deauth
-			RT_TRACE(COMP_SCAN, DBG_LOUD, 
+			RT_TRACE(COMP_SCAN, DBG_LOUD,
 				("PacketCheckIEValidity(): wrong subtype: %u\n", PacketSubType));
 			bRet = FALSE;
 			break;
@@ -409,7 +409,7 @@ PacketCheckIEValidity(
 
 		if(!(offset = sPacketIEOffsetTable[PacketSubType]))
 		{// not a sub type of frame that could have IEs
-			RT_TRACE(COMP_SCAN, DBG_LOUD, 
+			RT_TRACE(COMP_SCAN, DBG_LOUD,
 				("PacketCheckIEValidity(): not a sub type of frame that could have IEs, subtype: %u\n", PacketSubType));
 			bRet = FALSE;
 			break;
@@ -419,7 +419,7 @@ PacketCheckIEValidity(
 		{
 			if(offset + 2 >= packet.Length)
 			{// [malicious attack] not ok to read EID and Element Length
-				RT_TRACE(COMP_SCAN, DBG_LOUD, 
+				RT_TRACE(COMP_SCAN, DBG_LOUD,
 					("PacketCheckIEValidity(): [malicious attack] not ok to read EID and Element Length\n"));
 				bRet = TRUE;
 				break;
@@ -433,21 +433,21 @@ PacketCheckIEValidity(
 				bRet = FALSE;
 				break;
 			}
-			
-			if(offset + 2 + u1ELength < packet.Length) 
+
+			if(offset + 2 + u1ELength < packet.Length)
 			{// Jump to the position of length of next IE. (2 byte is for the ID and length field.)
 				offset = offset + 2 + u1ELength; // incr at least 2 for every loop
 				ValidPacketLength = offset;
 			}
-			else if(offset + 2 + u1ELength == packet.Length) 
+			else if(offset + 2 + u1ELength == packet.Length)
 			{// the IEs in the packet are all valid.
 				bRet = TRUE;
 				ValidPacketLength = offset + 2 + u1ELength;
 				break;
 			}
-			else 
+			else
 			{// [malicious attack] length of IE exceeds packet length
-				RT_TRACE(COMP_SCAN, DBG_LOUD, 
+				RT_TRACE(COMP_SCAN, DBG_LOUD,
 					("PacketCheckIEValidity(): [malicious attack] length of IE exceeds packet length\n"));
 				bRet = TRUE;
 				break;
@@ -477,7 +477,7 @@ PacketCheckIEValidity(
 // Remark:
 //	It checks the category, action field (if there is such one) and OUI information to determine the type.
 //	Do not input non-action frame to this function and it doesn't check if this packet is action frame.
-// By Bruce, 2012-03-09.	
+// By Bruce, 2012-03-09.
 //
 ACT_PKT_TYPE
 PacketGetActionFrameType(
@@ -503,7 +503,7 @@ PacketGetActionFrameType(
 		if(0 == PlatformCompareMemory(Frame_FrameBody(*posMpdu), PktActPatternsMap[idx].Pattern, PktActPatternsMap[idx].PatternLen))
 		{
 			return (ACT_PKT_TYPE)(PktActPatternsMap[idx].PktType);
-		}		
+		}
 	}
 	return ACT_PKT_TYPE_UNKNOWN;
 }
@@ -541,7 +541,7 @@ PacketGetEncapDataFrameType(
 		if(0 == PlatformCompareMemory(posDataContent->Octet, PktEncapDataPatternsMap[idx].Pattern, PktEncapDataPatternsMap[idx].PatternLen))
 		{
 			return (ENCAP_DATA_PKT_TYPE)(PktEncapDataPatternsMap[idx].PktType);
-		}		
+		}
 	}
 	return ENCAP_DATA_PKT_UNKNOWN;
 }
@@ -570,44 +570,44 @@ PacketGetIeOffset(
 {
 	BOOLEAN		bValid = TRUE;
 	u4Byte		idx = 0;
-	
+
 	switch(PacketGetType(*posMpdu))
 	{
 		default:
 			bValid = FALSE;
 			break;
-			
+
 		case Type_Auth:
 			*pOffset = (sMacHdrLng + 6);
 			break;
-			
+
 		case Type_Probe_Req:
 			*pOffset = (sMacHdrLng + 0);
 			break;
-			
+
 		case Type_Beacon:
 		case Type_Probe_Rsp:
 			*pOffset = (sMacHdrLng + 12);
 			break;
-			
+
 		case Type_Reasoc_Req:
 			*pOffset = (sMacHdrLng + 10);
 			break;
-			
+
 		case Type_Asoc_Req:
 			*pOffset = (sMacHdrLng + 4);
 			break;
-			
+
 		case Type_Asoc_Rsp:
 		case Type_Reasoc_Rsp:
 			*pOffset = (sMacHdrLng + 6);
 			break;
-			
+
 		case Type_Disasoc:
 		case Type_Deauth:
 			*pOffset = (sMacHdrLng + 2);
 			break;
-				
+
 		case Type_Action:
 			{
 				ACT_PKT_TYPE	actType = PacketGetActionFrameType(posMpdu);
@@ -663,12 +663,12 @@ PacketGetElementNum(
 	{
 		return 0;
 	}
-	
+
 	if(offset < packet.Length)
 	{
 		pu1Byte	pIE;
 		u2Byte IELen = (packet.Length - offset);
-		
+
 		pIE = (packet.Octet + offset);
 		FillOctetString(IEs, pIE,IELen);
 
@@ -681,17 +681,17 @@ PacketGetElementNum(
 				IENum++;
 				RT_TRACE(COMP_WPS, DBG_TRACE,("We find a WPS IE in probe or beacon Fragment num is %d \n",IENum));
 				IELen = IELen - ((u2Byte)(ret.Octet - pIE) + ret.Length);
-				pIE = (ret.Octet + ret.Length);			
-				FillOctetString(IEs, pIE,IELen);			
+				pIE = (ret.Octet + ret.Length);
+				FillOctetString(IEs, pIE,IELen);
 				RT_PRINT_DATA(COMP_WPS, DBG_TRACE, "The IE after WPS IE in the packet :\n", pIE, IELen);
 			}
 			else
 			{
-				RT_TRACE(COMP_WPS, DBG_TRACE,("There is no WPS IE in the probe or beacon\n"));				
+				RT_TRACE(COMP_WPS, DBG_TRACE,("There is no WPS IE in the probe or beacon\n"));
 			}
 		}
 		while(ret.Length != 0);
-		
+
 		return IENum;
 	}
 	else
@@ -707,7 +707,7 @@ PacketGetElementNum(
 // Added a parameter "OUISubType" and rewrited by Annie, 2005-11-08,
 // since the element ID of WPA-IE and WMM-IE are the same(0xDD=221).
 //
-OCTET_STRING 
+OCTET_STRING
 PacketGetElement(
 	IN	OCTET_STRING	packet,
 	IN	ELEMENT_ID		ID,
@@ -774,9 +774,9 @@ TimGetBcMcBit(
 	return	((Tim.Octet[2] & 0x01) == 0x01);
 }
 
-BOOLEAN	
-TimGetAIDBit( 
-	IN	OCTET_STRING	Tim, 
+BOOLEAN
+TimGetAIDBit(
+	IN	OCTET_STRING	Tim,
 	IN	u2Byte			AID
 	)
 {
@@ -784,7 +784,7 @@ TimGetAIDBit(
 	u2Byte		offset,offset_byte;
 	u1Byte		offset_bit;
 	u2Byte		FirstStationInTim;
-	
+
 	FirstStationInTim = (Tim.Octet[2] & 0xFE) * 8;
 	if( AID<FirstStationInTim || AID >= (FirstStationInTim+(Tim.Length-3)*8) )
 	{	// Out of the range(too large)
@@ -792,9 +792,9 @@ TimGetAIDBit(
 	}
 	else
 	{
-		
+
 		offset = AID - FirstStationInTim;
-		
+
 		offset_byte = offset >>3;
 		offset_bit  = (unsigned char)(offset & 0x7);
 
@@ -853,7 +853,7 @@ N_DBPSOfRate(
 	return N_DBPS;
 }
 
-u2Byte 
+u2Byte
 ComputeTxTime(
 	IN	u2Byte			FrameLength,
 	IN	u4Byte			DataRate,
@@ -874,7 +874,7 @@ ComputeTxTime(
 			// 1M can only use Long Preamble. Ref. 802.11b 18.2.2.2. 2005.01.18, by rcnjko.
 			if( bManagementFrame || !bShortPreamble || DataRate == 2 )
 			{	// long preamble
-				FrameTime = (u2Byte)(144+48+(FrameLength*8*2/DataRate));		
+				FrameTime = (u2Byte)(144+48+(FrameLength*8*2/DataRate));
 			}
 			else
 			{	// Short preamble
@@ -899,7 +899,7 @@ ComputeTxTime(
 		FrameTime = (u2Byte)(16 + 4 + 4*Ceiling + 6);
 		break;
 	}
-	
+
 	return FrameTime;
 }
 
@@ -974,7 +974,7 @@ CompareSSID(
 		    ( PlatformCompareMemory(ssidbuf1, ssidbuf2, ssidlen1) == 0 ))
 		return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
@@ -989,21 +989,21 @@ ComputeAckRate(
 
 	DataRate &= 0x7F;
 
-	// Find the highest rate in the BSSBasicRateSet 
+	// Find the highest rate in the BSSBasicRateSet
 	// that is less than or equal to DataRate.
 	for( i = 0; i < BSSBasicRateSet.Length; i++)
 	{
-		BasicRate = BSSBasicRateSet.Octet[i] & 0x7F; 
+		BasicRate = BSSBasicRateSet.Octet[i] & 0x7F;
 		if(	BasicRate <= DataRate && BasicRate > AckRate)
-			AckRate = BasicRate; 
+			AckRate = BasicRate;
 	}
 
-	// Make sure the AckRate is in the same modulation of DataRate, 
-	// otherwise we it shall use highest mandatory rate of PHY 
+	// Make sure the AckRate is in the same modulation of DataRate,
+	// otherwise we it shall use highest mandatory rate of PHY
 	// that is less than or equal to DataRate.
 	switch(DataRate)
 	{
-	// CCK. 
+	// CCK.
 	case MGN_1M:
 	case MGN_2M:
 	case MGN_5_5M:
@@ -1063,7 +1063,7 @@ HasNextIE(
 	if(Offset + 2 > posMpdu->Length) // 2 = 1(ID) + 1(Length).
 		return FALSE;
 
-	if(Offset + 2 + *(posMpdu->Octet + Offset + 1) > posMpdu->Length) 
+	if(Offset + 2 + *(posMpdu->Octet + Offset + 1) > posMpdu->Length)
 		return FALSE;
 
 	return TRUE;
@@ -1071,11 +1071,11 @@ HasNextIE(
 
 //
 //	Description:
-//		Wrap the IE in an RT_DOT11_IE object and advance offset 
+//		Wrap the IE in an RT_DOT11_IE object and advance offset
 //		to next IE.
 //
-//	Assumption: 
-//		Currnet offset contains a valid IE, that is, HasNextIE() 
+//	Assumption:
+//		Currnet offset contains a valid IE, that is, HasNextIE()
 //		returns TRUE before calling this function.
 //
 RT_DOT11_IE
@@ -1094,7 +1094,7 @@ AdvanceToNextIE(
 	return Ie;
 }
 
-// 
+//
 // Description:
 //	Get the number of IE elements and extract the interested element for return.
 // Arguments:
@@ -1121,14 +1121,14 @@ IEGetElementNum(
 	u1Byte 			IENum = 0;
 	OCTET_STRING	osTmp, osSingleIE;
 	u2Byte			offset = 0;
-	
+
 	do
 	{
 		if(offset >= IEs.Length)
 			break;
 
 		FillOctetString(osTmp, IEs.Octet + offset, (IEs.Length - offset));
-		
+
 		osSingleIE = IEGetElement(osTmp, ID, OUIType, OUISubType);
 		if(osSingleIE.Length > 0)
 		{
@@ -1142,12 +1142,12 @@ IEGetElementNum(
 		}
 	}
 	while(TRUE);
-		
+
 	return IENum;
 }
 
 
-// 
+//
 // Description:
 //	Parse the IE elements and extract the interested element for return.
 // Arguments:
@@ -1159,7 +1159,7 @@ IEGetElementNum(
 //		Vendor specified OUI to be determined in the element.
 // Revised by Bruce, 2009-02-12.
 //
-OCTET_STRING 
+OCTET_STRING
 IEGetElement(
 	IN	OCTET_STRING	IEs,
 	IN	ELEMENT_ID		ID,
@@ -1185,11 +1185,11 @@ IEGetElement(
 	static u1Byte	CcxSSIDLTag[] = {0x00, 0x50, 0xf2, 0x05};
 	static u1Byte	RealtekTurboModeTag[] = {0x00, 0xE0, 0x4C, 0x01};	// Added by Annie, 2005-12-27
 	static u1Byte	RealtekAggModeTag[] = {0x00, 0xe0, 0x4c, 0x02};
-	static u1Byte	RealtekBTIOTModeTag[] = {0x00, 0xe0, 0x4c, 0x03};	// Add for BT IOT 
-	static u1Byte	RealtekBtHsTag[] = {0x00, 0xe0, 0x4c, 0x04};		// Add for BT HS 	
+	static u1Byte	RealtekBTIOTModeTag[] = {0x00, 0xe0, 0x4c, 0x03};	// Add for BT IOT
+	static u1Byte	RealtekBtHsTag[] = {0x00, 0xe0, 0x4c, 0x04};		// Add for BT HS
 	static u1Byte	Epigram[] = {0x00,0x90,0x4c};
 	static u1Byte	EWC11NHTCap[] = {0x00, 0x90, 0x4c, 0x033};			// For 11n EWC definition, 2007.07.17, by Emily
-	static u1Byte	EWC11NHTInfo[] = {0x00, 0x90, 0x4c, 0x034};			// For 11n EWC definition, 2007.07.17, by Emily	
+	static u1Byte	EWC11NHTInfo[] = {0x00, 0x90, 0x4c, 0x034};			// For 11n EWC definition, 2007.07.17, by Emily
 	static u1Byte	Epigram11ACCap[] = {0x00, 0x90, 0x4c, 0x04, 0x08, 0xBF, 0x0C};	// For 11ac Epigram definition
 	static u1Byte	BroadcomCap_1[] = {0x00, 0x10, 0x18};
 	static u1Byte	BroadcomCap_2[] = {0x00, 0x0a, 0xf7};
@@ -1209,7 +1209,7 @@ IEGetElement(
 	static u1Byte	CcxMHDR[] = {0x00, 0x40, 0x96, 0x10};
 	static u1Byte	P2P_OUI_WITH_TYPE[] = {0x50, 0x6F, 0x9A, WLAN_PA_VENDOR_SPECIFIC};
 	static u1Byte	WFD_OUI_WITH_TYPE[] = {0x50, 0x6F, 0x9A, WFD_OUI_TYPE};
-	static u1Byte	NAN_OUI_WITH_TYPE[] = {0x50, 0x6F, 0x9A, 0x13}; 
+	static u1Byte	NAN_OUI_WITH_TYPE[] = {0x50, 0x6F, 0x9A, 0x13};
 	static u1Byte	RealtekTDLSTag[] = {0x00, 0xe0, 0x4c, 0x03};
 
 	//Mix mode can't get DHCP in MacOS Driver. CCW revice offset 2008-04-15
@@ -1221,7 +1221,7 @@ IEGetElement(
 		{
 			return ret;
 		}
-		
+
 		temp = IEs.Octet[offset];	// Get current Element ID.
 
 		if( temp == ID )
@@ -1236,7 +1236,7 @@ IEGetElement(
 					case OUI_SUB_WPA2GTK:
 						FillOctetString(osOuiSub, WPA2GTKTag,  sizeof(WPA2GTKTag));
 						break;
-						
+
 					case OUI_SUB_CCX_TSM:
 						FillOctetString(osOuiSub, CcxTsmTag,  sizeof(CcxTsmTag));
 						break;
@@ -1268,7 +1268,7 @@ IEGetElement(
 					case OUI_SUB_CCX_VER_NUM:
 						FillOctetString(osOuiSub, CcxVerNumTag,  sizeof(CcxVerNumTag));
 						break;
-						
+
 					case OUI_SUB_EPIG_IE:
 						FillOctetString(osOuiSub, Epigram,  sizeof(Epigram));
 						break;
@@ -1286,28 +1286,28 @@ IEGetElement(
 						break;
 
 					case OUI_SUB_BROADCOM_IE_1:
-						FillOctetString(osOuiSub, BroadcomCap_1,  sizeof(BroadcomCap_1));						
+						FillOctetString(osOuiSub, BroadcomCap_1,  sizeof(BroadcomCap_1));
 						break;
-						
+
 					case OUI_SUB_BROADCOM_IE_2:
-						FillOctetString(osOuiSub, BroadcomCap_2,  sizeof(BroadcomCap_2));						
+						FillOctetString(osOuiSub, BroadcomCap_2,  sizeof(BroadcomCap_2));
 						break;
-						
+
 					case OUI_SUB_BROADCOM_IE_3:
-						FillOctetString(osOuiSub, BroadcomCap_3,  sizeof(BroadcomCap_3));						
+						FillOctetString(osOuiSub, BroadcomCap_3,  sizeof(BroadcomCap_3));
 						break;
-						
+
 					case OUI_SUB_BROADCOM_LINKSYSE4200_IE_1:
-						FillOctetString(osOuiSub, BroadcomLinksysE4200Cap_1,  sizeof(BroadcomLinksysE4200Cap_1));						
+						FillOctetString(osOuiSub, BroadcomLinksysE4200Cap_1,  sizeof(BroadcomLinksysE4200Cap_1));
 						break;
-						
+
 					case OUI_SUB_BROADCOM_LINKSYSE4200_IE_2:
-						FillOctetString(osOuiSub, BroadcomLinksysE4200Cap_2,  sizeof(BroadcomLinksysE4200Cap_2));						
+						FillOctetString(osOuiSub, BroadcomLinksysE4200Cap_2,  sizeof(BroadcomLinksysE4200Cap_2));
 						break;
-						
+
 					case OUI_SUB_BROADCOM_LINKSYSE4200_IE_3:
-						FillOctetString(osOuiSub, BroadcomLinksysE4200Cap_3,  sizeof(BroadcomLinksysE4200Cap_3));						
-						break;			
+						FillOctetString(osOuiSub, BroadcomLinksysE4200Cap_3,  sizeof(BroadcomLinksysE4200Cap_3));
+						break;
 
 					case OUI_SUB_CISCO_IE:
 						FillOctetString(osOuiSub, CiscoCap, sizeof(CiscoCap));
@@ -1320,27 +1320,27 @@ IEGetElement(
 					case OUI_SUB_RALINK_IE:
 						FillOctetString(osOuiSub, RalinkCap, sizeof(RalinkCap));
 						break;
-						
+
 					case OUI_SUB_ATHEROS_IE_1:
 						FillOctetString(osOuiSub, AtherosCap_1, sizeof(AtherosCap_1));
 						break;
-						
+
 					case OUI_SUB_ATHEROS_IE_2:
 						FillOctetString(osOuiSub, AtherosCap_2, sizeof(AtherosCap_2));
 						break;
-						
+
 					case OUI_SUB_MARVELL:
 						FillOctetString(osOuiSub, MarvellCap, sizeof(MarvellCap));
 						break;
-						
+
 					case OUI_SUB_AIRGO:
 						FillOctetString(osOuiSub, AirgoCap, sizeof(AirgoCap));
-						break;	
-						
+						break;
+
 					case OUI_SUB_CCX_SFA:
 						FillOctetString(osOuiSub, CcxSFA, sizeof(CcxSFA));
 						break;
-						
+
 					case OUI_SUB_CCX_DIAG_REQ_REASON:
 						FillOctetString(osOuiSub, CcxDiagReqReason, sizeof(CcxDiagReqReason));
 						break;
@@ -1348,7 +1348,7 @@ IEGetElement(
 					case OUI_SUB_CCX_MFP_MHDR:
 						FillOctetString(osOuiSub, CcxMHDR, sizeof(CcxMHDR));
 						break;
-						
+
 					case OUI_SUB_WIFI_DIRECT:
 						FillOctetString(osOuiSub, P2P_OUI_WITH_TYPE, sizeof(P2P_OUI_WITH_TYPE));
 						break;
@@ -1356,15 +1356,15 @@ IEGetElement(
 					case OUI_SUB_WIFI_DISPLAY:
 						FillOctetString(osOuiSub, WFD_OUI_WITH_TYPE, sizeof(WFD_OUI_WITH_TYPE));
 						break;
-						
+
 					case OUI_SUB_NAN:
 						FillOctetString(osOuiSub, NAN_OUI_WITH_TYPE, sizeof(NAN_OUI_WITH_TYPE));
 						break;
-							
+
 					case OUI_SUB_REALTEK_TDLS:
 						FillOctetString(osOuiSub, RealtekTDLSTag, sizeof(RealtekTDLSTag));
 						break;
-						
+
 					case OUI_SUB_REALTEK_BT_IOT :
 						FillOctetString(osOuiSub, RealtekBTIOTModeTag, sizeof(RealtekBTIOTModeTag));
 						break;
@@ -1372,7 +1372,7 @@ IEGetElement(
 					case OUI_SUB_REALTEK_BT_HS:
 						FillOctetString(osOuiSub, RealtekBtHsTag, sizeof(RealtekBtHsTag));
 						break;
-						
+
 					default:
 						FillOctetString(osOuiSub, NULL, 0);
 						break;
@@ -1380,8 +1380,8 @@ IEGetElement(
 				if( osOuiSub.Length > 0 && (length >= (offset + 2 + osOuiSub.Length)) ) // Prevent malicious attack.
 				{
 					if( PlatformCompareMemory(
-						(IEs.Octet + offset + 2), 
-						osOuiSub.Octet, 
+						(IEs.Octet + offset + 2),
+						osOuiSub.Octet,
 						osOuiSub.Length) == 0 )
 					{ // OUI field and subtype field are matched
 						bIEMatched = TRUE;
@@ -1390,7 +1390,7 @@ IEGetElement(
 						// 060801, Isaiah:
 						// [UAPSD Logo] Marvel AP has similar element, [DD 07 00 50 F2 02 05 01 24].
 						//
-						if( (OUI_SUB_WMM == OUIType) && 
+						if( (OUI_SUB_WMM == OUIType) &&
 							(length >= (offset + 2 + osOuiSub.Length + 1)) )
 						{ // WMM-IE Matched!
 						 	u1Byte WmmSubtype = *(IEs.Octet+offset+2+sizeof(WMMTag));
@@ -1401,7 +1401,7 @@ IEGetElement(
 					}
 				}
 			}
-			else	
+			else
 			{ // Other ID: Matched!
 				bIEMatched = TRUE;
 			}
@@ -1412,7 +1412,7 @@ IEGetElement(
 		{ // IE matched! break to return.
 			//
 			// Get the length of current IE.
-			// We also perform length checking here to pervent malicious attack.	
+			// We also perform length checking here to pervent malicious attack.
 			//
 			switch(ID)
 			{
@@ -1529,7 +1529,7 @@ IsIELengthValid(
 	IN	u1Byte		IELength
 	)
 {
-	BOOLEAN			bRet = TRUE;	
+	BOOLEAN			bRet = TRUE;
 	u1Byte			MaxIELength = MAX_IE_LEN;
 
 	switch(IDIE)
@@ -1541,63 +1541,63 @@ IsIELengthValid(
 		case EID_SupRates:
 			MaxIELength = 12;//Because Belkin 11AC  on g Mode only has 12 Octets in this IE
 			break;
-			
+
 		case EID_FHParms:
 			MaxIELength = MAX_FH_PARM_LEN;
 			break;
-			
+
 		case EID_DSParms:
 			MaxIELength = MAX_DS_PARM_LEN;
 			break;
-			
+
 		case EID_CFParms:
 			MaxIELength = MAX_CF_PARM_LEN;
 			break;
-			
+
 		case EID_Tim:
 			MaxIELength = MAX_TIM_PARM_LEN;
 			break;
-			
+
 		case EID_IbssParms:
 			MaxIELength = MAX_IBSS_PARM_LEN;
 			break;
-			
+
 		case EID_QBSSLoad:
 			MaxIELength = MAX_QBSS_LOAD_LEN;
 			break;
-			
+
 		case EID_EDCAParms:
 			MaxIELength = MAX_EDCA_PARM_LEN;
 			break;
-			
+
 		case EID_TSpec:
 			MaxIELength = MAX_TSPEC_LEN;
 			break;
-			
+
 		case EID_Schedule:
 			MaxIELength = MAX_SCHEDULE_LEN;
 			break;
-			
+
 		case EID_Ctext:
 			MaxIELength = MAX_CTEXT_LEN;
 			break;
-			
+
 		case EID_ERPInfo:
 			MaxIELength = MAX_ERP_INFO_LEN;
 			break;
-			
+
 		case EID_TSDelay:
 			MaxIELength = MAX_TS_DELAY_LEN;
 			break;
-			
+
 		case EID_TCLASProc:
 			MaxIELength = MAX_TC_PROC_LEN;
 			break;
-			
+
 		case EID_QoSCap:
 			MaxIELength = MAX_QOS_CAP;
 			break;
-			
+
 		case EID_ExtSupRates:
 			MaxIELength = MAX_EXT_SUP_RATE_LEN;
 			break;
@@ -1605,23 +1605,23 @@ IsIELengthValid(
 		case EID_WAPI:
 			MaxIELength = MAX_WAPI_IE_LEN;
 			break;
-			
+
 		case EID_LinkIdentifier:
 			MaxIELength = MAX_LINKID_LEN;
 			break;
-			
+
 		case EID_SupportedChannels:
 			MaxIELength = MAX_SUPCHNL_LEN;
 			break;
-			
+
 		case EID_SupRegulatory:
 			MaxIELength = MAX_SUPREGULATORY_LEN;
 			break;
-			
+
 		case EID_SecondaryChnlOffset:
 			MaxIELength = MAX_SECONDARYOFFSET_LEN;
 			break;
-			
+
 		case EID_ChnlSwitchTimeing:
 			MaxIELength = MAX_CHNLSWITCHTIMING_LEN;
 			break;

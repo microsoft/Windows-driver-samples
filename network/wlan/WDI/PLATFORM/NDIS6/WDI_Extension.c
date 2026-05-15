@@ -20,7 +20,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_OPEN, 
+			OID_WDI_TASK_OPEN,
 			OID_STR_WRAPPER("OID_WDI_TASK_OPEN"),
 			TRUE,
 			NULL,
@@ -39,7 +39,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_CLOSE, 
+			OID_WDI_TASK_CLOSE,
 			OID_STR_WRAPPER("OID_WDI_TASK_CLOSE"),
 			TRUE,
 			NULL,
@@ -58,7 +58,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_SCAN, 
+			OID_WDI_TASK_SCAN,
 			OID_STR_WRAPPER("OID_WDI_TASK_SCAN"),
 			FALSE,
 			ParseWdiTaskScan,
@@ -77,7 +77,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_P2P_DISCOVER, 
+			OID_WDI_TASK_P2P_DISCOVER,
 			OID_STR_WRAPPER("OID_WDI_TASK_P2P_DISCOVER"),
 			FALSE,
 			ParseWdiTaskP2pDiscover,
@@ -96,7 +96,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_CONNECT, 
+			OID_WDI_TASK_CONNECT,
 			OID_STR_WRAPPER("OID_WDI_TASK_CONNECT"),
 			FALSE,
 			ParseWdiTaskConnect,
@@ -115,7 +115,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_DOT11_RESET, 
+			OID_WDI_TASK_DOT11_RESET,
 			OID_STR_WRAPPER("OID_WDI_TASK_DOT11_RESET"),
 			FALSE,
 			ParseWdiTaskDot11Reset,
@@ -134,7 +134,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_DISCONNECT, 
+			OID_WDI_TASK_DISCONNECT,
 			OID_STR_WRAPPER("OID_WDI_TASK_DISCONNECT"),
 			FALSE,
 			ParseWdiTaskDisconnect,
@@ -153,7 +153,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_P2P_SEND_REQUEST_ACTION_FRAME, 
+			OID_WDI_TASK_P2P_SEND_REQUEST_ACTION_FRAME,
 			OID_STR_WRAPPER("OID_WDI_TASK_P2P_SEND_REQUEST_ACTION_FRAME"),
 			FALSE,
 			ParseWdiTaskP2pSendRequestActionFrame,
@@ -172,7 +172,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_P2P_SEND_RESPONSE_ACTION_FRAME, 
+			OID_WDI_TASK_P2P_SEND_RESPONSE_ACTION_FRAME,
 			OID_STR_WRAPPER("OID_WDI_TASK_P2P_SEND_RESPONSE_ACTION_FRAME"),
 			FALSE,
 			ParseWdiTaskP2pSendResponseActionFrame,
@@ -191,7 +191,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_SET_RADIO_STATE, 
+			OID_WDI_TASK_SET_RADIO_STATE,
 			OID_STR_WRAPPER("OID_WDI_TASK_SET_RADIO_STATE"),
 			TRUE,
 			ParseWdiTaskSetRadioState,
@@ -210,7 +210,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_CREATE_PORT, 
+			OID_WDI_TASK_CREATE_PORT,
 			OID_STR_WRAPPER("OID_WDI_TASK_CREATE_PORT"),
 			TRUE,
 			ParseWdiTaskCreatePort,
@@ -229,7 +229,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_DELETE_PORT, 
+			OID_WDI_TASK_DELETE_PORT,
 			OID_STR_WRAPPER("OID_WDI_TASK_DELETE_PORT"),
 			TRUE,
 			ParseWdiTaskDeletePort,
@@ -248,7 +248,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_START_AP, 
+			OID_WDI_TASK_START_AP,
 			OID_STR_WRAPPER("OID_WDI_TASK_START_AP"),
 			FALSE,
 			ParseWdiTaskStartAp,
@@ -267,7 +267,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_STOP_AP, 
+			OID_WDI_TASK_STOP_AP,
 			OID_STR_WRAPPER("OID_WDI_TASK_STOP_AP"),
 			FALSE,
 			NULL,
@@ -286,7 +286,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_SEND_AP_ASSOCIATION_RESPONSE, 
+			OID_WDI_TASK_SEND_AP_ASSOCIATION_RESPONSE,
 			OID_STR_WRAPPER("OID_WDI_TASK_SEND_AP_ASSOCIATION_RESPONSE"),
 			FALSE,
 			ParseWdiTaskSendApAssociationResponse,
@@ -305,7 +305,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_CHANGE_OPERATION_MODE, 
+			OID_WDI_TASK_CHANGE_OPERATION_MODE,
 			OID_STR_WRAPPER("OID_WDI_TASK_CHANGE_OPERATION_MODE"),
 			FALSE,
 			ParseWdiTaskChangeOperationMode,
@@ -324,7 +324,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_ROAM, 
+			OID_WDI_TASK_ROAM,
 			OID_STR_WRAPPER("OID_WDI_TASK_ROAM"),
 			FALSE,
 			ParseWdiTaskRoam,
@@ -344,7 +344,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_SEND_REQUEST_ACTION_FRAME, 
+			OID_WDI_TASK_SEND_REQUEST_ACTION_FRAME,
 			OID_STR_WRAPPER("OID_WDI_TASK_SEND_REQUEST_ACTION_FRAME"),
 			FALSE,
 			ParseWdiTaskSendRequestActionFrame,
@@ -352,7 +352,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 			sizeof(WDI_TASK_SEND_REQUEST_ACTION_FRAME_PARAMETERS)
 		},
 		NDIS_STATUS_WDI_INDICATION_SEND_REQUEST_ACTION_FRAME_COMPLETE,
-		TRUE,	
+		TRUE,
 		28,
 		WDI_OID_TASK_SEND_REQUEST_ACTION_FRAME,
 		WDI_CANCEL_OID_TASK_SEND_REQUEST_ACTION_FRAME,
@@ -363,7 +363,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_TASK,
-			OID_WDI_TASK_SEND_RESPONSE_ACTION_FRAME, 
+			OID_WDI_TASK_SEND_RESPONSE_ACTION_FRAME,
 			OID_STR_WRAPPER("OID_WDI_TASK_SEND_RESPONSE_ACTION_FRAME"),
 			FALSE,
 			ParseWdiTaskSendResponseActionFrame,
@@ -371,7 +371,7 @@ RT_TASK_ENTRY RT_SUPPORT_TASKs[]=
 			sizeof(WDI_TASK_SEND_RESPONSE_ACTION_FRAME_PARAMETERS)
 		},
 		NDIS_STATUS_WDI_INDICATION_SEND_RESPONSE_ACTION_FRAME_COMPLETE,
-		TRUE,	
+		TRUE,
 		28,
 		WDI_OID_TASK_SEND_RESPONSE_ACTION_FRAME,
 		WDI_CANCEL_OID_TASK_SEND_RESPONSE_ACTION_FRAME,
@@ -387,7 +387,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_P2P_LISTEN_STATE, 
+			OID_WDI_SET_P2P_LISTEN_STATE,
 			OID_STR_WRAPPER("OID_WDI_SET_P2P_LISTEN_STATE"),
 			FALSE,
 			ParseWdiSetP2pListenState,
@@ -399,7 +399,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_P2P_ADDITIONAL_IE, 
+			OID_WDI_SET_P2P_ADDITIONAL_IE,
 			OID_STR_WRAPPER("OID_WDI_SET_P2P_ADDITIONAL_IE"),
 			FALSE,
 			NULL,
@@ -411,7 +411,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_ADD_CIPHER_KEYS, 
+			OID_WDI_SET_ADD_CIPHER_KEYS,
 			OID_STR_WRAPPER("OID_WDI_SET_ADD_CIPHER_KEYS"),
 			FALSE,
 			ParseWdiSetAddCipherKeys,
@@ -423,7 +423,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_DELETE_CIPHER_KEYS, 
+			OID_WDI_SET_DELETE_CIPHER_KEYS,
 			OID_STR_WRAPPER("OID_WDI_SET_DELETE_CIPHER_KEYS"),
 			FALSE,
 			ParseWdiSetDeleteCipherKeys,
@@ -435,7 +435,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_DEFAULT_KEY_ID, 
+			OID_WDI_SET_DEFAULT_KEY_ID,
 			OID_STR_WRAPPER("OID_WDI_SET_DEFAULT_KEY_ID"),
 			FALSE,
 			ParseWdiSetDefaultKeyId,
@@ -447,7 +447,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_CONNECTION_QUALITY, 
+			OID_WDI_SET_CONNECTION_QUALITY,
 			OID_STR_WRAPPER("OID_WDI_SET_CONNECTION_QUALITY"),
 			FALSE,
 			ParseWdiSetConnectionQuality,
@@ -459,7 +459,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_GET_AUTO_POWER_SAVE, 
+			OID_WDI_GET_AUTO_POWER_SAVE,
 			OID_STR_WRAPPER("OID_WDI_GET_AUTO_POWER_SAVE"),
 			FALSE,
 			ParseWdiGetAutoPowerSave,
@@ -467,11 +467,11 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 			sizeof(WDI_GET_AUTO_POWER_SAVE_PARAMETERS)
 		},
 		WDI_OID_GET_AUTO_POWER_SAVE
-	},					
+	},
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_GET_STATISTICS, 
+			OID_WDI_GET_STATISTICS,
 			OID_STR_WRAPPER("OID_WDI_GET_STATISTICS"),
 			FALSE,
 			NULL,
@@ -483,7 +483,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_RECEIVE_PACKET_FILTER, 
+			OID_WDI_SET_RECEIVE_PACKET_FILTER,
 			OID_STR_WRAPPER("OID_WDI_SET_RECEIVE_PACKET_FILTER"),
 			FALSE,
 			ParseWdiSetReceivePacketFilter,
@@ -495,7 +495,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_GET_ADAPTER_CAPABILITIES, 
+			OID_WDI_GET_ADAPTER_CAPABILITIES,
 			OID_STR_WRAPPER("OID_WDI_GET_ADAPTER_CAPABILITIES"),
 			TRUE,
 			NULL,
@@ -507,7 +507,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_NETWORK_LIST_OFFLOAD, 
+			OID_WDI_SET_NETWORK_LIST_OFFLOAD,
 			OID_STR_WRAPPER("OID_WDI_SET_NETWORK_LIST_OFFLOAD"),
 			FALSE,
 			ParseWdiSetNetworkListOffload,
@@ -519,7 +519,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_RECEIVE_COALESCING, 
+			OID_WDI_SET_RECEIVE_COALESCING,
 			OID_STR_WRAPPER("OID_WDI_SET_RECEIVE_COALESCING"),
 			FALSE,
 			ParseWdiSetReceiveCoalescing,
@@ -531,7 +531,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_PRIVACY_EXEMPTION_LIST, 
+			OID_WDI_SET_PRIVACY_EXEMPTION_LIST,
 			OID_STR_WRAPPER("OID_WDI_SET_PRIVACY_EXEMPTION_LIST"),
 			FALSE,
 			ParseWdiSetPrivacyExemptionList,
@@ -543,7 +543,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_POWER_STATE, 
+			OID_WDI_SET_POWER_STATE,
 			OID_STR_WRAPPER("OID_WDI_SET_POWER_STATE"),
 			TRUE,
 			ParseWdiSetPowerState,
@@ -567,7 +567,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_ADD_WOL_PATTERN, 
+			OID_WDI_SET_ADD_WOL_PATTERN,
 			OID_STR_WRAPPER("OID_WDI_SET_ADD_WOL_PATTERN"),
 			FALSE,
 			ParseWdiSetAddWolPattern,
@@ -579,7 +579,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_REMOVE_WOL_PATTERN, 
+			OID_WDI_SET_REMOVE_WOL_PATTERN,
 			OID_STR_WRAPPER("OID_WDI_SET_REMOVE_WOL_PATTERN"),
 			FALSE,
 			ParseWdiSetRemoveWolPattern,
@@ -591,7 +591,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_MULTICAST_LIST, 
+			OID_WDI_SET_MULTICAST_LIST,
 			OID_STR_WRAPPER("OID_WDI_SET_MULTICAST_LIST"),
 			FALSE,
 			ParseWdiSetMulticastList,
@@ -627,7 +627,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_ADAPTER_CONFIGURATION, 
+			OID_WDI_SET_ADAPTER_CONFIGURATION,
 			OID_STR_WRAPPER("OID_WDI_SET_ADAPTER_CONFIGURATION"),
 			TRUE,
 			ParseWdiSetAdapterConfiguration,
@@ -639,7 +639,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_GET_RECEIVE_COALESCING_MATCH_COUNT, 
+			OID_WDI_GET_RECEIVE_COALESCING_MATCH_COUNT,
 			OID_STR_WRAPPER("OID_WDI_GET_RECEIVE_COALESCING_MATCH_COUNT"),
 			FALSE,
 			ParseWdiGetReceiveCoalescingMatchCount,
@@ -663,7 +663,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_IHV_REQUEST, 
+			OID_WDI_IHV_REQUEST,
 			OID_STR_WRAPPER("OID_WDI_IHV_REQUEST"),
 			FALSE,
 			NULL,
@@ -675,7 +675,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_GET_NEXT_ACTION_FRAME_DIALOG_TOKEN, 
+			OID_WDI_GET_NEXT_ACTION_FRAME_DIALOG_TOKEN,
 			OID_STR_WRAPPER("OID_WDI_GET_NEXT_ACTION_FRAME_DIALOG_TOKEN"),
 			FALSE,
 			ParseWdiGetNextActionFrameDialogToken,
@@ -687,7 +687,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_P2P_WPS_ENABLED, 
+			OID_WDI_SET_P2P_WPS_ENABLED,
 			OID_STR_WRAPPER("OID_WDI_SET_P2P_WPS_ENABLED"),
 			FALSE,
 			ParseWdiSetP2pWpsEnabled,
@@ -699,7 +699,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_GET_BSS_ENTRY_LIST, 
+			OID_WDI_GET_BSS_ENTRY_LIST,
 			OID_STR_WRAPPER("OID_WDI_GET_BSS_ENTRY_LIST"),
 			FALSE,
 			ParseWdiGetBssEntryList,
@@ -711,7 +711,7 @@ RT_PROPERTY_ENTRY RT_SUPPORT_PROPERTYs[]=
 	{
 		{
 			RT_CMD_ENTRY_TYPE_PROPERTY,
-			OID_WDI_SET_FAST_BSS_TRANSITION_PARAMETERS, 
+			OID_WDI_SET_FAST_BSS_TRANSITION_PARAMETERS,
 			OID_STR_WRAPPER("OID_WDI_SET_FAST_BSS_TRANSITION_PARAMETERS"),
 			TRUE,
 			ParseWdiSetFastBssTransitionParameters,
@@ -730,7 +730,7 @@ wdi_GetCommandEntry(
 	)
 {
 	u4Byte					it = 0;
-	
+
 	for(it = 0 ; it < sizeof(RT_SUPPORT_TASKs) / sizeof(RT_SUPPORT_TASKs[0]); it++)
 	{
 		if(oid == RT_SUPPORT_TASKs[it].super.Oid)
@@ -784,7 +784,7 @@ wdi_TlvParser_Init(
 	parser->buf = NULL;
 	parser->bufSize = 0;
 	parser->parsedTlv.param = NULL;
-	
+
 	RT_TRACE( COMP_OID_SET, DBG_LOUD, ("wdi_TlvParser_Init(): Param Cleaned.\n"));
 
 	for(it = 0 ; it < sizeof(RT_SUPPORT_TASKs) / sizeof(RT_SUPPORT_TASKs[0]); it++)
@@ -798,7 +798,7 @@ wdi_TlvParser_Init(
 		if(parser->bufSize < RT_SUPPORT_PROPERTYs[it].super.parsedTlvSize)
 			parser->bufSize = RT_SUPPORT_PROPERTYs[it].super.parsedTlvSize;
 	}
-	
+
 	PlatformAllocateMemory(pAdapter, &parser->buf, parser->bufSize);
 
 	if(!parser->buf)
@@ -815,10 +815,10 @@ wdi_TlvParser_Deinit(
 {
 	// Prefast warning C6328: Size mismatch ignore
 #pragma warning (disable: 6328)
-	RT_ASSERT(0 == parser->nonCleanedup, 
-		("%s(): some parsed tls not cleaned up before deinit: %u\n", 
+	RT_ASSERT(0 == parser->nonCleanedup,
+		("%s(): some parsed tls not cleaned up before deinit: %u\n",
 		__FUNCTION__, parser->nonCleanedup));
-	
+
 	if(parser->buf)
 	{
 		PlatformFreeMemory(parser->buf, parser->bufSize);
@@ -826,7 +826,7 @@ wdi_TlvParser_Deinit(
 		parser->buf = NULL;
 		parser->bufSize = 0;
 		parser->parsedTlv.param = NULL;
-		
+
 		RT_TRACE( COMP_OID_SET, DBG_LOUD, ("wdi_TlvParser_Deinit(): Param Cleaned.\n"));
 	}
 	else
@@ -845,7 +845,7 @@ wdi_TlvParser_Parse(
 	)
 {
 	NDIS_STATUS					status = NDIS_STATUS_SUCCESS;
-	
+
 	if(!cmdEntry->TlvParser)
 		return NDIS_STATUS_SUCCESS;
 
@@ -855,14 +855,14 @@ wdi_TlvParser_Parse(
 	RT_ASSERT(parser->parsedTlv.param == NULL, ("%s(): parsedTlv param shall be NULL\n", __FUNCTION__));
 	// Prefast warning C6328: Size mismatch ignore
 #pragma warning (disable: 6328)
-	RT_ASSERT(0 == parser->nonCleanedup, 
-		("%s(): there are parsed tlvs not cleanded up: %u\n", 
+	RT_ASSERT(0 == parser->nonCleanedup,
+		("%s(): there are parsed tlvs not cleanded up: %u\n",
 		__FUNCTION__, parser->nonCleanedup));
 
 	do
 	{
 		PlatformZeroMemory(parser->buf, parser->bufSize);
-		parser->parsedTlv.param = NULL;		
+		parser->parsedTlv.param = NULL;
 		RT_TRACE( COMP_OID_SET, DBG_LOUD, ("wdi_TlvParser_Parse(): Param Cleaned.\n"));
 
 		if(sizeof(WDI_MESSAGE_HEADER) == pNdisRequest->DATA.METHOD_INFORMATION.InputBufferLength)
@@ -871,11 +871,11 @@ wdi_TlvParser_Parse(
 			status = NDIS_STATUS_SUCCESS;
 			break;
 		}
-		
+
 		if(NDIS_STATUS_SUCCESS != (status = cmdEntry->TlvParser(
 			pNdisRequest->DATA.METHOD_INFORMATION.InputBufferLength - sizeof(WDI_MESSAGE_HEADER),
 			(pu1Byte)pNdisRequest->DATA.METHOD_INFORMATION.InformationBuffer + sizeof(WDI_MESSAGE_HEADER),
-			&pAdapter->pPortCommonInfo->WdiData.TlvContext, 
+			&pAdapter->pPortCommonInfo->WdiData.TlvContext,
 			parser->buf)))
 		{
 			RT_TRACE( COMP_OID_SET, DBG_LOUD, ("wdi_TlvParser_Parse(): cmdEntry->TlvParser return %s\n", status?"NOT SUCCESS":"SUCCESS"));
@@ -886,7 +886,7 @@ wdi_TlvParser_Parse(
 
 		parser->parsedTlv.param = parser->buf;
 		parser->nonCleanedup++;
-		
+
 		RT_TRACE( COMP_OID_SET, DBG_LOUD, ("wdi_TlvParser_Parse(): Param Assigned.\n"));
 	}while(FALSE);
 
@@ -903,27 +903,27 @@ wdi_TlvParser_Cleanup(
 
 	if(!cmdEntry->TlvCleaner)
 		return;
-	
+
 	RT_ASSERT(cmdEntry->TlvParser, ("%s(): there's a cleaner but no parser\n", __FUNCTION__));
 
 	if(parser->parsedTlv.param)
 	{
 		RT_ASSERT(parser->parsedTlv.param, ("%s(): no parsed structure, parsedTlv.param is NULL\n", __FUNCTION__));
-		
+
 		// Prefast warning C6328: Size mismatch ignore
 #pragma warning (disable: 6328)
-		RT_ASSERT(1 == parser->nonCleanedup, 
-			("%s(): incorrect # of non cleaned up parsed tlvs: %u\n", 
+		RT_ASSERT(1 == parser->nonCleanedup,
+			("%s(): incorrect # of non cleaned up parsed tlvs: %u\n",
 			__FUNCTION__, parser->nonCleanedup));
-		
+
 		cmdEntry->TlvCleaner(parser->parsedTlv.param);
 		PlatformZeroMemory(parser->buf, parser->bufSize);
 		parser->parsedTlv.param = NULL;
 		parser->nonCleanedup--;
-		
+
 		RT_TRACE( COMP_OID_SET, DBG_LOUD, ("wdi_TlvParser_Cleanup(): Param Cleaned.\n"));
 	}
-	
+
 	return;
 }
 
@@ -955,7 +955,7 @@ OidHandle_VerifyTask(
 	else
 	{
 		pEntry= (PRT_COMPLETE_ENTRY)RTGetHeadList(pTaskIndicationList);
-		
+
 		if(pEntry->Oid == WdiTaskOid)
 		{
 			bResult = TRUE;
@@ -985,7 +985,7 @@ OidHandle_IndicateM3(
 
 	NdisOIDHistoryUpdate(pAdapter, pNdisRequest, RT_OID_HISTORY_M3);
 
-	// Should we need to ndicate the actual status for each property command instead? e.g., pOidHandle->OidStatus	
+	// Should we need to ndicate the actual status for each property command instead? e.g., pOidHandle->OidStatus
 	NdisMOidRequestComplete(
 		pAdapter->pNdisCommon->hNdisAdapter,
 		pNdisRequest,
@@ -1011,7 +1011,7 @@ OidHandle_IndicateM4(
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("==> OidHandle_IndicateM4 (%x)\n", pOidHandle->pNdisRequest->DATA.METHOD_INFORMATION.Oid));
 
 	NdisOIDHistoryUpdate(pAdapter, pOidHandle->pNdisRequest, RT_OID_HISTORY_M4);
-	
+
 	N6_ASSIGN_OBJECT_HEADER(
 		statusIndication.Header,
 		NDIS_OBJECT_TYPE_STATUS_INDICATION,
@@ -1035,7 +1035,7 @@ OidHandle_IndicateM4(
 		pAdapter->pNdisCommon->hNdisAdapter,
 		&statusIndication
 		);
-	
+
 	return RT_STATUS_SUCCESS;
 }
 
@@ -1054,7 +1054,7 @@ OidHandle_Cancel(
 	//		(1) Validate definition of abort from task table
 	//		(2) Validate OID/Transaction ID/Port ID
 	//
-	
+
 	RT_STATUS	RtStatus = RT_STATUS_INVALID_PARAMETER;
 	PWDI_DATA_STRUCT	pWdi = &(pAdapter->pPortCommonInfo->WdiData);
 
@@ -1094,10 +1094,10 @@ OidHandle_Cancel(
 				NdisAcquireSpinLock(&pWdi->TaskHandle.Lock);
 				pWdi->TaskHandle.Status |= RT_OID_HANDLER_STATUS_CANCELED;
 				NdisReleaseSpinLock(&pWdi->TaskHandle.Lock);
-				
+
 				OidHandle_Complete(pAdapter, OIDHANDLE_TYPE_TASK);
 			}
-			
+
 			break;
 		}
 
@@ -1140,10 +1140,10 @@ OidHandle_AbortAction(
 
 		if(NULL != pTask->AbortFunc)
 			pTask->AbortFunc(pTargetAdapter);
-		
+
 	}
 	while(FALSE);
-	
+
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<== OidHandle_AbortAction\n"));
 	return RtStatus;
 }
@@ -1167,9 +1167,9 @@ WDICommandCleanup(
 	)
 {
 	NDIS_STATUS				status = NDIS_STATUS_SUCCESS;
-	
+
 	RT_TRACE(COMP_OID_SET, DBG_TRACE, ("==> WDICommandCleanup\n"));
-	
+
 	do
 	{
 		if(pOidHandle->Status & RT_OID_HANDLER_STATUS_RELEASED)
@@ -1186,7 +1186,7 @@ WDICommandCleanup(
 			break;
 		}
 
-		if((!(pOidHandle->Status & RT_OID_HANDLER_STATUS_RETURNED)) && 
+		if((!(pOidHandle->Status & RT_OID_HANDLER_STATUS_RETURNED)) &&
 			(!bAsync) &&
 			!(pAdapter->pPortCommonInfo->WdiData.bCommandHangHappened))
 		{
@@ -1200,7 +1200,7 @@ WDICommandCleanup(
 		pOidHandle->Status &= ~RT_OID_HANDLER_STATUS_SET;
 		pOidHandle->Status &= ~RT_OID_HANDLER_STATUS_RETURNED;
 		pOidHandle->Status &= ~RT_OID_HANDLER_STATUS_CANCELED;
-		
+
 	}while(FALSE);
 
 	return status;
@@ -1240,7 +1240,7 @@ OidHandle_Complete(
 			pOidHandle = &pWdi->TaskHandle;
 			pTaskIndicationList = &pWdi->TaskCompleteIndicationList;
 		}
-		
+
 		entry = (RT_TASK_ENTRY *)pOidHandle->CmdEntry;
 		wdiHdr = (WDI_MESSAGE_HEADER *)pOidHandle->pInputBuffer;
 		//wdiHdr = (WDI_MESSAGE_HEADER *)pWdi->TaskHandle.pInputBuffer;
@@ -1270,14 +1270,14 @@ OidHandle_Complete(
 		{
 			bAsync = TRUE;
 		}
-		
+
 		if(entry->PreM4Cb != NULL)
 		{
 			entry->PreM4Cb(pAdapter, pOidHandle);
 		}
 
-		RT_TRACE(COMP_OID_SET, DBG_TRACE, 
-			("OidHandle_Complete start to indicate M4. Oid:0x%x Port:%d TransactionId:0x%x\n", 
+		RT_TRACE(COMP_OID_SET, DBG_TRACE,
+			("OidHandle_Complete start to indicate M4. Oid:0x%x Port:%d TransactionId:0x%x\n",
 			pWdi->TaskHandle.pNdisRequest->DATA.METHOD_INFORMATION.Oid,
 			PortNumber,
 			TransactionId));
@@ -1291,12 +1291,12 @@ OidHandle_Complete(
 		{
 			entry->PostM4Cb(pAdapter, &PortNumber);
 		}
-		
+
 	}
 	else if(OIDHANDLE_TYPE_PROPERTY == Type)
 	{
 		pOidHandle = &pWdi->PropertyHandle;
-		
+
 		pOidHandle->OidExecutionTime = (PlatformGetCurrentTime() - pOidHandle->OidStartTime);
 		RT_TRACE(COMP_OID_SET, DBG_TRACE, ("Property CMD execution time:%dus\n", (ULONG)pOidHandle->OidExecutionTime));
 
@@ -1306,7 +1306,7 @@ OidHandle_Complete(
 		}
 
 		pDefaultAdapter = GetDefaultAdapter(pAdapter);
-		
+
 		OidHandle_IndicateM3(pDefaultAdapter, &pWdi->PropertyHandle);
 	}
 	else
@@ -1318,7 +1318,7 @@ OidHandle_Complete(
 	status = WDICommandCleanup(pAdapter, pOidHandle, bAsync);
 
 	RT_TRACE(COMP_OID_SET, DBG_TRACE, ("==> OidHandle_Complete status:0x%x\n", status));
-	
+
 	return status;
 }
 
@@ -1339,7 +1339,7 @@ WDICommandHangComplete(
 	BOOLEAN				bResult = FALSE;
 	PRT_COMPLETE_ENTRY	pEntry = NULL;
 	PADAPTER			pDefaultAdapter = NULL;
-			
+
 	wdiHdr = (WDI_MESSAGE_HEADER *)pWdi->TaskHandle.pInputBuffer;
 	PortNumber = (u2Byte)wdiHdr->PortId;
 	TransactionId = wdiHdr->TransactionId;
@@ -1353,7 +1353,7 @@ WDICommandHangComplete(
 	else
 	{
 		pEntry= (PRT_COMPLETE_ENTRY)RTGetHeadList(&pWdi->TaskCompleteIndicationList);
-		
+
 		if(pEntry->Oid == pWdi->TaskHandle.pNdisRequest->DATA.METHOD_INFORMATION.Oid)
 		{
 			bResult = TRUE;
@@ -1390,14 +1390,14 @@ WDICommandHangComplete(
 	{
 		bAsync = TRUE;
 	}
-		
+
 	if(entry->PreM4Cb != NULL)
 	{
 		entry->PreM4Cb(pAdapter, &pWdi->TaskHandle);
 	}
 
-	RT_TRACE(COMP_OID_SET, DBG_TRACE, 
-		("OidHandle_Complete start to indicate M4. Oid:0x%x Port:%d TransactionId:0x%x\n", 
+	RT_TRACE(COMP_OID_SET, DBG_TRACE,
+		("OidHandle_Complete start to indicate M4. Oid:0x%x Port:%d TransactionId:0x%x\n",
 		pWdi->TaskHandle.pNdisRequest->DATA.METHOD_INFORMATION.Oid,
 		PortNumber,
 		TransactionId));
@@ -1443,7 +1443,7 @@ WDICommandHangCleanup(
 		//if(pEntry->Oid == NdisOid && pEntry->TransactionId == TransactionId && pEntry->PortId == PortId)
 		{
 			//If real FW hang happen, LE should just complete the command without touch FW.
-			if(OID_WDI_TASK_P2P_DISCOVER == pEntry->Oid || 
+			if(OID_WDI_TASK_P2P_DISCOVER == pEntry->Oid ||
 				OID_WDI_TASK_SCAN == pEntry->Oid
 				)
 			{
@@ -1455,7 +1455,7 @@ WDICommandHangCleanup(
 			else
 			{
 				pWdi->TaskHandle.Status |= RT_OID_HANDLER_STATUS_CANCELED;
-				
+
 				//OidHandle_Complete(pAdapter, OIDHANDLE_TYPE_TASK_POST_HANG);
 				WDICommandHangComplete(pAdapter);
 			}
@@ -1466,7 +1466,7 @@ WDICommandHangCleanup(
 		//Do nothing here since property cmd will return quickly without touch with FW(need double check) and it should not hang...
 		//pWdi->PropertyHandle.Status |= RT_OID_HANDLER_STATUS_CANCELED;
 		//OidHandle_Complete(pAdapter, OIDHANDLE_TYPE_PROPERTY);
-		
+
 		RT_TRACE(COMP_OID_SET, DBG_TRACE, ("WDICommandCancelForPLDR: Should Not happen for Property CMD\n"));
 	}
 
@@ -1665,7 +1665,7 @@ TaskCommandHandle(
 	{
 		RT_TRACE(COMP_OID_SET, DBG_TRACE, ("Sync:Task target is adapter\n"));
 	}
-	
+
 	status = entry->Func(pTargetAdapter, pOidHandle);
 
 	pOidHandle->Status |= RT_OID_HANDLER_STATUS_RETURNED;
@@ -1711,7 +1711,7 @@ PropertyCommandHandle(
 	{
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Property target is adapter\n"));
 	}
-	
+
 	pOidHandle->OidStatus = entry->Func(pTargetAdapter, pOidHandle);
 
 	pOidHandle->Status |= RT_OID_HANDLER_STATUS_RETURNED;
@@ -1735,15 +1735,15 @@ WDICommandHandleInitInner(
 {
 	NDIS_STATUS 		status = NDIS_STATUS_SUCCESS;
 	PWDI_DATA_STRUCT	pWdi = &(pAdapter->pPortCommonInfo->WdiData);
-	
+
 	if(NDIS_STATUS_SUCCESS != wdi_TlvParser_Init(&pOidHandle->tlvParser, pAdapter))
 	{
 		return NDIS_STATUS_FAILURE;
 	}
-	
+
 	status = PlatformAllocateMemory(
-					pAdapter, 
-					(PVOID*)&pOidHandle->pInputBuffer, 
+					pAdapter,
+					(PVOID*)&pOidHandle->pInputBuffer,
 					MAX_OID_INPUT_BUFFER_LEN
 					);
 	if(NDIS_STATUS_SUCCESS != status)
@@ -1765,10 +1765,10 @@ WDICommandHandleInitInner(
 
 	if(pOidHandle == &pWdi->TaskHandle || pOidHandle == &pWdi->TaskPostHangHandle)
 	{
-		status = PlatformInitializeWorkItem(pAdapter, 
+		status = PlatformInitializeWorkItem(pAdapter,
 					&(pOidHandle->WDICommandWorkitem),
 					( RT_WORKITEM_CALL_BACK) WDITaskCommandWorkItemCallback,
-					(PVOID) pAdapter, 
+					(PVOID) pAdapter,
 					"WDITaskCommandWorkitem"
 					);
 	}
@@ -1776,10 +1776,10 @@ WDICommandHandleInitInner(
 	//Also prepare a workitem for property command if needed
 	if(pOidHandle == &pWdi->PropertyHandle)
 	{
-		status = PlatformInitializeWorkItem(pAdapter, 
+		status = PlatformInitializeWorkItem(pAdapter,
 					&(pOidHandle->WDICommandWorkitem),
 					( RT_WORKITEM_CALL_BACK) WDIPropertyCommandWorkItemCallback,
-					(PVOID) pAdapter, 
+					(PVOID) pAdapter,
 					"WDIPropertyCommandWorkitem"
 					);
 	}
@@ -1869,7 +1869,7 @@ WDICommandHandleDeinit(
 	status = WDICommandHandleDeinitInner(pAdapter, pOidHandle);
 
 	pOidHandle = &(pWdi->TaskPostHangHandle);
-	status = WDICommandHandleDeinitInner(pAdapter, pOidHandle);	
+	status = WDICommandHandleDeinitInner(pAdapter, pOidHandle);
 
 	// TODO: remove spinlock later when nobody use it, currently only abort command will use it.
 	NdisFreeSpinLock(&pAdapter->pPortCommonInfo->WdiData.TaskCompleteIndicationLock);
@@ -1893,7 +1893,7 @@ PreSetupCommand(
 		RT_TRACE(COMP_OID_SET, DBG_SERIOUS, ("PreSetupCommand: OidHandle invalid state! 0x%x\n", pOidHandle->Status));
 		return NDIS_STATUS_INVALID_STATE;
 	}
-	
+
 	pOidHandle->pNdisRequest = pNdisRequest;
 	pOidHandle->OutputBufferLength = 0;
 	pOidHandle->OidExecutionTime = 0;
@@ -1906,7 +1906,7 @@ PreSetupCommand(
 	if(pNdisRequest->DATA.METHOD_INFORMATION.InputBufferLength <= pOidHandle->AllocatedBufferLength)
 	{
 		PlatformMoveMemory(
-			pOidHandle->pInputBuffer, 
+			pOidHandle->pInputBuffer,
 			pNdisRequest->DATA.METHOD_INFORMATION.InformationBuffer,
 			pNdisRequest->DATA.METHOD_INFORMATION.InputBufferLength);
 	}
@@ -1917,7 +1917,7 @@ PreSetupCommand(
 		{
 			pOidHandle->AllocatedBufferLength = pNdisRequest->DATA.METHOD_INFORMATION.InputBufferLength;
 			PlatformMoveMemory(
-				pOidHandle->pInputBuffer, 
+				pOidHandle->pInputBuffer,
 				pNdisRequest->DATA.METHOD_INFORMATION.InformationBuffer,
 				pNdisRequest->DATA.METHOD_INFORMATION.InputBufferLength);
 		}
@@ -1937,7 +1937,7 @@ PreSetupCommand(
 	{
 		RT_TRACE(COMP_OID_SET, DBG_SERIOUS, ("PreSetupCommand TLV Parser failure!\n"));
 	}
-	
+
 	return status;
 }
 
@@ -1990,7 +1990,7 @@ WDICommandHandle(
 		{
 			pOidHandle = &pWdi->TaskPostHangHandle;
 		}
-		
+
 		if(taskentry->bWaitComplete)
 		{
 			PlatformScheduleWorkItem(&(pOidHandle->WDICommandWorkitem));
@@ -2014,7 +2014,7 @@ WDICommandHandle(
 // The command synchronization scope is adapter level scope.
 // Basic rule is task commands are serialized between M1 and M4, while property serialized between M1 and M3.
 //
-// Note: 
+// Note:
 // 1. A subset of tasks can be aborted after they have been started.
 // 2. Data path is not serialized with the command path, expect for some specific cases.
 //
@@ -2047,7 +2047,7 @@ N6WdiHandleOidRequest(
 
 	pNdisRequest->DATA.METHOD_INFORMATION.BytesWritten = sizeof(WDI_MESSAGE_HEADER);
 	pWdiHeader->Status = NDIS_STATUS_SUCCESS;
-	
+
 	do
 	{
 		if(NdisRequestMethod != pNdisRequest->RequestType)
@@ -2056,7 +2056,7 @@ N6WdiHandleOidRequest(
 			ndisStatus = NDIS_STATUS_NOT_RECOGNIZED;
 			break;
 		}
-		
+
 		if(NULL == (entry = wdi_GetCommandEntry(pNdisRequest->DATA.METHOD_INFORMATION.Oid)))
 		{
 			RT_TRACE(COMP_OID_SET, DBG_TRACE, ("N6WdiHandleOidRequestEx Not Recognized Oid:0x%x\n", pNdisRequest->DATA.METHOD_INFORMATION.Oid));
@@ -2065,7 +2065,7 @@ N6WdiHandleOidRequest(
 		}
 
 		if(NULL == (oidHandle = wdi_GetOidHandler(pWdi, entry)))
-		{	
+		{
 			RT_TRACE(COMP_OID_SET, DBG_WARNING, ("N6WdiHandleOidRequestEx Failed to get valid OidHandle\n"));
 			ndisStatus = NDIS_STATUS_INVALID_DATA;
 			break;

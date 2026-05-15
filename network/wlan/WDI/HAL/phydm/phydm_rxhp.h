@@ -1,7 +1,7 @@
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
- *                                        
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
@@ -26,7 +26,7 @@
 
 #define	AFH_PSD		1	//0:normal PSD scan, 1: only do 20 pts PSD
 #define	MODE_40M		0	//0:20M, 1:40M
-#define	PSD_TH2		3  
+#define	PSD_TH2		3
 #define	PSD_CHMIN		20   // Minimum channel number for BT AFH
 #define	SIR_STEP_SIZE	3
 #define   Smooth_Size_1 	5
@@ -102,4 +102,3 @@ odm_PSDMonitorWorkItemCallback(
  #endif
 
  #endif
- 

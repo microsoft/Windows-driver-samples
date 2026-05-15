@@ -14,7 +14,7 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   - Add support for ADVANCED_PACKET_INJECTION, 
+//      December  13,   2013  -     1.1   - Add support for ADVANCED_PACKET_INJECTION,
 //                                             FLOW_ASSOCIATION, and PEND_ENDPOINT_CLOSURE callouts
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -215,10 +215,10 @@ static const GUID* const ppBasicActionContinue[]       = {&WFPSAMPLER_CALLOUT_BA
                                                           &WFPSAMPLER_CALLOUT_BASIC_ACTION_CONTINUE_AT_INGRESS_VSWITCH_TRANSPORT_V6,
                                                           &WFPSAMPLER_CALLOUT_BASIC_ACTION_CONTINUE_AT_EGRESS_VSWITCH_TRANSPORT_V4,
                                                           &WFPSAMPLER_CALLOUT_BASIC_ACTION_CONTINUE_AT_EGRESS_VSWITCH_TRANSPORT_V6,
-                                                          
+
 #endif // (NTDDI_VERSION >= NTDDI_WIN8)
 #endif // (NTDDI_VERSION >= NTDDI_WIN7)
-                                                          
+
                                                          };
 static const GUID* const ppBasicActionPermit[]         = {&WFPSAMPLER_CALLOUT_BASIC_ACTION_PERMIT_AT_INBOUND_IPPACKET_V4,
                                                           &WFPSAMPLER_CALLOUT_BASIC_ACTION_PERMIT_AT_INBOUND_IPPACKET_V6,

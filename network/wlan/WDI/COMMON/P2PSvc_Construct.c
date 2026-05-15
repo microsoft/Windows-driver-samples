@@ -27,7 +27,7 @@ p2psvc_MatchSvcNameHash_org_wi_fi_wfds(
 			break;
 		}
 	}
-	
+
 	return bMatched;
 }
 
@@ -36,7 +36,7 @@ p2psvc_MatchSvcNameHash(
 	IN  PP2PSVC_REQ_INFO_ENTRY		pInfoEntry,
 	IN  POCTET_STRING				posSvcNameHash
 	)
-{		
+{
 	BOOLEAN							bMatch = FALSE;
 	PRT_OBJECT_HEADER				pSvcNameHashObj = NULL;
 	u4Byte							nHashes = posSvcNameHash->Length / 6;
@@ -48,7 +48,7 @@ p2psvc_MatchSvcNameHash(
 	}
 
 	RT_PRINT_DATA(COMP_P2P, DBG_TRACE, "adv svc hash:\n", pSvcNameHashObj->Value, pSvcNameHashObj->Length);
-	
+
 	for(iterReqHash = 0; iterReqHash < nHashes; iterReqHash++)
 	{
 		if(0 == PlatformCompareMemory(posSvcNameHash->Octet + (6 * iterReqHash), pSvcNameHashObj->Value, 6))
@@ -74,10 +74,10 @@ p2psvc_EvalSvcAdvInfoAttrLen(
 	do
 	{
 		PRT_LIST_ENTRY 				pEntry = NULL;
-		
+
 		if(p2psvc_MatchSvcNameHash_org_wi_fi_wfds(posSvcNameHash))
 		{// Spec 3.4.3.2: if prefix search, send org.wi-fi.wfds service name
-		
+
 			reqLen += (u2Byte)(	sizeof(u4Byte)								// adv-id
 								+ 2											// config-method
 								+ sizeof(u1Byte)							// svc-name len
@@ -93,18 +93,18 @@ p2psvc_EvalSvcAdvInfoAttrLen(
 			  PP2PSVC_REQ_INFO_ENTRY	pInfoEntry = (PP2PSVC_REQ_INFO_ENTRY)pEntry;
 			  PRT_OBJECT_HEADER 		pAdvIdObj = NULL;
 			  PRT_OBJECT_HEADER 		pSvcNameObj = NULL;
-  
+
 			  if(!p2psvc_MatchSvcNameHash(pInfoEntry, posSvcNameHash)) continue;
-			  
+
 			  pAdvIdObj 	= P2PSvc_GetParam(&pInfoEntry->objList, P2PSVC_OBJ_HDR_ID_DATA_ADV_ID, 0);
 			  pSvcNameObj = P2PSvc_GetParam(&pInfoEntry->objList, P2PSVC_OBJ_HDR_ID_DATA_SVC_NAME, 0);
-  
+
 			  reqLen += (u2Byte)(pAdvIdObj->Length							// adv-id
 			  						+ 2										// config-method
 									+ sizeof(u1Byte)						// svc-name len
 									+ pSvcNameObj->Length					// svc-name
 									+ 0);
-  
+
 			  nSvcToAttach++;
 		  }
 		}
@@ -119,7 +119,7 @@ RT_STATUS
 p2psvc_MakePDSvcNameHash(
 	IN  PP2PSVC_INFO				pP2PSvcInfo,
 	OUT FRAME_BUF					*pBuf
-	) 
+	)
 {
 	RT_STATUS						rtStatus = RT_STATUS_SUCCESS;
 	pu1Byte							pLen = NULL;
@@ -172,7 +172,7 @@ RT_STATUS
 p2psvc_MakeSeekSvcNameHash(
 	IN  PP2PSVC_INFO				pP2PSvcInfo,
 	OUT FRAME_BUF					*pBuf
-	) 
+	)
 {
 	RT_STATUS						rtStatus = RT_STATUS_SUCCESS;
 	pu1Byte							pLen = NULL;
@@ -194,7 +194,7 @@ p2psvc_MakeSeekSvcNameHash(
 		{
 			PP2PSVC_REQ_INFO_ENTRY	pInfoEntry = (PP2PSVC_REQ_INFO_ENTRY)pEntry;
 			PRT_OBJECT_HEADER 		pSvcNameHashObj = NULL;
-			
+
 			pSvcNameHashObj = P2PSvc_GetParam(&pInfoEntry->objList, P2PSVC_OBJ_HDR_ID_DATA_SVC_NAME_HASH, 0);
 			FrameBuf_Add_Data(pBuf, pSvcNameHashObj->Value, 6);
 		}
@@ -216,10 +216,10 @@ p2psvc_MakeSeekSvcNameHash(
 
 //
 // Description:
-// 	Make adv-svc-info attr. 
+// 	Make adv-svc-info attr.
 //		The attr is carried in a independent P2P IE and if the IE is too big
 //		to fit in a single P2P IE, it is splitted into several.
-// 	If error occurs during the process, length of the posMsdu member 
+// 	If error occurs during the process, length of the posMsdu member
 //		will not be updated therefore no change is made to the original
 //		constructing frame.
 //
@@ -253,11 +253,11 @@ P2PSvc_MakeAdvSvcInfo(
 		if(0 == attrLen) break;
 
 		if(NULL == (pLen = p2p_add_IEHdr(pBuf))) break;
-		
+
 		// Attr id and len
 		FrameBuf_Add_u1(pBuf, P2P_ATTR_ADV_SVC_INFO);
 		FrameBuf_Add_le_u2(pBuf, attrLen);
-		
+
 		// advertise-svc-desc
 		if(p2psvc_MatchSvcNameHash_org_wi_fi_wfds(posSvcNameHash))
 		{// Spec 3.4.3.2: if prefix search, send org.wi-fi.wfds service name
@@ -265,16 +265,16 @@ P2PSvc_MakeAdvSvcInfo(
 			u4Byte 					AdvIdZero = 0;
 
 			// Main spec v0.43:
-			// If ASP finds a match with the Service Hash value of 
-			// "org.wi-fi.wfds" (i.e. advertises one of the Wi-Fi alliance 
-			// defined services listed in 3.2), then the ConfigMethods value 
-			// in Probe Response shall be ignored. 
-			
+			// If ASP finds a match with the Service Hash value of
+			// "org.wi-fi.wfds" (i.e. advertises one of the Wi-Fi alliance
+			// defined services listed in 3.2), then the ConfigMethods value
+			// in Probe Response shall be ignored.
+
 			// Attach [adv-id, config-method, svc-name len, svc-name]
 			FrameBuf_Add_le_u4(pBuf, AdvIdZero);
 			FrameBuf_Add_le_u2(pBuf, 0);
 			FrameBuf_Add_u1(pBuf, (u1Byte)(strlen(P2PSVC_WIFI_WFDS_SERVICE_NAME)));
-			FrameBuf_Add_Data(pBuf, P2PSVC_WIFI_WFDS_SERVICE_NAME, (u2Byte) strlen(P2PSVC_WIFI_WFDS_SERVICE_NAME));			
+			FrameBuf_Add_Data(pBuf, P2PSVC_WIFI_WFDS_SERVICE_NAME, (u2Byte) strlen(P2PSVC_WIFI_WFDS_SERVICE_NAME));
 		}
 		else
 		{
@@ -327,7 +327,7 @@ RT_STATUS
 P2PSvc_MakeSvcNameHash(
 	IN  PP2PSVC_INFO				pP2PSvcInfo,
 	OUT FRAME_BUF					*pBuf
-	) 
+	)
 {
 	RT_STATUS						rtStatus = RT_STATUS_SUCCESS;
 
@@ -370,7 +370,7 @@ P2PSvc_MakeInitorPDReqIE(
 	IN  PP2PSVC_INFO				pP2PSvcInfo,
 	IN  PP2PSVC_PD_ENTRY 			pPDEntry,
 	OUT FRAME_BUF					*pBuf
-	) 
+	)
 {
 	RT_STATUS						rtStatus = RT_STATUS_SUCCESS;
 	PP2P_INFO						pP2PInfo = GET_P2P_INFO(pP2PSvcInfo->pAdapter);
@@ -405,7 +405,7 @@ P2PSvc_MakeInitorPDReqIE(
 			FrameBuf_Add_Data(pBuf, pPDEntry->selfGrpInfo.grpDevAddr, 6);
 			FrameBuf_Add_Data(pBuf, pPDEntry->selfGrpInfo.ssidBuf, pPDEntry->selfGrpInfo.ssidLen);
 		}
-		
+
 		// Intended-intf-addr, contains NEW or GO
 		if(TEST_FLAG(pPDEntry->selfConnCap, P2PSVC_CONN_CAP_BMP_NEW | P2PSVC_CONN_CAP_BMP_GO))
 		{
@@ -455,7 +455,7 @@ P2PSvc_MakeInitorPDReqIE(
 
 		// Config-timeout, contains NEW or GO
 		if(TEST_FLAG(pPDEntry->selfConnCap, P2PSVC_CONN_CAP_BMP_NEW | P2PSVC_CONN_CAP_BMP_GO))
-		{	
+		{
 			P2PAttr_Make_ConfigTimeout(pBuf, pP2PInfo->GOConfigurationTimeout, pP2PInfo->ClientConfigurationTimeout);
 		}
 
@@ -464,7 +464,7 @@ P2PSvc_MakeInitorPDReqIE(
 		{
 			P2PAttr_Make_ListenChannel(pBuf, pP2PInfo->CountryString, pP2PInfo->RegulatoryClass, pP2PInfo->ListenChannel);
 		}
-		
+
 		// session-id (session-id, self dev-addr), always present
 		selfDevAddr = pP2PInfo->DeviceAddress;
 		pObj = P2PSvc_GetParam(&pInitorPDEntry->objList, P2PSVC_OBJ_HDR_ID_DATA_SESSION_ID, 0);
@@ -484,10 +484,10 @@ P2PSvc_MakeInitorPDReqIE(
 		// TODO:
 
 		//4 Indicate P2P attrs sent
-		P2PSvc_IndicateFrameSent(pP2PSvcInfo, 
-			P2PSVC_OBJ_HDR_ID_INDIC_INITOR_PD_REQ_SENT, 
+		P2PSvc_IndicateFrameSent(pP2PSvcInfo,
+			P2PSVC_OBJ_HDR_ID_INDIC_INITOR_PD_REQ_SENT,
 			peerDevAddr,
-			(u2Byte)(FrameBuf_Tail(pBuf) - 1 - pLen), 
+			(u2Byte)(FrameBuf_Tail(pBuf) - 1 - pLen),
 			pLen + 1);
 
 		p2p_update_IeHdrLen(pBuf, pLen);
@@ -501,7 +501,7 @@ P2PSvc_MakeRspdorFOPDReqIE(
 	IN  PP2PSVC_INFO				pP2PSvcInfo,
 	IN  PP2PSVC_PD_ENTRY 			pPDEntry,
 	OUT FRAME_BUF					*pBuf
-	) 
+	)
 {
 		RT_STATUS					rtStatus = RT_STATUS_SUCCESS;
 		PP2P_INFO					pP2PInfo = GET_P2P_INFO(pP2PSvcInfo->pAdapter);
@@ -533,7 +533,7 @@ P2PSvc_MakeRspdorFOPDReqIE(
 				FrameBuf_Add_Data(pBuf, pP2PInfo->DeviceAddress, 6);
 				FrameBuf_Add_Data(pBuf, pPDEntry->selfGrpInfo.ssidBuf, pPDEntry->selfGrpInfo.ssidLen);
 			}
-			
+
 			// Intended-intf-addr, contains NEW or GO
 			if(TEST_FLAG(pRspdorPDEntry->fopdReqConnCap, P2PSVC_CONN_CAP_BMP_NEW | P2PSVC_CONN_CAP_BMP_GO))
 			{
@@ -550,7 +550,7 @@ P2PSvc_MakeRspdorFOPDReqIE(
 			// Op-channel, contains NEW or GO
 			if(TEST_FLAG(pRspdorPDEntry->fopdReqConnCap, P2PSVC_CONN_CAP_BMP_NEW | P2PSVC_CONN_CAP_BMP_GO))
 			{
-				P2PAttr_Make_OperatingChannel(pBuf, pP2PInfo->CountryString, pP2PInfo->RegulatoryClass, pP2PInfo->OperatingChannel);	
+				P2PAttr_Make_OperatingChannel(pBuf, pP2PInfo->CountryString, pP2PInfo->RegulatoryClass, pP2PInfo->OperatingChannel);
 			}
 
 			// Channel-list, contains NEW
@@ -558,7 +558,7 @@ P2PSvc_MakeRspdorFOPDReqIE(
 			{
 				P2PAttr_Make_ChannelList(pBuf, pP2PInfo, &pP2PInfo->ChannelEntryList);
 			}
-			
+
 			// Session-info-data-info, NONE
 
 			// Conn-cap, present if accepted
@@ -586,7 +586,7 @@ P2PSvc_MakeRspdorFOPDReqIE(
 			{
 				P2PAttr_Make_ListenChannel(pBuf, pP2PInfo->CountryString, pP2PInfo->RegulatoryClass, pP2PInfo->ListenChannel);
 			}
-			
+
 			// Session-id-info, always present
 			FrameBuf_Add_u1(pBuf, P2P_ATTR_SESSION_ID_INFO);
 			FrameBuf_Add_le_u2(pBuf, 4 + 6);
@@ -602,10 +602,10 @@ P2PSvc_MakeRspdorFOPDReqIE(
 			// TODO:
 
 			//4 Indicate P2P attrs sent
-			P2PSvc_IndicateFrameSent(pP2PSvcInfo, 
-				P2PSVC_OBJ_HDR_ID_INDIC_RSPDOR_FOPD_REQ_SENT, 
-				pRspdorPDEntry->super.peerDevAddr, 
-				(u2Byte)(FrameBuf_Tail(pBuf) - 1 - pLen), 
+			P2PSvc_IndicateFrameSent(pP2PSvcInfo,
+				P2PSVC_OBJ_HDR_ID_INDIC_RSPDOR_FOPD_REQ_SENT,
+				pRspdorPDEntry->super.peerDevAddr,
+				(u2Byte)(FrameBuf_Tail(pBuf) - 1 - pLen),
 				pLen + 1);
 
 			p2p_update_IeHdrLen(pBuf, pLen);
@@ -622,7 +622,7 @@ P2PSvc_MakeInitorFOPDRspIE(
 	IN  PP2PSVC_PD_ENTRY 			pPDEntry,
 	IN  POCTET_STRING 				posP2PAttrs,
 	OUT FRAME_BUF					*pBuf
-	) 
+	)
 {
 	RT_STATUS						rtStatus = RT_STATUS_SUCCESS;
 	PP2P_INFO						pP2PInfo = GET_P2P_INFO(pP2PSvcInfo->pAdapter);
@@ -638,28 +638,28 @@ P2PSvc_MakeInitorFOPDRspIE(
 		pu1Byte						peerDevAddr = NULL;
 		u4Byte						advId = 0;
 		PP2P_WPS_ATTRIBUTES 		pWps = &pP2PInfo->WpsAttributes;
-		
+
 		if(!P2PSvc_GetP2PAttr(posP2PAttrs, P2P_ATTR_CONN_CAP_INFO, 1, &osConnCap))
 		{
 			rtStatus = RT_STATUS_INVALID_DATA;
 			break;
 		}
-		
+
 		if(NULL == (pLen = p2p_add_IEHdr(pBuf))) break;
-		
+
 		// P2P-cap, always present
 		if(p2p_ActingAs_Go(pP2PInfo))
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("Invalid role\n"));
-		P2PAttr_Make_Capability(pBuf, 
+		P2PAttr_Make_Capability(pBuf,
 			pP2PInfo->DeviceCapability & ~P2P_DEV_CAP_CLIENT_DISCOVERABILITY, // this cap valid only in P2P Group Info and AssocReq
 			pP2PInfo->GroupCapability);
 
 		// Dev-info, always present
-		P2PAttr_Make_DevInfo(pBuf, 
-			pP2PInfo->DeviceAddress, 
-			pWps->ConfigMethod, 
-			&pWps->PrimaryDeviceType, 
-			pWps->SecondaryDeviceTypeLength, 
+		P2PAttr_Make_DevInfo(pBuf,
+			pP2PInfo->DeviceAddress,
+			pWps->ConfigMethod,
+			&pWps->PrimaryDeviceType,
+			pWps->SecondaryDeviceTypeLength,
 			pWps->SecondaryDeviceTypeList,
 			pWps->DeviceNameLength,
 			pWps->DeviceName);
@@ -672,7 +672,7 @@ P2PSvc_MakeInitorFOPDRspIE(
 			FrameBuf_Add_Data(pBuf, pP2PInfo->DeviceAddress, 6);
 			FrameBuf_Add_Data(pBuf, pPDEntry->selfGrpInfo.ssidBuf, pPDEntry->selfGrpInfo.ssidLen);
 		}
-		
+
 		// Intended-intf-addr, connCap IS GO
 		if(P2PSVC_CONN_CAP_BMP_GO == pInitorPDEntry->fopdRspConnCap)
 		{
@@ -689,17 +689,17 @@ P2PSvc_MakeInitorFOPDRspIE(
 		// Op-channel, connCap IS GO
 		if(P2PSVC_CONN_CAP_BMP_GO == pInitorPDEntry->fopdRspConnCap)
 		{
-			P2PAttr_Make_OperatingChannel(pBuf, pP2PInfo->CountryString, pP2PInfo->RegulatoryClass, pP2PInfo->OperatingChannel);	
+			P2PAttr_Make_OperatingChannel(pBuf, pP2PInfo->CountryString, pP2PInfo->RegulatoryClass, pP2PInfo->OperatingChannel);
 		}
 
 		// Channel-list, IS CLI or GO
 		if(P2PSVC_CONN_CAP_BMP_GO == pInitorPDEntry->fopdRspConnCap
-			|| P2PSVC_CONN_CAP_BMP_CLI == pInitorPDEntry->fopdRspConnCap 
+			|| P2PSVC_CONN_CAP_BMP_CLI == pInitorPDEntry->fopdRspConnCap
 			)
 		{
 			P2PAttr_Make_ChannelList(pBuf, pP2PInfo, &pP2PInfo->ChannelEntryList);
 		}
-		
+
 		// Session-info-data-info, NONE
 
 		// Conn-cap, always present?
@@ -709,7 +709,7 @@ P2PSvc_MakeInitorFOPDRspIE(
 			FrameBuf_Add_le_u2(pBuf, 1);
 			FrameBuf_Add_u1(pBuf, pInitorPDEntry->fopdRspConnCap);
 		}
-		
+
 		// Adv-id (adv-id, svc-mac), always present
 		pObj = P2PSvc_GetParam(&pInitorPDEntry->objList, P2PSVC_OBJ_HDR_ID_DATA_DEV_ADDR, 0);
 		peerDevAddr = pObj->Value;
@@ -724,14 +724,14 @@ P2PSvc_MakeInitorFOPDRspIE(
 		// Config-timeout, IS GO or CLI
 		// Always add config-time out since WFA is checking this even when PD is failed
 		//if(P2PSVC_CONN_CAP_BMP_GO == pInitorPDEntry->fopdRspConnCap
-		//	|| P2PSVC_CONN_CAP_BMP_CLI == pInitorPDEntry->fopdRspConnCap 
+		//	|| P2PSVC_CONN_CAP_BMP_CLI == pInitorPDEntry->fopdRspConnCap
 		//	)
 		{
 			P2PAttr_Make_ConfigTimeout(pBuf, pP2PInfo->GOConfigurationTimeout, pP2PInfo->ClientConfigurationTimeout);
 		}
 
 		// Listen-channel, NONE
-		
+
 		// Session-id-info, always present
 		FrameBuf_Add_u1(pBuf, P2P_ATTR_SESSION_ID_INFO);
 		FrameBuf_Add_le_u2(pBuf, 4 + 6);
@@ -746,10 +746,10 @@ P2PSvc_MakeInitorFOPDRspIE(
 		// Persistent-grp-info, NONE
 
 		//4 Indicate P2P attrs sent
-		P2PSvc_IndicateFrameSent(pP2PSvcInfo, 
-			P2PSVC_OBJ_HDR_ID_INDIC_INITOR_FOPD_RSP_SENT, 
-			peerDevAddr, 
-			(u2Byte)(FrameBuf_Tail(pBuf) - 1 - pLen), 
+		P2PSvc_IndicateFrameSent(pP2PSvcInfo,
+			P2PSVC_OBJ_HDR_ID_INDIC_INITOR_FOPD_RSP_SENT,
+			peerDevAddr,
+			(u2Byte)(FrameBuf_Tail(pBuf) - 1 - pLen),
 			pLen + 1);
 
 		p2p_update_IeHdrLen(pBuf, pLen);
@@ -767,7 +767,7 @@ P2PSvc_MakeRspdorPDRspIE(
 	IN  PP2PSVC_PD_ENTRY 			pPDEntry,
 	IN  POCTET_STRING 				posP2PAttrs,
 	OUT FRAME_BUF					*pBuf
-	) 
+	)
 {
 	RT_STATUS						rtStatus = RT_STATUS_SUCCESS;
 	PP2P_INFO						pP2PInfo = GET_P2P_INFO(pP2PSvcInfo->pAdapter);
@@ -779,22 +779,22 @@ P2PSvc_MakeRspdorPDRspIE(
 	do
 	{
 		PP2P_WPS_ATTRIBUTES 		pWps = &pP2PInfo->WpsAttributes;
-		
+
 		if(NULL == (pLen = p2p_add_IEHdr(pBuf))) break;
 
 		// P2P-cap, always present
 		if(p2p_ActingAs_Go(pP2PInfo))
 			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("Invalid role\n"));
-		P2PAttr_Make_Capability(pBuf, 
+		P2PAttr_Make_Capability(pBuf,
 			pP2PInfo->DeviceCapability & ~P2P_DEV_CAP_CLIENT_DISCOVERABILITY, // this cap valid only in P2P Group Info and AssocReq
 			pP2PInfo->GroupCapability);
 
 		// P2P-dev-info, always present
-		P2PAttr_Make_DevInfo(pBuf, 
-			pP2PInfo->DeviceAddress, 
-			pWps->ConfigMethod, 
-			&pWps->PrimaryDeviceType, 
-			pWps->SecondaryDeviceTypeLength, 
+		P2PAttr_Make_DevInfo(pBuf,
+			pP2PInfo->DeviceAddress,
+			pWps->ConfigMethod,
+			&pWps->PrimaryDeviceType,
+			pWps->SecondaryDeviceTypeLength,
 			pWps->SecondaryDeviceTypeList,
 			pWps->DeviceNameLength,
 			pWps->DeviceName);
@@ -807,7 +807,7 @@ P2PSvc_MakeRspdorPDRspIE(
 			FrameBuf_Add_Data(pBuf, pPDEntry->selfGrpInfo.grpDevAddr, 6);
 			FrameBuf_Add_Data(pBuf, pPDEntry->selfGrpInfo.ssidBuf, pPDEntry->selfGrpInfo.ssidLen);
 		}
-		
+
 		// Intended-intf-addr, contains NEW or GO
 		if(TEST_FLAG(pRspdorPDEntry->pdRspConnCap, P2PSVC_CONN_CAP_BMP_GO))
 		{
@@ -828,8 +828,8 @@ P2PSvc_MakeRspdorPDRspIE(
 		}
 
 		// Channel-list, IS CLI or GO
-		if(P2PSVC_CONN_CAP_BMP_GO == pRspdorPDEntry->pdRspConnCap 
-			|| P2PSVC_CONN_CAP_BMP_CLI == pRspdorPDEntry->pdRspConnCap 
+		if(P2PSVC_CONN_CAP_BMP_GO == pRspdorPDEntry->pdRspConnCap
+			|| P2PSVC_CONN_CAP_BMP_CLI == pRspdorPDEntry->pdRspConnCap
 			)
 		{
 			P2PAttr_Make_ChannelList(pBuf, pP2PInfo, &pP2PInfo->ChannelEntryList);
@@ -853,15 +853,15 @@ P2PSvc_MakeRspdorPDRspIE(
 
 		// Config-timeout, IS GO or CLI
 		// Always add config-timeout since WFA is checking this even status is failed
-		//if(P2PSVC_CONN_CAP_BMP_GO == pRspdorPDEntry->pdRspConnCap 
-		//	|| P2PSVC_CONN_CAP_BMP_CLI == pRspdorPDEntry->pdRspConnCap 
+		//if(P2PSVC_CONN_CAP_BMP_GO == pRspdorPDEntry->pdRspConnCap
+		//	|| P2PSVC_CONN_CAP_BMP_CLI == pRspdorPDEntry->pdRspConnCap
 		//	)
-		{	
+		{
 			P2PAttr_Make_ConfigTimeout(pBuf, pP2PInfo->GOConfigurationTimeout, pP2PInfo->ClientConfigurationTimeout);
 		}
 
 		// Listen-channel, NONE
-		
+
 		// Session-id-info, always present
 		FrameBuf_Add_u1(pBuf, P2P_ATTR_SESSION_ID_INFO);
 		FrameBuf_Add_le_u2(pBuf, 4 + 6);
@@ -877,12 +877,12 @@ P2PSvc_MakeRspdorPDRspIE(
 		// TODO:
 
 		//4 Indicate P2P attrs sent
-		P2PSvc_IndicateFrameSent(pP2PSvcInfo, 
-			P2PSVC_OBJ_HDR_ID_INDIC_RSPDOR_PD_RSP_SENT, 
-			pRspdorPDEntry->super.peerDevAddr, 
-			(u2Byte)(FrameBuf_Tail(pBuf) - 1 - pLen), 
+		P2PSvc_IndicateFrameSent(pP2PSvcInfo,
+			P2PSVC_OBJ_HDR_ID_INDIC_RSPDOR_PD_RSP_SENT,
+			pRspdorPDEntry->super.peerDevAddr,
+			(u2Byte)(FrameBuf_Tail(pBuf) - 1 - pLen),
 			pLen + 1);
-		
+
 		p2p_update_IeHdrLen(pBuf, pLen);
 	}while(FALSE);
 
@@ -957,7 +957,7 @@ P2PSvc_MakeSvcInfoDesc(
 			CLEAR_FLAG(svcConfigMethod, P2P_WPS_CONFIG_METHODS_SVC_DEFAULT_PIN);
 		}
 		FrameBuf_Add_be_u2(pBuf, svcConfigMethod);
-		
+
 		// svc-name-len
 		FrameBuf_Add_u1(pBuf, (u1Byte)pSvcNameObj->Length);
 
@@ -972,7 +972,7 @@ P2PSvc_MakeSvcInfoDesc(
 		{
 			// svc-info-len
 			FrameBuf_Add_le_u2(pBuf, (u2Byte)pSvcInfoObj->Length);
-			
+
 			// svc-info
 			FrameBuf_Add_Data(pBuf, pSvcInfoObj->Value, (u2Byte)pSvcInfoObj->Length);
 		}

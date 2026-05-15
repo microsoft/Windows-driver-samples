@@ -22,7 +22,7 @@ PHY_SetTxPowerLimit(
 	IN	pu1Byte				PowerLimit
 	);
 
-VOID 
+VOID
 PHY_ConvertTxPowerLimitToPowerIndex(
 	IN	PADAPTER			Adapter
 	);

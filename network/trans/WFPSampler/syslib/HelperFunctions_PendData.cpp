@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Object><Action>
-//  
+//
 //      i.e.
 //
 //       KrnlHlprWorkItemQueue
@@ -43,7 +43,7 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Add support for pending at 
+//      December  13,   2013  -     1.1   -  Add support for pending at
 //                                              FWPM_LAYER_ALE_ENDPOINT_CLOSURE
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@
 
 /**
  @kernel_helper_function="KrnlHlprPendDataPurge"
- 
+
    Purpose:  Cleanup a PEND_DATA object.                                                        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -66,13 +66,13 @@ _IRQL_requires_same_
 inline VOID KrnlHlprPendDataPurge(_Inout_ PEND_DATA* pPendData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprPendDataPurge()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pPendData);
 
 #if(NTDDI_VERSION >= NTDDI_WIN7)
@@ -117,19 +117,19 @@ inline VOID KrnlHlprPendDataPurge(_Inout_ PEND_DATA* pPendData)
                  sizeof(PEND_DATA));
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprPendDataPurge()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprPendDataDestroy"
- 
+
    Purpose:  Cleanup and free a PEND_DATA object.                                               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -145,13 +145,13 @@ _Success_(*ppPendData == 0)
 VOID KrnlHlprPendDataDestroy(_Inout_ PEND_DATA** ppPendData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprPendDataDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppPendData);
 
    if(*ppPendData)
@@ -163,19 +163,19 @@ VOID KrnlHlprPendDataDestroy(_Inout_ PEND_DATA** ppPendData)
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprPendDataDestroy()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprPendDataPopulate"
- 
+
    Purpose:  Populates a PEND_DATA object with the completionContext.                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -196,13 +196,13 @@ NTSTATUS KrnlHlprPendDataPopulate(_Inout_ PEND_DATA* pPendData,
                                   _In_opt_ FWPS_CLASSIFY_OUT* pClassifyOut)                /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprPendDataPopulate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pPendData);
    NT_ASSERT(pClassifyValues);
    NT_ASSERT(pMetadata);
@@ -232,7 +232,7 @@ NTSTATUS KrnlHlprPendDataPopulate(_Inout_ PEND_DATA* pPendData,
                        DPFLTR_ERROR_LEVEL,
                        " !!!! KrnlHlprPendDataPopulate : FwpsAcquireClassifyHandle() [status: %#x]\n",
                        status);
-         
+
             HLPR_BAIL;
          }
 
@@ -246,7 +246,7 @@ NTSTATUS KrnlHlprPendDataPopulate(_Inout_ PEND_DATA* pPendData,
                        DPFLTR_ERROR_LEVEL,
                        " !!!! KrnlHlprPendDataPopulate : FwpsPendClassify() [status: %#x]\n",
                        status);
-         
+
             HLPR_BAIL;
          }
 
@@ -320,20 +320,20 @@ NTSTATUS KrnlHlprPendDataPopulate(_Inout_ PEND_DATA* pPendData,
 
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprPendDataPopulate() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprPendDataCreate"
- 
+
    Purpose:  Allocates and populates a PEND_DATA object with the completionContext.             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -359,13 +359,13 @@ NTSTATUS KrnlHlprPendDataCreate(_Outptr_ PEND_DATA** ppPendData,
 
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprPendDataCreate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppPendData);
    NT_ASSERT(pClassifyValues);
    NT_ASSERT(pMetadata);
@@ -390,7 +390,7 @@ NTSTATUS KrnlHlprPendDataCreate(_Outptr_ PEND_DATA** ppPendData,
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// *ppPendData initialized with calls to HLPR_NEW & KrnlHlprPendDataPopulate 
+#pragma warning(disable: 6001) /// *ppPendData initialized with calls to HLPR_NEW & KrnlHlprPendDataPopulate
 
    if(status != STATUS_SUCCESS &&
       *ppPendData)
@@ -399,13 +399,13 @@ NTSTATUS KrnlHlprPendDataCreate(_Outptr_ PEND_DATA** ppPendData,
 #pragma warning(pop)
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprPendDataCreate() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }

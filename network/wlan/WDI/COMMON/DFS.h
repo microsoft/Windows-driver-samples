@@ -5,17 +5,17 @@
  *
  *
  * Note:		Declare some variable which will be used by any debug command.
- *			
  *
- * Export:		
  *
- * Abbrev:			
+ * Export:
  *
- * History:		
- *	Data		Who		Remark 
+ * Abbrev:
+ *
+ * History:
+ *	Data		Who		Remark
  *	??/??/2010  Cosa   	Create initial version in different filed.
  *	12/23/2010	MHC		Gather the code from other source files.
- * 
+ *
  *****************************************************************************/
  /* Check to see if the file has been included already.  */
 #ifndef	__DFS_H__
@@ -33,7 +33,7 @@
 	(__channel >= 94 && __channel <= 145))
 #else//test radar chnl
 #define DFS_5G_RADAR_CHANNEL(__channel)	\
-	(__channel >= 40 && __channel <= 60) 
+	(__channel >= 40 && __channel <= 60)
 #endif
 
 #define DFS_DEFAULT_NON_RADAR_CHNL			40

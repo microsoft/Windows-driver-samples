@@ -14,8 +14,8 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Add support for multiple injectors and redirectors, and 
-//                                              add structure for serializing asynchronous 
+//      December  13,   2013  -     1.1   -  Add support for multiple injectors and redirectors, and
+//                                              add structure for serializing asynchronous
 //                                              FWPM_LAYER_STREAM injections
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////

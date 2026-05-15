@@ -5,14 +5,14 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	HalPhy.h
-	
+
 Abstract:
 	Prototype of PHY_XXX() and related data structure.
-	    
+
 Major Change History:
 	When       Who               What
 	---------- ---------------   -------------------------------
-	2011-08-10 Lanhsin            Create.	
+	2011-08-10 Lanhsin            Create.
 --*/
 
 /*--------------------------Define Parameters-------------------------------*/
@@ -65,7 +65,7 @@ Major Change History:
 #define	NON_SHORT_SLOT_TIME				20
 
 //
-// Antenna detection method, i.e., using single tone detection or RSSI reported from each antenna detected. 
+// Antenna detection method, i.e., using single tone detection or RSSI reported from each antenna detected.
 // Added by Roger, 2013.05.22.
 //
 #define IS_ANT_DETECT_SUPPORT_SINGLE_TONE(__Adapter)		((GET_HAL_DATA(__Adapter)->AntDetection) & BIT0)
@@ -76,16 +76,16 @@ Major Change History:
 typedef	enum _RF_TYPE{
 	RF_TYPE_MIN = 0, 	// 0
 	RF_8225=1,			// 1 11b/g RF for verification only
-	RF_8256=2,			// 2 11b/g/n 
+	RF_8256=2,			// 2 11b/g/n
 	RF_8258=3,			// 3 11a/b/g/n RF
 	RF_6052=4,			// 4 11b/g/n RF
-	RF_PSEUDO_11N=5,	// 5, It is a temporality RF. 
+	RF_PSEUDO_11N=5,	// 5, It is a temporality RF.
 	RF_TYPE_MAX
 }RF_TYPE_E,*PRF_TYPE_E;
 
 
 #define	RF_PATH_MAX_92C_88E 		2
-#define	RF_PATH_MAX_90_8812		4	//Max RF number 90 support 
+#define	RF_PATH_MAX_90_8812		4	//Max RF number 90 support
 #define   RF_PATH_MAX_90_8814A         4
 
 
@@ -119,7 +119,7 @@ typedef enum _BaseBand_Config_Type{
 	BaseBand_Config_PHY_REG = 0,			//Radio Path A
 	BaseBand_Config_AGC_TAB = 1,			//Radio Path B
 	BaseBand_Config_AGC_TAB_2G = 2,
-	BaseBand_Config_AGC_TAB_5G = 3,	
+	BaseBand_Config_AGC_TAB_5G = 3,
 	BaseBand_Config_PHY_REG_PG
 }BaseBand_Config_Type, *PBaseBand_Config_Type;
 
@@ -158,7 +158,7 @@ typedef enum _RATR_TABLE_MODE{
 }RATR_TABLE_MODE, *PRATR_TABLE_MODE;
 
 
-/*------------------------------Define structure----------------------------*/ 
+/*------------------------------Define structure----------------------------*/
 typedef struct _SwChnlCmd{
 	SwChnlCmdID		CmdID;
 	u4Byte			Para1;
@@ -171,10 +171,10 @@ typedef struct _SwChnlCmd{
 #pragma pack(1)
 #endif
 
-typedef struct _R_ANTENNA_SELECT_OFDM{	
-	u4Byte			r_tx_antenna:4;	
+typedef struct _R_ANTENNA_SELECT_OFDM{
+	u4Byte			r_tx_antenna:4;
 	u4Byte			r_ant_l:4;
-	u4Byte			r_ant_non_ht:4;	
+	u4Byte			r_ant_non_ht:4;
 	u4Byte			r_ant_ht1:4;
 	u4Byte			r_ant_ht2:4;
 	u4Byte			r_ant_ht_s1:4;
@@ -184,7 +184,7 @@ typedef struct _R_ANTENNA_SELECT_OFDM{
 }R_ANTENNA_SELECT_OFDM;
 
 typedef struct _R_ANTENNA_SELECT_CCK{
-	u1Byte			r_cckrx_enable_2:2;	
+	u1Byte			r_cckrx_enable_2:2;
 	u1Byte			r_cckrx_enable:2;
 	u1Byte			r_ccktx_enable:4;
 }R_ANTENNA_SELECT_CCK;
@@ -208,7 +208,7 @@ typedef struct RF_Shadow_Compare_Map {
 	UINT8		Driver_Write;
 }RF_SHADOW_T;
 
-/*------------------------------Define structure----------------------------*/ 
+/*------------------------------Define structure----------------------------*/
 
 
 /*------------------------Export global variable----------------------------*/

@@ -41,7 +41,7 @@ Abstract:
 #undef VER_PRODUCTVERSION_STR
 #define VER_PRODUCTVERSION_STR	VER_FILEVERSION_STR
 
-#define VER_LEGALCOPYRIGHT_STR	"Copyright (C) 2011 Realtek Semiconductor Corporation                            " 
+#define VER_LEGALCOPYRIGHT_STR	"Copyright (C) 2011 Realtek Semiconductor Corporation                            "
 #define VER_COMPANYNAME_STR		"Realtek Semiconductor Corporation                           "
 
 #include "common.ver"

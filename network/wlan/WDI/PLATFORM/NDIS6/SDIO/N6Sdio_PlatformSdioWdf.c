@@ -3,16 +3,16 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	N6Sdio_PlatformSdioWdf.c
-	
+
 Abstract:
 	Implement PlatforSdioXXX() and WdfSdio_XXX() on WDF SDIO.
-	    
+
 Major Change History:
 	When       Who               What
 	---------- ---------------   -------------------------------
 	2012-01-10 Roger             Create.
-                          
-	
+
+
 --*/
 
 #include "Mp_Precomp.h"
@@ -29,13 +29,13 @@ Major Change History:
 //================================================================================
 
 //================================================================================
-//	SDIO Init / DeInit.	
+//	SDIO Init / DeInit.
 //================================================================================
 
 //
 //	Description:
 //		Select 1st interface and initialize all pipes on it.
-//		Note, we don't start IoTargets of all pipes here 
+//		Note, we don't start IoTargets of all pipes here
 //		because HW is not properly configured.
 //
 //	Assumption:
@@ -48,14 +48,14 @@ WdfSdio_Initialize(
 {
 	NTSTATUS					ntStatus = STATUS_SUCCESS;
 	PRT_SDIO_DEVICE pDevice = GET_RT_SDIO_DEVICE(Adapter);
-	
+
 	//
 	// <Roger_TODO> We should implement SDIO initialization process on WDF framework if needed.
 	// 1. Async SD Request initiallization and corresponding event
 	// 2. All Sync SD Request initialization for IO or TxRx engine
 	// 2012.01.19.
 	//
-	
+
 	//
 	// Initialize event for control request.
 	//
@@ -87,7 +87,7 @@ WdfSdio_Halt(
 	//
 	// <Roger_TODO>
 	//
-	
+
 	WdfSdio_Disable(pAdapter);
 	WdfSdio_DeInitAsyncSDRequest(pAdapter);
 
@@ -96,7 +96,7 @@ WdfSdio_Halt(
 
 //
 //	Description:
-//		Start all Tx queues	
+//		Start all Tx queues
 //
 VOID
 WdfSdioTx_Enable(
@@ -113,7 +113,7 @@ WdfSdioTx_Enable(
 
 //
 //	Description:
-//		Tell framework to stop all pipes and wait until 
+//		Tell framework to stop all pipes and wait until
 //		all pending requests completed.
 //
 VOID
@@ -125,9 +125,9 @@ WdfSdio_Disable(
 	//
 	// <Roger_TODO>
 	//
-	
+
 	//
-	// Cancel and wait all async SD request completed. 
+	// Cancel and wait all async SD request completed.
 	//
 	WdfSdio_CancelAsyncSDReq(pAdapter);
 
@@ -171,7 +171,7 @@ WdfSdio_DeInitAsyncSDRequest(
 
 //
 //	Description:
-//		Cancel and wait all async vendor request completed. 
+//		Cancel and wait all async vendor request completed.
 //
 VOID
 WdfSdio_CancelAsyncSDReq(
@@ -186,11 +186,11 @@ WdfSdio_CancelAsyncSDReq(
 	if(pDevice->nIrpPendingCnt > 0)
 	{
 		if(pDevice->bAsynIoWritePending)
-		{ 
+		{
 			RT_TRACE(COMP_IO, DBG_LOUD, ("WdfSdio_CancelAsyncSDReq(): AsynIoWritePending => cancel it....\n"));
 			AsyncVendorRequest = pWdfUsbDevCtx->AsyncVendorRequest;
 			NdisReleaseSpinLock( &(pDevice->IrpSpinLock) );
-	
+
 			//
 			// Cancel the WDFREQUEST for AsynIO write request.
 			//
@@ -250,7 +250,7 @@ WdfSdio_AsyncVendorRequestWrite(
 	IN	PADAPTER				pAdapter,
 	IN	u1Byte					bReq,				// 1 byte bReq field of setup token.
 	IN	u2Byte					wValue, 			// 2 byte wValue field of setup token.
-	IN	u2Byte					wIndex,				// 2 byte wIndex field of setup token. 
+	IN	u2Byte					wIndex,				// 2 byte wIndex field of setup token.
 	IN	pu1Byte					pBuffer,			// Pointer to buffer to transfer in data-phase.
 	IN	u4Byte					BufferLength		// # of bytes to OUT or maximal # of bytes to IN.
 	)
@@ -258,7 +258,7 @@ WdfSdio_AsyncVendorRequestWrite(
 	//
 	// <Roger_TODO>
 	//
-	
+
 	return TRUE;
 }
 
@@ -268,7 +268,7 @@ WdfSdio_AsyncVendorRequestWrite(
 //		Initialize PlatformReserved[] of this SDIO_OUT_CONTEXT object.
 //		It return TRUE on success, FALSE otherwise.
 //
-BOOLEAN 
+BOOLEAN
 PlatformSdioInitTxContext(
 	IN	PADAPTER				pAdapter,
 	IN	PSDIO_OUT_CONTEXT		pContext
@@ -279,7 +279,7 @@ PlatformSdioInitTxContext(
 	//
 	// <Roger_TODO>
 	//
-	
+
 	return bResult;
 }
 
@@ -289,7 +289,7 @@ PlatformSdioInitTxContext(
 //	Description:
 //		Free URB and IRP allocated for this SDIO_OUT_CONTEXT object.
 //
-VOID 
+VOID
 PlatformSdioDeInitTxContext(
 	IN	PADAPTER				pAdapter,
 	IN	PSDIO_OUT_CONTEXT		pContext
@@ -298,7 +298,7 @@ PlatformSdioDeInitTxContext(
 	//
 	// <Roger_TODO>
 	//
-	
+
 }
 
 
@@ -320,7 +320,7 @@ PlatformSdioTxEnqueue(
 {
 
 	BOOLEAN						bResult = TRUE;
- 
+
 	//
 	// <Roger_TODO>
 	//
@@ -331,7 +331,7 @@ PlatformSdioTxEnqueue(
 
 //
 //	Description:
-//		Tell framework we are ready to issue Tx transfer on 
+//		Tell framework we are ready to issue Tx transfer on
 //		all Tx queues we selected.
 //
 //	Assumption:
@@ -351,7 +351,7 @@ WdfSdio_EnableAllTxQueues(
 
 //
 //	Description:
-//		Tell framework to stop ongoing OUT transfers on 
+//		Tell framework to stop ongoing OUT transfers on
 //		all IN pipes we selected.
 //
 //	Assumption:
@@ -378,7 +378,7 @@ WdfSdio_DisableAllTxQueues(
 		// Change IO Target to Stopped state to make it reject further request.
 		//
 		ioTargetState = WdfIoTargetGetState(WdfUsbTargetPipeGetIoTarget(hPipe));
-		if(ioTargetState == WdfIoTargetStarted) 
+		if(ioTargetState == WdfIoTargetStarted)
 		{
 			pRtOutPipe->IrpPendingCount--;
 
@@ -387,15 +387,15 @@ WdfSdio_DisableAllTxQueues(
 			//
 			PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 			RT_TRACE(COMP_SEND, DBG_LOUD, ("WdfSdio_DisableAllTxQueues(): stopping %d pipe ..........\n", idx));
-			WdfIoTargetStop(WdfUsbTargetPipeGetIoTarget(hPipe), WdfIoTargetCancelSentIo);		
+			WdfIoTargetStop(WdfUsbTargetPipeGetIoTarget(hPipe), WdfIoTargetCancelSentIo);
 			PlatformAcquireSpinLock(pAdapter, RT_TX_SPINLOCK);
 
 			//
 			// Wait outstanding requests completed.
-			//	
+			//
 			RT_TRACE(COMP_SEND, DBG_LOUD, ("WdfSdio_DisableAllTxQueues(): nInPipeIdx(%d) IrpPendingCounts=%d\n", idx, pRtOutPipe->IrpPendingCount));
 			if(	!RTIsListEmpty( &(pRtOutPipe->ContextBusyList) ) )
-			{	
+			{
 				PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 				while( !NdisWaitEvent(&(pRtOutPipe->AllIrpReturnedEvent), 50) )
 				{
@@ -408,8 +408,8 @@ WdfSdio_DisableAllTxQueues(
 		}
 		else
 		{
-			RT_TRACE(COMP_SEND, DBG_LOUD, 
-				("Try to stop OUT piep(%d) already in stopped state(%#X)\n", 
+			RT_TRACE(COMP_SEND, DBG_LOUD,
+				("Try to stop OUT piep(%d) already in stopped state(%#X)\n",
 				idx, ioTargetState));
 		}
 	}

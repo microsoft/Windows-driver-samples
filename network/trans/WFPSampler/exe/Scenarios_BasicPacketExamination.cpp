@@ -6,13 +6,13 @@
 //      Scenarios_BasicPacketExamination.cpp
 //
 //   Abstract:
-//      This module contains functions which prepares and sends data for the 
+//      This module contains functions which prepares and sends data for the
 //         BASIC_PACKET_EXAMINATION scenario implementation.
 //
 //   Naming Convention:
 //
 //      <Scope><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -26,13 +26,13 @@
 //          }
 //       <Action>
 //          {
-//            Execute                        - Function packages data and invokes RPC to the 
+//            Execute                        - Function packages data and invokes RPC to the
 //                                                WFPSampler service.
 //            Log                            - Function writes to the console.
 //          }
 //       <Modifier>
 //          {
-//            Help                           - Function provides context sensitive help for the 
+//            Help                           - Function provides context sensitive help for the
 //                                                scenario.
 //            ExaminationFlags               - Function acts on the .
 //          }
@@ -61,7 +61,7 @@
 
 /**
  @private_function="PrvScenarioBasicPacketExaminationParseExaminationFlags"
- 
+
    Purpose:  Parse the command line parameters for implementing packet examination such as:     <br>
                 Log while under lock                            (-lul)                          <br>
                 Log the FWPS_INCOMING_VALUES                    (-liv)                          <br>
@@ -192,7 +192,7 @@ UINT32 PrvScenarioBasicPacketExaminationParseExaminationFlags(_In_reads_(stringC
 /**
  @scenario_function="BasicPacketExaminationScenarioExecute"
 
-   Purpose:  Gather and package data neccessary to setup the BASIC_PACKET_EXAMINATION scenario, 
+   Purpose:  Gather and package data neccessary to setup the BASIC_PACKET_EXAMINATION scenario,
              then invoke RPC to implement the scenario in the WFPSampler service.               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -250,7 +250,7 @@ UINT32 BasicPacketExaminationScenarioExecute(_In_reads_(stringCount) PCWSTR* ppC
 
 /**
  @public_function="BasicPacketExaminationScenarioLogHelp"
- 
+
    Purpose:  Log usage information for the BASIC_PACKET_EXAMINATION scenario to the console.    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

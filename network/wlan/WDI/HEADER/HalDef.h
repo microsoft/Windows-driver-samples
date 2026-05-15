@@ -2,7 +2,7 @@
 #define __INC_HALDEF_H
 
 //
-// General Definition for 
+// General Definition for
 //
 /* Common definition for all 819x series driver */
 
@@ -61,8 +61,8 @@
 
 #define RTL819X_NO_SCAN_AFTER_LINK					0
 
-#define	U1DONTCARE 	0xFF	
-#define	U2DONTCARE 	0xFFFF	
+#define	U1DONTCARE 	0xFF
+#define	U2DONTCARE 	0xFFFF
 
 #define	INTEL_VENDOR_ID			0x8086
 #define	SIS_VENDOR_ID			0x1039
@@ -73,7 +73,7 @@
 #define MIN_DESC_BUFFER_LENGTH				5
 
 //
-// 2011/09/07 MH Add for different channel plan power index offset 
+// 2011/09/07 MH Add for different channel plan power index offset
 //
 #define	PWR_IDX_GROUP_NUM			4		// CCK/Legacyofdm/HT20/HT40
 
@@ -120,13 +120,13 @@ typedef enum _RT_MULTI_FUNC{
 //
 typedef enum _RT_POLARITY_CTL{
 	RT_POLARITY_LOW_ACT = 0,
-	RT_POLARITY_HIGH_ACT = 1,	
+	RT_POLARITY_HIGH_ACT = 1,
 }RT_POLARITY_CTL,*PRT_POLARITY_CTL;
 
 // For RTL8723 regulator mode. by tynli. 2011.01.14.
 typedef enum _RT_REGULATOR_MODE{
 	RT_SWITCHING_REGULATOR = 0,
-	RT_LDO_REGULATOR = 1,	
+	RT_LDO_REGULATOR = 1,
 }RT_REGULATOR_MODE,*PRT_REGULATOR_MODE;
 
 
@@ -389,7 +389,7 @@ typedef enum _RT_AMPDU_BRUST_MODE{
  // BIT[0] = 1: 32k, 0: 40M
 #define	FW_PS_CLOCK_OFF		BIT0		// 32k
 #define	FW_PS_CLOCK_ON		0		// 40M
- 
+
 #define	FW_PS_STATE_MASK  		(0x0F)
 #define	FW_PS_STATE_HW_MASK 	(0x07)
 #define	FW_PS_STATE_INT_MASK 	(0x3F)	// ISR_ENABLE, IMR_ENABLE, and PS mode should be inherited.
@@ -401,7 +401,7 @@ typedef enum _RT_AMPDU_BRUST_MODE{
 #define	FW_PS_IMR_MASK(x)   	((x) & 0xDF)
 #define	FW_PS_KEEP_IMR(x)		((x) & 0x20)
 
- 
+
 #define	FW_PS_STATE_S0		(FW_PS_DPS)
 #define	FW_PS_STATE_S1		(FW_PS_LCLK)
 #define	FW_PS_STATE_S2		(FW_PS_RF_OFF)
@@ -416,14 +416,14 @@ typedef enum _RT_AMPDU_BRUST_MODE{
 #define	FW_PS_STATE_ALL_ON_92C	(FW_PS_STATE_S4)
 #define	FW_PS_STATE_RF_ON_92C		(FW_PS_STATE_S3)
 #define	FW_PS_STATE_RF_OFF_92C	(FW_PS_STATE_S2)
-#define	FW_PS_STATE_RF_OFF_LOW_PWR_92C	(FW_PS_STATE_S1) 
+#define	FW_PS_STATE_RF_OFF_LOW_PWR_92C	(FW_PS_STATE_S1)
 
 
 // For 88E H2C PwrMode Cmd ID 5.
 #define	FW_PWR_STATE_ACTIVE	((FW_PS_RF_ON) | (FW_PS_REGISTER_ACTIVE))
 #define	FW_PWR_STATE_RF_OFF	0
 
-#define	FW_PS_IS_ACK(x)  		((x) & FW_PS_ACK ) 
+#define	FW_PS_IS_ACK(x)  		((x) & FW_PS_ACK )
 #define	FW_PS_IS_CLK_ON(x) 		((x) & (FW_PS_RF_OFF |FW_PS_ALL_ON ))
 #define	FW_PS_IS_RF_ON(x)  		((x) & (FW_PS_ALL_ON))
 #define	FW_PS_IS_ACTIVE(x)  		((x) & (FW_PS_ST_ACTIVE))
@@ -450,7 +450,7 @@ enum _Fw_Ps_State{
 	FW_PS_STATE_ALL_ON = 0,
 	FW_PS_STATE_RF_ON = 1,
 	FW_PS_STATE_RF_OFF = 2,
-	FW_PS_STATE_RF_OFF_LOW_PWR = 3,	
+	FW_PS_STATE_RF_OFF_LOW_PWR = 3,
 };
 
 typedef enum _LOWPWR32K_EXCEPTION
@@ -481,7 +481,7 @@ typedef enum _RQPN_TYPE
 }RQPN_TYPE;
 
 // ------------------------------------------------------------------------------------------------
-// Specific  definition depend on different chipset 
+// Specific  definition depend on different chipset
 // ------------------------------------------------------------------------------------------------
 #define SILENT_RESET									0
 
@@ -495,7 +495,7 @@ typedef enum _RQPN_TYPE
 
 // ------------------------------------------------------------------------------------------------
 // The definition for FindAdapter Procedure
-// (1) PCI memory mapped IO range. 
+// (1) PCI memory mapped IO range.
 // (2) Revision ID
 // (3) Default Hardware Type
 // (4) Require IO mapped IO Even if Memory Mapped IO is applied
@@ -517,7 +517,7 @@ typedef enum _RQPN_TYPE
 #define HAL_HW_SDIO_8188FS_PID			0xF179
 #define HAL_HW_SDIO_8723DS_PID			0xD723  //8723D
 
-#define HAL_HW_TYPE_ID_8723A				0x01	
+#define HAL_HW_TYPE_ID_8723A				0x01
 #define HAL_HW_TYPE_ID_8188E				0x02
 #define HAL_HW_TYPE_ID_8812A				0x04
 #define HAL_HW_TYPE_ID_8821A				0x05
@@ -544,8 +544,8 @@ typedef enum _RQPN_TYPE
 // (3) Define Retry Limit for different hardware
 //       2007/11/12 by Emily
 //
-	
-#define HAL_GET_MAXIMUN_AMSDU_SIZE(_Size)			_Size	// Limited by TX FIFO Size	
+
+#define HAL_GET_MAXIMUN_AMSDU_SIZE(_Size)			_Size	// Limited by TX FIFO Size
 #define HAL_GET_DECLARED_AMSDU_SIZE(_Peer_Cap)		(_Peer_Cap==0)?3839:7935;
 
 // Set diffrent retry limit in infrastructure mode and adhoc mode because if driver is set
@@ -554,11 +554,11 @@ typedef enum _RQPN_TYPE
 // frame has higher priority which may cause starvation of data packet. 2008/05/14 by Emily
 
 // The reason to set HAL_RETRY_LIMIT_INFRA to 0x30
-// (1) Lanhsin modified 02272008 for Linksys WRT350N. Under air, if we don't retry more 
+// (1) Lanhsin modified 02272008 for Linksys WRT350N. Under air, if we don't retry more
 //      times, these APs can't rx ok and the TP will be bad.
-// (2) Cosa modified 02272008 for BelkinF5D(Ralink) AP, Netgear WNR854T. Under air, if 
+// (2) Cosa modified 02272008 for BelkinF5D(Ralink) AP, Netgear WNR854T. Under air, if
 //      we don't retry more times, these APs can't rx ok and the TP will be bad.
-#define HAL_RETRY_LIMIT_INFRA							48	
+#define HAL_RETRY_LIMIT_INFRA							48
 #define HAL_RETRY_LIMIT_AP_ADHOC						14
 
 typedef u4Byte RT_INT_REG, *PRT_INT_REG;
@@ -580,46 +580,46 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 			#define 	RTL8192C_FW_UMC_WW_IMG			"rtl8192CU\\rtl8192cfwUww.bin"
 			#define 	RTL8192C_FW_UMC_B_WW_IMG		"rtl8192CU\\rtl8192cfwU_Bww.bin"
 
-			#define RTL8188C_PHY_REG					"rtl8192CU\\PHY_REG_1T.txt"	
+			#define RTL8188C_PHY_REG					"rtl8192CU\\PHY_REG_1T.txt"
 			#define RTL8188C_PHY_RADIO_A				"rtl8192CU\\radio_a_1T.txt"
-			#define RTL8188C_PHY_RADIO_B				"rtl8192CU\\radio_b_1T.txt"	
+			#define RTL8188C_PHY_RADIO_B				"rtl8192CU\\radio_b_1T.txt"
 			#define RTL8188C_AGC_TAB					"rtl8192CU\\AGC_TAB_1T.txt"
 			#define RTL8188C_PHY_MACREG					"rtl8192CU\\MAC_REG.txt"
 			#define RTL8188C_PHY_RADIO_A_mCard			"rtl8192CU\\radio_a_1T_mCard.txt"
-			#define RTL8188C_PHY_RADIO_B_mCard			"rtl8192CU\\radio_b_1T_mCard.txt" 
+			#define RTL8188C_PHY_RADIO_B_mCard			"rtl8192CU\\radio_b_1T_mCard.txt"
 			#define RTL8188C_PHY_RADIO_A_HP			"rtl8192CU\\radio_a_1T_HP.txt"
-			#define RTL8188C_PHY_REG_HP				"rtl8192CU\\PHY_REG_1T_HP.txt"	
-			#define RTL8188C_PHY_REG_mCard 			"rtl8192CU\\PHY_REG_1T_mCard.txt"				
+			#define RTL8188C_PHY_REG_HP				"rtl8192CU\\PHY_REG_1T_HP.txt"
+			#define RTL8188C_PHY_REG_mCard 			"rtl8192CU\\PHY_REG_1T_mCard.txt"
 			#define RTL8188C_AGC_TAB_HP				"rtl8192CU\\AGC_TAB_1T_HP.txt"
-			
-			#define RTL8192C_PHY_REG					"rtl8192CU\\PHY_REG_2T.txt"	
-			#define RTL8192C_PHY_REG_mCard			"rtl8192CU\\PHY_REG_2T_mCard.txt"				
+
+			#define RTL8192C_PHY_REG					"rtl8192CU\\PHY_REG_2T.txt"
+			#define RTL8192C_PHY_REG_mCard			"rtl8192CU\\PHY_REG_2T_mCard.txt"
 			#define RTL8192C_PHY_RADIO_A				"rtl8192CU\\radio_a_2T.txt"
-			#define RTL8192C_PHY_RADIO_B				"rtl8192CU\\radio_b_2T.txt"	
+			#define RTL8192C_PHY_RADIO_B				"rtl8192CU\\radio_b_2T.txt"
 			#define RTL8192C_AGC_TAB					"rtl8192CU\\AGC_TAB_2T.txt"
 			#define RTL8192C_PHY_MACREG					"rtl8192CU\\MAC_REG.txt"
 
 			#define RTL819X_PHY_REG_PG					"rtl8192CU\\PHY_REG_PG.txt"
-			#define RTL819X_PHY_REG_MP 					"rtl8192CU\\PHY_REG_MP.txt" 
+			#define RTL819X_PHY_REG_MP 					"rtl8192CU\\PHY_REG_MP.txt"
 			#define RTL819X_PHY_REG_PG_HP				"rtl8192CU\\PHY_REG_PG_HP.txt"
 			#define RTL819X_PHY_RADIO_A					"rtl8192CU\\radio_a.txt"
-			#define RTL819X_PHY_RADIO_B					"rtl8192CU\\radio_b.txt"			
-			
+			#define RTL819X_PHY_RADIO_B					"rtl8192CU\\radio_b.txt"
+
 //---------------------------------------------------------------------
 //		RTL8192DU From file
 //---------------------------------------------------------------------
 
 			#define RTL8192D_PHY_REG					"rtl8192DU\\PHY_REG.txt"
 			#define RTL8192D_PHY_REG_PG				"rtl8192DU\\PHY_REG_PG.txt"
-			#define RTL8192D_PHY_REG_MP				"rtl8192DU\\PHY_REG_MP.txt"			
-			
+			#define RTL8192D_PHY_REG_MP				"rtl8192DU\\PHY_REG_MP.txt"
+
 			#define RTL8192D_AGC_TAB					"rtl8192DU\\AGC_TAB.txt"
 			#define RTL8192D_AGC_TAB_2G				"rtl8192DU\\AGC_TAB_2G.txt"
 			#define RTL8192D_AGC_TAB_5G				"rtl8192DU\\AGC_TAB_5G.txt"
 			#define RTL8192D_PHY_RADIO_A				"rtl8192DU\\radio_a.txt"
 			#define RTL8192D_PHY_RADIO_B				"rtl8192DU\\radio_b.txt"
 			#define RTL8192D_PHY_RADIO_A_intPA			"rtl8192DU\\radio_a_intPA.txt"
-			#define RTL8192D_PHY_RADIO_B_intPA			"rtl8192DU\\radio_b_intPA.txt"			
+			#define RTL8192D_PHY_RADIO_B_intPA			"rtl8192DU\\radio_b_intPA.txt"
 			#define RTL8192D_PHY_MACREG				"rtl8192DU\\MAC_REG.txt"
 
 //---------------------------------------------------------------------
@@ -628,15 +628,15 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 			#define RTL8812_FW_IMG						"rtl8812AU\\rtl8812Ufw.bin"
 			#define RTL8812_FW_WW_IMG					"rtl8812AU\\rtl8812Ufwww.bin"
 			#define RTL8812_FW_BT_IMG						"rtl8812AU\\rtl8812UfwBT.bin"
-			#define RTL8812_PHY_REG						"rtl8812AU\\PHY_REG.txt" 
+			#define RTL8812_PHY_REG						"rtl8812AU\\PHY_REG.txt"
 			#define RTL8812_PHY_RADIO_A					"rtl8812AU\\RadioA.txt"
 			#define RTL8812_PHY_RADIO_B					"rtl8812AU\\RadioB.txt"
-			#define RTL8812_TXPWR_TRACK					"rtl8812AU\\TxPowerTrack.txt"			
+			#define RTL8812_TXPWR_TRACK					"rtl8812AU\\TxPowerTrack.txt"
 			#define RTL8812_AGC_TAB						"rtl8812AU\\AGC_TAB.txt"
 			#define RTL8812_PHY_MACREG 					"rtl8812AU\\MAC_REG.txt"
 			#define RTL8812_PHY_REG_PG					"rtl8812AU\\PHY_REG_PG.txt"
-			#define RTL8812_PHY_REG_MP 					"rtl8812AU\\PHY_REG_MP.txt" 	
-			#define RTL8812_TXPWR_LMT					"rtl8812AU\\TXPWR_LMT.txt" 
+			#define RTL8812_PHY_REG_MP 					"rtl8812AU\\PHY_REG_MP.txt"
+			#define RTL8812_TXPWR_LMT					"rtl8812AU\\TXPWR_LMT.txt"
 
 
 //---------------------------------------------------------------------
@@ -646,14 +646,14 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 		#define RTL8723_FW_UMC_B_IMG					"rtl8723S\\rtl8723fw_B.bin"
 		#define RTL8723_FW_UMC_WW_IMG					"rtl8723S\\rtl8723fwww.bin"
 		#define RTL8723_FW_UMC_B_WW_IMG 			"rtl8723S\\rtl8723fw_Bww.bin"
-		#define RTL8723_PHY_REG						"rtl8723S\\PHY_REG_1T.txt" 
+		#define RTL8723_PHY_REG						"rtl8723S\\PHY_REG_1T.txt"
 		#define RTL8723_PHY_RADIO_A					"rtl8723S\\radio_a_1T.txt"
-		#define RTL8723_PHY_RADIO_B					"rtl8723S\\radio_b_1T.txt" 
+		#define RTL8723_PHY_RADIO_B					"rtl8723S\\radio_b_1T.txt"
 		#define RTL8723_AGC_TAB						"rtl8723S\\AGC_TAB_1T.txt"
 		#define RTL8723_PHY_MACREG 					"rtl8723S\\MAC_REG.txt"
 		#define RTL8723_PHY_MACREG 					"rtl8723S\\MAC_REG.txt"
 		#define RTL8723_PHY_REG_PG						"rtl8723S\\PHY_REG_PG.txt"
-		#define RTL8723_PHY_REG_MP						"rtl8723S\\PHY_REG_MP.txt"	
+		#define RTL8723_PHY_REG_MP						"rtl8723S\\PHY_REG_MP.txt"
 
 //---------------------------------------------------------------------
 //		RTL8188ES From file
@@ -662,15 +662,15 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 		#define RTL8188E_FW_T_WW_IMG				"rtl8188E\\rtl8188Efwww.bin"
 		#define RTL8188E_FW_S_IMG					"rtl8188E\\rtl8188EfwS.bin"
 		#define RTL8188E_FW_S_WW_IMG					"rtl8188E\\rtl8188EfwSww.bin"
-		#define RTL8188E_PHY_REG						"rtl8188E\\PHY_REG_1T.txt" 
+		#define RTL8188E_PHY_REG						"rtl8188E\\PHY_REG_1T.txt"
 		#define RTL8188E_PHY_RADIO_A					"rtl8188E\\RadioA_1T.txt"
-		#define RTL8188E_PHY_RADIO_B					"rtl8188E\\RadioB_1T.txt" 
+		#define RTL8188E_PHY_RADIO_B					"rtl8188E\\RadioB_1T.txt"
 		#define RTL8188E_AGC_TAB						"rtl8188E\\AGC_TAB_1T.txt"
 		#define RTL8188E_PHY_MACREG 					"rtl8188E\\MAC_REG.txt"
 		#define RTL8188E_PHY_REG_PG						"rtl8188E\\PHY_REG_PG.txt"
-		#define RTL8188E_PHY_REG_MP 					"rtl8188E\\PHY_REG_MP.txt" 	
+		#define RTL8188E_PHY_REG_MP 					"rtl8188E\\PHY_REG_MP.txt"
 		#define RTL8188E_TXPWR_LMT 						"rtl8188E\\TXPWR_LMT.txt"
-		#define RTL8188E_TXPWR_TRACK					"rtl8188E\\TxPowerTrack.txt"		
+		#define RTL8188E_TXPWR_TRACK					"rtl8188E\\TxPowerTrack.txt"
 
 //---------------------------------------------------------------------
 //		RTL8821S From file
@@ -678,15 +678,15 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 		#define RTL8821_FW_IMG						"rtl8821AS\\RTL8821sFW.bin"
 		#define RTL8821_FW_WW_IMG					"rtl8821AS\\RTL8821sFWww.bin"
 		#define RTL8821_FW_BT_IMG						"rtl8821AS\\rtl8821AfwBT.bin"
-		#define RTL8821_PHY_REG						"rtl8821AS\\PHY_REG.txt" 
+		#define RTL8821_PHY_REG						"rtl8821AS\\PHY_REG.txt"
 		#define RTL8821_PHY_RADIO_A					"rtl8821AS\\RadioA.txt"
-		#define RTL8821_PHY_RADIO_B					"rtl8821AS\\RadioB.txt" 
-		#define RTL8821_TXPWR_TRACK					"rtl8821AS\\TxPowerTrack.txt" 				
+		#define RTL8821_PHY_RADIO_B					"rtl8821AS\\RadioB.txt"
+		#define RTL8821_TXPWR_TRACK					"rtl8821AS\\TxPowerTrack.txt"
 		#define RTL8821_AGC_TAB						"rtl8821AS\\AGC_TAB.txt"
 		#define RTL8821_PHY_MACREG 					"rtl8821AS\\MAC_REG.txt"
 		#define RTL8821_PHY_REG_PG					"rtl8821AS\\PHY_REG_PG.txt"
-		#define RTL8821_PHY_REG_MP 					"rtl8821AS\\PHY_REG_MP.txt"  
-		#define RTL8821_TXPWR_LMT					"rtl8821AS\\TXPWR_LMT.txt" 
+		#define RTL8821_PHY_REG_MP 					"rtl8821AS\\PHY_REG_MP.txt"
+		#define RTL8821_TXPWR_LMT					"rtl8821AS\\TXPWR_LMT.txt"
 
 //---------------------------------------------------------------------
 //		RTL8192E From file
@@ -694,15 +694,15 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 		#define RTL8192E_FW_IMG						"rtl8192ES\\rtl8192ESfw.bin"
 		#define RTL8192E_FW_WW_IMG						"rtl8192ES\\rtl8192ESfwww.bin"
 		#define RTL8192E_FW_BT_IMG 					"rtl8192EE\\rtl8192ESfwBT.bin"
-		#define RTL8192E_PHY_REG						"rtl8192ES\\PHY_REG.txt" 
+		#define RTL8192E_PHY_REG						"rtl8192ES\\PHY_REG.txt"
 		#define RTL8192E_PHY_RADIO_A				"rtl8192ES\\RadioA.txt"
-		#define RTL8192E_PHY_RADIO_B				"rtl8192ES\\RadioB.txt" 
+		#define RTL8192E_PHY_RADIO_B				"rtl8192ES\\RadioB.txt"
 		#define RTL8192E_AGC_TAB						"rtl8192ES\\AGC_TAB.txt"
 		#define RTL8192E_PHY_MACREG 					"rtl8192ES\\MAC_REG.txt"
 		#define RTL8192E_PHY_REG_PG					"rtl8192ES\\PHY_REG_PG.txt"
 		#define RTL8192E_PHY_REG_MP 					"rtl8192ES\\PHY_REG_MP.txt"
-		#define RTL8192_TXPWR_TRACK 				"rtl8192ES\\TxPowerTrack.txt"	
-		#define RTL8192E_TXPWR_LMT					"rtl8192ES\\TXPWR_LMT.txt" 		
+		#define RTL8192_TXPWR_TRACK 				"rtl8192ES\\TxPowerTrack.txt"
+		#define RTL8192E_TXPWR_LMT					"rtl8192ES\\TXPWR_LMT.txt"
 
 //---------------------------------------------------------------------
 //		RTL8723D From file
@@ -710,57 +710,57 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 		#define RTL8723D_FW_IMG						"rtl8723DS\\rtl8723DSfw.bin"
 		#define RTL8723D_FW_WW_IMG					"rtl8723DS\\rtl8723DSfwww.bin"
 		#define RTL8723D_FW_BT_IMG 					"rtl8723DS\\rtl8723DSfwBT.bin"
-		#define RTL8723D_PHY_REG						"rtl8723DS\\PHY_REG.txt" 
+		#define RTL8723D_PHY_REG						"rtl8723DS\\PHY_REG.txt"
 		#define RTL8723D_PHY_RADIO_A					"rtl8723DS\\RadioA.txt"
 		#define RTL8723D_AGC_TAB						"rtl8723DS\\AGC_TAB.txt"
 		#define RTL8723D_PHY_MACREG 					"rtl8723DS\\MAC_REG.txt"
 		#define RTL8723D_PHY_REG_PG					"rtl8723DS\\PHY_REG_PG.txt"
 		#define RTL8723D_PHY_REG_MP 					"rtl8723DS\\PHY_REG_MP.txt"
 		#define RTL8723D_TXPWR_TRACK 					"rtl8723DS\\TxPowerTrack.txt"
-		#define RTL8723D_TXPWR_LMT						"rtl8723DS\\TXPWR_LMT.txt" 		
+		#define RTL8723D_TXPWR_LMT						"rtl8723DS\\TXPWR_LMT.txt"
 
 //---------------------------------------------------------------------
 //		RTL8814A From file
 //---------------------------------------------------------------------
 		#define RTL8814A_FW_IMG						"rtl8814as\\rtl8814Afw.bin"
-		#define RTL8814A_PHY_REG						"rtl8814as\\PHY_REG.txt" 
+		#define RTL8814A_PHY_REG						"rtl8814as\\PHY_REG.txt"
 		#define RTL8814A_PHY_RADIO_A					"rtl8814as\\RadioA.txt"
 		#define RTL8814A_PHY_RADIO_B					"rtl8814as\\RadioB.txt"
 		#define RTL8814A_PHY_RADIO_C					"rtl8814as\\RadioC.txt"
-		#define RTL8814A_PHY_RADIO_D					"rtl8814as\\RadioD.txt" 
+		#define RTL8814A_PHY_RADIO_D					"rtl8814as\\RadioD.txt"
 		#define RTL8814A_AGC_TAB						"rtl8814as\\AGC_TAB.txt"
 		#define RTL8814A_PHY_MACREG 					"rtl8814as\\MAC_REG.txt"
 		#define RTL8814A_PHY_REG_PG					"rtl8814as\\PHY_REG_PG.txt"
 		#define RTL8814A_PHY_REG_MP 					"rtl8814as\\PHY_REG_MP.txt"
 		#define RTL8814A_TXPWR_TRACK 					"rtl8814as\\TxPowerTrack.txt"
-		#define RTL8814A_TXPWR_LMT						"rtl8814as\\TXPWR_LMT.txt" 		
+		#define RTL8814A_TXPWR_LMT						"rtl8814as\\TXPWR_LMT.txt"
 
 //---------------------------------------------------------------------
 //		RTL8821BS From file
 //---------------------------------------------------------------------
         #define RTL8821B_FW_IMG						"rtl8821BS\\rtl8821Bfw.bin"
-        #define RTL8821B_PHY_REG					"rtl8821BS\\PHY_REG.txt" 
+        #define RTL8821B_PHY_REG					"rtl8821BS\\PHY_REG.txt"
         #define RTL8821B_PHY_RADIO_A				"rtl8821BS\\RadioA.txt"
-        #define RTL8821B_TXPWR_TRACK				"rtl8821BS\\TxPowerTrack.txt" 		
+        #define RTL8821B_TXPWR_TRACK				"rtl8821BS\\TxPowerTrack.txt"
         #define RTL8821B_AGC_TAB					"rtl8821BS\\AGC_TAB.txt"
         #define RTL8821B_PHY_MACREG 				"rtl8821BS\\MAC_REG.txt"
         #define RTL8821B_PHY_REG_PG					"rtl8821BS\\PHY_REG_PG.txt"
-        #define RTL8821B_PHY_REG_MP 				"rtl8821BS\\PHY_REG_MP.txt" 	
-        #define RTL8821B_TXPWR_LMT					"rtl8821BS\\TXPWR_LMT.txt" 		
+        #define RTL8821B_PHY_REG_MP 				"rtl8821BS\\PHY_REG_MP.txt"
+        #define RTL8821B_TXPWR_LMT					"rtl8821BS\\TXPWR_LMT.txt"
 
 //---------------------------------------------------------------------
 //		RTL8822BS From file
 //---------------------------------------------------------------------
         #define RTL8822B_FW_IMG						"rtl8822BS\\rtl8822Bfw.bin"
-        #define RTL8822B_PHY_REG					"rtl8822BS\\PHY_REG.txt" 
+        #define RTL8822B_PHY_REG					"rtl8822BS\\PHY_REG.txt"
         #define RTL8822B_PHY_RADIO_A				"rtl8822BS\\RadioA.txt"
 		#define RTL8822B_PHY_RADIO_B				"rtl8822BS\\RadioB.txt"
-        #define RTL8822B_TXPWR_TRACK				"rtl8822BS\\TxPowerTrack.txt" 		
+        #define RTL8822B_TXPWR_TRACK				"rtl8822BS\\TxPowerTrack.txt"
         #define RTL8822B_AGC_TAB					"rtl8822BS\\AGC_TAB.txt"
         #define RTL8822B_PHY_MACREG 				"rtl8822BS\\MAC_REG.txt"
         #define RTL8822B_PHY_REG_PG					"rtl8822BS\\PHY_REG_PG.txt"
-        #define RTL8822B_PHY_REG_MP 				"rtl8822BS\\PHY_REG_MP.txt" 	
-        #define RTL8822B_TXPWR_LMT					"rtl8822BS\\TXPWR_LMT.txt" 	
+        #define RTL8822B_PHY_REG_MP 				"rtl8822BS\\PHY_REG_MP.txt"
+        #define RTL8822B_TXPWR_LMT					"rtl8822BS\\TXPWR_LMT.txt"
 
 //---------------------------------------------------------------------
 //		RTL8723BS From file
@@ -768,10 +768,10 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 		#define RTL8723B_FW_IMG						"rtl8723BS\\rtl8723Bfw.bin"
 		#define RTL8723B_FW_WW_IMG					"rtl8723BS\\rtl8723Bfwww.bin"
 		#define RTL8723B_FW_BT_IMG 					"rtl8723BS\\rtl8723BfwBT.bin"
-		#define RTL8723B_PHY_REG						"rtl8723BS\\PHY_REG.txt" 
+		#define RTL8723B_PHY_REG						"rtl8723BS\\PHY_REG.txt"
 		#define RTL8723B_PHY_RADIO_A					"rtl8723BS\\RadioA.txt"
-		#define RTL8723B_PHY_RADIO_B					"rtl8723BS\\RadioB.txt" 
-		#define RTL8723B_TXPWR_TRACK					"rtl8723BS\\TxPowerTrack.txt" 
+		#define RTL8723B_PHY_RADIO_B					"rtl8723BS\\RadioB.txt"
+		#define RTL8723B_TXPWR_TRACK					"rtl8723BS\\TxPowerTrack.txt"
 		#define RTL8723B_AGC_TAB						"rtl8723BS\\AGC_TAB.txt"
 		#define RTL8723B_PHY_MACREG 					"rtl8723BS\\MAC_REG.txt"
 		#define RTL8723B_PHY_REG_PG					"rtl8723BS\\PHY_REG_PG.txt"
@@ -784,30 +784,30 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 		#define RTL8703B_FW_IMG						"rtl8703BS\\rtl8703Bfw.bin"
 		#define RTL8703B_FW_WW_IMG					"rtl8703BS\\rtl8703Bfwww.bin"
 		#define RTL8703B_FW_BT_IMG 					"rtl8703BS\\rtl8703BfwBT.bin"
-		#define RTL8703B_PHY_REG					"rtl8703BS\\PHY_REG.txt" 
+		#define RTL8703B_PHY_REG					"rtl8703BS\\PHY_REG.txt"
 		#define RTL8703B_PHY_RADIO_A				"rtl8703BS\\RadioA.txt"
-		#define RTL8703B_PHY_RADIO_B				"rtl8703BS\\RadioB.txt" 
-		#define RTL8703B_TXPWR_TRACK				"rtl8703BS\\TxPowerTrack.txt" 
+		#define RTL8703B_PHY_RADIO_B				"rtl8703BS\\RadioB.txt"
+		#define RTL8703B_TXPWR_TRACK				"rtl8703BS\\TxPowerTrack.txt"
 		#define RTL8703B_AGC_TAB					"rtl8703BS\\AGC_TAB.txt"
 		#define RTL8703B_PHY_MACREG 				"rtl8703BS\\MAC_REG.txt"
 		#define RTL8703B_PHY_REG_PG					"rtl8703BS\\PHY_REG_PG.txt"
 		#define RTL8703B_PHY_REG_MP 				"rtl8703BS\\PHY_REG_MP.txt"
-		#define RTL8703B_TXPWR_LMT 					"rtl8703BS\\TXPWR_LMT.txt"		
+		#define RTL8703B_TXPWR_LMT 					"rtl8703BS\\TXPWR_LMT.txt"
 //---------------------------------------------------------------------
 //		RTL8188FS From file
 //---------------------------------------------------------------------
 		#define RTL8188F_FW_IMG						"rtl8188FS\\rtl8188Ffw.bin"
 		#define RTL8188F_FW_WW_IMG					"rtl8188FS\\rtl8188Ffwww.bin"
 		#define RTL8188F_FW_BT_IMG 					"rtl8188FS\\rtl8188FfwBT.bin"
-		#define RTL8188F_PHY_REG					"rtl8188FS\\PHY_REG.txt" 
+		#define RTL8188F_PHY_REG					"rtl8188FS\\PHY_REG.txt"
 		#define RTL8188F_PHY_RADIO_A				"rtl8188FS\\RadioA.txt"
-		#define RTL8188F_PHY_RADIO_B				"rtl8188FS\\RadioB.txt" 
-		#define RTL8188F_TXPWR_TRACK				"rtl8188FS\\TxPowerTrack.txt" 
+		#define RTL8188F_PHY_RADIO_B				"rtl8188FS\\RadioB.txt"
+		#define RTL8188F_TXPWR_TRACK				"rtl8188FS\\TxPowerTrack.txt"
 		#define RTL8188F_AGC_TAB					"rtl8188FS\\AGC_TAB.txt"
 		#define RTL8188F_PHY_MACREG 				"rtl8188FS\\MAC_REG.txt"
 		#define RTL8188F_PHY_REG_PG					"rtl8188FS\\PHY_REG_PG.txt"
 		#define RTL8188F_PHY_REG_MP 				"rtl8188FS\\PHY_REG_MP.txt"
-		#define RTL8188F_TXPWR_LMT 					"rtl8188FS\\TXPWR_LMT.txt"	
+		#define RTL8188F_TXPWR_LMT 					"rtl8188FS\\TXPWR_LMT.txt"
 //---------------------------------------------------------------------
 //		RTL8723S From header
 //---------------------------------------------------------------------
@@ -816,12 +816,12 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 		#define Rtl8723_FwUMCBCutImageArray		Rtl8723SFwUMCBCutImgArray
 		#define Rtl8723_FwWWImageArray			Rtl8723FwWWImgArray
 		#define Rtl8723_FwUMCBWWCutImageArray	Rtl8723FwUMCBCutWWImgArray
-		
+
 		// MAC/BB/PHY Array
 		#define Rtl8723_MAC_Array					Rtl8723SMAC_2T_Array
 		#define Rtl8723_AGCTAB_2TArray				Rtl8723SAGCTAB_2TArray
 		#define Rtl8723_AGCTAB_1TArray				Rtl8723SAGCTAB_1TArray
-		#define Rtl8723_PHY_REG_2TArray			Rtl8723SPHY_REG_2TArray			
+		#define Rtl8723_PHY_REG_2TArray			Rtl8723SPHY_REG_2TArray
 		#define Rtl8723_PHY_REG_1TArray			Rtl8723SPHY_REG_1TArray
 		#define Rtl8723_RadioA_2TArray				Rtl8723SRadioA_2TArray
 		#define Rtl8723_RadioA_1TArray				Rtl8723SRadioA_1TArray
@@ -829,7 +829,7 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 		#define Rtl8723_RadioB_1TArray				Rtl8723SRadioB_1TArray
 		#define Rtl8723_PHY_REG_Array_PG 			Rtl8723SPHY_REG_Array_PG
 		#define Rtl8723_PHY_REG_Array_MP 			Rtl8723SPHY_REG_Array_MP
-		
+
 		// Array length
 		#define Rtl8723_ImgArrayLength				Rtl8723SImgArrayLength
 		#define Rtl8723_UMCBCutImgArrayLength		Rtl8723SUMCBCutImgArrayLength
@@ -849,7 +849,7 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 		// Fw Array
 		#define Rtl8192E_FwImageArray				Rtl8192ESFwImgArray
 		#define Rtl8192E_FwWWImageArray 			Rtl8192EFwWWImgArray
-				
+
 		// MAC/BB/PHY Array
 		#define Rtl8192E_MAC_Array					Rtl8192ESMAC_1T_Array
 		#define Rtl8192E_PHY_REG_1TArray			Rtl8192ESPHY_REG_1TArray
@@ -857,7 +857,7 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 		#define Rtl8192E_RadioA_1TArray				Rtl8192ESRadioA_1TArray
 		#define Rtl8192E_PHY_REG_Array_PG			Rtl8192ESPHY_REG_Array_PG
 		#define Rtl8192E_PHY_REG_Array_MP 			Rtl8192ESPHY_REG_Array_MP
-				
+
 		// Array length
 		#define Rtl8192E_ImgArrayLength				Rtl8192ESImgArrayLength
 		#define Rtl8192E_MAC_ArrayLength			Rtl8192ESMAC_1T_ArrayLength
@@ -872,7 +872,7 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 
 
 
-// ---------------------------------------------------------------------      
+// ---------------------------------------------------------------------
 //		RTL8723 Power Configuration CMDs for PCIe interface
 //---------------------------------------------------------------------
 #define Rtl8723_NIC_PWR_ON_FLOW				rtl8723A_power_on_flow
@@ -909,7 +909,7 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 #define Rtl8812_NIC_RESUME_FLOW				rtl8812_resume_flow
 #define Rtl8812_NIC_PDN_FLOW					rtl8812_hwpdn_flow
 #define Rtl8812_NIC_LPS_ENTER_FLOW			      rtl8812_enter_lps_flow
-#define Rtl8812_NIC_LPS_LEAVE_FLOW				rtl8812_leave_lps_flow		
+#define Rtl8812_NIC_LPS_LEAVE_FLOW				rtl8812_leave_lps_flow
 
 //---------------------------------------------------------------------
 //		RTL8821 Power Configuration CMDs for PCIe interface
@@ -922,7 +922,7 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 #define Rtl8821A_NIC_RESUME_FLOW				rtl8821A_resume_flow
 #define Rtl8821A_NIC_PDN_FLOW					rtl8821A_hwpdn_flow
 #define Rtl8821A_NIC_LPS_ENTER_FLOW			rtl8821A_enter_lps_flow
-#define Rtl8821A_NIC_LPS_LEAVE_FLOW			rtl8821A_leave_lps_flow		
+#define Rtl8821A_NIC_LPS_LEAVE_FLOW			rtl8821A_leave_lps_flow
 
 //---------------------------------------------------------------------
 //		RTL8821B Power Configuration CMDs for PCIe interface
@@ -935,7 +935,7 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 #define Rtl8821B_NIC_RESUME_FLOW				rtl8821B_resume_flow
 #define Rtl8821B_NIC_PDN_FLOW					rtl8821B_hwpdn_flow
 #define Rtl8821B_NIC_LPS_ENTER_FLOW			rtl8821B_enter_lps_flow
-#define Rtl8821B_NIC_LPS_LEAVE_FLOW			rtl8821B_leave_lps_flow		
+#define Rtl8821B_NIC_LPS_LEAVE_FLOW			rtl8821B_leave_lps_flow
 
 //---------------------------------------------------------------------
 //		RTL8822B Power Configuration CMDs for PCIe interface
@@ -948,7 +948,7 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 #define Rtl8822B_NIC_RESUME_FLOW			rtl8822B_resume_flow
 #define Rtl8822B_NIC_PDN_FLOW				rtl8822B_hwpdn_flow
 #define Rtl8822B_NIC_LPS_ENTER_FLOW			rtl8822B_enter_lps_flow
-#define Rtl8822B_NIC_LPS_LEAVE_FLOW			rtl8822B_leave_lps_flow		
+#define Rtl8822B_NIC_LPS_LEAVE_FLOW			rtl8822B_leave_lps_flow
 
 
 //---------------------------------------------------------------------
@@ -962,7 +962,7 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 #define Rtl8192E_NIC_RESUME_FLOW				rtl8192E_resume_flow
 #define Rtl8192E_NIC_PDN_FLOW					rtl8192E_hwpdn_flow
 #define Rtl8192E_NIC_LPS_ENTER_FLOW			rtl8192E_enter_lps_flow
-#define Rtl8192E_NIC_LPS_LEAVE_FLOW			rtl8192E_leave_lps_flow	
+#define Rtl8192E_NIC_LPS_LEAVE_FLOW			rtl8192E_leave_lps_flow
 
 //---------------------------------------------------------------------
 //		RTL8814A Power Configuration CMDs for PCIe interface
@@ -975,7 +975,7 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 #define Rtl8814A_NIC_RESUME_FLOW				rtl8814A_resume_flow
 #define Rtl8814A_NIC_PDN_FLOW					rtl8814A_hwpdn_flow
 #define Rtl8814A_NIC_LPS_ENTER_FLOW			rtl8814A_enter_lps_flow
-#define Rtl8814A_NIC_LPS_LEAVE_FLOW			rtl8814A_leave_lps_flow	
+#define Rtl8814A_NIC_LPS_LEAVE_FLOW			rtl8814A_leave_lps_flow
 
 //---------------------------------------------------------------------
 //		RTL8723B Power Configuration CMDs
@@ -988,7 +988,7 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 #define Rtl8723B_NIC_RESUME_FLOW				rtl8723B_resume_flow
 #define Rtl8723B_NIC_PDN_FLOW					rtl8723B_hwpdn_flow
 #define Rtl8723B_NIC_LPS_ENTER_FLOW			rtl8723B_enter_lps_flow
-#define Rtl8723B_NIC_LPS_LEAVE_FLOW			rtl8723B_leave_lps_flow		
+#define Rtl8723B_NIC_LPS_LEAVE_FLOW			rtl8723B_leave_lps_flow
 
 //---------------------------------------------------------------------
 //		RTL8703B Power Configuration CMDs
@@ -1026,7 +1026,7 @@ typedef u4Byte RT_INT_REG, *PRT_INT_REG;
 #define Rtl8723D_NIC_RESUME_FLOW				rtl8723D_resume_flow
 #define Rtl8723D_NIC_PDN_FLOW					rtl8723D_hwpdn_flow
 #define Rtl8723D_NIC_LPS_ENTER_FLOW			rtl8723D_enter_lps_flow
-#define Rtl8723D_NIC_LPS_LEAVE_FLOW			rtl8723D_leave_lps_flow		
+#define Rtl8723D_NIC_LPS_LEAVE_FLOW			rtl8723D_leave_lps_flow
 
 
 typedef enum _FA_CNT_TYPE{
@@ -1038,7 +1038,7 @@ typedef enum _FA_CNT_TYPE{
 }FA_CNT_TYPE;
 
 //
-// Forward declaration. 
+// Forward declaration.
 //
 typedef struct _ADAPTER	ADAPTER, *PADAPTER;
 typedef struct _RT_RFD	RT_RFD, *PRT_RFD;
@@ -1075,10 +1075,10 @@ typedef enum _HARDWARE_TYPE{
 	HARDWARE_TYPE_RTL8192ES,
 	HARDWARE_TYPE_RTL8814AE,
 	HARDWARE_TYPE_RTL8814AU,
-	HARDWARE_TYPE_RTL8814AS,	
+	HARDWARE_TYPE_RTL8814AS,
 	HARDWARE_TYPE_RTL8812E,
 	HARDWARE_TYPE_RTL8812AU,
-	HARDWARE_TYPE_RTL8811AU,	
+	HARDWARE_TYPE_RTL8811AU,
 	HARDWARE_TYPE_RTL8821E,
 	HARDWARE_TYPE_RTL8821U,
 	HARDWARE_TYPE_RTL8821S,
@@ -1125,8 +1125,8 @@ typedef	enum _LED_CTL_MODE{
 	LED_CTL_START_WPS = 9,
 	LED_CTL_STOP_WPS = 10,
 	LED_CTL_START_WPS_BOTTON = 11, 		//added for runtop
-	LED_CTL_STOP_WPS_FAIL = 12, 		//added for ALPHA	
-	LED_CTL_STOP_WPS_FAIL_OVERLAP = 13, //added for BELKIN	
+	LED_CTL_STOP_WPS_FAIL = 12, 		//added for ALPHA
+	LED_CTL_STOP_WPS_FAIL_OVERLAP = 13, //added for BELKIN
 	LED_CTL_CONNECTION_NO_TRANSFER = 14,
 	LED_CTL_OFF_BY_BUTTON = 15,   //added for ALPHA
 }LED_CTL_MODE;
@@ -1135,13 +1135,13 @@ typedef	enum _LED_CTL_MODE{
 
 typedef enum _HW_VARIABLES{
 	HW_VAR_ETHER_ADDR,
-	HW_VAR_MULTICAST_REG,		
+	HW_VAR_MULTICAST_REG,
 	HW_VAR_BASIC_RATE,
 	HW_VAR_BSSID,					// HW Port 0 BSSID
 	HW_VAR_BSSID1,				// HW Port 1 BSSID
 	HW_VAR_MEDIA_STATUS,
 	HW_VAR_BEACON_INTERVAL,
-	HW_VAR_ATIM_WINDOW,	
+	HW_VAR_ATIM_WINDOW,
 	HW_VAR_SIFS,
 	HW_VAR_SLOT_TIME,
 	HW_VAR_ACK_PREAMBLE,
@@ -1156,7 +1156,7 @@ typedef enum _HW_VARIABLES{
 	HW_VAR_CCX_CLM_NHM,			// For CCX 2 parallel channel load request and noise histogram request, 2006.05.12.
 	HW_VAR_TURBO_MODE,			// For turbo mode related settings, added by Roger, 2006.12.15.
 	HW_VAR_RF_STATE, 			// For change or query RF power state, 061214, rcnjko.
-	HW_VAR_RF_OFF_BY_HW,		// For UI to query if external HW signal disable RF, 061229, rcnjko. 
+	HW_VAR_RF_OFF_BY_HW,		// For UI to query if external HW signal disable RF, 061229, rcnjko.
 	//1!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	//1Attention Please!!!<11n or 8190 specific code should be put below this line>
 	//1!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1189,7 +1189,7 @@ typedef enum _HW_VARIABLES{
 	HW_VAR_CORRECT_TSF,			//Added by tynli. 2009.10.22. For Hw count TBTT time.
 	HW_VAR_FWLPS_RF_ON,			//Added by tynli. 2009.11.09. For checking if Fw finishs RF on sequence.
 	HW_VAR_DUAL_TSF_RST,		//Added by tynli. 2009.12.03. Suggested by TimChen.
-	HW_VAR_TSFR_SYNC_EN,			// Synchronize HW-Port 0 TSF to HW-Port 1 TSF 
+	HW_VAR_TSFR_SYNC_EN,			// Synchronize HW-Port 0 TSF to HW-Port 1 TSF
 	HW_VAR_DUAL_SWITCH_BAND,
 	HW_VAR_INT_MIGRATION, //Added by Roger, 2010.03.05.
  	HW_VAR_RX_AGGR_USBTH,
@@ -1240,8 +1240,8 @@ typedef enum _HW_VARIABLES{
 	HW_VAR_SUPPORT_USB3,
 	HW_VAR_USB_MODE,
 	HW_VAR_AMPDU_MAX_TIME,
-	HW_VAR_AMPDU_MAX_AGG_NUM_DYNAMIC,	
-	HW_VAR_BATCH_INDICATE_ENABLE,	
+	HW_VAR_AMPDU_MAX_AGG_NUM_DYNAMIC,
+	HW_VAR_BATCH_INDICATE_ENABLE,
 	HW_VAR_JAGUAR_PATCH,
 	HW_VAR_ANTENNA_DETECTED_INFO, // Support for antenna detection info from each IC, added by Roger, 2012.11.27.
 	HW_VAR_NQOS_SEQ_NUM, // Hw sequence number for non-Qos data and mgnt frame
@@ -1316,20 +1316,20 @@ typedef enum _HW_VARIABLES{
 
 	/* for some IC need to set 4 TxAGC value at one times, suggest by Stanley, 2015.05.25 */
 	HW_VAR_TXAGC_NEED_SET_4_RATE_AT_ONCE,
-	
+
 	HW_VAR_FCS_NOA,
 	HW_VAR_FCS_ADJUST_TSF,
-	
-	//--------------- START ------------------	
+
+	//--------------- START ------------------
 	/*Avoid Rx DPC watchdog violation*/
-	HW_VAR_RWPTR_RX_INTERRUPT_LOOP_BREAK,	
+	HW_VAR_RWPTR_RX_INTERRUPT_LOOP_BREAK,
 	HW_VAR_AVOID_RX_DPC_WATCHDOG_VIOLATION,
 	//---------------- END -------------------
 	HW_VAR_TX_COMPLETE_LATER_SUPPORT,
 
-	//--------------- START ------------------	
-	// MAC Address Randomization 
-	// True  : Support MAC Address Randomization and DeviceAddress ( Support  4 or more MAC register)  
+	//--------------- START ------------------
+	// MAC Address Randomization
+	// True  : Support MAC Address Randomization and DeviceAddress ( Support  4 or more MAC register)
 	// Fslse : Just support One of MAC Address Randomization and DeviceAddress  ( Just Support 2 MAC register )
 	HW_VAR_MAC_ADRESS_COX_CAP,   // Just For Query !!
 	// Write New MAC Address
@@ -1337,7 +1337,7 @@ typedef enum _HW_VARIABLES{
 	//---------------- END -------------------
 
 #if INTEL_RTD3_SUPPORT
-	HW_VAR_RTD3_SUPPORT,	
+	HW_VAR_RTD3_SUPPORT,
 #endif
 
 }HW_VARIABLES;
@@ -1367,7 +1367,7 @@ typedef enum _HAL_HW_TIMER_TYPE
 
 
 typedef enum _HAL_DEF_VARIABLE{
-	HAL_DEF_LED,					// Led, 0: disable, 1: enable. 061010, by rcnjko. 
+	HAL_DEF_LED,					// Led, 0: disable, 1: enable. 061010, by rcnjko.
 	HAL_DEF_WOWLAN,
 	HAL_DEF_ENDPOINTS,				//number of endpoints
 	HAL_DEF_MIN_TX_POWER_DBM,		// The min supported Tx power in dBm.
@@ -1381,7 +1381,7 @@ typedef enum _HAL_DEF_VARIABLE{
 	HAL_DEF_TX_PWR_PERCENTAGE, // For WNC NEC TxPwr adjustment purpose, added by Roger, 2010.03.09.
 	HAL_DEF_USB_SELECTIVE_SUSPEND,
 	HAL_DEF_REMOTE_WAKEUP,
-	HAL_DEF_TX_FEEDBACK_SUPPORT,  // Determine if it supports Tx Feedback through C2H, by Hana, 2015.02.10 
+	HAL_DEF_TX_FEEDBACK_SUPPORT,  // Determine if it supports Tx Feedback through C2H, by Hana, 2015.02.10
 	// 2011/01/12 MH Add for 9xp compatiable.
 	HAL_DEF_BEACON_QUEUE,				// Get the Beacon Queue ID for sending the Beacon packet. If the returned value is beacon queue, it must support HW Beacon. By Bruce, 2011-01-18.
 	HAL_DEF_HW_BEACON_SUPPORT,			// Determine if it supports HW Beacon sent in TBTT automatically. By Bruce, 2011-01-18.
@@ -1392,7 +1392,7 @@ typedef enum _HAL_DEF_VARIABLE{
 	HAL_DEF_EFUSE_BYTES,
 	HAL_DEF_AUTOLOAD_STATUS, 	//Get current autoload status, 0: autoload success, 1: autoload fail. 2008.12.19. Added by Roger.
 	HAL_DEF_EFUSE_BT_USAGE, 		//Get current BT EFUSE utilization. 2008.12.19. Added by Roger.
-	HAL_DEF_EFUSE_BT_BYTES,	
+	HAL_DEF_EFUSE_BT_BYTES,
 	// 2011/09/07 MH Add for netgear requirement.
 	HAL_DEF_GAIN_OFFSET_FCC_LOW,
 	HAL_DEF_GAIN_OFFSET_FCC,
@@ -1403,7 +1403,7 @@ typedef enum _HAL_DEF_VARIABLE{
 	HAL_DEF_GAIN_OFFSET_ETSI_LOW,
 	HAL_DEF_GAIN_OFFSET_ETSI,
 	HAL_DEF_GAIN_OFFSET_ETSI_HIGH,
-	HAL_DEF_AP_IBSS_INTERRUPT,	// Configure the interrupt mask of AP/IBSS mode 
+	HAL_DEF_AP_IBSS_INTERRUPT,	// Configure the interrupt mask of AP/IBSS mode
 	HAL_DEF_ENABLE_TXOK_INTERRUPT,
 	HAL_DEF_CHECK_NIC_UNPLUG,	// Check the interrupt state of NIC if it is unplugged.
 	HAL_DEF_USE_RA_MASK,			// Control RAMask
@@ -1460,7 +1460,7 @@ typedef enum _HAL_INT_TYPE
 	HAL_INT_TYPE_RX_OK,				// Receive DMA OK
 	HAL_INT_TYPE_RDU,
 	HAL_INT_TYPE_HSISR_IND,			// HSISR Indicator (HSIMR & HSISR is true, this bit is set to 1)	. By YJ,120406
-	HAL_INT_TYPE_SYS_PDNINT,			// System Interrupt: Hardware Power Down PIN Negedge Interrupt. By YJ,120406	
+	HAL_INT_TYPE_SYS_PDNINT,			// System Interrupt: Hardware Power Down PIN Negedge Interrupt. By YJ,120406
 	HAL_INT_TYPE_SYS_RONINT,			// System Interrupt: Hardware Power Down PIN Negedge Interrupt. By YJ,120406
 	HAL_INT_TYPE_GPIO9_INT,
 	HAL_INT_TYPE_AMPDU_BURST_TIMER,	// Timer/Counter 4 interrupt.
@@ -1492,8 +1492,8 @@ typedef struct _EEPROM_OFFSET{
 #endif
 
 
-// Power save mode configured. 
-typedef	enum _RT_PS_MODE	
+// Power save mode configured.
+typedef	enum _RT_PS_MODE
 {
 	eActive,	// Active/Continuous access.
 	eMaxPs,		// Max power save mode.
@@ -1583,9 +1583,9 @@ typedef enum _SCAN_OPERATION_BACKUP_OPT{
 }SCAN_OPERATION_BACKUP_OPT;
 
 
-// Related IO. 
+// Related IO.
 typedef	enum _IO_TYPE{
-	IO_CMD_PAUSE_BAND0_DM_BY_SCAN = 0,	
+	IO_CMD_PAUSE_BAND0_DM_BY_SCAN = 0,
 	IO_CMD_PAUSE_BAND1_DM_BY_SCAN = 1,
 	IO_CMD_RESUME_DM_BY_SCAN = 2,
 }IO_TYPE,*PIO_TYPE;
@@ -1725,9 +1725,9 @@ typedef struct _RT_OFFLOAD_NETWORK
 typedef struct _RT_NLO_INFO
 {
 	ULONG					NumDot11OffloadNetwork;
-	ULONG  					FastScanPeriod; 
-	ULONG 					FastScanIterations; 
-	ULONG 					SlowScanPeriod; 	
+	ULONG  					FastScanPeriod;
+	ULONG 					FastScanIterations;
+	ULONG 					SlowScanPeriod;
 	RT_OFFLOAD_NETWORK 	dDot11OffloadNetworkList[NATIVE_802_11_MAX_NETWORKOFFLOAD_SIZE];
 }RT_NLO_INFO, *PRT_NLO_INFO;
 
@@ -1736,7 +1736,7 @@ typedef struct _RT_AOAC_REPORT_{
 	u8Byte	ReplayCounterOfEapolKey;
 	u1Byte	GroupKey[32];
 	u1Byte	KeyIndex;
-	u1Byte	SecurityType; 
+	u1Byte	SecurityType;
 }RT_AOAC_REPORT, *PRT_AOAC_REPORT;
 
 #ifdef REMOVE_PACK
@@ -1747,7 +1747,7 @@ typedef struct _RT_AOAC_REPORT_{
 // Determine how we handle the Beacon sent, by Bruce, 2011-01-18.
 // By the following definition, we should schedule the timer if we use the SW beacon or handle the TBTT timing.
 #define	BEACON_SEND_AUTO_HW				0		// (Beacon Queue) HW updates Beacon buffer automatically (by interrupts or events) and the packets can be sent in TBTT automatically.
-#define	BEACON_SEND_AUTO_SW				1		// (Beacon Queue) SW needs to updates the Beacon by self timer but the HW can send the Beacons in TBTT. 
+#define	BEACON_SEND_AUTO_SW				1		// (Beacon Queue) SW needs to updates the Beacon by self timer but the HW can send the Beacons in TBTT.
 #define	BEACON_SEND_MANUAL				2		// (AC/MGNT/HIGN Queue) SW needs to updates the Beacon and send it by self timer. In other words, we need to handle the TBTT timing.
 
 
@@ -1759,7 +1759,7 @@ typedef struct _RT_AOAC_REPORT_{
 			((__pAdapter)->bDriverStopped || \
 			 (__pAdapter)->bSurpriseRemoved ||	\
 			 RT_IS_FUNC_DISABLED((__pAdapter), (DF_IO_BIT | DF_IO_D3_BIT)))
-			 
+
 #define RT_USB_CANNOT_IO(__pAdapter) \
 			((__pAdapter)->bDriverStopped || \
 			 (__pAdapter)->bSurpriseRemoved || \
@@ -1855,23 +1855,23 @@ typedef VOID
 	IN	PADAPTER		Adapter
 	);
 
-typedef VOID	
+typedef VOID
 (*NicReleaseAllTimerHandler)(
 	IN	PADAPTER		Adapter
 	);
 
-typedef RT_STATUS	
+typedef RT_STATUS
 (*NicInitializeAdapterHandler)(
 	IN	PADAPTER		Adapter,
 	IN	u1Byte			Channel
 	);
 
-typedef VOID	
+typedef VOID
 (*NicHalUpdateDefaultSettingHandler)(
 	IN	PADAPTER		Adapter
 	);
 
-typedef VOID	
+typedef VOID
 (*NicHalIntUpdateDefSetHandler)(
 	IN	PADAPTER		Adapter
 	);
@@ -2222,7 +2222,7 @@ typedef BOOLEAN
 
 typedef u4Byte
 (*NicGetRxPacketShiftBytesHandler)(
-	PRT_RFD		pRfd	
+	PRT_RFD		pRfd
 );
 
 typedef VOID
@@ -2232,8 +2232,8 @@ typedef VOID
 
 typedef VOID
 (*NICUpdateHalRATRTableHandler)(
-	IN	PADAPTER			Adapter,	
-	IN	POCTET_STRING		posLegcyRate,	
+	IN	PADAPTER			Adapter,
+	IN	POCTET_STRING		posLegcyRate,
 	IN	pu1Byte				pMcsRate,
 	IN	PRT_WLAN_STA            pEntry
 );
@@ -2307,7 +2307,7 @@ typedef VOID
 
 typedef u4Byte
 (*NicRxCommandPacketHandler)(
-	PADAPTER		Adapter, 
+	PADAPTER		Adapter,
 	PRT_RFD 		pRfd
 );
 
@@ -2340,18 +2340,18 @@ typedef VOID
 
 typedef BOOLEAN
 (*NicGetNmodeSupportBySecCfgHandler)(
-	IN	PADAPTER		Adapter);	
+	IN	PADAPTER		Adapter);
 
 typedef BOOLEAN
 (*NicGetNmodeSupportBySWSecHandler)(
-	IN	PADAPTER		Adapter);		
+	IN	PADAPTER		Adapter);
 
 
 typedef VOID
 (*NicCountTxStatisticsHandler)(
 	IN	PADAPTER		Adapter,
 	IN	PRT_TCB		pTcb
-	
+
 );
 
 typedef BOOLEAN
@@ -2371,13 +2371,13 @@ typedef BOOLEAN
 	IN		PDM_ODM_T		pDM_Odm
 	//IN	PADAPTER			Adapter
 	);
-	
+
 typedef BOOLEAN
 (*NicPathDivCheckBeforeLink)(
 	IN		PDM_ODM_T		pDM_Odm
 	//IN	PADAPTER			Adapter
 	);
-	
+
 typedef VOID
 (*NicHalSetCTSDynamicBWSelectHandler)(
 	IN	PADAPTER			Adapter,
@@ -2438,11 +2438,11 @@ typedef struct _HAL_INTERFACE{
 
 	// Capability.
 	BOOLEAN						bSupportTbttNotification; // TRUE if the H/W can notify S/W before TBTT.
-	
+
 	// CCX supported version
 	u1Byte						CcxVerSupported; // 0: means not support CCX, > 0: are the version of CCX supported by this IC.
 
-	// WLAN Device operations. 
+	// WLAN Device operations.
 	NicGetEEPROMSizeHandler		GetEEPROMSizeHandler;
 	NicReadAdapterInfoHandler		ReadAdapterInfoHandler;
 
@@ -2454,7 +2454,7 @@ typedef struct _HAL_INTERFACE{
 	NicInitializeAdapterHandler		InitializeAdapterHandler;
 	NicHalUpdateDefaultSettingHandler	HalUpdateDefaultSettingHandler;
 	NicHalIntUpdateDefSetHandler	HalIntUpdateDefSetHandler;
-	
+
 	NicHaltAdapterHandler			HaltAdapterHandler;
 	NicShutdownAdapterHandler		ShutdownHandler;
 	NicSleepAdapterHandler			SleepAdapterHandler;
@@ -2466,9 +2466,9 @@ typedef struct _HAL_INTERFACE{
 	NicSetHalDefVarHandler			SetHalDefVarHandler;
 
 	NicGetInterruptHandler			GetInterruptHandler;
-	
+
 	NicGetHwRateFromMRateHandler		GetHwRateFromMRateHandler;
-	
+
 	NicQueryRxDescStatusHandler		QueryRxDescStatusHandler;
 	NicTxFillDescriptorHandler			TxFillDescriptorHandler;
 	NicQueryTxDescStatusHandler		QueryTxDescStatusHandler;
@@ -2483,30 +2483,30 @@ typedef struct _HAL_INTERFACE{
 	NicSetTxPowerLevelHandler			SetTxPowerLevelHandler;
 	NicGetTxPowerLevelHandler			GetTxPowerLevelHandler;
 	NicUpdateTxPowerDbmHandler		UpdateTxPowerDbmHandler;
-	
+
 	NicSetTxAntennaHandler			SetTxAntennaHandler;
 	NicSwAntDivCheckBeforeLink			SwAntDivCheckBeforeLinkHandler;
 	NicPathDivCheckBeforeLink			PathDivCheckBeforeLinkHandler;
-	
+
 	NicHalSetCTSDynamicBWSelectHandler	HalSetCTSDynamicBWSelectHandler;
-	
+
 	NicEnableHWSecurityConfigHandler	EnableHWSecCfgHandler;
 	NicDisableHWSecurityConfigHandler	DisableHWSecCfgHandler;
 	NicSetKeyHandler					SetKeyHandler;
-		
+
 	NicAllowAllDestAddrHandler			AllowAllDestAddrHandler;
 	NicAllowErrorPacketHandler			AllowErrorPacketHandler;
 
 	NicSetMonitorModeHandler			SetMonitorModeHandler;
 
-	NicLedControlHandler				LedControlHandler;	
-	
+	NicLedControlHandler				LedControlHandler;
+
 	NicHalEnableRxHandler				HalEnableRxHandler;//Aadded by Roger, 2007.02.12.
 	NicHalDisableRxHandler				HalDisableRxHandler;//Aadded by Roger, 2007.02.12.
-	
+
 	NicHalDisableTxHandler				HalDisableTxHandler;//Aadded by Roger, 2009.07.08.
 	NicHalEnableTxHandler				HalEnableTxHandler;//Aadded by Roger, 2009.07.08.
-	
+
 	NicCountTxStatisticsHandler			HalCountTxStatisticsHandler; //Add for count unicast tx bytes temp 2008-04-14
 	NicHalResetAllTimerHandler			HalResetAllTimerHandler;
 
@@ -2516,9 +2516,9 @@ typedef struct _HAL_INTERFACE{
 	NicInterruptRecognizedHandler		InterruptRecognizedHandler;
 	NicDisableInterruptHandler			DisableInterruptHandler;
 	NicClearInterruptHandler			ClearInterruptHandler;
-	NicEnableInterruptHandler			EnableInterruptHandler;	
-	NicDumpHardwareProfileHandler		DumpHardwareProfileHandler;	
-	
+	NicEnableInterruptHandler			EnableInterruptHandler;
+	NicDumpHardwareProfileHandler		DumpHardwareProfileHandler;
+
 	//
 	// Runtime D3 related function handler, added by Roger, 2013.02.05.
 	//
@@ -2526,14 +2526,14 @@ typedef struct _HAL_INTERFACE{
 	NicHalRTD3EnterHandler				HalRTD3EnterHandler;
 	NicHalRTD3LeaveHandler				HalRTD3LeaveHandler;
 #endif
-	
+
 	// HW function
 	NicHalSetRsvdPageBndyHandler		HalSetRsvdPageBndyHandler;
 	NicHalDownloadRsvdPageHandler		HalDownloadRsvdPageHandler;
 	NicHalGetAOACReportHandler			HalGetAOACReportHandler;
 	NicHalDropRxFIFOHandler			HalDropRxFIFOHandler;
 
-	
+
 	//
 	// Bus specific operations.
 	//
@@ -2562,7 +2562,7 @@ typedef struct _HAL_INTERFACE{
 	NICUpdateHalRAMaskHandler			UpdateHalRAMaskHandler;
 	NICResetHalRAMaskHandler			ResetHalRAMaskHandler;
 	NICRAPostActionHandler				RAPostActionHandler;
-	
+
 	NICUpdateLPSStatusHandler			UpdateLPSStatusHandler;
 	NICUpdateIPSStatusHandler			UpdateIPSStatusHandler;
 	NICSetBWModeHandler					SetBWModeHandler;
@@ -2571,7 +2571,7 @@ typedef struct _HAL_INTERFACE{
 	NicRxCommandPacketHandler			RxCommandPacketHandler;
 	NicCheckHWStopHandler				TxCheckStuckHandler;
 	NicCheckHWStopHandler				RxCheckStuckHandler;
-	NicTxFillCmdDescHandler				TxFillCmdDescHandler;	
+	NicTxFillCmdDescHandler				TxFillCmdDescHandler;
 	NicGetNmodeSupportBySecCfgHandler	GetNmodeSupportBySecCfgHandler;
 	NicGetNmodeSupportBySWSecHandler	GetNmodeSupportBySWSecHandler;
 	NicScanOperationBackupHandler		ScanOperationBackupHandler;
@@ -2625,7 +2625,7 @@ Hal_PauseTx(
 //
 typedef enum _SIGNAL_STRENGTH_POLICY{
 	SIGNAL_STRENGTH_SCALE_FINE = 0,
-	SIGNAL_STRENGTH_SCALE_NORMAL = 1,	
+	SIGNAL_STRENGTH_SCALE_NORMAL = 1,
 }SIGNAL_STRENGTH_POLICY;
 
 typedef enum _InitialGainOpType{
@@ -2639,17 +2639,17 @@ typedef enum _VERSION_8192C{
 	VERSION_TEST_CHIP_88C = 0x0000,
 	VERSION_TEST_CHIP_92C = 0x0020,
 	VERSION_TEST_UMC_CHIP_8723A = 0x0081,
-	VERSION_NORMAL_TSMC_CHIP_88C = 0x0008, 
+	VERSION_NORMAL_TSMC_CHIP_88C = 0x0008,
 	VERSION_NORMAL_TSMC_CHIP_92C = 0x0028,
 	VERSION_NORMAL_TSMC_CHIP_92C_1T2R = 0x0018,
 	VERSION_NORMAL_UMC_CHIP_88C_A_CUT = 0x0088,
 	VERSION_NORMAL_UMC_CHIP_92C_A_CUT = 0x00a8,
-	VERSION_NORMAL_UMC_CHIP_92C_1T2R_A_CUT = 0x0098,		
+	VERSION_NORMAL_UMC_CHIP_92C_1T2R_A_CUT = 0x0098,
 	VERSION_NORMAL_UMC_CHIP_8723A_1T1R_A_CUT = 0x0089,
-	VERSION_NORMAL_UMC_CHIP_8723A_1T1R_B_CUT = 0x1089,	
-	VERSION_NORMAL_UMC_CHIP_88C_B_CUT = 0x1088, 
-	VERSION_NORMAL_UMC_CHIP_92C_B_CUT = 0x10a8, 
-	VERSION_NORMAL_UMC_CHIP_92C_1T2R_B_CUT = 0x1090, 
+	VERSION_NORMAL_UMC_CHIP_8723A_1T1R_B_CUT = 0x1089,
+	VERSION_NORMAL_UMC_CHIP_88C_B_CUT = 0x1088,
+	VERSION_NORMAL_UMC_CHIP_92C_B_CUT = 0x10a8,
+	VERSION_NORMAL_UMC_CHIP_92C_1T2R_B_CUT = 0x1090,
 	VERSION_TEST_CHIP_92D_SINGLEPHY= 0x0022,
 	VERSION_TEST_CHIP_92D_DUALPHY = 0x0002,
 	VERSION_NORMAL_CHIP_92D_SINGLEPHY= 0x002a,
@@ -2671,7 +2671,7 @@ typedef enum _VERSION_8192C{
 	VERSION_NORMAL_TSMC_CHIP_8821_B_CUT = 0x100d,
 	VERSION_NORMAL_TSMC_CHIP_8821_C_CUT = 0x200d,
 	VERSION_TEST_CHIP_1T1R_8723B = 0x0106,
-	VERSION_NORMAL_SMIC_CHIP_1T1R_8723B = 0x010E,	
+	VERSION_NORMAL_SMIC_CHIP_1T1R_8723B = 0x010E,
 	VERSION_NORMAL_SMIC_CHIP_1T1R_8723B_B_CUT = 0x110E,
 	VERSION_NORMAL_SMIC_CHIP_1T1R_8723B_D_CUT = 0x310E,
 	VERSION_NORMAL_SMIC_CHIP_1T1R_8723B_F_CUT = 0x410E,
@@ -2690,10 +2690,10 @@ typedef enum _VERSION_8192C{
 	VERSION_NORMAL_TSMC_CHIP_1T1R_8821B = 0x00010009,
 	VERSION_NORMAL_SMIC_CHIP_1T1R_8821B = 0x00011009,
 	VERSION_NORMAL_UMC_CHIP_1T1R_8821B	= 0x00012009,
-	
+
 	/* 8822B series */
 	VERSION_NORMAL_SMIC_CHIP_1T1R_8822B = 0x0001100A,
-	VERSION_NORMAL_SMIC_CHIP_2T2R_8822B = 0x0001100A,	
+	VERSION_NORMAL_SMIC_CHIP_2T2R_8822B = 0x0001100A,
 
 	/* 8703B series */
 	VERSION_NORMAL_SMIC_CHIP_1T1R_8703B = 0x0001200B,
@@ -2711,7 +2711,7 @@ typedef enum _VERSION_CVID{
 #define CHANNEL_MAX_NUMBER			14+24+21	// 14 + 24 + 14 + 7
 #define CHANNEL_MAX_NUMBER_2G		14
 #define CHANNEL_MAX_NUMBER_5G		49			// 28 + 14 + 7 = 49
-#define CHANNEL_MAX_NUMBER_5G_80M	7			
+#define CHANNEL_MAX_NUMBER_5G_80M	7
 #define CHANNEL_GROUP_MAX				3+9	// ch1~3, ch4~9, ch10~14 total three groups
 #define MAX_PG_GROUP 				13
 
@@ -2722,12 +2722,12 @@ HAL_CmnInitPGData(
 	IN	PADAPTER		Adapter
 	);
 
-VOID 
+VOID
 HAL_DiffTXDummyLen(
 	IN PADAPTER			Adapter
 );
 
-VOID 
+VOID
 HAL_DiffTXRXLen(
 	IN PADAPTER			Adapter
 );
@@ -2737,7 +2737,7 @@ HAL_ReadTypeIDbyEfuse(
 	IN	PADAPTER	Adapter
 	);
 
-RT_STATUS 
+RT_STATUS
 HAL_ReadTypeID(
 	IN	PADAPTER	Adapter
 	);
@@ -2797,7 +2797,7 @@ HAL_SetTxPowerForAllRate(
 	IN	ULONG		ulTxPowerData
 	);
 
-VOID 
+VOID
 HAL_ReadCloudKey_Ex(
 	IN		PADAPTER	Adapter,
 	IN		u1Byte		Length,
@@ -2861,7 +2861,7 @@ BOOLEAN
 HAL_IsOld8051Series(
 	IN	PADAPTER	Adapter
 	);
-	
+
 VOID
 EXhalcommon_CheckHang(
 	IN	PADAPTER	Adapter
@@ -2962,7 +2962,7 @@ typedef struct _Path_Diversity_
 	u1Byte		Timer;
 	u1Byte		PathDiv_NoLink_State;
 	u1Byte		CCKPathDivEnable;
-	
+
 }PD_T, *pPD_T;
 
 
@@ -3057,7 +3057,7 @@ typedef struct _HW_REG_DEFINE{
 	u4Byte	byteNum;
 } HW_REG_DEFINE, *PHW_REG_DEFINE;
 
-typedef struct _HW_REG_PREACTION{ 
+typedef struct _HW_REG_PREACTION{
 	u4Byte	writeRegOffset;
 	u4Byte	byteNum;
 	u4Byte	bitMask;

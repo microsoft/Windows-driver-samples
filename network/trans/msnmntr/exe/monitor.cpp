@@ -9,7 +9,7 @@ Abstract:
 Environment:
 
     User mode
-    
+
 --*/
 
 #include "windows.h"
@@ -66,12 +66,12 @@ Return Value:
     {
         return ERROR_INVALID_PARAMETER;
     }
-    *monitorDevice = CreateFileW(MONITOR_DOS_NAME, 
-                                 GENERIC_READ | GENERIC_WRITE, 
-                                 FILE_SHARE_READ | FILE_SHARE_WRITE, 
-                                 NULL, 
-                                 OPEN_EXISTING, 
-                                 0, 
+    *monitorDevice = CreateFileW(MONITOR_DOS_NAME,
+                                 GENERIC_READ | GENERIC_WRITE,
+                                 FILE_SHARE_READ | FILE_SHARE_WRITE,
+                                 NULL,
+                                 OPEN_EXISTING,
+                                 0,
                                  NULL);
 
     if (*monitorDevice == INVALID_HANDLE_VALUE)
@@ -110,7 +110,7 @@ Routine Description:
    Adds the callouts during installation
 
 Arguments:
-   
+
    [in]  PCWSTR AppPath - The path to the application to monitor.
 
 Return Value:
@@ -190,7 +190,7 @@ Return Value:
    }
 
    printf("Successfully Added Persistent Stream callout.\n");
-   
+
    printf("Committing Transaction\n");
    result = FwpmTransactionCommit(engineHandle);
    if (NO_ERROR == result)
@@ -225,7 +225,7 @@ Routine Description:
    Sets the kernel callout ID's through the Monitor Sample device
 
 Arguments:
-   
+
    [in] HANDLE monitorDevice - Monitor Sample device
    [in] CALLOUTS* callouts - Callout structure with ID's set
    [in] DWORD size - Size of the callout structure.
@@ -295,7 +295,7 @@ Return Value:
       printf("Successfully Committed Transaction.\n");
    }
    goto cleanup;
-   
+
 abort:
    printf("Aborting Transaction\n");
    result = FwpmTransactionAbort(engineHandle);
@@ -325,7 +325,7 @@ Routine Description:
    Enables monitoring on new connections.
 
 Arguments:
-   
+
    [in] HANDLE monitorDevice - Monitor Sample device
    [in] MONITOR_SETTINGS* monitorSettings - Settings for the Monitor Sample driver.
 
@@ -336,7 +336,7 @@ Return Value:
 --*/
 {
    DWORD bytesReturned;
-   
+
    if (!DeviceIoControl(monitorDevice,
                         MONITOR_IOCTL_ENABLE_MONITOR,
                         monitorSettings,
@@ -365,7 +365,7 @@ Routine Description:
 Arguments:
 
    [in] HANDLE monitorDevice - Monitor Sample device handle.
-   
+
 Return Value:
 
    NO_ERROR or DeviceIoControl specific code.
@@ -373,7 +373,7 @@ Return Value:
 --*/
 {
    DWORD bytesReturned;
-   
+
    if (!DeviceIoControl(monitorDevice,
                         MONITOR_IOCTL_DISABLE_MONITOR,
                         NULL,
@@ -401,10 +401,10 @@ Routine Description:
     Filtering Platform (WFP).
 
 Arguments:
-   
+
    [in] HANDLE engineHandle - Handle to the base Filtering engine
    [in] FWP_BYTE_BLOB* applicationPath - full path to the application including
-                                         the NULL terminator and size also 
+                                         the NULL terminator and size also
                                          including the NULL the terminator
    [in] CALLOUTS* callouts - The callouts that need to be added.
 
@@ -419,7 +419,7 @@ Return Value:
    FWPM_FILTER filter;
    FWPM_FILTER_CONDITION filterConditions[2]; // We only need two for this call.
 
-   RtlZeroMemory(&monitorSubLayer, sizeof(FWPM_SUBLAYER)); 
+   RtlZeroMemory(&monitorSubLayer, sizeof(FWPM_SUBLAYER));
 
    monitorSubLayer.subLayerKey = MONITOR_SAMPLE_SUBLAYER;
    monitorSubLayer.displayData.name = L"Monitor Sample Sub layer";
@@ -427,7 +427,7 @@ Return Value:
    monitorSubLayer.flags = 0;
    // We don't really mind what the order of invocation is.
    monitorSubLayer.weight = 0;
-   
+
    printf("Starting Transaction\n");
 
    result = FwpmTransactionBegin(engineHandle, 0);
@@ -444,9 +444,9 @@ Return Value:
    {
       goto abort;
    }
-   
+
    printf("Sucessfully added Sublayer\n");
-   
+
    RtlZeroMemory(&filter, sizeof(FWPM_FILTER));
 
    filter.layerKey = FWPM_LAYER_ALE_FLOW_ESTABLISHED_V4;
@@ -457,7 +457,7 @@ Return Value:
    filter.filterCondition = filterConditions;
    filter.subLayerKey = monitorSubLayer.subLayerKey;
    filter.weight.type = FWP_EMPTY; // auto-weight.
-      
+
    filter.numFilterConditions = 2;
 
    RtlZeroMemory(filterConditions, sizeof(filterConditions));
@@ -491,7 +491,7 @@ Return Value:
    }
 
    printf("Successfully added Flow Established filter\n");
-  
+
    RtlZeroMemory(&filter, sizeof(FWPM_FILTER));
 
    filter.layerKey = FWPM_LAYER_STREAM_V4;
@@ -499,13 +499,13 @@ Return Value:
    filter.action.calloutKey = MONITOR_SAMPLE_STREAM_CALLOUT_V4;
    filter.subLayerKey = monitorSubLayer.subLayerKey;
    filter.weight.type = FWP_EMPTY; // auto-weight.
-   
+
    filter.numFilterConditions = 0;
-   
+
    RtlZeroMemory(filterConditions, sizeof(filterConditions));
 
    filter.filterCondition = filterConditions;
-   
+
    filter.displayData.name = L"Stream Layer Filter";
    filter.displayData.description = L"Monitors TCP traffic.";
 
@@ -540,7 +540,7 @@ abort:
    }
 
 cleanup:
-   
+
    return result;
 }
 
@@ -550,7 +550,7 @@ MonitorAppIDFromPath(
     _Out_ FWP_BYTE_BLOB** appId)
 {
    DWORD result = NO_ERROR;
-   
+
    result = FwpmGetAppIdFromFileName(fileName, appId);
 
    return result;
@@ -613,7 +613,7 @@ MonitorAppDoMonitoring(PCWSTR AppPath)
 
    printf("Adding Filters through the Filtering Engine\n");
 
-   result = MonitorAppAddFilters(engineHandle, 
+   result = MonitorAppAddFilters(engineHandle,
                                 applicationId);
 
    if (NO_ERROR != result)
@@ -626,7 +626,7 @@ MonitorAppDoMonitoring(PCWSTR AppPath)
    printf("Enabling monitoring through the Monitor Sample Device\n");
 
    monitorSettings.monitorOperation = monitorTraffic;
-   
+
    result = MonitorAppEnableMonitoring(monitorDevice,
                                       &monitorSettings);
    if (NO_ERROR != result)
@@ -662,7 +662,7 @@ cleanup:
    {
       FwpmFreeMemory((void**)&applicationId);
    }
-   
+
    if (engineHandle)
    {
       result =  FwpmEngineClose(engineHandle);
@@ -708,7 +708,7 @@ MonitorAppProcessArguments(_In_ int argc, _In_reads_(argc) PCWSTR argv[])
 int __cdecl wmain(_In_ int argc, _In_reads_(argc) PCWSTR argv[])
 {
    DWORD result;
-   
+
    result = MonitorAppProcessArguments(argc, argv);
 
    return (int)result;

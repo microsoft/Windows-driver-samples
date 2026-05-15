@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -58,7 +58,7 @@
 
 /**
  @helper_function="HlprFwpmTransactionAbort"
- 
+
    Purpose:  Wrapper for the FwpmTransactionAbort API.                                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -91,7 +91,7 @@ UINT32 HlprFwpmTransactionAbort(_In_ HANDLE engineHandle)
 
 /**
  @helper_function="HlprFwpmTransactionBegin"
- 
+
    Purpose:  Wrapper for the FwpmTransactionBegin API.                                          <br>
                                                                                                 <br>
    Notes:    Only need to use if making multiple BFE calls.                                     <br>
@@ -126,7 +126,7 @@ UINT32 HlprFwpmTransactionBegin(_In_ HANDLE engineHandle,
 
 /**
  @helper_function="HlprFwpmTransactionCommit"
- 
+
    Purpose:  Wrapper for the FwpmTransactionCommit API.                                         <br>
                                                                                                 <br>
    Notes:    On failure, transaction gets aborted.                                              <br>

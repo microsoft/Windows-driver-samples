@@ -6,13 +6,13 @@
 //      HelperFunctions\FwpObjects.c
 //
 //   Abstract:
-//      This module contains kernel helper functions that allocate, populate, purge, and free WFP 
+//      This module contains kernel helper functions that allocate, populate, purge, and free WFP
 //         structures in memory.
 //
 //   Naming Convention:
 //
 //      <Module><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       KrnlHlprFwpValueCreateLocalCopy
@@ -32,7 +32,7 @@
 //            FwpsClassifyOut            -       Function pertains to FWPS_CLASSIFY_OUT objects.
 //            FwpsFilter                 -       Function pertains to FWPS_FILTER objects.
 //            FwpsFilterCondition        -       Function pertains to FWPS_FILTER_CONDITION objects.
-//            FwpsIncomingMetadataValues -       Function pertains to FWPS_INCOMING_METADATA 
+//            FwpsIncomingMetadataValues -       Function pertains to FWPS_INCOMING_METADATA
 //                                                  objects.
 //            FwpsIncomingValues         -       Function pertains to FWPS_INCOMING_VALUES objects.
 //            FwpsStreamCalloutIOPacket  -       Function pertains to FWPS_STREAM_DATA objects.
@@ -63,12 +63,12 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Add support for multiple injectors, add 
-//                                              KrnlHlprFwpValueGetStringForFwpsIncomingValue, 
+//      December  13,   2013  -     1.1   -  Add support for multiple injectors, add
+//                                              KrnlHlprFwpValueGetStringForFwpsIncomingValue,
 //                                              KrnlHlprFwpsRedirectHandleCreate,
 //                                              KrnlHlprFwpsRedirecthandleDestroy,
-//                                              KrnlHlprFwpsLayerIsDiscard, 
-//                                              KrnlHlprFwpsLayerIDToString functions, add missing 
+//                                              KrnlHlprFwpsLayerIsDiscard,
+//                                              KrnlHlprFwpsLayerIDToString functions, add missing
 //                                              conditions, and fix invalid conditions.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@ HANDLE g_pRedirectionHandles[2]                          = {0};
 
 /**
  @kernel_helper_function="KrnlHlprFwpByteBlobPurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an FWP_BYTE_BLOB.                                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -135,20 +135,20 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpByteBlobPurgeLocalCopy(_Inout_ FWP_BYTE_BLOB* pBlob)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpByteBlobPurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pBlob);
 
    HLPR_DELETE_ARRAY(pBlob->data,
                      WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpByteBlobPurgeLocalCopy()\n");
@@ -160,7 +160,7 @@ VOID KrnlHlprFwpByteBlobPurgeLocalCopy(_Inout_ FWP_BYTE_BLOB* pBlob)
 
 /**
  @kernel_helper_function="KrnlHlprFwpByteBlobDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWP_BYTE_BLOB.                                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -176,13 +176,13 @@ _Success_(*ppBlob == 0)
 VOID KrnlHlprFwpByteBlobDestroyLocalCopy(_Inout_ FWP_BYTE_BLOB** ppBlob)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpByteBlobDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppBlob);
 
    if(*ppBlob)
@@ -192,7 +192,7 @@ VOID KrnlHlprFwpByteBlobDestroyLocalCopy(_Inout_ FWP_BYTE_BLOB** ppBlob)
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpByteBlobDestroyLocalCopy()\n");
@@ -204,7 +204,7 @@ VOID KrnlHlprFwpByteBlobDestroyLocalCopy(_Inout_ FWP_BYTE_BLOB** ppBlob)
 
 /**
  @kernel_helper_function="KrnlHlprFwpByteBlobPopulateLocalCopy"
- 
+
    Purpose:  Populate a local copy of an FWP_BYTE_BLOB.                                         <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using
@@ -221,13 +221,13 @@ NTSTATUS KrnlHlprFwpByteBlobPopulateLocalCopy(_In_ const FWP_BYTE_BLOB* pOrigina
                                               _Inout_ FWP_BYTE_BLOB* pBlob)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpByteBlobPopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalBlob);
    NT_ASSERT(pBlob);
 
@@ -255,7 +255,7 @@ NTSTATUS KrnlHlprFwpByteBlobPopulateLocalCopy(_In_ const FWP_BYTE_BLOB* pOrigina
       KrnlHlprFwpByteBlobPurgeLocalCopy(pBlob);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpByteBlobPopulateLocalCopy() [status: %#x]\n",
@@ -268,7 +268,7 @@ NTSTATUS KrnlHlprFwpByteBlobPopulateLocalCopy(_In_ const FWP_BYTE_BLOB* pOrigina
 
 /**
  @kernel_helper_function="KrnlHlprFwpByteBlobCreateLocalCopy"
- 
+
    Purpose:  Allocate and populate a local copy of an FWP_BYTE_BLOB.                            <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -285,13 +285,13 @@ _Success_(return != 0)
 FWP_BYTE_BLOB* KrnlHlprFwpByteBlobCreateLocalCopy(_In_ const FWP_BYTE_BLOB* pOriginalBlob)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpByteBlobCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalBlob);
 
    NTSTATUS       status    = STATUS_SUCCESS;
@@ -315,14 +315,14 @@ FWP_BYTE_BLOB* KrnlHlprFwpByteBlobCreateLocalCopy(_In_ const FWP_BYTE_BLOB* pOri
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pByteBlob initialized with call to HLPR_NEW & KrnlHlprFwpByteBlobPopulateLocalCopy 
+#pragma warning(disable: 6001) /// pByteBlob initialized with call to HLPR_NEW & KrnlHlprFwpByteBlobPopulateLocalCopy
 
    if(status != STATUS_SUCCESS &&
       pByteBlob)
       KrnlHlprFwpByteBlobDestroyLocalCopy(&pByteBlob);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpByteBlobCreateLocalCopy() [pByteBlob: %#p]\n",
@@ -342,7 +342,7 @@ FWP_BYTE_BLOB* KrnlHlprFwpByteBlobCreateLocalCopy(_In_ const FWP_BYTE_BLOB* pOri
 
 /**
  @kernel_helper_function="KrnlHlprFwpmDisplayDataPurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an FWPM_DISPLAY_DATA.                                      <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -355,13 +355,13 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpmDisplayDataPurgeLocalCopy(_Inout_ FWPM_DISPLAY_DATA* pData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmDisplayDataPurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pData);
 
    HLPR_DELETE_ARRAY(pData->name,
@@ -371,7 +371,7 @@ VOID KrnlHlprFwpmDisplayDataPurgeLocalCopy(_Inout_ FWPM_DISPLAY_DATA* pData)
                      WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmDisplayDataPurgeLocalCopy()\n");
@@ -383,7 +383,7 @@ VOID KrnlHlprFwpmDisplayDataPurgeLocalCopy(_Inout_ FWPM_DISPLAY_DATA* pData)
 
 /**
  @kernel_helper_function="KrnlHlprFwpmDisplayDataDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWPM_DISPLAY_DATA.                             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -399,13 +399,13 @@ _Success_(*ppDisplayData == 0)
 VOID KrnlHlprFwpmDisplayDataDestroyLocalCopy(_Inout_ FWPM_DISPLAY_DATA** ppDisplayData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmDisplayDataDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppDisplayData);
 
    if(*ppDisplayData)
@@ -415,7 +415,7 @@ VOID KrnlHlprFwpmDisplayDataDestroyLocalCopy(_Inout_ FWPM_DISPLAY_DATA** ppDispl
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmDisplayDataDestroyLocalCopy()\n");
@@ -427,7 +427,7 @@ VOID KrnlHlprFwpmDisplayDataDestroyLocalCopy(_Inout_ FWPM_DISPLAY_DATA** ppDispl
 
 /**
  @kernel_helper_function="KrnlHlprFwpmDisplayDataPopulateLocalCopy"
- 
+
    Purpose:  Populate a local copy of an FWPM_DISPLAY_DATA.                                     <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using
@@ -444,20 +444,20 @@ NTSTATUS KrnlHlprFwpmDisplayDataPopulateLocalCopy(_In_ const FWPM_DISPLAY_DATA* 
                                                   _Inout_ FWPM_DISPLAY_DATA* pData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmDisplayDataPopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalData);
    NT_ASSERT(pData);
 
    NTSTATUS status          = STATUS_SUCCESS;
    KIRQL    irql            = KeGetCurrentIrql();
    size_t   nameSize        = 0;
-   size_t   descriptionSize = 0;      
+   size_t   descriptionSize = 0;
 
    if(irql == PASSIVE_LEVEL)
    {
@@ -534,7 +534,7 @@ NTSTATUS KrnlHlprFwpmDisplayDataPopulateLocalCopy(_In_ const FWPM_DISPLAY_DATA* 
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmDisplayDataPopulateLocalCopy() [status: %#x]\n",
@@ -547,7 +547,7 @@ NTSTATUS KrnlHlprFwpmDisplayDataPopulateLocalCopy(_In_ const FWPM_DISPLAY_DATA* 
 
 /**
  @kernel_helper_function="KrnlHlprFwpmDisplayDataCreateLocalCopy"
- 
+
    Purpose:  ALlocate and populate a local copy of an FWPM_DISPLAY_DATA.                        <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using
@@ -564,13 +564,13 @@ _Success_(return != 0)
 FWPM_DISPLAY_DATA* KrnlHlprFwpmDisplayDataCreateLocalCopy(_In_ const FWPM_DISPLAY_DATA* pOriginalDisplayData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmDisplayDataCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalDisplayData);
 
    NTSTATUS           status       = STATUS_SUCCESS;
@@ -593,14 +593,14 @@ FWPM_DISPLAY_DATA* KrnlHlprFwpmDisplayDataCreateLocalCopy(_In_ const FWPM_DISPLA
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pDisplayData initialized with call to HLPR_NEW & KrnlHlprFwpmDisplayDataPopulateLocalCopy 
+#pragma warning(disable: 6001) /// pDisplayData initialized with call to HLPR_NEW & KrnlHlprFwpmDisplayDataPopulateLocalCopy
 
    if(status != STATUS_SUCCESS &&
       pDisplayData)
       KrnlHlprFwpmDisplayDataDestroyLocalCopy(&pDisplayData);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmDisplayDataCreateLocalCopy() [pDisplayData: %#p]\n",
@@ -620,7 +620,7 @@ FWPM_DISPLAY_DATA* KrnlHlprFwpmDisplayDataCreateLocalCopy(_In_ const FWPM_DISPLA
 
 /**
  @kernel_helper_function="KrnlHlprFwpmClassifyOptionPurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an FWPM_CLASSIFY_OPTION.                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -633,13 +633,13 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpmClassifyOptionPurgeLocalCopy(_Inout_ FWPM_CLASSIFY_OPTION* pOption)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmClassifyOptionPurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOption);
 
    KrnlHlprFwpValuePurgeLocalCopy(&(pOption->value));
@@ -647,7 +647,7 @@ VOID KrnlHlprFwpmClassifyOptionPurgeLocalCopy(_Inout_ FWPM_CLASSIFY_OPTION* pOpt
    pOption->type = FWP_CLASSIFY_OPTION_MAX;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmClassifyOptionPurgeLocalCopy()\n");
@@ -659,7 +659,7 @@ VOID KrnlHlprFwpmClassifyOptionPurgeLocalCopy(_Inout_ FWPM_CLASSIFY_OPTION* pOpt
 
 /**
  @kernel_helper_function="KrnlHlprFwpmClassifyOptionDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWPM_CLASSIFY_OPTION.                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -675,13 +675,13 @@ _Success_(*ppOption == 0)
 VOID KrnlHlprFwpmClassifyOptionDestroyLocalCopy(_Inout_ FWPM_CLASSIFY_OPTION** ppOption)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmClassifyOptionDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppOption);
 
    if(*ppOption)
@@ -691,7 +691,7 @@ VOID KrnlHlprFwpmClassifyOptionDestroyLocalCopy(_Inout_ FWPM_CLASSIFY_OPTION** p
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmClassifyOptionDestroyLocalCopy()\n");
@@ -703,7 +703,7 @@ VOID KrnlHlprFwpmClassifyOptionDestroyLocalCopy(_Inout_ FWPM_CLASSIFY_OPTION** p
 
 /**
  @kernel_helper_function="KrnlHlprFwpmClassifyOptionPopulateLocalCopy"
- 
+
    Purpose:  Populate a local copy of an FWPM_CLASSIFY_OPTION.                                  <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using
@@ -720,13 +720,13 @@ NTSTATUS KrnlHlprFwpmClassifyOptionPopulateLocalCopy(_In_ const FWPM_CLASSIFY_OP
                                                      _Inout_ FWPM_CLASSIFY_OPTION* pOption)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmClassifyOptionPopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalOption);
    NT_ASSERT(pOption);
 
@@ -748,7 +748,7 @@ NTSTATUS KrnlHlprFwpmClassifyOptionPopulateLocalCopy(_In_ const FWPM_CLASSIFY_OP
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmClassifyOptionPopulateLocalCopy() [status: %#x]\n",
@@ -761,7 +761,7 @@ NTSTATUS KrnlHlprFwpmClassifyOptionPopulateLocalCopy(_In_ const FWPM_CLASSIFY_OP
 
 /**
  @kernel_helper_function="KrnlHlprFwpmClassifyOptionCreateLocalCopy"
- 
+
    Purpose:  Allocate and populate a local copy of an FWPM_CLASSIFY_OPTION.                     <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using
@@ -778,13 +778,13 @@ _Success_(return != 0)
 FWPM_CLASSIFY_OPTION* KrnlHlprFwpmClassifyOptionCreateLocalCopy(_In_ const FWPM_CLASSIFY_OPTION* pOriginalOption)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmClassifyOptionCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    FWPM_CLASSIFY_OPTION* pOption = 0;
 
    if(pOriginalOption)
@@ -808,14 +808,14 @@ FWPM_CLASSIFY_OPTION* KrnlHlprFwpmClassifyOptionCreateLocalCopy(_In_ const FWPM_
       HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pOption initialized with call to HLPR_NEW & KrnlHlprFwpmClassifyOptionPopulateLocalCopy 
+#pragma warning(disable: 6001) /// pOption initialized with call to HLPR_NEW & KrnlHlprFwpmClassifyOptionPopulateLocalCopy
 
       if(status != STATUS_SUCCESS)
          KrnlHlprFwpmClassifyOptionDestroyLocalCopy(&pOption);
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmClassifyOptionCreateLocalCopy() [pOption: %#p]\n",
@@ -835,7 +835,7 @@ FWPM_CLASSIFY_OPTION* KrnlHlprFwpmClassifyOptionCreateLocalCopy(_In_ const FWPM_
 
 /**
  @kernel_helper_function="KrnlHlprFwpmClassifyOptionsPurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an FWPM_CLASSIFY_OPTIONS.                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -848,13 +848,13 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpmClassifyOptionsPurgeLocalCopy(_Inout_ FWPM_CLASSIFY_OPTIONS* pOptions)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmClassifyOptionsPurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOptions);
 
    for(UINT32 optionIndex = 0;
@@ -865,7 +865,7 @@ VOID KrnlHlprFwpmClassifyOptionsPurgeLocalCopy(_Inout_ FWPM_CLASSIFY_OPTIONS* pO
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmClassifyOptionsPurgeLocalCopy()\n");
@@ -877,7 +877,7 @@ VOID KrnlHlprFwpmClassifyOptionsPurgeLocalCopy(_Inout_ FWPM_CLASSIFY_OPTIONS* pO
 
 /**
  @kernel_helper_function="KrnlHlprFwpmClassifyOptionsDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWPM_CLASSIFY_OPTIONS.                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -893,13 +893,13 @@ _Success_(*ppOptions == 0)
 VOID KrnlHlprFwpmClassifyOptionsDestroyLocalCopy(_Inout_ FWPM_CLASSIFY_OPTIONS** ppOptions)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmClassifyOptionsDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppOptions);
 
    if(*ppOptions)
@@ -909,7 +909,7 @@ VOID KrnlHlprFwpmClassifyOptionsDestroyLocalCopy(_Inout_ FWPM_CLASSIFY_OPTIONS**
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmClassifyOptionsDestroyLocalCopy()\n");
@@ -921,7 +921,7 @@ VOID KrnlHlprFwpmClassifyOptionsDestroyLocalCopy(_Inout_ FWPM_CLASSIFY_OPTIONS**
 
 /**
  @kernel_helper_function="KrnlHlprFwpmClassifyOptionsPopulateLocalCopy"
- 
+
    Purpose:  Populate a local copy of an FWPM_CLASSIFY_OPTIONS.                                 <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -938,13 +938,13 @@ NTSTATUS KrnlHlprFwpmClassifyOptionsPopulateLocalCopy(_In_ const FWPM_CLASSIFY_O
                                                       _Inout_ FWPM_CLASSIFY_OPTIONS* pOptions)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmClassifyOptionsPopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalOptions);
    NT_ASSERT(pOptions);
 
@@ -977,7 +977,7 @@ NTSTATUS KrnlHlprFwpmClassifyOptionsPopulateLocalCopy(_In_ const FWPM_CLASSIFY_O
       KrnlHlprFwpmClassifyOptionsPurgeLocalCopy(pOptions);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmClassifyOptionsPopulateLocalCopy() [status: %#x]\n",
@@ -990,7 +990,7 @@ NTSTATUS KrnlHlprFwpmClassifyOptionsPopulateLocalCopy(_In_ const FWPM_CLASSIFY_O
 
 /**
  @kernel_helper_function="KrnlHlprFwpmClassifyOptionsCreateLocalCopy"
- 
+
    Purpose:  Allocate and populate a local copy of an FWPM_CLASSIFY_OPTIONS.                    <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -1007,13 +1007,13 @@ _Success_(return != 0)
 FWPM_CLASSIFY_OPTIONS* KrnlHlprFwpmClassifyOptionsCreateLocalCopy(_In_ const FWPM_CLASSIFY_OPTIONS* pOriginalOptions)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmClassifyOptionsCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalOptions);
 
    NTSTATUS               status   = STATUS_SUCCESS;
@@ -1036,14 +1036,14 @@ FWPM_CLASSIFY_OPTIONS* KrnlHlprFwpmClassifyOptionsCreateLocalCopy(_In_ const FWP
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pOptions initialized with call to HLPR_NEW & KrnlHlprFwpmClassifyOptionsPopulateLocalCopy 
+#pragma warning(disable: 6001) /// pOptions initialized with call to HLPR_NEW & KrnlHlprFwpmClassifyOptionsPopulateLocalCopy
 
    if(status != STATUS_SUCCESS &&
       pOptions)
       KrnlHlprFwpmClassifyOptionsDestroyLocalCopy(&pOptions);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmClassifyOptionsCreateLocalCopy() [pOptions: %#p]\n",
@@ -1065,7 +1065,7 @@ FWPM_CLASSIFY_OPTIONS* KrnlHlprFwpmClassifyOptionsCreateLocalCopy(_In_ const FWP
 
 /**
  @kernel_helper_function="KrnlHlprIPsecDoSPOptionsPurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an IPSEC_DOSP_OPTIONS.                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1078,13 +1078,13 @@ _IRQL_requires_same_
 VOID KrnlHlprIPsecDoSPOptionsPurgeLocalCopy(_Inout_ IPSEC_DOSP_OPTIONS* pOptions)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprIPsecDoSPOptionsPurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOptions);
 
    HLPR_DELETE_ARRAY(pOptions->publicIFLuids,
@@ -1094,7 +1094,7 @@ VOID KrnlHlprIPsecDoSPOptionsPurgeLocalCopy(_Inout_ IPSEC_DOSP_OPTIONS* pOptions
                      WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprIPsecDoSPOptionsPurgeLocalCopy()\n");
@@ -1106,7 +1106,7 @@ VOID KrnlHlprIPsecDoSPOptionsPurgeLocalCopy(_Inout_ IPSEC_DOSP_OPTIONS* pOptions
 
 /**
  @kernel_helper_function="KrnlHlprIPsecDoSPOptionsDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an IPSEC_DOSP_OPTIONS.                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1122,13 +1122,13 @@ _Success_(*ppOptions == 0)
 VOID KrnlHlprIPsecDoSPOptionsDestroyLocalCopy(_Inout_ IPSEC_DOSP_OPTIONS** ppOptions)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprIPsecDoSPOptionsDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppOptions);
 
    if(*ppOptions)
@@ -1138,7 +1138,7 @@ VOID KrnlHlprIPsecDoSPOptionsDestroyLocalCopy(_Inout_ IPSEC_DOSP_OPTIONS** ppOpt
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprIPsecDoSPOptionsDestroyLocalCopy()\n");
@@ -1150,7 +1150,7 @@ VOID KrnlHlprIPsecDoSPOptionsDestroyLocalCopy(_Inout_ IPSEC_DOSP_OPTIONS** ppOpt
 
 /**
  @kernel_helper_function="KrnlHlprIPsecDoSPOptionsPopulateLocalCopy"
- 
+
    Purpose:  Allocate and populate a local copy of an IPSEC_DOSP_OPTIONS.                       <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using
@@ -1167,13 +1167,13 @@ NTSTATUS KrnlHlprIPsecDoSPOptionsPopulateLocalCopy(_In_ const IPSEC_DOSP_OPTIONS
                                                    _Inout_ IPSEC_DOSP_OPTIONS* pOptions)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprIPsecDoSPOptionsPopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalOptions);
    NT_ASSERT(pOptions);
 
@@ -1212,7 +1212,7 @@ NTSTATUS KrnlHlprIPsecDoSPOptionsPopulateLocalCopy(_In_ const IPSEC_DOSP_OPTIONS
       KrnlHlprIPsecDoSPOptionsPurgeLocalCopy(pOptions);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprIPsecDoSPOptionsPopulateLocalCopy() [status: %#x]\n",
@@ -1226,7 +1226,7 @@ NTSTATUS KrnlHlprIPsecDoSPOptionsPopulateLocalCopy(_In_ const IPSEC_DOSP_OPTIONS
 
 /**
  @kernel_helper_function="KrnlHlprIPsecDoSPOptionsCreateLocalCopy"
- 
+
    Purpose:  Allocate and populate a local copy of an IPSEC_DOSP_OPTIONS.                       <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using
@@ -1243,13 +1243,13 @@ _Success_(return != 0)
 IPSEC_DOSP_OPTIONS* KrnlHlprIPsecDoSPOptionsCreateLocalCopy(_In_ const IPSEC_DOSP_OPTIONS* pOriginalOptions)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprIPsecDoSPOptionsCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalOptions);
 
    NTSTATUS            status   = STATUS_SUCCESS;
@@ -1272,14 +1272,14 @@ IPSEC_DOSP_OPTIONS* KrnlHlprIPsecDoSPOptionsCreateLocalCopy(_In_ const IPSEC_DOS
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pOptions initialized with call to HLPR_NEW & KrnlHlprIPsecDoSPOptionsPopulateLocalCopy 
+#pragma warning(disable: 6001) /// pOptions initialized with call to HLPR_NEW & KrnlHlprIPsecDoSPOptionsPopulateLocalCopy
 
    if(status != STATUS_SUCCESS &&
       pOptions)
       KrnlHlprIPsecDoSPOptionsDestroyLocalCopy(&pOptions);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprIPsecDoSPOptionsCreateLocalCopy() [pOptions: %#p]\n",
@@ -1301,7 +1301,7 @@ IPSEC_DOSP_OPTIONS* KrnlHlprIPsecDoSPOptionsCreateLocalCopy(_In_ const IPSEC_DOS
 
 /**
  @kernel_helper_function="KrnlHlprFwpTokenInformationPurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an FWP_TOKEN_INFORMATION.                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1314,13 +1314,13 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpTokenInformationPurgeLocalCopy(_Inout_ FWP_TOKEN_INFORMATION* pTokenInfo)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpTokenInformationPurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pTokenInfo);
 
    for(UINT32 i = 0;
@@ -1346,7 +1346,7 @@ VOID KrnlHlprFwpTokenInformationPurgeLocalCopy(_Inout_ FWP_TOKEN_INFORMATION* pT
                      WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpTokenInformationPurgeLocalCopy()\n");
@@ -1358,7 +1358,7 @@ VOID KrnlHlprFwpTokenInformationPurgeLocalCopy(_Inout_ FWP_TOKEN_INFORMATION* pT
 
 /**
  @kernel_helper_function="KrnlHlprFwpTokenInformationDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWP_TOKEN_INFORMATION.                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1374,13 +1374,13 @@ _Success_(*ppTokenInfo == 0)
 VOID KrnlHlprFwpTokenInformationDestroyLocalCopy(_Inout_ FWP_TOKEN_INFORMATION** ppTokenInfo)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpTokenInformationDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppTokenInfo);
 
    if(*ppTokenInfo)
@@ -1390,7 +1390,7 @@ VOID KrnlHlprFwpTokenInformationDestroyLocalCopy(_Inout_ FWP_TOKEN_INFORMATION**
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpTokenInformationDestroyLocalCopy()\n");
@@ -1402,7 +1402,7 @@ VOID KrnlHlprFwpTokenInformationDestroyLocalCopy(_Inout_ FWP_TOKEN_INFORMATION**
 
 /**
  @kernel_helper_function="KrnlHlprFwpTokenInformationPopulateLocalCopy"
- 
+
    Purpose:  Populate a local copy of an FWP_TOKEN_INFORMATION.                                 <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -1419,13 +1419,13 @@ NTSTATUS KrnlHlprFwpTokenInformationPopulateLocalCopy(_In_ const FWP_TOKEN_INFOR
                                                       _Inout_ FWP_TOKEN_INFORMATION* pTokenInfo)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpTokenInformationPopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalTokenInfo);
    NT_ASSERT(pTokenInfo);
 
@@ -1594,7 +1594,7 @@ NTSTATUS KrnlHlprFwpTokenInformationPopulateLocalCopy(_In_ const FWP_TOKEN_INFOR
       KrnlHlprFwpTokenInformationDestroyLocalCopy(&pTokenInfo);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpTokenInformationPopulateLocalCopy() [status: %#x]\n",
@@ -1607,7 +1607,7 @@ NTSTATUS KrnlHlprFwpTokenInformationPopulateLocalCopy(_In_ const FWP_TOKEN_INFOR
 
 /**
  @kernel_helper_function="KrnlHlprFwpTokenInformationCreateLocalCopy"
- 
+
    Purpose:  Allocate and populate a local copy of an FWP_TOKEN_INFORMATION.                    <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -1624,13 +1624,13 @@ _Success_(return != 0)
 FWP_TOKEN_INFORMATION* KrnlHlprFwpTokenInformationCreateLocalCopy(_In_ const FWP_TOKEN_INFORMATION* pOriginalTokenInfo)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpTokenInformationCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalTokenInfo);
 
    NTSTATUS               status     = STATUS_SUCCESS;
@@ -1653,14 +1653,14 @@ FWP_TOKEN_INFORMATION* KrnlHlprFwpTokenInformationCreateLocalCopy(_In_ const FWP
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pTokenInfo initialized with call to HLPR_NEW & KrnlHlprFwpTokenInformationPopulateLocalCopy 
+#pragma warning(disable: 6001) /// pTokenInfo initialized with call to HLPR_NEW & KrnlHlprFwpTokenInformationPopulateLocalCopy
 
    if(status != STATUS_SUCCESS &&
       pTokenInfo)
       KrnlHlprFwpTokenInformationDestroyLocalCopy(&pTokenInfo);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpTokenInformationCreateLocalCopy() [pTokenInfo: %#p]\n",
@@ -1680,8 +1680,8 @@ FWP_TOKEN_INFORMATION* KrnlHlprFwpTokenInformationCreateLocalCopy(_In_ const FWP
 
 /**
  @kernel_helper_function="KrnlHlprFwpValueGetStringForFwpsIncomingValue"
- 
-   Purpose:  Return a string representing the condition field of the FWPS_INCOMING_VALUE.       <br> 
+
+   Purpose:  Return a string representing the condition field of the FWPS_INCOMING_VALUE.       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
                                                                                                 <br>
@@ -1892,10 +1892,10 @@ PSTR KrnlHlprFwpValueGetStringForFwpsIncomingValue(_In_ UINT32 layerID,
             pString = "FWPM_CONDITION_PROFILE_ID";
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-         
+
          else if(fieldID == FWPS_FIELD_INBOUND_TRANSPORT_V4_IPSEC_SECURITY_REALM_ID)
             pString = "FWPM_CONDITION_IPSEC_SECURITY_REALM_ID";
-         
+
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
@@ -2243,10 +2243,10 @@ PSTR KrnlHlprFwpValueGetStringForFwpsIncomingValue(_In_ UINT32 layerID,
             pString = "FWPM_CONDITION_ALE_PACKAGE_ID";
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-         
+
          else if(fieldID == FWPS_FIELD_ALE_RESOURCE_ASSIGNMENT_V4_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE)
             pString = "FWPM_CONDITION_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE";
-         
+
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
@@ -2305,10 +2305,10 @@ PSTR KrnlHlprFwpValueGetStringForFwpsIncomingValue(_In_ UINT32 layerID,
             pString = "FWPM_CONDITION_ALE_PACKAGE_ID";
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-         
+
          else if(fieldID == FWPS_FIELD_ALE_AUTH_LISTEN_V4_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE)
             pString = "FWPM_CONDITION_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE";
-         
+
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
@@ -2417,10 +2417,10 @@ PSTR KrnlHlprFwpValueGetStringForFwpsIncomingValue(_In_ UINT32 layerID,
             pString = "FWPM_CONDITION_ALE_PACKAGE_ID";
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-         
+
          else if(fieldID == FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V4_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE)
             pString = "FWPM_CONDITION_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE";
-         
+
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
@@ -2537,10 +2537,10 @@ PSTR KrnlHlprFwpValueGetStringForFwpsIncomingValue(_In_ UINT32 layerID,
             pString = "FWPM_CONDITION_ALE_PACKAGE_ID";
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-         
+
          else if(fieldID == FWPS_FIELD_ALE_AUTH_CONNECT_V4_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE)
             pString = "FWPM_CONDITION_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE";
-         
+
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
@@ -2622,10 +2622,10 @@ PSTR KrnlHlprFwpValueGetStringForFwpsIncomingValue(_In_ UINT32 layerID,
             pString = "FWPM_CONDITION_ALE_PACKAGE_ID";
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-         
+
          else if(fieldID == FWPS_FIELD_ALE_FLOW_ESTABLISHED_V4_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE)
             pString = "FWPM_CONDITION_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE";
-         
+
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
 #endif /// (NTDDI_VERSION >= NTDDI_VISTASP1)
@@ -2753,10 +2753,10 @@ PSTR KrnlHlprFwpValueGetStringForFwpsIncomingValue(_In_ UINT32 layerID,
             pString = "FWPM_CONDITION_ALE_PACKAGE_ID";
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-         
+
          else if(fieldID == FWPS_FIELD_ALE_ENDPOINT_CLOSURE_V4_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE)
             pString = "FWPM_CONDITION_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE";
-         
+
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
 
@@ -2819,10 +2819,10 @@ PSTR KrnlHlprFwpValueGetStringForFwpsIncomingValue(_In_ UINT32 layerID,
             pString = "FWPM_CONDITION_ALE_PACKAGE_ID";
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-         
+
          else if(fieldID == FWPS_FIELD_ALE_CONNECT_REDIRECT_V4_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE)
             pString = "FWPM_CONDITION_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE";
-         
+
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
 
@@ -2867,10 +2867,10 @@ PSTR KrnlHlprFwpValueGetStringForFwpsIncomingValue(_In_ UINT32 layerID,
             pString = "FWPM_CONDITION_ALE_PACKAGE_ID";
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-         
+
          else if(fieldID == FWPS_FIELD_ALE_BIND_REDIRECT_V4_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE)
             pString = "FWPM_CONDITION_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE";
-         
+
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
 
@@ -3214,8 +3214,8 @@ PSTR KrnlHlprFwpValueGetStringForFwpsIncomingValue(_In_ UINT32 layerID,
 
 /**
  @kernel_helper_function="KrnlHlprFwpValueGetFromFwpsIncomingValues"
- 
-   Purpose:  Retrieve a pointer to the FWP_VALUE for a given condition in the 
+
+   Purpose:  Retrieve a pointer to the FWP_VALUE for a given condition in the
              FWPS_INCOMING_VALUES.                                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -3232,13 +3232,13 @@ FWP_VALUE* KrnlHlprFwpValueGetFromFwpsIncomingValues(_In_ const FWPS_INCOMING_VA
                                                      _In_ const GUID* pConditionKey)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpValueGetFromFwpsIncomingValues()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pClassifyValues);
    NT_ASSERT(pConditionKey);
 
@@ -3416,10 +3416,10 @@ FWP_VALUE* KrnlHlprFwpValueGetFromFwpsIncomingValues(_In_ const FWPS_INCOMING_VA
             pValue = &(pClassifyValues->incomingValue[FWPS_FIELD_OUTBOUND_TRANSPORT_V4_PROFILE_ID].value);
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-         
+
          else if(pConditionKey == &FWPM_CONDITION_IPSEC_SECURITY_REALM_ID)
             pValue = &(pClassifyValues->incomingValue[FWPS_FIELD_OUTBOUND_TRANSPORT_V4_IPSEC_SECURITY_REALM_ID].value);
-         
+
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
 
@@ -3629,10 +3629,10 @@ FWP_VALUE* KrnlHlprFwpValueGetFromFwpsIncomingValues(_In_ const FWPS_INCOMING_VA
             pValue = &(pClassifyValues->incomingValue[FWPS_FIELD_ALE_RESOURCE_ASSIGNMENT_V4_ALE_PACKAGE_ID].value);
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-                  
+
          else if(pConditionKey == &FWPM_CONDITION_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE)
             pValue = &(pClassifyValues->incomingValue[FWPS_FIELD_ALE_RESOURCE_ASSIGNMENT_V4_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE].value);
-                  
+
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
@@ -3676,10 +3676,10 @@ FWP_VALUE* KrnlHlprFwpValueGetFromFwpsIncomingValues(_In_ const FWPS_INCOMING_VA
             pValue = &(pClassifyValues->incomingValue[FWPS_FIELD_ALE_AUTH_LISTEN_V4_ALE_PACKAGE_ID].value);
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-                  
+
          else if(pConditionKey == &FWPM_CONDITION_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE)
             pValue = &(pClassifyValues->incomingValue[FWPS_FIELD_ALE_AUTH_LISTEN_V4_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE].value);
-                  
+
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
@@ -3768,10 +3768,10 @@ FWP_VALUE* KrnlHlprFwpValueGetFromFwpsIncomingValues(_In_ const FWPS_INCOMING_VA
             pValue = &(pClassifyValues->incomingValue[FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V4_ALE_PACKAGE_ID].value);
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-                  
+
          else if(pConditionKey == &FWPM_CONDITION_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE)
             pValue = &(pClassifyValues->incomingValue[FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V4_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE].value);
-                  
+
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
@@ -3863,10 +3863,10 @@ FWP_VALUE* KrnlHlprFwpValueGetFromFwpsIncomingValues(_In_ const FWPS_INCOMING_VA
             pValue = &(pClassifyValues->incomingValue[FWPS_FIELD_ALE_AUTH_CONNECT_V4_ALE_PACKAGE_ID].value);
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-                  
+
          else if(pConditionKey == &FWPM_CONDITION_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE)
             pValue = &(pClassifyValues->incomingValue[FWPS_FIELD_ALE_AUTH_CONNECT_V4_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE].value);
-                  
+
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN7)
@@ -3923,10 +3923,10 @@ FWP_VALUE* KrnlHlprFwpValueGetFromFwpsIncomingValues(_In_ const FWPS_INCOMING_VA
             pValue = &(pClassifyValues->incomingValue[FWPS_FIELD_ALE_FLOW_ESTABLISHED_V4_ALE_PACKAGE_ID].value);
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-                  
+
          else if(pConditionKey == &FWPM_CONDITION_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE)
             pValue = &(pClassifyValues->incomingValue[FWPS_FIELD_ALE_FLOW_ESTABLISHED_V4_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE].value);
-                  
+
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
 #endif /// (NTDDI_VERSION >= NTDDI_VISTASP1)
@@ -3976,10 +3976,10 @@ FWP_VALUE* KrnlHlprFwpValueGetFromFwpsIncomingValues(_In_ const FWPS_INCOMING_VA
             pValue = &(pClassifyValues->incomingValue[FWPS_FIELD_ALE_RESOURCE_RELEASE_V4_ALE_PACKAGE_ID].value);
 
 #if(NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
-                  
+
          else if(pConditionKey == &FWPM_CONDITION_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE)
             pValue = &(pClassifyValues->incomingValue[FWPS_FIELD_ALE_RESOURCE_RELEASE_V4_ALE_SECURITY_ATTRIBUTE_FQBN_VALUE].value);
-                  
+
 #endif /// (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
 #endif /// (NTDDI_VERSION >= NTDDI_WIN8)
 
@@ -4366,7 +4366,7 @@ FWP_VALUE* KrnlHlprFwpValueGetFromFwpsIncomingValues(_In_ const FWPS_INCOMING_VA
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpValueGetFromFwpsIncomingValues() [pValue: %#p]\n",
@@ -4379,7 +4379,7 @@ FWP_VALUE* KrnlHlprFwpValueGetFromFwpsIncomingValues(_In_ const FWPS_INCOMING_VA
 
 /**
  @kernel_helper_function="KrnlHlprFwpValuePurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an FWP_VALUE.                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -4392,13 +4392,13 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpValuePurgeLocalCopy(_Inout_ FWP_VALUE* pValue)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpValuePurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pValue);
 
    switch(pValue->type)
@@ -4491,7 +4491,7 @@ VOID KrnlHlprFwpValuePurgeLocalCopy(_Inout_ FWP_VALUE* pValue)
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpValuePurgeLocalCopy()\n");
@@ -4503,7 +4503,7 @@ VOID KrnlHlprFwpValuePurgeLocalCopy(_Inout_ FWP_VALUE* pValue)
 
 /**
  @kernel_helper_function="KrnlHlprFwpValueDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWP_VALUE.                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -4519,13 +4519,13 @@ _Success_(*ppValue == 0)
 VOID KrnlHlprFwpValueDestroyLocalCopy(_Inout_ FWP_VALUE** ppValue)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpValueDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppValue);
 
    if(*ppValue)
@@ -4535,7 +4535,7 @@ VOID KrnlHlprFwpValueDestroyLocalCopy(_Inout_ FWP_VALUE** ppValue)
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpValueDestroyLocalCopy()\n");
@@ -4547,7 +4547,7 @@ VOID KrnlHlprFwpValueDestroyLocalCopy(_Inout_ FWP_VALUE** ppValue)
 
 /**
  @kernel_helper_function="KrnlHlprFwpValuePopulateLocalCopy"
- 
+
    Purpose:  Populate a local copy of an FWP_VALUE.                                             <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using
@@ -4564,13 +4564,13 @@ NTSTATUS KrnlHlprFwpValuePopulateLocalCopy(_In_ const FWP_VALUE* pOriginalValue,
                                            _Inout_ FWP_VALUE* pValue)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpValuePopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalValue);
    NT_ASSERT(pValue);
 
@@ -4753,7 +4753,7 @@ NTSTATUS KrnlHlprFwpValuePopulateLocalCopy(_In_ const FWP_VALUE* pOriginalValue,
       KrnlHlprFwpValuePurgeLocalCopy(pValue);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpValuePopulateLocalCopy() [status: %#x]\n",
@@ -4766,7 +4766,7 @@ NTSTATUS KrnlHlprFwpValuePopulateLocalCopy(_In_ const FWP_VALUE* pOriginalValue,
 
 /**
  @kernel_helper_function="KrnlHlprFwpValueCreateLocalCopy"
- 
+
    Purpose:  Allocate and populate a local copy of an FWP_VALUE.                                <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -4783,13 +4783,13 @@ _Success_(return != 0)
 FWP_VALUE* KrnlHlprFwpValueCreateLocalCopy(_In_ const FWP_VALUE* pOriginalValue)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpValueCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalValue);
 
    NTSTATUS   status = STATUS_SUCCESS;
@@ -4812,14 +4812,14 @@ FWP_VALUE* KrnlHlprFwpValueCreateLocalCopy(_In_ const FWP_VALUE* pOriginalValue)
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pValue initialized with call to HLPR_NEW & KrnlHlprFwpValuePopulateLocalCopy 
+#pragma warning(disable: 6001) /// pValue initialized with call to HLPR_NEW & KrnlHlprFwpValuePopulateLocalCopy
 
    if(status != STATUS_SUCCESS &&
       pValue)
       KrnlHlprFwpValueDestroyLocalCopy(&pValue);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpValueCreateLocalCopy() [pValue: %#p]\n",
@@ -4839,7 +4839,7 @@ FWP_VALUE* KrnlHlprFwpValueCreateLocalCopy(_In_ const FWP_VALUE* pOriginalValue)
 
 /**
  @kernel_helper_function="KrnlHlprFwpV4AddrAndMaskPurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an FWP_V4_ADDR_AND_MASK.                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -4852,20 +4852,20 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpV4AddrAndMaskPurgeLocalCopy(_Inout_ FWP_V4_ADDR_AND_MASK* pAddrMask)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpV4AddrAndMaskPurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pAddrMask);
 
    RtlZeroMemory(pAddrMask,
                  sizeof(FWP_V4_ADDR_AND_MASK));
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpV4AddrAndMaskPurgeLocalCopy()\n");
@@ -4877,7 +4877,7 @@ VOID KrnlHlprFwpV4AddrAndMaskPurgeLocalCopy(_Inout_ FWP_V4_ADDR_AND_MASK* pAddrM
 
 /**
  @kernel_helper_function="KrnlHlprFwpV4AddrAndMaskDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWP_V4_ADDR_AND_MASK.                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -4893,13 +4893,13 @@ _Success_(*ppAddrMask == 0)
 VOID KrnlHlprFwpV4AddrAndMaskDestroyLocalCopy(_Inout_ FWP_V4_ADDR_AND_MASK** ppAddrMask)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpV4AddrAndMaskDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppAddrMask);
 
    if(*ppAddrMask)
@@ -4909,7 +4909,7 @@ VOID KrnlHlprFwpV4AddrAndMaskDestroyLocalCopy(_Inout_ FWP_V4_ADDR_AND_MASK** ppA
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpV4AddrAndMaskDestroyLocalCopy()\n");
@@ -4921,7 +4921,7 @@ VOID KrnlHlprFwpV4AddrAndMaskDestroyLocalCopy(_Inout_ FWP_V4_ADDR_AND_MASK** ppA
 
 /**
  @kernel_helper_function="KrnlHlprFwpV4AddrAndMaskPopulateLocalCopy"
- 
+
    Purpose:  Populate a local copy of an FWP_V4_ADDR_AND_MASK.                                  <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -4938,13 +4938,13 @@ NTSTATUS KrnlHlprFwpV4AddrAndMaskPopulateLocalCopy(_In_ const FWP_V4_ADDR_AND_MA
                                                    _Inout_ FWP_V4_ADDR_AND_MASK* pAddrMask)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpV4AddrAndMaskPopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalAddrMask);
    NT_ASSERT(pAddrMask);
 
@@ -4954,7 +4954,7 @@ NTSTATUS KrnlHlprFwpV4AddrAndMaskPopulateLocalCopy(_In_ const FWP_V4_ADDR_AND_MA
    pAddrMask->mask = pOriginalAddrMask->mask;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpV4AddrAndMaskPopulateLocalCopy() [status: %#x]\n",
@@ -4967,7 +4967,7 @@ NTSTATUS KrnlHlprFwpV4AddrAndMaskPopulateLocalCopy(_In_ const FWP_V4_ADDR_AND_MA
 
 /**
  @kernel_helper_function="KrnlHlprFwpV4AddrAndMaskCreateLocalCopy"
- 
+
    Purpose:  Allocate and populate a local copy of an FWP_V4_ADDR_AND_MASK.                     <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -4984,13 +4984,13 @@ _Success_(return != 0)
 FWP_V4_ADDR_AND_MASK* KrnlHlprFwpV4AddrAndMaskCreateLocalCopy(_In_ const FWP_V4_ADDR_AND_MASK* pOriginalAddrMask)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpV4AddrAndMaskCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalAddrMask);
 
    NTSTATUS              status    = STATUS_SUCCESS;
@@ -5013,14 +5013,14 @@ FWP_V4_ADDR_AND_MASK* KrnlHlprFwpV4AddrAndMaskCreateLocalCopy(_In_ const FWP_V4_
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pAddrMask initialized with call to HLPR_NEW & KrnlHlprFwpV4AddrAndMaskPopulateLocalCopy 
+#pragma warning(disable: 6001) /// pAddrMask initialized with call to HLPR_NEW & KrnlHlprFwpV4AddrAndMaskPopulateLocalCopy
 
    if(status != STATUS_SUCCESS &&
       pAddrMask)
       KrnlHlprFwpV4AddrAndMaskDestroyLocalCopy(&pAddrMask);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpV4AddrAndMaskCreateLocalCopy() [pAddrMask: %#p]\n",
@@ -5040,7 +5040,7 @@ FWP_V4_ADDR_AND_MASK* KrnlHlprFwpV4AddrAndMaskCreateLocalCopy(_In_ const FWP_V4_
 
 /**
  @kernel_helper_function="KrnlHlprFwpV6AddrAndMaskPurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an FWP_V6_ADDR_AND_MASK.                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -5053,20 +5053,20 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpV6AddrAndMaskPurgeLocalCopy(_Inout_ FWP_V6_ADDR_AND_MASK* pAddrMask)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpV6AddrAndMaskPurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pAddrMask);
 
    RtlZeroMemory(pAddrMask,
                  sizeof(FWP_V6_ADDR_AND_MASK));
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpV6AddrAndMaskPurgeLocalCopy()\n");
@@ -5078,7 +5078,7 @@ VOID KrnlHlprFwpV6AddrAndMaskPurgeLocalCopy(_Inout_ FWP_V6_ADDR_AND_MASK* pAddrM
 
 /**
  @kernel_helper_function="KrnlHlprFwpV6AddrAndMaskDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWP_V6_ADDR_AND_MASK.                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -5094,13 +5094,13 @@ _Success_(*ppAddrMask == 0)
 VOID KrnlHlprFwpV6AddrAndMaskDestroyLocalCopy(_Inout_ FWP_V6_ADDR_AND_MASK** ppAddrMask)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpV6AddrAndMaskDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppAddrMask);
 
    if(*ppAddrMask)
@@ -5110,7 +5110,7 @@ VOID KrnlHlprFwpV6AddrAndMaskDestroyLocalCopy(_Inout_ FWP_V6_ADDR_AND_MASK** ppA
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpV6AddrAndMaskDestroyLocalCopy()\n");
@@ -5122,7 +5122,7 @@ VOID KrnlHlprFwpV6AddrAndMaskDestroyLocalCopy(_Inout_ FWP_V6_ADDR_AND_MASK** ppA
 
 /**
  @kernel_helper_function="KrnlHlprFwpV6AddrAndMaskPopulateLocalCopy"
- 
+
    Purpose:  Populate a local copy of an FWP_V6_ADDR_AND_MASK.                                  <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -5139,13 +5139,13 @@ NTSTATUS KrnlHlprFwpV6AddrAndMaskPopulateLocalCopy(_In_ const FWP_V6_ADDR_AND_MA
                                                    _Inout_ FWP_V6_ADDR_AND_MASK* pAddrMask)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpV6AddrAndMaskPopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalAddrMask);
    NT_ASSERT(pAddrMask);
 
@@ -5158,7 +5158,7 @@ NTSTATUS KrnlHlprFwpV6AddrAndMaskPopulateLocalCopy(_In_ const FWP_V6_ADDR_AND_MA
    pAddrMask->prefixLength = pOriginalAddrMask->prefixLength;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpV6AddrAndMaskPopulateLocalCopy() [status: %#x]\n",
@@ -5171,7 +5171,7 @@ NTSTATUS KrnlHlprFwpV6AddrAndMaskPopulateLocalCopy(_In_ const FWP_V6_ADDR_AND_MA
 
 /**
  @kernel_helper_function="KrnlHlprFwpV6AddrAndMaskCreateLocalCopy"
- 
+
    Purpose:  Allocate and populate a local copy of an FWP_V6_ADDR_AND_MASK.                     <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -5188,13 +5188,13 @@ _Success_(return != 0)
 FWP_V6_ADDR_AND_MASK* KrnlHlprFwpV6AddrAndMaskCreateLocalCopy(_In_ const FWP_V6_ADDR_AND_MASK* pOriginalAddrMask)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpV6AddrAndMaskCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalAddrMask);
 
    NTSTATUS              status    = STATUS_SUCCESS;
@@ -5217,14 +5217,14 @@ FWP_V6_ADDR_AND_MASK* KrnlHlprFwpV6AddrAndMaskCreateLocalCopy(_In_ const FWP_V6_
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pAddrMask initialized with call to HLPR_NEW & KrnlHlprFwpV6AddrAndMaskPopulateLocalCopy 
+#pragma warning(disable: 6001) /// pAddrMask initialized with call to HLPR_NEW & KrnlHlprFwpV6AddrAndMaskPopulateLocalCopy
 
    if(status != STATUS_SUCCESS &&
       pAddrMask)
       KrnlHlprFwpV6AddrAndMaskDestroyLocalCopy(&pAddrMask);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpV6AddrAndMaskCreateLocalCopy() [pAddrMask: %#p]\n",
@@ -5244,7 +5244,7 @@ FWP_V6_ADDR_AND_MASK* KrnlHlprFwpV6AddrAndMaskCreateLocalCopy(_In_ const FWP_V6_
 
 /**
  @kernel_helper_function="KrnlHlprFwpRangePurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an FWP_RANGE.                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -5257,13 +5257,13 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpRangePurgeLocalCopy(_Inout_ FWP_RANGE* pRange)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpRangePurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pRange);
 
    KrnlHlprFwpValuePurgeLocalCopy(&(pRange->valueLow));
@@ -5271,7 +5271,7 @@ VOID KrnlHlprFwpRangePurgeLocalCopy(_Inout_ FWP_RANGE* pRange)
    KrnlHlprFwpValuePurgeLocalCopy(&(pRange->valueHigh));
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpRangePurgeLocalCopy()\n");
@@ -5283,7 +5283,7 @@ VOID KrnlHlprFwpRangePurgeLocalCopy(_Inout_ FWP_RANGE* pRange)
 
 /**
  @kernel_helper_function="KrnlHlprFwpRangeDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWP_RANGE.                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -5299,13 +5299,13 @@ _Success_(*ppRange == 0)
 VOID KrnlHlprFwpRangeDestroyLocalCopy(_Inout_ FWP_RANGE** ppRange)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpRangeDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppRange);
 
    if(*ppRange)
@@ -5315,7 +5315,7 @@ VOID KrnlHlprFwpRangeDestroyLocalCopy(_Inout_ FWP_RANGE** ppRange)
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpRangeDestroyLocalCopy()\n");
@@ -5327,7 +5327,7 @@ VOID KrnlHlprFwpRangeDestroyLocalCopy(_Inout_ FWP_RANGE** ppRange)
 
 /**
  @kernel_helper_function="KrnlHlprFwpRangePopulateLocalCopy"
- 
+
    Purpose:  Populate a local copy of an FWP_RANGE.                                             <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -5344,13 +5344,13 @@ NTSTATUS KrnlHlprFwpRangePopulateLocalCopy(_In_ const FWP_RANGE* pOriginalRange,
                                            _Inout_ FWP_RANGE* pRange)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpRangePopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalRange);
    NT_ASSERT(pRange);
 
@@ -5370,7 +5370,7 @@ NTSTATUS KrnlHlprFwpRangePopulateLocalCopy(_In_ const FWP_RANGE* pOriginalRange,
       KrnlHlprFwpRangePurgeLocalCopy(pRange);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpRangePopulateLocalCopy() [status: %#x]\n",
@@ -5383,7 +5383,7 @@ NTSTATUS KrnlHlprFwpRangePopulateLocalCopy(_In_ const FWP_RANGE* pOriginalRange,
 
 /**
  @kernel_helper_function="KrnlHlprFwpRangeCreateLocalCopy"
- 
+
    Purpose:  Allocate and populate a local copy of an FWP_RANGE.                                <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -5400,13 +5400,13 @@ _Success_(return != 0)
 FWP_RANGE* KrnlHlprFwpRangeCreateLocalCopy(_In_ const FWP_RANGE* pOriginalRange)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpRangeCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalRange);
 
    NTSTATUS   status = STATUS_SUCCESS;
@@ -5434,14 +5434,14 @@ FWP_RANGE* KrnlHlprFwpRangeCreateLocalCopy(_In_ const FWP_RANGE* pOriginalRange)
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pRange initialized with call to HLPR_NEW & KrnlHlprFwpValuePopulateLocalCopy 
+#pragma warning(disable: 6001) /// pRange initialized with call to HLPR_NEW & KrnlHlprFwpValuePopulateLocalCopy
 
    if(status != STATUS_SUCCESS &&
       pRange)
       KrnlHlprFwpRangeDestroyLocalCopy(&pRange);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpRangeCreateLocalCopy() [pRange: %#p]\n",
@@ -5461,7 +5461,7 @@ FWP_RANGE* KrnlHlprFwpRangeCreateLocalCopy(_In_ const FWP_RANGE* pOriginalRange)
 
 /**
  @kernel_helper_function="KrnlHlprFwpConditionValuePurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an FWP_CONDITION_VALUE.                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -5474,13 +5474,13 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpConditionValuePurgeLocalCopy(_Inout_ FWP_CONDITION_VALUE* pValue)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpConditionValuePurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pValue);
 
    switch(pValue->type)
@@ -5599,7 +5599,7 @@ VOID KrnlHlprFwpConditionValuePurgeLocalCopy(_Inout_ FWP_CONDITION_VALUE* pValue
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpConditionValuePurgeLocalCopy()\n");
@@ -5611,7 +5611,7 @@ VOID KrnlHlprFwpConditionValuePurgeLocalCopy(_Inout_ FWP_CONDITION_VALUE* pValue
 
 /**
  @kernel_helper_function="KrnlHlprFwpConditionValueDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWP_CONDITION_VALUE.                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -5627,13 +5627,13 @@ _Success_(*ppValue == 0)
 VOID KrnlHlprFwpConditionValueDestroyLocalCopy(_Inout_ FWP_CONDITION_VALUE** ppValue)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpConditionValueDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppValue);
 
    if(*ppValue)
@@ -5643,7 +5643,7 @@ VOID KrnlHlprFwpConditionValueDestroyLocalCopy(_Inout_ FWP_CONDITION_VALUE** ppV
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpConditionValueDestroyLocalCopy()\n");
@@ -5655,7 +5655,7 @@ VOID KrnlHlprFwpConditionValueDestroyLocalCopy(_Inout_ FWP_CONDITION_VALUE** ppV
 
 /**
  @kernel_helper_function="KrnlHlprFwpConditionValuePopulateLocalCopy"
- 
+
    Purpose:  Populate a local copy of an FWP_CONDITION_VALUE.                                   <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using
@@ -5672,13 +5672,13 @@ NTSTATUS KrnlHlprFwpConditionValuePopulateLocalCopy(_In_ const FWP_CONDITION_VAL
                                                     _Inout_ FWP_CONDITION_VALUE* pValue)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpConditionValuePopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalValue);
    NT_ASSERT(pValue);
 
@@ -5898,7 +5898,7 @@ NTSTATUS KrnlHlprFwpConditionValuePopulateLocalCopy(_In_ const FWP_CONDITION_VAL
       KrnlHlprFwpConditionValuePurgeLocalCopy(pValue);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpConditionValuePopulateLocalCopy() [status: %#x]\n",
@@ -5911,7 +5911,7 @@ NTSTATUS KrnlHlprFwpConditionValuePopulateLocalCopy(_In_ const FWP_CONDITION_VAL
 
 /**
  @kernel_helper_function="KrnlHlprFwpConditionValueCreateLocalCopy"
- 
+
    Purpose:  Allocate ans populate a local copy of an FWP_CONDITION_VALUE.                      <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using
@@ -5928,13 +5928,13 @@ _Success_(return != 0)
 FWP_CONDITION_VALUE* KrnlHlprFwpConditionValueCreateLocalCopy(_In_ const FWP_CONDITION_VALUE* pOriginalValue)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpConditionValueCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalValue);
 
    NTSTATUS             status          = STATUS_SUCCESS;
@@ -5957,14 +5957,14 @@ FWP_CONDITION_VALUE* KrnlHlprFwpConditionValueCreateLocalCopy(_In_ const FWP_CON
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pConditionValue initialized with call to HLPR_NEW & KrnlHlprFwpConditionValuePopulateLocalCopy 
+#pragma warning(disable: 6001) /// pConditionValue initialized with call to HLPR_NEW & KrnlHlprFwpConditionValuePopulateLocalCopy
 
    if(status != STATUS_SUCCESS &&
       pConditionValue)
       KrnlHlprFwpConditionValueDestroyLocalCopy(&pConditionValue);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpConditionValueCreateLocalCopy() [pConditionValue: %#p]\n",
@@ -5984,8 +5984,8 @@ FWP_CONDITION_VALUE* KrnlHlprFwpConditionValueCreateLocalCopy(_In_ const FWP_CON
 
 /**
  @kernel_helper_function="KrnlHlprFwpsIncomingValueConditionFlagsAreSet"
- 
-   Purpose:  Determine if the FWPS_INCOMING_VALUES has the FLAGS condition set with the given 
+
+   Purpose:  Determine if the FWPS_INCOMING_VALUES has the FLAGS condition set with the given
              flags.                                                                             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -6000,13 +6000,13 @@ BOOLEAN KrnlHlprFwpsIncomingValueConditionFlagsAreSet(_In_ const FWPS_INCOMING_V
                                                       _In_ UINT32 flags)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsIncomingValueConditionFlagsAreSet()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pClassifyValues);
 
    BOOLEAN    flagsAreSet = FALSE;
@@ -6018,7 +6018,7 @@ BOOLEAN KrnlHlprFwpsIncomingValueConditionFlagsAreSet(_In_ const FWPS_INCOMING_V
       flagsAreSet = TRUE;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsIncomingValueConditionFlagsAreSet()\n");
@@ -6030,7 +6030,7 @@ BOOLEAN KrnlHlprFwpsIncomingValueConditionFlagsAreSet(_In_ const FWPS_INCOMING_V
 
 /**
  @kernel_helper_function="KrnlHlprFwpsIncomingValuesPurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an FWPS_INCOMING_VALUES.                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -6043,13 +6043,13 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpsIncomingValuesPurgeLocalCopy(_Inout_ FWPS_INCOMING_VALUES* pValues)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsIncomingValuesPurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pValues);
 
    for(UINT32 valueIndex = 0;
@@ -6063,7 +6063,7 @@ VOID KrnlHlprFwpsIncomingValuesPurgeLocalCopy(_Inout_ FWPS_INCOMING_VALUES* pVal
                      WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsIncomingValuesPurgeLocalCopy()\n");
@@ -6075,7 +6075,7 @@ VOID KrnlHlprFwpsIncomingValuesPurgeLocalCopy(_Inout_ FWPS_INCOMING_VALUES* pVal
 
 /**
  @kernel_helper_function="KrnlHlprFwpsIncomingValuesDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWPS_INCOMING_VALUES.                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -6091,23 +6091,23 @@ _Success_(*ppValues == 0)
 VOID KrnlHlprFwpsIncomingValuesDestroyLocalCopy(_Inout_ FWPS_INCOMING_VALUES** ppValues)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsIncomingValuesDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppValues);
 
    if(*ppValues)
       KrnlHlprFwpsIncomingValuesPurgeLocalCopy(*ppValues);
-      
+
    HLPR_DELETE(*ppValues,
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsIncomingValuesDestroyLocalCopy()\n");
@@ -6119,7 +6119,7 @@ VOID KrnlHlprFwpsIncomingValuesDestroyLocalCopy(_Inout_ FWPS_INCOMING_VALUES** p
 
 /**
  @kernel_helper_function="KrnlHlprFwpsIncomingValuesPopulateLocalCopy"
- 
+
    Purpose:  Populate a local copy of an FWPS_INCOMING_VALUES.                                  <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -6136,13 +6136,13 @@ NTSTATUS KrnlHlprFwpsIncomingValuesPopulateLocalCopy(_In_ const FWPS_INCOMING_VA
                                                      _Inout_ FWPS_INCOMING_VALUES* pValues)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsIncomingValuesPopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalValues);
    NT_ASSERT(pValues);
 
@@ -6173,7 +6173,7 @@ NTSTATUS KrnlHlprFwpsIncomingValuesPopulateLocalCopy(_In_ const FWPS_INCOMING_VA
       KrnlHlprFwpsIncomingValuesPurgeLocalCopy(pValues);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsIncomingValuesPopulateLocalCopy() [status: %#x]\n",
@@ -6186,7 +6186,7 @@ NTSTATUS KrnlHlprFwpsIncomingValuesPopulateLocalCopy(_In_ const FWPS_INCOMING_VA
 
 /**
  @kernel_helper_function="KrnlHlprFwpsIncomingValuesCreateLocalCopy"
- 
+
    Purpose:  Allocate and populate a local copy of an FWPS_INCOMING_VALUES.                     <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -6203,13 +6203,13 @@ _Success_(return != 0)
 FWPS_INCOMING_VALUES* KrnlHlprFwpsIncomingValuesCreateLocalCopy(_In_ const FWPS_INCOMING_VALUES* pOriginalValues)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsIncomingValuesCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalValues);
 
    NTSTATUS              status          = STATUS_SUCCESS;
@@ -6232,14 +6232,14 @@ FWPS_INCOMING_VALUES* KrnlHlprFwpsIncomingValuesCreateLocalCopy(_In_ const FWPS_
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pIncomingValues initialized with call to HLPR_NEW & KrnlHlprFwpsIncomingValuesPopulateLocalCopy 
+#pragma warning(disable: 6001) /// pIncomingValues initialized with call to HLPR_NEW & KrnlHlprFwpsIncomingValuesPopulateLocalCopy
 
    if(status != STATUS_SUCCESS &&
       pIncomingValues)
       KrnlHlprFwpsIncomingValuesDestroyLocalCopy(&pIncomingValues);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsIncomingValuesCreateLocalCopy() [pIncomingValues: %#p]\n",
@@ -6259,7 +6259,7 @@ FWPS_INCOMING_VALUES* KrnlHlprFwpsIncomingValuesCreateLocalCopy(_In_ const FWPS_
 
 /**
  @kernel_helper_function="KrnlHlprFwpsIncomingMetadataValuesPurgeLocalCopy
- 
+
    Purpose:  Cleanup a local copy of an FWPS_INCOMING_METADATA_VALUES.                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -6272,13 +6272,13 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpsIncomingMetadataValuesPurgeLocalCopy(_Inout_ FWPS_INCOMING_METADATA_VALUES* pMetadata)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsIncomingMetadataValuesPurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pMetadata);
 
    KrnlHlprFwpByteBlobDestroyLocalCopy(&(pMetadata->processPath));
@@ -6306,7 +6306,7 @@ VOID KrnlHlprFwpsIncomingMetadataValuesPurgeLocalCopy(_Inout_ FWPS_INCOMING_META
 #endif /// (NTDDI_VERSION >= NTDDI_WIN6SP1)
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsIncomingMetadataValuesPurgeLocalCopy()\n");
@@ -6318,7 +6318,7 @@ VOID KrnlHlprFwpsIncomingMetadataValuesPurgeLocalCopy(_Inout_ FWPS_INCOMING_META
 
 /**
  @kernel_helper_function="KrnlHlprFwpsIncomingMetadataValuesDestroyLocalCopy
- 
+
    Purpose:  Cleanup and free a local copy of an FWPS_INCOMING_METADATA_VALUES.                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -6334,13 +6334,13 @@ _Success_(*ppMetadata == 0)
 VOID KrnlHlprFwpsIncomingMetadataValuesDestroyLocalCopy(_Inout_ FWPS_INCOMING_METADATA_VALUES** ppMetadata)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsIncomingMetadataValuesDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppMetadata);
 
    if(*ppMetadata)
@@ -6350,7 +6350,7 @@ VOID KrnlHlprFwpsIncomingMetadataValuesDestroyLocalCopy(_Inout_ FWPS_INCOMING_ME
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsIncomingMetadataValuesDestroyLocalCopy()\n");
@@ -6362,10 +6362,10 @@ VOID KrnlHlprFwpsIncomingMetadataValuesDestroyLocalCopy(_Inout_ FWPS_INCOMING_ME
 
 /**
  @kernel_helper_function="KrnlHlprFwpsIncomingMetadataValuesPopulateLocalCopy
- 
+
    Purpose:  Populate a local copy of the FWPS_INCOMING_METADATA_VALUES.                        <br>
                                                                                                 <br>
-   Notes:    The caller is responsible for freeing any allocated memory using 
+   Notes:    The caller is responsible for freeing any allocated memory using
              KrnlHlprFwpsIncomingMetadataValuesPurgeLocalCopy().                                <br>
                                                                                                 <br>
    MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/Windows/Hardware/FF552397.aspx             <br>
@@ -6379,13 +6379,13 @@ NTSTATUS KrnlHlprFwpsIncomingMetadataValuesPopulateLocalCopy(_In_ const FWPS_INC
                                                              _Inout_ FWPS_INCOMING_METADATA_VALUES* pMetadata)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsIncomingMetadataValuesPopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalMetadata);
 
    NTSTATUS status = STATUS_SUCCESS;
@@ -6543,7 +6543,7 @@ NTSTATUS KrnlHlprFwpsIncomingMetadataValuesPopulateLocalCopy(_In_ const FWPS_INC
                                      FWPS_METADATA_FIELD_ORIGINAL_DESTINATION))
    {
       BYTE*  pDestination = 0;
-      SIZE_T sockAddrSize = (pOriginalMetadata->originalDestination->sa_family == AF_INET) ? 
+      SIZE_T sockAddrSize = (pOriginalMetadata->originalDestination->sa_family == AF_INET) ?
                             sizeof(SOCKADDR_IN) :
                             sizeof(SOCKADDR_IN6);
 
@@ -6617,7 +6617,7 @@ NTSTATUS KrnlHlprFwpsIncomingMetadataValuesPopulateLocalCopy(_In_ const FWPS_INC
       KrnlHlprFwpsIncomingMetadataValuesPurgeLocalCopy(pMetadata);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsIncomingMetadataValuesPopulateLocalCopy() [status: %#x]\n",
@@ -6630,7 +6630,7 @@ NTSTATUS KrnlHlprFwpsIncomingMetadataValuesPopulateLocalCopy(_In_ const FWPS_INC
 
 /**
  @kernel_helper_function="KrnlHlprFwpsIncomingMetadataValuesCreateLocalCopy
- 
+
    Purpose:  Allocate and populate a local copy of the FWPS_INCOMING_METADATA_VALUES.           <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -6647,13 +6647,13 @@ _Success_(return != 0)
 FWPS_INCOMING_METADATA_VALUES* KrnlHlprFwpsIncomingMetadataValuesCreateLocalCopy(_In_ const FWPS_INCOMING_METADATA_VALUES* pOriginalMetadata)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsIncomingMetadataValuesCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalMetadata);
 
    NTSTATUS                       status    = STATUS_SUCCESS;
@@ -6676,14 +6676,14 @@ FWPS_INCOMING_METADATA_VALUES* KrnlHlprFwpsIncomingMetadataValuesCreateLocalCopy
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pMetadata initialized with call to HLPR_NEW & KrnlHlprFwpsIncomingMetadataValuesPopulateLocalCopy 
+#pragma warning(disable: 6001) /// pMetadata initialized with call to HLPR_NEW & KrnlHlprFwpsIncomingMetadataValuesPopulateLocalCopy
 
    if(status != STATUS_SUCCESS &&
       pMetadata)
       KrnlHlprFwpsIncomingMetadataValuesDestroyLocalCopy(&pMetadata);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsIncomingMetadataValuesCreateLocalCopy() [pMetadata: %#p]\n",
@@ -6703,7 +6703,7 @@ FWPS_INCOMING_METADATA_VALUES* KrnlHlprFwpsIncomingMetadataValuesCreateLocalCopy
 
 /**
  @kernel_helper_function="KrnlHlprFwpsClassifyOutPurgeLocalCopy"
- 
+
    Purpose:  Cleanup  a local copy of an FWPS_CLASSIFY_OUT.                                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -6716,20 +6716,20 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpsClassifyOutPurgeLocalCopy(_Inout_ FWPS_CLASSIFY_OUT* pOriginalClassifyOut)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsClassifyOutPurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalClassifyOut);
 
    RtlZeroMemory(pOriginalClassifyOut,
                  sizeof(FWPS_CLASSIFY_OUT));
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsClassifyOutPurgeLocalCopy()\n");
@@ -6741,7 +6741,7 @@ VOID KrnlHlprFwpsClassifyOutPurgeLocalCopy(_Inout_ FWPS_CLASSIFY_OUT* pOriginalC
 
 /**
  @kernel_helper_function="KrnlHlprFwpsClassifyOutDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWPS_CLASSIFY_OUT.                             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -6757,13 +6757,13 @@ _Success_(*ppClassifyOut == 0)
 VOID KrnlHlprFwpsClassifyOutDestroyLocalCopy(_Inout_ FWPS_CLASSIFY_OUT** ppClassifyOut)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsClassifyOutDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppClassifyOut);
 
    if(*ppClassifyOut)
@@ -6773,7 +6773,7 @@ VOID KrnlHlprFwpsClassifyOutDestroyLocalCopy(_Inout_ FWPS_CLASSIFY_OUT** ppClass
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsClassifyOutDestroyLocalCopy()\n");
@@ -6785,7 +6785,7 @@ VOID KrnlHlprFwpsClassifyOutDestroyLocalCopy(_Inout_ FWPS_CLASSIFY_OUT** ppClass
 
 /**
  @kernel_helper_function="KrnlHlprFwpsClassifyOutPopulateLocalCopy"
- 
+
    Purpose:  Populate a local copy of the FWPS_CLASSIFY_OUT.                                    <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -6800,13 +6800,13 @@ VOID KrnlHlprFwpsClassifyOutPopulateLocalCopy(_In_ const FWPS_CLASSIFY_OUT* pOri
                                                      _Inout_ FWPS_CLASSIFY_OUT* pClassifyOut)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsClassifyOutPopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalClassifyOut);
    NT_ASSERT(pClassifyOut);
 
@@ -6815,7 +6815,7 @@ VOID KrnlHlprFwpsClassifyOutPopulateLocalCopy(_In_ const FWPS_CLASSIFY_OUT* pOri
                  sizeof(FWPS_CLASSIFY_OUT));
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsClassifyOutPopulateLocalCopy()\n");
@@ -6827,7 +6827,7 @@ VOID KrnlHlprFwpsClassifyOutPopulateLocalCopy(_In_ const FWPS_CLASSIFY_OUT* pOri
 
 /**
  @kernel_helper_function="KrnlHlprFwpsClassifyOutCreateLocalCopy"
- 
+
    Purpose:  Allocate and populate a local copy of the FWPS_CLASSIFY_OUT.                       <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -6844,13 +6844,13 @@ _Success_(return != 0)
 FWPS_CLASSIFY_OUT* KrnlHlprFwpsClassifyOutCreateLocalCopy(_In_ const FWPS_CLASSIFY_OUT* pOriginalClassifyOut)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsClassifyOutCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalClassifyOut);
 
    NTSTATUS           status       = 0;
@@ -6874,7 +6874,7 @@ FWPS_CLASSIFY_OUT* KrnlHlprFwpsClassifyOutCreateLocalCopy(_In_ const FWPS_CLASSI
               status);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsClassifyOutCreateLocalCopy() [pClassifyOut: %#p]\n",
@@ -6892,7 +6892,7 @@ FWPS_CLASSIFY_OUT* KrnlHlprFwpsClassifyOutCreateLocalCopy(_In_ const FWPS_CLASSI
 
 /**
  @kernel_helper_function="KrnlHlprFwpsStreamDataPurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an FWPS_STREAM_DATA.                                       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -6905,13 +6905,13 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpsStreamDataPurgeLocalCopy(_Inout_ FWPS_STREAM_DATA* pStreamData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsStreamDataPurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pStreamData);
 
    BOOLEAN isDispatch = (KeGetCurrentIrql() == DISPATCH_LEVEL) ? TRUE : FALSE;
@@ -6931,7 +6931,7 @@ VOID KrnlHlprFwpsStreamDataPurgeLocalCopy(_Inout_ FWPS_STREAM_DATA* pStreamData)
    pStreamData->netBufferListChain = 0;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsStreamDataPurgeLocalCopy()\n");
@@ -6943,7 +6943,7 @@ VOID KrnlHlprFwpsStreamDataPurgeLocalCopy(_Inout_ FWPS_STREAM_DATA* pStreamData)
 
 /**
  @kernel_helper_function="KrnlHlprFwpsStreamDataDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWPS_STREAM_DATA.                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -6959,13 +6959,13 @@ _Success_(*ppStreamData == 0)
 VOID KrnlHlprFwpsStreamDataDestroyLocalCopy(_Inout_ FWPS_STREAM_DATA** ppStreamData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsStreamDataDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppStreamData);
 
    if(*ppStreamData)
@@ -6975,7 +6975,7 @@ VOID KrnlHlprFwpsStreamDataDestroyLocalCopy(_Inout_ FWPS_STREAM_DATA** ppStreamD
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsStreamDataDestroyLocalCopy()\n");
@@ -6987,10 +6987,10 @@ VOID KrnlHlprFwpsStreamDataDestroyLocalCopy(_Inout_ FWPS_STREAM_DATA** ppStreamD
 
 /**
  @kernel_helper_function="KrnlHlprFwpsStreamDataPopulateLocalCopy
- 
+
    Purpose:  Populate a local copy of the FWPS_STREAM_DATA.                                     <br>
                                                                                                 <br>
-   Notes:    The caller is responsible for freeing the allocated memory using 
+   Notes:    The caller is responsible for freeing the allocated memory using
              KrnlHlprFwpsStreamDataPurgeLocalCopy().                                            <br>
                                                                                                 <br>
    MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/Windows/Hardware/FF552419.aspx             <br>
@@ -7004,13 +7004,13 @@ NTSTATUS KrnlHlprFwpsStreamDataPopulateLocalCopy(_In_ const FWPS_STREAM_DATA* pO
                                                  _Inout_ FWPS_STREAM_DATA* pStreamData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsStreamDataPopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalStreamData);
    NT_ASSERT(pStreamData);
 
@@ -7030,7 +7030,7 @@ NTSTATUS KrnlHlprFwpsStreamDataPopulateLocalCopy(_In_ const FWPS_STREAM_DATA* pO
    pStreamData->netBufferListChain = pOriginalStreamData->netBufferListChain;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsStreamDataPopulateLocalCopy() [status: %#x]\n",
@@ -7043,10 +7043,10 @@ NTSTATUS KrnlHlprFwpsStreamDataPopulateLocalCopy(_In_ const FWPS_STREAM_DATA* pO
 
 /**
  @kernel_helper_function="KrnlHlprFwpsStreamDataCreateLocalCopy
- 
+
    Purpose:  Allocate and populate a local copy of the FWPS_STREAM_DATA.                        <br>
                                                                                                 <br>
-   Notes:    The caller is responsible for freeing the allocated memory using 
+   Notes:    The caller is responsible for freeing the allocated memory using
              KrnlHlprFwpsStreamDataDestroyLocalCopy().                                          <br>
                                                                                                 <br>
    MSDN_Ref: HTTP://MSDN.Microsoft.com/En-US/Library/Windows/Hardware/FF552419.aspx             <br>
@@ -7060,13 +7060,13 @@ _Success_(return != 0)
 FWPS_STREAM_DATA* KrnlHlprFwpsStreamDataCreateLocalCopy(_In_ const FWPS_STREAM_DATA* pOriginalStreamData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsStreamDataCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalStreamData);
 
    NTSTATUS          status      = STATUS_SUCCESS;
@@ -7089,14 +7089,14 @@ FWPS_STREAM_DATA* KrnlHlprFwpsStreamDataCreateLocalCopy(_In_ const FWPS_STREAM_D
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pStreamData initialized with call to HLPR_NEW & KrnlHlprFwpsStreamDataPopulateLocalCopy 
+#pragma warning(disable: 6001) /// pStreamData initialized with call to HLPR_NEW & KrnlHlprFwpsStreamDataPopulateLocalCopy
 
    if(status != STATUS_SUCCESS &&
       pStreamData)
       KrnlHlprFwpsStreamDataDestroyLocalCopy(&pStreamData);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsStreamDataCreateLocalCopy() [pStreamData: %#p]\n",
@@ -7116,7 +7116,7 @@ FWPS_STREAM_DATA* KrnlHlprFwpsStreamDataCreateLocalCopy(_In_ const FWPS_STREAM_D
 
 /**
  @kernel_helper_function="KrnlHlprFwpsStreamCalloutIOPacketPurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an FWPS_STREAM_CALLOUT_IO_PACKET.                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -7129,13 +7129,13 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpsStreamCalloutIOPacketPurgeLocalCopy(_Inout_ FWPS_STREAM_CALLOUT_IO_PACKET* pIOPacket)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsStreamCalloutIOPacketPurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pIOPacket);
 
    KrnlHlprFwpsStreamDataDestroyLocalCopy(&(pIOPacket->streamData));
@@ -7144,7 +7144,7 @@ VOID KrnlHlprFwpsStreamCalloutIOPacketPurgeLocalCopy(_Inout_ FWPS_STREAM_CALLOUT
                  sizeof(FWPS_STREAM_CALLOUT_IO_PACKET));
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsStreamCalloutIOPacketPurgeLocalCopy()\n");
@@ -7156,7 +7156,7 @@ VOID KrnlHlprFwpsStreamCalloutIOPacketPurgeLocalCopy(_Inout_ FWPS_STREAM_CALLOUT
 
 /**
  @kernel_helper_function="KrnlHlprFwpsStreamCalloutIOPacketDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWPS_STREAM_CALLOUT_IO_PACKET.                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -7172,13 +7172,13 @@ _Success_(*ppIOPacket == 0)
 VOID KrnlHlprFwpsStreamCalloutIOPacketDestroyLocalCopy(_Inout_ FWPS_STREAM_CALLOUT_IO_PACKET** ppIOPacket)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsStreamCalloutIOPacketDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppIOPacket);
 
    if(*ppIOPacket)
@@ -7188,7 +7188,7 @@ VOID KrnlHlprFwpsStreamCalloutIOPacketDestroyLocalCopy(_Inout_ FWPS_STREAM_CALLO
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsStreamCalloutIOPacketDestroyLocalCopy()\n");
@@ -7200,7 +7200,7 @@ VOID KrnlHlprFwpsStreamCalloutIOPacketDestroyLocalCopy(_Inout_ FWPS_STREAM_CALLO
 
 /**
  @kernel_helper_function="KrnlHlprFwpsStreamCalloutIOPacketPopulateLocalCopy
- 
+
    Purpose:  Populate a local copy of the FWPS_STREAM_CALLOUT_IO_PACKET.                        <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -7217,13 +7217,13 @@ NTSTATUS KrnlHlprFwpsStreamCalloutIOPacketPopulateLocalCopy(_In_ const FWPS_STRE
                                                             _Inout_ FWPS_STREAM_CALLOUT_IO_PACKET* pIOPacket)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsStreamCalloutIOPacketPopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalIOPacket);
    NT_ASSERT(pIOPacket);
 
@@ -7244,7 +7244,7 @@ NTSTATUS KrnlHlprFwpsStreamCalloutIOPacketPopulateLocalCopy(_In_ const FWPS_STRE
       KrnlHlprFwpsStreamCalloutIOPacketPurgeLocalCopy(pIOPacket);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsStreamCalloutIOPacketPopulateLocalCopy() [status: %#x]\n",
@@ -7257,7 +7257,7 @@ NTSTATUS KrnlHlprFwpsStreamCalloutIOPacketPopulateLocalCopy(_In_ const FWPS_STRE
 
 /**
  @kernel_helper_function="KrnlHlprFwpsStreamCalloutIOPacketCreateLocalCopy
- 
+
    Purpose:  Allocate and populate a local copy of the FWPS_STREAM_CALLOUT_IO_PACKET.           <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -7274,13 +7274,13 @@ _Success_(return != 0)
 FWPS_STREAM_CALLOUT_IO_PACKET* KrnlHlprFwpsStreamCalloutIOPacketCreateLocalCopy(_In_ const FWPS_STREAM_CALLOUT_IO_PACKET* pOriginalIOPacket)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsStreamCalloutIOPacketCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalIOPacket);
 
    NTSTATUS                       status    = STATUS_SUCCESS;
@@ -7303,7 +7303,7 @@ FWPS_STREAM_CALLOUT_IO_PACKET* KrnlHlprFwpsStreamCalloutIOPacketCreateLocalCopy(
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pIOPacket initialized with call to HLPR_NEW & KrnlHlprFwpsStreamCalloutIOPacketPopulateLocalCopy 
+#pragma warning(disable: 6001) /// pIOPacket initialized with call to HLPR_NEW & KrnlHlprFwpsStreamCalloutIOPacketPopulateLocalCopy
 
    if(status != STATUS_SUCCESS)
       KrnlHlprFwpsStreamCalloutIOPacketDestroyLocalCopy(&pIOPacket);
@@ -7311,7 +7311,7 @@ FWPS_STREAM_CALLOUT_IO_PACKET* KrnlHlprFwpsStreamCalloutIOPacketCreateLocalCopy(
 #pragma warning(push)
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsStreamCalloutIOPacketCreateLocalCopy() [pIOPacket: %#p]\n",
@@ -7329,7 +7329,7 @@ FWPS_STREAM_CALLOUT_IO_PACKET* KrnlHlprFwpsStreamCalloutIOPacketCreateLocalCopy(
 
 /**
  @kernel_helper_function="KrnlHlprFwpmProviderContextPurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an FWPM_PROVIDER_CONTEXT.                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -7344,13 +7344,13 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpmProviderContextPurgeLocalCopy(_Inout_ FWPM_PROVIDER_CONTEXT* pContext)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmProviderContextPurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pContext);
 
    switch(pContext->type)
@@ -7434,7 +7434,7 @@ VOID KrnlHlprFwpmProviderContextPurgeLocalCopy(_Inout_ FWPM_PROVIDER_CONTEXT* pC
    KrnlHlprFwpmDisplayDataPurgeLocalCopy(&(pContext->displayData));
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmProviderContextPurgeLocalCopy()\n");
@@ -7446,7 +7446,7 @@ VOID KrnlHlprFwpmProviderContextPurgeLocalCopy(_Inout_ FWPM_PROVIDER_CONTEXT* pC
 
 /**
  @kernel_helper_function="KrnlHlprFwpmProviderContextDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWPM_PROVIDER_CONTEXT.                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -7464,13 +7464,13 @@ _Success_(*ppContext == 0)
 VOID KrnlHlprFwpmProviderContextDestroyLocalCopy(_Inout_ FWPM_PROVIDER_CONTEXT** ppContext)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmProviderContextDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppContext);
 
    if(*ppContext)
@@ -7480,7 +7480,7 @@ VOID KrnlHlprFwpmProviderContextDestroyLocalCopy(_Inout_ FWPM_PROVIDER_CONTEXT**
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmProviderContextDestroyLocalCopy()\n");
@@ -7492,7 +7492,7 @@ VOID KrnlHlprFwpmProviderContextDestroyLocalCopy(_Inout_ FWPM_PROVIDER_CONTEXT**
 
 /**
  @kernel_helper_function="KrnlHlprFwpmProviderContextPopulateLocalCopy
- 
+
    Purpose:  Populate a local copy of the FWPM_PROVIDER_CONTEXT.                                <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -7511,13 +7511,13 @@ NTSTATUS KrnlHlprFwpmProviderContextPopulateLocalCopy(_In_ const FWPM_PROVIDER_C
                                                       _Inout_ FWPM_PROVIDER_CONTEXT* pProviderContext)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmProviderContextPopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalContext);
    NT_ASSERT(pProviderContext);
 
@@ -7624,7 +7624,7 @@ NTSTATUS KrnlHlprFwpmProviderContextPopulateLocalCopy(_In_ const FWPM_PROVIDER_C
       KrnlHlprFwpmProviderContextPurgeLocalCopy(pProviderContext);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmProviderContextPopulateLocalCopy() [status: %#x]\n",
@@ -7637,7 +7637,7 @@ NTSTATUS KrnlHlprFwpmProviderContextPopulateLocalCopy(_In_ const FWPM_PROVIDER_C
 
 /**
  @kernel_helper_function="KrnlHlprFwpmProviderContextCreateLocalCopy
- 
+
    Purpose:  Allocate and populate a local copy of the FWPM_PROVIDER_CONTEXT.                   <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -7656,13 +7656,13 @@ _Success_(return != 0)
 FWPM_PROVIDER_CONTEXT* KrnlHlprFwpmProviderContextCreateLocalCopy(_In_ const FWPM_PROVIDER_CONTEXT* pOriginalContext)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmProviderContextCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalContext);
 
    NTSTATUS               status           = STATUS_SUCCESS;
@@ -7685,7 +7685,7 @@ FWPM_PROVIDER_CONTEXT* KrnlHlprFwpmProviderContextCreateLocalCopy(_In_ const FWP
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pProviderContext initialized with call to HLPR_NEW & KrnlHlprFwpmProviderContextPopulateLocalCopy 
+#pragma warning(disable: 6001) /// pProviderContext initialized with call to HLPR_NEW & KrnlHlprFwpmProviderContextPopulateLocalCopy
 
    if(status !=  STATUS_SUCCESS)
       KrnlHlprFwpmProviderContextDestroyLocalCopy(&pProviderContext);
@@ -7693,7 +7693,7 @@ FWPM_PROVIDER_CONTEXT* KrnlHlprFwpmProviderContextCreateLocalCopy(_In_ const FWP
 #pragma warning(pop)
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmProviderContextCreateLocalCopy() [pProviderContext: %#p]\n",
@@ -7711,7 +7711,7 @@ FWPM_PROVIDER_CONTEXT* KrnlHlprFwpmProviderContextCreateLocalCopy(_In_ const FWP
 
 /**
  @kernel_helper_function="KrnlHlprFwpsFilterConditionPurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an FWPS_FILTER_CONDITION.                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -7724,13 +7724,13 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpsFilterConditionPurgeLocalCopy(_Inout_ FWPS_FILTER_CONDITION* pCondition)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsFilterConditionPurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pCondition);
 
    KrnlHlprFwpConditionValuePurgeLocalCopy(&(pCondition->conditionValue));
@@ -7741,7 +7741,7 @@ VOID KrnlHlprFwpsFilterConditionPurgeLocalCopy(_Inout_ FWPS_FILTER_CONDITION* pC
    pCondition->matchType = FWP_MATCH_TYPE_MAX;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsFilterConditionPurgeLocalCopy()\n");
@@ -7753,7 +7753,7 @@ VOID KrnlHlprFwpsFilterConditionPurgeLocalCopy(_Inout_ FWPS_FILTER_CONDITION* pC
 
 /**
  @kernel_helper_function="KrnlHlprFwpsFilterConditionDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWPS_FILTER_CONDITION.                         <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -7770,13 +7770,13 @@ VOID KrnlHlprFwpsFilterConditionDestroyLocalCopy(_Inout_ FWPS_FILTER_CONDITION**
                                                         _In_ UINT32 numConditions)                    /* 1 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsFilterConditionDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppConditions);
 
    if(*ppConditions)
@@ -7793,7 +7793,7 @@ VOID KrnlHlprFwpsFilterConditionDestroyLocalCopy(_Inout_ FWPS_FILTER_CONDITION**
                      WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsFilterConditionDestroyLocalCopy()\n");
@@ -7805,7 +7805,7 @@ VOID KrnlHlprFwpsFilterConditionDestroyLocalCopy(_Inout_ FWPS_FILTER_CONDITION**
 
 /**
  @kernel_helper_function="KrnlHlprFwpsFilterConditionPopulateLocalCopy"
- 
+
    Purpose:  Populate a local copy of an FWPS_FILTER_CONDITION.                                 <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using
@@ -7822,13 +7822,13 @@ NTSTATUS KrnlHlprFwpsFilterConditionPopulateLocalCopy(_In_ const FWPS_FILTER_CON
                                                       _Inout_ FWPS_FILTER_CONDITION* pCondition)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsFilterConditionPopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalCondition);
    NT_ASSERT(pCondition);
 
@@ -7845,7 +7845,7 @@ NTSTATUS KrnlHlprFwpsFilterConditionPopulateLocalCopy(_In_ const FWPS_FILTER_CON
       KrnlHlprFwpsFilterConditionPurgeLocalCopy(pCondition);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsFilterConditionPopulateLocalCopy() [status: %#x]\n",
@@ -7858,7 +7858,7 @@ NTSTATUS KrnlHlprFwpsFilterConditionPopulateLocalCopy(_In_ const FWPS_FILTER_CON
 
 /**
  @kernel_helper_function="KrnlHlprFwpsFilterConditionCreateLocalCopy"
- 
+
    Purpose:  Allocate and populate a local copy of an FWPS_FILTER_CONDITION.                    <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing any allocated memory using
@@ -7876,13 +7876,13 @@ FWPS_FILTER_CONDITION* KrnlHlprFwpsFilterConditionCreateLocalCopy(_In_reads_(num
                                                                   _In_ UINT32 numConditions)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsFilterConditionCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalConditions);
    NT_ASSERT(numConditions);
 
@@ -7912,7 +7912,7 @@ FWPS_FILTER_CONDITION* KrnlHlprFwpsFilterConditionCreateLocalCopy(_In_reads_(num
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pConditions initialized with call to HLPR_NEW_ARRAY & KrnlHlprFwpsFilterConditionPopulateLocalCopy 
+#pragma warning(disable: 6001) /// pConditions initialized with call to HLPR_NEW_ARRAY & KrnlHlprFwpsFilterConditionPopulateLocalCopy
 
    if(status != STATUS_SUCCESS &&
       pConditions)
@@ -7921,7 +7921,7 @@ FWPS_FILTER_CONDITION* KrnlHlprFwpsFilterConditionCreateLocalCopy(_In_reads_(num
 #pragma warning(pop)
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsFilterConditionCreateLocalCopy() [pConditions: %#p]\n",
@@ -7939,7 +7939,7 @@ FWPS_FILTER_CONDITION* KrnlHlprFwpsFilterConditionCreateLocalCopy(_In_reads_(num
 
 /**
  @kernel_helper_function="KrnlHlprFwpsFilterPurgeLocalCopy"
- 
+
    Purpose:  Cleanup a local copy of an FWPS_FILTER.                                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -7952,13 +7952,13 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpsFilterPurgeLocalCopy(_Inout_ FWPS_FILTER* pFilter)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsFilterPurgeLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pFilter);
 
    KrnlHlprFwpmProviderContextDestroyLocalCopy(&(pFilter->providerContext));
@@ -7969,7 +7969,7 @@ VOID KrnlHlprFwpsFilterPurgeLocalCopy(_Inout_ FWPS_FILTER* pFilter)
    KrnlHlprFwpValuePurgeLocalCopy(&(pFilter->weight));
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsFilterPurgeLocalCopy()\n");
@@ -7981,7 +7981,7 @@ VOID KrnlHlprFwpsFilterPurgeLocalCopy(_Inout_ FWPS_FILTER* pFilter)
 
 /**
  @kernel_helper_function="KrnlHlprFwpsFilterDestroyLocalCopy"
- 
+
    Purpose:  Cleanup and free a local copy of an FWPS_FILTER.                                   <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -7999,13 +7999,13 @@ _Success_(*ppFilter == 0)
 VOID KrnlHlprFwpsFilterDestroyLocalCopy(_Inout_ FWPS_FILTER** ppFilter)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsFilterDestroyLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppFilter);
 
    if(*ppFilter)
@@ -8015,7 +8015,7 @@ VOID KrnlHlprFwpsFilterDestroyLocalCopy(_Inout_ FWPS_FILTER** ppFilter)
                WFPSAMPLER_SYSLIB_TAG);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsFilterDestroyLocalCopy()\n");
@@ -8027,7 +8027,7 @@ VOID KrnlHlprFwpsFilterDestroyLocalCopy(_Inout_ FWPS_FILTER** ppFilter)
 
 /**
  @kernel_helper_function="KrnlHlprFwpsFilterPopulateLocalCopy
- 
+
    Purpose:  Populate a local copy of the FWPS_FILTER.                                          <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -8047,13 +8047,13 @@ NTSTATUS KrnlHlprFwpsFilterPopulateLocalCopy(_In_ const FWPS_FILTER* pOriginalFi
                                              _Inout_ FWPS_FILTER* pFilter)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsFilterPopulateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalFilter);
    NT_ASSERT(pFilter);
 
@@ -8092,7 +8092,7 @@ NTSTATUS KrnlHlprFwpsFilterPopulateLocalCopy(_In_ const FWPS_FILTER* pOriginalFi
       KrnlHlprFwpsFilterPurgeLocalCopy(pFilter);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsFilterPopulateLocalCopy() [status: %#x]\n",
@@ -8105,7 +8105,7 @@ NTSTATUS KrnlHlprFwpsFilterPopulateLocalCopy(_In_ const FWPS_FILTER* pOriginalFi
 
 /**
  @kernel_helper_function="KrnlHlprFwpsFilterCreateLocalCopy
- 
+
    Purpose:  Allocate and populate a local copy of the FWPS_FILTER.                             <br>
                                                                                                 <br>
    Notes:    The caller is responsible for freeing the allocated memory using
@@ -8124,13 +8124,13 @@ _Success_(return != 0)
 FWPS_FILTER* KrnlHlprFwpsFilterCreateLocalCopy(_In_ const FWPS_FILTER* pOriginalFilter)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsFilterCreateLocalCopy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pOriginalFilter);
 
    NTSTATUS     status  = STATUS_SUCCESS;
@@ -8153,7 +8153,7 @@ FWPS_FILTER* KrnlHlprFwpsFilterCreateLocalCopy(_In_ const FWPS_FILTER* pOriginal
    HLPR_BAIL_LABEL:
 
 #pragma warning(push)
-#pragma warning(disable: 6001) /// pFilter initialized with call to HLPR_NEW & KrnlHlprFwpsFilterPopulateLocalCopy 
+#pragma warning(disable: 6001) /// pFilter initialized with call to HLPR_NEW & KrnlHlprFwpsFilterPopulateLocalCopy
 
    if(status != STATUS_SUCCESS)
       KrnlHlprFwpsFilterDestroyLocalCopy(&pFilter);
@@ -8161,7 +8161,7 @@ FWPS_FILTER* KrnlHlprFwpsFilterCreateLocalCopy(_In_ const FWPS_FILTER* pOriginal
 #pragma warning(pop)
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsFilterCreateLocalCopy() [pFilter: %p]\n",
@@ -8179,7 +8179,7 @@ FWPS_FILTER* KrnlHlprFwpsFilterCreateLocalCopy(_In_ const FWPS_FILTER* pOriginal
 
 /**
  @kernel_helper_function="KrnlHlprFwpmSessionReleaseHandle
- 
+
    Purpose:  Close an open handle to BFE.                                                       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -8192,13 +8192,13 @@ _Success_(return == STATUS_SUCCESS)
 NTSTATUS KrnlHlprFwpmSessionReleaseHandle(_Inout_ HANDLE* pEngineHandle)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmSessionReleaseHandle()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pEngineHandle);
 
    NTSTATUS status = STATUS_SUCCESS;
@@ -8222,7 +8222,7 @@ NTSTATUS KrnlHlprFwpmSessionReleaseHandle(_Inout_ HANDLE* pEngineHandle)
    HLPR_BAIL_LABEL:
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmSessionReleaseHandle() [status: %#x]\n",
@@ -8235,7 +8235,7 @@ NTSTATUS KrnlHlprFwpmSessionReleaseHandle(_Inout_ HANDLE* pEngineHandle)
 
 /**
  @kernel_helper_function="KrnlHlprFwpmSessionDestroyEngineHandle
- 
+
    Purpose:  Close an open handle to BFE and set the handle to 0.                               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -8250,13 +8250,13 @@ _Success_(*ppEngineHandle == 0)
 VOID KrnlHlprFwpmSessionDestroyEngineHandle(_Inout_ HANDLE** ppEngineHandle)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmSessionDestroyEngineHandle()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppEngineHandle);
 
    if(*ppEngineHandle)
@@ -8265,7 +8265,7 @@ VOID KrnlHlprFwpmSessionDestroyEngineHandle(_Inout_ HANDLE** ppEngineHandle)
    *ppEngineHandle = 0;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmSessionDestroyEngineHandle()\n");
@@ -8277,7 +8277,7 @@ VOID KrnlHlprFwpmSessionDestroyEngineHandle(_Inout_ HANDLE** ppEngineHandle)
 
 /**
  @kernel_helper_function="KrnlHlprFwpmSessionAcquireHandle
- 
+
    Purpose:  Open a handle to BFE.                                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -8293,13 +8293,13 @@ NTSTATUS KrnlHlprFwpmSessionAcquireHandle(_Inout_ HANDLE* pEngineHandle,
                                           _In_ const GUID* pSessionKey)  /* WFPSAMPLER_SESSION_KM */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmSessionAcquireHandle()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pEngineHandle);
    NT_ASSERT(pSessionKey);
 
@@ -8328,7 +8328,7 @@ NTSTATUS KrnlHlprFwpmSessionAcquireHandle(_Inout_ HANDLE* pEngineHandle,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmSessionAcquireHandle() [status: %#x]\n",
@@ -8341,7 +8341,7 @@ NTSTATUS KrnlHlprFwpmSessionAcquireHandle(_Inout_ HANDLE* pEngineHandle,
 
 /**
  @kernel_helper_function="KrnlHlprFwpmSessionCreateEngineHandle
- 
+
    Purpose:  Open a handle to BFE.                                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -8358,13 +8358,13 @@ NTSTATUS KrnlHlprFwpmSessionCreateEngineHandle(_Outptr_ HANDLE** ppEngineHandle,
                                                _In_ const GUID* pSessionKey)     /* WFPSAMPLER_SESSION_KM */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpmSessionCreateEngineHandle()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppEngineHandle);
    NT_ASSERT(pSessionKey);
 
@@ -8384,7 +8384,7 @@ NTSTATUS KrnlHlprFwpmSessionCreateEngineHandle(_Outptr_ HANDLE** ppEngineHandle,
       KrnlHlprFwpmSessionReleaseHandle(&g_EngineHandle);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpmSessionCreateEngineHandle() [status: %#x]\n",
@@ -8402,7 +8402,7 @@ NTSTATUS KrnlHlprFwpmSessionCreateEngineHandle(_Outptr_ HANDLE** ppEngineHandle,
 
 /**
  @kernel_helper_function="KrnlHlprFwpsInjectionReleaseHandle
- 
+
    Purpose:  Destroy an opened injection handle and set it to 0.                                <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -8416,13 +8416,13 @@ _Success_(return == STATUS_SUCCESS)
 NTSTATUS KrnlHlprFwpsInjectionReleaseHandle(_In_ HANDLE* pInjectionHandle)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsInjectionReleaseHandle()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pInjectionHandle);
 
    NTSTATUS status = STATUS_SUCCESS;
@@ -8443,7 +8443,7 @@ NTSTATUS KrnlHlprFwpsInjectionReleaseHandle(_In_ HANDLE* pInjectionHandle)
    HLPR_BAIL_LABEL:
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsInjectionReleaseHandle() {status: %#x]\n",
@@ -8456,7 +8456,7 @@ NTSTATUS KrnlHlprFwpsInjectionReleaseHandle(_In_ HANDLE* pInjectionHandle)
 
 /**
  @kernel_helper_function="KrnlHlprFwpsInjectionAcquireHandle
- 
+
    Purpose:  Open injection handle for use with the various injection APIs.                     <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -8472,13 +8472,13 @@ NTSTATUS KrnlHlprFwpsInjectionAcquireHandle(_Inout_ HANDLE* pInjectionHandle,
                                             _In_ UINT32 injectionType)         /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsInjectionAcquireHandle()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pInjectionHandle);
 
    NTSTATUS status = STATUS_SUCCESS;
@@ -8493,7 +8493,7 @@ NTSTATUS KrnlHlprFwpsInjectionAcquireHandle(_Inout_ HANDLE* pInjectionHandle,
                  status);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsInjectionAcquireHandle() [status: %#x]\n",
@@ -8513,7 +8513,7 @@ NTSTATUS KrnlHlprFwpsInjectionAcquireHandle(_Inout_ HANDLE* pInjectionHandle,
 
 /**
  @kernel_helper_function="KrnlHlprFwpsRedirectHandleDestroy
- 
+
    Purpose:  Destroy an opened redirection handle and set it to 0.                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -8525,13 +8525,13 @@ _IRQL_requires_same_
 VOID KrnlHlprFwpsRedirectHandleDestroy(_In_ HANDLE* pRedirectionHandle)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsRedirectHandleDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pRedirectionHandle);
 
    FwpsRedirectHandleDestroy(*pRedirectionHandle);
@@ -8551,7 +8551,7 @@ VOID KrnlHlprFwpsRedirectHandleDestroy(_In_ HANDLE* pRedirectionHandle)
 
 /**
  @kernel_helper_function="KrnlHlprFwpsRedirectHandleCreate
- 
+
    Purpose:  Open redirection handle for use with the various redirection APIs.                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -8565,13 +8565,13 @@ _Success_(return == STATUS_SUCCESS)
 NTSTATUS KrnlHlprFwpsRedirectHandleCreate(_Inout_ HANDLE* pRedirectionHandle) /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprFwpsRedirectHandleCreate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pRedirectionHandle);
 
    NTSTATUS status = STATUS_SUCCESS;
@@ -8586,7 +8586,7 @@ NTSTATUS KrnlHlprFwpsRedirectHandleCreate(_Inout_ HANDLE* pRedirectionHandle) /*
                  status);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprFwpsRedirectHandleCreate() [status: %#x]\n",
@@ -8606,7 +8606,7 @@ NTSTATUS KrnlHlprFwpsRedirectHandleCreate(_Inout_ HANDLE* pRedirectionHandle) /*
 
 /**
  @helper function="KrnlHlprFwpsLayerGetDirection"
- 
+
    Purpose: Determine the direction of the NBL based on the layer.                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -8680,7 +8680,7 @@ FWP_DIRECTION KrnlHlprFwpsLayerGetDirection(_In_ UINT32 layerID)
 
 /**
  @helper function="KrnlHlprFwpsLayerIsIPv4"
- 
+
    Purpose: Determine if the layer is an IPv4 layer.                                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -8750,7 +8750,7 @@ BOOLEAN KrnlHlprFwpsLayerIsIPv4(_In_ UINT32 layerID)
 
 /**
  @helper function="KrnlHlprFwpsLayerIsIPv6"
- 
+
    Purpose: Determine if the layer is an IPv6 layer.                                            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -8820,7 +8820,7 @@ BOOLEAN KrnlHlprFwpsLayerIsIPv6(_In_ UINT32 layerID)
 
 /**
  @helper function="KrnlHlprFwpsLayerIsDiscard"
- 
+
    Purpose: Determine if the layer is a discard layer.                                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -8869,7 +8869,7 @@ BOOLEAN KrnlHlprFwpsLayerIsDiscard(_In_ UINT32 layerID)
 
 /**
  @helper function="KrnlHlprFwpsLayerIDToString"
- 
+
    Purpose: Return a string representation of the supplied layer.                               <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

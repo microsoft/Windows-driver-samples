@@ -10,7 +10,7 @@ typedef u4Byte QOS_MODE, *PQOS_MODE;
 #define QOS_WMMSA			2
 #define QOS_EDCA			4
 #define QOS_HCCA			8
-#define QOS_WMM_UAPSD		16   //WMM Power Save, 2006-06-14 Isaiah 
+#define QOS_WMM_UAPSD		16   //WMM Power Save, 2006-06-14 Isaiah
 
 #define WMM_PARAM_ELE_BODY_LEN	18
 
@@ -125,13 +125,13 @@ typedef	enum _ACK_POLICY{
 
 #define GET_WMM_QOS_INFO_FIELD_STA_AC_BE_UAPSD(_pStart)	LE_BITS_TO_1BYTE(_pStart, 2, 1)
 #define SET_WMM_QOS_INFO_FIELD_STA_AC_BE_UAPSD(_pStart, _val)	SET_BITS_TO_LE_1BYTE(_pStart, 2, 1, _val)
-	
+
 #define GET_WMM_QOS_INFO_FIELD_STA_AC_BK_UAPSD(_pStart)	LE_BITS_TO_1BYTE(_pStart, 3, 1)
 #define SET_WMM_QOS_INFO_FIELD_STA_AC_BK_UAPSD(_pStart, _val)	SET_BITS_TO_LE_1BYTE(_pStart, 3, 1, _val)
 
 #define GET_WMM_QOS_INFO_FIELD_STA_MAX_SP_LEN(_pStart)	LE_BITS_TO_1BYTE(_pStart, 5, 2)
 #define SET_WMM_QOS_INFO_FIELD_STA_MAX_SP_LEN(_pStart, _val)	SET_BITS_TO_LE_1BYTE(_pStart, 5, 2, _val)
-		
+
 
 #define WMM_INFO_ELEMENT_SIZE	7
 
@@ -295,7 +295,7 @@ typedef	enum _ACK_POLICY{
 
 
 #define QOS_RATE_TO_BPS(_rate) ( (u4Byte)( ((_rate)*1000*1000)/2 ) )
-#define QOS_BPS_TO_RATE(_bps)  ( (u1Byte)( ((_bps) * 2)/(1000*1000))) 
+#define QOS_BPS_TO_RATE(_bps)  ( (u1Byte)( ((_bps) * 2)/(1000*1000)))
 
 
 
@@ -315,7 +315,7 @@ typedef u4Byte AC_CODING;
 #define AC3_VO	3		// ACI: 0x11	// Voice
 #define AC_MAX	4		// Max: define total number; Should not to be used as a real enum.
 
-	
+
 #define AC_PARAM_SIZE	4
 
 #define GET_WMM_AC_PARAM_AIFSN(_pStart)	( (u1Byte)LE_BITS_TO_4BYTE(_pStart, 0, 4) )
@@ -422,7 +422,7 @@ typedef	enum _DIRECTION_VALUE{
 
 #define GET_TSPEC_BODY_TSINFO_AGGREGATION(_TSpecBody)				LE_BITS_TO_1BYTE( (_TSpecBody)+1, 1, 1)
 #define SET_TSPEC_BODY_TSINFO_AGGREGATION(_TSpecBody, _value)			SET_BITS_TO_LE_1BYTE( (_TSpecBody)+1, 1, 1 , (_value))
-		
+
 #define GET_TSPEC_BODY_TSINFO_PSB(_TSpecBody)					LE_BITS_TO_1BYTE( (_TSpecBody)+1, 2, 1)
 #define SET_TSPEC_BODY_TSINFO_PSB(_TSpecBody, _value)				SET_BITS_TO_LE_1BYTE( (_TSpecBody)+1, 2, 1 , (_value))
 
@@ -479,25 +479,25 @@ typedef	u1Byte		AC_UAPSD, *PAC_UAPSD;
 
 #define	GET_VO_UAPSD(_apsd) ((_apsd) & BIT0)
 #define	SET_VO_UAPSD(_apsd) ((_apsd) |= BIT0)
-	
+
 #define	GET_VI_UAPSD(_apsd) ((_apsd) & BIT1)
 #define	SET_VI_UAPSD(_apsd) ((_apsd) |= BIT1)
-	
+
 #define	GET_BK_UAPSD(_apsd) ((_apsd) & BIT2)
 #define	SET_BK_UAPSD(_apsd) ((_apsd) |= BIT2)
 
 #define	GET_BE_UAPSD(_apsd) ((_apsd) & BIT3)
 #define	SET_BE_UAPSD(_apsd) ((_apsd) |= BIT3)
-	
+
 typedef	u1Byte		AC_NOACK, *PAC_NOACK;
 
 // Maps of AC NoAck and Bits
 #define	GET_VO_NOACK(_AC) ((_AC) & BIT0)
 #define	SET_VO_NOACK(_AC) ((_AC) |= BIT0)
-	
+
 #define	GET_VI_NOACK(_AC) ((_AC) & BIT1)
 #define	SET_VI_NOACK(_AC) ((_AC) |= BIT1)
-	
+
 #define	GET_BK_NOACK(_AC) ((_AC) & BIT2)
 #define	SET_BK_NOACK(_AC) ((_AC) |= BIT2)
 
@@ -512,7 +512,7 @@ typedef	u1Byte		AC_NOACK, *PAC_NOACK;
 	(0 == (_UP) || 3 == (_UP)) ? BIT3 : 0)
 
 #ifdef REMOVE_PACK
-#pragma pack(1) 
+#pragma pack(1)
 #endif
 
 //typedef struct _TCLASS{
@@ -570,7 +570,7 @@ typedef union _QOS_TCLAS{
 } QOS_TCLAS, *PQOS_TCLAS;
 
 #ifdef REMOVE_PACK
-#pragma pack() 
+#pragma pack()
 #endif
 
 //
@@ -606,19 +606,19 @@ typedef struct _STA_QOS{
 	OCTET_STRING			WMMIE;
 
 	// Part 1. Self QoS Mode.
-	QOS_MODE				QosCapability; //QoS Capability, 2006-06-14 Isaiah 
+	QOS_MODE				QosCapability; //QoS Capability, 2006-06-14 Isaiah
 	QOS_MODE				QosCapabilityBackup; //QoS CapabilityBackup
 
 	QOS_MODE				CurrentQosMode;
 
-	// For WMM Power Save Mode : 
+	// For WMM Power Save Mode :
 	// ACs are trigger/delivery enabled or legacy power save enabled. 2006-06-13 Isaiah
 	AC_UAPSD				b4ac_Uapsd;  //VoUapsd(bit0), ViUapsd(bit1),  BkUapsd(bit2), BeUapsd(bit3),
 	AC_UAPSD				Curr4acUapsd;
 	BOOLEAN					bInServicePeriod;
 	BOOLEAN					bWmmMoreData; // Mark as the final trigger-enabled qos data from the AP.
 	u1Byte					MaxSPLength;
-	
+
 	// Part 2. EDCA Parameter (perAC)
 	pu1Byte					pWMMInfoEle;
 	u1Byte					WMMParamEle[WMM_PARAM_ELEMENT_SIZE];
@@ -631,10 +631,10 @@ typedef struct _STA_QOS{
 
 	// Part 4. Per TID (Part 5: TCLASS will be described by TStream)
 	QOS_TSTREAM				StaTsArray[MAX_STA_TS_COUNT]; // Traffic Stream objects for STA mode.
-	RT_HASH_TABLE_HANDLE	hApTsTable; // Traffic Stream objects for AP mode. 
+	RT_HASH_TABLE_HANDLE	hApTsTable; // Traffic Stream objects for AP mode.
 	u1Byte					DialogToken;
 	WMM_TSPEC				TSpec;
-	
+
 	u1Byte					QBssWirelessMode;
 
 	// No Ack Setting

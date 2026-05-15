@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Scope><Object><Action><Modifier>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -28,7 +28,7 @@
 //          {
 //            Initialize         - Function prepares environment for use.
 //            Terminate          - Function cleans up the environment.
-//            Troubleshoot       - Function attempts to provide extra information to diagnose cause 
+//            Troubleshoot       - Function attempts to provide extra information to diagnose cause
 //                                    of failure.
 //          }
 //       <Modifier>
@@ -78,7 +78,7 @@ extern "C"
 {
    /**
     @framework_function="MIDL_user_free"
-    
+
       Purpose:  RPC stub routine to allocate memory.                                            <br>
                                                                                                 <br>
       Notes:                                                                                    <br>
@@ -104,7 +104,7 @@ extern "C"
 
    /**
     @framework_function="MIDL_user_free"
-    
+
       Purpose:  RPC stub routine to free allocated memory.                                      <br>
                                                                                                 <br>
       Notes:                                                                                    <br>
@@ -122,7 +122,7 @@ extern "C"
 
 /**
  @private_function="PrvRPCTroubleshootError"
- 
+
    Purpose:  Function to retrieve extended error information about RPC's inner workings.        <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -210,7 +210,7 @@ VOID PrvRPCTroubleshootError()
          HlprLogInfo(L"   [Flags: %#x]",
                      errorInfo.Flags);
 
-         HlprLogInfo(L"   [NumberOfParameters: %d]", 
+         HlprLogInfo(L"   [NumberOfParameters: %d]",
                      errorInfo.NumberOfParameters);
 
          for(UINT32 i = 0;
@@ -231,7 +231,7 @@ VOID PrvRPCTroubleshootError()
                               pNewLine);
 
                   HeapFree(GetProcessHeap(),
-                           0, 
+                           0,
                            errorInfo.Parameters[i].u.AnsiString);
 
                   break;
@@ -243,7 +243,7 @@ VOID PrvRPCTroubleshootError()
                               pNewLine);
 
                   HeapFree(GetProcessHeap(),
-                           0, 
+                           0,
                            errorInfo.Parameters[i].u.UnicodeString);
 
                   break;
@@ -280,7 +280,7 @@ VOID PrvRPCTroubleshootError()
                   break;
                }
                default:
-                  HlprLogInfo(L"   [ParameterType Invalid: %d]%s", 
+                  HlprLogInfo(L"   [ParameterType Invalid: %d]%s",
                               errorInfo.Parameters[i].ParameterType,
                               pNewLine);
             }
@@ -297,7 +297,7 @@ VOID PrvRPCTroubleshootError()
 
 /**
  @framework_function="RPCClientInterfaceTerminate"
- 
+
    Purpose:  Teardown the RPC client interface by unbinding and freeing the handles.            <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -336,7 +336,7 @@ UINT32 RPCClientInterfaceTerminate()
 
 /**
  @framework_function="RPCClientInterfaceInitialize"
- 
+
    Purpose:  Initialize the RPC client interface by creating a fast binding handle.             <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

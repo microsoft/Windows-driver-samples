@@ -3,16 +3,16 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	ParserGen.h
-	
+
 Abstract:
 	Parse MSDU to match the specified type, fetch fixed offset.
-	    
+
 Major Change History:
 	When           Who					What
 	---------- ---------------   -------------------------------
 	2007-06-11	shienchang			Create.
 	2008-03-10	Bruce				Modify from 818xB.
-	
+
 --*/
 #ifndef __INC_PARSERGEN_H
 #define __INC_PARSERGEN_H
@@ -180,7 +180,7 @@ typedef struct _GP_HP_NODE
 //	ParserName:
 //		The name of this generic parser.
 //	ParserRules:
-//		The corrresponding handler and the next protocol to the current protocol. 
+//		The corrresponding handler and the next protocol to the current protocol.
 //	ParserContext:
 //		The input context about for this parser.
 //	Gate:
@@ -198,7 +198,7 @@ typedef struct _GENERIC_PARSER
 	u1Byte			PID;
 	u1Byte			ParserName[MAX_PARSER_NAME];
 	PGP_RULE		pParseRules;
-	PVOID			ParserContext;	
+	PVOID			ParserContext;
 	GPParserGate	Gate;
 	GPParserAction	Action;
 	PGP_HP_NODE		pParsingTree;
@@ -210,7 +210,7 @@ typedef struct _GENERIC_PARSER
 //
 typedef BOOLEAN
 	(*ifAllocateParser)(
-		IN		PADAPTER			Adapter, 
+		IN		PADAPTER			Adapter,
 		IN		PGENERIC_PARSER		pParser
 		);
 

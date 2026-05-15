@@ -11,7 +11,7 @@
 //   Naming Convention:
 //
 //      <Module><Object><Action>
-//  
+//
 //      i.e.
 //
 //       KrnlHlprWorkItemQueue
@@ -48,7 +48,7 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Add support for pending at 
+//      December  13,   2013  -     1.1   -  Add support for pending at
 //                                              FWPM_LAYER_ALE_ENDPOINT_CLOSURE.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemDataPurge"
- 
+
    Purpose:  Cleanup a WORKITEM_DATA object.                                                    <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -71,13 +71,13 @@ _IRQL_requires_same_
 VOID KrnlHlprWorkItemDataPurge(_Inout_ WORKITEM_DATA* pWorkItemData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemDataPurge()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pWorkItemData);
 
    if(pWorkItemData->pIOWorkItem)
@@ -87,19 +87,19 @@ VOID KrnlHlprWorkItemDataPurge(_Inout_ WORKITEM_DATA* pWorkItemData)
                  sizeof(WORKITEM_DATA));
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemDataPurge()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemDataDestroy"
- 
+
    Purpose:  Cleanup and free a WORKITEM_DATA object.                                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -115,13 +115,13 @@ _Success_(*ppWorkItemData == 0)
 VOID KrnlHlprWorkItemDataDestroy(_Inout_ WORKITEM_DATA** ppWorkItemData)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemDataDestroy()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppWorkItemData);
 
    if(*ppWorkItemData)
@@ -133,20 +133,20 @@ VOID KrnlHlprWorkItemDataDestroy(_Inout_ WORKITEM_DATA** ppWorkItemData)
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemDataDestroy()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemDataPopulate"
- 
-   Purpose:  Populates a WORKITEM_DATA object with the classifyData, injectionData, 
+
+   Purpose:  Populates a WORKITEM_DATA object with the classifyData, injectionData,
              PIOWorkItem, and context supplied.                                                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -163,13 +163,13 @@ VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
                                          _In_opt_ VOID* pContext)                 /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemDataPopulate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pWorkItemData);
    NT_ASSERT(pClassifyData);
 
@@ -179,20 +179,20 @@ VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
    pWorkItemData->pContext       = pContext;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemDataPopulate()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemDataPopulate"
- 
-   Purpose:  Populates a WORKITEM_DATA object with the classifyData, pendData, PIOWorkItem, and 
+
+   Purpose:  Populates a WORKITEM_DATA object with the classifyData, pendData, PIOWorkItem, and
              context supplied.                                                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -209,13 +209,13 @@ VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
                                          _In_opt_ VOID* pContext)              /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemDataPopulate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pWorkItemData);
    NT_ASSERT(pClassifyData);
    NT_ASSERT(pPendData);
@@ -226,20 +226,20 @@ VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
    pWorkItemData->pContext      = pContext;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemDataPopulate()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemDataPopulate"
- 
-   Purpose:  Populates a WORKITEM_DATA object with the classifyData, redirectData, PIOWorkItem, 
+
+   Purpose:  Populates a WORKITEM_DATA object with the classifyData, redirectData, PIOWorkItem,
              and context supplied.                                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -256,13 +256,13 @@ VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
                                          _In_opt_ VOID* pContext)              /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemDataPopulate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pWorkItemData);
    NT_ASSERT(pClassifyData);
    NT_ASSERT(pRedirectData);
@@ -273,20 +273,20 @@ VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
    pWorkItemData->pContext      = pContext;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemDataPopulate()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemDataPopulate"
- 
-   Purpose:  Populates a WORKITEM_DATA object with the notifyData, PIOWorkItem, and context 
+
+   Purpose:  Populates a WORKITEM_DATA object with the notifyData, PIOWorkItem, and context
              supplied.                                                                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -302,13 +302,13 @@ VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
                                          _In_opt_ VOID* pContext)             /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemDataPopulate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pWorkItemData);
    NT_ASSERT(pNotifyData);
 
@@ -317,20 +317,20 @@ VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
    pWorkItemData->pContext    = pContext;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemDataPopulate()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemDataPopulate"
- 
-   Purpose:  Populates a WORKITEM_DATA object with the pendData, PIOWorkItem, and context 
+
+   Purpose:  Populates a WORKITEM_DATA object with the pendData, PIOWorkItem, and context
              supplied.                                                                          <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -346,13 +346,13 @@ VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
                                          _In_opt_ VOID* pContext)              /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemDataPopulate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pWorkItemData);
    NT_ASSERT(pPendData);
 
@@ -361,20 +361,20 @@ VOID KrnlHlprWorkItemDataPopulate(_Inout_ WORKITEM_DATA* pWorkItemData,
    pWorkItemData->pContext      = pContext;
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemDataPopulate()\n");
 
 #endif /// DBG
-   
+
    return;
 }
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemDataCreate"
- 
-   Purpose:  Allocates and populates a WORKITEM_DATA object with the classifyData, 
+
+   Purpose:  Allocates and populates a WORKITEM_DATA object with the classifyData,
              injectionData, PIOWorkItem, and context supplied.                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -396,13 +396,13 @@ NTSTATUS KrnlHlprWorkItemDataCreate(_Outptr_ WORKITEM_DATA** ppWorkItemData,
                                     _In_opt_ VOID* pContext)                 /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemDataCreate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppWorkItemData);
    NT_ASSERT(pClassifyData);
    NT_ASSERT(pInjectionData);
@@ -427,21 +427,21 @@ NTSTATUS KrnlHlprWorkItemDataCreate(_Outptr_ WORKITEM_DATA** ppWorkItemData,
       KrnlHlprWorkItemDataDestroy(ppWorkItemData);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemDataCreate() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemDataCreate"
- 
-   Purpose:  Allocates and populates a WORKITEM_DATA object with the classifyData, pendData, 
+
+   Purpose:  Allocates and populates a WORKITEM_DATA object with the classifyData, pendData,
              PIOWorkItem, and context supplied.                                                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -463,13 +463,13 @@ NTSTATUS KrnlHlprWorkItemDataCreate(_Outptr_ WORKITEM_DATA** ppWorkItemData,
                                     _In_opt_ VOID* pContext)                 /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemDataCreate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppWorkItemData);
    NT_ASSERT(pClassifyData);
    NT_ASSERT(pPendData);
@@ -494,21 +494,21 @@ NTSTATUS KrnlHlprWorkItemDataCreate(_Outptr_ WORKITEM_DATA** ppWorkItemData,
       KrnlHlprWorkItemDataDestroy(ppWorkItemData);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemDataCreate() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemDataCreate"
- 
-   Purpose:  Allocates and populates a WORKITEM_DATA object with the classifyData, redirectData, 
+
+   Purpose:  Allocates and populates a WORKITEM_DATA object with the classifyData, redirectData,
              PIOWorkItem, and context supplied.                                                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -530,13 +530,13 @@ NTSTATUS KrnlHlprWorkItemDataCreate(_Outptr_ WORKITEM_DATA** ppWorkItemData,
                                     _In_opt_ VOID* pContext)                 /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemDataCreate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppWorkItemData);
    NT_ASSERT(pClassifyData);
    NT_ASSERT(pRedirectData);
@@ -561,21 +561,21 @@ NTSTATUS KrnlHlprWorkItemDataCreate(_Outptr_ WORKITEM_DATA** ppWorkItemData,
       KrnlHlprWorkItemDataDestroy(ppWorkItemData);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemDataCreate() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemDataCreate"
- 
-   Purpose:  Allocates and populates a WORKITEM_DATA object with the notifyData, PIOWorkItem, 
+
+   Purpose:  Allocates and populates a WORKITEM_DATA object with the notifyData, PIOWorkItem,
              and context supplied.                                                              <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -596,13 +596,13 @@ NTSTATUS KrnlHlprWorkItemDataCreate(_Outptr_ WORKITEM_DATA** ppWorkItemData,
                                     _In_opt_ VOID* pContext)                 /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemDataCreate()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(ppWorkItemData);
    NT_ASSERT(pNotifyData);
 
@@ -625,21 +625,21 @@ NTSTATUS KrnlHlprWorkItemDataCreate(_Outptr_ WORKITEM_DATA** ppWorkItemData,
       KrnlHlprWorkItemDataDestroy(ppWorkItemData);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemDataCreate() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemDataCreate"
- 
-   Purpose:  Allocates and populates a WORKITEM_DATA object with the pendData, PIOWorkItem, and 
+
+   Purpose:  Allocates and populates a WORKITEM_DATA object with the pendData, PIOWorkItem, and
              context supplied.                                                                  <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -702,7 +702,7 @@ NTSTATUS KrnlHlprWorkItemDataCreate(_Outptr_ WORKITEM_DATA** ppWorkItemData,
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemQueue"
- 
+
    Purpose:  Queue a workitem for later execution at PASSIVE_LEVEL.                             <br>
                                                                                                 <br>
    Notes:    Data is expected to be obtained by other means (i.e. LIST_ENTRY)                   <br>
@@ -719,13 +719,13 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
                                _In_ IO_WORKITEM_ROUTINE* pWorkItemFn)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemQueue()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pWDMDevice);
    NT_ASSERT(pWorkItemFn);
 
@@ -762,21 +762,21 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
       IoFreeWorkItem(pIOWorkItem);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemQueue() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemQueue"
- 
+
    Purpose:  Queue a workitem for later execution at PASSIVE_LEVEL.                             <br>
                                                                                                 <br>
    Notes:    INJECTION_DATA specific.                                                           <br>
@@ -796,13 +796,13 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
                                _In_opt_ VOID* pContext)                 /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemQueue()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pWDMDevice);
    NT_ASSERT(pWorkItemFn);
    NT_ASSERT(pClassifyData);
@@ -855,20 +855,20 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemQueue() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemQueue"
- 
+
    Purpose:  Queue a workitem for later execution at PASSIVE_LEVEL.                             <br>
                                                                                                 <br>
    Notes:    PEND_DATA specific.                                                                <br>
@@ -888,13 +888,13 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
                                _In_opt_ VOID* pContext)               /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemQueue()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pWDMDevice);
    NT_ASSERT(pWorkItemFn);
    NT_ASSERT(pClassifyData);
@@ -948,20 +948,20 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemQueue() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemQueue"
- 
+
    Purpose:  Queue a workitem for later execution at PASSIVE_LEVEL.                             <br>
                                                                                                 <br>
    Notes:    REDIRECT_DATA specific.                                                            <br>
@@ -981,13 +981,13 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
                                _In_opt_ VOID* pContext)               /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemQueue()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pWDMDevice);
    NT_ASSERT(pWorkItemFn);
    NT_ASSERT(pClassifyData);
@@ -1041,20 +1041,20 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemQueue() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemQueue"
- 
+
    Purpose:  Queue a workitem for later execution at PASSIVE_LEVEL.                             <br>
                                                                                                 <br>
    Notes:    NOTIFY_DATA specific.                                                              <br>
@@ -1073,13 +1073,13 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
                                _In_opt_ VOID* pContext)               /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemQueue()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pWDMDevice);
    NT_ASSERT(pWorkItemFn);
    NT_ASSERT(pNotifyData);
@@ -1131,20 +1131,20 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemQueue() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemQueue"
- 
+
    Purpose:  Queue a workitem for later execution at PASSIVE_LEVEL.                             <br>
                                                                                                 <br>
    Notes:    PEND_DATA specific.                                                                <br>
@@ -1163,13 +1163,13 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
                                _In_opt_ VOID* pContext)               /* 0 */
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemQueue()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(pWDMDevice);
    NT_ASSERT(pWorkItemFn);
    NT_ASSERT(pPendData);
@@ -1221,20 +1221,20 @@ NTSTATUS KrnlHlprWorkItemQueue(_In_ PDEVICE_OBJECT pWDMDevice,
    }
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemQueue() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemSleep"
- 
+
    Purpose:  Delay the thread for the specified time.                                           <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -1248,13 +1248,13 @@ _Success_(return == STATUS_SUCCESS)
 NTSTATUS KrnlHlprWorkItemSleep(_In_ UINT32 numMS)
 {
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " ---> KrnlHlprWorkItemSleep()\n");
 
 #endif /// DBG
-   
+
    NT_ASSERT(numMS);
 
    NTSTATUS status   = STATUS_SUCCESS;
@@ -1265,13 +1265,13 @@ NTSTATUS KrnlHlprWorkItemSleep(_In_ UINT32 numMS)
                                    (PLARGE_INTEGER)&interval);
 
 #if DBG
-   
+
    DbgPrintEx(DPFLTR_IHVNETWORK_ID,
               DPFLTR_INFO_LEVEL,
               " <--- KrnlHlprWorkItemSleep() [status: %#x]\n",
               status);
 
 #endif /// DBG
-   
+
    return status;
 }

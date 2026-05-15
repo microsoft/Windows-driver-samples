@@ -232,7 +232,7 @@ Return Value:
                              &defQueue // pointer to default queue
                              );
     __analysis_assume(queueConfig.EvtIoStop == 0);
-	
+
     if (!NT_SUCCESS (status)) {
 
         //
@@ -256,7 +256,7 @@ Return Value:
                               &fmDeviceData->FmReadQueue
                              );
     __analysis_assume(queueConfig.EvtIoStop == 0);
-	
+
     if (!NT_SUCCESS (status)) {
         KdPrint( ("WdfIoQueueCreate failed 0x%x\n", status));
         return status;
@@ -276,7 +276,7 @@ Return Value:
                               &fmDeviceData->FmMaskWaitQueue
                              );
     __analysis_assume(queueConfig.EvtIoStop == 0);
-	
+
     if (!NT_SUCCESS (status)) {
         KdPrint( ("WdfIoQueueCreate failed 0x%x\n", status));
         return status;

@@ -19,7 +19,7 @@ QosParsingDebug_TspecIE(
 	)
 {
 	pu1Byte pIe = pOsBuffer->Octet;
-	
+
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("======= TSPEC IE =======\n"));
 
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("TrafficType:  %d\n", GET_TSPEC_TSINFO_TRAFFIC_TYPE(pIe) ));
@@ -31,7 +31,7 @@ QosParsingDebug_TspecIE(
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("UP:  %d\n", GET_TSPEC_TSINFO_UP(pIe) ));
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("AckPolicy:  %d\n", GET_TSPEC_TSINFO_ACK_POLICY(pIe) ));
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("Schedule:  %d\n", GET_TSPEC_TSINFO_SCHEDULE(pIe) ));
-	
+
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("NominalMsduSize:  %d\n", GET_TSPEC_NOMINAL_MSDU_SIZE(pIe) ));
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("MaxMsduSize:  %d\n", GET_TSPEC_MAX_MSDU_SIZE(pIe) ));
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("MinServiceInterval:  %d\n", GET_TSPEC_MIN_SERVICE_INTERVAL(pIe) ));
@@ -47,7 +47,7 @@ QosParsingDebug_TspecIE(
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("MinPhyRate:  %d\n", GET_TSPEC_MIN_PHY_RATE(pIe) ));
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("SurplusBandwith:  %d\n", GET_TSPEC_SURPLUS_BANDWITH_ALLOWANCE(pIe) ));
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("MediumTime:  %d\n", GET_TSPEC_MEDIUM_TIME(pIe) ));
-	
+
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("===== end of TSPEC IE =====\n"));
 }
 
@@ -66,19 +66,19 @@ QosParsingDebug_TsrsIE(
 	u1Byte	Length;
 	u1Byte	i;
 	u1Byte	rate;
-	
+
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("======= TSRS IE =======\n"));
 
 	Length = (*(pOsBuffer->Octet + 1)) - 5;
 	TSID = *(pOsBuffer->Octet + 6);
-	
+
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("TSID:  %d\n", TSID));
 	for (i = 0; i < Length; i ++)
 	{
 		rate = *(pOsBuffer->Octet + 7 + i);
 		RT_TRACE( COMP_QOS, DBG_LOUD, ("Rate:  0x%x\n", rate));
 	}
-	
+
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("===== end of TSRS IE =====\n"));
 
 }
@@ -95,15 +95,15 @@ QosParsingDebug_MsduLifetimeIE(
 {
 	u1Byte	TSID;
 	u2Byte	MsduLifetime;
-	
+
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("======= MSDU Lifetime IE =======\n"));
 
 	TSID = *(pOsBuffer->Octet+6);
 	MsduLifetime = N2H2BYTE( *((UNALIGNED pu2Byte)(pOsBuffer->Octet+7)) );
 
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("TSID:  %d\n", TSID));
-	RT_TRACE( COMP_QOS, DBG_LOUD, ("MsduLifetime:  %d\n", MsduLifetime));	
-	
+	RT_TRACE( COMP_QOS, DBG_LOUD, ("MsduLifetime:  %d\n", MsduLifetime));
+
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("===== end of MSDU Lifetime IE =====\n"));
 
 }
@@ -113,8 +113,8 @@ QosParsingDebug_MsduLifetimeIE(
 //
 // Initialize QoS parameters.
 // Ref: RTL8185B_InitQoSPara() in 8185 QoS code.
-// 
-VOID 
+//
+VOID
 QosInitializeSTA(
 	IN	PADAPTER		Adapter
 	)
@@ -123,7 +123,7 @@ QosInitializeSTA(
 	PSTA_QOS		pStaQos = pMgntInfo->pStaQos;
 
 	u1Byte	szQoSOUI[] = {0x00, 0x50, 0xf2, 0x02};
-	
+
 	pStaQos->CurrentQosMode = QOS_DISABLE;
 
 	pStaQos->bInServicePeriod = FALSE; //[APSD] Isaiah 2006-07-24
@@ -131,7 +131,7 @@ QosInitializeSTA(
 	pStaQos->WMMIE.Octet = pStaQos->WMMIEBuf;
 	pStaQos->WMMIE.Length = 0;
 	pStaQos->pWMMInfoEle = pStaQos->WMMIEBuf;
-	
+
 	// Default OUI & type: 00-50-F2-02
 //	CopyMem( pStaQos->WMMIE.Octet, szQoSOUI, 4 );
 	PlatformMoveMemory(pStaQos->WMMIE.Octet, szQoSOUI, 4);
@@ -140,7 +140,7 @@ QosInitializeSTA(
 	SET_WMM_INFO_ELE_QOS_INFO_FIELD(pStaQos->pWMMInfoEle,0);
 
 	pStaQos->WMMIE.Length = 7;
-	
+
 	// Decide ACM method. Annie, 2005-12-13.
 	pStaQos->AcmMethod = eAcmWay2_SW;
 
@@ -151,9 +151,9 @@ QosInitializeSTA(
 }
 
 //
-// Deinitialize all resources allocated at QosInitializeSTA 
+// Deinitialize all resources allocated at QosInitializeSTA
 //
-VOID 
+VOID
 QosDeinitializeSTA(
 	IN	PADAPTER		Adapter
 	)
@@ -163,7 +163,7 @@ QosDeinitializeSTA(
 
 
 
-VOID 
+VOID
 QosInitializeBssDesc(
 	IN	PBSS_QOS		pBssQos
 	)
@@ -185,8 +185,8 @@ QosInitializeBssDesc(
 //
 // Parsing WMM Information element or parameter element.
 // Ref: RTL8185B_InitQoSPara() in 8185 QoS code.
-// 
-VOID 
+//
+VOID
 QosParsingQoSElement(
 	IN	PADAPTER		Adapter,
 	IN	BOOLEAN			bEDCAParms,
@@ -222,7 +222,7 @@ QosParsingQoSElement(
 
 	switch( pBssDesc->BssQos.EleSubType )
 	{
-		case QOSELE_TYPE_INFO:		
+		case QOSELE_TYPE_INFO:
 			pBssDesc->BssQos.pWMMInfoEle = pBssDesc->BssQos.bdWMMIE.Octet;
 			qosinfo= GET_WMM_INFO_ELE_QOS_INFO_FIELD(pBssDesc->BssQos.pWMMInfoEle);
 			break;
@@ -237,7 +237,7 @@ QosParsingQoSElement(
 	}
 
 
-	//[APSD] Indicate QosMode whether WMM AP supports WMM Power Save or not.  
+	//[APSD] Indicate QosMode whether WMM AP supports WMM Power Save or not.
 	if(Adapter->MgntInfo.pStaQos->QosCapability & QOS_WMM_UAPSD)
 	{
 		RT_TRACE( COMP_QOS, DBG_LOUD, ("[APSD] qosinfo=%x\n", qosinfo));
@@ -249,14 +249,14 @@ QosParsingQoSElement(
 
 
 	//RT_TRACE( COMP_QOS, DBG_LOUD, ("[WMM] AP bdQoSMode=%x\n", pBssDesc->BssQos.bdQoSMode));
-	
+
 	// For debugging ONLY. Annie, 2005-11-12.
 	//QosParsingDebug_BssDesc( pBssDesc );
 
 }
 
 
-VOID 
+VOID
 QosSetLegacyWMMParamWithHT(
 	IN	PADAPTER		Adapter,
 	OUT	PRT_WLAN_BSS	pBssDesc
@@ -266,14 +266,14 @@ QosSetLegacyWMMParamWithHT(
 	pBssDesc->BssQos.bdQoSMode |= QOS_WMM; // [Isaiah] when to pBssDesc->BssQos.bdQoSMode &= ~QOS_WMM ??
 
 	pBssDesc->BssQos.bdQoSMode &=~ QOS_WMM_UAPSD;
-	
+
 	FillOctetString(pBssDesc->BssQos.bdWMMIE, pBssDesc->BssQos.bdWMMIEBuf, WMM_PARAM_ELEMENT_SIZE);
 	pBssDesc->BssQos.pWMMParamEle = pBssDesc->BssQos.bdWMMIE.Octet;
 	SET_WMM_PARAM_ELE_AC_PARAMS(pBssDesc->BssQos.pWMMParamEle, Adapter->STA_EDCA_PARAM);
 
-	
+
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("[WMM] QosSetLegacyWMMParamWithHT(): AP bdQoSMode=%x\n", pBssDesc->BssQos.bdQoSMode));
-	
+
 	// For debugging ONLY. Annie, 2005-11-12.
 	// QosParsingDebug_BssDesc( pBssDesc );
 
@@ -290,7 +290,7 @@ QosSetLegacyACParam(
 	)
 {
 	// [Win7] pChnlAccessSetting use the common part for both adapters. 2009.07.02, by Bohn
-	PCHANNEL_ACCESS_SETTING pChnlAccessSetting = &(GetDefaultMgntInfo(Adapter)->ChannelAccessSetting);	
+	PCHANNEL_ACCESS_SETTING pChnlAccessSetting = &(GetDefaultMgntInfo(Adapter)->ChannelAccessSetting);
 	AC_CODING	eACI;
 	u4Byte		AcParam=0;
 	pu1Byte		pTmp_WMMParamEle=NULL;
@@ -300,23 +300,23 @@ QosSetLegacyACParam(
 	// 2. Note that, 85B's throughput with Cisco1231 and Broadcom testbed are less than 20M, so we change the contention window from 0xA5 to 0x73.
 	//     With CW=0x73, the throughput are 21M~22M.
 	//     If there in any side event with 0x73, we should test 0xA4 first (following spec). Annie, 2006-04-04.
-	//		
+	//
 	SET_WMM_AC_PARAM_AIFSN(&AcParam, 2);	// Follow 802.11 DIFS.
 	SET_WMM_AC_PARAM_ACM(&AcParam, 0);
 	SET_WMM_AC_PARAM_ECWMIN(&AcParam, pChnlAccessSetting->CWminIndex);
 	SET_WMM_AC_PARAM_ECWMAX(&AcParam, pChnlAccessSetting->CWmaxIndex);
 	SET_WMM_AC_PARAM_TXOP_LIMIT(&AcParam, 0);
-	
+
 
 	pTmp_WMMParamEle = (pu1Byte)GetTwoPortSharedResource(Adapter,TWO_PORT_SHARED_OBJECT__SET_OF_pStaQos_WMMParamEle
 		,Adapter->MgntInfo.pStaQos->WMMParamEle,NULL);
-	
+
 	RT_ASSERT(pTmp_WMMParamEle != NULL, ("QosSetLegacyACParam(): Get Null WMMParamEle.\n"));
 
 	for(eACI = 0; eACI < AC_MAX; eACI++)
 	{
 		if(eACI == AC3_VO)
-		{ 
+		{
 			// For Wifi-Direct Device Discovery: MgntQueue should be fast ----------------------------------------
 			u4Byte		VOQueueAcParam = 0;
 			SET_WMM_AC_PARAM_AIFSN(&VOQueueAcParam, 0);
@@ -345,14 +345,14 @@ QosSetLegacyACParam(
 // Ref: QOS_OnAssociationResponse() in 8185 QoS code:
 // TODO:
 // 	(1)Config QoS mode, MSR reister for EDCA/HCCA mode
-// 	(2) Config ACM reqirement	
+// 	(2) Config ACM reqirement
 // 		(2.1) Config driver parameter for ACM control
 // 		(2.2) Configure WME parameter register
 // 		(2.3) Configure WiFi mode ACM
 // 	(3) Config Queue Size Request Mode
 // 	(4) Turn on accumulated duration field if required
 //	(5)Create AddTspec action management frame
-// 
+//
 VOID
 QosOnAssocRsp(
 	IN	PADAPTER		Adapter,
@@ -389,7 +389,7 @@ QosOnAssocRsp(
 
 		FillOctetString(WMMParaEle, pStaQos->WMMParamEle, WMM_PARAM_ELEMENT_SIZE);
 	}
-	
+
 	//copy OUI ~ Reserved (8 bytes), because Joseph say AC Parameters may disorder.
 	//They would store later.
 	CopyMem( pStaQos->WMMParamEle, WMMParaEle.Octet, 8 );
@@ -402,11 +402,11 @@ QosOnAssocRsp(
 	{
 		AcParamPtr = GET_WMM_PARAM_ELE_SINGLE_AC_PARAM(WMMParaEle.Octet, index);
 		if(AcParamPtr != NULL)
-			eACI = GET_WMM_AC_PARAM_ACI(AcParamPtr); 
-	
+			eACI = GET_WMM_AC_PARAM_ACI(AcParamPtr);
+
 		// Filter out ACI and ACM which is not related to EDCA parameters and check if the
 		// value is all NULL. If the value is all NULL, we shall use EDCA default value.
-		//Prefast warning C28182: Dereferencing NULL pointer. 'AcParamPtr' contains the same NULL value as 'WMMParaEle.Octet' did. 
+		//Prefast warning C28182: Dereferencing NULL pointer. 'AcParamPtr' contains the same NULL value as 'WMMParaEle.Octet' did.
 		if(AcParamPtr != NULL &&
 			EF4Byte( *((UNALIGNED pu4Byte)AcParamPtr) & 0xffffff0f)==0)
 			SET_WMM_PARAM_ELE_SINGLE_AC_PARAM(pStaQos->WMMParamEle, eACI, &(Adapter->STA_EDCA_PARAM[eACI]) );
@@ -439,11 +439,11 @@ QosOnBeaconUpdateParameter(
 {
 	PSTA_QOS		pStaQos = Adapter->MgntInfo.pStaQos;
 
-	RT_ASSERT( pStaQos->QosCapability, ("QosOnBeaconUpdateParameter(): QosCapability == WMM_Disable!!!\n"));	
+	RT_ASSERT( pStaQos->QosCapability, ("QosOnBeaconUpdateParameter(): QosCapability == WMM_Disable!!!\n"));
 
 	if(pBssDesc->BssQos.EleSubType != QOSELE_TYPE_PARAM)
 		return;
-	else	
+	else
 	{
 
 		pu1Byte			pWMMPE_STA= pStaQos->WMMParamEle;
@@ -458,9 +458,9 @@ QosOnBeaconUpdateParameter(
 		{
 			bssAcParamPtr = GET_WMM_PARAM_ELE_SINGLE_AC_PARAM(pBssDesc->BssQos.pWMMParamEle, index);
 			AcIdx = GET_WMM_AC_PARAM_ACI(bssAcParamPtr);
-		
+
 			staAcParamPtr = GET_WMM_PARAM_ELE_SINGLE_AC_PARAM(pWMMPE_STA, AcIdx);
-		
+
 			staAcParam = EF4Byte(*((UNALIGNED pu4Byte)staAcParamPtr));
 			bssAcParam = EF4Byte(*((UNALIGNED pu4Byte)bssAcParamPtr));
 
@@ -492,23 +492,23 @@ QosFillHeader(
 	u2Byte		FragBufferIndex = 0;
 	pu1Byte		pHeader = (pu1Byte)(GET_FRAME_OF_FIRST_FRAG(Adapter, pTcb));
 	PSTA_QOS	pStaQos = Adapter->MgntInfo.pStaQos;
-	
+
 	// Note: subtype of QoS data has already changed in TranslateHeader().
-	// Thus I use FC byte[0] bit7 to determine filling QoS control field or not. 
+	// Thus I use FC byte[0] bit7 to determine filling QoS control field or not.
 	// Annie, 2005-12-06.
 	if( IsQoSDataFrame(pHeader) && !IsMgntQosNull(pHeader))
-	{		
+	{
 		u2Byte	QosCtrl;
 		// 1. Fill QoS Control Field
 		SET_QOS_CTRL(pHeader, 0);
 		SET_QOS_CTRL_STA_DATA_AMSDU(pHeader, ((pTcb->bAggregate)?1:0) );
 		SET_QOS_CTRL_WMM_UP(pHeader, pTcb->priority);
-		SET_QOS_CTRL_WMM_ACK_POLICY(pHeader, 
+		SET_QOS_CTRL_WMM_ACK_POLICY(pHeader,
 			(WMMUP_TO_RT_AC_BIT(pTcb->priority) & pStaQos->AcNoAck) ? 1 : 0); // Set Ack Policy by the UP setting
-		
+
 		// 2. Consider fragmentation case.
 		QosCtrl=GET_QOS_CTRL(pHeader);
-	
+
 		for( i=0; i<pTcb->BufferCount; i++ )
 		{
 			if( FragBufferIndex == 0 )	// fragmentation header
@@ -537,14 +537,14 @@ QosFillHeader(
 		case 3:
 			pTcb->SpecifiedQueueID = BE_QUEUE;	// 1
 			break;
-			
+
 		case 1:
 		case 2:
 			pTcb->SpecifiedQueueID = BK_QUEUE;	// 0
 			break;
-			
+
 		case 4:
-		case 5:			
+		case 5:
 			pTcb->SpecifiedQueueID = VI_QUEUE;	// 2
 			break;
 
@@ -644,7 +644,7 @@ QosParsingDebug_BssDesc(
 		return;
 	}
 
-	RT_TRACE( COMP_QOS, DBG_LOUD, ("-----------------------------------------\n" ) );	
+	RT_TRACE( COMP_QOS, DBG_LOUD, ("-----------------------------------------\n" ) );
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("===> QosParsingDebug_BssDesc()\n") );
 	RT_PRINT_STR( COMP_QOS, DBG_LOUD, "SSID", pBssDesc->bdSsIdBuf, pBssDesc->bdSsIdLen );
 
@@ -669,10 +669,10 @@ QosParsingDebug_STA(
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("QosParsingDebug_STA(): CurrentQosMode is %d\n", pStaQos->CurrentQosMode ) );
 	if( pStaQos->CurrentQosMode == QOS_DISABLE )
 	{
-		RT_TRACE( COMP_QOS, DBG_LOUD, ("<=== QosParsingDebug_STA(): QOS_DISABLE.\n") );	
+		RT_TRACE( COMP_QOS, DBG_LOUD, ("<=== QosParsingDebug_STA(): QOS_DISABLE.\n") );
 		return;
 	}
-	
+
 	// 0. Show current SSID.
 	RT_PRINT_STR( COMP_QOS, DBG_LOUD, "SSID", pMgntInfo->Ssid.Octet, pMgntInfo->Ssid.Length );
 
@@ -684,7 +684,7 @@ QosParsingDebug_STA(
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("--------------- WMM Parameter Element Content ----------------\n") );
 
 	QosParsingDebug_ParaElement( pStaQos->WMMParamEle );
-	
+
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("------------------------------------------------------------\n") );
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("<=== QosParsingDebug_STA()\n") );
 }
@@ -720,7 +720,7 @@ QosParsingDebug_ParaElement(
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("OUI sub Type: 0x%02X\n",GET_WMM_PARAM_ELE_OUI_SUBTYPE(pWMMParamEle))  );
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("Version: 0x%02X\n",		GET_WMM_PARAM_ELE_VERSION(pWMMParamEle))  );
 	RT_TRACE( COMP_QOS, DBG_LOUD, ("QosInfo: 0x%02X\n",		GET_WMM_PARAM_ELE_QOS_INFO_FIELD(pWMMParamEle))  );
-	
+
 	pAcParam = GET_WMM_PARAM_ELE_AC_PARAMS(pWMMParamEle);
 	for( eACI=0; eACI<AC_MAX; eACI++ )
 	{
@@ -748,10 +748,10 @@ QosParsingDebug_AcParam(
 	RT_TRACE( COMP_QOS, DBG_TRACE, ("	   - AIFSN(4bit)=0x%X\n",	GET_WMM_AC_PARAM_AIFSN(pAcParam)) );
 	RT_TRACE( COMP_QOS, DBG_TRACE, ("	   - ACM(1bit)=0x%X\n",		GET_WMM_AC_PARAM_ACM(pAcParam)) );
 	RT_TRACE( COMP_QOS, DBG_TRACE, ("       - ACI(2bit)=0x%X\n",		GET_WMM_AC_PARAM_ACI(pAcParam))  );
-	
+
 	RT_TRACE( COMP_QOS, DBG_TRACE, ("       - ECWmin(4bit)=0x%X\n",	GET_WMM_AC_PARAM_ECWMIN(pAcParam)) );
 	RT_TRACE( COMP_QOS, DBG_TRACE, ("       - ECWmax(4bit)=0x%X\n",	GET_WMM_AC_PARAM_ECWMAX(pAcParam)) );
-	
+
 	RT_TRACE( COMP_QOS, DBG_TRACE, ("     TXOPLimit = 0x%04X\n",		GET_WMM_AC_PARAM_TXOP_LIMIT(pAcParam)) );
 }
 
@@ -800,7 +800,7 @@ SendQoSNullFunctionData(
 	if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 	{
 		ConstructNullFunctionData(
-			Adapter, 
+			Adapter,
 			pBuf->Buffer.VirtualAddress,
 			&pTcb->PacketLength,
 			StaAddr,
@@ -810,10 +810,10 @@ SendQoSNullFunctionData(
 			bForcePowerSave);
 
 		DataRate = pMgntInfo->LowestBasicRate;			// Annie, 2005-03-31
-		
+
 		pTcb->priority = AC;
-		
-		MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, LOW_QUEUE, DataRate);	
+
+		MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, LOW_QUEUE, DataRate);
 	}
 
 	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
@@ -824,12 +824,12 @@ SendQoSNullFunctionData(
 VOID
 QosConstructEDCAParamElem(
 	IN	PADAPTER		Adapter,
-	OUT	POCTET_STRING	posEDCAParamElem	
+	OUT	POCTET_STRING	posEDCAParamElem
 	)
 {
 	//1REWRITE this part!!!
 	PlatformZeroMemory(posEDCAParamElem->Octet, 2); //(Qos Info field + reserved) for WMM
-	
+
 	CopyMem(posEDCAParamElem->Octet + 2, Adapter->STA_EDCA_PARAM, AC_MAX * AC_PARAM_SIZE);
 
 	posEDCAParamElem->Length = WMM_PARAM_ELE_BODY_LEN;
@@ -881,7 +881,7 @@ QosConstructTSPEC(
 	SET_TSPEC_OUI_TYPE(pTspec, 2);
 	SET_TSPEC_OUI_SUBTYPE(pTspec, 2);
 	SET_TSPEC_VERSION(pTspec, 1);
-	
+
 	// TSINFO
 	SET_TSPEC_TSINFO_TSID(pTspec, TID);
 	SET_TSPEC_TSINFO_DIRECTION(pTspec, Direction);
@@ -925,13 +925,13 @@ VOID
 QosInitTs(
 	IN PADAPTER			Adapter,
 	IN PQOS_TSTREAM		pTs,
-	IN u1Byte			TSID, 
+	IN u1Byte			TSID,
 	IN PWMM_TSPEC		pTSpec
 	)
 {
 	PMGNT_INFO	pMgntInfo = &(Adapter->MgntInfo);
 	PSTA_QOS 	pStaQos = pMgntInfo->pStaQos;
-	
+
 	RT_ASSERT(pTs != NULL, ("QosInitTs(): pTs should NOT be NULL!!!\n"));
 	RT_ASSERT(pTSpec != NULL, ("QosInitTs(): pTSpecElm should NOT be NULL!!!\n"));
 	RT_ASSERT(TSID < MAX_STA_TS_COUNT, ("QosInitTs(): invalid TSID(%d)!!!\n", TSID));
@@ -946,7 +946,7 @@ QosInitTs(
 	PlatformMoveMemory(&(pTs->OutStandingTSpec), pTSpec, sizeof(WMM_TSPEC));
 	pTs->NominalPhyRate = (u1Byte) QOS_BPS_TO_RATE( GET_TSPEC_MIN_PHY_RATE(pTSpec) );
 	pTs->UserPriority = GET_TSPEC_TSINFO_UP(pTSpec);
-	
+
 
 	RT_TRACE(COMP_QOS, DBG_LOUD, ("========================================\n"));
 	RT_TRACE(COMP_QOS, DBG_LOUD, ("QosInitTs(): pTs(%p), TSID(%d)\n", pTs, TSID));
@@ -970,13 +970,13 @@ QosFlushTs(
 	)
 {
 	PRT_TCB		pTcb;
-	
+
 	if(!ACTING_AS_AP(Adapter))
 	{
 		while ( !RTIsListEmpty(&(pTs->BufferedPacketList)) )
 		{
 			pTcb = (PRT_TCB)RTRemoveHeadList(&(pTs->BufferedPacketList));
-			
+
 			pTcb->bFromUpperLayer = FALSE;
 			NicIFSendPacket(Adapter, pTcb);
 
@@ -991,22 +991,22 @@ QosFlushTs(
 //
 //	Input:
 //		TSID: Traffic stream ID, WMM: 0-7, CAC: 8,9, 11e: 8-15
-//		RA: Receiver MAC address. 
+//		RA: Receiver MAC address.
 //		TA: Transmitter MAC address.
 //		pTSpec: TSPEC of the traffic stream, its content will be copied into the QOS_TSTREAM object.
 //
 //	Output:
-//		Pointer to the TS object for new created traffic stream if succeeded, 
+//		Pointer to the TS object for new created traffic stream if succeeded,
 //		NULL otherwise.
 //
 //	Assumption:
 //		1. RT_QOS_SPINLOCK is NOT acquired.
 //
-PQOS_TSTREAM 
+PQOS_TSTREAM
 QosAddTs(
 	IN PADAPTER			Adapter,
-	IN u1Byte			TSID, 
-	IN pu1Byte			RA, 
+	IN u1Byte			TSID,
+	IN pu1Byte			RA,
 	IN pu1Byte			TA,
 	IN PWMM_TSPEC		pTSpec
 	)
@@ -1023,7 +1023,7 @@ QosAddTs(
 	{
 		if(TSID < MAX_STA_TS_COUNT)
 		{
-			pTs = &(pStaQos->StaTsArray[TSID]); 
+			pTs = &(pStaQos->StaTsArray[TSID]);
 		}
 	}
 	else
@@ -1038,9 +1038,9 @@ QosAddTs(
 
 	if(pTs != NULL)
 	{
-		if (pTs->bUsed) 
+		if (pTs->bUsed)
 			QosUpdateTs(Adapter, pTs, pTSpec);
-		else 
+		else
 			QosInitTs(Adapter, pTs, TSID, pTSpec);
 	}
 	else
@@ -1053,7 +1053,7 @@ QosAddTs(
 
 //
 //	Description:
-//		Get a TS object according to given (TSID, RA, TA).	
+//		Get a TS object according to given (TSID, RA, TA).
 //
 //	Input:
 //		TSID: Traffic stream ID, WMM: 0-7, CAC: 8,9, 11e: 8-15
@@ -1064,27 +1064,27 @@ QosAddTs(
 //		Pointer to a TS object if found, NULL otherwise.
 //
 //	Assumption:
-//		1. We MIGHT acquired RT_QOS_SPINLOCK before calling this function, 
+//		1. We MIGHT acquired RT_QOS_SPINLOCK before calling this function,
 //		so, we should not acquire it in this function.
 //
-PQOS_TSTREAM 
+PQOS_TSTREAM
 QosGetTs(
 	IN PADAPTER			Adapter,
-	IN u1Byte			TSID, 
-	IN pu1Byte			RA, 
+	IN u1Byte			TSID,
+	IN pu1Byte			RA,
 	IN pu1Byte			TA
 	)
 {
 	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);
 	PSTA_QOS		pStaQos = pMgntInfo->pStaQos;
 	PQOS_TSTREAM	pTs = NULL;
-	
+
 	if(!ACTING_AS_AP(Adapter))
 	{
-		if(	TSID < MAX_STA_TS_COUNT && 
+		if(	TSID < MAX_STA_TS_COUNT &&
 			pStaQos->StaTsArray[TSID].bUsed )
 		{
-			pTs = &(pStaQos->StaTsArray[TSID]); 
+			pTs = &(pStaQos->StaTsArray[TSID]);
 		}
 	}
 	else
@@ -1116,7 +1116,7 @@ QosUpdateTs(
 {
 	PMGNT_INFO	pMgntInfo = &(Adapter->MgntInfo);
 	PSTA_QOS 	pStaQos = pMgntInfo->pStaQos;
-	
+
 	RT_ASSERT(pTs != NULL, ("QosUpdateTs(): pTs should NOT be NULL!!!\n"));
 	RT_ASSERT(pTSpec != NULL, ("QosUpdateTs(): pTSpec should NOT be NULL!!!\n"));
 
@@ -1142,7 +1142,7 @@ QosSendAddTs(
 	PSTA_QOS 			pStaQos = pMgntInfo->pStaQos;
 	PQOS_TSTREAM		pTStream = pTs;
 	u4Byte i;
-	
+
 	for (i = 0; i < numTs; i ++)
 	{
 		if (pTStream && pTStream->bUsed)
@@ -1150,8 +1150,8 @@ QosSendAddTs(
 		pTStream ++;
 	}
 
-	PlatformSetTimer(Adapter, 
-					&(pStaQos->AddTsTimer), 
+	PlatformSetTimer(Adapter,
+					&(pStaQos->AddTsTimer),
 					ADDTS_TIME_SLOT);
 	SendQosAddTs(Adapter, pTs, numTs);
 
@@ -1190,7 +1190,7 @@ QosTsHash(
 
 	RT_PRINT_DATA(COMP_QOS, DBG_TRACE, "TSID, RA, TA: ", Key, RM_STA_RX_POWER_KEY_SIZE);
 
-	for(idx = 1; idx < QOS_TSTREAM_KEY_SIZE; idx ++) 
+	for(idx = 1; idx < QOS_TSTREAM_KEY_SIZE; idx ++)
 		result += Key[idx];
 
 	result = result % MAX_AP_TS_COUNT;
@@ -1227,7 +1227,7 @@ QosAddTsTimerCallback(
 				// If ADDTS has sent out, TimeSlotCount should not be zero.
 				if (pTs->TimeSlotCount)
 					pTs->TimeSlotCount ++;
-				
+
 				if (pTs->TimeSlotCount == (ADDTS_TIMEOUT / ADDTS_TIME_SLOT) )
 				{ // Time is up, remove this ts, do not request ts.
 					RT_TRACE(COMP_QOS, DBG_LOUD, ("QosAddTsTimerCallback(): ADDTS Timeout!\n"));
@@ -1249,7 +1249,7 @@ QosAddTsTimerCallback(
 							ADDTS_TIME_SLOT);
 		}
 	}
-	
+
 }
 
 //
@@ -1299,7 +1299,7 @@ QosResetTs(
 	)
 {
 	PRT_TCB		pTcb;
-	
+
 	RT_ASSERT(pTs != NULL, ("QosResetTs(): pTs should NOT be NULL!!!\n"));
 
 	pTs->bUsed = FALSE;
@@ -1328,7 +1328,7 @@ QosResetTs(
 //	Assumption:
 //		RT_QOS_SPINLOCK is NOT acquired.
 //
-BOOLEAN 
+BOOLEAN
 QosResetAllTs(
 	IN PADAPTER			Adapter
 	)
@@ -1380,7 +1380,7 @@ QosRemoveAllTs(
 	PQOS_TSTREAM	pTs;
 	PRT_LIST_ENTRY	pList, pEntry;
 	u1Byte			i;
-	
+
 
 	for (i = 0; i < MAX_STA_TS_COUNT; i ++)
 	{
@@ -1398,8 +1398,8 @@ QosRemoveAllTs(
 		RT_ASSERT(pTs->bUsed, ("QosRemoveAllTs(): pTs(%p) bUsed==FALSE !!!\n", pTs));
 		QosRemoveTs(Adapter, pTs);
 	}
-	RtResetHashTable(pStaQos->hApTsTable);	
-	
+	RtResetHashTable(pStaQos->hApTsTable);
+
 }
 
 
@@ -1473,7 +1473,7 @@ QosParsingTrafficStreamIE(
 		{
 			osIE.Octet = Dot11Ie.Content.Octet - 2;
 			osIE.Length = Dot11Ie.Content.Length + 2;
-			
+
 			if (PlatformCompareMemory(
 						Dot11Ie.Content.Octet,
 						TspecOui,
@@ -1487,7 +1487,7 @@ QosParsingTrafficStreamIE(
 						TsrsOui,
 						sizeof(TsrsOui)) == 0)
 			{
-				QosRecvTsrsIE(Adapter, &osIE, source, rspStatus);	
+				QosRecvTsrsIE(Adapter, &osIE, source, rspStatus);
 				QosParsingDebug_TsrsIE(Adapter, &osIE);
 			}
 			else if (PlatformCompareMemory(
@@ -1499,11 +1499,11 @@ QosParsingTrafficStreamIE(
 				QosParsingDebug_MsduLifetimeIE(Adapter, &osIE);
 			}
 			else if (PlatformCompareMemory(
-						Dot11Ie.Content.Octet, 
+						Dot11Ie.Content.Octet,
 						CcxTsmOui,
 						sizeof(CcxTsmOui)) == 0)
 			{
-				
+
 			}
 		}
 	}
@@ -1539,19 +1539,19 @@ QosRecvTspecIE(
 				pTs->TimeSlotCount = 0;
 
 				// Update TS parameter.
-				RT_ASSERT( (pOsBuffer->Length == sizeof(WMM_TSPEC)), 
+				RT_ASSERT( (pOsBuffer->Length == sizeof(WMM_TSPEC)),
 					("QosRecvTspecIE(): Invalid TSPEC IE length\n"));
 				PlatformMoveMemory(&(pTs->TSpec),
 									pOsBuffer->Octet,
 									sizeof(WMM_TSPEC));
 				QosIncAdmittedTime(Adapter, pTs);
-							
+
 				if (pTs->bEstablishing)
 				{
 					u1Byte	CurrCcxVerNumber = 0;
-			
+
 					CCX_QueryVersionNum(Adapter, &CurrCcxVerNumber);
-					
+
 					pTs->bEstablishing = FALSE;
 
 					if (CurrCcxVerNumber >= 4)
@@ -1572,22 +1572,22 @@ QosRecvTspecIE(
 						QosFlushTs(Adapter, pTs);
 						PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 					}
-					
+
 				}
-			}			
+			}
 		}
 		else if (source == QOSIE_SRC_DELTS)
 		{
 			TSID = GET_TSPEC_TSINFO_TSID(pOsBuffer->Octet);
-			
+
 			QosDecAdmittedTime(Adapter, pTs);
-			pTs = &(pStaQos->StaTsArray[TSID]);	
+			pTs = &(pStaQos->StaTsArray[TSID]);
 			if (pTs && pTs->bUsed)
 			{
 				QosRemoveTs(Adapter, pTs);
 			}
 		}
-		
+
 	}
 	else
 	{
@@ -1626,7 +1626,7 @@ QosRecvTsrsIE(
 			(source == QOSIE_SRC_REASOCRSP) )
 		{
 			pTs = &(pStaQos->StaTsArray[TSID]);
-			
+
 			for (i = 0; i < Length; i ++)
 			{
 				rate = *(pOsBuffer->Octet + 7 + i);
@@ -1635,7 +1635,7 @@ QosRecvTsrsIE(
 					rate &= ~0x80;
 					if (rate != QosGetNPR(Adapter, pTs))
 					{
-						RT_TRACE(COMP_QOS, DBG_LOUD, 
+						RT_TRACE(COMP_QOS, DBG_LOUD,
 							("QosRecvTsrsIE(): returned NPR (%d) is not one we requested (%d) \n", rate, QosGetNPR(Adapter, pTs)));
 						QosSetNPR(Adapter, pTs, rate);
 
@@ -1682,7 +1682,7 @@ QosConstructTSRS(
 	//
 	u1Byte	TSRS[] = { 0xdd, 0x06, 0x00, 0x40, 0x96, 0x08, 0x00, 0x00 };
 	u1Byte	TSID;
-	
+
 	if (pTs && pTs->bUsed)
 	{
 		TSID = GET_TSPEC_TSINFO_TSID(pTs->TSpec);
@@ -1720,10 +1720,10 @@ QosIncAdmittedTime(
 	bAcm = (BOOLEAN)GET_WMM_AC_PARAM_ACM(pTs->TSpec);
 	if (!bAcm)
 		return;
-	
+
 	UserPriority = GET_TSPEC_TSINFO_UP(pTs->TSpec);
 	MediumTime = GET_TSPEC_MEDIUM_TIME(pTs->TSpec);
-	
+
 	switch (UserPriority)
 	{
 		case 0:
@@ -1768,10 +1768,10 @@ QosDecAdmittedTime(
 	RT_ASSERT(pTs != NULL, ("QosIncAdmittedTime(): pTs should not be NULL\n"));
 	if (!pTs->bUsed)
 		return;
-	
+
 	UserPriority = GET_TSPEC_TSINFO_UP(pTs->TSpec);
 	MediumTime = GET_TSPEC_MEDIUM_TIME(pTs->TSpec);
-	
+
 	switch (UserPriority)
 	{
 		case 0:
@@ -1792,7 +1792,7 @@ QosDecAdmittedTime(
 			break;
 	}
 	//RT_TRACE(COMP_QOS, DBG_LOUD, ("QosDecAdmittedTime(): DELTS: AC(%d) AdmitTime(%"i64fmt"d) MediumTime(%d)\n",
-		//		eACI, pStaQos->acm[eACI].MediumTime, MediumTime));			
+		//		eACI, pStaQos->acm[eACI].MediumTime, MediumTime));
 	if (pStaQos->acm[eACI].MediumTime > MediumTime)
 		pStaQos->acm[eACI].MediumTime -= MediumTime;
 	else
@@ -1815,7 +1815,7 @@ QosACMTimerCallback(
 	AC_CODING	eACI;
 	pu1Byte 	pacParam;
 	BOOLEAN 	bAcm;
-	
+
 	for(eACI = 0; eACI < AC_MAX; eACI ++)
 	{
 		pacParam = (pu1Byte)(GET_WMM_PARAM_ELE_AC_PARAM(pStaQos->WMMParamEle)+(4 * eACI));
@@ -1831,7 +1831,7 @@ QosACMTimerCallback(
 				pStaQos->acm[eACI].UsedTime = pStaQos->acm[eACI].UsedTime -
 											  pStaQos->acm[eACI].MediumTime;
 			}
-		}	
+		}
 	}
 
 	CCX_UpdateUsedTime( Adapter );
@@ -1873,13 +1873,13 @@ QosSetNPR(
 {
 	PMGNT_INFO	pMgntInfo = &(Adapter->MgntInfo);
 	u4Byte		MinPhyRate = 0;
-	
+
 	if (!MgntIsRateValidForWirelessMode(rate, pMgntInfo->dot11CurrentWirelessMode))
 	{
 		RT_TRACE(COMP_QOS, DBG_WARNING, ("QosSetNPR(): Invalid data rate to set!\n"));
 		return;
 	}
-	
+
 	if (pTs && pTs->bUsed)
 	{
 		MinPhyRate = GET_TSPEC_MIN_PHY_RATE(pTs->TSpec);
@@ -1896,7 +1896,7 @@ QosSetNPR(
 
 //
 //	Description:
-//		Search established TS and if 
+//		Search established TS and if
 //		1. No TS -- drop the packet.
 //		2. TS is establishing -- buffer the packet.
 //		3. TS is established -- transmit the packet.
@@ -1914,20 +1914,20 @@ QosAdmissionControl(
 	PQOS_TSTREAM		pTs;
 	BOOLEAN				bHandled = FALSE;
 	u1Byte				CurrCcxVerNumber = 0;
-			
-	CCX_QueryVersionNum(Adapter, &CurrCcxVerNumber);	
-	
+
+	CCX_QueryVersionNum(Adapter, &CurrCcxVerNumber);
+
 	if (CurrCcxVerNumber >= 4)
 	{
 		return CCX_CallAdmissionControl(Adapter, pTcb);
 	}
-	
+
 	if (ACTING_AS_AP(Adapter)) return FALSE;
-	
+
 	if (pTcb->TSID <= MAX_TSPEC_TSID)
 	{
-		pTs = QosGetTs(Adapter, 
-							pTcb->TSID, 
+		pTs = QosGetTs(Adapter,
+							pTcb->TSID,
 							pMgntInfo->Bssid,
 							Adapter->CurrentAddress);
 
@@ -1965,7 +1965,7 @@ QosAdmissionControl(
 			bHandled = TRUE;
 		}
 	}
-						
+
 	return bHandled;
 }
 
@@ -1990,9 +1990,9 @@ QosCalcUsedTimeAndAdmitPacket(
 	u8Byte			AccUsedTime;
 	BOOLEAN			bReturn = TRUE;
 
-	if (pStaQos->CurrentQosMode == QOS_DISABLE) 
+	if (pStaQos->CurrentQosMode == QOS_DISABLE)
 		return TRUE;
-	
+
 	switch (pTcb->priority)
 	{
 		case 0:
@@ -2027,7 +2027,7 @@ QosCalcUsedTimeAndAdmitPacket(
 			// 1. Calc used time
 			UsedTime = ((pTcb->PacketLength * 8 * 2) / (pTcb->DataRate)) / 32;
 			AccUsedTime = pStaQos->acm[eACI].UsedTime + UsedTime;
-			
+
 			// 2. Admit packet.
 			if (AccUsedTime >= pStaQos->acm[eACI].MediumTime)
 			{
@@ -2045,14 +2045,14 @@ QosCalcUsedTimeAndAdmitPacket(
 						break;
 					case AC1_BK:
 						bReturn = FALSE;
-						bDetermined = TRUE;						
+						bDetermined = TRUE;
 						break;
 					case AC0_BE:
 						eACI = AC1_BK;
 						pTcb->priority = 2;
-						break;	
+						break;
 				}
-				
+
 			}
 			else
 			{
@@ -2086,7 +2086,7 @@ QosReturnAllPendingTxMsdu(
 	PRT_LIST_ENTRY	pList, pEntry;
 	u1Byte			i;
 	PRT_TCB			pTcb;
-	
+
 
 	for(i = 0; i < MAX_STA_TS_COUNT; i ++)
 	{
@@ -2116,7 +2116,7 @@ QosReturnAllPendingTxMsdu(
 			ReturnTCB(Adapter, pTcb, RT_STATUS_SUCCESS);
 		}
 	}
-	
+
 }
 
 //
@@ -2149,10 +2149,10 @@ OnAddTsReq(
 	pTaddr = Frame_Addr2(*posMpdu);
 	pRaddr = Frame_Addr1(*posMpdu);
 
-	QosParsingTrafficStreamIE(Adapter, 
-								posMpdu, 
+	QosParsingTrafficStreamIE(Adapter,
+								posMpdu,
 								(sMacHdrLng + 4), // The first IE in this action frame.
-								QOSIE_SRC_ADDTSREQ, 
+								QOSIE_SRC_ADDTSREQ,
 								FALSE );
 
 	return RT_STATUS_SUCCESS;
@@ -2177,7 +2177,7 @@ OnAddTsRsp(
 	u1Byte			i;
 	u1Byte			DialogToken, StatusCode;
 	u1Byte				CurrCcxVerNumber = 0;
-	
+
 	if(ACTING_AS_AP(Adapter))
 		return RT_STATUS_SUCCESS;
 
@@ -2203,7 +2203,7 @@ OnAddTsRsp(
 				pTs->TimeSlotCount = 0;
 		}
 	}
-		
+
 	CCX_QueryVersionNum(Adapter, &CurrCcxVerNumber);
 
 	if (CurrCcxVerNumber >= 4)
@@ -2214,21 +2214,21 @@ OnAddTsRsp(
 
 	if (StatusCode == 0)
 	{ // Success.
-		QosParsingTrafficStreamIE(Adapter, 
-									posMpdu, 
-									(sMacHdrLng + 4), 
-									QOSIE_SRC_ADDTSRSP, 
+		QosParsingTrafficStreamIE(Adapter,
+									posMpdu,
+									(sMacHdrLng + 4),
+									QOSIE_SRC_ADDTSRSP,
 									TRUE );
 	}
 	else
 	{ // Failed.
 		if (CurrCcxVerNumber >= 4)
-		{			
+		{
 			RT_TRACE(COMP_QOS, DBG_LOUD, ("OnAddTsRsp(): ADDTS failed, try to roaming...\n"));
 
 			CCX_OnAddTsRspSet(Adapter);
-			
-			MgntActSet_802_11_BSSID_LIST_SCAN(Adapter);			
+
+			MgntActSet_802_11_BSSID_LIST_SCAN(Adapter);
 		}
 		else
 		{
@@ -2241,14 +2241,14 @@ OnAddTsRsp(
 					{
 						pTs->TimeSlotCount = 0;
 						if (pTs->bEstablishing)
-							QosRemoveTs(Adapter, pTs);					
-					}				
+							QosRemoveTs(Adapter, pTs);
+					}
 				}
 			}
 		}
 
 	}
-			
+
 	//return (StatusCode == 0);
 	return RT_STATUS_SUCCESS;
 }
@@ -2278,10 +2278,10 @@ OnDelTs(
 	pTaddr = Frame_Addr2(*posMpdu);
 	pRaddr = Frame_Addr1(*posMpdu);
 
-	QosParsingTrafficStreamIE(Adapter, 
-								posMpdu, 
-								(sMacHdrLng + 4), 
-								QOSIE_SRC_DELTS, 
+	QosParsingTrafficStreamIE(Adapter,
+								posMpdu,
+								(sMacHdrLng + 4),
+								QOSIE_SRC_DELTS,
 								FALSE );
 
 	return RT_STATUS_SUCCESS;

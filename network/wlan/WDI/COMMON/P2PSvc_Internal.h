@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //
 // Copyright (c) 2013 Realtek Semiconductor, Inc. All rights reserved.
-// 
+//
 //---------------------------------------------------------------------------
 // Description:
 //		P2P Service interface for internal implementation
@@ -19,8 +19,8 @@
 // --------------------------------
 //     P2PSvc_Internal.h
 // --------------------------------
-//  ActionInfo, Construct, Object, ParamSpec, PD, SD, SearchResult,... 
-// 
+//  ActionInfo, Construct, Object, ParamSpec, PD, SD, SearchResult,...
+//
 // P2PSvcType.h is visible to all P2PSvc modules.
 //
 
@@ -53,27 +53,27 @@ typedef struct _P2PSVC_INFO
 	BOOLEAN 						bEnabled;
 	RT_SPIN_LOCK					lock;
 
-	// A list of P2PSVC_REQ_INFO_ENTRY each 
+	// A list of P2PSVC_REQ_INFO_ENTRY each
 	// representing an advertised service
 	RT_LIST_ENTRY					advSvcList;
 	u4Byte							advSvcListCnt;
 
-	// A list of P2PSVC_REQ_INFO_ENTRY each 
+	// A list of P2PSVC_REQ_INFO_ENTRY each
 	// representing a seek request
 	RT_LIST_ENTRY					seekReqList;
 	u4Byte							seekReqListCnt;
 
-	// A list of P2PSVC_SEARCH_RESULT_LIST_ENTRY each 
+	// A list of P2PSVC_SEARCH_RESULT_LIST_ENTRY each
 	// representing the search result of a device
 	RT_LIST_ENTRY					searchResultList;
 	u4Byte							searchResultListCnt;
 
-	// A list of P2PSVC_PD_ENTRY each 
+	// A list of P2PSVC_PD_ENTRY each
 	// representing a provision discovery session
 	RT_LIST_ENTRY					pdSessionList;
 	u4Byte							pdSessionListCnt;
 
-	// The SSID that will be used for starting 
+	// The SSID that will be used for starting
 	// P2P Group
 	u1Byte							goSsidBuf[32];
 	u1Byte							goSsidLen;
@@ -174,7 +174,7 @@ typedef struct _P2PSVC_PD_ENTRY
 	//
 	// If bDone, we have status from the last PD rsp,
 	// and if the status is success, we have the topology,
-	// which records how we are going to connect with the 
+	// which records how we are going to connect with the
 	// peer dev.
 	//
 	BOOLEAN							bDone;
@@ -242,7 +242,7 @@ typedef struct _P2PSVC_RSPDOR_PD_ENTRY
 	// FOPD info, valid if bDeferred is true
 	u8Byte							fopdRspRxTime;		// time the rspdor recvs the FOPD rsp
 
-	P2P_STATUS_CODE					fopdReqStatus;		
+	P2P_STATUS_CODE					fopdReqStatus;
 
 	// the status to be sent in FOPD req
 	u1Byte							fopdReqConnCap;		// the conn cap to be sent in FOPD req, valid only whe FOPD req status is success
@@ -296,7 +296,7 @@ P2PSvc_FreeMem(
 
 RT_STATUS
 P2PSvc_GetAdvSvcByAdvId(
-	IN  PP2PSVC_INFO				pP2PSvcInfo, 
+	IN  PP2PSVC_INFO				pP2PSvcInfo,
 	IN  u4Byte						advId,
 	OUT PP2PSVC_REQ_INFO_ENTRY 		*ppAdvSvcEntry
 	);
@@ -596,7 +596,7 @@ P2PSvc_GetParamSpec(
 	IN  u4Byte						actId
 	);
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_ValidateReqInfo(
 	IN  PVOID						infoBuf,
 	IN  u4Byte						inBufLen,
@@ -665,15 +665,15 @@ P2PSvc_PDSessionInProgress(
 	OUT PP2PSVC_PD_ENTRY			*ppPDEntry
 	);
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_AddPDInitorData(
-	IN  PADAPTER					pAdapter, 
+	IN  PADAPTER					pAdapter,
 	IN  PVOID						infoBuf,
 	IN  u4Byte						inBufLen,
 	IN  u4Byte						outBufLen
 	);
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_AddPDRspdorData(
 	IN  PP2PSVC_INFO				pP2PSvcInfo,
 	IN  pu1Byte						devAddr,
@@ -846,7 +846,7 @@ P2PSvc_SeekReqNeedSD(
 RT_STATUS
 P2PSvc_UpdateSearchResult(
 	IN  PP2PSVC_INFO				pP2PSvcInfo,
-	IN  u1Byte						searchId, 
+	IN  u1Byte						searchId,
 	IN  pu1Byte						devAddr,
 	IN  PP2PSVC_SR_LIST_ENTRY		pSREntryToUpdate,
 	OUT PBOOLEAN					pbDuplicatedEntry,
@@ -856,8 +856,8 @@ P2PSvc_UpdateSearchResult(
 RT_STATUS
 P2PSvc_MakeSearchResultDataFromProbeRsp(
 	IN  PP2PSVC_INFO				pP2PSvcInfo,
-	IN  PP2PSVC_REQ_INFO_ENTRY 		pSeekInfoEntry, 
-	IN  pu1Byte						devAddr, 
+	IN  PP2PSVC_REQ_INFO_ENTRY 		pSeekInfoEntry,
+	IN  pu1Byte						devAddr,
 	IN  POCTET_STRING				posP2PAttrs,
 	IN  OCTET_STRING				osAdvSvcInfo,
 	OUT PP2PSVC_SR_LIST_ENTRY		*ppSREntryOut
@@ -889,9 +889,9 @@ P2PSvc_Free_SeekReqList(
 	IN  u1Byte						seekId
 	);
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_Set_AdvSvc(
-	IN  PADAPTER 					pAdapter, 
+	IN  PADAPTER 					pAdapter,
 	IN  PVOID 						infoBuf,
 	IN  u4Byte						inBufLen,
 	IN  u4Byte						outBufLen,
@@ -900,7 +900,7 @@ P2PSvc_Set_AdvSvc(
 	OUT pu4Byte						pBytesNeeded
 	);
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_Set_CancelAdvSvc(
 	IN  PADAPTER 					pAdapter,
 	IN  PVOID 						infoBuf,
@@ -909,9 +909,9 @@ P2PSvc_Set_CancelAdvSvc(
 	OUT pu4Byte						pBytesWritten,
 	OUT pu4Byte						pBytesRead,
 	OUT pu4Byte						pBytesNeeded
-	); 
+	);
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_Set_SvcStatus(
 	IN  PADAPTER 					pAdapter,
 	IN  PVOID 						infoBuf,
@@ -922,7 +922,7 @@ P2PSvc_Set_SvcStatus(
 	OUT pu4Byte						pBytesNeeded
 	);
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_Set_Seek(
 	IN  PADAPTER 					pAdapter,
 	IN  PVOID 						infoBuf,
@@ -933,7 +933,7 @@ P2PSvc_Set_Seek(
 	OUT pu4Byte						pBytesNeeded
 	);
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_Set_CancelSeek(
 	IN  PADAPTER 					pAdapter,
 	IN  PVOID 						infoBuf,
@@ -944,7 +944,7 @@ P2PSvc_Set_CancelSeek(
 	OUT pu4Byte						pBytesNeeded
 	);
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_Set_ConnCap(
 	IN  PADAPTER 					pAdapter,
 	IN  PVOID 						infoBuf,
@@ -955,7 +955,7 @@ P2PSvc_Set_ConnCap(
 	OUT pu4Byte						pBytesNeeded
 	);
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_Set_PDReq(
 	IN  PADAPTER 					pAdapter,
 	IN  PVOID 						infoBuf,
@@ -966,7 +966,7 @@ P2PSvc_Set_PDReq(
 	OUT pu4Byte						pBytesNeeded
 	);
 
-RT_STATUS 
+RT_STATUS
 P2PSvc_Set_RspdorFOPDReq(
 	IN  PADAPTER 					pAdapter,
 	IN  PVOID 						infoBuf,

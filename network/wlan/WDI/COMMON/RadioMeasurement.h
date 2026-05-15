@@ -14,8 +14,8 @@ typedef	enum _RT_RM_ACTION_STATUS{
 
 // RM action status
 typedef	enum _RT_RM_HASH_TABLE{
-	RT_RM_TABLE_FRAME_REPORT = 0,				// 
-	RT_RM_TABLE_NEIGHBOR = 1,					// 
+	RT_RM_TABLE_FRAME_REPORT = 0,				//
+	RT_RM_TABLE_NEIGHBOR = 1,					//
 	RT_RM_TABLE_MAX,		// The rm is still going.
 }_RT_RM_HASH_TABLE, *P_RT_RM_HASH_TABLE;
 
@@ -52,7 +52,7 @@ StopCcxTsm(
 BOOLEAN
 StartCcxTsm(
 	IN PADAPTER			Adapter,
-	IN u1Byte			TSID, 
+	IN u1Byte			TSID,
 	IN u2Byte			MeasurementInterval // in TU
 	);
 
@@ -70,7 +70,7 @@ TsmTimerCallback(
 VOID
 OnCcxTsmIE(
 	IN PADAPTER			Adapter,
-	IN POCTET_STRING	posCcxTsmIE	
+	IN POCTET_STRING	posCcxTsmIE
 	);
 
 VOID

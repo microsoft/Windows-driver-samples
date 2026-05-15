@@ -34,7 +34,7 @@ typedef enum _MULTICHANNEL_FCS_COMMON_INFO{
 	MULTICHANNEL_FCS_PORT_RFETYPE = 9,
 	MULTICHANNEL_FCS_PORT_CHANNEL_TX_NULL = 10,
 	MULTICHANNEL_FCS_PORT_C2H_REPORT = 11,
-	MULTICHANNEL_FCS_PORT_CHANNEL_SCAN = 12,	
+	MULTICHANNEL_FCS_PORT_CHANNEL_SCAN = 12,
 	MULTICHANNEL_FCS_PORT_ROLE = 13,
 	MULTICHANNEL_FCS_COMMON_NOA_DURATION = 14,
 	MULTICHANNEL_FCS_COMMON_NOA_STARTTIME = 15,
@@ -85,7 +85,7 @@ typedef enum _FCS_FW_STATE{
 	FCS_FW_STOPPED			= 2,
 }FCS_FW_STATE, *PFCS_FW_STATE;
 
-// Represent channel switch operation mode 
+// Represent channel switch operation mode
 typedef enum _FCS_CHNL_OPMODE{
 	FCS_CHNL_OPMODE_NONE			=	0,
 	FCS_CHNL_OPMODE_RESET			=	1,
@@ -105,7 +105,7 @@ typedef enum _FCS_QPKT_LEVEL{
 
 
 //============================================================================
-// Multiple Channel Supported 
+// Multiple Channel Supported
 //============================================================================
 
 // Context for Each Port Specific
@@ -114,7 +114,7 @@ typedef struct _MULTICHANNEL_PORT_CONTEXT {
 	//==================================================
 	// Client-Related Elements
 	//==================================================
-	
+
 	// This controls the offset for this port to the HW TSF counter --
 	BOOLEAN bBssLocalTsfValid;
 	s8Byte BssLocalTsfOffset;
@@ -142,7 +142,7 @@ typedef struct _MULTICHANNEL_PORT_CONTEXT {
 	u1Byte	FcsDuration;
 	u1Byte	Role;
 	u2Byte	MacIdBitmap;
-	
+
 } MULTICHANNEL_PORT_CONTEXT, *PMULTICHANNEL_PORT_CONTEXT;
 
 #define MULTICHANNEL_SIZE_OF_PORT_CONTEXT 		sizeof(MULTICHANNEL_PORT_CONTEXT)
@@ -158,9 +158,9 @@ typedef struct _MULTICHANNEL_COMMON_CONTEXT {
 	// -------------------------------------------------------
 
 
-	
+
 	// HW / SW Timer Switch --------------------------------
-	BOOLEAN		bUseHardwareTimer; 	
+	BOOLEAN		bUseHardwareTimer;
 	// ----------------------------------------------------
 
 
@@ -172,7 +172,7 @@ typedef struct _MULTICHANNEL_COMMON_CONTEXT {
 	PADAPTER pAdapterBeforeSwitch;
 	// ------------------------------------------------
 
-	// Used for HwTsf Synchronization ----------------- 
+	// Used for HwTsf Synchronization -----------------
 	u1Byte TargetApBssid[6];
 	BOOLEAN bSyncHwTsfBeaconUpdateReceived;
 	RT_WORK_ITEM MultiChannelSyncHwTsfWorkItem;
@@ -257,7 +257,7 @@ MultiChannelSwitchChannelWorkItemCallback(
 
 VOID
 MultiChannelHandleChannelSwitchToCurrentPort(
-	PADAPTER pAdapterBeforeSwitch, 
+	PADAPTER pAdapterBeforeSwitch,
 	PADAPTER pCurrentPort
 );
 
@@ -290,7 +290,7 @@ MultiChannelDisableEnableExactHwQueue(
 
 VOID
 MultiChannelStopChannelSwitchScheduler(
-	PADAPTER pAdapter,		
+	PADAPTER pAdapter,
 	BOOLEAN   bEnableSwitchOperation
 );
 

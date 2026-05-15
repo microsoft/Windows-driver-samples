@@ -58,7 +58,7 @@ typedef struct _SMBIOS_DATA{
 	BOOLEAN			bAsusTX201;
 	BOOLEAN 		bWABTSeries;
 	BOOLEAN 		bB550;
-	
+
 #if(MUTUAL_AUTHENTICATION == 1)
 	SMBIOS_STATUS	MutualAuth;
 	BOOLEAN 		MutualAuthEnable;
@@ -95,7 +95,7 @@ SmbiosGetMutualAuth(
 	IN	ULONG		RemainLen
 	);
 VOID
-MutualAuthWorkItemCallback( 
+MutualAuthWorkItemCallback(
     IN PVOID      pContext
 	);
 VOID

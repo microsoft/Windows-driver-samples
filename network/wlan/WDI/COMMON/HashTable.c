@@ -6,17 +6,17 @@
 //		Generic hash table for kernel mode module.
 //
 //	Note:
-//		1. Memory allocation is a issue on kernel space for calling context 
-//		and computation time limitation. So we don't re-hash the table even 
-//		it is full. In short, this implementation is not a perfect hash, 
-//		however, if user has a good guess on hash table usage to prevent 
-//		full and colission condition, this implementation is still a 
+//		1. Memory allocation is a issue on kernel space for calling context
+//		and computation time limitation. So we don't re-hash the table even
+//		it is full. In short, this implementation is not a perfect hash,
+//		however, if user has a good guess on hash table usage to prevent
+//		full and colission condition, this implementation is still a
 //		constant time on put, remove, and get operations.
 //
-//		2. This implementation is not thread-safe, that is, user have to 
-//		protect related resource and the function exported here by their 
+//		2. This implementation is not thread-safe, that is, user have to
+//		protect related resource and the function exported here by their
 //		own means.
-//		
+//
 //	070606, by rcnjko.
 //-----------------------------------------------------------------------------
 
@@ -31,7 +31,7 @@ typedef struct _RT_HASH_TABLE RT_HASH_TABLE;
 //================================================================================
 //	Prototype of protected function.
 //================================================================================
-int 
+int
 RtCompareKeys(
 	IN pu1Byte		Key1,
 	IN pu1Byte		Key2,
@@ -73,23 +73,23 @@ RtResetHashTable(
 		}
 
 		idx = 0;
-		for(pTmpSListEntry = RTGetHeadSList( &(hHashTable->FreeValuesList) ); 
-			pTmpSListEntry != NULL && idx < hHashTable->Capacity; 
+		for(pTmpSListEntry = RTGetHeadSList( &(hHashTable->FreeValuesList) );
+			pTmpSListEntry != NULL && idx < hHashTable->Capacity;
 			pTmpSListEntry = pTmpSListEntry->Next)
 		{
 			pHashEntry = RT_HASH_ENTRY_FROM_FREE_LINK(pTmpSListEntry);
 
-			RT_ASSERT( ((pu1Byte)pHashEntry >= (pu1Byte)(hHashTable->pValuesBuf) && 
-						(pu1Byte)pHashEntry < ((pu1Byte)(hHashTable->pValuesBuf) + (hHashTable->ValueSize * hHashTable->NumValuesAlloc))), 
+			RT_ASSERT( ((pu1Byte)pHashEntry >= (pu1Byte)(hHashTable->pValuesBuf) &&
+						(pu1Byte)pHashEntry < ((pu1Byte)(hHashTable->pValuesBuf) + (hHashTable->ValueSize * hHashTable->NumValuesAlloc))),
 						("hHashTable(%p) idx(%d) pHashEntry(%p): invalid pHashEntry!!!\n",
 						hHashTable, idx, pHashEntry));
 			idx++;
 		}
-		RT_ASSERT(idx == hHashTable->NumValuesAlloc, 
-			("hHashTable(%p) idx(%d) != NumValuesAlloc(%d), pTmpSListEntry(%p)\n", 
+		RT_ASSERT(idx == hHashTable->NumValuesAlloc,
+			("hHashTable(%p) idx(%d) != NumValuesAlloc(%d), pTmpSListEntry(%p)\n",
 			hHashTable, idx, hHashTable->NumValuesAlloc, pTmpSListEntry));
-		RT_ASSERT(pTmpSListEntry == NULL, 
-			("hHashTable(%p) pTmpSListEntry(%p) != NULL, idx(%d), NumValuesAlloc(%d)\n", 
+		RT_ASSERT(pTmpSListEntry == NULL,
+			("hHashTable(%p) pTmpSListEntry(%p) != NULL, idx(%d), NumValuesAlloc(%d)\n",
 			hHashTable, pTmpSListEntry, idx, hHashTable->NumValuesAlloc));
 	}
 #endif
@@ -103,7 +103,7 @@ RtResetHashTable(
 //	Input:
 //		Capacity: number of bucket of the hash table to allocated.
 //		ValueSize: number of byte of a value object.
-//		KeySize: number of byte of the key. 
+//		KeySize: number of byte of the key.
 //		pfHash: pointer to the hash function, see definition of RT_HT_HASH_FUNC for detail.
 //
 //	Output:
@@ -196,7 +196,7 @@ RtAllocateHashTable(
 		{
 			pHashEntry->Key = pKey;
 			RTInsertTailSList(&(pTable->FreeValuesList), &(pHashEntry->FreeLink));
-			
+
 			pHashEntry = (PRT_HASH_ENTRY)((pu1Byte)pHashEntry + ValueSize);
 			pKey = (pu1Byte)pKey + KeySize;
 		}
@@ -218,7 +218,7 @@ RtAllocateHashTable(
 		return pTable;
 
 	}while(FALSE);
-	
+
 	//
 	// Error case.
 	//
@@ -237,7 +237,7 @@ RtAllocateHashTable(
 
 //
 //	Description:
-//		Return the value object of specified key if found, 
+//		Return the value object of specified key if found,
 //		NULL otherwise.
 //
 PRT_HASH_ENTRY
@@ -252,16 +252,16 @@ RtGetValueFromHashTable(
 
 	idx = hHashTable->pfHash(Key);
 	for( pTmpListEntry = hHashTable->Buckets[idx].Flink;
-		 pTmpListEntry != &(hHashTable->Buckets[idx]); 
+		 pTmpListEntry != &(hHashTable->Buckets[idx]);
 		 pTmpListEntry = pTmpListEntry->Flink )
 	{
 		pHashEntry = RT_HASH_ENTRY_FROM_BUCKET_LINK(pTmpListEntry);
 		// Compare the keys if they are equal.
 		if( RtCompareKeys(Key, pHashEntry->Key, hHashTable->KeySize) == 0 )
-		{ 
+		{
 			return pHashEntry;
 		}
-	}	
+	}
 
 	return NULL;
 }
@@ -270,7 +270,7 @@ RtGetValueFromHashTable(
 // Description:
 //	Compare the two keys and return 0 if they are equal, otherwise return an interger indicating the difference.
 //
-int 
+int
 RtCompareKeys(
 	IN pu1Byte		Key1,
 	IN pu1Byte		Key2,
@@ -292,11 +292,11 @@ RtCompareKeys(
 
 //
 //	Description:
-//		Retrive an value object from pool and put it to the hash table 
+//		Retrive an value object from pool and put it to the hash table
 //		according to hash value of the key.
 //
 //	Output:
-//		Return the value object assocaited with the key specfied, 
+//		Return the value object assocaited with the key specfied,
 //		NULL if no available value object now.
 //
 PRT_HASH_ENTRY
@@ -316,9 +316,9 @@ RtPutKeyToHashTable(
 	{
 		return pHashEntry;
 	}
-	
+
 	//
-	// Retrive an value object from pool for a new Key, 
+	// Retrive an value object from pool for a new Key,
 	// and put it into hash table.
 	//
 	idx = hHashTable->pfHash(Key);
@@ -366,7 +366,7 @@ RtFreeHashTable(
 			RT_TRACE(COMP_INIT, DBG_TRACE, ("RtFreeHashTable(): pValuesBuf: %p, ValuesBufSize: %d\n", hHashTable->pValuesBuf, ValuesBufSize));
 			PlatformFreeMemory(hHashTable->pValuesBuf, ValuesBufSize);
 		}
-	
+
 		TableSize = sizeof(RT_HASH_TABLE) + ((hHashTable->Capacity - 1) * sizeof(RT_LIST_ENTRY));
 		RT_TRACE(COMP_INIT, DBG_TRACE, ("RtFreeHashTable(): hHashTable: %p, TableSize: %d\n", hHashTable, TableSize));
 		PlatformFreeMemory(hHashTable, TableSize);
@@ -375,7 +375,7 @@ RtFreeHashTable(
 
 //
 //	Description:
-//		Remove value object of specified key from hash table. 
+//		Remove value object of specified key from hash table.
 //
 void
 RtRemoveKeyFromVaHashTable(
@@ -389,17 +389,17 @@ RtRemoveKeyFromVaHashTable(
 
 	idx = hHashTable->pfHash(Key);
 	for( pTmpListEntry = hHashTable->Buckets[idx].Flink;
-		 pTmpListEntry != &(hHashTable->Buckets[idx]); 
+		 pTmpListEntry != &(hHashTable->Buckets[idx]);
 		 pTmpListEntry = pTmpListEntry->Flink )
 	{
 		pHashEntry = RT_HASH_ENTRY_FROM_BUCKET_LINK(pTmpListEntry);
 		if( RtCompareKeys(Key, pHashEntry->Key, hHashTable->KeySize) == 0 )
-		{ 
+		{
 			RTRemoveEntryList( &(pHashEntry->BucketLink) );
 			RTRemoveEntryList( &(pHashEntry->BusyLink) );
 
 			RTInsertTailSList( &(hHashTable->FreeValuesList), &(pHashEntry->FreeLink) );
 		}
-	}	
+	}
 }
 

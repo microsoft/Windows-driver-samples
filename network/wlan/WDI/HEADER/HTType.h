@@ -3,7 +3,7 @@
 
 
 //------------------------------------------------------------
-// The HT Capability element is present in beacons, association request, 
+// The HT Capability element is present in beacons, association request,
 //	reassociation request and probe response frames
 //------------------------------------------------------------
 
@@ -78,8 +78,8 @@ typedef enum _HT_Bandwidth_40MHZ_Sub_Carrier{
 
 //Supported MCS set
 #define GET_HT_CAPABILITY_ELE_MCS(_pEleStart)						((_pEleStart)+3)
-			
-//Extended HT Capability Info	
+
+//Extended HT Capability Info
 #define SET_HT_CAPABILITY_ELE_EXT_HTCAPINFO(_pEleStart, _val)					WriteEF2Byte(((pu1Byte)(_pEleStart))+19, _val)
 #define GET_HT_CAPABILITY_ELE_EXT_HTCAPINFO(_pEleStart)						ReadEF2Byte(((pu1Byte)(_pEleStart))+19)
 
@@ -99,7 +99,7 @@ typedef enum _HT_Bandwidth_40MHZ_Sub_Carrier{
 #define GET_HT_CAPABILITY_ELE_EXT_HTCAPINFO_RDR(_pEleStart)					((u1Byte)LE_BITS_TO_2BYTE( ((pu1Byte)(_pEleStart))+19, 11, 1))
 #define GET_HT_CAPABILITY_ELE_EXT_HTCAPINFO_RSVD4(_pEleStart)				((u1Byte)LE_BITS_TO_2BYTE( ((pu1Byte)(_pEleStart))+19, 12, 4))
 
-		
+
 //TXBF Capabilities
 #define SET_HT_CAPABILITY_ELE_TXBF_CAP(_pEleStart, _val)					WriteEF4Byte(((pu1Byte)(_pEleStart))+21, _val)
 #define SET_HT_CAP_TXBF_RECEIVE_NDP_CAP(_pEleStart, _val)					SET_BITS_TO_LE_4BYTE( ((pu1Byte)(_pEleStart))+21, 3, 1, ((u1Byte)_val) )
@@ -197,7 +197,7 @@ typedef enum _HT_AMSDU_MODE_E{
 	HT_AMSDU_AUTO = 0,
 	HT_AMSDU_ENABLE = 1,
 	HT_AMSDU_DISABLE = 2,
-	HT_AMSDU_WITHIN_AMPDU = 3, 
+	HT_AMSDU_WITHIN_AMPDU = 3,
 }HT_AMSDU_MODE_E, *PHT_AMSDU_MODE_E;
 
 typedef enum _SHORTGI_MODE_E{
@@ -223,8 +223,8 @@ typedef enum _SHORTGI_MODE_E{
 #define	BEAMFORMING_HT_BEAMFORMEE_CHNL_EST_CAP	(BIT6|BIT7)
 
 //------------------------------------------------------------
-//  The Data structure is used to keep HT related variables when card is 
-//  configured as non-AP STA mode.  **Note**  Current_xxx should be set 
+//  The Data structure is used to keep HT related variables when card is
+//  configured as non-AP STA mode.  **Note**  Current_xxx should be set
 //	to default value in HTInitializeHTInfo()
 //------------------------------------------------------------
 
@@ -238,14 +238,14 @@ typedef struct _RT_HIGH_THROUGHPUT{
 	BOOLEAN				bCurShortGI40MHz;			// Tx Short GI for 40MHz
 	BOOLEAN				bCurShortGI20MHz;			// Tx Short GI for 20MHz
 
-	u1Byte				HtLdpcCap;					// Capability combination of HT LDPC LDPC_HT_XXX 
+	u1Byte				HtLdpcCap;					// Capability combination of HT LDPC LDPC_HT_XXX
 	u1Byte				HtCurLdpc;					// Current target connection supports LDPC
 
 	u1Byte				HtStbcCap;					// Capability combination of HT STBC_HT_XXX
 	u1Byte				HtCurStbc;					// Current target connection support STBC
 
-	u1Byte				HtBeamformCap;				// Capability combination of VHT LDPC LDPC_VHT_XXX 
-	u1Byte				HtCurBeamform;				// Current combination of BEAMFORMING_VHT_XXX in BSS connection 
+	u1Byte				HtBeamformCap;				// Capability combination of VHT LDPC LDPC_VHT_XXX
+	u1Byte				HtCurBeamform;				// Current combination of BEAMFORMING_VHT_XXX in BSS connection
 
 	BOOLEAN				bRegSuppCCK;				// Tx CCK rate capability
 	BOOLEAN				bCurSuppCCK;				// Tx CCK rate capability
@@ -266,12 +266,12 @@ typedef struct _RT_HIGH_THROUGHPUT{
 	u2Byte				nAMSDU_MaxSize;			// This indicates Tx A-MSDU capability
 	BOOLEAN				bCurrent_AMSDU_Support;	// This indicates Tx A-MSDU capability
 	u2Byte				nCurrent_AMSDU_MaxSize;	// This indicates Tx A-MSDU capability
-	
+
 	BOOLEAN				bHWAMSDU_Support;			// This indicates Tx A-MSDU capability
 
 	// AMPDU  related <2006.08.10 Emily>
 	BOOLEAN				bAMPDUEnable;				// This indicate Tx A-MPDU capability
-	BOOLEAN				bCurrentAMPDUEnable;		// This indicate Tx A-MPDU capability		
+	BOOLEAN				bCurrentAMPDUEnable;		// This indicate Tx A-MPDU capability
 	u1Byte				AMPDU_Factor;				// This indicate Tx A-MPDU capability
 	u1Byte				CurrentAMPDUFactor;			// This indicate Tx A-MPDU capability
 	u1Byte				MPDU_Density;				// This indicate Tx A-MPDU capability
@@ -293,7 +293,7 @@ typedef struct _RT_HIGH_THROUGHPUT{
 	// MIMO PS related
 	u1Byte				SelfMimoPs;
 	u1Byte				PeerMimoPs;
-	
+
 	// 40MHz Channel Offset settings.
 	BOOLEAN				bPeer40MHzCap;					// Supported channel width set
 	EXTCHNL_OFFSET		PeerExtChnlOffset;
@@ -308,7 +308,7 @@ typedef struct _RT_HIGH_THROUGHPUT{
 	u8Byte				lastTimeSentObssRptUs;			// Last system time to send the Obss report
 
 	// For Realtek proprietary A-MPDU factor for aggregation
-	u1Byte				RT2RT_HT_Mode;	
+	u1Byte				RT2RT_HT_Mode;
 
 	// Rx Reorder control
 	BOOLEAN				bRegRxReorderEnable;
@@ -326,7 +326,7 @@ typedef struct _RT_HIGH_THROUGHPUT{
 
 	//Added for dual band 40MHz support
 	BOOLEAN				bRegBW40MHzFor2G;
-	BOOLEAN				bRegBW40MHzFor5G; 	
+	BOOLEAN				bRegBW40MHzFor5G;
 
 	BOOLEAN				b40Intolerant;
 	BOOLEAN				bAMPDUManual;
@@ -349,9 +349,9 @@ typedef struct _RT_HTINFO_STA_ENTRY{
 	u1Byte			STBC;
 
 	BOOLEAN			bSupportCck;
-	
+
 	u2Byte			AMSDU_MaxSize;
-	
+
 	u1Byte			AMPDU_Factor;
 	u1Byte			MPDU_Density;
 
@@ -359,11 +359,11 @@ typedef struct _RT_HTINFO_STA_ENTRY{
 
 	u1Byte			McsRateSet[16];
 	u1Byte			HTHighestOperaRate;
-	
+
 	BOOLEAN			bCurRxReorderEnable;
-	
+
 	BOOLEAN			bShortGI20M;
-	BOOLEAN			bShortGI40M;		
+	BOOLEAN			bShortGI40M;
 
 	u1Byte			HtCurBeamform;
 }RT_HTINFO_STA_ENTRY, *PRT_HTINFO_STA_ENTRY;
@@ -377,7 +377,7 @@ typedef struct _RT_HTINFO_STA_ENTRY{
 typedef struct _BSS_HT{
 
 	BOOLEAN					bdSupportHT;
-	
+
 	// HT related elements
 	u1Byte					bdHTCapBuf[32];
 	u2Byte					bdHTCapLen;
@@ -385,9 +385,9 @@ typedef struct _BSS_HT{
 	u2Byte					bdHTInfoLen;
 
 	HT_SPEC_VER				bdHTSpecVer;
-	
+
 	u1Byte					RT2RT_HT_Mode;
-	
+
 	BOOLEAN					bd40Intolerant;
 	BOOLEAN					bdOBSSExemption;
 	u2Byte					OBSSScanInterval;

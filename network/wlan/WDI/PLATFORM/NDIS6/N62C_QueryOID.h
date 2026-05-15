@@ -7,7 +7,7 @@ Module Name:
 
 Abstract:
     Contains Port specific defines
-    
+
 Revision History:
       When        What
     ----------    ----------------------------------------------
@@ -42,7 +42,7 @@ N62CQueryAdditionalIE(
 	OUT PDOT11_ADDITIONAL_IE	AdditionalIe,
 	IN	u4Byte					InformationBufferLength,
 	OUT	pu4Byte					BytesWritten,
-	OUT	pu4Byte					BytesNeeded	
+	OUT	pu4Byte					BytesNeeded
 	);
 
 NDIS_STATUS

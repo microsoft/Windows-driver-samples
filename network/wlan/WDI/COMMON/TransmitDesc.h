@@ -27,8 +27,8 @@ MgntQuery_AggregationCapability(
 	);
 
 
-BOOLEAN 
-MgntQuery_RA_ShortGI(	
+BOOLEAN
+MgntQuery_RA_ShortGI(
 	IN	PADAPTER			Adapter,
 	IN	u1Byte				macId,
 	IN	PRT_WLAN_STA		pEntry,
@@ -37,7 +37,7 @@ MgntQuery_RA_ShortGI(
 );
 
 
-VOID	
+VOID
 MgntQuery_ShortGI(
 	PADAPTER	Adapter,
 	PRT_TCB		pTcb
@@ -75,7 +75,7 @@ MgntQuery_BandwidthMode(
 
 VOID
 MgntSet_RA_Ratr_Index(
-	IN	PMGNT_INFO			pMgntInfo,	
+	IN	PMGNT_INFO			pMgntInfo,
 	IN	MAC_ID_OWNER_TYPE	MacIdOwnerType,
 	IN	u1Byte				ratr_index,
 	IN	PRT_WLAN_STA		pEntry

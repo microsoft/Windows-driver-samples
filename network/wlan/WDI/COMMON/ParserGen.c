@@ -3,16 +3,16 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	ParserGen.c
-	
+
 Abstract:
 	Parse MSDU to match the specified type, fetch fixed offset.
-	    
+
 Major Change History:
 	When		Who					What
 	---------- ---------------   -------------------------------
 	2007-06-11	shienchang			Create.
 	2008-03-11	Bruce				Modify from 818xB.
-	
+
 --*/
 
 #include "Mp_Precomp.h"
@@ -231,14 +231,14 @@ RuleMatchingProcess(
 
 	pRuleSet[0] = pParser->pParseRules;
 	pRuleSet[1] = GPGlobalRule;
-	
+
 	while ( i < sizeof(pRuleSet) / sizeof(PGP_RULE) )
-	{		
+	{
 		//
 		// Go through parser's rules & global rules.
 		//
 		bMatched = FALSE;
-		
+
 		for (pRule = pRuleSet[i];
 			(pRule != NULL) && (pRule->CurrProtocol != 0);
 			pRule ++)
@@ -250,7 +250,7 @@ RuleMatchingProcess(
 										pToken,
 										pParser);
 				if (bMatched)
-					break;	
+					break;
 			}
 		}
 
@@ -264,12 +264,12 @@ RuleMatchingProcess(
 			{
 				break;
 			}
-		}		
+		}
 		else
 			i ++;
 	}
 
-	if (!bMatched) 
+	if (!bMatched)
 	{
 		DbgProtocol(pToken->currProtocol);
 		if (pToken->ProtocolCount < MAX_PROTOCOL_NUM)
@@ -294,16 +294,16 @@ MatchingByRule(
 	u1Byte		SigBuffer[MAX_SIG_LENGTH];
 	BOOLEAN		bApply = FALSE;
 	BOOLEAN		bMatched = FALSE;
-	BOOLEAN 	bAdv=FALSE;	
+	BOOLEAN 	bAdv=FALSE;
 	u4Byte		currIndex, currOffset;
 	u4Byte		hdrLen=0;
-	
+
 	if ( pRule->SigLength <= MAX_SIG_LENGTH)
 	{
 		currIndex = pToken->currBufferIndex;
 		currOffset = pToken->currBufferOffset;
 		hdrLen = PROTO_UNKNOWN_HDRLEN;
-							
+
 		//
 		// Check signature.
 		// case 1: if signature is unknown, invoke the customer routine
@@ -338,18 +338,18 @@ MatchingByRule(
 							NULL,
 							0);
 			}
-							
+
 			if (bApply && bAdv)
 			{
 				DbgProtocol(pToken->currProtocol);
 				if (pToken->ProtocolCount < MAX_PROTOCOL_NUM)
 					pToken->ProtocolSuite[pToken->ProtocolCount++] = pToken->currProtocol;
-							
+
 				if (pRule->NextProtocol != PROTO_UNKNOWN)
 					pToken->currProtocol = pRule->NextProtocol;
 				bMatched = TRUE;
 			}
-							
+
 		}
 		else
 		{
@@ -391,13 +391,13 @@ MatchingByRule(
 					DbgProtocol(pToken->currProtocol);
 					if (pToken->ProtocolCount < MAX_PROTOCOL_NUM)
 						pToken->ProtocolSuite[pToken->ProtocolCount++] = pToken->currProtocol;
-								
+
 					if (pRule->NextProtocol != PROTO_UNKNOWN)
 						pToken->currProtocol = pRule->NextProtocol;
 					bMatched = TRUE;
 				}
-			}			
-					
+			}
+
 		}
 	}
 	else
@@ -439,13 +439,13 @@ GetSignatureAndAdvanceToNextProtocol(
 	IN	u4Byte				DataBufLength
 	)
 {
-	
+
 	if (pDataBuffer!=NULL && DataBufLength!=0)
 	{
-		if (AdvanceAndGetDataByOffset(pToken, 
-									DataOffset, 
+		if (AdvanceAndGetDataByOffset(pToken,
+									DataOffset,
 									FALSE,
-									pDataBuffer, 
+									pDataBuffer,
 									DataBufLength))
 		{
 			if (AdvanceAndGetDataByOffset(pToken,
@@ -467,7 +467,7 @@ GetSignatureAndAdvanceToNextProtocol(
 									0))
 		{
 			return TRUE;
-		}		
+		}
 	}
 
 	return FALSE;
@@ -508,22 +508,22 @@ GetNextLine(
 	u4Byte	BytesRead = 0;
 	u4Byte	i, j;
 	u4Byte	start;
-	
+
 	PlatformZeroMemory(pOutBuffer, OutBufferLen);
-	
+
 	for(i = pToken->currBufferIndex; i < pToken->BufferCount; i ++)
 	{
-		if (i == pToken->currBufferIndex) 
+		if (i == pToken->currBufferIndex)
 			start = pToken->currBufferOffset;
 		else
 			start = 0;
-		
+
 		for (j = start; j < pToken->BufferList[i].Length; j ++)
 		{
 			pOutBuffer[BytesRead ++]  = pToken->BufferList[i].VirtualAddress[j];
-			
+
 			if (pOutBuffer[BytesRead-2]==0x0d &&
-				pOutBuffer[BytesRead-1]==0x0a) 
+				pOutBuffer[BytesRead-1]==0x0a)
 			{
 				if (!bNoAdvance)
 				{
@@ -581,11 +581,11 @@ UngetLine(
 
 	for (i = pToken->currBufferIndex + 1; i > 0; i --)
 	{
-		if (i==pToken->currBufferIndex+1) 
+		if (i==pToken->currBufferIndex+1)
 			len = pToken->currBufferOffset;
 		else
 			len = pToken->BufferList[i-1].Length;
-		
+
 		for (j = len; j > 0; j --)
 		{
 			if (pToken->BufferList[i-1].VirtualAddress[j-1] == 0x0a)
@@ -660,7 +660,7 @@ AdvanceAndGetDataByOffset(
 	u4Byte		tmpIndex=0, tmpOffset=0;
 	BOOLEAN		bOnlyAdvance = (pDataBuffer==NULL || DataBufLength==0) ? TRUE : FALSE;
 	BOOLEAN		bOnlyAdvanceComplete = FALSE;
-	
+
 	for(i = pToken->currBufferIndex;i < pToken->BufferCount; i ++)
 	{
 		if(pToken->BufferList[i].Length==0)
@@ -674,12 +674,12 @@ AdvanceAndGetDataByOffset(
 		{
 			len = pToken->BufferList[i].Length;
 		}
-		
+
 		for (; (BytesRead!=DataBufLength) || bOnlyAdvance; BytesRead ++)
 		{
 			if ( (len + offset) > (DataOffset + BytesRead) )
 			{
-				u4Byte ByteIndexToCopy = 
+				u4Byte ByteIndexToCopy =
 					(i == pToken->currBufferIndex) ?
 							(DataOffset+BytesRead + pToken->currBufferOffset ) - offset :
 							(DataOffset+BytesRead) - offset;
@@ -693,7 +693,7 @@ AdvanceAndGetDataByOffset(
 					tmpIndex = i;
 					tmpOffset = ByteIndexToCopy;
 
-					if (bOnlyAdvance) 
+					if (bOnlyAdvance)
 					{
 						bOnlyAdvanceComplete = TRUE;
 						break;
@@ -763,8 +763,8 @@ GPUseHPParser(
 	u4Byte			nodeIndex = 0;
 	u4Byte			currNode=0, nextNode=0;
 	PRT_LIST_ENTRY	pListEntry;
-	
-	if (pParser->pParsingTree == NULL) 
+
+	if (pParser->pParsingTree == NULL)
 	{
 		pParser->bUseHP = FALSE;
 		return;
@@ -778,8 +778,8 @@ GPUseHPParser(
 		for (pRule = pRuleSet[i];
 			(pRule != NULL) && (pRule->CurrProtocol != 0);
 			pRule ++)
-		{			
-			for (j = 0; j < nodeIndex; j ++) 
+		{
+			for (j = 0; j < nodeIndex; j ++)
 			{
 				pNode = GP_HP_GET_NODE_BY_INDEX(pParser->pParsingTree, j);
 				if (pNode->ProtocolId == pRule->CurrProtocol)
@@ -788,7 +788,7 @@ GPUseHPParser(
 					break;
 				}
 			}
-			if (j == nodeIndex) 
+			if (j == nodeIndex)
 			{
 				currNode = nodeIndex;
 				pNode = GP_HP_GET_NODE_BY_INDEX(pParser->pParsingTree, currNode);
@@ -796,7 +796,7 @@ GPUseHPParser(
 				pNode->bUsed = TRUE;
 				RTInitializeListHead(&(pNode->Link));
 				nodeIndex ++;
-				if (nodeIndex == MAX_HP_PROTOCOL_PER_PARSER) 
+				if (nodeIndex == MAX_HP_PROTOCOL_PER_PARSER)
 				{
 					pParser->bUseHP = FALSE;
 					return;
@@ -820,7 +820,7 @@ GPUseHPParser(
 				pNode->bUsed = TRUE;
 				RTInitializeListHead(&(pNode->Link));
 				nodeIndex++;
-				if (nodeIndex == MAX_HP_PROTOCOL_PER_PARSER) 
+				if (nodeIndex == MAX_HP_PROTOCOL_PER_PARSER)
 				{
 					pParser->bUseHP = FALSE;
 					return;
@@ -843,17 +843,17 @@ GPUseHPParser(
 					break;
 				}
 			}
-				
+
 			pEntry->pRule = pRule;
 			pEntry->index = (u1Byte)nextNode;
 			RTInsertTailList(&(pNode->Link), &(pEntry->Link));
 			entryIndex++;
-			if (entryIndex == MAX_HP_RULES_PER_PARSER) 
+			if (entryIndex == MAX_HP_RULES_PER_PARSER)
 			{
 				pParser->bUseHP = FALSE;
 				return;
 			}
-			
+
 		}
 	}
 
@@ -884,17 +884,17 @@ GPParserHandlerEthernet(
 	if (pSigBuffer == NULL) return FALSE;
 
 	typeLength = N2H2BYTE( *((UNALIGNED pu2Byte)pSigBuffer) );
-	
+
 	switch (NextProtocol)
 	{
 		case PROTO_IP:
-			if (typeLength == 0x0800) 
+			if (typeLength == 0x0800)
 			{
 				*AdvBytes = PROTO_ETHERNET_HDRLEN;
 				bResult = TRUE;
 			}
 			break;
-			
+
 		default:
 			break;
 	}
@@ -921,7 +921,7 @@ GPParserHandlerWlan(
 {
 	PMGNT_INFO	pMgntInfo = &(Adapter->MgntInfo);
 	u4Byte		QosCtrlLen = 0;
-	
+
 	*AdvBytes = PROTO_UNKNOWN_HDRLEN;
 	if (pSigBuffer == NULL)
 		return FALSE;
@@ -964,17 +964,17 @@ GPParserHandlerWlanLlc(
 	if (pSigBuffer == NULL)
 		return FALSE;
 	typeLength = N2H2BYTE( *((UNALIGNED pu2Byte)pSigBuffer) );
-	
+
 	switch (NextProtocol)
 	{
 		case PROTO_IP:
-			if (typeLength == 0x0800) 
+			if (typeLength == 0x0800)
 			{
 				*AdvBytes = PROTO_WLAN_LLC_HDRLEN;
 				bResult = TRUE;
 			}
 			break;
-			
+
 		default:
 			break;
 	}
@@ -1005,11 +1005,11 @@ GPParserHandlerIP(
 	*AdvBytes = PROTO_UNKNOWN_HDRLEN;
 	if (pSigBuffer == NULL)
 		return FALSE;
-	
+
 	switch (NextProtocol)
 	{
 		case PROTO_TCP:
-			if (type == 0x06) 
+			if (type == 0x06)
 			{
 				*AdvBytes = PROTO_IP_HDRLEN;
 				bResult = TRUE;
@@ -1017,7 +1017,7 @@ GPParserHandlerIP(
 			break;
 
 		case PROTO_UDP:
-			if (type == 0x11) 
+			if (type == 0x11)
 			{
 				*AdvBytes = PROTO_IP_HDRLEN;
 				bResult = TRUE;
@@ -1091,7 +1091,7 @@ GPAllocateParser(
 			if (Status != RT_STATUS_SUCCESS)
 			{
 				RT_TRACE(COMP_CCX, DBG_SERIOUS, ("GPAllocateParser(): Failed to allocate parser\n"));
-				return FALSE;			
+				return FALSE;
 			}
 
 			PlatformZeroMemory(pParser, sizeof(GENERIC_PARSER));
@@ -1143,7 +1143,7 @@ GPAllocateParser(
 			}
 
 			*(((PGENERIC_PARSER*)pMgntInfo->pGenericParser) + i) = pParser;
-			
+
 			bFound = TRUE;
 			break;
 		}
@@ -1168,10 +1168,10 @@ GPFreeParser(
 	BOOLEAN				bClear = TRUE;
 	u4Byte				i;
 	PGENERIC_PARSER		pParser;
-	
+
 	if (pMgntInfo->pGenericParser == NULL)
 		return;
-	
+
 	//
 	// Try to free parser.
 	//
@@ -1192,7 +1192,7 @@ GPFreeParser(
 						MAX_HP_PROTOCOL_PER_PARSER * sizeof(GP_HP_NODE) +
 						MAX_HP_RULES_PER_PARSER * sizeof(GP_HP_ENTRY));
 				}
-				
+
 				PlatformFreeMemory(pParser, sizeof(GENERIC_PARSER));
 
 				*(((PGENERIC_PARSER*)pMgntInfo->pGenericParser)+i) = NULL;
@@ -1240,7 +1240,7 @@ GPParseTCB(
 
 	PlatformZeroMemory(pToken, sizeof(GPPARSE_TOKEN));
 
-	PlatformMoveMemory(pToken->BufferList, 
+	PlatformMoveMemory(pToken->BufferList,
 						pTcb->BufferList,
 						sizeof(SHARED_MEMORY) * MAX_PER_PACKET_BUFFER_LIST_LENGTH);
 	pToken->BufferCount = pTcb->BufferCount;
@@ -1251,7 +1251,7 @@ GPParseTCB(
 	pToken->gpFlag = GPFLAG_TX;
 
 	return ParseBuffer(Adapter, pToken);
-	
+
 }
 
 //
@@ -1270,7 +1270,7 @@ GPParseRFD(
 	PGPPARSE_TOKEN		pToken = &token;
 
 	PlatformZeroMemory(pToken, sizeof(GPPARSE_TOKEN));
-	
+
 	pToken->BufferList[0].VirtualAddress = pRfd->Buffer.VirtualAddress + pRfd->FragOffset;
 	pToken->BufferList[0].Length = pRfd->FragLength;
 	pToken->BufferCount = 1;
@@ -1281,7 +1281,7 @@ GPParseRFD(
 	pToken->gpFlag = GPFLAG_RX;
 
 	return ParseBuffer(Adapter, pToken);
-	
+
 }
 
 
@@ -1318,9 +1318,9 @@ GPParserGateVoWlanSIP(
 			(pMgntInfo->pStaQos->CurrentQosMode & QOS_WMMSA) )
 		{
 			u1Byte	CurrCcxVerNumber = 0;
-			
+
 			CCX_QueryVersionNum(Adapter, &CurrCcxVerNumber);
-			
+
 			if ( CurrCcxVerNumber >= 4 )
 			{
 				pu1Byte param = GET_WMM_PARAM_ELE_AC_PARAM(pStaQos->WMMParamEle);
@@ -1365,7 +1365,7 @@ GPAllocateParserVoWlanSIP(
 
 	if (pParser->pParsingTree && pParser->bUseHP)
 		GPUseHPParser(pParser);
-	
+
 	return TRUE;
 }
 
@@ -1443,7 +1443,7 @@ GPParserCustomHandleUDP2SIP(
 	RT_SPINLOCK_TYPE	SpinLockType;
 	BOOLEAN				bQosData = FALSE;
 	BOOLEAN				bRejectData = FALSE;
-	
+
 	RT_ASSERT( ((pToken->gpFlag == GPFLAG_TX)||(pToken->gpFlag == GPFLAG_RX)),
 		("GPParserCustomHandleUDP2SIP(): Parser flag must either be GPFLAG_TX or GPFLAG_RX\n"));
 
@@ -1453,12 +1453,12 @@ GPParserCustomHandleUDP2SIP(
 		SpinLockType = RT_RX_SPINLOCK;
 	else
 		return bReturn;
-	
+
 	*AdvBytes = PROTO_UNKNOWN_HDRLEN;
 
 	if (!GetNextLine(pToken, TRUE, line, sizeof(line)) )
 		return FALSE;
-	
+
 	switch (NextProtocol)
 	{
 		case PROTO_SIP_INVITE:
@@ -1467,7 +1467,7 @@ GPParserCustomHandleUDP2SIP(
 			{
 				RT_TRACE(COMP_CCX , DBG_LOUD, ("GPParserCustomHandleUDP2SIP(): PROTO_SIP_INVITE, pToken->gpFlag = %02X\n", pToken->gpFlag));
 				CCX_GPParserCustomHandleUDP2SIP(Adapter, SpinLockType, &bQosData, &bReturn, &bRejectData);
-			}					
+			}
 			break;
 
 		case PROTO_SIP_STATUS:
@@ -1485,7 +1485,7 @@ GPParserCustomHandleUDP2SIP(
 				{ // Reject the status packet responding to the in-call.
 					bRejectData = TRUE;
 				}
-			}	
+			}
 			break;
 
 		case PROTO_SIP_BYE:
@@ -1499,7 +1499,7 @@ GPParserCustomHandleUDP2SIP(
 				CCX_CAC_DelTs(Adapter);
 				PlatformAcquireSpinLock(Adapter, SpinLockType);
 				bReturn = TRUE;
-			}	
+			}
 			break;
 
 		case PROTO_SIP_NOTIFY:
@@ -1514,7 +1514,7 @@ GPParserCustomHandleUDP2SIP(
 				bReturn = TRUE;
 			}
 			break;
-			
+
 		case PROTO_SIP_ACK:
 			if (PlatformCompareMemory(
 						&line[PROTO_UDP_HDRLEN],
@@ -1527,11 +1527,11 @@ GPParserCustomHandleUDP2SIP(
 				bReturn = TRUE;
 			}
 			break;
-			
+
 		default:
 			break;
 	}
-	
+
 	if (bQosData)
 	{
 		*AdvBytes = PROTO_UDP_HDRLEN;
@@ -1563,7 +1563,7 @@ GPParserCustomHandleUDP2SIP(
 		PRT_TCB	pTcb = (PRT_TCB)pToken->pDataObj;
 		if (pTcb) pTcb->TSID = SESSION_REJECT_TSID;
 	}
-	
+
 	return bReturn;
 }
 
@@ -1588,7 +1588,7 @@ GPParserCustomHandleSIP2SDP(
 	const char*	AudioSig = "m=audio";
 
 	*AdvBytes = PROTO_UNKNOWN_HDRLEN;
-	
+
 	while (GetNextLine(pToken, FALSE, line, sizeof(line)) )
 	{
 		if (PlatformCompareMemory(line, (PVOID)AudioSig, 7) == 0)
@@ -1596,7 +1596,7 @@ GPParserCustomHandleSIP2SDP(
 			return TRUE;
 		}
 	}
-	
+
 	return FALSE;
 }
 
@@ -1621,7 +1621,7 @@ GPParserCustomHandleSIPSTATUS(
 	u1Byte				callId[MAX_SESSION_ID];
 	u4Byte				callIdLen;
 	RT_SPINLOCK_TYPE	SpinLockType;
-	
+
 	RT_ASSERT( ((pToken->gpFlag == GPFLAG_TX)||(pToken->gpFlag == GPFLAG_RX)),
 		("GPParserCustomHandleUDP2SIP(): Parser flag must either be GPFLAG_TX or GPFLAG_RX\n"));
 
@@ -1631,16 +1631,16 @@ GPParserCustomHandleSIPSTATUS(
 		SpinLockType = RT_RX_SPINLOCK;
 	else
 		return FALSE;
-	
+
 	*AdvBytes = PROTO_UNKNOWN_HDRLEN;
-	
+
 	if (GetNextLine(pToken, TRUE, line, sizeof(line)) )
 	{
-		// 
+		//
 		// SIP reponse status code:
 		//	1XX 	Provisional 	100 Trying
 		//	2XX	Successful		200 OK
-		//	3XX	Redirection 	302 Moved Temporarily	
+		//	3XX	Redirection 	302 Moved Temporarily
 		//	4XX	Client Error	404 Not Found
 		//	5XX	Server Error	504 Server Time-out
 		//	6XX	Global Failure	603 Decline
@@ -1691,7 +1691,7 @@ GetCallId(
 	u1Byte	buf[256];
 	u4Byte	i;
 	const char*	CallSig = "Call-ID:";
-	
+
 	while (GetNextLine(pToken, bNoAdvance, buf, sizeof(buf)))
 	{
 		if (PlatformCompareMemory(buf, (PVOID)CallSig, 8) == 0)
@@ -1727,7 +1727,7 @@ RemoveSession(
 
 	if (sessionIdLen > MAX_SESSION_ID)
 		return;
-	
+
 	for (i = 0; i < MAX_SESSION; i ++)
 	{
 		if ( (pContext->Session[i].bUsed == TRUE) &&
@@ -1774,7 +1774,7 @@ GPParserCustomHandleSDP(
 	const char*		RtpSig = "RTP/AVP";
 
 	*AdvBytes = PROTO_UNKNOWN_HDRLEN;
-	
+
 	if (GetCallId(pToken, FALSE, callId, &callIdLen))
 	{
 		if (!AddSession((PGP_VOWLAN_CONTEXT)pParserContext, callId, callIdLen))
@@ -1798,9 +1798,9 @@ GPParserCustomHandleSDP(
 		if (!UngetLine(pToken))
 			return FALSE;
 	}
-	else 
+	else
 		return FALSE;
-	
+
 	if (!GetNextLine(pToken, TRUE, line, sizeof(line)) )
 		return FALSE;
 
@@ -1832,7 +1832,7 @@ GPParserCustomHandleSDP(
 			{
 				i ++;
 				type = 65535;
-				
+
 				for (; i < sizeof(line); i ++)
 				{
 					for (j = 0; j < sizeof(charTable); j ++)
@@ -1866,7 +1866,7 @@ GPParserCustomHandleSDP(
 					{
 						RT_TRACE(COMP_CCX, DBG_LOUD, ("GPParserCustomHandleSDP(): Invalid flag\n"));
 					}
-					
+
 					break;
 				}
 			}
@@ -1897,7 +1897,7 @@ AddSession(
 	}
 
 	RT_PRINT_STR(COMP_CCX, DBG_LOUD, "AddSession():\n", sessionId, sessionIdLen);
-	
+
 	//
 	// Check if an call can be added.
 	//
@@ -1912,9 +1912,9 @@ AddSession(
 			{
 				RT_TRACE(COMP_CCX, DBG_LOUD, ("AddSession(): This session has been existed!\n"));
 				return TRUE;
-			}	
+			}
 		}
-		
+
 		if (!pContext->Session[i].bUsed) break;
 	}
 
@@ -1923,7 +1923,7 @@ AddSession(
 		PlatformZeroMemory(pContext->Session[i].sessionId, MAX_SESSION_ID);
 		PlatformMoveMemory(pContext->Session[i].sessionId, sessionId, sessionIdLen);
 		pContext->Session[i].sessionIdLen = sessionIdLen;
-		pContext->Session[i].bUsed = TRUE;		
+		pContext->Session[i].bUsed = TRUE;
 		return TRUE;
 	}
 
@@ -1950,7 +1950,7 @@ UpdateSessionInfo(
 
 	if (sessionIdLen > MAX_SESSION_ID)
 		return FALSE;
-	
+
 	for (i = 0; i < MAX_SESSION; i ++)
 	{
 		if ( (pContext->Session[i].bUsed == TRUE) &&
@@ -1989,7 +1989,7 @@ MatchSession(
 		return FALSE;
 	if (Port == 0)
 		return FALSE;
-	
+
 	for (i = 0; i < MAX_SESSION; i ++)
 	{
 		if (pContext->Session[i].bUsed)
@@ -2024,9 +2024,9 @@ GPParserCustomHandleSIPBYE(
 {
 	u1Byte	callId[MAX_SESSION_ID];
 	u4Byte	callIdLen;
-	
+
 	*AdvBytes = PROTO_UNKNOWN_HDRLEN;
-	
+
 	if (GetCallId(pToken, FALSE, callId, &callIdLen))
 	{
 		RemoveSession((PGP_VOWLAN_CONTEXT)pParserContext, callId, callIdLen);
@@ -2061,7 +2061,7 @@ GPParserCustomHandleUDP2RTP(
 
 	if ( (pToken->gpFlag == GPFLAG_TX) || (pToken->gpFlag == GPFLAG_RX) )
 	{
-		offset = 0;	
+		offset = 0;
 	}
 	else
 	{
@@ -2081,7 +2081,7 @@ GPParserCustomHandleUDP2RTP(
 			bReturn = TRUE;
 		}
 	}
-		
+
 	return bReturn;
 }
 
@@ -2103,12 +2103,12 @@ GPParserCustomHandleRTP2G711(
 	)
 {
 	u1Byte	type;
-	
+
 	*AdvBytes = PROTO_UNKNOWN_HDRLEN;
-	
-	if (AdvanceAndGetDataByOffset(pToken, 
-								1, 
-								TRUE, 
+
+	if (AdvanceAndGetDataByOffset(pToken,
+								1,
+								TRUE,
 								&type,
 								sizeof(type)) )
 	{
@@ -2145,7 +2145,7 @@ GPParserCustomHandleG711(
 	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);
 	PSTA_QOS		pStaQos = pMgntInfo->pStaQos;
 	PQOS_TSTREAM	pTs = NULL;
-	
+
 	*AdvBytes = PROTO_UNKNOWN_HDRLEN;
 	if (pToken->gpFlag == GPFLAG_TX)
 	{
@@ -2190,11 +2190,11 @@ GPGetParseRFDInfo(
 		pu1Byte		pDA;
 		pu1Byte		pSA;
 		u1Byte		PacketType;  // RX_PACKET_TYPE
-		pu1Byte		pEtherType;  // 2 bytes : IPv4 , IPv6 , ARP ...  
+		pu1Byte		pEtherType;  // 2 bytes : IPv4 , IPv6 , ARP ...
 		// IP
-		u1Byte		ARPOption;  // Request or Response 
-		pu1Byte		ARPSPA;      // ARP Sender IP 
-		pu1Byte		ARPTPA;      // ARP Target IP 
+		u1Byte		ARPOption;  // Request or Response
+		pu1Byte		ARPSPA;      // ARP Sender IP
+		pu1Byte		ARPTPA;      // ARP Target IP
 		u1Byte		Protocol;      // UDP : 0x11  , TCP : 0x06
 		//UDP
 		pu1Byte		pDestinationPort; // 2 bytes
@@ -2206,7 +2206,7 @@ GPGetParseRFDInfo(
 	u1Byte				ArpType[2] = {0x08 ,0x06};
 	u1Byte				IPv4Type[2] = {0x08 ,0x00};
 	u1Byte				IPv6Type[2] = {0x86 ,0xdd};
-	
+
 	FillOctetString(frame, pRfd->Buffer.VirtualAddress+PLATFORM_GET_FRAGOFFSET(pRfd), pRfd->PacketLength);
 
 	PlatformZeroMemory(pRxfiterInfo, sizeof(RX_FILTER_INFO));
@@ -2217,7 +2217,7 @@ GPGetParseRFDInfo(
 		pRxfiterInfo->PacketType = RXPacketTypeUndefined;
 		return FALSE;
 	}
-	
+
 	// MAC !!
 	pRxfiterInfo->pDA = Frame_pDaddr(frame);
 	pRxfiterInfo->pSA = Frame_pSaddr(frame);
@@ -2246,13 +2246,13 @@ GPGetParseRFDInfo(
 	pRxfiterInfo->pEtherType  = frame.Octet + sMacHdrLng  + LLC_HEADER_SIZE;
 
 	pCurrentbuf = frame.Octet + sMacHdrLng  + LLC_HEADER_SIZE + TYPE_LENGTH_FIELD_SIZE;
-	
+
 	// IP !!
 	if( PlatformCompareMemory(pRxfiterInfo->pEtherType , ArpType, 2) == 0)
 	{
 		// ARP
 		pRxfiterInfo->ARPOption = pCurrentbuf + 6;
-		pRxfiterInfo->ARPSPA = pCurrentbuf + 6 + 2 + 6;  // 6 Option offset , 2 Option Len , 6 SPA Mac Len 
+		pRxfiterInfo->ARPSPA = pCurrentbuf + 6 + 2 + 6;  // 6 Option offset , 2 Option Len , 6 SPA Mac Len
 		pRxfiterInfo->ARPTPA = pCurrentbuf + 6 + 2 + 6 + 4 + 6 ; //  // 6 Option offset , 2 Option Len , 6 SPA Mac Len , 4 SPA len , 6 TPA Mac Len
 	}
 	else if(PlatformCompareMemory(pRxfiterInfo->pEtherType , IPv4Type, 2) == 0)
@@ -2262,14 +2262,14 @@ GPGetParseRFDInfo(
 		if(pRxfiterInfo->Protocol == 0x11)
 		{
 			u1Byte		IPv4len = (pCurrentbuf[0]&0x0f) * 4;
-			pRxfiterInfo->pDestinationPort =  pCurrentbuf + IPv4len + 2;  // (pCurrentbuf[0]>>4) IPv4 Heard len 2 Source Port 
+			pRxfiterInfo->pDestinationPort =  pCurrentbuf + IPv4len + 2;  // (pCurrentbuf[0]>>4) IPv4 Heard len 2 Source Port
 			//RT_PRINT_DATA(COMP_TEST, DBG_LOUD, "IPV4 pRxfiterInfo->pDestinationPort :\n", pRxfiterInfo->pDestinationPort, 2);
 		}
 		//RT_TRACE(COMP_TEST, DBG_LOUD , ("===> pRfd nTotalSubframe (%d) \n" , pRfd->nTotalSubframe) );
 	}
 	else if(PlatformCompareMemory(pRxfiterInfo->pEtherType , IPv6Type, 2) == 0)
 	{
-		
+
 		pRxfiterInfo->Protocol = pCurrentbuf[6];
 		// UDP !!
 		if(pRxfiterInfo->Protocol == 0x11)
@@ -2279,10 +2279,10 @@ GPGetParseRFDInfo(
 		}
 		//RT_TRACE(COMP_TEST, DBG_LOUD , ("===> pRfd nTotalSubframe (%d) \n" , pRfd->nTotalSubframe) );
 	}
-	
-		
+
+
 	return TRUE;
-	
+
 }
 
 

@@ -12,7 +12,7 @@
 //
 //      <Scope><Object><Action><Modifier>
 //      <Scope><Object><Action>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -22,7 +22,7 @@
 //          }
 //       <Object>
 //          {
-//            ScenarioPendAuthorization - Function pertains to all of the Pend Authorization 
+//            ScenarioPendAuthorization - Function pertains to all of the Pend Authorization
 //                                           Scenarios.
 //            RPC                       - Function is and RPC entry point.
 //          }
@@ -31,7 +31,7 @@
 //            Add                       - Function adds objects.
 //            Remove                    - Function removes objects.
 //            Invoke                    - Function implements the scenario based on parameters
-//                                                 passed from the commandline interface 
+//                                                 passed from the commandline interface
 //                                                 (WFPSampler.exe).
 //          }
 //       <Modifier>
@@ -58,7 +58,7 @@
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
 //      December  13,   2013  -     1.1   -  Prune filters for enumeration and limit scenario to
-//                                              only the supported layers 
+//                                              only the supported layers
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,10 +66,10 @@
 
 /**
  @private_function="PrvScenarioPendAuthorizationDeleteFwpmObjects"
- 
+
    Purpose:  Function that disables the SCENARIO_PEND_AUTHORIZATION scenarios.                  <br>
                                                                                                 <br>
-   Notes:    Scenario removes the filters using specified filtering conditions at the specified 
+   Notes:    Scenario removes the filters using specified filtering conditions at the specified
              layer.  The associated callout and provider contexts are removed as well.          <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -164,11 +164,11 @@ UINT32 PrvScenarioPendAuthorizationDeleteFwpmObjects(_In_ const FWPM_FILTER* pFi
 
 /**
  @private_function="PrvScenarioPendAuthorizationAddFwpmObjects"
- 
+
    Purpose:  Function that enables the SCENARIO_PEND_AUTHORIZATION scenarios.                   <br>
                                                                                                 <br>
-   Notes:    Scenario adds a filter using specified filtering conditions to the specified layer. 
-             This filter is associated with WFPSampler's default sublayer and provider.  The 
+   Notes:    Scenario adds a filter using specified filtering conditions to the specified layer.
+             This filter is associated with WFPSampler's default sublayer and provider.  The
              appropriate callout and provider context is added and associated with the filter.  <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -205,7 +205,7 @@ UINT32 PrvScenarioPendAuthorizationAddFwpmObjects(_In_ const FWPM_FILTER* pFilte
       HLPR_BAIL_ON_FAILURE(status);
 
       providerContext.displayData.name        = L"WFPSampler's Pend Authorization ProviderContext";
-      providerContext.displayData.description = L"Instructs the driver what final action to take on the pended authorization";      
+      providerContext.displayData.description = L"Instructs the driver what final action to take on the pended authorization";
       providerContext.providerKey             = (GUID*)&WFPSAMPLER_PROVIDER;
       providerContext.type                    = FWPM_GENERAL_CONTEXT;
       providerContext.dataBuffer              = &byteBlob;
@@ -278,8 +278,8 @@ UINT32 PrvScenarioPendAuthorizationAddFwpmObjects(_In_ const FWPM_FILTER* pFilte
 
 /**
  @scenario_function="ScenarioPendAuthorizationRemove"
- 
-   Purpose:  Function that removes corresponding objects for a previously added 
+
+   Purpose:  Function that removes corresponding objects for a previously added
              SCENARIO_PEND_AUTHORIZATION.                                                       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -296,10 +296,10 @@ UINT32 ScenarioPendAuthorizationRemove(_In_ const FWPM_FILTER* pFilter)
 
 /**
  @scenario_function="ScenarioPendAuthorizationAdd"
- 
+
    Purpose:  Scenario which will delay and either block or permit an authorization attempt.     <br>
                                                                                                 <br>
-   Notes:    Adds a filter which references one of the 
+   Notes:    Adds a filter which references one of the
              WFPSAMPLER_CALLOUT_PEND_AUTHORIZATION callouts for the provided layer.             <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -317,8 +317,8 @@ UINT32 ScenarioPendAuthorizationAdd(_In_ const FWPM_FILTER* pFilter,
 
 /**
  @rpc_function="RPCInvokeScenarioPendAuthorization"
- 
-   Purpose:  RPC exposed function used to dipatch the scenario routines for 
+
+   Purpose:  RPC exposed function used to dipatch the scenario routines for
              SCENARIO_PEND_AUTHORIZATION.                                                       <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

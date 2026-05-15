@@ -6,7 +6,7 @@
 //      HelperFunctions_Process.h
 //
 //   Abstract:
-//      This module contains prototypes for functions which assist in actions pertaining to 
+//      This module contains prototypes for functions which assist in actions pertaining to
 //         processes.
 //
 //   Author:

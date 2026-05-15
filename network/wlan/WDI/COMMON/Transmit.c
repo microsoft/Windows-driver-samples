@@ -39,7 +39,7 @@ VerifyPsOnTx(
 	{
 		if( !MacAddr_isMulticast(pRaddr) )
 		{ // Unicast.
-			PRT_WLAN_STA	pEntry = AsocEntry_GetEntry(pMgntInfo, pRaddr);	
+			PRT_WLAN_STA	pEntry = AsocEntry_GetEntry(pMgntInfo, pRaddr);
 
 			// No entry.
 			if(pEntry == NULL)
@@ -49,7 +49,7 @@ VerifyPsOnTx(
 				RT_TRACE(COMP_AP, DBG_LOUD, ("[WARNING] VerifyPsOnTx(): No Entry for client!\n"));
 				return txPsStauts;
 			}
-			
+
 			// Queue the unicast packet if dest STA is in power-save mode.
 			if(pEntry->bPowerSave)
 			{
@@ -80,7 +80,7 @@ VerifyPsOnTx(
 				}
 				bEospPkt = GET_QOS_CTRL_WMM_EOSP(osMpdu.Octet);
 
-				if(bUAPSD) 
+				if(bUAPSD)
 				{
 					if(bEospPkt)
 					{
@@ -88,7 +88,7 @@ VerifyPsOnTx(
 					}
 					else if(pEntry->WmmEosp != RT_STA_EOSP_STATE_OPENED || !RTIsListEmpty(&(pEntry->WmmPsQueue)))
 					{
-						// 
+						//
 						// If the packets from the upper layer are queued, such as ping, the protocol layer or the socket
 						// will block the packets sent until these queued packets are returned. It causes the ping rate with
 						// large packet size low and fail in the P2P Test item 6.1.12/6.1.13/7.1.5.
@@ -108,14 +108,14 @@ VerifyPsOnTx(
 
 						// Check if this chip supports per tx packet feedback.
 						bSupportTxFeedback = TxFeedbackInstallTxFeedbackInfoForTcb(pAdapter, pTcb);
-		
+
 						if(bSupportTxFeedback)
 						{
 							TxFeedbackFillTxFeedbackInfoUserConfiguration(
-									pTcb, 
-									RT_TX_FEEDBACK_ID_AP_WMM_EOSP_ENDING, 
-									pAdapter, 
-									Ap_PsTxFeedbackCallback, 
+									pTcb,
+									RT_TX_FEEDBACK_ID_AP_WMM_EOSP_ENDING,
+									pAdapter,
+									Ap_PsTxFeedbackCallback,
 									(PVOID) pEntry
 								);
 						}
@@ -179,13 +179,13 @@ VerifyPsOnTx(
 
 			return txPsStauts;
 		}
-		
+
 		// Set PwrMgnt bit, by Bruce, 2007-11-09.
 		//RT_PRINT_DATA(COMP_MLME, DBG_LOUD, "packet:\n", osMpdu.Octet, osMpdu.Length);
 		SET_80211_HDR_PWR_MGNT(osMpdu.Octet, MgntGetPwrMgntInfo(pAdapter, pTcb, TRUE));
 		//
 		// Move from PreTransmitTCB() becsauce the TCBs in the wait queues sent without passing
-		// through PreTransmitTCB(). 
+		// through PreTransmitTCB().
 		// Only those packets without pwr mgnt bit set are considered as sent in awake
 		// By Bruce, 2008-01-18.
 		//
@@ -198,7 +198,7 @@ VerifyPsOnTx(
 				// Note, if the NULL frame without pwr mgnt bit set, the packet still should be inserted into the queue.
 				if(IsMgntNullFrame(osMpdu.Octet) && GET_80211_HDR_PWR_MGNT(osMpdu.Octet))
 					break;
-				
+
 				if(IN_LEGACY_POWER_SAVE(pMgntInfo->pStaQos))
 					LPS_OnTx(pAdapter, pTcb);
 				else
@@ -216,7 +216,7 @@ VerifyPsOnTx(
 				if(IsStaQosTriggerFrame(&osMpdu, pMgntInfo->pStaQos->Curr4acUapsd))
 				{
 					pMgntInfo->pStaQos->bInServicePeriod = TRUE;
-				}					
+				}
 			}
 		}
 	}
@@ -226,10 +226,10 @@ VerifyPsOnTx(
 	{
 		// Set PwrMgnt bit, by Bruce, 2007-11-09.
 		SET_80211_HDR_PWR_MGNT(osMpdu.Octet, MgntGetPwrMgntInfo(pAdapter, pTcb, TRUE));
-		
+
 		//
 		// Move from PreTransmitTCB() becsauce the TCBs in the wait queues sent without passing
-		// through PreTransmitTCB(). 
+		// through PreTransmitTCB().
 		// Only those packets without pwr mgnt bit set are considered as sent in awake
 		// By Bruce, 2008-01-18.
 		//
@@ -252,13 +252,13 @@ InitializeTxVariables(
 	u2Byte i;
 	BOOLEAN bSupportEarlyMode;
 
-	// Initialize each queue with the same number of TxDesc, 
+	// Initialize each queue with the same number of TxDesc,
 	// except for BEACON_QUEUE. 2005.11.14, by rcnjko.
 	for(i = 0; i < MAX_TX_QUEUE;i++)
 	{
 		Adapter->NumTxDesc[i] = Adapter->RT_TXDESC_NUM;
 	}
-	// TODO: Emily 2006.11.15. If we are implmemting multiple BSSID feature, more 
+	// TODO: Emily 2006.11.15. If we are implmemting multiple BSSID feature, more
 	// TODO: than two descriptors may be required.
 	Adapter->NumTxDesc[BEACON_QUEUE] = 2;	// BEACON_QUEUE
 	Adapter->NumTxDesc[BE_QUEUE] = Adapter->RT_TXDESC_NUM_BE_QUEUE;	// BE queue need more descriptor for performance consideration
@@ -275,9 +275,9 @@ InitializeTxVariables(
 		Adapter->HalFunc.GetHwRegHandler(Adapter, HW_VAR_EARLY_MODE_THRESHOLD, &(Adapter->EarlyMode_Threshold));
 		for(i=0 ; i<8 ; i++)
 			Adapter->EarlyMode_QueueNum[i] = 0;
-		
+
 	}
-	
+
 	RTInitializeListHead(&Adapter->TcbIdleQueue);
 	for(i=0;i<MAX_TX_QUEUE;i++)
 	{
@@ -288,9 +288,9 @@ InitializeTxVariables(
 	}
 	RTInitializeListHead(&Adapter->LocalBufferQueue);
 	RTInitializeListHead(&Adapter->LocalFWBufferQueue);
-	
+
 	ResetTxStatistics(Adapter);
-	
+
 }
 
 RT_STATUS
@@ -303,10 +303,10 @@ PrepareTCBs(
 	PRT_TX_LOCAL_BUFFER		pLocalBuffer;
 	RT_STATUS				status;
 	u4Byte					BufferLength,offset;
-	BufferLength	= MAX_LLC_LENGTH + 
-				MAX_802_11_HEADER_LENGTH*MAX_FRAGMENT_COUNT + 
-				MAX_802_11_TRAILER_LENGTH + 
-				MAX_FIRMWARE_INFORMATION_SIZE + 
+	BufferLength	= MAX_LLC_LENGTH +
+				MAX_802_11_HEADER_LENGTH*MAX_FRAGMENT_COUNT +
+				MAX_802_11_TRAILER_LENGTH +
+				MAX_FIRMWARE_INFORMATION_SIZE +
 				AMSDU_SUBHEADER_LENGTH;
 	do{
 		//2 Allocate TCBs
@@ -324,7 +324,7 @@ PrepareTCBs(
 			if(status!=RT_STATUS_SUCCESS)
 				return status;
 			PlatformZeroMemory(pTcb[i].Buffer.VirtualAddress , BufferLength);
-		
+
 			GET_SHARED_MEMORY_WITH_OFFSET(
 				&pTcb[i].Buffer,
 				&pTcb[i].LLC,
@@ -375,8 +375,8 @@ PrepareTCBs(
 			status = PlatformAllocateSharedMemory(Adapter, &pLocalBuffer[i].Buffer, Adapter->MAX_TRANSMIT_BUFFER_SIZE);
 			if(status!=RT_STATUS_SUCCESS)
 				return status;
-			
-			RTInsertTailListWithCnt(&Adapter->LocalBufferQueue, &pLocalBuffer[i].List, &Adapter->NumLocalBufferIdle);			
+
+			RTInsertTailListWithCnt(&Adapter->LocalBufferQueue, &pLocalBuffer[i].List, &Adapter->NumLocalBufferIdle);
 		}
 
 		//2 Allocate Firmware local buffers
@@ -388,7 +388,7 @@ PrepareTCBs(
 		PlatformZeroMemory(Adapter->LocalFWBufferArray.Ptr,Adapter->LocalFWBufferArray.Length);
 
 		pLocalBuffer=(PRT_TX_LOCAL_BUFFER)Adapter->LocalFWBufferArray.Ptr;
-		
+
 		for(i=0;i<Adapter->NumLocalFWBuffer;i++)
 		{
 			status = PlatformAllocateSharedMemory(Adapter, &pLocalBuffer[i].Buffer, RT_LOCAL_FW_BUF_SIZE+Adapter->HWDescHeadLength);
@@ -397,10 +397,10 @@ PrepareTCBs(
 			{
 				return status;
 			}
-			RTInsertTailListWithCnt(&Adapter->LocalFWBufferQueue, &pLocalBuffer[i].List, &Adapter->NumLocalFWBufferIdle);		
+			RTInsertTailListWithCnt(&Adapter->LocalFWBufferQueue, &pLocalBuffer[i].List, &Adapter->NumLocalFWBufferIdle);
 		}
 	}while(FALSE);
-	
+
 	return status;
 }
 
@@ -430,8 +430,8 @@ FreeTCBs(
 			pTcb=(PRT_TCB)RTRemoveHeadList(&Adapter->TcbBusyQueue[QueueID]);
 			ReturnTCB(Adapter, pTcb, RT_STATUS_SUCCESS);
 		}
-		Adapter->nBufInTxDesc[QueueID] = 0; 
-		
+		Adapter->nBufInTxDesc[QueueID] = 0;
+
 		while(!RTIsListEmpty(&Adapter->TcbWaitQueue[QueueID]))
 		{
 			pTcb=(PRT_TCB)RTRemoveHeadList(&Adapter->TcbWaitQueue[QueueID]);
@@ -456,7 +456,7 @@ FreeTCBs(
 			while(!RTIsListEmpty(&Adapter->LocalBufferQueue))
 			{
 				pLocalBuffer=(PRT_TX_LOCAL_BUFFER)RTRemoveHeadListWithCnt(&Adapter->LocalBufferQueue, &Adapter->NumLocalBufferIdle);
-	
+
 				PlatformFreeSharedMemory(Adapter, &pLocalBuffer->Buffer);
 				nFreed++;
 			}
@@ -474,7 +474,7 @@ FreeTCBs(
 			while(!RTIsListEmpty(&Adapter->LocalFWBufferQueue))
 			{
 				pLocalBuffer=(PRT_TX_LOCAL_BUFFER)RTRemoveHeadListWithCnt(&Adapter->LocalFWBufferQueue, &Adapter->NumLocalFWBufferIdle);
-	
+
 				PlatformFreeSharedMemory(Adapter, &pLocalBuffer->Buffer);
 				nFreed++;
 			}
@@ -493,7 +493,7 @@ FreeTCBs(
 			while(!RTIsListEmpty(&Adapter->TcbIdleQueue))
 			{
 				pTcb=(PRT_TCB)RTRemoveHeadListWithCnt(&Adapter->TcbIdleQueue, &Adapter->NumIdleTcb);
-	
+
 				PlatformFreeSharedMemory(Adapter, &pTcb->Buffer);
 				nFreed++;
 			}
@@ -522,7 +522,7 @@ RemoveZeroLengthBuffer(
 		if(i!=j)
 		{
 			pTcb->BufferList[j]=pTcb->BufferList[i];
-			
+
 			if(IS_REMOVE_ZERO_LEN_BUF(pTcb->SourceAdapt))
 			{
 				if(pTcb->SubHdrIndexAry[k] == (u1Byte)i)
@@ -568,7 +568,7 @@ RetrieveSegmentDataFromTCB(
 		}
 
 		if (BytesRead == DataBufLength) break;
-		
+
 		offset +=pTcb->BufferList[i].Length;
 	}
 
@@ -583,20 +583,20 @@ RetrieveSegmentDataFromTCB(
 
 /**
 * Function:	TcbGetTOSField
-* 
+*
 * Overview:	Get TOS field of IP header in TCB buffer.
-*			Input the TCB pointer and indicate SkipBuffer number for this function to get the 
+*			Input the TCB pointer and indicate SkipBuffer number for this function to get the
 *			Ethernet packet sent from upper layer.
 *			Using this function before packet conversion. (TranslateHeader())
-* 
-* Input:		
+*
+* Input:
 *		PRT_TCB		pTcb
 *		u1Byte		SkipBuffers
-* 			
-* Output:		
+*
+* Output:
 *		None
-* 		
-* Return:     	
+*
+* Return:
 *		TOS value
 */
 u1Byte
@@ -663,7 +663,7 @@ TranslateHeader(
 
 	//2 Fill wireless header
 	pHeader=pTcb->BufferList[0].VirtualAddress;
-	
+
 	//1 Note:	BufferList[0] is reserved for 802.11 header
 	//1		BufferList[1] is reserved for LLC
 
@@ -675,16 +675,16 @@ TranslateHeader(
 
 	if( (CheckFragment(Adapter, pTcb, Adapter->TXPacketShiftBytes) == FALSE) &&
 		( (pTcb->PacketLength + additionalHeaderLen ) <= FRAGMENT_THRESHOLD(Adapter) ) )
-	{	
+	{
 
 	}
 
 	{
 		SET_80211_HDR_FRAME_CONTROL(pHeader, 0);
 		SET_80211_HDR_TYPE_AND_SUBTYPE(pHeader, Type_Data);
-		
+
 		pTcb->bTDLPacket = FALSE;
-				
+
 		switch(pMgntInfo->OpMode)
 		{
 			case RT_OP_MODE_IBSS:				// 0,0
@@ -728,7 +728,7 @@ TranslateHeader(
 			PlatformMoveMemory(&pTcb->BufferList[0].VirtualAddress[SAOffset], Adapter->CurrentAddress, ETHERNET_ADDRESS_LENGTH);
 			PlatformMoveMemory(pTcb->SourceAddress, Adapter->CurrentAddress, ETHERNET_ADDRESS_LENGTH);
 		}
-		
+
 		PlatformMoveMemory(&pTcb->BufferList[0].VirtualAddress[DAOffset], pTcb->BufferList[2].VirtualAddress, ETHERNET_ADDRESS_LENGTH);
 		//2004/07/22, kcwu
 		PlatformMoveMemory(pTcb->DestinationAddress, pTcb->BufferList[2].VirtualAddress, ETHERNET_ADDRESS_LENGTH);
@@ -745,7 +745,7 @@ TranslateHeader(
 	//2 Add LLC if need
 	// Find TypeLength, 2006.10.27, refined by shien chang.
 	RetrieveSegmentDataFromTCB(
-		pTcb,	
+		pTcb,
 		2,						// The number of buffer in bufferlist to skip.
 		12, 						// The TypeLength offset.
 		TypeLengthBuf,			// 2 Byte buffer for TypeLength data.
@@ -759,22 +759,22 @@ TranslateHeader(
 		u1Byte btTmp = 0;
 
 		// For delaying enter PS mode for FW control LPS. by tynli.
-		if(GET_POWER_SAVE_CONTROL(pMgntInfo)->bFwCtrlLPS && 
+		if(GET_POWER_SAVE_CONTROL(pMgntInfo)->bFwCtrlLPS &&
 			GET_POWER_SAVE_CONTROL(pMgntInfo)->bLeisurePs)
 		{
 			//DbgPrint("EAPOL packet----->\n");
 			pMgntInfo->DelayLPSLastTimeStamp = PlatformGetCurrentTime();
-			
+
 			// 20100902 Joseph: Since we send NULL frame in LeisurePSLeave() function, TX_SPINLOCK
 			// shall be release for all product and OS. Originally, TX_SPINLOCK is raised twice here and
 			// system hang immediately.
-			// We should call LeisurePSLeave to turn the RF on to receive EAPOL/DHCP/ARP packets, 
+			// We should call LeisurePSLeave to turn the RF on to receive EAPOL/DHCP/ARP packets,
 			// and release TX spinlock first beacuse we will acquire TX spinlock for FW H2C commands in 92su.
 			PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 			LeisurePSLeave(Adapter, LPS_DISABLE_TX_EAPOL_PKT);
 			PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
 		}
-		
+
 		if(	!SecIsTxKeyInstalled(Adapter, Addr1) )
 		{
 			pTcb->EncInfo.SecProtInfo = RT_SEC_EAPOL_BEFORE_KEY_INSTALLED;
@@ -785,7 +785,7 @@ TranslateHeader(
 		}
 
 		// Send in lowest basic rate to get more time for adding key. 2005.04.19, by rcnjko.
-		if(pMgntInfo->IOTAction & HT_IOT_ACT_WA_IOT_Broadcom)	
+		if(pMgntInfo->IOTAction & HT_IOT_ACT_WA_IOT_Broadcom)
 		{
 			pTcb->DataRate = MgntQuery_TxRateExcludeCCKRates(pMgntInfo->mBrates);//0xc;//ofdm 6m
 			pTcb->bTxDisableRateFallBack = FALSE;
@@ -795,7 +795,7 @@ TranslateHeader(
 			pTcb->DataRate = Adapter->MgntInfo.LowestBasicRate;
 			//disable rate fallback for EAPOL packate to resolve 5G ad hoc cck hang. zhiyuan 2012/04/28
 			if(IS_WIRELESS_MODE_A(Adapter) || IS_WIRELESS_MODE_N_5G(Adapter))
-				pTcb->bTxDisableRateFallBack = TRUE;			
+				pTcb->bTxDisableRateFallBack = TRUE;
 		}
 
 		RT_DISP(FDM, WA_IOT, ("EAPOL TranslateHeader(), pTcb->DataRate = 0x%x\n", pTcb->DataRate));
@@ -806,19 +806,19 @@ TranslateHeader(
 		{
 			if(pTcb->BufferList[i].Length == 0)
 				continue;
-			
+
 			if(pTcb->BufferList[i].Length + nTmpOffset > 19)
 			{
 				btTmp = EF1Byte(pTcb->BufferList[i].VirtualAddress[19-nTmpOffset]);
-				
+
 				if(btTmp == 0x0d || btTmp == 0x0f)
 				{
-					pTcb->EncInfo.SecProtInfo |= RT_SEC_MIC_FAILURE_REPORT;	
+					pTcb->EncInfo.SecProtInfo |= RT_SEC_MIC_FAILURE_REPORT;
 				}
 
 				break;
 			}
-		
+
 			nTmpOffset += pTcb->BufferList[i].Length;
 		}
 	}
@@ -828,12 +828,12 @@ TranslateHeader(
 	}
 
 	CCX_QueryCCKMSupport(Adapter, &bCCX8021xenable, &bAPSuportCCKM);
-	
+
 	{
 		// Insert LLC in need
 		if(TypeLength > (MAXIMUM_ETHERNET_PACKET_SIZE-ETHERNET_HEADER_SIZE) )
 		{
-			if ((TypeLength == 0x8137) || (TypeLength == 0x80F3)) 
+			if ((TypeLength == 0x8137) || (TypeLength == 0x80F3))
 			{ // Bridge tunneling
 				PlatformMoveMemory(
 					pTcb->BufferList[1].VirtualAddress,
@@ -842,19 +842,19 @@ TranslateHeader(
 
 				pTcb->BufferList[1].Length=LLC_HEADER_SIZE;
 				pTcb->PacketLength += LLC_HEADER_SIZE;
-			} 
+			}
 			//else if( pSecInfo->pCkipPara->bIsMIC) It will add SNAP to EAPOL packet in 802.1x ,2006.10.04 CCW
 			else if(pSecInfo->pCkipPara->bIsMIC && (pTcb->EncInfo.SecProtInfo != RT_SEC_EAPOL_BEFORE_KEY_INSTALLED)
-					&& !(( pSecInfo->PairwiseEncAlgorithm == RT_ENC_ALG_WEP40 || 
-					pSecInfo->PairwiseEncAlgorithm ==RT_ENC_ALG_WEP104 ) &&  // WEP mode 
+					&& !(( pSecInfo->PairwiseEncAlgorithm == RT_ENC_ALG_WEP40 ||
+					pSecInfo->PairwiseEncAlgorithm ==RT_ENC_ALG_WEP104 ) &&  // WEP mode
 					pSecInfo->AuthMode == RT_802_11AuthModeOpen &&    // Open mode
 					!( bCCX8021xenable && bAPSuportCCKM )      && // Not in CCKM mode
-					IsSecProtEapol(pTcb->EncInfo.SecProtInfo) == TRUE)				// Is EPAOL Packet 							
+					IsSecProtEapol(pTcb->EncInfo.SecProtInfo) == TRUE)				// Is EPAOL Packet
 				  )
 			{ // CKIP MIC SNAP
 				RT_TRACE( COMP_CKIP, DBG_LOUD, ("[CKIP] TranslateHeader(): CMIC snap case!\n") );
-			
-			      // Set CKIP Snap 
+
+			      // Set CKIP Snap
 				PlatformMoveMemory(
 							pTcb->BufferList[1].VirtualAddress,
 							Snap_CKIP_MIC,
@@ -864,18 +864,18 @@ TranslateHeader(
 							pTcb->BufferList[1].VirtualAddress + 8,
 							8);
 
-				//Set SEQ 
+				//Set SEQ
 				CKIP_SEQ_DECIMAL2ARRAY( pSecInfo->pCkipPara->ulSeqUpLink, seqv );
 				PlatformMoveMemory(
 					pTcb->BufferList[1].VirtualAddress + 12,
 					seqv,
 					4);
 				pSecInfo->pCkipPara->ulSeqUpLink += 2;
-				
+
 				pTcb->BufferList[1].Length=16;
 				pTcb->PacketLength += 16;
-			} 
-			else 
+			}
+			else
 			{ // 802.1h
 				PlatformMoveMemory(
 					pTcb->BufferList[1].VirtualAddress,
@@ -905,7 +905,7 @@ TranslateHeader(
 			2,
 			15,
 			&TOS,
-			sizeof(TOS));		
+			sizeof(TOS));
 		pTcb->priority = TOS>>5;
 		RT_DISP(FQoS, QoS_INIT,  ("Translate Header pTcb->priority = %d\r\n", pTcb->priority));
 	}
@@ -959,8 +959,8 @@ TranslateHeader(
 				//Note:
 				// osMpdu may not include the packet content but just 802.11 header.
 				FillOctetString(osMpdu, pTcb->BufferList[0].VirtualAddress, (u2Byte)pTcb->BufferList[0].Length);
-				pRaddr = Frame_pRaddr(osMpdu);	
-							
+				pRaddr = Frame_pRaddr(osMpdu);
+
 				//
 				// Translate the DHCP offer packet from multicast packet to unicast so that the client
 				// can receive the DHCP response easier. By Bruce, 2011-01-06.
@@ -980,29 +980,29 @@ TranslateHeader(
 
 					// Check if this mac address is belong to one of the clients.
 					pEntry = AsocEntry_GetEntry(&pTcb->SourceAdapt->MgntInfo, ClientMac);
-					
+
 					if(pEntry != NULL)
 					{
 						RT_PRINT_ADDR(COMP_AP, DBG_LOUD, "Replace the DHCP receiver address from multicast to ", ClientMac);
 						PlatformMoveMemory(pRaddr, ClientMac, 6);
 						PlatformMoveMemory(pTcb->DestinationAddress, ClientMac, 6);
 					}
-				}						
+				}
 				// 68 : UDP BOOTP client
 				// 67 : UDP BOOTP server
 				//DbgPrint("DHCP Protocol !!\n");
 				// Use low rate to send DHCP packet.
-				if(pMgntInfo->IOTAction & HT_IOT_ACT_WA_IOT_Broadcom)	
+				if(pMgntInfo->IOTAction & HT_IOT_ACT_WA_IOT_Broadcom)
 				{
 					pTcb->DataRate = MgntQuery_TxRateExcludeCCKRates(pMgntInfo->mBrates);//0xc;//ofdm 6m
 					pTcb->bTxDisableRateFallBack = FALSE;
 				}
 				else
-					pTcb->DataRate = Adapter->MgntInfo.LowestBasicRate; 
+					pTcb->DataRate = Adapter->MgntInfo.LowestBasicRate;
 				RT_DISP(FDM, WA_IOT, ("DHCP TranslateHeader(), pTcb->DataRate = 0x%x\n", pTcb->DataRate));
 				pTcb->bTxUseDriverAssingedRate = TRUE;
 				pTcb->specialDataType = PACKET_DHCP;
-				pMgntInfo->LPSDelayCnt= 
+				pMgntInfo->LPSDelayCnt=
 					GET_POWER_SAVE_CONTROL(pMgntInfo)->LPSAwakeIntvl*2;
 				// For delaying enter PS mode for FW control LPS. by tynli.
 				if(	GET_POWER_SAVE_CONTROL(pMgntInfo)->bFwCtrlLPS &&
@@ -1024,13 +1024,13 @@ TranslateHeader(
 	{
 		//DbgPrint("IP ARP !!\n");
 		pMgntInfo->LPSDelayCnt = pMgntInfo->mDtimCount;
-		if(pMgntInfo->IOTAction & HT_IOT_ACT_WA_IOT_Broadcom)	
+		if(pMgntInfo->IOTAction & HT_IOT_ACT_WA_IOT_Broadcom)
 		{
 			pTcb->DataRate = MgntQuery_TxRateExcludeCCKRates(pMgntInfo->mBrates);//0xc;//ofdm 6m
 			pTcb->bTxDisableRateFallBack = FALSE;
 		}
 		else
-			pTcb->DataRate = pMgntInfo->LowestBasicRate; 
+			pTcb->DataRate = pMgntInfo->LowestBasicRate;
 		RT_DISP(FDM, WA_IOT, ("ARP TranslateHeader(), pTcb->DataRate = 0x%x\n", pTcb->DataRate));
 		pTcb->bTxUseDriverAssingedRate = TRUE;
 		pTcb->specialDataType = PACKET_ARP;
@@ -1039,7 +1039,7 @@ TranslateHeader(
 		{ // by tynli
 			//DbgPrint("ARP packet----->\n");
 			pMgntInfo->DelayLPSLastTimeStamp = PlatformGetCurrentTime();
-			
+
 			// 20100902 Joseph: Since we send NULL frame in LeisurePSLeave() function, TX_SPINLOCK
 			// shall be release for all product and OS. Originally, TX_SPINLOCK is raised twice here and
 			// system hang immediately.
@@ -1061,12 +1061,12 @@ TranslateHeader(
 		u1Byte	CurrCcxVerNumber = 0;
 
 		CCX_QueryVersionNum(Adapter, &CurrCcxVerNumber);
-		
-		if(!(( 	pSecInfo->PairwiseEncAlgorithm == RT_ENC_ALG_WEP40 || 
-				pSecInfo->PairwiseEncAlgorithm ==RT_ENC_ALG_WEP104 ) &&  // WEP mode 
+
+		if(!(( 	pSecInfo->PairwiseEncAlgorithm == RT_ENC_ALG_WEP40 ||
+				pSecInfo->PairwiseEncAlgorithm ==RT_ENC_ALG_WEP104 ) &&  // WEP mode
 				pSecInfo->AuthMode == RT_802_11AuthModeOpen &&    // Open mode
 				!( bCCX8021xenable && bAPSuportCCKM && CurrCcxVerNumber >= 2 )      && // Not in CCKM mode
-				IsSecProtEapol(pTcb->EncInfo.SecProtInfo) == TRUE							// Is EPAOL Packet 
+				IsSecProtEapol(pTcb->EncInfo.SecProtInfo) == TRUE							// Is EPAOL Packet
 		))
 		{
 			pTcb->BufferList[0].Length = (sMacHdrLng + pSecInfo->EncryptionHeadOverhead);
@@ -1178,7 +1178,7 @@ CheckSpecialTxPktContentFromHighLayer(
 	u2Byte	IP_Src_Port = 0, IP_Dst_Port = 0;
 	u2Byte	u2Tmp = 0;
 
-	u1Byte	Check_Buf_Index, Check_Buf_Offset;	
+	u1Byte	Check_Buf_Index, Check_Buf_Offset;
 
 	if(pTcb->BufferType==RT_TCB_BUFFER_TYPE_LOCAL)
 	{
@@ -1186,20 +1186,20 @@ CheckSpecialTxPktContentFromHighLayer(
 		// Payload is saved in buffer 1.
 		// Since LLC header is coalesced with oter payload in buffer 1, we just skip first 8 bytes LLC
 		// in front of buffer to get the paylaod.
-		Check_Buf_Index = 1; 
-		Check_Buf_Offset = 8; 
+		Check_Buf_Index = 1;
+		Check_Buf_Offset = 8;
 	}
 	else
 	{
 		// 20100309 Joseph: Normal case.
 		// Payload is saved in buffer 2 and LLC is separate with it in buffer 1.
-		Check_Buf_Index = 2; 
-		Check_Buf_Offset = 0; 
+		Check_Buf_Index = 2;
+		Check_Buf_Offset = 0;
 	}
 
 	RetrieveSegmentDataFromTCB(
 		pTcb,
-		Check_Buf_Index, 
+		Check_Buf_Index,
 		9+Check_Buf_Offset,	// Get payload offset 9 to get protocol type.
 		&IP_Protocol,
 		sizeof(IP_Protocol));
@@ -1221,7 +1221,7 @@ CheckSpecialTxPktContentFromHighLayer(
 		RetrieveSegmentDataFromTCB(
 				pTcb,
 				Check_Buf_Index,
-				IP_HeaderLen+Check_Buf_Offset, 
+				IP_HeaderLen+Check_Buf_Offset,
 				&u2Tmp,
 				2);
 		IP_Src_Port = H2N2BYTE(u2Tmp);
@@ -1230,16 +1230,16 @@ CheckSpecialTxPktContentFromHighLayer(
 		RetrieveSegmentDataFromTCB(
 				pTcb,
 				Check_Buf_Index,
-				IP_HeaderLen + Check_Buf_Offset + 2, 
+				IP_HeaderLen + Check_Buf_Offset + 2,
 				&u2Tmp,
 				2);
 		IP_Dst_Port = H2N2BYTE(u2Tmp);
-	}	
-		
+	}
+
 	if(IP_Protocol == 0x11)		// UDP protocol
 	{
 		pTcb->IPType = TX_IPTYPE_UDP;
-		
+
 		//DbgPrint("DHCP_Src_Port = %d, DHCP_Dst_Port = %d \n", DHCP_Src_Port, DHCP_Dst_Port);
 		if((IP_Src_Port == 68 && IP_Dst_Port == 67) ||
 		    (IP_Src_Port == 67 && IP_Dst_Port == 68))
@@ -1250,8 +1250,8 @@ CheckSpecialTxPktContentFromHighLayer(
 			//Note:
 			// osMpdu may not include the packet content but just 802.11 header.
 			FillOctetString(osMpdu, pTcb->BufferList[0].VirtualAddress, (u2Byte)pTcb->BufferList[0].Length);
-			pRaddr = Frame_pRaddr(osMpdu);	
-						
+			pRaddr = Frame_pRaddr(osMpdu);
+
 			//
 			// Translate the DHCP offer packet from multicast packet to unicast so that the client
 			// can receive the DHCP response easier. By Bruce, 2011-01-06.
@@ -1270,16 +1270,16 @@ CheckSpecialTxPktContentFromHighLayer(
 					6);
 
 				// Check if this mac address is belong to one of the clients.
-				pEntry = AsocEntry_GetEntry(&pTcb->SourceAdapt->MgntInfo, ClientMac);				
-				
+				pEntry = AsocEntry_GetEntry(&pTcb->SourceAdapt->MgntInfo, ClientMac);
+
 				if(pEntry != NULL)
-				{					
+				{
 					RT_PRINT_ADDR(COMP_AP, DBG_LOUD, "Replace the DHCP receiver address from multicast to ", ClientMac);
 					// Copy the client mac address to the ra.
-					PlatformMoveMemory(pRaddr, ClientMac, 6);	
+					PlatformMoveMemory(pRaddr, ClientMac, 6);
 					PlatformMoveMemory(pTcb->DestinationAddress, ClientMac, 6);
 				}
-			}						
+			}
 
 			return TRUE;
 		}
@@ -1291,7 +1291,7 @@ CheckSpecialTxPktContentFromHighLayer(
 	else if(0x06 == IP_Protocol) // TCP
 	{
 		pTcb->IPType = TX_IPTYPE_TCP;
-	
+
 		// DbgPrint("TCP src port = %d, dst port = %d\n", IP_Src_Port, IP_Dst_Port);
 		if(IP_Src_Port == 7236 || IP_Dst_Port == 7236 ||
 		    IP_Src_Port == 8554 || IP_Dst_Port == 8554)
@@ -1304,8 +1304,8 @@ CheckSpecialTxPktContentFromHighLayer(
 					continue;
 				RT_PRINT_DATA(COMP_P2P, DBG_LOUD, "",
 					pTcb->BufferList[offset].VirtualAddress, pTcb->BufferList[offset].Length);
-			}			
-		}		
+			}
+		}
 	}
 	return FALSE;
 }
@@ -1347,12 +1347,12 @@ FillPartialHeader(
 			|| MgntActQuery_ApType(Adapter) == RT_AP_TYPE_LINUX)
 		{
 			//
-			// 061227, rcnjko: 
-			// Translate header for NDIS6 faked AP mode (UI make upper layer take us as AdHoc mode). 
+			// 061227, rcnjko:
+			// Translate header for NDIS6 faked AP mode (UI make upper layer take us as AdHoc mode).
 			//
 			if( pMgntInfo->OpMode == RT_OP_MODE_AP && IsFrameTypeData((pTcb->BufferList[0].VirtualAddress)) )
 			{
-				u1Byte	tmpAddr[6];	
+				u1Byte	tmpAddr[6];
 				u1Byte	tmpAddr2[6];
 
 				SET_80211_HDR_TO_DS(pHeader, 0);
@@ -1389,17 +1389,17 @@ FillPartialHeader(
 		pTcb->bMulticast = MacAddr_isMulticast(pTcb->DestinationAddress);
 	else
 		pTcb->bMulticast = FALSE;
-			
+
 	GET_80211_HDR_ADDRESS1(pHeader, Addr1);
-	
+
 	// Find TypeLength, 2006.10.27, refined by shien chang.
 	RetrieveSegmentDataFromTCB(
-		pTcb,	
+		pTcb,
 		0,						// The number of buffer in bufferlist to skip.
 		30, 						// The TypeLength offset. 24 for Wireless header, 6 for LLC
 		TypeLengthBuf,			// 2 Byte buffer for TypeLength data.
-		sizeof(TypeLengthBuf));		// Buffer length.	
-		
+		sizeof(TypeLengthBuf));		// Buffer length.
+
 	TypeLength=(((u2Byte)TypeLengthBuf[0])<<8) + TypeLengthBuf[1];
 
 	if(TypeLength == 0x888e)
@@ -1447,14 +1447,14 @@ FillPartialHeader(
 	if(bIsSpecialPkt)
 	{
 		// Use low rate to send DHCP packet.
-		if(pMgntInfo->IOTAction & HT_IOT_ACT_WA_IOT_Broadcom)	
+		if(pMgntInfo->IOTAction & HT_IOT_ACT_WA_IOT_Broadcom)
 		{
 			pTcb->DataRate = MgntQuery_TxRateExcludeCCKRates(pMgntInfo->mBrates);//0xc;//ofdm 6m
 			pTcb->bTxDisableRateFallBack = FALSE;
 		}
 		else
 		{
-			pTcb->DataRate = pMgntInfo->HighestBasicRate; 
+			pTcb->DataRate = pMgntInfo->HighestBasicRate;
 			//disable rate fallback for EAPOL packate to resolve 5G ad hoc cck hang. zhiyuan 2012/04/28
 			//SUT disconnect,DUT will indication OS start association succuss,and send eapol packet in AES MODE.this will cause cck hang on 5G.
 			if(IS_WIRELESS_MODE_A(Adapter) || IS_WIRELESS_MODE_N_5G(Adapter))
@@ -1470,7 +1470,7 @@ FillPartialHeader(
 			GET_POWER_SAVE_CONTROL(pMgntInfo)->bLeisurePs)
 		{ //by tynli
 			pMgntInfo->DelayLPSLastTimeStamp = PlatformGetCurrentTime();
-			
+
 			// 20100902 Joseph: Since we send NULL frame in LeisurePSLeave() function, TX_SPINLOCK
 			// shall be release for all product and OS. Originally, TX_SPINLOCK is raised twice here and
 			// system hang immediately.
@@ -1483,7 +1483,7 @@ FillPartialHeader(
 		}
 	}
 	//*************************************************************************
-	
+
 
 	//3 Add SecurityHeader
 	if(!IsSecProtEapolBeforeKeyInstalled(pTcb->EncInfo.SecProtInfo) && MgntGetEncryptionInfo(Adapter,pTcb,&pTcb->EncInfo,FALSE)
@@ -1503,7 +1503,7 @@ FillPartialHeader(
 	}
 
 	RT_DISP(FQoS, QoS_INIT,  ("FillPartialHeader CurrentQosMode=%d\r\n", pMgntInfo->pStaQos->CurrentQosMode));
-	
+
 	//3 Added QoS Control
 	if(!MacAddr_isMulticast(Addr1) && (pMgntInfo->pStaQos->CurrentQosMode > QOS_DISABLE ))
 	{
@@ -1512,7 +1512,7 @@ FillPartialHeader(
 		{
 			pu1Byte dstaddr = (pu1Byte)pTcb->DestinationAddress;
 			PRT_WLAN_STA pSTA = AsocEntry_GetEntry( pMgntInfo, dstaddr);
-			
+
 			if(pSTA!=NULL)
 			{
 				if(pSTA->QosMode > QOS_DISABLE )
@@ -1521,7 +1521,7 @@ FillPartialHeader(
 		}
 		else// if(pMgntInfo->mActingAsAp && pSTA!=NULL)
 			bInsertQoS = TRUE;
-		
+
 		if(bInsertQoS == TRUE)
 		{
 			pTcb->BufferList[0].Length += sQoSCtlLng;
@@ -1584,17 +1584,17 @@ GetTcbDestaddr(
 )
 {
 	if( pTcb->ProtocolType==RT_PROTOCOL_802_3 )
-	{ 
-		*ppDestaddr =  pTcb->BufferList[0].VirtualAddress; 
-	} 
+	{
+		*ppDestaddr =  pTcb->BufferList[0].VirtualAddress;
+	}
 	else
-	{ 
-		*ppDestaddr =  pTcb->BufferList[0].VirtualAddress+4; 
-	} 
-	if(	TEST_FLAG(pTcb->tcbFlags, RT_TCB_FLAG_USE_COALESCE_BUFFER) || 
+	{
+		*ppDestaddr =  pTcb->BufferList[0].VirtualAddress+4;
+	}
+	if(	TEST_FLAG(pTcb->tcbFlags, RT_TCB_FLAG_USE_COALESCE_BUFFER) ||
 		TEST_FLAG(pTcb->tcbFlags, RT_TCB_FLAG_USE_PACKET_SHIFT))
 		*ppDestaddr += Adapter->TXPacketShiftBytes;
-	
+
 }
 
 
@@ -1615,11 +1615,11 @@ PreTransmitTxDoCoalesce(
 
 	if(pTcb->ColoaseMethod == 2)
 		bColoaseResult = TxDoCoalescePciE(Adapter, pTcb);
-	else 
+	else
 	{
 		bColoaseResult = TxDoCoalesce(Adapter, pTcb);
 	}
-	
+
 	if(!bColoaseResult)
 	{
 		ReturnTCB(Adapter, pTcb, RT_STATUS_SUCCESS);
@@ -1641,8 +1641,8 @@ PreTransmitWaitQueue(
 {
 	if(!RTIsListEmpty(Get_WAIT_QUEUE(Adapter, pTcb->SpecifiedQueueID)))
 	{
-		RT_TRACE( COMP_SEND, DBG_TRACE, 
-			("PreTransmitTCB(): there is already packets queued in wait queue(%d)\n", 
+		RT_TRACE( COMP_SEND, DBG_TRACE,
+			("PreTransmitTCB(): there is already packets queued in wait queue(%d)\n",
 			 pTcb->SpecifiedQueueID));
 		RTInsertTailListWithCnt(Get_WAIT_QUEUE(Adapter, pTcb->SpecifiedQueueID), &pTcb->List, GET_WAIT_QUEUE_CNT(Adapter,pTcb->SpecifiedQueueID));
 
@@ -1684,9 +1684,9 @@ PreTransmitTCB(
 	PADAPTER 		DefAdapter = GetDefaultAdapter(Adapter);
 	PMGNT_INFO 		pDefaultMgntInfo =&(DefAdapter->MgntInfo);
 	RT_STATUS		rtStatus;
-		
+
 	pTcb->SourceAdapt = Adapter;
-	
+
 	Adapter->ShortcutIndex = 0;
 
 	if( Adapter->SNForShortcut >= 255 )
@@ -1701,7 +1701,7 @@ PreTransmitTCB(
 		return FALSE;
 	}
 
-	Adapter->HalFunc.GetHwRegHandler(Adapter, HW_VAR_RF_STATE, (pu1Byte)(&rtState));	
+	Adapter->HalFunc.GetHwRegHandler(Adapter, HW_VAR_RF_STATE, (pu1Byte)(&rtState));
 
 	if(rtState == eRfOff)
 	{	// This packet should not be sent if RF is OFF, drop it !!
@@ -1720,7 +1720,7 @@ PreTransmitTCB(
 	}
 
 	do{
-		
+
 		{
 			if(pTcb->bAMSDUProcessed == FALSE)
 			{
@@ -1739,19 +1739,19 @@ PreTransmitTCB(
 					TranslateHeader(Adapter, pTcb);
 
 					pTcb->ProtocolType=RT_PROTOCOL_802_11;
-					
-					// We only check if GroupTransmitKey exists when 
+
+					// We only check if GroupTransmitKey exists when
 					// sending non-EAPPacket in Ad-Hoc mode with AES or TKIP encryption.
 					// 2004.11.30, by rcnjko.
 					if( pMgntInfo->mIbss && !IsSecProtEapol(pTcb->EncInfo.SecProtInfo) )
 					{
 						if( pSecInfo->PairwiseEncAlgorithm == RT_ENC_ALG_TKIP ||
-							pSecInfo->PairwiseEncAlgorithm == RT_ENC_ALG_AESCCMP ) 
+							pSecInfo->PairwiseEncAlgorithm == RT_ENC_ALG_AESCCMP )
 						{
 							if(pSecInfo->KeyLen[pSecInfo->DefaultTransmitKeyIdx] == 0)
 							{
 								ReturnTCB(Adapter, pTcb, RT_STATUS_SUCCESS);
-								break;								
+								break;
 							}
 						}
 					}
@@ -1759,10 +1759,10 @@ PreTransmitTCB(
 					// Not to send packet if there is no key. Added by Annie , 2006-04-27.
 					if( SecDropForKeyAbsent( Adapter, pTcb ) )
 					{
-						ReturnTCB(Adapter, pTcb, RT_STATUS_SUCCESS);							
+						ReturnTCB(Adapter, pTcb, RT_STATUS_SUCCESS);
 						break;
 					}
-				
+
 					bCheckLocalToWds = TRUE;
 				}
 				else
@@ -1788,7 +1788,7 @@ PreTransmitTCB(
 							if(SecDropForKeyAbsent( Adapter, pTcb ) )
 							{
 								RT_TRACE(COMP_SEC,DBG_LOUD,("PreTransmit :SecDropForKeyAbsent: drop data \n"));
-								ReturnTCB(Adapter, pTcb, RT_STATUS_SUCCESS);	
+								ReturnTCB(Adapter, pTcb, RT_STATUS_SUCCESS);
 								break;
 							}
 						}
@@ -1815,8 +1815,8 @@ PreTransmitTCB(
 					u1Byte		CurrCcxVerNumber = 0;
 
 					CCX_QueryVersionNum(Adapter, &CurrCcxVerNumber);
-					CCX_QueryCACSupport(Adapter, &bCcxCACEnable);					
-						
+					CCX_QueryCACSupport(Adapter, &bCcxCACEnable);
+
 					if((bCcxCACEnable) && CurrCcxVerNumber >= 4)
 					{
 						TR_ACTION			trAction = TR_ACTION_CONTINUE;
@@ -1838,13 +1838,13 @@ PreTransmitTCB(
 					if(pMgntInfo->pStaQos->AcmMethod == eAcmWay2_SW)
 					{
 						//
-						// In admission cotrolled queue, the packet should be 
+						// In admission cotrolled queue, the packet should be
 						// (1) sent as the UP defined, or
 						// (2) dropped, if the TSID is defined but the TS is invalid/rejected/non-used, or
 						// (3) buffered, if the TSID and TS is valid but the used time exceeds the admitted time, or
 						// (4) mapped to the lower UP that does not require ACM (WiFi test).
 						// Note:
-						//	If the pMgntInfo->pStaQos->AcmMethod is set eAcmWay2_SW, the ACM is absolutely 
+						//	If the pMgntInfo->pStaQos->AcmMethod is set eAcmWay2_SW, the ACM is absolutely
 						//	handled by SW and the actions follow the 4 items described of the above.
 						// By Bruce, 2009-03-25.
 						//
@@ -1860,7 +1860,7 @@ PreTransmitTCB(
 						break;
 					}
 				}
-				
+
 				if(AMSDUTransmitTCB(Adapter, &pTcb, pHeader) == FALSE)
 					return FALSE;
 		}
@@ -1876,16 +1876,16 @@ PreTransmitTCB(
 					RT_TRACE_F(COMP_TDLS, DBG_WARNING, ("TDLS_PrepareTxFeedback failed!\n"));
 				}
 			}
-			
+
 			// Forward the frame from local machine to WDS if necessary.
 			if(bCheckLocalToWds && ACTING_AS_AP(Adapter) && pMgntInfo->WdsMode != WDS_DISABLED)
 			{
-				AP_WdsTx(Adapter, pTcb); 
+				AP_WdsTx(Adapter, pTcb);
 			}
 
 			bMicFailureReport = IsSecProtMicFailureReport(pTcb->EncInfo.SecProtInfo);
 
-			// Query management for data rate 
+			// Query management for data rate
 			pTcb->DataRate = MgntQuery_FrameTxRate( Adapter, pTcb );
 
 			// Calculate TKIP MIC if this packet will be encrypted by HW or SW.
@@ -1896,7 +1896,7 @@ PreTransmitTCB(
 				SecCalculateMIC(Adapter, pTcb);
 			}else if( pTcb->EncInfo.bMFPPacket )
 			{
-				// TKIP MFP case 
+				// TKIP MFP case
 				RT_TRACE( COMP_CCX , DBG_LOUD , ("===> TKIP MFP Calculate MIC \n") );
 				SecCalculateMIC(Adapter, pTcb);
 			}
@@ -1904,7 +1904,7 @@ PreTransmitTCB(
 			RemoveZeroLengthBuffer(pTcb);
 			//2 After this point, the TCB should never contain zero-length buffer
 			//2 Because all zero-length buffers are reserved for header translation
-			if( IsFrameTypeData(pHeader) ) 
+			if( IsFrameTypeData(pHeader) )
 			{
 				if(RT_STATUS_SUCCESS == WAPI_SecFuncHandler(WAPI_PRETRANSMITTCB, Adapter, (PVOID)pTcb, WAPI_END))
 					break;
@@ -1917,10 +1917,10 @@ PreTransmitTCB(
 			if(PreTransmitTxDoCoalesce(Adapter, pTcb, &pHeader) == FALSE)// '&' add by ylb 20130508 for pHeader is wrong when enable AMSDU
 				break;
 		}
-		
+
 		//1 Caution:	Don't add any code between coalesce and fragment.
 		//1 			Because the length information may be wrong.
-		if(CheckFragment(Adapter, pTcb, Adapter->TXPacketShiftBytes))	
+		if(CheckFragment(Adapter, pTcb, Adapter->TXPacketShiftBytes))
 		{
 			FragmentTCB(Adapter, pTcb);
 		}
@@ -1930,9 +1930,9 @@ PreTransmitTCB(
 
 		// Update fragment information for non-fragment case. 2005.03.08, by rcnjko.
 		if(pTcb->FragCount==1)
-		{			
+		{
 			pTcb->FragLength[0]=(u2Byte)pTcb->PacketLength;
-			pTcb->FragBufCount[0]=pTcb->BufferCount;			
+			pTcb->FragBufCount[0]=pTcb->BufferCount;
 		}
 
 		//
@@ -1946,12 +1946,12 @@ PreTransmitTCB(
 
 		RT_ASSERT( pTcb->SpecifiedQueueID!=UNSPECIFIED_QUEUE_ID, ("PreTransmitTCB(): %d: SpecifiedQueueID should not be UNSPECIFIED!!\n", pTcb->SpecifiedQueueID ) );
 
-		// Fill up WEP bit and IV of each fragment in the TCB if necessary.	
+		// Fill up WEP bit and IV of each fragment in the TCB if necessary.
 		if (SecFillHeader(Adapter, pTcb))
 		{
 			// Do software encryption if necessary.
-			if(	!pTcb->EncInfo.IsEncByHW || pSecInfo->SWTxEncryptFlag ) 
-			{ 
+			if(	!pTcb->EncInfo.IsEncByHW || pSecInfo->SWTxEncryptFlag )
+			{
 				SecSoftwareEncryption(Adapter, pTcb);
 			}
 		}
@@ -1967,7 +1967,7 @@ PreTransmitTCB(
 			// EAPoL can't be Fragment !!
 			if( IsSecProtEapol(pTcb->EncInfo.SecProtInfo) )
 			{
-				// Get 4-Way 2nd Packet!! EAP_HDR_LEN	
+				// Get 4-Way 2nd Packet!! EAP_HDR_LEN
 				pEapMess = pTcb->BufferList[0].VirtualAddress + EAP_HDR_LEN;
 				EapPkLen	 = pTcb->PacketLength - EAP_HDR_LEN;
 				if( bEncrypt )
@@ -1988,7 +1988,7 @@ PreTransmitTCB(
 
 					pEapKeyMess.Octet = pEapMess + LIB1X_EAPOL_HDRLEN;
 					pEapKeyMess.Length = (u2Byte)(EapPkLen- LIB1X_EAPOL_HDRLEN);
-					
+
 
 					if( Message_KeyType(pEapKeyMess) == type_Pairwise )
 					{
@@ -2007,11 +2007,11 @@ PreTransmitTCB(
 						}
 
 					}
-				
+
 				}
 
 				RT_PRINT_DATA(COMP_SEC, DBG_LOUD, "S5 mbS5SNose \n", pMgntInfo->mbS5SNose , KEY_NONCE_LEN);
-				
+
 			}
 		}
 
@@ -2031,7 +2031,7 @@ PreTransmitTCB(
 			// RT_PRINT_ADDR(COMP_P2P, DBG_LOUD, "PreTransmitTCB(): Packet Buffered pTcb->DestinationAddress: ", pTcb->DestinationAddress);
 			break;
 		}
-		
+
 		//
 		// Map channel switch pkt to power save condition
 		// TRUE: buffer pkt
@@ -2054,9 +2054,9 @@ PreTransmitTCB(
 				// Redirect to Specific Queue -------------------------------------------------------
 
 				//
-				// <Roger_Notes> We should not redirect queue ID for upper Miracast application, it might cause 
+				// <Roger_Notes> We should not redirect queue ID for upper Miracast application, it might cause
 				// compatibility issue for multi-queue transmission on DMP site. And we need to decide TCB priority for HW-AC mapping
-				// as well to prevent incorrect TXDMA mapping, e.g., VI_QUEUE(LOW_QUEUE for Non-Qos and default specific queue in AP mode) 
+				// as well to prevent incorrect TXDMA mapping, e.g., VI_QUEUE(LOW_QUEUE for Non-Qos and default specific queue in AP mode)
 				// map to QSLT_BE.
 				// 2013.10.14.
 				//
@@ -2066,7 +2066,7 @@ PreTransmitTCB(
 					QueueID = pTcb->SpecifiedQueueID;
 
 				// ------------------------------------------------------------------------------
-				
+
 				// SW-AC Queue and HW-AC Queue Coherence (cf. MapHwQueueToFirmwareQueue) ---
 				switch(QueueID)
 				{
@@ -2083,7 +2083,7 @@ PreTransmitTCB(
 			// Drop miracast RTP packet if necessary
 			//
 			{
-				PMULTICHANNEL_PORT_CONTEXT pPortContext = (PMULTICHANNEL_PORT_CONTEXT)(pTcb->SourceAdapt->MultiChannel); 
+				PMULTICHANNEL_PORT_CONTEXT pPortContext = (PMULTICHANNEL_PORT_CONTEXT)(pTcb->SourceAdapt->MultiChannel);
 				if(TEST_FLAG(pPortContext->FCSPortState, FCS_STATE_PKT_DROPPED) && (TX_IPTYPE_UDP ==  pTcb->IPType) )
 				{
 					ReturnTCB(Adapter, pTcb, RT_STATUS_SUCCESS);
@@ -2092,33 +2092,33 @@ PreTransmitTCB(
 			}
 		}
 #endif
-	
+
 		if(pHalData->bAutoAMPDUBurstMode && pTcb->SpecifiedQueueID < BEACON_QUEUE)
 		{
 			if(pMgntInfo->LinkDetectInfo.bBusyTrafficAccordingTP && pMgntInfo->bMediaConnect && (Adapter->bInHctTest==FALSE))
 			{
 				if( IsFrameTypeData(pHeader))
-				{				
+				{
 					RTInsertTailListWithCnt(Get_WAIT_QUEUE(Adapter, pTcb->SpecifiedQueueID), &pTcb->List, GET_WAIT_QUEUE_CNT(Adapter,pTcb->SpecifiedQueueID));
 					return FALSE;
-				}			
+				}
 			}
 
 			if(!pMgntInfo->LinkDetectInfo.bBusyTrafficAccordingTP && (*GET_WAIT_QUEUE_CNT(Adapter,pTcb->SpecifiedQueueID))> 0)
 			{
 				HAL_HW_TIMER_TYPE TimerType = HAL_TIMER_EARLYMODE;
 				Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_HW_REG_TIMER_RESTART,  (pu1Byte)(&TimerType));
-			}		
+			}
 		}
-	
-		// <RJ_TODO> 
-		// 1. We should insert the packet into tail of TcbWaitQueue, 
-		// and transmit it TxHandleInterrupt() or UsbIoCompeleteSentXXX() 
+
+		// <RJ_TODO>
+		// 1. We should insert the packet into tail of TcbWaitQueue,
+		// and transmit it TxHandleInterrupt() or UsbIoCompeleteSentXXX()
 		// with TransmitTCB().
 		// 2. Other conditions:
-		// Out of TCB, TxDesc, NetworkSetupInProgress(). 
-		if(	(IsFrameTypeData(pHeader) &&  
-			
+		// Out of TCB, TxDesc, NetworkSetupInProgress().
+		if(	(IsFrameTypeData(pHeader) &&
+
 			((pMgntInfo->bScanInProgress) || GET_HAL_DATA(Adapter)->bNeedQueuePacketInIQKProgress) &&  // Marked: To shorten the Ping roundtrip time. Use TxPause to hold packets.
 
 			!IsMgntNullFrame(pHeader) &&
@@ -2149,7 +2149,7 @@ PreTransmitTCB(
 		if(PreTransmitWaitQueue(Adapter, pTcb, &bImmediateComplete) == TRUE)
 			break;
 
-		if(GET_HAL_DATA(Adapter)->AMPDUBurstMode == RT_AMPDU_BRUST_92D || 
+		if(GET_HAL_DATA(Adapter)->AMPDUBurstMode == RT_AMPDU_BRUST_92D ||
 			(GET_HAL_DATA(Adapter)->AMPDUBurstMode == RT_AMPDU_BRUST_8814A )||
 			(GET_HAL_DATA(Adapter)->AMPDUBurstMode == RT_AMPDU_BRUST_8822B))
 		{
@@ -2165,7 +2165,7 @@ PreTransmitTCB(
 			}
 		}
 
-		if( IsFrameTypeData(pHeader) ) 
+		if( IsFrameTypeData(pHeader) )
 		{
 			// Start Timer for LED Tx/Rx blinking
 			if(Adapter->bInHctTest)
@@ -2177,7 +2177,7 @@ PreTransmitTCB(
 				if (Adapter->LedTxCnt == 0)
 					PlatformSetTimer(Adapter, &pMgntInfo->LedTimer, 50);
 			}
-			
+
 			Adapter->LedTxCnt++;
 		}
 
@@ -2185,10 +2185,10 @@ PreTransmitTCB(
 		// NOTE! DO NOT ACCESS pTcb after TransmitTCB() return sucessfully.
 		// Otherwise, it will cause Tx dead locked at USB path.
 		// 061122, by rcnjko.
-		//		
+		//
 		rtStatus = TransmitTCB(Adapter, pTcb);
 		if(RT_STATUS_SUCCESS != rtStatus && RT_STATUS_PKT_DROP != rtStatus)
-		{			
+		{
 			RT_TRACE(COMP_SEND, DBG_LOUD, ("TransmitTcb fail\n"));
 			RTInsertTailListWithCnt(Get_WAIT_QUEUE(Adapter, pTcb->SpecifiedQueueID), &pTcb->List, GET_WAIT_QUEUE_CNT(Adapter,pTcb->SpecifiedQueueID));
 
@@ -2211,24 +2211,24 @@ PreTransmitTCB(
 		}
 
 		//
-		// 041005, rcnjko: 
-		// Disassociate from the AP after MIC failure report sent 
-		// if twice MIC error occured in 60 seconds. 
+		// 041005, rcnjko:
+		// Disassociate from the AP after MIC failure report sent
+		// if twice MIC error occured in 60 seconds.
 		//
 		if(	bMicFailureReport && // Replaced with a local varible to prevent access pTcb after TransmitTCB(), 061122, by rcnjko.
 			pSecInfo->bToDisassocAfterMICFailureReportSend )		// Modified by Annie for WiFi WPA2 Test in SGS, 2006-06-14.
 		{
-			// For debug purpose. 
+			// For debug purpose.
 			RT_PRINT_DATA( COMP_SEC, DBG_LOUD, "PreTransmitTCB(): Send MIC Report", pTcb->BufferList[0].VirtualAddress, pTcb->BufferList[0].Length);
 
 			// Reset bToDisassocAfterMICFailureReportSend.
-			// <RJ_TODO> bToDisassocAfterMICFailureReportSend has better to be reset 
+			// <RJ_TODO> bToDisassocAfterMICFailureReportSend has better to be reset
 			// if the MIC failure report is not sent by upper layer after a period.
-			pSecInfo->bToDisassocAfterMICFailureReportSend = FALSE;	
-			
-			// Disassociate from AP. 
+			pSecInfo->bToDisassocAfterMICFailureReportSend = FALSE;
+
+			// Disassociate from AP.
 			// Note that, we must relase Tx spinlock before calling MgntActSet_802_11_DISASSOCIATE()
-			// because SendDisassociation() will acquire it again, which will cause OS hang. 
+			// because SendDisassociation() will acquire it again, which will cause OS hang.
 			// 2005.08.02, by rcnjko.
 			PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 			MgntActSet_802_11_DEAUTHENTICATION(Adapter, mic_failure);	// Modified for WiFi Mandatory Testplan v1.2: We shall send Deauthentication packet instead of Disassociation packet. Annie, 2006-05-04.
@@ -2267,7 +2267,7 @@ TxDoCoalesce(
 		return FALSE;
 
 	// Note that! we have not yet reserved Tx Desc for 8187, so header offset is 0.
-	bFragment=CheckFragment(Adapter, pTcb, 0); 
+	bFragment=CheckFragment(Adapter, pTcb, 0);
 	BytesCopied = Adapter->TXPacketShiftBytes;
 
 	// Consider QoS data frame. Added by Annie, 2006-01-08.
@@ -2282,8 +2282,8 @@ TxDoCoalesce(
 		for(i=0;i<pTcb->BufferCount;i++)
 		{
 			PlatformMoveMemory(
-				pCoalseceBuffer->Buffer.VirtualAddress+BytesCopied, 
-				pTcb->BufferList[i].VirtualAddress, 
+				pCoalseceBuffer->Buffer.VirtualAddress+BytesCopied,
+				pTcb->BufferList[i].VirtualAddress,
 				pTcb->BufferList[i].Length);
 			BytesCopied += (u2Byte)pTcb->BufferList[i].Length;
 		}
@@ -2328,7 +2328,7 @@ TxDoCoalesce(
 			}
 		}
 	}
-	
+
 	//2 Modify buffer list
 	pTcb->BufferList[0]=pCoalseceBuffer->Buffer;
 	pTcb->BufferList[0].Length=BytesCopied;
@@ -2349,13 +2349,13 @@ CheckFragment(
 {
 	PMGNT_INFO pMgntInfo = &Adapter->MgntInfo;
 	pu1Byte pHeader = NULL;
-	pu1Byte pRaddr = NULL; 
+	pu1Byte pRaddr = NULL;
 
 	pHeader = pTcb->BufferList[0].VirtualAddress+ nHdrOffset;
 
-	 pRaddr = pHeader + 4; 
+	 pRaddr = pHeader + 4;
 
-	
+
 	if(pTcb->bBTTxPacket)
 		return FALSE;
 
@@ -2389,12 +2389,12 @@ CheckFragment(
 		{
 			PRT_WLAN_STA pEntry = AsocEntry_GetEntry( pMgntInfo,  pTcb->DestinationAddress);
 			if(pEntry != NULL)
-			{	
-				if(pEntry->IOTAction & HT_IOT_ACT_AMSDU_ENABLE)	
+			{
+				if(pEntry->IOTAction & HT_IOT_ACT_AMSDU_ENABLE)
 					return FALSE;
 				else if(pEntry->IOTAction & HT_IOT_ACT_AMSDU_AMPDU)
 					return FALSE;
-			}	
+			}
 		}
 		else
 			return FALSE;
@@ -2449,24 +2449,24 @@ FragmentTCB(
 			{
 				Length=(u2Byte)(CoalesceBuffer.Length-Offset);
 			}
-			
+
 			GET_SHARED_MEMORY_WITH_OFFSET(
-				&CoalesceBuffer, 
-				&pTcb->BufferList[FragIndex], 
-				Offset, 
+				&CoalesceBuffer,
+				&pTcb->BufferList[FragIndex],
+				Offset,
 				Length);
 
 			pTcb->FragLength[FragIndex]=Length;
 			pTcb->FragBufCount[FragIndex]=1;
-			
+
 			Offset+=Length;
 
 			// offset ICV or MIC fild ,2007/12/28 by CCW
 			Offset += pMgntInfo->SecurityInfo.EncryptionTailOverhead;
-			
+
 			FragIndex++;
 		}while(Offset<CoalesceBuffer.Length);
-		
+
 		pTcb->FragCount=FragIndex;
 		pTcb->BufferCount=FragIndex;
 	}
@@ -2491,10 +2491,10 @@ FragmentTCB(
 			if(FragLen + BufferList[ReadBufferIndex].Length > FragThreshold)
 			{
 				AddLen=FragThreshold-FragLen;
-				
+
 				pTcb->BufferList[WriteBufferIndex]=BufferList[ReadBufferIndex];
 				pTcb->BufferList[WriteBufferIndex].Length=AddLen;
-				
+
 				MAKE_SHARED_MEMORY_OFFSET_AT_FRONT(
 					&BufferList[ReadBufferIndex],
 					AddLen);
@@ -2517,7 +2517,7 @@ FragmentTCB(
 				{	//2 Insert header for 2~ fragment
 					pTcb->Header[FragIndex].Length=sMacHdrLng+QosCtrlLen+pMgntInfo->SecurityInfo.EncryptionHeadOverhead;
 					pTcb->BufferList[WriteBufferIndex++]=pTcb->Header[FragIndex];
-				
+
 					FragLen=sMacHdrLng+QosCtrlLen+pMgntInfo->SecurityInfo.EncryptionHeadOverhead;
 					FragBufferCount=1;
 				}
@@ -2534,7 +2534,7 @@ FragmentTCB(
 	for(i=1;i<pTcb->FragCount;i++)
 	{
 		PlatformMoveMemory(
-			pTcb->BufferList[FragIndex].VirtualAddress + Adapter->TXPacketShiftBytes, 
+			pTcb->BufferList[FragIndex].VirtualAddress + Adapter->TXPacketShiftBytes,
 			pTcb->BufferList[0].VirtualAddress + Adapter->TXPacketShiftBytes,
 			sMacHdrLng);
 
@@ -2542,7 +2542,7 @@ FragmentTCB(
 		{
 			SET_80211_HDR_MORE_FRAG(pTcb->BufferList[FragIndex].VirtualAddress+Adapter->TXPacketShiftBytes, 0);	// Clear more frag for last fragment
 		}
-		
+
 		SET_80211_HDR_FRAGMENT(pTcb->BufferList[FragIndex].VirtualAddress+Adapter->TXPacketShiftBytes, (u1Byte)i);
 
 		FragIndex+=pTcb->FragBufCount[i];
@@ -2550,22 +2550,22 @@ FragmentTCB(
 }
 
 /*-----------------------------------------------------------------------------
-// Procedure:   Transmit one packet 
+// Procedure:   Transmit one packet
 //
     Description:   	Emily 2006/04/30, For 8190 PCI
-				When configure tx descriptor under 8190Pci hardware, reserve the 
-				first one descriptor for Firmware Info(not insert, cause the descriptor 
-				address nust be contineous). Then, fill descriptor for each packet 
-				buffer from the second descriptor. Configure first descriptor and 
+				When configure tx descriptor under 8190Pci hardware, reserve the
+				first one descriptor for Firmware Info(not insert, cause the descriptor
+				address nust be contineous). Then, fill descriptor for each packet
+				buffer from the second descriptor. Configure first descriptor and
 				pTcb->nDescUsed++ before set Own bit.
 
 				Joseph 2006/10/13, Revision
-				Integrate the procedure of protection mode determination and duration 
+				Integrate the procedure of protection mode determination and duration
 				calculation into single function respectively.
 				TransmitTcb() handle the information of each MSDU.
 				For further improvement, we can add an function like "HandleMPDUInfo"
-				to handle specific information of every fragment of MSDU. But now there 
-				are only TxTime calculation is specific to each MPDU, so just leave this 
+				to handle specific information of every fragment of MSDU. But now there
+				are only TxTime calculation is specific to each MPDU, so just leave this
 				idea for future extension.
 	Return value:
 				TransmitTCB returns RT_STATUS_RESOURCE if TransmitTCB occur some error and cannot Tx.
@@ -2586,13 +2586,13 @@ TransmitTCB(
 	u2Byte		SequenceNumber = 0;
 	pu1Byte 	pFrame = GET_FRAME_OF_FIRST_FRAG(pAdapter, pTcb);
 	u1Byte		QueueID = pTcb->SpecifiedQueueID;
-	pu1Byte		pRecvAddr = NULL; 
+	pu1Byte		pRecvAddr = NULL;
 	s2Byte		BufferCount;
 	RT_RF_POWER_STATE 	rfState;
 	PADAPTER 	Adapter =  GetDefaultAdapter(pAdapter);
 
 
-	pMgntInfo = &(Adapter->MgntInfo);	
+	pMgntInfo = &(Adapter->MgntInfo);
 	Adapter->HalFunc.GetHwRegHandler(Adapter, HW_VAR_RF_STATE, (pu1Byte)(&rfState));
 
 	if(rfState != eRfOn)
@@ -2607,9 +2607,9 @@ TransmitTCB(
 
 {	//tynli_test_32k 2011.02.25.
 	u1Byte	FwPSState;
-	Adapter->HalFunc.GetHwRegHandler(Adapter, HW_VAR_FW_PS_STATE, &FwPSState);		
+	Adapter->HalFunc.GetHwRegHandler(Adapter, HW_VAR_FW_PS_STATE, &FwPSState);
 	if(IS_IN_LOW_POWER_STATE(pAdapter, FwPSState))
-	{		
+	{
 		RT_TRACE(COMP_SEND, DBG_LOUD, ("TransmitTCB(): CANNOT TX---> Wake up Hw. return RT_STATUS_RESOURCE\n"));
 		if( PlatformIsWorkItemScheduled(&(pMgntInfo->PowerSaveControl.FwPsClockOnWorkitem)) == FALSE)
 		{
@@ -2641,7 +2641,7 @@ TransmitTCB(
 		Adapter->HalFunc.TxFillDescriptorHandler(Adapter, pTcb, 0, 0, 0, 0);
 		return RT_STATUS_SUCCESS;
 	}
-	
+
 #else
 	if(FALSE == PlatformIsTxQueueAvailable(Adapter, QueueID, pTcb->BufferCount))
 	{
@@ -2649,10 +2649,10 @@ TransmitTCB(
 		return RT_STATUS_RESOURCE;
 	}
 #endif
- 
+
 
 	// Note:
-	//	To prevent lossing tx report from the HW restriction, make sure only one tcb 
+	//	To prevent lossing tx report from the HW restriction, make sure only one tcb
 	//	with tx feedback info in HW queue.
 	if(TxFeedbackIsTxFeedbackInfoInstalled(pTcb))
 	{
@@ -2664,7 +2664,7 @@ TransmitTCB(
 			return RT_STATUS_RESOURCE;
 		}
 	}
-	
+
 	if(RT_IN_PS_LEVEL(Adapter, RT_RF_LPS_DISALBE_2R))
 	{
 		BOOLEAN		Disable2R = FALSE;
@@ -2688,12 +2688,12 @@ TransmitTCB(
 			RT_TRACE_F(COMP_CMD, DBG_LOUD, ("Return TRUE because Entry was release and the data frame needs to drop, return RT_STATUS_RESOURCE\n"));
 			ReturnTCB(Adapter, pTcb, RT_STATUS_SUCCESS);
 			return RT_STATUS_PKT_DROP;
-		}//if	
+		}//if
 
 		// Check if the A-MPDU aggreagtion is allowed and get its aggregation capabilities/
 		MgntQuery_AggregationCapability(pTcb->SourceAdapt, pRecvAddr, pTcb);
 
-		/* 2007/03/06 MH This function check if short GI is enabled, and current 
+		/* 2007/03/06 MH This function check if short GI is enabled, and current
 		transmit bandwidth for TX firmware info in RTL8190. */
 		MgntQuery_ShortGI(pTcb->SourceAdapt, pTcb);
 
@@ -2710,7 +2710,7 @@ TransmitTCB(
 		if(pTcb->SourceAdapt->TDLSSupport)
 			TDLS_QueryCapability(pTcb->SourceAdapt, pTcb);
 
-		
+
 
 		//
 		// This function will determine if we need to send protection frame and how to send protection frame.
@@ -2727,7 +2727,7 @@ TransmitTCB(
 	// Qos Data frame will use individual number sequence according to destination address and TID.
 	//
 	SequenceNumber = MgntQuery_SequenceNumber(
-						pTcb->SourceAdapt, 
+						pTcb->SourceAdapt,
 						pFrame,
 						pTcb->bBTTxPacket,
 						pRecvAddr,
@@ -2744,7 +2744,7 @@ TransmitTCB(
 	// Duration field and SeqNum field is now handled in this function.
 	//
 	FillFrameField(Adapter, pTcb, SequenceNumber);
-					
+
 #if WLAN_ETW_SUPPORT
 	//
 	// Assign sequence number
@@ -2754,7 +2754,7 @@ TransmitTCB(
 
 	//cosa add for debug use. 08/23/2007
 	Adapter->TxStats.NumTransmitTCBAvailable[QueueID]++;
-	
+
 	//
 	// Fill Tx Descriptor
 	//
@@ -2762,13 +2762,13 @@ TransmitTCB(
 		firstDesc=0;
 	else
 		firstDesc = curDesc = Adapter->NextTxDescToFill[QueueID];
-	
+
 	pTcb->nDescUsed=0;
 	pTcb->nFragSent = 0;
 	pTcb->nFragCompleted = 0;
 	Adapter->nFragDescUsed=0;
 
-	BufferCount = pTcb->BufferCount;	
+	BufferCount = pTcb->BufferCount;
 
 	for(i=0;i< pTcb->BufferCount;i++)
 	{
@@ -2793,9 +2793,9 @@ TransmitTCB(
 
 #if !defined(MUTIPLE_BULK_OUT)
 		//
-		// 050413, rcnjko: 
+		// 050413, rcnjko:
 		// For 8187, we must keep at most one Irp Pending in each endpoint,
-		// so, we send one fragment in TransmitTCB() and will handle other fragment 
+		// so, we send one fragment in TransmitTCB() and will handle other fragment
 		// in the complete handler of this endpoint.
 		//
 		if(pTcb->nDescUsed == 1)
@@ -2806,7 +2806,7 @@ TransmitTCB(
 
 			if(IS_RW_PTR(Adapter))
 				curDesc = Adapter->CurrentTXWritePoint[QueueID];
-	
+
 #if WLAN_ETW_SUPPORT
 
 			//
@@ -2839,7 +2839,7 @@ TransmitTCB(
 
 		if(!IS_RW_PTR(Adapter))
 			curDesc=(curDesc+1)%Adapter->NumTxDesc[QueueID];
-		
+
 	}
 
 	return RT_STATUS_SUCCESS;
@@ -2878,7 +2878,7 @@ CountTxStatistics(
 	{
 		return;
 	}
-	
+
 	if( pTcb->status.TOK )
 	{
 
@@ -2982,7 +2982,7 @@ UpdateEarlyModeInfo(
 			break;
 		default:
 			maxPktNum = 0;
-			break;	
+			break;
 	}
 
 	if(GET_HAL_DATA(Adapter)->AMPDUBurstNum < maxPktNum)
@@ -3009,11 +3009,11 @@ UpdateEarlyModeInfo(
 
 		case RT_ENC_ALG_SMS4:
 			additionLen = 20;
-			break;		
+			break;
 
 		case RT_ENC_ALG_WEP:
 		default:
-			break;		
+			break;
 	}
 
 	if(MacAddr_isBcst(pTcb->DestinationAddress) ||MacAddr_isMulticast(pTcb->DestinationAddress) || !IsQoSDataFrame(pFrame))
@@ -3022,26 +3022,26 @@ UpdateEarlyModeInfo(
 	// Prefast warning 6011
 	if(plistHead != NULL && RTIsListEmpty(plistHead))
 		return FALSE;
-	
+
 	// Prefast warning 6011
 	if (plistHead != NULL)
 	{
 		pEntry = RTGetHeadList(plistHead);
 	}
-	
+
 	pTcb->EMPktNum = 0;
 	do{
 		pNextTcb = (PRT_TCB)pEntry;
 		// Prefast warning C6011: Dereferencing NULL pointer 'pNextTcb'.
 		if((pNextTcb != NULL) && (PlatformCompareMemory(pTcb->DestinationAddress,pNextTcb->DestinationAddress,ETHERNET_ADDRESS_LENGTH) == 0)
 				&& (pTcb->priority == pNextTcb->priority))
-		{ 
+		{
 				pTcb->EMPktLen[pTcb->EMPktNum] =pNextTcb->FragLength[0]+additionLen;
 				pTcb->EMPktNum ++;
 		}
 		else
 			break;
-		
+
 		// Prefast warning C6011: Dereferencing NULL pointer 'pEntry'.
 		if (pEntry != NULL)
 		{
@@ -3066,7 +3066,7 @@ TxCheckStuck(
 	PMGNT_INFO 		pMgntInfo = &Adapter->MgntInfo;
 	PRT_TCB			pTcb;
 	u1Byte			ResetThreshold=NIC_SEND_HANG_THRESHOLD_NORMAL;
-	
+
 	//
 	// Decide Stuch threshold according to current power save mode
 	//
@@ -3086,20 +3086,20 @@ TxCheckStuck(
 		default: //for MacOS comipler warning: "eAutoPs" not handled in switch
 			break;
 	}
-			
+
 	//
 	// Check whether specific tcb has been queued for a specific time
 	//
 	for(QueueID = 0; QueueID < MAX_TX_QUEUE; QueueID++)
 	{
-		
+
 		if(RTIsListEmpty(&Adapter->TcbBusyQueue[QueueID]))
 			continue;
 		else
 		{
 			pTcb = (PRT_TCB)RTGetHeadList(&Adapter->TcbBusyQueue[QueueID]);
 			pTcb->nStuckCount++;
-			
+
 			if(pTcb->nStuckCount > ResetThreshold)
 			{
 				RT_TRACE( COMP_SEND, DBG_SERIOUS, ("<== TxCheckStuck()\n") );
@@ -3133,7 +3133,7 @@ _ReturnTCB(
 	RT_STATUS			status
 	)
 {
-	PADAPTER Adapter = GetDefaultAdapter(pAdapter); 
+	PADAPTER Adapter = GetDefaultAdapter(pAdapter);
 	RT_ASSERT(IS_TX_LOCKED(Adapter) == TRUE, ("ReturnTCB(): bTxLocked(%x) should be TRUE\n!", Adapter->bTxLocked));
 
 	if(pTcb == NULL)
@@ -3151,9 +3151,9 @@ _ReturnTCB(
 	switch(pTcb->BufferType)
 	{
 	case RT_TCB_BUFFER_TYPE_SYSTEM:
-		// We MUST release tx spin lock acquired before DrvIFCompletePacket(). 
+		// We MUST release tx spin lock acquired before DrvIFCompletePacket().
 		// Otherwise, nested lock acquiration might happen.
-		// For example, when we plug two 8187 in one machine, it will cause 
+		// For example, when we plug two 8187 in one machine, it will cause
 		// OS hangs at RtUsbSend().  2005.11.17, by rcnjko.
 		if(pTcb->Reserved != NULL)
 		{
@@ -3169,7 +3169,7 @@ _ReturnTCB(
 
 	case RT_TCB_BUFFER_TYPE_BT_LOCAL:
 		break;
-		
+
 	case RT_TCB_BUFFER_TYPE_RFD:
 		ReturnRFDList(Adapter, (PRT_RFD)pTcb->Reserved);
 		break;
@@ -3191,7 +3191,7 @@ _ReturnTCB(
 	}
 
 	// Initialize TCB before insert it into TcbIdleQueue, 2005.07.06, by rcnjko.
-	CLEAR_FLAGS(pTcb->tcbFlags);	
+	CLEAR_FLAGS(pTcb->tcbFlags);
 	pTcb->DataRate=UNSPECIFIED_DATA_RATE;
 	pTcb->bSpecifShortGI = FALSE;
 	pTcb->bUseShortGI = FALSE;
@@ -3201,7 +3201,7 @@ _ReturnTCB(
 	pTcb->BufferCount = 0;
 	pTcb->Reserved = NULL;
 	pTcb->priority = 0;
-	pTcb->EncInfo.SecProtInfo = RT_SEC_NORMAL_DATA; 
+	pTcb->EncInfo.SecProtInfo = RT_SEC_NORMAL_DATA;
 	pTcb->EncInfo.IsEncByHW = FALSE;	// Null Function Data Len_Adjust debug, Annie, 2006-01-06.
 	pTcb->bFromUpperLayer = FALSE;
 	pTcb->TSID = DEFAULT_TSID;
@@ -3248,7 +3248,7 @@ _ReturnTCB(
 	RESET_CCX_PACKET_TX_INFO(pTcb);
 
 	TxFeedbackDeInstallTxFeedbackInfoForTcb(Adapter, pTcb);
-	
+
 	RTInsertTailListWithCnt(&Adapter->TcbIdleQueue, &pTcb->List, &Adapter->NumIdleTcb);
 	RT_TRACE(COMP_SEND, DBG_LOUD, ("_ReturnTCB(), Adapter->NumIdleTcb = %d\n", Adapter->NumIdleTcb));
 }
@@ -3260,7 +3260,7 @@ ReturnTCB(
 	PRT_TCB				pTcb,
 	RT_STATUS			status
 	)
-{	
+{
 	if(pTcb->isUsbTxAgg)
 	{
 		RT_LIST_ENTRY aggList;
@@ -3277,7 +3277,7 @@ ReturnTCB(
 		while(RTIsListNotEmpty(&aggList))
 		{
 			PRT_TCB pAggTcb = (PRT_TCB)RTRemoveHeadList(&aggList);
-			_ReturnTCB(pAdapter, pAggTcb, status);			
+			_ReturnTCB(pAdapter, pAggTcb, status);
 		}
 	}
 	else
@@ -3297,7 +3297,7 @@ ReturnTCB(
 	)
 {
 	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
-	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(pDefaultAdapter);	
+	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(pDefaultAdapter);
 
 	RT_ASSERT(IS_TX_LOCKED(pDefaultAdapter) == TRUE, ("ReturnTCB(): bTxLocked(%x) should be TRUE\n!", pDefaultAdapter->bTxLocked));
 
@@ -3309,7 +3309,7 @@ ReturnTCB(
 	}
 
 	if (TEST_FLAG(pTcb->tcbFlags, RT_TCB_FLAG_USE_COALESCE_BUFFER))
-	{		
+	{
 		ReturnLocalBuffer(pDefaultAdapter, pTcb->pCoalesceBuffer);		// coalesece buffer is belong to each adapter.
 	}
 
@@ -3320,7 +3320,7 @@ ReturnTCB(
 		if(pTcb->ColoaseMethod == 2)
 		{
 			u1Byte i=0;
-			
+
 			for (i=0; i<pTcb->BufferBackCount; i++)
 			{
 				//pTcb->BufferList[i+1] = pTcb->BufferListBack[i];
@@ -3329,13 +3329,13 @@ ReturnTCB(
 			}
 		}
 
-		// We MUST release tx spin lock acquired before DrvIFCompletePacket(). 
+		// We MUST release tx spin lock acquired before DrvIFCompletePacket().
 		// Otherwise, nested lock acquiration might happen.
-		// For example, when we plug two 8187 in one machine, it will cause 
+		// For example, when we plug two 8187 in one machine, it will cause
 		// OS hangs at RtUsbSend().  2005.11.17, by rcnjko.
 		if(pTcb->Reserved != NULL)
 		{
-			PlatformReleaseSpinLock(pDefaultAdapter, RT_TX_SPINLOCK); 
+			PlatformReleaseSpinLock(pDefaultAdapter, RT_TX_SPINLOCK);
 			DrvIFCompletePacket(pDefaultAdapter, pTcb, status);
 			PlatformAcquireSpinLock(pDefaultAdapter, RT_TX_SPINLOCK);
 		}
@@ -3344,10 +3344,10 @@ ReturnTCB(
 	case RT_TCB_BUFFER_TYPE_LOCAL:
 		if(pTcb->bTxCompleteLater)
 		{
-			PlatformReleaseSpinLock(pDefaultAdapter, RT_TX_SPINLOCK); 
+			PlatformReleaseSpinLock(pDefaultAdapter, RT_TX_SPINLOCK);
 			DrvIFCompletePacket(pDefaultAdapter, pTcb, RT_STATUS_SUCCESS);
 			PlatformAcquireSpinLock(pDefaultAdapter, RT_TX_SPINLOCK);
-		}		
+		}
 		ReturnLocalBuffer(pDefaultAdapter, (PRT_TX_LOCAL_BUFFER)pTcb->Reserved);
 		break;
 
@@ -3392,7 +3392,7 @@ ReturnTCB(
 	pTcb->BufferType = RT_TCB_BUFFER_TYPE_NONE;
 	pTcb->Reserved = NULL;
 	pTcb->priority = 0;
-	pTcb->EncInfo.SecProtInfo = RT_SEC_NORMAL_DATA; 
+	pTcb->EncInfo.SecProtInfo = RT_SEC_NORMAL_DATA;
 	pTcb->EncInfo.IsEncByHW = FALSE;	// Null Function Data Len_Adjust debug, Annie, 2006-01-06.
 	pTcb->bFromUpperLayer = FALSE;
 	pTcb->TSID = DEFAULT_TSID;
@@ -3413,7 +3413,7 @@ ReturnTCB(
 	pTcb->G_ID = 0;
 	pTcb->bBTTxPacket = FALSE;
 	pTcb->BT_macId = 0;
-	pTcb->EncInfo.bMFPPacket = FALSE; 	// CCX V65 Reset 
+	pTcb->EncInfo.bMFPPacket = FALSE; 	// CCX V65 Reset
 	pTcb->sysTime[0] = 0;
 	pTcb->sysTime[1] = 0;
 	pTcb->sysTime[2] = 0;
@@ -3444,9 +3444,9 @@ ReturnTCB(
 	//
 	pTcb->TcbFrameUniqueueID = 0;
 #endif
-	
+
 	if(GET_HAL_DATA(pDefaultAdapter)->AMPDUBurstMode)
-	{	
+	{
 		pTcb->bEnableEarlyMode = FALSE;
 		pTcb->EMPktNum = 0;
 		PlatformZeroMemory(pTcb->EMPktLen,sizeof(pTcb->EMPktLen));
@@ -3455,7 +3455,7 @@ ReturnTCB(
 	RESET_CCX_PACKET_TX_INFO(pTcb);
 
 	TxFeedbackDeInstallTxFeedbackInfoForTcb(pDefaultAdapter, pTcb);
-	
+
 	RTInsertTailListWithCnt(&pDefaultAdapter->TcbIdleQueue, &pTcb->List, &pDefaultAdapter->NumIdleTcb);
 	RT_TRACE(COMP_SEND, DBG_LOUD, ("ReturnTCB(), pAdapter->NumIdleTcb = %d\n", pDefaultAdapter->NumIdleTcb));
 }
@@ -3499,10 +3499,10 @@ ReturnLocalBuffer(
 	PRT_TX_LOCAL_BUFFER	pLocalBuffer
 	)
 {
-	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);	
-	//RTInsertTailList(&Adapter->LocalBufferQueue, &pLocalBuffer->List);	
+	PADAPTER pDefaultAdapter = GetDefaultAdapter(pAdapter);
+	//RTInsertTailList(&Adapter->LocalBufferQueue, &pLocalBuffer->List);
 	RTInsertTailListWithCnt(&pDefaultAdapter->LocalBufferQueue, &pLocalBuffer->List, &pDefaultAdapter->NumLocalBufferIdle);
-	
+
 }
 
 VOID
@@ -3511,7 +3511,7 @@ ReturnLocalFWBuffer(
 	PRT_TX_LOCAL_BUFFER	pLocalBuffer
 	)
 {
-	PADAPTER pDefaultAdapter = GetDefaultAdapter(Adapter);	
+	PADAPTER pDefaultAdapter = GetDefaultAdapter(Adapter);
 	RTInsertTailListWithCnt(&pDefaultAdapter->LocalFWBufferQueue, &pLocalBuffer->List, &pDefaultAdapter->NumLocalFWBufferIdle);
 }
 
@@ -3535,7 +3535,7 @@ WaitTxBusyQueueComplete(
 	BOOLEAN			bResult = TRUE;
 	u1Byte			QueueID;
 	int				WaitingCnt;
-	
+
 	for(QueueID = 0, WaitingCnt = 0; QueueID < MAX_TX_QUEUE; )
 	{
 		if(RTIsListEmpty(&Adapter->TcbBusyQueue[QueueID]))
@@ -3580,7 +3580,7 @@ ReleaseDataFrameQueued(
 	PlatformAcquireSpinLock(pAdapter, RT_TX_SPINLOCK);
 
 	// Return all packets in Tcb wait queues.
-	for(QueueID = 0; QueueID < MAX_TX_QUEUE; QueueID++)	
+	for(QueueID = 0; QueueID < MAX_TX_QUEUE; QueueID++)
 	{
 		pEntry = RTGetHeadList(Get_WAIT_QUEUE(pAdapter, QueueID));
 
@@ -3588,24 +3588,24 @@ ReleaseDataFrameQueued(
 		{
 			pTcb = (PRT_TCB)pEntry;
 			pEntry = RTNextEntryList(pEntry);
-			
+
 			if(pAdapter == pTcb->SourceAdapt)
 			{
 				RTRemoveEntryListWithCnt((PRT_LIST_ENTRY)pTcb, GET_WAIT_QUEUE_CNT(pAdapter, QueueID));
 				RtnCnt++;
-				ReturnTCB(pAdapter, pTcb, RT_STATUS_SUCCESS);	
+				ReturnTCB(pAdapter, pTcb, RT_STATUS_SUCCESS);
 			}
 		}
 	}
 
 	RT_TRACE(COMP_SEND, DBG_LOUD, ("ReleaseDataFramemQueued(), free %d pTcb from TcbWaitQueue[].\n", RtnCnt));
-	
+
 	if(!OS_SUPPORT_WDI(pAdapter))
 	{
 		// Return all packets in platform wait queue.
 		PlatformReleaseDataFrameQueued(pAdapter);
 	}
-	
+
 	PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 }
 
@@ -3707,7 +3707,7 @@ tx_generalThreadCallback(
 	while(1)
 	{
 		if(RT_DRIVER_HALT(Adapter))
-		{			
+		{
 			RT_TRACE(COMP_SEND, DBG_LOUD,  ("[TX], Tx general thread is stopped because bDriverStopped(%d) or bSurpriseRemoved(%d)!!!\n",
 				Adapter->bDriverStopped, Adapter->bSurpriseRemoved));
 			break;
@@ -3739,17 +3739,17 @@ TX_InitThreads(
 	PlatformInitializeSemaphore(&Adapter->txGen.txGenSemaphore, 0);
 
 	PlatformInitializeThread(
-		Adapter,  
-		&Adapter->txGen.txGenThread,  
-		(RT_THREAD_CALL_BACK)tx_generalThreadCallback,  
+		Adapter,
+		&Adapter->txGen.txGenThread,
+		(RT_THREAD_CALL_BACK)tx_generalThreadCallback,
 		"tx_generalThreadCallback",
 		FALSE,
 		0,
 		NULL);
 
 	PlatformRunThread(
-		Adapter, 
-		&Adapter->txGen.txGenThread, 
+		Adapter,
+		&Adapter->txGen.txGenThread,
 		PASSIVE_LEVEL,
 		NULL);
 }
@@ -3763,7 +3763,7 @@ TX_DeInitThreads(
 
 	PlatformReleaseSemaphore(&Adapter->txGen.txGenSemaphore);
 	PlatformFreeSemaphore(&Adapter->txGen.txGenSemaphore);
-	
+
 	PlatformWaitThreadEnd(Adapter, &(Adapter->txGen.txGenThread));
 	PlatformCancelThread(Adapter, &(Adapter->txGen.txGenThread));
 	PlatformReleaseThread(Adapter, &(Adapter->txGen.txGenThread));

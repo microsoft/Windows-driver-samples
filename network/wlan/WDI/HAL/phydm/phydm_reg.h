@@ -1,7 +1,7 @@
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
- *                                        
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
@@ -120,7 +120,7 @@
 // Bitmap Definition
 //
 #if(DM_ODM_SUPPORT_TYPE & (ODM_AP))
-// TX AGC 
+// TX AGC
 #define		rTxAGC_A_CCK11_CCK1_JAguar	0xc20
 #define		rTxAGC_A_Ofdm18_Ofdm6_JAguar	0xc24
 #define		rTxAGC_A_Ofdm54_Ofdm24_JAguar	0xc28

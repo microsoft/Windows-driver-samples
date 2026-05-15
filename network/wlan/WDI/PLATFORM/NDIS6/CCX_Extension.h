@@ -17,7 +17,7 @@ typedef	struct _OCTET_STRING	OCTET_STRING, *POCTET_STRING;
 //Edit by Mars 2008/02/21
 //-------------------------------------------------------------------------------
 //===========================================================================
-VOID 
+VOID
 CcxIndicateStatusIndication (
 	IN	PADAPTER		pAdapter,
 	IN	u4Byte			StatusCode,

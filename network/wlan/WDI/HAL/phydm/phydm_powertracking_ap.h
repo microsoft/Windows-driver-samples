@@ -1,7 +1,7 @@
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
- *                                        
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
@@ -17,7 +17,7 @@
  *
  *
  ******************************************************************************/
- 
+
 #ifndef	__PHYDMPOWERTRACKING_H__
 #define    __PHYDMPOWERTRACKING_H__
 
@@ -44,7 +44,7 @@
 #define IQK_MAC_REG_NUM		4
 #define IQK_ADDA_REG_NUM		16
 #define IQK_BB_REG_NUM_MAX	10
-#if (RTL8192D_SUPPORT==1) 
+#if (RTL8192D_SUPPORT==1)
 #define IQK_BB_REG_NUM		10
 #else
 #define IQK_BB_REG_NUM		9
@@ -82,7 +82,7 @@ extern	u1Byte CCKSwingTable_Ch1_Ch14_88F[CCK_TABLE_SIZE_88F][16];
 #define	ODM_CCK_TABLE_SIZE		33
 // <20140613, YuChen> In case fail to read TxPowerTrack.txt, we use the table of 88E as the default table.
 extern u1Byte DeltaSwingTableIdx_2GA_P_DEFAULT[DELTA_SWINGIDX_SIZE];
-extern u1Byte DeltaSwingTableIdx_2GA_N_DEFAULT[DELTA_SWINGIDX_SIZE]; 
+extern u1Byte DeltaSwingTableIdx_2GA_N_DEFAULT[DELTA_SWINGIDX_SIZE];
 
 
 //extern	u4Byte OFDMSwingTable_92E[OFDM_TABLE_SIZE_92E];
@@ -116,36 +116,36 @@ typedef struct _IQK_MATRIX_REGS_SETTING{
 typedef struct ODM_RF_Calibration_Structure
 {
 	//for tx power tracking
-	
+
 	u4Byte	RegA24; // for TempCCK
 	s4Byte	RegE94;
 	s4Byte 	RegE9C;
 	s4Byte	RegEB4;
-	s4Byte	RegEBC;	
+	s4Byte	RegEBC;
 
 	//u1Byte bTXPowerTracking;
 	u1Byte  	TXPowercount;
-	BOOLEAN bTXPowerTrackingInit; 
+	BOOLEAN bTXPowerTrackingInit;
 	BOOLEAN bTXPowerTracking;
 	u1Byte  	TxPowerTrackControl; //for mp mode, turn off txpwrtracking as default
 	u1Byte  	TM_Trigger;
     	u1Byte  	InternalPA5G[2];	//pathA / pathB
-	
+
 	u1Byte  	ThermalMeter[2];    // ThermalMeter, index 0 for RFIC0, and 1 for RFIC1
 	u1Byte  	ThermalValue;
 	u1Byte  	ThermalValue_LCK;
 	u1Byte  	ThermalValue_IQK;
-	u1Byte	ThermalValue_DPK;		
+	u1Byte	ThermalValue_DPK;
 	u1Byte	ThermalValue_AVG[AVG_THERMAL_NUM];
-	u1Byte	ThermalValue_AVG_index;		
+	u1Byte	ThermalValue_AVG_index;
 	u1Byte	ThermalValue_RxGain;
 	u1Byte	ThermalValue_Crystal;
 	u1Byte	ThermalValue_DPKstore;
 	u1Byte	ThermalValue_DPKtrack;
 	BOOLEAN	TxPowerTrackingInProgress;
 	BOOLEAN	bDPKenable;
-	
-	BOOLEAN	bReloadtxpowerindex;	
+
+	BOOLEAN	bReloadtxpowerindex;
 	u1Byte 	bRfPiEnable;
 	u4Byte 	TXPowerTrackingCallbackCnt; //cosa add for debug
 
@@ -154,9 +154,9 @@ typedef struct ODM_RF_Calibration_Structure
 	u1Byte 	OFDM_index[MAX_RF_PATH];
 	s1Byte	PowerIndexOffset;
 	s1Byte	DeltaPowerIndex;
-	s1Byte	DeltaPowerIndexLast;	
+	s1Byte	DeltaPowerIndexLast;
 	BOOLEAN bTxPowerChanged;
-		
+
 	u1Byte 	ThermalValue_HP[HP_THERMAL_NUM];
 	u1Byte 	ThermalValue_HP_index;
 	IQK_MATRIX_REGS_SETTING IQKMatrixRegSetting[IQK_Matrix_Settings_NUM];
@@ -189,10 +189,10 @@ typedef struct ODM_RF_Calibration_Structure
 	u1Byte  DeltaSwingTableIdx_5GD_N[BAND_NUM][DELTA_SWINGIDX_SIZE];
 	u1Byte  DeltaSwingTableIdx_2GA_P_8188E[DELTA_SWINGIDX_SIZE];
 	u1Byte  DeltaSwingTableIdx_2GA_N_8188E[DELTA_SWINGIDX_SIZE];
-	
+
 	u1Byte			BbSwingIdxOfdm[MAX_RF_PATH];
 	u1Byte			BbSwingIdxOfdmCurrent;
-#if (DM_ODM_SUPPORT_TYPE &  (ODM_WIN|ODM_CE))	
+#if (DM_ODM_SUPPORT_TYPE &  (ODM_WIN|ODM_CE))
 	u1Byte			BbSwingIdxOfdmBase[MAX_RF_PATH];
 #else
 	u1Byte			BbSwingIdxOfdmBase;
@@ -202,11 +202,11 @@ typedef struct ODM_RF_Calibration_Structure
 	u1Byte			BbSwingIdxCckCurrent;
 	u1Byte			BbSwingIdxCckBase;
 	u1Byte			DefaultOfdmIndex;
-	u1Byte			DefaultCckIndex;	
+	u1Byte			DefaultCckIndex;
 	BOOLEAN			BbSwingFlagCck;
-	
-	s1Byte			Absolute_OFDMSwingIdx[MAX_RF_PATH];   
-	s1Byte			Remnant_OFDMSwingIdx[MAX_RF_PATH];   
+
+	s1Byte			Absolute_OFDMSwingIdx[MAX_RF_PATH];
+	s1Byte			Remnant_OFDMSwingIdx[MAX_RF_PATH];
 	s1Byte			Remnant_CCKSwingIdx;
 	s1Byte			Modify_TxAGC_Value;       /*Remnat compensate value at TxAGC */
 	BOOLEAN			Modify_TxAGC_Flag_PathA;
@@ -214,12 +214,12 @@ typedef struct ODM_RF_Calibration_Structure
 	BOOLEAN			Modify_TxAGC_Flag_PathC;
 	BOOLEAN			Modify_TxAGC_Flag_PathD;
 	BOOLEAN			Modify_TxAGC_Flag_PathA_CCK;
-	
+
 	s1Byte			KfreeOffset[MAX_RF_PATH];
-    
-	//--------------------------------------------------------------------//	
-	
-	//for IQK	
+
+	//--------------------------------------------------------------------//
+
+	//for IQK
 	u4Byte 	RegC04;
 	u4Byte 	Reg874;
 	u4Byte 	RegC08;
@@ -228,14 +228,14 @@ typedef struct ODM_RF_Calibration_Structure
 	u4Byte 	Reg870;
 	u4Byte 	Reg860;
 	u4Byte 	Reg864;
-	
+
 	BOOLEAN	bIQKInitialized;
 	BOOLEAN bLCKInProgress;
 	BOOLEAN	bAntennaDetected;
 	u4Byte	ADDA_backup[IQK_ADDA_REG_NUM];
 	u4Byte	IQK_MAC_backup[IQK_MAC_REG_NUM];
 	u4Byte	IQK_BB_backup_recover[9];
-	u4Byte	IQK_BB_backup[IQK_BB_REG_NUM];	
+	u4Byte	IQK_BB_backup[IQK_BB_REG_NUM];
 
 	//for APK
 	u4Byte 	APKoutput[2][2]; //path A/B; output1_1a/output1_2a
@@ -279,9 +279,9 @@ odm_TXPowerTrackingCheckCE(
 	);
 
 
-#if(DM_ODM_SUPPORT_TYPE & (ODM_WIN)) 
+#if(DM_ODM_SUPPORT_TYPE & (ODM_WIN))
 
-VOID 
+VOID
 odm_TXPowerTrackingCallbackThermalMeter92C(
             IN PADAPTER	Adapter
             );

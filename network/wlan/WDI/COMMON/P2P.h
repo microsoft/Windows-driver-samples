@@ -28,7 +28,7 @@
 #define IS_5G_CHANNEL(__channel)	\
 	((__channel) >= 36 && (__channel) <= 165) // TODO: this is a incorrect definition
 
-#define	P2P_UPDATE_MANAGED_INFO_PERIOD	3 // * watchdog 
+#define	P2P_UPDATE_MANAGED_INFO_PERIOD	3 // * watchdog
 
 #define P2P_MAX_NUM_NOA_DESC 2
 
@@ -45,7 +45,7 @@
 #define P2P_SCAN_PERIOD_SEARCH 100 - 20 //ms
 #define P2P_SWITCH_CHNL_PERIOD 5 //ms
 
-#define P2P_SCAN_FIND_PHASE_LOOP_TIMES 32 // times of looping between listen and find phase before sending GONReq 
+#define P2P_SCAN_FIND_PHASE_LOOP_TIMES 32 // times of looping between listen and find phase before sending GONReq
 
 // Block the scan request from the default port to prevent channel switching which causes P2P handshake fail.
 #define	P2P_BLOCK_NORMAL_SCAN_PERIOD	3000000 // us
@@ -129,11 +129,11 @@ typedef enum _P2P_SUPPORT_STATE
 
 //
 // We can't send frame of CCK rate to a P2P Device.
-// 
+//
 //
 #define P2P_LOWEST_RATE MGN_6M
 
-#if ( P2P_SUPPORT == 1 ) 
+#if ( P2P_SUPPORT == 1 )
 #define P2P_ENABLED(_pP2P_INFO) ( ((_pP2P_INFO)->Role) != P2P_NONE)
 #else
 #define P2P_ENABLED(_pP2P_INFO) 0
@@ -462,7 +462,7 @@ typedef enum _P2P_STATE
 typedef struct _P2P_DEVICE_DISCRIPTOR {
 	u1Byte WPS_UUID[16];
 	P2P_ROLE Role;
-	
+
 	// From P2P Capability subelement
 	u1Byte DeviceCapability;
 	u1Byte GroupCapability;
@@ -494,14 +494,14 @@ typedef struct _P2P_DEVICE_DISCRIPTOR {
 	u1Byte ClientConfigurationTimeout;
 
 	u1Byte DialogToken;
-	
+
 	u1Byte GroupBssid[6]; //1  used for invitation
 
 	//
 	// This is valid after AsocReq, AsocRsp, GONReq, GONRsp is recvd
 	//
 	u1Byte IntendedP2PInterfaceAddress[6];
-	
+
 	u1Byte Status;
 	u1Byte MinorReasonCode;
 
@@ -520,7 +520,7 @@ typedef struct _P2P_DEVICE_DISCRIPTOR {
 typedef struct _P2P_DEVICE_DESCRIPTOR_V0 {
 	u1Byte WPS_UUID[16];
 	P2P_ROLE Role;
-	
+
 	// From P2P Capability subelement
 	u1Byte DeviceCapability;
 	u1Byte GroupCapability;
@@ -552,14 +552,14 @@ typedef struct _P2P_DEVICE_DESCRIPTOR_V0 {
 	u1Byte ClientConfigurationTimeout;
 
 	u1Byte DialogToken;
-	
+
 	u1Byte GroupBssid[6]; //1  used for invitation
 
 	//
 	// This is valid after AsocReq, AsocRsp, GONReq, GONRsp is recvd
 	//
 	u1Byte IntendedP2PInterfaceAddress[6];
-	
+
 	u1Byte Status;
 	u1Byte MinorReasonCode;
 
@@ -691,7 +691,7 @@ typedef enum _P2P_SD_STATUS_CODE
 typedef struct _P2P_SERVICE_DESCRIPTOR
 {
 	P2P_SD_PROTOCOL ServiceType;
-	u2Byte BufferLength; 
+	u2Byte BufferLength;
 	u1Byte Buffer[P2P_MAX_SERVICE_DESCRIPTOR_BUFFER_LEN]; // The ServiceInfo is for the serivice info we provide
 }P2P_SERVICE_DESCRIPTOR, *PP2P_SERVICE_DESCRIPTOR;
 
@@ -757,7 +757,7 @@ typedef enum _P2P_STATUS_CODE {
 	P2P_STATUS_FAIL_TIMEOUT_WAITING_FOR_INVITATION_RSP,
 
 	P2P_STATUS_FAIL_PROVISION_DISCOVERY_FAILED,
-	
+
 	P2P_STATUS_FAIL_SERVICE_DISCOVERY_FAILED,
 
 	P2P_STATUS_MAX = 255,
@@ -797,7 +797,7 @@ typedef struct _P2P_INVITATION_CONTEXT {
 	u1Byte OpChannel; // op channel in the invitation request
 
 	BOOLEAN bWaitingBackwardInvite;
-	
+
 }P2P_INVITATION_CONTEXT, *PP2P_INVITATION_CONTEXT;
 
 typedef struct _P2P_PROVISION_DISCOVERY_CONTEXT {
@@ -806,10 +806,10 @@ typedef struct _P2P_PROVISION_DISCOVERY_CONTEXT {
 	BOOLEAN go;
 	u1Byte goBssid[6];
 	u1Byte Channel;
-	
+
 	u1Byte SsidBuf[32];
 	u1Byte SsidLen;
-	
+
 }P2P_PROVISION_DISCOVERY_CONTEXT, *PP2P_PROVISION_DISCOVERY_CONTEXT;
 
 typedef struct _P2P_PERSISTENT_PROFILE {
@@ -846,7 +846,7 @@ typedef enum _WPS_ATTRIBUTE_TAG { // network order
 	P2P_WP2_ATTR_TAG_MANUFACTURER_NAME = 0x1021,
 } WPS_ATTRIBUTE_TAG, *PWPS_ATTRIBUTE_TAG;
 
-typedef enum _WPS_CONFIG_METHODS 
+typedef enum _WPS_CONFIG_METHODS
 {
 	P2P_WPS_CONFIG_METHODS_LABEL = 0x04,
 	P2P_WPS_CONFIG_METHODS_DISPLAY = 0x08,
@@ -855,14 +855,14 @@ typedef enum _WPS_CONFIG_METHODS
 	P2P_WPS_CONFIG_METHODS_SVC_DEFAULT_PIN = 0x1000,
 }WPS_CONFIG_METHODS, *PWPS_CONFIG_METHODS;
 
-typedef enum _WPS_DEVICE_PASSWD_ID 
+typedef enum _WPS_DEVICE_PASSWD_ID
 {
-	P2P_WPS_DEV_PASSWD_ID_DEFAULT =0x0000, 
-	P2P_WPS_DEV_PASSWD_ID_USER_SPEC =0x0001, 
-	P2P_WPS_DEV_PASSWD_ID_MACHINE_SPEC =0x0002, 
+	P2P_WPS_DEV_PASSWD_ID_DEFAULT =0x0000,
+	P2P_WPS_DEV_PASSWD_ID_USER_SPEC =0x0001,
+	P2P_WPS_DEV_PASSWD_ID_MACHINE_SPEC =0x0002,
 	P2P_WPS_DEV_PASSWD_ID_REKEY =0x0003,
-	P2P_WPS_DEV_PASSWD_ID_PBC =0x0004, 
-	P2P_WPS_DEV_PASSWD_ID_REG_SPEC =0x0005, 
+	P2P_WPS_DEV_PASSWD_ID_PBC =0x0004,
+	P2P_WPS_DEV_PASSWD_ID_REG_SPEC =0x0005,
 	P2P_WPS_DEV_PASSWD_ID_RESERVED =0x0006,
 	P2P_WPS_DEV_PASSWD_ID_WFDS_DEFAULT_PIN = 0x0008,
 }WPS_DEVICE_PASSWD_ID , *PWPS_DEVICE_PASSWD_ID;
@@ -901,7 +901,7 @@ typedef struct _P2P_SD_CONTEXT
 	u1Byte FragmentID;
 }P2P_SD_CONTEXT, *PP2P_SD_CONTEXT;
 
-typedef struct _P2P_NOA_DESCRIPTOR 
+typedef struct _P2P_NOA_DESCRIPTOR
 {
 	BOOLEAN	bValid;
 	u1Byte	CountOrType;
@@ -946,7 +946,7 @@ typedef struct _P2P_REG_CLASS_MAP {
 	EXTCHNL_OFFSET		chOffsest;
 }P2P_REG_CLASS_MAP, *PP2P_REG_CLASS_MAP;
 
-static P2P_REG_CLASS_MAP P2PRegClass[] = 
+static P2P_REG_CLASS_MAP P2PRegClass[] =
 {
 /*	{81, 1, 13, 1},
 	{82, 14, 14, 1},
@@ -961,20 +961,20 @@ static P2P_REG_CLASS_MAP P2PRegClass[] =
 */
 	{81,	1,		13, 	1,		CHANNEL_WIDTH_20,	EXTCHNL_OFFSET_NO_EXT},
 	{82,	14, 	14, 	1,		CHANNEL_WIDTH_20,	EXTCHNL_OFFSET_NO_EXT},
-	
+
 	//{83,	1,		6,		1,		CHANNEL_WIDTH_40, 	EXTCHNL_OFFSET_UPPER},
 	//{84,	7,		13, 	1,		CHANNEL_WIDTH_40, 	EXTCHNL_OFFSET_NO_EXT},
 
 	{115,	36, 	48, 	4,		CHANNEL_WIDTH_20,	EXTCHNL_OFFSET_NO_EXT},
-	
+
 	{116,	36, 	44, 	8,		CHANNEL_WIDTH_40, 	EXTCHNL_OFFSET_UPPER},
 	{117,	40, 	48, 	8,		CHANNEL_WIDTH_40, 	EXTCHNL_OFFSET_NO_EXT},
-	
+
 	{124,	149,	161,	4,		CHANNEL_WIDTH_20,	EXTCHNL_OFFSET_NO_EXT},
-	
+
 	{126,	149,	157,	8,		CHANNEL_WIDTH_40, 	EXTCHNL_OFFSET_UPPER},
 	{127,	153,	161,	8,		CHANNEL_WIDTH_40, 	EXTCHNL_OFFSET_NO_EXT},
-	
+
 	{125,	165,	165,	1,		CHANNEL_WIDTH_20,	EXTCHNL_OFFSET_NO_EXT},
 	//---------------------------------------------------------------------------------
 	{ 0, 0, 0, 0, CHANNEL_WIDTH_20, EXTCHNL_OFFSET_NO_EXT}
@@ -991,7 +991,7 @@ typedef ULONG P2P_DISCOVER_SEQUENCE;
 typedef struct _P2P_DEVICE_ID_TO_SCAN {
 	ULONG uNumOfDeviceIDs;
 	u1Byte DeviceIDs[P2P_MAX_DEVICE_ID_TO_SCAN][6];
-} P2P_DEVICE_ID_TO_SCAN, * PP2P_DEVICE_ID_TO_SCAN; 
+} P2P_DEVICE_ID_TO_SCAN, * PP2P_DEVICE_ID_TO_SCAN;
 //----------------------------------------------------------------------------
 
 // Save the raw packets of the devices found in the channel -------------------------------
@@ -1003,7 +1003,7 @@ typedef struct _P2P_DEVICE_LIST_ENTRY {
 
 	MEMORY_BUFFER BeaconPacket;
 	u8Byte BeaconHostTimestamp;
-	
+
 	MEMORY_BUFFER ProbeResponsePacket;
 	u8Byte ProbeResponseHostTimestamp;
 
@@ -1066,7 +1066,7 @@ typedef struct _P2P_DEVICE_LIST {
 
 typedef union _P2P_EVENT_DATA {
 	RT_STATUS rtStatus;
-	MEMORY_BUFFER Packet;		
+	MEMORY_BUFFER Packet;
 } P2P_EVENT_DATA, *PP2P_EVENT_DATA;
 // ---------------------------------------------------------------------------
 
@@ -1095,7 +1095,7 @@ typedef struct _P2P_CLIENT_JOIN_GROUP_CONTEXT{
 
 	u1Byte							uWaitForWpsSlotCount;			// 100 ms per slot
 	RT_TIMER						P2PWaitForWpsReadyTimer;
-	
+
 } P2P_CLIENT_JOIN_GROUP_CONTEXT, *PP2P_CLIENT_JOIN_GROUP_CONTEXT;
 // ----------------------------------------------------------------------------------------------------
 
@@ -1112,7 +1112,7 @@ typedef struct _P2P_CLIENT_JOIN_GROUP_CONTEXT{
 
 typedef struct _P2P_INFO {
 	DECLARE_RT_OBJECT(P2P_INFO);
-	
+
 	//======================================================================
 	// Common
 	//======================================================================
@@ -1122,10 +1122,10 @@ typedef struct _P2P_INFO {
 	P2P_STATE State;
 	P2P_STATE PreviouslyIndicatedState;
 	u8Byte PreviouslyIndicateStateTime;
-		
+
 	u1Byte DeviceAddress[6];
 	u1Byte InterfaceAddress[6];
-	
+
 	u1Byte DeviceCapability;
 	u1Byte GroupCapability;
 
@@ -1141,11 +1141,11 @@ typedef struct _P2P_INFO {
 	//u1Byte ChannelPlanChannel[32]; // this is not to be modified but for reference only
 	//u1Byte ChannelPlanLength;
 	P2P_CHANNELS ChannelEntryList;
-	
+
 	//WPS
 	P2P_WPS_ATTRIBUTES WpsAttributes;
 	WPS_DEVICE_PASSWD_ID WpsDevPasswdId; // this is the source of our provisioning info
-	
+
 	// Configuration Timeout, in units of 10ms
 	u1Byte GOConfigurationTimeout;
 	u1Byte ClientConfigurationTimeout;
@@ -1158,7 +1158,7 @@ typedef struct _P2P_INFO {
 	P2P_STATE StateBeforeScan;
 	u4Byte ForceScanListIndicateSlotCount;
 	BOOLEAN bDeviceDiscoveryInProgress;
-	
+
 	// Connection
 	P2P_CONNECTION_CONTEXT ConnectionContext;
 	P2P_STATUS_CODE PreviousGONegoResult; // this is for Sigma query
@@ -1172,7 +1172,7 @@ typedef struct _P2P_INFO {
 	BOOLEAN bExtendedListening;
 	u2Byte ExtListenTimingPeriod;
 	u2Byte ExtListenTimingDuration;
-	
+
 	// Status
 	u1Byte Status;
 	u1Byte MinorReasonCode;
@@ -1191,7 +1191,7 @@ typedef struct _P2P_INFO {
 	// Provision Discovery
 	P2P_PROVISION_DISCOVERY_CONTEXT ProvisionDiscoveryContext;
 	u1Byte							ProvisionReqRetryCnt;
-	
+
 	BOOLEAN bPreGroupFormation;
 
 	BOOLEAN bSendProbeReqInExtendedListen;
@@ -1243,7 +1243,7 @@ typedef struct _P2P_INFO {
 	//======================================================================
 	// Other 802.11 Info, to be carried in ProbeRsp constructed by IHV Service
 	//======================================================================
-	
+
 	//======================================================================
 	// Temporary Fields
 	//======================================================================
@@ -1255,12 +1255,12 @@ typedef struct _P2P_INFO {
 	ACTION_TIMER_HANDLE		P2PActionTimer;
 	// -------------------------------------------------------
 
-		
+
 	RT_TIMER P2PMgntTimer;
 	u8Byte LastTimerFired;
 
 	u1Byte		ManagedUpdateCnt;	// Update the managed info from Wlan AP.
-	// 
+	//
 	// If true, the SP is ended by the NoA, and the client must re-send the trigger frame to the P2P GO for a new SP.
 	// In the P2P GO mode, it must automatically end all SPs for all clients no matter the final frame with the EOSP bit set, and shall
 	// not send any WMM-PS packets to those clients without receiving the trigger frames. In P2P TestPlan 6.1.13 and 7.1.5.
@@ -1303,7 +1303,7 @@ typedef struct _P2P_INFO {
 	RT_SCAN_TYPE ScanType;							// Determine the scan type in the scan phase
 	P2P_DEVICE_ID_TO_SCAN ScanDeviceIDs;			// The Device IDs for the scan process
 	BOOLEAN	bForceScanLegacyNetworks;				// Scan the legacy networks
-	BOOLEAN	bDeviceDiscoveryIndicateToOS;			// Let the OID indicated only once 
+	BOOLEAN	bDeviceDiscoveryIndicateToOS;			// Let the OID indicated only once
 	// + Search for Specific Channel
 	BOOLEAN bDiscoverForSpecificChannels;			// Flag for enabling the search
 	u1Byte DiscoverForSpecificChannels[10];			// Specific Channels
@@ -1316,11 +1316,11 @@ typedef struct _P2P_INFO {
 
 	// For saving the received raw packets ----------------------------------------------
 	//	NOTE: These should be merged with the ScanList if the UI and IHV are all stable.
-	P2P_DEVICE_LIST DeviceList; 
+	P2P_DEVICE_LIST DeviceList;
 	P2P_DEVICE_LIST DeviceListForQuery;
 	// -----------------------------------------------------------------------------
-	
-	// For Win 8: OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_REQUEST --------------------------------------	
+
+	// For Win 8: OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_REQUEST --------------------------------------
 	u1Byte ProvisionRequestGroupCapability;
 	BOOLEAN bProvisionRequestUseGroupID;
 	u1Byte ProvisionRequestGroupIDDeviceAddress[6];
@@ -1328,7 +1328,7 @@ typedef struct _P2P_INFO {
 	u1Byte uProvisionRequestGroupIDSSIDLength;
 	// -------------------------------------------------------------------------------------------------
 
-	// For Win 8: OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_RESPONSE --------------------------------------	
+	// For Win 8: OID_DOT11_WFD_SEND_PROVISION_DISCOVERY_RESPONSE --------------------------------------
 	u1Byte ProvisionResponseReceiverDeviceAddress[6];
 	u1Byte ProvisionResponseDialogToken;
 	u1Byte ProvisionResponseConfigMethod;
@@ -1378,13 +1378,13 @@ typedef struct _P2P_INFO {
 	u2Byte uInvitationRequestOperatingChannelNumber;
 	BOOLEAN bInvitationRequestUseSpecifiedOperatingChannel;
 	u1Byte InvitationRequestGroupIDDeviceAddress[6];
-	u1Byte InvitationRequestPeerDeviceAddress[6];	
+	u1Byte InvitationRequestPeerDeviceAddress[6];
 	u1Byte InvitationRequestGroupIDSSID[MAX_SSID_LEN];
 	u1Byte uInvitationRequestGroupIDSSIDLength;
 	BOOLEAN bInvitationRequestLocalGO;
 	//---------------------------------------------------------------------------------
 
-	
+
 	// For Win 8: OID_DOT11_WFD_SEND_INVITATION_RESPONSE ------------------------------
 	u1Byte InvitationResponseReceiverDeviceAddress[6];
 	u1Byte InvitationResponseDialogToken;
@@ -1402,7 +1402,7 @@ typedef struct _P2P_INFO {
 	// Debug Device Discovery  -------------------
 	u2Byte	ProbeRequestSequenceNum;
 	// ----------------------------------------
-	
+
 
 	// Trick for knowing next channel switch time -------
 	s8Byte TimeStartToStopSendingProbeResponse;
@@ -1442,7 +1442,7 @@ P2PSetRole(
 	IN PP2P_INFO pP2PInfo,
 	IN P2P_ROLE Role
 	);
-	
+
 VOID
 P2PGOSetBeaconInterval(
 	IN PP2P_INFO pP2PInfo,
@@ -1468,7 +1468,7 @@ P2PCommonChannelArrived(
 	IN OCTET_STRING osPacket
 	);
 
-OCTET_STRING 
+OCTET_STRING
 P2PWpsIEGetAttribute(
 	IN OCTET_STRING osWpsIEAttributes,
 	IN BOOLEAN bWpsAttributesInBE,
@@ -1485,12 +1485,12 @@ P2PDeviceTypeMatches(
 // Dump Routine
 //======================================================================
 
-VOID 
+VOID
 P2PDumpDeviceCapability(
 	IN u1Byte DeviceCapability
 	);
 
-VOID 
+VOID
 P2PDumpGroupCapability(
 	IN u1Byte GroupCapability
 	);
@@ -1508,31 +1508,31 @@ P2PClientInfoGetCount(
 	IN PP2P_INFO pP2PInfo
 	);
 
-PP2P_CLIENT_INFO_DISCRIPTOR 
+PP2P_CLIENT_INFO_DISCRIPTOR
 P2PClientInfoFindByInterfaceAddress(
 	IN PP2P_INFO pP2PInfo,
 	IN pu1Byte InterfaceAddress
 	);
 
-PP2P_CLIENT_INFO_DISCRIPTOR 
+PP2P_CLIENT_INFO_DISCRIPTOR
 P2PClientInfoFindByDeviceAddress(
 	IN PP2P_INFO pP2PInfo,
 	IN pu1Byte DeviceAddress
 	);
 
-PP2P_CLIENT_INFO_DISCRIPTOR 
+PP2P_CLIENT_INFO_DISCRIPTOR
 P2PClientInfoEnumClients(
 	IN PP2P_INFO pP2PInfo,
 	IN u1Byte StartIndex,
 	OUT pu1Byte pIndex
 	);
 
-PP2P_DEVICE_DISCRIPTOR 
+PP2P_DEVICE_DISCRIPTOR
 P2PScanListFind(
 	IN PP2P_DEVICE_DISCRIPTOR pScanList,
 	IN u4Byte ScanListSize,
-	IN pu1Byte DeviceAddress, 
-	IN pu1Byte InterfaceAddress, 
+	IN pu1Byte DeviceAddress,
+	IN pu1Byte InterfaceAddress,
 	OUT pu4Byte pScanListIndex
 	);
 
@@ -1541,7 +1541,7 @@ P2PScanListAllFound(
 	IN PP2P_INFO pP2PInfo
 	);
 
-PP2P_DEVICE_DISCRIPTOR 
+PP2P_DEVICE_DISCRIPTOR
 P2PScanListAdd(
 	IN OUT PP2P_DEVICE_DISCRIPTOR pScanList,
 	IN OUT pu4Byte pScanListSize
@@ -1693,7 +1693,7 @@ VOID
 P2PExtendedListenStart(
 	IN PP2P_INFO pP2PInfo
 	);
-	
+
 VOID
 P2PExtendedListenResetCounter(
 	IN PP2P_INFO pP2PInfo
@@ -1724,7 +1724,7 @@ P2PDisconnect(
 	IN PP2P_INFO pP2PInfo
 	);
 
-BOOLEAN 
+BOOLEAN
 P2PInvitePeerStart(
 	IN PP2P_INFO pP2PInfo,
 	IN PP2P_LIB_INVITATION_REQ_CONTEXT pLibInvittionContext
@@ -1782,7 +1782,7 @@ P2PSetPsState(
 	IN	PP2P_INFO		pP2PInfo,
 	IN	u4Byte			Source,
 	IN	P2P_PS_STATE	P2pState,
-	IN	u8Byte			Timeout	
+	IN	u8Byte			Timeout
 	);
 
 VOID
@@ -1795,13 +1795,13 @@ P2PNotifyClientPSChange(
 	IN	PP2P_INFO		pP2PInfo
 	);
 
-VOID 
+VOID
 P2PServiceDiscoveryReq(
 	PP2P_INFO pP2PInfo,
 	PP2P_SD_REQ_CONTEXT pServiceQueryContent
 	);
 
-VOID 
+VOID
 P2PServiceDiscoveryRsp(
 	PP2P_INFO pP2PInfo,
 	PP2P_SD_RSP_CONTEXT pServiceRspContent
@@ -1926,7 +1926,7 @@ RT_STATUS
 P2P_OnBeacon(
 	IN	PADAPTER		pAdapter,
 	IN	PRT_RFD			pRfd,
-	IN	POCTET_STRING	posMpdu	
+	IN	POCTET_STRING	posMpdu
 	);
 
 RT_STATUS
@@ -2102,23 +2102,23 @@ P2P_SetWpsIe(
 	IN  u1Byte 					*pIePayload
 	);
 
-VOID 
+VOID
 P2PDumpWpsAttributes(
 	IN PP2P_WPS_ATTRIBUTES pP2PWpsAttributes
 	);
 
-VOID 
+VOID
 P2PDumpScanList(
 	IN PP2P_DEVICE_DISCRIPTOR pDevDescriptors,
 	IN u4Byte nDevDescriptors
 	);
 
-VOID 
+VOID
 P2PScanListClear(
 	IN  P2P_INFO				*pP2PInfo
 	);
 
-VOID 
+VOID
 P2PScanListCopy(
 	IN OUT PP2P_DEVICE_DISCRIPTOR pScanListDest,
 	IN OUT pu4Byte pScanListDestSize,
@@ -2165,7 +2165,7 @@ P2PExtendedListenComplete(
 	IN PP2P_INFO pP2PInfo
 	);
 
-VOID 
+VOID
 P2PGOStartAutomously(
 	IN PP2P_INFO pP2PInfo
 	);
@@ -2207,7 +2207,7 @@ P2PMlmeAssociateRequest(
 	u4Byte			asocTmot,
 	u2Byte			asCap,
 	u2Byte			asListenInterval,
-	BOOLEAN			Reassociate	
+	BOOLEAN			Reassociate
 	);
 
 VOID
@@ -2250,7 +2250,7 @@ P2P_APRemoveKey(
 VOID
 P2P_APSetkey(
 	IN	PADAPTER		Adapter,
-	IN	u1Byte 			*pucMacAddr, 
+	IN	u1Byte 			*pucMacAddr,
 	IN	u4Byte 			ulEncAlg
 	);
 

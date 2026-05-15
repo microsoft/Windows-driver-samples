@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
 //	File name:		Ndis6Common.c
-//	Description:	Define data structure, RT_NDIS6_COMMON, to keep NDIS6.x 
+//	Description:	Define data structure, RT_NDIS6_COMMON, to keep NDIS6.x
 //					common information and export some common helper functions.
 //
 //	Author:			rcnjko
@@ -37,7 +37,7 @@ typedef	struct _RT_NDIS_DRIVER_CONTEXT
 	WCHAR				RegistryPath[256];			// Keep registry path for adaptors to access common registries
 }RT_NDIS_DRIVER_CONTEXT, *PRT_NDIS_DRIVER_CONTEXT;
 
-typedef struct _WDI_TXRX_STATISTICS {	
+typedef struct _WDI_TXRX_STATISTICS {
 	u4Byte			numWdiTxDescInit;
 	u4Byte			numWdiTxDescDeInit;
 	u4Byte			numWdiTxDataSend;
@@ -54,7 +54,7 @@ typedef struct _WDI_TXRX_STATISTICS {
 	u4Byte			numCheckTxPause;
 	u4Byte			numTxResourceAvailable;
 	u4Byte			monitorTxPauseReason;
-	
+
 	u4Byte			numRxIndicateNBLToUE;
 	u4Byte			numRxReturnNBLFromUE;
 	u4Byte			numWdiRxStop;
@@ -151,7 +151,7 @@ extern WDI_CMD_STATISTICS		GLWdiCmdStatistics;
 	{0xA1841308, 0x3541, 0x4FAB, {0xBC, 0x81, 0xF7, 0x15, 0x56, 0xF2, 0x0B, 0x4A}}
 
 #define GUID_WLAN_POWER_MODE \
-	{0x12BBEBE6, 0x58D6, 0x4636, {0x95, 0xBB, 0x32, 0x17, 0xef, 0x86, 0x7c, 0x1a}} 
+	{0x12BBEBE6, 0x58D6, 0x4636, {0x95, 0xBB, 0x32, 0x17, 0xef, 0x86, 0x7c, 0x1a}}
 
 
 //
@@ -175,18 +175,18 @@ typedef struct {
 //
 #define IS_STATUS_CODE_SUCCESS(StatusCode) \
 			(StatusCode == 0 ? TRUE : FALSE)
-	
+
 //
 //	070524, rcnjko:
 //
-//	MiniportReserved[0]: Reference count. 
+//	MiniportReserved[0]: Reference count.
 //		Initialize as (1 + # of NB) when we start processing the NBL.
 //		Minus 1 at each time NB returned and end of NBL processing.
-//		The reason to initialized it as (1 + # of NB) is to prevent 
+//		The reason to initialized it as (1 + # of NB) is to prevent
 //		completed NBL before all processing done.
 //
 //	MiniportReserved[1]: Pointer to the NB to processing.
-//		Initialize to pointer of first NB in the NBL, 
+//		Initialize to pointer of first NB in the NBL,
 //		and will be advaced to next one when we had performed Scatter/Gather operation.
 //
 #define RT_NBL_GET_REF_CNT(_NBL) \
@@ -244,7 +244,7 @@ typedef struct {
 
 #define N6C_CANNOT_TX   N6SDIO_CANNOT_TX
 
-static DOT11_DATA_RATE_MAPPING_ENTRY N6_Std_abg_DataRateMappingTable[] = 
+static DOT11_DATA_RATE_MAPPING_ENTRY N6_Std_abg_DataRateMappingTable[] =
 {
 	{2, 0, 2},
 	{4, 0, 4},
@@ -359,14 +359,14 @@ typedef struct _N6_INDICATE_STATE_MACHINE
 // 1. The NDIS6 miniport driver state management is based on the document:
 // ws-07-0043-v00-all-wlan-driver-ndis6-miniport-driver-state-csscg-070604.vsd
 //
-// 2. Driver is initialized at halted state. 
-// The state <= MINIPORT_PAUSING cannot Send/Recv packets will be drop, 
+// 2. Driver is initialized at halted state.
+// The state <= MINIPORT_PAUSING cannot Send/Recv packets will be drop,
 // see N6XXX_CANNOT_TX() and N6XXX_CANNOT_RX().
 //
-// 3. On NDIS6, shutdown and sleep requests happen 
-// only if we are in paused state. 
+// 3. On NDIS6, shutdown and sleep requests happen
+// only if we are in paused state.
 //
-// 4. We can add some state between running and pausing, 
+// 4. We can add some state between running and pausing,
 // for example, Tx/Rx reseting, and keep packets in these state.
 //
 
@@ -392,7 +392,7 @@ typedef enum _N6C_MP_DRIVER_STATE
 
 
 #define N6_GET_RX_NBL_POOL(_pAdapter)	\
-	(GET_RT_SDIO_DEVICE(GetDefaultAdapter(_pAdapter))->RxNetBufferListPool) 
+	(GET_RT_SDIO_DEVICE(GetDefaultAdapter(_pAdapter))->RxNetBufferListPool)
 
 //
 // Supported Auth and Cipher pairs. 2006.10.13, by shien chang.
@@ -424,7 +424,7 @@ typedef struct _NIC_PHY_MIB
 
 
 //
-// Current IBSS parameters. By Bruce, 2007-08-13. 
+// Current IBSS parameters. By Bruce, 2007-08-13.
 //
 typedef struct _RTL_DOT11_IBSS_PARAMS
 {
@@ -435,9 +435,9 @@ typedef struct _RTL_DOT11_IBSS_PARAMS
 
 typedef enum _PLATFORM_NDIS_VERSION{
 	PLATFORM_NDIS_VERSION_50 = 0x0,
-	PLATFORM_NDIS_VERSION_51 = 0x1,	
-	PLATFORM_NDIS_VERSION_60 = 0x2,	
-	PLATFORM_NDIS_VERSION_62 = 0x3,	
+	PLATFORM_NDIS_VERSION_51 = 0x1,
+	PLATFORM_NDIS_VERSION_60 = 0x2,
+	PLATFORM_NDIS_VERSION_62 = 0x3,
 }PLATFORM_NDIS_VERSION;
 
 //
@@ -453,17 +453,17 @@ typedef enum _RT_PENDED_OID_TYPE
 
 typedef enum _RT_D0_FILTER_STATE
 {
-	RT_D0_FILTER_NONE 		= 0,   // NO fiter entry 
-	RT_D0_FILTER_INIT 		 	= 1,   // NO buffer packet !! 
-	RT_D0_FILTER_BUFFING		= 2,   // buffer packet and start timer 
-	RT_D0_FILTER_FLUSHING 	= 3,  // Try to indic or drop Packet 
+	RT_D0_FILTER_NONE 		= 0,   // NO fiter entry
+	RT_D0_FILTER_INIT 		 	= 1,   // NO buffer packet !!
+	RT_D0_FILTER_BUFFING		= 2,   // buffer packet and start timer
+	RT_D0_FILTER_FLUSHING 	= 3,  // Try to indic or drop Packet
 	RT_D0_FILTER_MAX
 } RT_D0_FILTER_STATE, *PRT_D0_FILTER_STATE;
 
 typedef enum _RT_OID_HISTORY_STATE
 {
 	RT_OID_HISTORY_NONE			= 0,	//Init state
-	RT_OID_HISTORY_STARTED		= 1,	
+	RT_OID_HISTORY_STARTED		= 1,
 	RT_OID_HISTORY_PENDING		= 2,
 	RT_OID_HISTORY_COMPLETE		= 3,
 	RT_OID_HISTORY_UNKNOWN		= 4,
@@ -505,7 +505,7 @@ typedef enum _RT_RX_STATE
 typedef enum _RT_UsbSafetySwitch_Bits
 {
 	//20130620 MH add for VIA USB30 inpipe reset for rx faildue to host stop to send bulk in irp  workaround~!..
-	RT_UsbSafetySwitch_ViaU3				= BIT0,	//set to 1=support VIA USB3.0 workaround. 
+	RT_UsbSafetySwitch_ViaU3				= BIT0,	//set to 1=support VIA USB3.0 workaround.
 	RT_UsbSafetySwitch_IrpPendingCount	= BIT1,	//set to 1=not using Rx IrpPendingCount workaround
 	RT_UsbSafetySwitch_8812_schmitt		= BIT2,	//set to 1=not using 8812AU schmitt trigger
 	RT_UsbSafetySwitch_8814_schmitt		= BIT3	//set to 1=not using 8814AU schmitt trigger
@@ -520,7 +520,7 @@ typedef enum _RT_TIMER_RESOURCE_ACTION{
 typedef struct _RT_NDIS6_COMMON{
 
 	// NDIS miniport adapter handle.
-	NDIS_HANDLE		hNdisAdapter;		
+	NDIS_HANDLE		hNdisAdapter;
 
 	UINT				NdisVersion;
 
@@ -539,7 +539,7 @@ typedef struct _RT_NDIS6_COMMON{
 	// Variables for registry values.
 	//
 	//----------------------------------------------------------------------------
-	
+
 	// "NetworkAddress"
 	u1Byte				NetworkAddress[6];
 
@@ -561,16 +561,16 @@ typedef struct _RT_NDIS6_COMMON{
 	u2Byte				RegChannelPlan;
 
 	u1Byte				RegRFType;
-	
+
 	// "WirelessMode"
-	int					RegWirelessMode; // Default Wireless Mode for initialization.	
+	int					RegWirelessMode; // Default Wireless Mode for initialization.
 
 	// "HTMode"
 	u1Byte				RegHTMode;
 
 	// "Channel"
-	int					RegChannel; //  2.4G Default channel.	
-	int					RegChannel5G; //  5G Default channel.	
+	int					RegChannel; //  2.4G Default channel.
+	int					RegChannel5G; //  5G Default channel.
 
  	// "AntennaDiversityType" , 20120313 added by Kordan.
 	u1Byte				AntDivType;
@@ -581,21 +581,21 @@ typedef struct _RT_NDIS6_COMMON{
 	// "Amplifier Type" , 20120827 added by Kordan.
 	u1Byte				AmplifierType_2G;
 	u1Byte				AmplifierType_5G;
-	
+
 	s1Byte 				TxBBSwing_2G;
 	s1Byte 				TxBBSwing_5G;
 	BOOLEAN				bTurnOffEfuseMask;
 	u1Byte				RFE_Type;
 	BOOLEAN				bTFBGA;
-	BOOLEAN 			bEfusePriorityAuto;	
-	
+	BOOLEAN 			bEfusePriorityAuto;
+
 	// For Netgear UI, 2005.01.13, by rcnjko.
 	// "ForcedDataRate"
 	u2Byte				RegForcedDataRate; // Force Data Rate. 0: Auto, 0x02: 1M ~ 0x6C: 54M.
 	u2Byte				RegForcedBstDataRate; // Force Bst Data Rate. 0: Auto, 0x02: 1M ~ 0x6C: 54M. , 0x80: MCS0 ~ 0x8f: MCS15
 
-	// "WirelessMode4ScanList" 
-	int					RegWirelessMode4ScanList; // Wireless Mode used to filter scan list, see enum _WIRELESS_MODE for its definition. 
+	// "WirelessMode4ScanList"
+	int					RegWirelessMode4ScanList; // Wireless Mode used to filter scan list, see enum _WIRELESS_MODE for its definition.
 	//
 
 	// For 818x UI and WPA Verify, 2004.11.30, by rcnjko.
@@ -620,11 +620,11 @@ typedef struct _RT_NDIS6_COMMON{
 	// "PowerSaveMode"
 	u1Byte				RegPowerSaveMode; // Default power-saving mode to confige.
 
-	// For WMM Power Save Mode : 
+	// For WMM Power Save Mode :
 	// ACs are trigger/delivery enabled or legacy power save enabled. 2006-06-13 Isaiah
 	u1Byte					StaUapsd;
 	u1Byte					MaxSPLength;
-	
+
 	// For debugging IBSS beacon behavior. 2005.04.18, by rcnjko.
 	int					RegEnableSwBeacon;
 
@@ -646,7 +646,7 @@ typedef struct _RT_NDIS6_COMMON{
 
 	// mix mode protection, 20141113 by Gibson
 	int                 RegProtectionmode;
-	
+
 	// For NdisReadNetworkAddress().
 	// <RJ_8185> We shall resotre the network address at mphalt of 8185 for HCT12.0 test.
 	u1Byte				CurrentAddress[6];//dot11MacAddress
@@ -659,31 +659,31 @@ typedef struct _RT_NDIS6_COMMON{
 	// Support CCX or not
 	u1Byte				RegCcx;
 	// CCX Radio Measurement, 2006.05.15, by rcnjko.
-	int					RegCcxRm;	
+	int					RegCcxRm;
 	u2Byte				RegCcxOffLineDurUpLimit;
 
 	u1Byte				RegCcxCatasRoamLimit;
-	
+
 	// Update CCX Cell Tx Power
 	BOOLEAN				RegCcxUpdateTxCellPwr;
 	// CCX CAC Enable
 	BOOLEAN				RegCcxCACEnable;
-	
-	//For HW init 
+
+	//For HW init
 	BOOLEAN				bRegHwParaFile;
 
 	// For TPC, added by shien chang, 2006.06.29
 	int					RegTxPowerLevel;
-		
+
 	// Antenna Diversity Mechanism, by Isaiah, 2007-01-03
-	BOOLEAN				bRegSwAntennaDiversityMechanism;	
-	
+	BOOLEAN				bRegSwAntennaDiversityMechanism;
+
 	// 070207, rcnjko: 802.11d.
 	BOOLEAN				bRegDot11dEnable;
 
 	// "TurboMode". Added by Roger, 2006.12.07.
-	int					RegTurboModeSelect;		
-	
+	int					RegTurboModeSelect;
+
 	// Auto select channel, 2005.12.27, by rcnjko.
 	int					RegAutoSelChnl;
 	int					RegChnlWeight;			// Added by Annie, 2006-07-26.
@@ -698,7 +698,7 @@ typedef struct _RT_NDIS6_COMMON{
 	// "WdsMode", 0: WDS disabled, 1: AP+WDS.
 	u1Byte				RegWdsMode;
 
-	// "CustomerID", 0: allow EEPROM to determine pMgntInfo->CustomerID, >0: overwrite pMgntInfo->CustomerID. 
+	// "CustomerID", 0: allow EEPROM to determine pMgntInfo->CustomerID, >0: overwrite pMgntInfo->CustomerID.
 	int					RegCustomerID;
 
 	//"RegFragThreshold", 256 ~2432. 2007-03-05 by David
@@ -706,25 +706,25 @@ typedef struct _RT_NDIS6_COMMON{
 
 	// DM InitialGain control. hpfan 2009.03.31
 	BOOLEAN		bRegDMInitialGain;
- 	
+
 	BOOLEAN		bRegGpioRfSw;
 
 	BOOLEAN		bRegHwWpsPbc;
 	//----------------------------------------------------------------------------
-	// Workaround for HCT 12.0. 
+	// Workaround for HCT 12.0.
 	//
 	//----------------------------------------------------------------------------
 	BOOLEAN								bRegHctTest;
 	BOOLEAN								bRegWFDTest;
 
 	BOOLEAN								bRegScanTimeCheck;
-	
-	BOOLEAN								bRegChaos;	
-	NDIS_802_11_NETWORK_TYPE			BeSetNetworkTypeByNDTest; 
+
+	BOOLEAN								bRegChaos;
+	NDIS_802_11_NETWORK_TYPE			BeSetNetworkTypeByNDTest;
 	BOOLEAN								KeepDisconnectFlag;
-	
+
 	BOOLEAN								bRegPnpCapabilities;
-	
+
 	BOOLEAN								bRegFixedMacAddr;
 
 	//----------------------------------------------------------------------------
@@ -786,7 +786,7 @@ typedef struct _RT_NDIS6_COMMON{
 	u1Byte								RegAcNoAck;
 
 	RT_THREAD			TxHandleThread;
-#if (RTL8723_SDIO_IO_THREAD_ENABLE || RTL8723_USB_IO_THREAD_ENABLE) 
+#if (RTL8723_SDIO_IO_THREAD_ENABLE || RTL8723_USB_IO_THREAD_ENABLE)
 	RT_THREAD			IOHandleThread;
 #endif
 
@@ -795,12 +795,12 @@ typedef struct _RT_NDIS6_COMMON{
 
 	//1!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	//1//1Attention Please!!!<11n or 8190 specific code should be put below this line>
-	//1!!!!!!!!!!!!!!!!!!!!!!!!!!!	
+	//1!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	//----------------------------------------------------------------------------
 	// For 802.11n only function.
 	//
-	//----------------------------------------------------------------------------		
+	//----------------------------------------------------------------------------
 	// For HT Cck rate support, Joseph
 	BOOLEAN							bRegHT_EnableCck;
 
@@ -808,7 +808,7 @@ typedef struct _RT_NDIS6_COMMON{
 	u1Byte							RegBWSetting;
 	BOOLEAN							bRegBW40MHzFor2G;
 	BOOLEAN							bRegBW40MHzFor5G;
-	
+
 	BOOLEAN							bReg11nAdhoc;
 	BOOLEAN							bRegIOTBcm256QAM;
 	u1Byte							bRegVht24g;
@@ -816,18 +816,18 @@ typedef struct _RT_NDIS6_COMMON{
 
 	// For AMSDU aggregation, Joseph
 	int 								RegAMSDU;
-	int								RegAMSDU_MaxSize;	
-	
+	int								RegAMSDU_MaxSize;
+
 	int 								RegHWAMSDU;
 
 	// For AMPDU aggregation <2006.08.10 Emily>
 	int								bRegAMPDUEnable;
 	int								RegAMPDU_Factor;
 	int								RegMPDU_Density;
-	
+
 	// MIMO Power Save
 	int								RegMimoPs;
-	
+
 	// For Rx Reorder Control
 	u1Byte				RegRxReorder;
 	u1Byte				RegRxReorder_WinSize;
@@ -849,13 +849,13 @@ typedef struct _RT_NDIS6_COMMON{
 
 	DOT11_SUPPORTED_POWER_LEVELS		dot11SupportedPowerLevels;
 	ULONG								dot11CurrentTxPowerLevel;
-	
+
 	 // PHY list
     	ULONG                   					staDesiredPhyList[NATIVE_802_11_MAX_NUM_PHY_TYPES];
     	ULONG                   					staDesiredPhyCount;
-    	ULONG                  					ActivePhyId; 
-	
-	
+    	ULONG                  					ActivePhyId;
+
+
 	// 802.11d MIB.
 	BOOLEAN								dot11MultiDomainCapabilityImplemented;
 
@@ -884,7 +884,7 @@ typedef struct _RT_NDIS6_COMMON{
 	ULONG								NumDot11DesiredBSSIDList;
 
 	ULONG								dot11UnreachableDetectionThreshold;
-	
+
 	// Use group key, 2006.11.06, by shien chang.
 	BOOLEAN								dot11UnicastUseGroupEnabled;
 
@@ -892,26 +892,26 @@ typedef struct _RT_NDIS6_COMMON{
 
 	// Status indication, 2006.11.15, by shien chang.
 	BOOLEAN								bToIndicateScanComplete;
-	
+
 	// New status indication state machine, 2006.11.29, by shien chang.
 	N6_INDICATE_STATE_MACHINE			IndicationEngine;
 
 	//for pend request 20061206 by David
     	/** If the miniport pends a request, the copy is kept here */
-   	PNDIS_OID_REQUEST                   		PendedRequest;	
-	
+   	PNDIS_OID_REQUEST                   		PendedRequest;
+
 
 	// For Restore N6  unicase , mutilcase encrypt Alg ,CCW
 	DOT11_CIPHER_ALGORITHM          					RegGroupALg;
 	DOT11_CIPHER_ALGORITHM							RegPairwiseAlg;
-       DOT11_AUTH_ALGORITHM             					RegAuthalg;         
+       DOT11_AUTH_ALGORITHM             					RegAuthalg;
 	u1Byte											RegRSNADefaultkeybuf[61];
 	OCTET_STRING									RegRSNADefaultkey;
 	u4Byte 											RegRSNAKeyID;
 
 	// To avoid explicit scan operation during wakeup auto link stage.
 	BOOLEAN											bWakeupAutoLinkInProgressing;
-	
+
 	// Use this flag to check whether indicate roaming start while system resume, by Roger. 2007.11.07.
 	BOOLEAN											bDissociateBeforeSleep;
 
@@ -956,13 +956,13 @@ typedef struct _RT_NDIS6_COMMON{
 	ULONG 				PCI_BAR0;
 	ULONG 				PCI_BAR1;
 	UCHAR 				PCI_InterruptLine;
-	USHORT				PCI_CommandRegister;		
+	USHORT				PCI_CommandRegister;
 
 	u1Byte				RegCckPwEnl;
 
 	// Accept ADDBA Request
 	int 					bRegAcceptAddbaReq;
-	
+
 	// CCX Vista Context
 	Cisco_CCX_CONTEXT	Cisco_CCX_CONTEXT;
 
@@ -1003,15 +1003,15 @@ typedef struct _RT_NDIS6_COMMON{
 
 	// Turn on/off Win7 Virtaul Wifi support.
 	BOOLEAN				bRegVWifiSupport;
-	BOOLEAN				bRegDMDPMAC0VWifiSupport;	
+	BOOLEAN				bRegDMDPMAC0VWifiSupport;
 
 	u1Byte				RegbtHsMode;
 	u1Byte				bRegDefaultAntenna;
 	u1Byte				RegAntDiv;
 	u1Byte				RegAntDetection;
 
-        u1Byte				bRegUseRxInterruptWorkItem;	
-		
+        u1Byte				bRegUseRxInterruptWorkItem;
+
 	// For WoWLAN mode. by tynli.
 	u1Byte				RegAPOffloadEnable;
 	u1Byte				RegWoWLANLPSLevel;
@@ -1024,28 +1024,28 @@ typedef struct _RT_NDIS6_COMMON{
 	u1Byte				bRegNSOffloadEnable;
 	u1Byte				RegNLOEnable;
 	u1Byte				RegPnpKeepLink;
-	
+
 	BOOLEAN				bRegWakeOnMagicPacket;
 	BOOLEAN				bRegWakeOnPattern;
 	BOOLEAN				bRegWakeOnDisconnect;
 
 	// Connected standby feature
 	BOOLEAN				bRegPacketCoalescing;
-	
+
 	u1Byte				RegFSSDetection;
-	
+
 	// BIT0 - 20MHz
 	// BIT1 - 40MHz
 	// BIT2 - 80MHz
 	// BIT3 - 160MHz
 	u1Byte				RegShortGISupport;
-	
+
 	u1Byte				RegAPTimExtend;
 	u1Byte				RegUSBResetTxHang;
 
 	BOOLEAN				bRegVelocity;
 
-	// 2010/05/18 MH For GPIO detect timer delay setting.	
+	// 2010/05/18 MH For GPIO detect timer delay setting.
 	u1Byte				bRegTimerGPIO;
 	u2Byte				bRegGPIODelay;
 	u2Byte				bRegGPIOBack;
@@ -1056,30 +1056,30 @@ typedef struct _RT_NDIS6_COMMON{
 	// 2010/08/25 MH Add to support pdn mode switch.
 	u1Byte				bRegPDNMode;
 
-	// 2010/09/01 MH According to PM's request, we support dongle selective suspend mode switch.	
+	// 2010/09/01 MH According to PM's request, we support dongle selective suspend mode switch.
 	u1Byte				bRegDongleSS;
 
-	// 2010/09/13 MH According to PM's request, we support different SS power seave level.	
+	// 2010/09/13 MH According to PM's request, we support different SS power seave level.
 	u1Byte				bRegSSPwrLvl;
 
 	// 2011/02/16 MH Add for SS HW radio detect workaround temporarily.
 	u1Byte				bRegSSWakeCnt;
 
-	// 2010/12/17 MH Add for RX aggregation mode switch according to TX/RX traffic.	
+	// 2010/12/17 MH Add for RX aggregation mode switch according to TX/RX traffic.
 	u1Byte				bRegAggDMEnable;
 
-	// 2010/12/31 MH Add for UPHY dynamic chaneg.	
+	// 2010/12/31 MH Add for UPHY dynamic chaneg.
 	u1Byte				bRegUPDMEnable;
 
 	// 2011/07/08 MH Add for different link speed display.
-	u1Byte				bRegLinkSpeedLevel;	
+	u1Byte				bRegLinkSpeedLevel;
 
 	u1Byte				RegRSSI2GridMode;
 
-	// 2011/07/14 MH Add for rx short cut.	
+	// 2011/07/14 MH Add for rx short cut.
 	u1Byte				bRegRxSC;
 
-	// 2011/07/15 Sinda Add for tx short cut.	
+	// 2011/07/15 Sinda Add for tx short cut.
 	u1Byte				bRegTxSC;
 
 	// 2011/09/15 MH Add registry for switching packet compete method.
@@ -1133,7 +1133,7 @@ typedef struct _RT_NDIS6_COMMON{
 	u1Byte				RegChannelPlan2GBuf[40];
 	OCTET_STRING		RegChannelPlan5G;
 	u1Byte				RegChannelPlan5GBuf[100];
-	
+
 	u1Byte				RegDecryptCustomFile;
 
 	// 2013/04/16 VincentLan Add to switch Spur Calibration Method
@@ -1144,30 +1144,30 @@ typedef struct _RT_NDIS6_COMMON{
 	u1Byte				RegRfKFreeEnable;
 
 
-	u1Byte				RegTxDutyEnable;	
+	u1Byte				RegTxDutyEnable;
 	// 2011/11/15 MH Add for user can select different region and map to dedicated power gain offset table.
 	u1Byte				RegPwrTblSel;
 
 	u1Byte				RegTxPwrLevel;
 
 	// 2011/11/15 MH Add for user can select different tx power by rate switch by default value and registry value.
-	u1Byte				RegPwrByRate;	
-	u4Byte				RegPwrRaTbl1;	
-	u4Byte				RegPwrRaTbl2;	
-	u4Byte				RegPwrRaTbl3;	
-	u4Byte				RegPwrRaTbl4;	
-	u4Byte				RegPwrRaTbl5;	
-	u4Byte				RegPwrRaTbl6;	
-	u4Byte				RegPwrRaTbl7;	
-	u4Byte				RegPwrRaTbl8;	
-	u4Byte				RegPwrRaTbl9;	
-	u4Byte				RegPwrRaTbl10;	
-	u4Byte				RegPwrRaTbl11;	
-	u4Byte				RegPwrRaTbl12;	
-	u4Byte				RegPwrRaTbl13;	
-	u4Byte				RegPwrRaTbl14;	
-	u4Byte				RegPwrRaTbl15;	
-	u4Byte				RegPwrRaTbl16;	
+	u1Byte				RegPwrByRate;
+	u4Byte				RegPwrRaTbl1;
+	u4Byte				RegPwrRaTbl2;
+	u4Byte				RegPwrRaTbl3;
+	u4Byte				RegPwrRaTbl4;
+	u4Byte				RegPwrRaTbl5;
+	u4Byte				RegPwrRaTbl6;
+	u4Byte				RegPwrRaTbl7;
+	u4Byte				RegPwrRaTbl8;
+	u4Byte				RegPwrRaTbl9;
+	u4Byte				RegPwrRaTbl10;
+	u4Byte				RegPwrRaTbl11;
+	u4Byte				RegPwrRaTbl12;
+	u4Byte				RegPwrRaTbl13;
+	u4Byte				RegPwrRaTbl14;
+	u4Byte				RegPwrRaTbl15;
+	u4Byte				RegPwrRaTbl16;
 
 	BOOLEAN				RegSendPacketByTimer;
 
@@ -1178,11 +1178,11 @@ typedef struct _RT_NDIS6_COMMON{
 	u1Byte				RegEarlymodeEnable;
 	BOOLEAN				RegAutoAMPDUBurstModeEnable;
 	u2Byte				RegAutoAMPDUBurstModeThreshold;
-	
+
 	u1Byte				RegReduceImr;
-#if (NEW_EARLY_MODE_ENABLE == 1)	
+#if (NEW_EARLY_MODE_ENABLE == 1)
 	BOOLEAN				RegNewAMPDUBurstModeEnable;//New Earry Mode ctrl for 8814A,  add by ylb 20130418
-#endif	
+#endif
 	u2Byte				RegTxHignTPThreshold;
 	u2Byte				RegRxHignTPThreshold;
 
@@ -1191,7 +1191,7 @@ typedef struct _RT_NDIS6_COMMON{
 
 	BOOLEAN				bRegDbgMode;
 	u8Byte				RegDbgZone;
-	
+
 	PVOID			N6PowerSettingHandle;
 	PVOID			N6WLANPowerModeHandle;
 
@@ -1202,20 +1202,20 @@ typedef struct _RT_NDIS6_COMMON{
 	BOOLEAN				bFilterHiddenAP;
 	u4Byte				Oidcounter;
 	BOOLEAN				bToIndicateNLOScanComplete;
-	
+
 	GUID				NetCfgInstanceId;	// Read from the registry in initialization.
 
-	u1Byte				RegPAMode;	
+	u1Byte				RegPAMode;
 
 	//2011.09.23 LukeLee add for path diversity
 	BOOLEAN				bPathDivEnable;
 
 	BOOLEAN				bRegBtFwSupport;
 
-	// Add TCP offload 
+	// Add TCP offload
 	ULONG				RegTCPOffloadMode;
 
-	// D0 Rx colse 
+	// D0 Rx colse
 	RT_TIMER			D0RxIndicatTimer;
 	RT_LIST_ENTRY		D0FilterPktQueue;
 	NDIS_SPIN_LOCK		D0FilterPktLock; // For timer synchronization.
@@ -1223,7 +1223,7 @@ typedef struct _RT_NDIS6_COMMON{
 
 	// 2011/12/08 hpfan Add for Tcp Reorder
 	BOOLEAN				bTcpReorderEnable;
-	
+
 	u1Byte				bRegUseThreadHandleInterrupt;
 	u1Byte				bRegDPCISRTest;
 
@@ -1280,9 +1280,9 @@ typedef struct _RT_NDIS6_COMMON{
 	BOOLEAN				RegFWQC;
 
 	// 2012/11/28 MH Add for BB team AMPDU test.
-	u1Byte				RegAMfactor;	
+	u1Byte				RegAMfactor;
 	u1Byte				RegVHTRSec;
-	
+
 	u2Byte				RegScanLarge;
 	u2Byte				RegScanMiddle;
 	u2Byte				RegScanNormal;
@@ -1298,7 +1298,7 @@ typedef struct _RT_NDIS6_COMMON{
 	u1Byte				RegWaitBeforeGoSkipScan;
 
 	//20130109 Used for Invitation No/After to Pass, with skip scan when Go is connected
-	u1Byte				RegGoSkipScanForWFDTest;	
+	u1Byte				RegGoSkipScanForWFDTest;
 	u1Byte				RegClientSkipScanForWFDTest;
 	BOOLEAN				RegForceGoTxData20MBw;
 
@@ -1308,7 +1308,7 @@ typedef struct _RT_NDIS6_COMMON{
 	u1Byte				RegTxPwrPercentage; // Default Tx output power percentage.
 
 	u1Byte				RegScanOffloadType;
-	
+
 	// 2013/02/05 MH Add for streamMode switch.
 	u1Byte				RegStreamMode;
 	// 2013/02/06 MH Add Transmit power control level for all customer in the future.
@@ -1332,23 +1332,23 @@ typedef struct _RT_NDIS6_COMMON{
 
 	u1Byte				RegSifsThresh;
 
-	u1Byte				RegFwload;	
+	u1Byte				RegFwload;
 
 	u1Byte				RegUsbSafetySwitch;
 
 	u1Byte				RegRspPwr;
-	u4Byte				RegPktIndicate;	
+	u4Byte				RegPktIndicate;
 
-	BOOLEAN				RegClearAMDWakeUpStatus; // zhiyuan add for 88ee Lenovo AMD platform	
+	BOOLEAN				RegClearAMDWakeUpStatus; // zhiyuan add for 88ee Lenovo AMD platform
 
-	BOOLEAN 			RegbCustomizedScanPeriod;	
+	BOOLEAN 			RegbCustomizedScanPeriod;
 	u2Byte				RegIntelCustomizedScanPeriod;
 	u2Byte				RegAMDCustomizedScanPeriod;
-	
 
-	u2Byte		RegDisableBTCoexist;	
 
-	BOOLEAN				RegEnableMA;	
+	u2Byte		RegDisableBTCoexist;
+
+	BOOLEAN				RegEnableMA;
 
 	u1Byte				RegVhtWeakSecurity;
 	//20130606 MH For passive scan control dynamic switch after meeting with RF/FAE team.
@@ -1357,7 +1357,7 @@ typedef struct _RT_NDIS6_COMMON{
 
 	BOOLEAN 	RegIsAMDIOIC;
 	u4Byte		RegWmmPage;
-	u1Byte		RegDisableAC;	
+	u1Byte		RegDisableAC;
 	u4Byte		RegLedInterval;
 	u1Byte		Reg8814auEfuse;
 	u1Byte		RegValidRFPath;
@@ -1390,7 +1390,7 @@ typedef struct _RT_NDIS6_COMMON{
 	RT_LIST_ENTRY		OidHistoryList;
 	NDIS_SPIN_LOCK		OidHistorySpinLock;
 	u1Byte				OidHistoryCount;
-	
+
 	// SDIO polling interrupt mode
 	BOOLEAN 	RegSdioPollIntrHandler;
 	u2Byte		RegSdioIntrPollingLimit;
@@ -1404,7 +1404,7 @@ typedef struct _RT_NDIS6_COMMON{
 	WDI_BAND_INFO_CONTAINER	BandInfo[WDI_802_11_MAX_NUM_BAND_TYPES];
 	ULONG						BandInfoCount;
 	WDI_PHY_INFO_CONTAINER		PhyInfo[WDI_802_11_MAX_NUM_PHY_TYPES];
-	
+
 	//Rx control state is used for port
 	RT_RX_STATE					bRxControlState;
 	//Rx data path state is used for adapter
@@ -1417,7 +1417,7 @@ typedef struct _RT_NDIS6_COMMON{
 	 u1Byte				Reg88EIOTAction;
 	u2Byte		RegTxSendAsap;
 
-	// MAC Address Randomization 
+	// MAC Address Randomization
 	u1Byte		RegSupportMACRandom;
 
 	// ECSA
@@ -1797,7 +1797,7 @@ N6CQueryPhyIdReady(
 	IN	PADAPTER		Adapter
 	);
 
-PVOID 
+PVOID
 GetTwoPortSharedResource(
 	IN		PADAPTER	Adapter,
 	IN		u1Byte		Type_ToGet,
@@ -1831,7 +1831,7 @@ N6CReleaseDataFrameQueuedWorkItemCallback(
 #if WPP_SOFTWARE_TRACE
 #define RT_TRACE(_Comp, _Level, Fmt)
 #define RT_TRACE_EX(_Comp, _Level, Fmt)
-#define RT_TRACE_MAC(_Comp, _Level, Fmt)	
+#define RT_TRACE_MAC(_Comp, _Level, Fmt)
 #define RT_TRACE_F(_Comp, _Level, Fmt)	//DoTraceMessage(_Comp, _Level, Fmt)
 
 #define RT_ASSERT(_Exp,Fmt)
@@ -1880,7 +1880,7 @@ N6CReleaseDataFrameQueuedWorkItemCallback(
 				DbgPrint Fmt;														\
 				ASSERT(FALSE);													\
 			}
-			
+
 #define PRINT_DATA(_TitleString, _HexData, _HexDataLen)						\
 {												\
 	char			*szTitle = _TitleString;					\
@@ -1980,12 +1980,12 @@ N6CReleaseDataFrameQueuedWorkItemCallback(
 		(_UUID).Data1, (_UUID).Data2, (_UUID).Data3, (_UUID).Data4[0], (_UUID).Data4[1],	\
 		(_UUID).Data4[2], (_UUID).Data4[3], (_UUID).Data4[4], (_UUID).Data4[5], (_UUID).Data4[6], (_UUID).Data4[7]));	\
 }
-			
+
 #else	// of #if DBG
 // 2009/06/22 MH Allow fre build to print info test.
 #define RT_TRACE(_Comp, _Level, Fmt)
 #define RT_TRACE_EX(_Comp, _Level, Fmt)
-#define RT_TRACE_MAC(_Comp, _Level, Fmt)	
+#define RT_TRACE_MAC(_Comp, _Level, Fmt)
 //#define	COMBINE_COMP(_COMP)	_COMP
 #define RT_TRACE_F(_Comp, _Level, Fmt)
 #define RT_ASSERT(_Exp,Fmt)

@@ -22,83 +22,83 @@ p2p_Send_DumpTxReport(
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("pTxProfile: is NULL!!!\n"));
 		return;
 	}
-	
-	if(pTxProfile->bPktOk.bVaild) 
+
+	if(pTxProfile->bPktOk.bVaild)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("bPktOk: %u\n", pTxProfile->bPktOk.Data));
 	}
-	else 
+	else
 	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("bPktOk: N/A\n"));
 	}
-	
+
 	if(pTxProfile->bRetryOver.bVaild)
-	{ 
+	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("bRetryOver: %u\n", pTxProfile->bRetryOver.Data));}
-	else 
-	{	
+	else
+	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("bRetryOver: N/A\n"));
 	}
-	
+
 	if(pTxProfile->bLifeTimeOver.bVaild)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("bLifeTimeOver: %u\n", pTxProfile->bLifeTimeOver.Data));
 	}
 	else
-	{ 
+	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("bLifeTimeOver: N/A\n"));
 	}
-	
+
 	if(pTxProfile->bUnicast.bVaild)
-	{ 
+	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("bUnicast: %u\n", pTxProfile->bUnicast.Data));
 	}
 	else
-	{ 
+	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("bUnicast: N/A\n"));
 	}
-	
+
 	if(pTxProfile->uQueueID.bVaild)
-	{ 
+	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("uQueueID: %u\n", pTxProfile->uQueueID.Data));
 	}
 	else
-	{ 
+	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("uQueueID: N/A\n"));
 	}
-	
+
 	if(pTxProfile->uMacID.bVaild)
-	{ 
+	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("uMacID: %u\n", pTxProfile->uMacID.Data));
 	}
 	else
 	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("uMacID: N/A\n"));
 	}
-	
+
 	if(pTxProfile->uDataRetryCount.bVaild)
-	{ 
+	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("uDataRetryCount: %u\n", pTxProfile->uDataRetryCount.Data));
 	}
 	else
-	{ 
+	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("uDataRetryCount: N/A\n"));
 	}
-	
+
 	if(pTxProfile->uQueueTimeUs.bVaild)
-	{ 
+	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("uQueueTimeUs: %u\n", pTxProfile->uQueueTimeUs.Data));
 	}
 	else
-	{ 
+	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("uQueueTimeUs: N/A\n"));
 	}
-	
-	if(pTxProfile->uFinalDataRateIndex.bVaild) 
+
+	if(pTxProfile->uFinalDataRateIndex.bVaild)
 	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("uFinalDataRateIndex: %u\n", pTxProfile->uFinalDataRateIndex.Data));
 	}
-	else 
+	else
 	{
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("uFinalDataRateIndex: N/A\n"));
 	}
@@ -117,23 +117,23 @@ p2p_GetSentFrame(
 	)
 {
 	BOOLEAN						bFound = FALSE;
-	
+
 	do
 	{
 		P2P_DEV_LIST_ENTRY *dev = NULL;
 
 		FrameBuf_Init(0, 0, NULL, buf);
-		
+
 		if(NULL == (dev = p2p_DevList_Get(&info->devList, devAddr, devType)))
 		{
-			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("dev not found: %02X:%02X:%02X:%02X:%02X:%02X\n", 
+			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("dev not found: %02X:%02X:%02X:%02X:%02X:%02X\n",
 				devAddr[0], devAddr[1], devAddr[2], devAddr[3], devAddr[4], devAddr[5]));
 			break;
 		}
 
 		if(NULL == dev->txFrames[frameType]->frame)
 		{
-			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("no tx frame recorded: %02X:%02X:%02X:%02X:%02X:%02X\n", 
+			RT_TRACE_F(COMP_P2P, DBG_WARNING, ("no tx frame recorded: %02X:%02X:%02X:%02X:%02X:%02X\n",
 				devAddr[0], devAddr[1], devAddr[2], devAddr[3], devAddr[4], devAddr[5]));
 			break;
 		}
@@ -158,24 +158,24 @@ p2p_IndicateFrameSent(
 	)
 {
 	p2p_DevList_Lock(&info->devList);
-	
+
 	do
 	{
 		FRAME_BUF buf;
-		
+
 		if(!p2p_GetSentFrame(info, devAddr, devType, frameType, &buf))
 		{
 			break;
 		}
-		
-		p2p_IndicateActionFrameSendComplete(info, 
-			eventId, 
-			rtStatus, 
-			buf.os.Octet, 
+
+		p2p_IndicateActionFrameSendComplete(info,
+			eventId,
+			rtStatus,
+			buf.os.Octet,
 			buf.os.Length);
-		
+
 	}while(FALSE);
-	
+
 	p2p_DevList_Unlock(&info->devList);
 
 	return;
@@ -188,7 +188,7 @@ p2p_GoNegConfirmSent(
 	IN  const RT_TX_FEEDBACK_INFO * const pTxFeedbackInfo
 	)
 {
-	PP2P_INFO 					pP2PInfo = (pTxFeedbackInfo) ? 
+	PP2P_INFO 					pP2PInfo = (pTxFeedbackInfo) ?
 											(pTxFeedbackInfo->pContext) : (NULL);
 	u1Byte						dataRate = P2P_LOWEST_RATE;
 
@@ -212,14 +212,14 @@ p2p_GoNegConfirmSent(
 		{
 			BOOLEAN bSupportTxReport = FALSE;
 
-			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("failed, try again\n"));		
+			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("failed, try again\n"));
 			p2p_Send_DumpTxReport(&pTxFeedbackInfo->TxProfile);
 
 			p2p_DevList_Lock(&pP2PInfo->devList);
 
-			p2p_Send_GoNegConfirm(pP2PInfo, 
-				pP2PInfo->ConnectionContext.ConnectingDevice.DeviceAddress, 
-				pP2PInfo->ConnectionContext.DialogToken, 
+			p2p_Send_GoNegConfirm(pP2PInfo,
+				pP2PInfo->ConnectionContext.ConnectingDevice.DeviceAddress,
+				pP2PInfo->ConnectionContext.DialogToken,
 				&bSupportTxReport);
 
 			p2p_DevList_Unlock(&pP2PInfo->devList);
@@ -229,7 +229,7 @@ p2p_GoNegConfirmSent(
 	FunctionOut(COMP_P2P);
 
 	return;
-	
+
 }
 
 VOID
@@ -260,15 +260,15 @@ p2p_PDRspSent(
 		}
 		else
 		{
-			RT_TRACE(COMP_P2P, DBG_LOUD, ("send failed\n"));		
+			RT_TRACE(COMP_P2P, DBG_LOUD, ("send failed\n"));
 		}
 
 		P2PSvc_OnPDRspSent(pP2PInfo->pP2PSvcInfo, bSendOk);
-		
+
 	}while(FALSE);
 
 	FunctionOut(COMP_P2P);
-	
+
 	return;
 }
 
@@ -302,24 +302,24 @@ p2p_Send_GoNegReq(
 
 		pTcb->PacketLength = FrameBuf_Length(&fbuf);
 
-		p2p_IndicateActionFrameSendComplete(pP2PInfo, 
-			P2P_EVENT_GO_NEGOTIATION_REQUEST_SEND_COMPLETE, 
-			RT_STATUS_SUCCESS, 
-			pBuf->Buffer.VirtualAddress, 
+		p2p_IndicateActionFrameSendComplete(pP2PInfo,
+			P2P_EVENT_GO_NEGOTIATION_REQUEST_SEND_COMPLETE,
+			RT_STATUS_SUCCESS,
+			pBuf->Buffer.VirtualAddress,
 			pTcb->PacketLength);
-	
+
 		if(bSend)
 		{
-			p2p_DevList_TxUpdate(&pP2PInfo->devList, P2P_FID_GO_NEG_REQ, 
+			p2p_DevList_TxUpdate(&pP2PInfo->devList, P2P_FID_GO_NEG_REQ,
 				da, P2P_DEV_TYPE_DEV, &fbuf,
 				dialogToken, RT_GetChannelNumber(pP2PInfo->pAdapter));
 
 			MgntSendPacket(pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, dataRate);
-		}		
+		}
 		else
 			RT_TRACE_F(COMP_P2P, DBG_LOUD, ("update dev list only\n"));
 	}
-	
+
 	PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 
 	return;
@@ -345,24 +345,24 @@ p2p_Send_GoNegRsp(
 
 		FrameBuf_Init(pAdapter->MAX_TRANSMIT_BUFFER_SIZE, 0, pBuf->Buffer.VirtualAddress, &fbuf);
 		FrameBuf_SetDbgLevel(&fbuf, DBG_LOUD);
-		
+
 		p2p_Construct_GoNegRsp(pP2PInfo, dialogToken, &fbuf, da);
 
 		pTcb->PacketLength = FrameBuf_Length(&fbuf);
 
-		p2p_IndicateActionFrameSendComplete(pP2PInfo, 
-			P2P_EVENT_GO_NEGOTIATION_RESPONSE_SEND_COMPLETE, 
-			RT_STATUS_SUCCESS, 
-			pBuf->Buffer.VirtualAddress, 
+		p2p_IndicateActionFrameSendComplete(pP2PInfo,
+			P2P_EVENT_GO_NEGOTIATION_RESPONSE_SEND_COMPLETE,
+			RT_STATUS_SUCCESS,
+			pBuf->Buffer.VirtualAddress,
 			pTcb->PacketLength);
 
-		p2p_DevList_TxUpdate(&pP2PInfo->devList, P2P_FID_GO_NEG_RSP, 
-			da, P2P_DEV_TYPE_DEV, &fbuf, 
+		p2p_DevList_TxUpdate(&pP2PInfo->devList, P2P_FID_GO_NEG_RSP,
+			da, P2P_DEV_TYPE_DEV, &fbuf,
 			dialogToken, RT_GetChannelNumber(pP2PInfo->pAdapter));
-		
+
 		MgntSendPacket(pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, dataRate);
 	}
-	
+
 	PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 }
 
@@ -392,32 +392,32 @@ p2p_Send_GoNegConfirm(
 
 		pTcb->PacketLength = FrameBuf_Length(&fbuf);
 
-		p2p_IndicateActionFrameSendComplete(pP2PInfo, 
-			P2P_EVENT_GO_NEGOTIATION_CONFIRM_SEND_COMPLETE, 
-			RT_STATUS_SUCCESS, 
-			pBuf->Buffer.VirtualAddress, 
+		p2p_IndicateActionFrameSendComplete(pP2PInfo,
+			P2P_EVENT_GO_NEGOTIATION_CONFIRM_SEND_COMPLETE,
+			RT_STATUS_SUCCESS,
+			pBuf->Buffer.VirtualAddress,
 			pTcb->PacketLength);
 
 		*pbSupportTxReport = TxFeedbackInstallTxFeedbackInfoForTcb(pAdapter, pTcb);
-		
+
 		if(*pbSupportTxReport)
 		{
 			TxFeedbackFillTxFeedbackInfoUserConfiguration(
-						pTcb, 
-						RT_TX_FEEDBACK_ID_P2P_NEGO_TX, 
-						pAdapter, 
+						pTcb,
+						RT_TX_FEEDBACK_ID_P2P_NEGO_TX,
+						pAdapter,
 						p2p_GoNegConfirmSent,
 						pP2PInfo
 					);
 		}
 
-		p2p_DevList_TxUpdate(&pP2PInfo->devList, P2P_FID_GO_NEG_CONF, 
+		p2p_DevList_TxUpdate(&pP2PInfo->devList, P2P_FID_GO_NEG_CONF,
 			da, P2P_DEV_TYPE_DEV, &fbuf,
 			dialogToken, RT_GetChannelNumber(pP2PInfo->pAdapter));
-		
+
 		MgntSendPacket(pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, dataRate);
 	}
-	
+
 	PlatformReleaseSpinLock(pP2PInfo->pAdapter, RT_TX_SPINLOCK);
 }
 
@@ -446,19 +446,19 @@ p2p_Send_InvitationReq(
 
 		pTcb->PacketLength = FrameBuf_Length(&fbuf);
 
-		p2p_IndicateActionFrameSendComplete(pP2PInfo, 
-			P2P_EVENT_INVITATION_REQUEST_SEND_COMPLETE, 
-			RT_STATUS_SUCCESS, 
-			pBuf->Buffer.VirtualAddress, 
+		p2p_IndicateActionFrameSendComplete(pP2PInfo,
+			P2P_EVENT_INVITATION_REQUEST_SEND_COMPLETE,
+			RT_STATUS_SUCCESS,
+			pBuf->Buffer.VirtualAddress,
 			pTcb->PacketLength);
 
-		p2p_DevList_TxUpdate(&pP2PInfo->devList, P2P_FID_INV_REQ, 
-			da, P2P_DEV_TYPE_DEV, &fbuf, 
+		p2p_DevList_TxUpdate(&pP2PInfo->devList, P2P_FID_INV_REQ,
+			da, P2P_DEV_TYPE_DEV, &fbuf,
 			dialogToken, RT_GetChannelNumber(pP2PInfo->pAdapter));
 
 		MgntSendPacket(pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, dataRate);
 	}
-	
+
 	PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 }
 
@@ -487,19 +487,19 @@ p2p_Send_InvitationRsp(
 
 		pTcb->PacketLength = FrameBuf_Length(&fbuf);
 
-		p2p_IndicateActionFrameSendComplete(pP2PInfo, 
-			P2P_EVENT_INVITATION_RESPONSE_SEND_COMPLETE, 
-			RT_STATUS_SUCCESS, 
-			pBuf->Buffer.VirtualAddress, 
+		p2p_IndicateActionFrameSendComplete(pP2PInfo,
+			P2P_EVENT_INVITATION_RESPONSE_SEND_COMPLETE,
+			RT_STATUS_SUCCESS,
+			pBuf->Buffer.VirtualAddress,
 			pTcb->PacketLength);
 
-		p2p_DevList_TxUpdate(&pP2PInfo->devList, P2P_FID_INV_RSP, 
+		p2p_DevList_TxUpdate(&pP2PInfo->devList, P2P_FID_INV_RSP,
 			da, P2P_DEV_TYPE_DEV, &fbuf,
 			dialogToken, RT_GetChannelNumber(pP2PInfo->pAdapter));
-	
+
 		MgntSendPacket(pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, dataRate);
 	}
-	
+
 	PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 }
 
@@ -531,7 +531,7 @@ p2p_Send_DevDiscReq(
 
 		MgntSendPacket(pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, dataRate);
 	}
-	
+
 	PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 }
 
@@ -562,10 +562,10 @@ p2p_Send_DevDiscRsp(
 		pTcb->PacketLength = FrameBuf_Length(&fbuf);
 
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Send Packet! status = %d\n", status));
-		
+
 		MgntSendPacket(pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
-	
+
 	PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 }
 
@@ -594,18 +594,18 @@ p2p_Send_PDReq(
 
 		// Increase the dialog token.
 		IncreaseDialogToken(pP2PInfo->DialogToken);
-		
+
 		p2p_Construct_PDReq(pP2PInfo, &fbuf, mac, dialogToken, configMethod);
 
 		pTcb->PacketLength = FrameBuf_Length(&fbuf);
 
-		p2p_DevList_TxUpdate(&pP2PInfo->devList, P2P_FID_PD_REQ, 
+		p2p_DevList_TxUpdate(&pP2PInfo->devList, P2P_FID_PD_REQ,
 			mac, bGo ? P2P_DEV_TYPE_GO : P2P_DEV_TYPE_DEV, &fbuf,
 			dialogToken, RT_GetChannelNumber(pP2PInfo->pAdapter));
-		
+
 		MgntSendPacket(pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, dataRate);
 	}
-	
+
 	PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 }
 
@@ -640,18 +640,18 @@ p2p_Send_PDRsp(
 
 		pTcb->PacketLength = FrameBuf_Length(&fbuf);
 
-		p2p_IndicateActionFrameSendComplete(pP2PInfo, 
-			P2P_EVENT_PROVISION_DISCOVERY_RESPONSE_SEND_COMPLETE, 
-			RT_STATUS_SUCCESS, 
-			pBuf->Buffer.VirtualAddress, 
+		p2p_IndicateActionFrameSendComplete(pP2PInfo,
+			P2P_EVENT_PROVISION_DISCOVERY_RESPONSE_SEND_COMPLETE,
+			RT_STATUS_SUCCESS,
+			pBuf->Buffer.VirtualAddress,
 			pTcb->PacketLength);
 
 		if(TRUE == (bSupportTxReport = TxFeedbackInstallTxFeedbackInfoForTcb(pAdapter, pTcb)))
 		{
 			TxFeedbackFillTxFeedbackInfoUserConfiguration(
-						pTcb, 
-						RT_TX_FEEDBACK_ID_P2P_PD_RSP_TX, 
-						pAdapter, 
+						pTcb,
+						RT_TX_FEEDBACK_ID_P2P_PD_RSP_TX,
+						pAdapter,
 						p2p_PDRspSent,
 						(PVOID)(pP2PInfo)
 					);
@@ -659,13 +659,13 @@ p2p_Send_PDRsp(
 
 		if(pbSupportTxReport) *pbSupportTxReport = bSupportTxReport;
 
-		p2p_DevList_TxUpdate(&pP2PInfo->devList, P2P_FID_PD_RSP, 
+		p2p_DevList_TxUpdate(&pP2PInfo->devList, P2P_FID_PD_RSP,
 			da, P2P_DEV_TYPE_DEV, &fbuf,
 			dialogToken, RT_GetChannelNumber(pP2PInfo->pAdapter));
 
 		MgntSendPacket(pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, dataRate);
 	}
-	
+
 	PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 }
 
@@ -697,7 +697,7 @@ p2p_Send_PresenceReq(
 
 		MgntSendPacket(pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, dataRate);
 	}
-	
+
 	PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 }
 
@@ -729,7 +729,7 @@ p2p_Send_PresenceRsp(
 
 		MgntSendPacket(pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, dataRate);
 	}
-	
+
 	PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 }
 
@@ -760,7 +760,7 @@ p2p_Send_GoDiscoverabilityReq(
 
 		MgntSendPacket(pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, dataRate);
 	}
-	
+
 	PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 }
 
@@ -787,10 +787,10 @@ p2p_Send_SDReq(
 		p2p_Construct_SDReq(pP2PInfo, &fbuf, da);
 
 		pTcb->PacketLength = FrameBuf_Length(&fbuf);
-		
+
 		MgntSendPacket(pP2PInfo->pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
-		
+
 	PlatformReleaseSpinLock(pP2PInfo->pAdapter, RT_TX_SPINLOCK);
 
 	return;
@@ -818,14 +818,14 @@ p2p_Send_SDRsp(
 
 		FrameBuf_Init(pAdapter->MAX_TRANSMIT_BUFFER_SIZE, 0, pBuf->Buffer.VirtualAddress, &fbuf);
 		FrameBuf_SetDbgLevel(&fbuf, DBG_LOUD);
-		
+
 		p2p_Construct_SDRsp(pP2PInfo, &fbuf, da, dialogToken, status, bFrag);
 
 		pTcb->PacketLength = FrameBuf_Length(&fbuf);
-		
+
 		MgntSendPacket(pP2PInfo->pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
-	
+
 	PlatformReleaseSpinLock(pP2PInfo->pAdapter, RT_TX_SPINLOCK);
 
 	return;
@@ -856,7 +856,7 @@ p2p_Send_SDComebackReq(
 
 		MgntSendPacket(pP2PInfo->pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
-	
+
 	PlatformReleaseSpinLock(pP2PInfo->pAdapter, RT_TX_SPINLOCK);
 
 	return;
@@ -889,7 +889,7 @@ p2p_Send_SDComebackRsp(
 
 		MgntSendPacket(pP2PInfo->pAdapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, DataRate);
 	}
-	
+
 	PlatformReleaseSpinLock(pP2PInfo->pAdapter, RT_TX_SPINLOCK);
 
 	return;

@@ -2,7 +2,7 @@
 #define __INC_MGNTGEN_H
 
 
-/*--------------------------Define -------------------------------------------*/ 
+/*--------------------------Define -------------------------------------------*/
 
 typedef enum _MGN_RATE_{
 	MGN_1M		= 0x02,
@@ -226,7 +226,7 @@ VOID
 MgntReleaseAllTimer(
 	PADAPTER			Adapter
 	);
-	
+
 
 BOOLEAN
 MgntGetFWBuffer(
@@ -280,17 +280,17 @@ MgntFreeBeaconBuf(
 	PADAPTER			Adapter
 	);
 
-BOOLEAN 
-MgntIsMacAddrGroup( 
-	pu1Byte addr 
+BOOLEAN
+MgntIsMacAddrGroup(
+	pu1Byte addr
 	);
 
 VOID
-MgntSsInquiry( 
+MgntSsInquiry(
 	PADAPTER			Adapter,
-	pu1Byte				pSaddr, 
-	PAUTH_STATUS_T		state_auth, 
-	PASOC_STATUS_T		state_asoc 
+	pu1Byte				pSaddr,
+	PAUTH_STATUS_T		state_auth,
+	PASOC_STATUS_T		state_asoc
 	);
 
 BOOLEAN
@@ -356,7 +356,7 @@ MgntIsDataOnlyFrame(
 
 BOOLEAN
 MgntIsRateValidForWirelessMode(
-	u1Byte	rate,		
+	u1Byte	rate,
 	u1Byte	wirelessmode
 );
 
@@ -414,12 +414,12 @@ MgntDisableNetMonitorMode(
 	BOOLEAN						bInitState
 );
 
-BOOLEAN 
+BOOLEAN
 MgntAllocHashTables(
 	IN	PADAPTER		pAdapter
 	);
 
-VOID 
+VOID
 MgntFreeHashTables(
 	IN	PADAPTER		pAdapter
 	);

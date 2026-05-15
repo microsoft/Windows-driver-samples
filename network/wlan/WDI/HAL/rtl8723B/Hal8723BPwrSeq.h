@@ -2,7 +2,7 @@
 #define REALTEK_POWER_SEQUENCE_8723B
 
 
-/* 
+/*
 	Check document WM-20150115-JackieLau-RTL8723B_Power_Architecture v10.vsd
 	There are 6 HW Power States:
 	0: POFF--Power Off
@@ -19,7 +19,7 @@
 	TRANS_SUS_TO_CARDEMU
 	TRANS_CARDEMU_TO_PDN
 	TRANS_ACT_TO_LPS
-	TRANS_LPS_TO_ACT	
+	TRANS_LPS_TO_ACT
 
 	TRANS_END
 */
@@ -30,7 +30,7 @@
 #define	RTL8723B_TRANS_CARDEMU_TO_PDN_STEPS	15
 #define	RTL8723B_TRANS_PDN_TO_CARDEMU_STEPS	15
 #define	RTL8723B_TRANS_ACT_TO_LPS_STEPS		15
-#define	RTL8723B_TRANS_LPS_TO_ACT_STEPS		15	
+#define	RTL8723B_TRANS_LPS_TO_ACT_STEPS		15
 #define	RTL8723B_TRANS_END_STEPS		1
 
 
@@ -60,7 +60,7 @@
 	{0x0058, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK,PWR_BASEADDR_MAC,PWR_CMD_WRITE, BIT0, BIT0},/*Enable HSISR GPIO[C:0] interrupt*/\
 	{0x005A, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK,PWR_BASEADDR_MAC,PWR_CMD_WRITE, BIT1, BIT1},/*Enable HSISR GPIO9 interrupt*/\
 	{0x0069, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK,PWR_BASEADDR_MAC,PWR_CMD_WRITE, BIT6, BIT6},/*For GPIO9 internal pull high setting*/\
-	
+
 
 #define RTL8723B_TRANS_ACT_TO_CARDEMU													\
 	/* format */																\
@@ -163,7 +163,7 @@
 	{0x0100, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK,PWR_BASEADDR_MAC,PWR_CMD_WRITE, 0xFF, 0xFF}, /*.	0x100[7:0] = 0xFF	 enable WMAC TRX*/\
 	{0x0002, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK,PWR_BASEADDR_MAC,PWR_CMD_WRITE, BIT1|BIT0, BIT1|BIT0}, /*.	0x02[1:0] = 2b'11	 enable BB macro*/\
 	{0x0522, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK,PWR_BASEADDR_MAC,PWR_CMD_WRITE, 0xFF, 0}, /*.	0x522 = 0*/
- 
+
 #define RTL8723B_TRANS_END															\
 	/* format */																\
 	/* { offset, cut_msk, fab_msk|interface_msk, base|cmd, msk, value }, // comments here*/								\

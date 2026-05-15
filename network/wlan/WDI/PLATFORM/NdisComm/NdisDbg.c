@@ -41,9 +41,9 @@ ndbg_CheckBtRspStatus(
 			RT_DISP(FBT, BT_DBG_STATE, ("[BTDBG], BT status : MP_BT_STATUS_UNKNOWN_STATUS_L\n"));
 			break;
 	}
-	
+
 	return retStatus;
-}	
+}
 
 BT_CTRL_STATUS
 ndbg_CheckC2hFrame(
@@ -53,7 +53,7 @@ ndbg_CheckC2hFrame(
 {
 	BT_CTRL_STATUS	c2hStatus=BT_STATUS_C2H_SUCCESS;
 	PBT_EXT_C2H 		pExtC2h=(PBT_EXT_C2H)&GLCurBtC2hRsp[0];
-		
+
 	RT_DISP_DATA(FBT, BT_DBG_CONTENT, ("[BTDBG], C2H rsp hex: \n"), pExtC2h, 6);
 
 	RT_DISP(FBT, BT_DBG_STATE, ("[BTDBG], statusCode = 0x%x\n", pExtC2h->statusCode));
@@ -98,7 +98,7 @@ ndbg_SendH2c(
 		for(i=0; i<BT_H2C_MAX_RETRY; i++)
 		{
 			RT_DISP(FBT, BT_DBG_STATE, ("[BTDBG], Send H2C command to wifi!!!\n"));
-			
+
 			pDbgCtx->h2cReqNum++;
 			pDbgCtx->h2cReqNum %= 16;
 			if(PlatformWaitEvent(&pDbgCtx->dbgH2cRspEvent, 100))
@@ -166,7 +166,7 @@ ndbg_BtFwOpCodeProcess(
 	h2cStatus = ndbg_SendH2c(Adapter, pH2c, h2cParaLen+2);
 	if(BT_STATUS_H2C_SUCCESS == h2cStatus)
 	{
-		// if reach here, it means H2C get the correct c2h response, 
+		// if reach here, it means H2C get the correct c2h response,
 		c2hStatus = ndbg_CheckC2hFrame(Adapter, pH2c);
 		if(BT_STATUS_C2H_SUCCESS == c2hStatus)
 		{
@@ -219,7 +219,7 @@ ndbg_BtStackOpCodeProcess(
 	}
 	else
 		retStatus = BT_STATUS_WRONG_LEVEL;
-		
+
 	return retStatus;
 }
 
@@ -230,7 +230,7 @@ DbgWorkItemCallback(
 {
 	PADAPTER				pAdapter = (PADAPTER)pContext;
 	PRT_NDIS_DBG_CONTEXT	pDbgCtx = &(pAdapter->ndisDbgCtx);
-		
+
 	// Execute specified action.
 	if(pDbgCtx->CurrDbgAct != NULL)
 	{
@@ -243,16 +243,16 @@ DbgWorkItemCallback(
 
 #if DBG
 		EndTime = PlatformGetCurrentTime();
-		RT_TRACE(COMP_DBG, DBG_LOUD, 
+		RT_TRACE(COMP_DBG, DBG_LOUD,
 			("DbgActType: %d, time spent: %I64d us\n",
-			pDbgCtx->DbgActType, (EndTime-StartTime) )); 
+			pDbgCtx->DbgActType, (EndTime-StartTime) ));
 #endif
 	}
 
 	PlatformAcquireSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 	pDbgCtx->bDbgWorkItemInProgress = FALSE;
 	PlatformReleaseSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
-	
+
 	if(pDbgCtx->bDbgDrvUnload)
 	{
 		PlatformSetEvent( &(pDbgCtx->DbgWorkItemEvent) );
@@ -261,7 +261,7 @@ DbgWorkItemCallback(
 
 //-----------------------------------------------------------------------------
 //	Description:
-//		Callback function of a workitem for IO.	
+//		Callback function of a workitem for IO.
 //
 //-----------------------------------------------------------------------------
 VOID
@@ -273,7 +273,7 @@ DbgIoCallback(
 	PRT_NDIS_DBG_CONTEXT	pDbgCtx = &(pAdapter->ndisDbgCtx);
 	PRT_SDIO_DEVICE pDevice = GET_RT_SDIO_DEVICE(pAdapter);
 
-	RT_ASSERT((KeGetCurrentIrql() == PASSIVE_LEVEL), 
+	RT_ASSERT((KeGetCurrentIrql() == PASSIVE_LEVEL),
 		("DbgIoCallback(): not in PASSIVE_LEVEL!\n"));
 
 	switch(pDbgCtx->DbgActType)
@@ -354,13 +354,13 @@ DbgIoCallback(
 			else
 			{ // IO REG
 				if(pDevice->SdioRegDbgCtrl & SDIO_REG_CTRL_CMD52)
-					PlatformEFSdioCmd52Write4Byte(pAdapter, WLAN_IOREG_DEVICE_ID, 1, pDbgCtx->DbgIoOffset, (u4Byte)(pDbgCtx->DbgIoValue));		
+					PlatformEFSdioCmd52Write4Byte(pAdapter, WLAN_IOREG_DEVICE_ID, 1, pDbgCtx->DbgIoOffset, (u4Byte)(pDbgCtx->DbgIoValue));
 				else
 					PlatformEFIOWrite4Byte(pAdapter, pDbgCtx->DbgIoOffset, (u4Byte)(pDbgCtx->DbgIoValue));
 			}
 		}
 		break;
-	
+
 	case DBG_READ_MAC_1BYTE:
 		if( IS_BB_REG_OFFSET_92S(pDbgCtx->DbgIoOffset) )
 		{
@@ -384,7 +384,7 @@ DbgIoCallback(
 			else
 			{ // IO REG
 				if(pDevice->SdioRegDbgCtrl & SDIO_REG_CTRL_CMD52)
-					pDbgCtx->DbgIoValue = PlatformEFSdioCmd52Read1Byte(pAdapter,  WLAN_IOREG_DEVICE_ID, 1,pDbgCtx->DbgIoOffset);		
+					pDbgCtx->DbgIoValue = PlatformEFSdioCmd52Read1Byte(pAdapter,  WLAN_IOREG_DEVICE_ID, 1,pDbgCtx->DbgIoOffset);
 				else
 					pDbgCtx->DbgIoValue = PlatformEFIORead1Byte(pAdapter, pDbgCtx->DbgIoOffset);
 			}
@@ -414,7 +414,7 @@ DbgIoCallback(
 			else
 			{ // IO REG
 				if(pDevice->SdioRegDbgCtrl & SDIO_REG_CTRL_CMD52)
-					pDbgCtx->DbgIoValue = PlatformEFSdioCmd52Read2Byte(pAdapter,  WLAN_IOREG_DEVICE_ID, 1,pDbgCtx->DbgIoOffset);		
+					pDbgCtx->DbgIoValue = PlatformEFSdioCmd52Read2Byte(pAdapter,  WLAN_IOREG_DEVICE_ID, 1,pDbgCtx->DbgIoOffset);
 				else
 					pDbgCtx->DbgIoValue = PlatformEFIORead2Byte(pAdapter, pDbgCtx->DbgIoOffset);
 			}
@@ -436,7 +436,7 @@ DbgIoCallback(
 			else
 			{ // IO REG
 				if(pDevice->SdioRegDbgCtrl & SDIO_REG_CTRL_CMD52)
-					pDbgCtx->DbgIoValue = PlatformEFSdioCmd52Read4Byte(pAdapter,  WLAN_IOREG_DEVICE_ID, 1,pDbgCtx->DbgIoOffset);		
+					pDbgCtx->DbgIoValue = PlatformEFSdioCmd52Read4Byte(pAdapter,  WLAN_IOREG_DEVICE_ID, 1,pDbgCtx->DbgIoOffset);
 				else
 					pDbgCtx->DbgIoValue = PlatformEFIORead4Byte(pAdapter, pDbgCtx->DbgIoOffset);
 			}
@@ -453,7 +453,7 @@ DbgIoCallback(
 		PHY_SetBBReg(pAdapter, pDbgCtx->DbgIoOffset, bMaskDWord, pDbgCtx->DbgIoValue);
 		break;
 
-	case DBG_READ_RF:	
+	case DBG_READ_RF:
 		pDbgCtx->DbgIoValue = PHY_QueryRFReg(pAdapter, (u1Byte)pDbgCtx->DbgRfPath, pDbgCtx->DbgIoOffset, bRFRegOffsetMask);
 		break;
 
@@ -503,9 +503,9 @@ DbgIoCallback(
 		{
 			u4Byte	BufferLengthRead;
 			u1Byte	i=0;
-			
+
 			PlatformUsbSyncVendorRequest(
-					pAdapter, 
+					pAdapter,
 					TRUE, 	// bWrite
 					0x05, 	// bReq
 					0, 		// wValue
@@ -533,10 +533,10 @@ DbgIoCallback(
 	case DBG_READ_EFUSE_4BYTE:
 		EFUSE_MaskedShadowRead(pAdapter, 4, (u2Byte)(pDbgCtx->DbgIoOffset), (UINT32 *)&pDbgCtx->DbgIoValue);
 		break;
-		
+
 	case DBG_UPDATE_EFUSE:
-		pDbgCtx->DbgIoValue = EFUSE_ShadowUpdate(pAdapter, FALSE);	
-		break;	
+		pDbgCtx->DbgIoValue = EFUSE_ShadowUpdate(pAdapter, FALSE);
+		break;
 
 	case DBG_WRITE_BT_EFUSE_1BYTE:
 		EFUSE_ShadowWriteBT(pAdapter, 1, (u2Byte)pDbgCtx->DbgIoOffset, (UINT32)pDbgCtx->DbgIoValue);
@@ -553,10 +553,10 @@ DbgIoCallback(
 	case DBG_READ_BT_EFUSE_4BYTE:
 		EFUSE_ShadowReadBT(pAdapter, 4, (u2Byte)(pDbgCtx->DbgIoOffset), (UINT32 *)&pDbgCtx->DbgIoValue);
 		break;
-		
+
 	case DBG_UPDATE_BT_EFUSE:
 		pDbgCtx->DbgIoValue = EFUSE_ShadowUpdateBT(pAdapter, FALSE);
-		break;	
+		break;
 
 	case DBG_SWITCH_ANTENNA:
 		pAdapter->HalFunc.SetTxAntennaHandler(pAdapter, (u1Byte)pDbgCtx->DbgIoValue);
@@ -565,7 +565,7 @@ DbgIoCallback(
 	case DBG_SET_TXPWR_FOR_ALL_RATE:
 		HAL_SetTxPowerForAllRate(pAdapter, pDbgCtx->DbgIoValue);
 		break;
-		
+
 	default:
 		break;
 	}
@@ -587,7 +587,7 @@ NDBG_Init(
 	RT_DISP(FBT, BT_DBG_STATE, ("[BTDBG], NDBG_Init()\n"));
 
 	pDbgCtx->bDbgDrvUnload = FALSE;
-	
+
 	PlatformInitializeEvent(&(pDbgCtx->DbgWorkItemEvent));
 	PlatformInitializeEvent(&pDbgCtx->dbgH2cRspEvent);
 	PlatformInitializeEvent(&pDbgCtx->dbgBtC2hEvent);
@@ -595,7 +595,7 @@ NDBG_Init(
 	PlatformInitializeSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 	PlatformInitializeWorkItem(
 		pAdapter,
-		&(pDbgCtx->DbgWorkItem), 
+		&(pDbgCtx->DbgWorkItem),
 		(RT_WORKITEM_CALL_BACK)DbgWorkItemCallback,
 		(PVOID)pAdapter,
 		"DbgWorkItem");
@@ -626,14 +626,14 @@ NDBG_Halt(
 	{
 		PlatformWaitEvent(&(pDbgCtx->DbgWorkItemEvent), 2000);
 	}
-	
+
 	PlatformFreeSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 }
 
 //-----------------------------------------------------------------------------
 //	Description:
-//		Read MAC register.	
-//		
+//		Read MAC register.
+//
 //-----------------------------------------------------------------------------
 BOOLEAN
 DbgReadMacReg(
@@ -651,7 +651,7 @@ DbgReadMacReg(
 		pAdapter=GetDefaultAdapter(Adapter);
 	else
 		pAdapter=Adapter;
-	
+
 	pDbgCtx = &(pAdapter->ndisDbgCtx);
 
 	switch(ulRegDataWidth)
@@ -679,7 +679,7 @@ DbgReadMacReg(
 		PlatformAcquireSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 		if(pDbgCtx->bDbgWorkItemInProgress)
 		{
-			RT_ASSERT(FALSE, 
+			RT_ASSERT(FALSE,
 				("DbgWorkItem is in progress!, skip DbgReadMacReg(), IoType: %d.\n", ulIoType));
 			bResult = FALSE;
 		}
@@ -702,8 +702,8 @@ DbgReadMacReg(
 
 //-----------------------------------------------------------------------------
 //	Description:
-//		Write MAC register.	
-//		
+//		Write MAC register.
+//
 //-----------------------------------------------------------------------------
 BOOLEAN
 DbgWriteMacReg(
@@ -742,7 +742,7 @@ DbgWriteMacReg(
 		PlatformAcquireSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 		if(pDbgCtx->bDbgWorkItemInProgress)
 		{
-			RT_ASSERT(FALSE, 
+			RT_ASSERT(FALSE,
 				("DbgWorkItem is in progress!, skip DbgWriteMacReg(), IoType: %d.\n", ulIoType));
 			bResult = FALSE;
 		}
@@ -765,8 +765,8 @@ DbgWriteMacReg(
 
 //-----------------------------------------------------------------------------
 //	Description:
-//		Read BB register.	
-//		
+//		Read BB register.
+//
 //-----------------------------------------------------------------------------
 BOOLEAN
 DbgReadBbReg(
@@ -794,7 +794,7 @@ DbgReadBbReg(
 		PlatformAcquireSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 		if(pDbgCtx->bDbgWorkItemInProgress)
 		{
-			RT_ASSERT(FALSE, 
+			RT_ASSERT(FALSE,
 				("DbgWorkItem is in progress!, skip DbgReadBbReg(), IoType: %d.\n", ulIoType));
 			bResult = FALSE;
 		}
@@ -817,8 +817,8 @@ DbgReadBbReg(
 
 //-----------------------------------------------------------------------------
 //	Description:
-//		Write BB register.	
-//		
+//		Write BB register.
+//
 //-----------------------------------------------------------------------------
 BOOLEAN
 DbgWriteBbReg(
@@ -847,7 +847,7 @@ DbgWriteBbReg(
 		PlatformAcquireSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 		if(pDbgCtx->bDbgWorkItemInProgress)
 		{
-			RT_ASSERT(FALSE, 
+			RT_ASSERT(FALSE,
 				("DbgWorkItem is in progress!, skip DbgWriteBbReg(), IoType: %d.\n", ulIoType));
 			bResult = FALSE;
 		}
@@ -870,8 +870,8 @@ DbgWriteBbReg(
 
 //-----------------------------------------------------------------------------
 //	Description:
-//		Read RF register.	
-//		
+//		Read RF register.
+//
 //-----------------------------------------------------------------------------
 BOOLEAN
 DbgReadRfReg(
@@ -885,7 +885,7 @@ DbgReadRfReg(
 	ULONG	ulIoType;
 	ULONG	RF_PATH=0, INulRegOffset=0;
 
-	ulIoType = DBG_READ_RF; 
+	ulIoType = DBG_READ_RF;
 	RF_PATH = (ulRegDataWidth >> 4); // Get RF path
 	INulRegOffset = ulRegOffset & 0x0fff;
 
@@ -895,7 +895,7 @@ DbgReadRfReg(
 		PlatformAcquireSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 		if(pDbgCtx->bDbgWorkItemInProgress)
 		{
-			RT_ASSERT(FALSE, 
+			RT_ASSERT(FALSE,
 				("DbgWorkItem is in progress!, skip DbgReadRfReg(), IoType: %d.\n", ulIoType));
 			bResult = FALSE;
 		}
@@ -908,7 +908,7 @@ DbgReadRfReg(
 			pDbgCtx->bDbgWorkItemInProgress = TRUE;
 			pDbgCtx->DbgActType = ulIoType;
 			pDbgCtx->CurrDbgAct = DbgIoCallback;
-			
+
 			PlatformScheduleWorkItem( &(pDbgCtx->DbgWorkItem) );
 		}
 		PlatformReleaseSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
@@ -919,8 +919,8 @@ DbgReadRfReg(
 
 //-----------------------------------------------------------------------------
 //	Description:
-//		Write RF register.	
-//		
+//		Write RF register.
+//
 //-----------------------------------------------------------------------------
 BOOLEAN
 DbgWriteRfReg(
@@ -946,7 +946,7 @@ DbgWriteRfReg(
 		PlatformAcquireSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 		if(pDbgCtx->bDbgWorkItemInProgress)
 		{
-			RT_ASSERT(FALSE, 
+			RT_ASSERT(FALSE,
 				("DbgWorkItem is in progress!, skip DbgWriteRfReg(), IoType: %d.\n", ulIoType));
 			bResult = FALSE;
 		}
@@ -971,8 +971,8 @@ DbgWriteRfReg(
 
 //-----------------------------------------------------------------------------
 //	Description:
-//		Read EEPROM for OID_RT_PRO_READ_EEPROM.	
-//		
+//		Read EEPROM for OID_RT_PRO_READ_EEPROM.
+//
 //-----------------------------------------------------------------------------
 BOOLEAN
 DbgReadEeprom(
@@ -1031,7 +1031,7 @@ DbgReadEeprom(
 //-----------------------------------------------------------------------------
 //	Description:
 //		Write EEPROM for OID_RT_PRO_WRITE_EEPROM.
-//		
+//
 //-----------------------------------------------------------------------------
 BOOLEAN
 DbgWriteEeprom(
@@ -1066,7 +1066,7 @@ DbgWriteEeprom(
 		PlatformAcquireSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 		if(pDbgCtx->bDbgWorkItemInProgress)
 		{
-			RT_ASSERT(FALSE, 
+			RT_ASSERT(FALSE,
 				("DbgWorkItem is in progress!, skip Pro8187IoCallback(), IoType: %d.\n", ulIoType));
 			bResult = FALSE;
 		}
@@ -1091,7 +1091,7 @@ DbgWriteEeprom(
 //-----------------------------------------------------------------------------
 //	Description:
 //		87S-USB Out Command.
-//		
+//
 //-----------------------------------------------------------------------------
 BOOLEAN
 DbgOutCmd(
@@ -1105,13 +1105,13 @@ DbgOutCmd(
 	ULONG			ulIoType;
 	ULONG i=0;
 
-	ulIoType = DBG_OUT_CMD; 
+	ulIoType = DBG_OUT_CMD;
 
 	// Perform IO via workitem.
 	PlatformAcquireSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 	if(pDbgCtx->bDbgWorkItemInProgress)
 	{
-		RT_ASSERT(FALSE, 
+		RT_ASSERT(FALSE,
 			("DbgWorkItem is in progress!, skip Pro8187IoCallback(), IoType: %d.\n", ulIoType));
 		bResult = FALSE;
 	}
@@ -1119,7 +1119,7 @@ DbgOutCmd(
 	{
 		PlatformZeroMemory(&pDbgCtx->DbgIoBuf, 64);
 		pDbgCtx->DbgIoOffset = 0;
-		
+
 		pDbgCtx->DbgIoValue = ulOutCmdWidth; //use DbgIoValue to indicate OutCmd length
 		PlatformMoveMemory(&pDbgCtx->DbgIoBuf, ulOutCmd, ulOutCmdWidth);
 
@@ -1135,9 +1135,9 @@ DbgOutCmd(
 
 //-----------------------------------------------------------------------------
 //	Description:
-//		Read EEPROM for OID_RT_PRO_READ_EFUSE.	
+//		Read EEPROM for OID_RT_PRO_READ_EFUSE.
 //	Added by Roger, 2008.11.10.
-//		
+//
 //-----------------------------------------------------------------------------
 BOOLEAN
 DbgReadEFuse(
@@ -1201,7 +1201,7 @@ DbgReadEFuse(
 //	Description:
 //		Write EEPROM for OID_RT_PRO_WRITE_EFUSE.
 //	Added by Roger, 2008.11.10.
-//		
+//
 //-----------------------------------------------------------------------------
 BOOLEAN
 DbgWriteEFuse(
@@ -1219,7 +1219,7 @@ DbgWriteEFuse(
 	{
 	case 1:
 		ulIoType = DBG_WRITE_EFUSE_1BYTE;
-		break;	
+		break;
 
 	default:
 		bResult = FALSE;
@@ -1232,7 +1232,7 @@ DbgWriteEFuse(
 		PlatformAcquireSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 		if(pDbgCtx->bDbgWorkItemInProgress)
 		{
-			RT_ASSERT(FALSE, 
+			RT_ASSERT(FALSE,
 				("DbgWorkItem is in progress!, skip Pro8187IoCallback(), IoType: %d.\n", ulIoType));
 			bResult = FALSE;
 		}
@@ -1256,18 +1256,18 @@ DbgWriteEFuse(
 //	Description:
 //		Write EEPROM for OID_RT_PRO_WRITE_EFUSE.
 //	Added by Roger, 2008.11.10.
-//		
+//
 //-----------------------------------------------------------------------------
 BOOLEAN
 DbgUpdateEFuse(
-	IN	PADAPTER	pAdapter	
+	IN	PADAPTER	pAdapter
 	)
 {
 	PRT_NDIS_DBG_CONTEXT	pDbgCtx = &(pAdapter->ndisDbgCtx);
 	BOOLEAN 		bResult = TRUE;
 	ULONG			ulIoType;
-	
-	ulIoType = DBG_UPDATE_EFUSE;	
+
+	ulIoType = DBG_UPDATE_EFUSE;
 
 	if(bResult == TRUE)
 	{
@@ -1275,7 +1275,7 @@ DbgUpdateEFuse(
 		PlatformAcquireSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 		if(pDbgCtx->bDbgWorkItemInProgress)
 		{
-			RT_ASSERT(FALSE, 
+			RT_ASSERT(FALSE,
 				("DbgWorkItem is in progress!, skip Pro8187IoCallback(), IoType: %d.\n", ulIoType));
 			bResult = FALSE;
 		}
@@ -1365,7 +1365,7 @@ DbgWriteBTEFuse(
 	{
 	case 1:
 		ulIoType = DBG_WRITE_BT_EFUSE_1BYTE;
-		break;	
+		break;
 
 	default:
 		bResult = FALSE;
@@ -1378,7 +1378,7 @@ DbgWriteBTEFuse(
 		PlatformAcquireSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 		if(pDbgCtx->bDbgWorkItemInProgress)
 		{
-			RT_ASSERT(FALSE, 
+			RT_ASSERT(FALSE,
 				("DbgWorkItem is in progress!, skip DbgWriteBTEFuse(), IoType: %d.\n", ulIoType));
 			bResult = FALSE;
 		}
@@ -1401,14 +1401,14 @@ DbgWriteBTEFuse(
 
 BOOLEAN
 DbgUpdateBTEFuse(
-	IN	PADAPTER	pAdapter	
+	IN	PADAPTER	pAdapter
 	)
 {
 	PRT_NDIS_DBG_CONTEXT	pDbgCtx = &(pAdapter->ndisDbgCtx);
 	BOOLEAN 		bResult = TRUE;
 	ULONG			ulIoType;
-	
-	ulIoType = DBG_UPDATE_BT_EFUSE;	
+
+	ulIoType = DBG_UPDATE_BT_EFUSE;
 
 	if(bResult == TRUE)
 	{
@@ -1416,7 +1416,7 @@ DbgUpdateBTEFuse(
 		PlatformAcquireSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 		if(pDbgCtx->bDbgWorkItemInProgress)
 		{
-			RT_ASSERT(FALSE, 
+			RT_ASSERT(FALSE,
 				("DbgWorkItem is in progress!, skip DbgUpdateBTEFuse(), IoType: %d.\n", ulIoType));
 			bResult = FALSE;
 		}
@@ -1443,7 +1443,7 @@ DbgSetTxAntenna(
 	BOOLEAN 		bResult = TRUE;
 	ULONG			ulIoType;
 
-	ulIoType = DBG_SWITCH_ANTENNA;	
+	ulIoType = DBG_SWITCH_ANTENNA;
 
 	if(bResult == TRUE)
 	{
@@ -1451,7 +1451,7 @@ DbgSetTxAntenna(
 		PlatformAcquireSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 		if(pDbgCtx->bDbgWorkItemInProgress)
 		{
-			RT_ASSERT(FALSE, 
+			RT_ASSERT(FALSE,
 				("DbgWorkItem is in progress!, skip Pro8187IoCallback(), IoType: %d.\n", ulIoType));
 			bResult = FALSE;
 		}
@@ -1466,7 +1466,7 @@ DbgSetTxAntenna(
 		PlatformReleaseSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 	}
 
-	return bResult;	
+	return bResult;
 }
 
 BOOLEAN
@@ -1517,14 +1517,14 @@ ndbg_BtControlStart(
 	BOOLEAN 		bResult = TRUE;
 	PRT_NDIS_DBG_CONTEXT	pDbgCtx = &(pAdapter->ndisDbgCtx);
 	ULONG	ulIoType = DBG_BT_CONTROL;
-	
+
 	PlatformAcquireSpinLock(pAdapter, RT_DBG_SPIN_LOCK);
 
 	if(pDbgCtx->bDbgWorkItemInProgress)
 	{
-		RT_ASSERT(FALSE, 
+		RT_ASSERT(FALSE,
 		("DbgWorkItem is in progress!, skip Pro8187IoCallback(), IoType: %d.\n", ulIoType));
-		bResult = FALSE;			
+		bResult = FALSE;
 	}
 	else
 	{
@@ -1577,7 +1577,7 @@ NDBG_BtControl(
 			Status = NDIS_STATUS_INVALID_LENGTH;
 		}
 	}
-	
+
 	return Status;
 }
 
@@ -1613,7 +1613,7 @@ NDBG_GetBtFwVersion(
 		return FALSE;
 	}
 	else
-	{	
+	{
 		pu2Tmp = (pu2Byte)&pBtRspContent[0];
 		btRealFwVer = *pu2Tmp;
 		btFwVer = pExtC2h->buf[2];
@@ -1634,7 +1634,7 @@ NDBG_FwC2hBtControl(
 	PRT_NDIS_DBG_CONTEXT	pDbgCtx=&(Adapter->ndisDbgCtx);
 	PBT_EXT_C2H		pExtC2h=(PBT_EXT_C2H)tmpBuf;
 
-	RT_DISP_DATA(FBT, BT_DBG_CONTENT, ("[BTDBG], NDBG_FwC2hBtControl(), hex: \n"), 
+	RT_DISP_DATA(FBT, BT_DBG_CONTENT, ("[BTDBG], NDBG_FwC2hBtControl(), hex: \n"),
 						tmpBuf, length);
 
 	RT_DISP(FBT, BT_DBG_STATE, ("[BTDBG], pExtC2h->extendId=0x%x\n", pExtC2h->extendId));
@@ -1642,7 +1642,7 @@ NDBG_FwC2hBtControl(
 	{
 		case EXT_C2H_WIFI_FW_ACTIVE_RSP:
 			RT_DISP(FBT, BT_DBG_STATE, ("[BTDBG], EXT_C2H_WIFI_FW_ACTIVE_RSP\n"));
-			RT_DISP_DATA(FBT, BT_DBG_CONTENT, ("[BTDBG], pExtC2h->buf hex: \n"), 
+			RT_DISP_DATA(FBT, BT_DBG_CONTENT, ("[BTDBG], pExtC2h->buf hex: \n"),
 				&pExtC2h->buf[0], (length-3));
 			PlatformSetEvent(&pDbgCtx->dbgH2cRspEvent);
 			break;
@@ -1653,7 +1653,7 @@ NDBG_FwC2hBtControl(
 			RT_DISP(FBT, BT_DBG_STATE, ("[BTDBG], pExtC2h->retLen=0x%x\n", pExtC2h->retLen));
 			RT_DISP(FBT, BT_DBG_STATE, ("[BTDBG], pExtC2h->opCodeVer=0x%x\n", pExtC2h->opCodeVer));
 			RT_DISP(FBT, BT_DBG_STATE, ("[BTDBG], pExtC2h->reqNum=0x%x\n", pExtC2h->reqNum));
-			RT_DISP_DATA(FBT, BT_DBG_CONTENT, ("[BTDBG], pExtC2h->buf hex: \n"), 
+			RT_DISP_DATA(FBT, BT_DBG_CONTENT, ("[BTDBG], pExtC2h->buf hex: \n"),
 				&pExtC2h->buf[0], (length-3));
 			PlatformSetEvent(&pDbgCtx->dbgBtC2hEvent);
 			break;
@@ -1680,10 +1680,10 @@ NDBG_StackBtCoexNotify(
 	if(length)
 	{
 		PlatformMoveMemory(&pStackRsp->buf[0], tmpBuf, length);
-		RT_DISP_DATA(FBT, BT_DBG_CONTENT, ("[BTDBG], NDBG_StackBtCoexNotify(), hex: \n"), 
+		RT_DISP_DATA(FBT, BT_DBG_CONTENT, ("[BTDBG], NDBG_StackBtCoexNotify(), hex: \n"),
 			tmpBuf, length);
 	}
-	RT_DISP(FBT, BT_DBG_STATE, ("[BTDBG], pStackRsp->opCode=0x%x, pStackRsp->opStatus=0x%x\n", 
+	RT_DISP(FBT, BT_DBG_STATE, ("[BTDBG], pStackRsp->opCode=0x%x, pStackRsp->opStatus=0x%x\n",
 		pStackRsp->opCode, pStackRsp->opStatus));
 	PlatformSetEvent(&pDbgCtx->dbgBtCoexEvent);
 }

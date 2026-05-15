@@ -42,10 +42,10 @@ AsocEntry_GetEntry(
 	{
 		return NULL;
 	}
-	
+
 	for(i = sum;i < ASSOCIATE_ENTRY_NUM; i++)
 	{
-		if(	pMgntInfo->AsocEntry[i].bUsed && 
+		if(	pMgntInfo->AsocEntry[i].bUsed &&
 			pMgntInfo->AsocEntry[i].Sum == sum &&
 			PlatformCompareMemory(MacAddr, pMgntInfo->AsocEntry[i].MacAddr, 6) == 0 )
 		{
@@ -54,7 +54,7 @@ AsocEntry_GetEntry(
 	}
 	for(i = 0; i < sum; i++)
 	{
-		if(	pMgntInfo->AsocEntry[i].bUsed && 
+		if(	pMgntInfo->AsocEntry[i].bUsed &&
 			pMgntInfo->AsocEntry[i].Sum == sum &&
 			PlatformCompareMemory(MacAddr, pMgntInfo->AsocEntry[i].MacAddr, 6) == 0 )
 		{
@@ -132,14 +132,14 @@ AsocEntry_AddStation(
 	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);
 	PRT_WLAN_STA	pEntry;
 	u1Byte			StaHWLimit = 0;
-	
+
 	if(pMgntInfo->SecurityInfo.PairwiseEncAlgorithm == RT_ENC_ALG_NO_CIPHER)
 		StaHWLimit = ASSOCIATE_ENTRY_NUM;
 	else if(Adapter == GetDefaultAdapter (Adapter))
 		StaHWLimit = 32;
 	else
 		StaHWLimit = 15;
-	
+
 	if( (ASSOCIATE_ENTRY_NUM -pMgntInfo->AvailableAsocEntryNum) >= StaHWLimit)
 	{
 		RT_TRACE( COMP_AP, DBG_LOUD, ("AsocEntry_AddStation(): Fail %d\n", pMgntInfo->AvailableAsocEntryNum) );
@@ -152,9 +152,9 @@ AsocEntry_AddStation(
 	if(pEntry != NULL)
 	{
 		RT_TRACE_F(COMP_AP, DBG_TRACE, ("AsocEntry_ResetEntry\n"));
-	
+
 		AsocEntry_ResetEntry(Adapter, pEntry);
-	
+
 		pEntry->bUsed = TRUE;
 		pEntry->Sum = AsocEntry_ComputeSum(MacAddr);
 		PlatformMoveMemory(pEntry->MacAddr, MacAddr, 6);
@@ -165,7 +165,7 @@ AsocEntry_AddStation(
 		RT_PRINT_ADDR(COMP_AP, DBG_LOUD, "Entry Address", pEntry->MacAddr);
 
 		//vivi mask this, use Adapter->DM_DigTable.CurMultiSTAConnectState = DIG_MultiSTA_CONNECT instead of it
-		//DM_MultiSTA_InitGainChangeNotify_CONNECT(Adapter);			
+		//DM_MultiSTA_InitGainChangeNotify_CONNECT(Adapter);
 		{	// Temp fix need to fine tune later.
 			HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(Adapter);
 			pHalData->DM_OutSrc.DM_DigTable.CurMultiSTAConnectState = DIG_MultiSTA_CONNECT;
@@ -194,7 +194,7 @@ AsocEntry_ResetEntry(
 
 	pEntry->DataRate = 0;
 	pEntry->bUseShortGI = FALSE;
-	
+
 	pEntry->IOTAction = 0;
 	pEntry->IOTPeer = HT_IOT_PEER_UNKNOWN;
 
@@ -206,23 +206,23 @@ AsocEntry_ResetEntry(
 	// HalMacId to this AID ------------------
 	pEntry->AssociatedMacId = 0;
 	// ------------------------------------
-	
+
 	//
 	// QoS Capability
 	//
 	pEntry->QosMode = QOS_DISABLE;
-	
+
 	pEntry->PSIdleCunt = 0;
-	
+
 
 	//
 	// HT Capability.
 	//
 	AP_HTResetSTAEntry(Adapter, pEntry);
 	AP_VHTResetSTAEntry(Adapter, pEntry);
-	
+
 	// Added by Annie, 2005-07-01.
-	if( ACTING_AS_AP(Adapter) && 
+	if( ACTING_AS_AP(Adapter) &&
 	   (pSecInfo->AuthMode == RT_802_11AuthModeWPAPSK ||pSecInfo->SecLvl == RT_SEC_LVL_WPA2 ) )
 	{
 		Authenticator_StateINITIALIZE(Adapter, pEntry);
@@ -233,17 +233,17 @@ AsocEntry_ResetEntry(
 	WFD_RemoveAssocClient(Adapter, pEntry->MacAddr);
 
 	//
-	// 061221, rcnjko: 
-	// 1. We must clear PTK for RSNA IBSS case if peer STA is gone, 
-	// otherwise, when the STA join this IBSS again, we'll try send 
-	// encrypted EAPOL-KEY to it, and therefore 4-way fails. 
+	// 061221, rcnjko:
+	// 1. We must clear PTK for RSNA IBSS case if peer STA is gone,
+	// otherwise, when the STA join this IBSS again, we'll try send
+	// encrypted EAPOL-KEY to it, and therefore 4-way fails.
 	//
-	// 2. As to our GTK of RSNA IBSS and WEP key, NDIS6 won't set it again 
-	// even all peer STA leaved. So, keep default key. 
+	// 2. As to our GTK of RSNA IBSS and WEP key, NDIS6 won't set it again
+	// even all peer STA leaved. So, keep default key.
 	//
 	if( pMgntInfo->OpMode == RT_OP_MODE_IBSS && pMgntInfo->bRSNAPSKMode )
 	{
-		
+
 		int index;
 		PPER_STA_MPAKEY_ENTRY		pMapKey;
 		PPER_STA_DEFAULT_KEY_ENTRY	pDefKey;
@@ -257,19 +257,19 @@ AsocEntry_ResetEntry(
 			if( pMapKey->Valid && eqMacAddr(pMapKey->MACAdrss, pEntry->MacAddr) )
 			{
 				RT_PRINT_ADDR( COMP_SEC, DBG_LOUD, "RSNA IBSS: Clear PTK of ", pEntry->MacAddr);
-				PlatformZeroMemory( pMapKey, sizeof(PER_STA_MPAKEY_ENTRY) ); 
+				PlatformZeroMemory( pMapKey, sizeof(PER_STA_MPAKEY_ENTRY) );
 			}
 
 			pDefKey = &(pSecInfo->PerStaDefKeyTable[index]);
 			if( pDefKey->Valid && eqMacAddr(pDefKey->MACAdrss, pEntry->MacAddr))
 			{
 				RT_PRINT_ADDR( COMP_SEC, DBG_LOUD, "RSNA IBSS: Clear GTK of ", pEntry->MacAddr);
-				PlatformZeroMemory( pDefKey, sizeof(PER_STA_DEFAULT_KEY_ENTRY) ); 
+				PlatformZeroMemory( pDefKey, sizeof(PER_STA_DEFAULT_KEY_ENTRY) );
 			}
 		}
-		
+
 		//vivi added for new cam search flow, 20091028
-		//also remove hw cam 
+		//also remove hw cam
 		SEC_AsocEntry_ResetEntry(Adapter, pEntry);
 
 	}
@@ -288,7 +288,7 @@ AsocEntry_ResetEntry(
 	{
 		PlatformFreeMemory(pEntry->AP_RecvAsocReq, 1024);
 		pEntry->AP_RecvAsocReq = NULL;
-	}		
+	}
 	pEntry->AP_RecvAsocReqLength = 0;
 
 	if(pEntry->AP_SendAsocResp != NULL)
@@ -352,7 +352,7 @@ AsocEntry_RemoveStation(
 #endif
 
 	RemovePeerTS(Adapter, MacAddr);
-	
+
 	if(GET_TDLS_ENABLED(pMgntInfo) && !ACTING_AS_AP(Adapter))
 	{
 		TDLS_RemovePeer(Adapter, MacAddr);
@@ -388,7 +388,7 @@ AsocEntry_RemoveStation(
 	{
 		if(pMgntInfo->AsocEntry[i].bUsed)
 			continue;
-		
+
 		// Move first of the entry with hash value=i to this empty entry.
 		for(j = 0; j < ASSOCIATE_ENTRY_NUM; j++)
 		{
@@ -408,7 +408,7 @@ AsocEntry_RemoveStation(
 				}
 				else
 				{
-					
+
 					pMgntInfo->AsocEntry[i].PsQueue.Flink->Blink = &(pMgntInfo->AsocEntry[i].PsQueue); // 1st node.
 					pMgntInfo->AsocEntry[i].PsQueue.Blink->Flink = &(pMgntInfo->AsocEntry[i].PsQueue); // last node.
 				}
@@ -439,7 +439,7 @@ AsocEntry_RemoveStation(
 				RTInitializeListHead( &(pMgntInfo->AsocEntry[j].WmmPsQueue) );
 				PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 				pMgntInfo->AsocEntry[j].perSTAKeyInfo.pWLanSTA = &(pMgntInfo->AsocEntry[j]);
-				
+
 				if(Adapter->TDLSSupport)
 				{
 					TDLS_UpdatePeer(Adapter, &(pMgntInfo->AsocEntry[i]));
@@ -502,7 +502,7 @@ AsocEntry_IsStationAssociated(
 	{
 		return FALSE;
 	}
-	
+
 	if(pEntry->bAssociated)
 	{
 		return TRUE;
@@ -544,7 +544,7 @@ AsocEntry_AgeFunction(
 			bFree = FALSE;
 			if(AsocEntry[i].bAssociated)
 			{
-				RT_TRACE(COMP_AP, DBG_TRACE, ("AsocEntry_AgeFunction() check, %02X-%02X-%02X-%02X-%02X-%02X MacId %d Entry index %d\n", AsocEntry[i].MacAddr[0], AsocEntry[i].MacAddr[1], AsocEntry[i].MacAddr[2], AsocEntry[i].MacAddr[3], AsocEntry[i].MacAddr[4], AsocEntry[i].MacAddr[5], AsocEntry[i].AssociatedMacId, i));	
+				RT_TRACE(COMP_AP, DBG_TRACE, ("AsocEntry_AgeFunction() check, %02X-%02X-%02X-%02X-%02X-%02X MacId %d Entry index %d\n", AsocEntry[i].MacAddr[0], AsocEntry[i].MacAddr[1], AsocEntry[i].MacAddr[2], AsocEntry[i].MacAddr[3], AsocEntry[i].MacAddr[4], AsocEntry[i].MacAddr[5], AsocEntry[i].AssociatedMacId, i));
 				// 10 minutes.
 				//if(TimeDifference > 600000)		// rewrited by Annie, 2006-02-16.
 				if(TimeDifference >  ((u8Byte)pMgntInfo->LiveTime)*1000)
@@ -574,7 +574,7 @@ AsocEntry_AgeFunction(
 					if(AsocEntry[i].WirelessMode < WIRELESS_MODE_N_24G)
 						nLegacyStaCnt++;
 					else if(!AsocEntry[i].BandWidth)
-						n20MHzStaCnt++;		
+						n20MHzStaCnt++;
 
 					//
 					// If the power save queues are not empty, check if we should clear the queue.
@@ -585,7 +585,7 @@ AsocEntry_AgeFunction(
 						PRT_TCB	pTcb;
 
 						AsocEntry[i].PSIdleCunt = (AsocEntry[i].PSIdleCunt + 1 ) % ((pMgntInfo->bWiFiConfg ? AP_CLIENT_PS_QUEUE_TIMEOUT_LOGO_SEC : AP_CLIENT_PS_QUEUE_TIMEOUT_SEC) / RT_CHECK_FOR_HANG_PERIOD);
-					
+
 						if( AsocEntry[i].PSIdleCunt == 0 )
 						{
 							PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
@@ -603,7 +603,7 @@ AsocEntry_AgeFunction(
 							}
 
 							//
-							// We leave power saving mode when idle condition for PSQ and WMMPSQ was met to prevent bug check code 
+							// We leave power saving mode when idle condition for PSQ and WMMPSQ was met to prevent bug check code
 							// DPC_WATCHDOG_VIOLATION (133), added by Roger, 2013.08.05.
 							//
 							AsocEntry[i].bPowerSave = FALSE;
@@ -635,7 +635,7 @@ AsocEntry_AgeFunction(
 				{
 					pMgntInfo->pCurrentSta = &(AsocEntry[i]);
 					DrvIFIndicateIncommingAssociationComplete(Adapter, unspec_reason);
-				}	
+				}
 				RT_TRACE_F(COMP_AP, DBG_TRACE, ("AsocEntry_RemoveStation\n"));
 				AsocEntry_RemoveStation(Adapter, AsocEntry[i].MacAddr);
 			}
@@ -650,7 +650,7 @@ AsocEntry_AgeFunction(
 		// Do not update bUseProtection bit when G mode STA add or leave. 2010.11.24. by tynli.
 
 		BOOLEAN bUseProtection = (nBModeStaCnt == 0)? FALSE: TRUE;
-		
+
 		ActUpdate_ProtectionMode(Adapter, bUseProtection);
 		if(nBModeStaCnt == 0)
 			pMgntInfo->mCap |= cShortSlotTime;
@@ -673,7 +673,7 @@ AsocEntry_AgeFunction(
 				pMgntInfo->pHTInfo->CurrentOpMode = HT_OPMODE_40MHZ_PROTECT;
 			else
 				pMgntInfo->pHTInfo->CurrentOpMode = HT_OPMODE_NO_PROTECT;
-				
+
 		}
 	}
 
@@ -691,7 +691,7 @@ AsocEntry_AgeFunction(
 			OCTET_STRING 	osRateSet;
 			u1Byte 			RateSet[6] = { MGN_1M, MGN_2M, MGN_5_5M, MGN_11M,MGN_6M, MGN_9M };
 
-			//[Win7 Two Port TP IOT BroadCom Issue] when G-STA link to  our Vwifi, we use protection, 
+			//[Win7 Two Port TP IOT BroadCom Issue] when G-STA link to  our Vwifi, we use protection,
 			// however, Default link to Broadcom can only accept OFDM ACK without CCK ones. 2009.07.30, by Bohn
 			if(pMgntInfo->IOTPeer == HT_IOT_PEER_BROADCOM)
 			{
@@ -710,7 +710,7 @@ AsocEntry_AgeFunction(
 		}
 	}
 	else
-	{		
+	{
 		// Periodically update RTS rate to prevent the RTS rate > init data rate. 2010.11.24. by tynli.
 		Adapter->HalFunc.SetHwRegHandler( Adapter, HW_VAR_INIT_RTS_RATE, (pu1Byte)(&Adapter));
 	}
@@ -740,7 +740,7 @@ AsocEntry_BecomeDisassoc(
 		ReturnTCB(Adapter, pTcb, RT_STATUS_SUCCESS);
 	}
 	PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
-	
+
 	// Reset association state of the STA.
 	pEntry->bAssociated = FALSE;
 
@@ -756,7 +756,7 @@ AsocEntry_EnumStation(
 	ULONG	i, nFound = 0;
 	PMGNT_INFO	pMgntInfo = &(Adapter->MgntInfo);
 	PRT_WLAN_STA	AsocEntry = pMgntInfo->AsocEntry;
-	
+
 	//<SC_TODO: need a spinlock>
 	for (i=0; i<ASSOCIATE_ENTRY_NUM; i++)
 	{
@@ -793,7 +793,7 @@ AsocEntry_ResetAll(
 		pEntry = &(pMgntInfo->AsocEntry[i]);
 
 		RT_TRACE_F(COMP_AP, DBG_TRACE, ("AsocEntry_ResetEntry\n"));
-		
+
 		AsocEntry_ResetEntry(Adapter, pEntry); // This will free packets queued for this station.
 		pEntry->bUsed = FALSE;
 		pMgntInfo->AvailableAsocEntryNum++;
@@ -850,7 +850,7 @@ AsocEntry_UpdateAsocInfo(
 	}
 	//RT_TRACE_F(COMP_AP, DBG_LOUD, ("Action = %d CpntentLen = %d\n", Action, ContentLength));
 	//RT_PRINT_ADDR(COMP_AP, DBG_LOUD, "AsocEntry_UpdateAsocInfo(): Addr = ", StaAddr);
-	
+
 	switch(Action)
 	{
 		case ALLOCATE_ASOC_REQ:
@@ -858,8 +858,8 @@ AsocEntry_UpdateAsocInfo(
 			if(pEntry->AP_RecvAsocReq == NULL)
 			{
 				PlatformAllocateMemory(
-					Adapter, 
-					(PVOID *)&(pEntry->AP_RecvAsocReq), 
+					Adapter,
+					(PVOID *)&(pEntry->AP_RecvAsocReq),
 					1024);
 			}
 			break;
@@ -869,8 +869,8 @@ AsocEntry_UpdateAsocInfo(
 			if(pEntry->AP_SendAsocResp == NULL)
 			{
 				PlatformAllocateMemory(
-					Adapter, 
-					(PVOID *)&(pEntry->AP_SendAsocResp), 
+					Adapter,
+					(PVOID *)&(pEntry->AP_SendAsocResp),
 					1024);
 			}
 			break;
@@ -880,35 +880,35 @@ AsocEntry_UpdateAsocInfo(
 			if(pEntry->AP_AsocRspIEFromOS == NULL)
 			{
 				PlatformAllocateMemory(
-					Adapter, 
-					(PVOID *)&(pEntry->AP_AsocRspIEFromOS), 
+					Adapter,
+					(PVOID *)&(pEntry->AP_AsocRspIEFromOS),
 					1024);
 			}
 			break;
 		}
 		case UPDATE_ASOC_REQ:
 		{
-			//RT_ASSERT(ContentLength <= 1024, 
+			//RT_ASSERT(ContentLength <= 1024,
 			//	("AsocEntry_UpdateAsocInfo(): ContentLength greater than 1024.\n"));
 			if(ContentLength > 1024)
 			{
 				pEntry->AP_RecvAsocReqLength = 0;
 				break;
 			}
-			
+
 			if(pEntry->AP_RecvAsocReq)
 			{
 				PlatformMoveMemory(
 					pEntry->AP_RecvAsocReq,
 					Content,
 					ContentLength);
-				pEntry->AP_RecvAsocReqLength= ContentLength;		
+				pEntry->AP_RecvAsocReqLength= ContentLength;
 			}
 			break;
 		}
 		case UPDATE_ASOC_RSP:
-		{	
-			//RT_ASSERT(ContentLength <= 1024, 
+		{
+			//RT_ASSERT(ContentLength <= 1024,
 			//	("AsocEntry_UpdateAsocInfo(): ContentLength greater than 1024.\n"));
 			//RT_TRACE_F(COMP_AP, DBG_LOUD, ("UPDATE_ASOC_RSP\n"));
 			//RT_PRINT_DATA(COMP_AP, DBG_LOUD, "UPDATE_ASOC_RSP Content:\n", Content, ContentLength);
@@ -917,34 +917,34 @@ AsocEntry_UpdateAsocInfo(
 				pEntry->AP_SendAsocRespLength = 0;
 				break;
 			}
-			
+
 			if(pEntry->AP_SendAsocResp)
 			{
 				PlatformMoveMemory(
 					pEntry->AP_SendAsocResp,
 					Content,
 					ContentLength);
-				pEntry->AP_SendAsocRespLength= ContentLength;	
+				pEntry->AP_SendAsocRespLength= ContentLength;
 			}
 			break;
 		}
 		case UPDATE_ASOC_RSP_IE_FROM_OS:
 		{
-			//RT_ASSERT(ContentLength <= 1024, 
+			//RT_ASSERT(ContentLength <= 1024,
 			//	("AsocEntry_UpdateAsocInfo(): ContentLength greater than 1024.\n"));
 			if(ContentLength > 1024)
 			{
 				pEntry->AP_AsocRspIEFromOSLength= 0;
 				break;
 			}
-			
+
 			if(pEntry->AP_AsocRspIEFromOS)
 			{
 				PlatformMoveMemory(
 					pEntry->AP_AsocRspIEFromOS,
 					Content,
 					ContentLength);
-				pEntry->AP_AsocRspIEFromOSLength = ContentLength;	
+				pEntry->AP_AsocRspIEFromOSLength = ContentLength;
 			}
 			break;
 		}
@@ -957,7 +957,7 @@ AsocEntry_UpdateAsocInfo(
 			}
 			else
 				RT_ASSERT(TRUE, ("AP_RecvAsocReq is NULL\n"));
-			
+
 			pEntry->AP_RecvAsocReqLength = 0;
 			break;
 		}
@@ -970,7 +970,7 @@ AsocEntry_UpdateAsocInfo(
 			}
 			else
 				RT_ASSERT(TRUE, ("AP_SendAsocResp is NULL\n"));
-			
+
 			pEntry->AP_SendAsocRespLength = 0;
 			break;
 		}
@@ -990,7 +990,7 @@ AsocEntry_UpdateAsocInfo(
 		default:
 			break;
 	}
-	
+
 }
 
 
@@ -1066,7 +1066,7 @@ AP_PS_ReturnAllQueuedPackets(
 		pTcb = (PRT_TCB)RTRemoveHeadList(&(pMgntInfo->GroupPsQueue));
 		ReturnTCB(Adapter, pTcb, RT_STATUS_SUCCESS);
 	}
-	
+
 	for(i = 0; i < ASSOCIATE_ENTRY_NUM; i++)
 	{
 		pEntry = &(pMgntInfo->AsocEntry[i]);
@@ -1095,7 +1095,7 @@ AP_PS_ReturnAllQueuedPackets(
 
 
 //
-// Description: Update the power-save state of a STA and take proper response 
+// Description: Update the power-save state of a STA and take proper response
 // 				to the STA changing their power-save mode.
 // 2005.07.05, by rcnjko.
 //
@@ -1109,7 +1109,7 @@ AP_PS_UpdateStationPSState(
 	PRT_WLAN_STA	pEntry;
 	BOOLEAN			bPowerSave = (Frame_PwrMgt((*posFrame))==1) ? TRUE : FALSE;
 	RT_STATUS		rtStatus;
-	
+
 	pEntry = AsocEntry_GetEntry(pMgntInfo, Frame_pTaddr((*posFrame)));
 	if(pEntry == NULL)
 	{
@@ -1123,7 +1123,7 @@ AP_PS_UpdateStationPSState(
 	if(bPowerSave)
 	{ // STA is power-save state.
 		// Reset the PS idle count because the STA is still sending PS packets.
-		pEntry->PSIdleCunt = 0;			
+		pEntry->PSIdleCunt = 0;
 		if(!pEntry->bPowerSave)
 		{
 			// RT_PRINT_ADDR(COMP_AP, DBG_LOUD, "AP_PS_UpdateStationPSState(): Client enter to ps for addr = ", pEntry->MacAddr);
@@ -1183,7 +1183,7 @@ AP_PS_UpdateStationPSState(
 				PRT_TCB	pTcb;
 				OCTET_STRING		osMpdu;
 				BOOLEAN				bSupportTxFeedback = FALSE;
-				
+
 				// Acquire the Tx Spin Lock to protect the variables in pEntry,
 				// because there are more than 1 functions reference these variables.
 				PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
@@ -1214,14 +1214,14 @@ AP_PS_UpdateStationPSState(
 
 
 						bSupportTxFeedback = TxFeedbackInstallTxFeedbackInfoForTcb(Adapter, pTcb);
-		
+
 						if(bSupportTxFeedback)
 						{
 							TxFeedbackFillTxFeedbackInfoUserConfiguration(
-									pTcb, 
-									(pEntry->WmmEosp == RT_STA_EOSP_STATE_OPENED) ? RT_TX_FEEDBACK_ID_AP_WMM_PS_PKT : RT_TX_FEEDBACK_ID_AP_WMM_EOSP_ENDING, 
-									Adapter, 
-									Ap_PsTxFeedbackCallback, 
+									pTcb,
+									(pEntry->WmmEosp == RT_STA_EOSP_STATE_OPENED) ? RT_TX_FEEDBACK_ID_AP_WMM_PS_PKT : RT_TX_FEEDBACK_ID_AP_WMM_EOSP_ENDING,
+									Adapter,
+									Ap_PsTxFeedbackCallback,
 									(PVOID)pEntry
 								);
 						}
@@ -1257,11 +1257,11 @@ AP_PS_UpdateStationPSState(
 					PRT_TX_LOCAL_BUFFER 	pBuf;
 
 					pEntry->WmmEosp = RT_STA_EOSP_STATE_ENDED;
-					
+
 					if(MgntGetBuffer(Adapter, &pTcb, &pBuf))
 					{
 						ConstructNullFunctionData(
-							Adapter, 
+							Adapter,
 							pBuf->Buffer.VirtualAddress,
 							&pTcb->PacketLength,
 							pEntry->MacAddr,
@@ -1269,15 +1269,15 @@ AP_PS_UpdateStationPSState(
 							GET_QOS_CTRL_WMM_UP(posFrame->Octet),
 							TRUE,
 							FALSE);
-						
+
 						if(TxFeedbackInstallTxFeedbackInfoForTcb(Adapter, pTcb))
 						{
 
 							TxFeedbackFillTxFeedbackInfoUserConfiguration(
-									pTcb, 
-									RT_TX_FEEDBACK_ID_AP_WMM_EOSP_ENDING, 
-									Adapter, 
-									Ap_PsTxFeedbackCallback, 
+									pTcb,
+									RT_TX_FEEDBACK_ID_AP_WMM_EOSP_ENDING,
+									Adapter,
+									Ap_PsTxFeedbackCallback,
 									(PVOID)pEntry
 								);
 
@@ -1285,7 +1285,7 @@ AP_PS_UpdateStationPSState(
 						}
 
 						pTcb->bTxUseDriverAssingedRate = TRUE;
-						pTcb->priority = GET_QOS_CTRL_WMM_UP(posFrame->Octet);						
+						pTcb->priority = GET_QOS_CTRL_WMM_UP(posFrame->Octet);
 						MgntSendPacket(Adapter, pTcb, pBuf, pTcb->PacketLength, NORMAL_QUEUE, Adapter->MgntInfo.LowestBasicRate);
 
 						RT_PRINT_ADDR(COMP_AP, DBG_LOUD, "AP_PS_UpdateStationPSState(): SendQosNull of EOSP for client = ", pEntry->MacAddr);
@@ -1322,21 +1322,21 @@ AP_PS_UpdateStationPSState(
 		if(Adapter == GetFirstGOPort(Adapter))
 		{
 			MultiChannelDisableEnableExactHwQueue(Adapter, FALSE);
-			
+
 			if(GetFirstClientPort(Adapter) != NULL)
 			{
 				MultiChannelDisableEnableExactHwQueue(GetFirstClientPort(Adapter), FALSE);
 			}
-			
+
 			MultiChannelDumpHwQueueStatus(Adapter);
 		}
 		// -------------------------------------------------------------------------------------
-#endif		
+#endif
 
 		// Send out all packet queued for the STA.
 		PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
 		//
-		// We remove all TCBs from the PsQueue and insert into the tmp list to prevent that the TCBs may be  recurcively 
+		// We remove all TCBs from the PsQueue and insert into the tmp list to prevent that the TCBs may be  recurcively
 		// inserted back into the PsQueue when the client enters and leaves PS mode frequently.
 		// By Bruce, 2010-06-02.
 		//
@@ -1364,10 +1364,10 @@ AP_PS_UpdateStationPSState(
 		while( !RTIsListEmpty(&tmpList))
 		{
 			pTcb = (PRT_TCB)RTRemoveHeadList(&tmpList);
-			
+
 			if(pMgntInfo->bAPTimExtend)
 			{
-				// 
+				//
 				// We set the TIM to force the client to wake up no matter if the queue has the packets for this client.
 				// It's a workaround solution for the IPOD issue.
 				//
@@ -1379,10 +1379,10 @@ AP_PS_UpdateStationPSState(
 			{
 				RTInsertTailListWithCnt(Get_WAIT_QUEUE(Adapter, pTcb->SpecifiedQueueID), &pTcb->List,GET_WAIT_QUEUE_CNT(Adapter,pTcb->SpecifiedQueueID));
 			}
-		}		
+		}
 		PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
 	}
-	
+
 	return pEntry;
 }
 
@@ -1407,7 +1407,7 @@ AP_PS_SendPacket(
 
 	if( !MacAddr_isMulticast(pRaddr) )
 	{ // Unicast.
-		PRT_WLAN_STA	pEntry = AsocEntry_GetEntry(pMgntInfo, pRaddr);	
+		PRT_WLAN_STA	pEntry = AsocEntry_GetEntry(pMgntInfo, pRaddr);
 
 		// Queue the unicast packet if dest STA is in power-save mode.
 		if(pEntry != NULL && pEntry->bPowerSave)
@@ -1463,7 +1463,7 @@ AP_PS_FillTim(
 		u1Byte ByteOffset,BitOffset,BeginByte,EndByte;
 
 		PlatformFillMemory(pMgntInfo->TimBuf, 254, 0);
-		
+
 		// Set Virtual Bit Map for AID>0 (unicast).
 		for(i = 0;i < ASSOCIATE_ENTRY_NUM; i++)
 		{
@@ -1478,11 +1478,11 @@ AP_PS_FillTim(
 			//		The P2P test plan 6.1.12 is corrected so our AP can set pvb bit for the sta in WMM UAPSD.
 			//		Revised by Bruce, 2012-06-14.
 			// By Bruce, 2010-12-31.
-			// 
+			//
 			//
 			if(pEntry->bUsed && pEntry->bAssociated && pEntry->bPowerSave &&
 				(!RTIsListEmpty(&(pEntry->PsQueue)) ||
-				(!RTIsListEmpty(&(pEntry->WmmPsQueue)) && ((pEntry->WmmStaQosInfo & 0xF) == 0xF)) || 
+				(!RTIsListEmpty(&(pEntry->WmmPsQueue)) && ((pEntry->WmmStaQosInfo & 0xF) == 0xF)) ||
 				pEntry->FillTIMFlags))
 			{
 				// RT_PRINT_ADDR(COMP_AP, DBG_LOUD, "AP_PS_FillTim(): Fill Unicast TIM for addr = ", pEntry->MacAddr);
@@ -1496,7 +1496,7 @@ AP_PS_FillTim(
 
 				if(MinAID == -1 || pEntry->AID < MinAID)
 					MinAID = pEntry->AID;
-				
+
 				if(pEntry->FillTIM)
 					pEntry->FillTIM= FALSE;
 				else
@@ -1524,7 +1524,7 @@ AP_PS_FillTim(
 		// DTIM Period.
 		pMgntInfo->Tim.Octet[1] = (u1Byte)pMgntInfo->dot11DtimPeriod;
 		// Bitmap Control.
-		pMgntInfo->Tim.Octet[2] = BeginByte | 
+		pMgntInfo->Tim.Octet[2] = BeginByte |
 									(RTIsListEmpty(&pMgntInfo->GroupPsQueue) ? 0 : 1);
 
 		pMgntInfo->Tim.Length = 4 + (EndByte-BeginByte);
@@ -1535,7 +1535,7 @@ AP_PS_FillTim(
 // Description:	Handle power-save poll.
 // 2005.07.07, by rcnjko.
 //
-VOID 
+VOID
 AP_PS_OnPSPoll(
 	IN	PADAPTER		Adapter,
 	IN	OCTET_STRING	osMpdu
@@ -1545,11 +1545,11 @@ AP_PS_OnPSPoll(
 	pu1Byte			pSaddr = Frame_pSaddr(osMpdu);
 	PRT_WLAN_STA	pEntry = AsocEntry_GetEntry(pMgntInfo, pSaddr);
 	RT_STATUS		rtStatus;
-   
+
 	if(pEntry == NULL)
 		return;
 
-	// We don't handle ps-poll with PwrMgt==TRUE, because this case is handle in 
+	// We don't handle ps-poll with PwrMgt==TRUE, because this case is handle in
 	// AP_PS_UpdateStationPSState() before. 2005.07.07, by rcnjko.
 	if(Frame_PwrMgt(osMpdu) == FALSE)
 		return;
@@ -1574,7 +1574,7 @@ AP_PS_OnPSPoll(
 		}
 
 		rtStatus =  TransmitTCB(Adapter, pTcb);
-		
+
 		if(RT_STATUS_SUCCESS != rtStatus && RT_STATUS_PKT_DROP != rtStatus)
 		{
 			// Insert it to tail of wait queue.
@@ -1584,9 +1584,9 @@ AP_PS_OnPSPoll(
 	}
 	else
 	{
-		// 		
+		//
 		// Too many packets will be sent in air, and no test plan check this.
-		//		
+		//
 		PRT_TCB					pTcb;
 		PRT_TX_LOCAL_BUFFER 	pBuf;
 		// Send Null Function Data to the Client, because we have no data buffered.
@@ -1596,7 +1596,7 @@ AP_PS_OnPSPoll(
 		{
 			//Add bQoS parameter for QoS Null by Isaiah 2006-07-31
 			ConstructNullFunctionData(
-				Adapter, 
+				Adapter,
 				pBuf->Buffer.VirtualAddress,
 				&pTcb->PacketLength,
 				pSaddr,
@@ -1613,7 +1613,7 @@ AP_PS_OnPSPoll(
 		}
 
 		PlatformReleaseSpinLock(Adapter, RT_TX_SPINLOCK);
-	}	
+	}
 }
 
 //
@@ -1641,7 +1641,7 @@ AP_ForwardPacketWithFromDS(
 	// Note!, we should check buffer length before copy and forward it.
 	if(mpdu.Length > maxMpduSizeToForward)
 	{
-		// We cannot forward this packet because the mpdu recived is large than 
+		// We cannot forward this packet because the mpdu recived is large than
 		// our transmit buffer size. 2005.06.03, by rcnjko.
 		return FALSE;
 	}
@@ -1661,7 +1661,7 @@ AP_ForwardPacketWithFromDS(
 			pTcb->BufferList[0].PhysicalAddressHigh = pRfd->Buffer.PhysicalAddressHigh;
 			pTcb->BufferList[0].PhysicalAddressLow = pRfd->Buffer.PhysicalAddressLow;
 
-			// Get shifted bytes of Starting address of 802.11 header. 2006.09.28, by Emily	
+			// Get shifted bytes of Starting address of 802.11 header. 2006.09.28, by Emily
 			pTcb->BufferList[0].PhysicalAddressLow +=Adapter->HalFunc.GetRxPacketShiftBytesHandler(pRfd);
 			pTcb->BufferList[0].Length = pRfd->PacketLength;
 			pTcb->PacketLength = pRfd->PacketLength;
@@ -1695,13 +1695,13 @@ AP_ForwardPacketWithFromDS(
 		{
 			// Copy the incoming frame to local buffer.
 			if( IsQoSDataFrame(mpdu.Octet ) && MacAddr_isMulticast(Frame_pDaddr(mpdu)))
-			{ // we need to remove Qos fild for muticast 
+			{ // we need to remove Qos fild for muticast
 				pu1Byte pOrData = pBuf->Buffer.VirtualAddress;
 				pu1Byte pDsData = mpdu.Octet;
 
 				// Copy Head !!
 				PlatformMoveMemory( pOrData , pDsData , sMacHdrLng );
-				pOrData = pOrData + sMacHdrLng ;  
+				pOrData = pOrData + sMacHdrLng ;
 				pDsData = pDsData + sMacHdrLng + sQoSCtlLng ;
 
 				// Copy payload !!
@@ -1710,12 +1710,12 @@ AP_ForwardPacketWithFromDS(
 				// Clear Qos bite !!
 				SET_80211_HDR_QOS_EN( pBuf->Buffer.VirtualAddress , 0  );
 
-				// Set Packet Length 
+				// Set Packet Length
 				Packetleng = pRfd->PacketLength - sQoSCtlLng;
 			}
 			else
 			{
-			
+
 				PlatformMoveMemory(pBuf->Buffer.VirtualAddress, mpdu.Octet, mpdu.Length);
 
 				Packetleng = pRfd->PacketLength;
@@ -1737,7 +1737,7 @@ AP_ForwardPacketWithFromDS(
 			pTcb->BufferType = RT_TCB_BUFFER_TYPE_LOCAL;
 			pTcb->Reserved = pBuf;
 			pTcb->bInsert8BytesForEarlyMode=FALSE;
-                     
+
 			bResult = TRUE;
 		}
 		else
@@ -1780,12 +1780,12 @@ AP_ForwardPacketWithFromDS(
 		SET_80211_HDR_TO_DS(pHeader, 0);
 
 		// <RJ_NOTE> Duration and Sequence control will be set up in TransmitTcb().
-		SET_80211_HDR_DURATION(pHeader, 0); 
+		SET_80211_HDR_DURATION(pHeader, 0);
 		SET_80211_HDR_FRAGMENT_SEQUENCE(pHeader, 0);
 
 		//RT_PRINT_DATA(COMP_INIT, DBG_LOUD, ("Header \n"), pHeader, 32);
 		// Forward it.
-		// <NOTE> AP_PS_SendPacket() will queue the packet to send in proper queue 
+		// <NOTE> AP_PS_SendPacket() will queue the packet to send in proper queue
 		// if necessary, 2005.07.05, by rcnjko.
 		pTcb->pAdapter = Adapter;
 		NicIFSendPacket(Adapter, pTcb);
@@ -1798,13 +1798,13 @@ AP_ForwardPacketWithFromDS(
 
 
 //
-//	Description: 
+//	Description:
 //		Translate and forward the packet received from WDS AP to STA associated.
 //	2006.06.11, by rcnjko.
 //
 BOOLEAN
 AP_FromWdsToBss(
-	IN	PADAPTER		Adapter, 
+	IN	PADAPTER		Adapter,
 	IN	PRT_RFD			pRfd,
 	IN	BOOLEAN			bNeedCopy
 	)
@@ -1824,7 +1824,7 @@ AP_FromWdsToBss(
 	// Note!, we should check buffer length before copy and forward it.
 	if(mpdu.Length > maxMpduSizeToForward)
 	{
-		// We cannot forward this packet because the mpdu recived is larger than 
+		// We cannot forward this packet because the mpdu recived is larger than
 		// our transmit buffer size.
 		return bResult;
 	}
@@ -1834,17 +1834,17 @@ AP_FromWdsToBss(
 
 	// TODO: consider per-STA encryption algorithm and QoS.
 	BssFrameHdrLng = sMacHdrLng + pMgntInfo->SecurityInfo.EncryptionHeadOverhead;
-	
+
 	PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
 
 	if(bNeedCopy == FALSE)
-	{ // case 1: Reuse the buffer in RFD. 
+	{ // case 1: Reuse the buffer in RFD.
 		//
 		// Note that, in this case:
-		// pTcb->BufferList[0]: 802.11 Header without Addr4 (including QoS and Security), 
+		// pTcb->BufferList[0]: 802.11 Header without Addr4 (including QoS and Security),
 		// which references to pTcb->Header[0].
-		// pTcb->BufferList[1]: 802.11 frame body (begine with LLC), 
-		// which reuses pRfd->Buffer with proper offset. 
+		// pTcb->BufferList[1]: 802.11 frame body (begine with LLC),
+		// which reuses pRfd->Buffer with proper offset.
 		// 2006.06.11, by rcnjko.
 		//
 
@@ -1886,8 +1886,8 @@ AP_FromWdsToBss(
 		{
 			// Copy the incoming frame to local buffer with proper offset.
 			PlatformMoveMemory(
-				pBuf->Buffer.VirtualAddress + BssFrameHdrLng, 
-				mpdu.Octet + WdsFrameHdrLng, 
+				pBuf->Buffer.VirtualAddress + BssFrameHdrLng,
+				mpdu.Octet + WdsFrameHdrLng,
 				mpdu.Length - WdsFrameHdrLng);
 
 			// Set up TCB.
@@ -1918,13 +1918,13 @@ AP_FromWdsToBss(
 		u1Byte	SrcAddr[6];
 		u1Byte	DstAddr[6];
 		pu1Byte	pHeader = NULL;
-	
+
 		// Back up SA/DA addresses.
 		PlatformMoveMemory(SrcAddr, Frame_pSaddr(mpdu), 6);
 		PlatformMoveMemory(DstAddr, Frame_pDaddr(mpdu), 6);
-	
+
 		pHeader = pTcb->BufferList[0].VirtualAddress;
-	
+
 		// Clear Flag
 		SET_80211_HDR_MORE_FRAG(pHeader, 0);
 		SET_80211_HDR_RETRY(pHeader, 0);
@@ -1932,7 +1932,7 @@ AP_FromWdsToBss(
 		SET_80211_HDR_MORE_DATA(pHeader, 0);
 		SET_80211_HDR_WEP(pHeader, 0);
 		SET_80211_HDR_ORDER(pHeader, 0);
-	
+
 		// Frame Control field.
 		SET_80211_HDR_FRAME_CONTROL(pHeader, 0); // clear all flags before set
 		SET_80211_HDR_TYPE_AND_SUBTYPE(pHeader, Type_Data);
@@ -1942,15 +1942,15 @@ AP_FromWdsToBss(
 		SET_80211_HDR_ADDRESS1(pHeader, DstAddr); // DA
 		SET_80211_HDR_ADDRESS2(pHeader, pMgntInfo->Bssid); // BSSID
 		SET_80211_HDR_ADDRESS3(pHeader, SrcAddr); // SA
-	
+
 		// <RJ_NOTE> Duration and Sequence control will be set up in TransmitTcb().
 		SET_80211_HDR_DURATION(pHeader, 0);
 		SET_80211_HDR_FRAGMENT_SEQUENCE(pHeader, 0);
 
 		RT_PRINT_DATA(COMP_AP, DBG_TRACE, ("AP_FromWdsToBss(): "), pTcb->BufferList[0].VirtualAddress, pTcb->BufferList[0].Length);
-	
+
 		// Forward it.
-		// <NOTE> AP_PS_SendPacket() will queue the packet to send in proper queue 
+		// <NOTE> AP_PS_SendPacket() will queue the packet to send in proper queue
 		// if necessary, 2005.07.05, by rcnjko.
 		pTcb->pAdapter = Adapter;
 		NicIFSendPacket(Adapter, pTcb);
@@ -1962,13 +1962,13 @@ AP_FromWdsToBss(
 }
 
 //
-//	Description: 
+//	Description:
 //		Translate and forward the packet received from STA associated to WDS AP.
 //	2006.06.11, by rcnjko.
 //
 BOOLEAN
 AP_FromBssToWds(
-	IN	PADAPTER		Adapter, 
+	IN	PADAPTER		Adapter,
 	IN	PRT_RFD			pRfd,
 	IN	BOOLEAN			bNeedCopy
 	)
@@ -1988,7 +1988,7 @@ AP_FromBssToWds(
 	// Note!, we should check buffer length before copy and forward it.
 	if(mpdu.Length > maxMpduSizeToForward)
 	{
-		// We cannot forward this packet because the mpdu recived is larger than 
+		// We cannot forward this packet because the mpdu recived is larger than
 		// our transmit buffer size.
 		return bResult;
 	}
@@ -1998,17 +1998,17 @@ AP_FromBssToWds(
 
 	// TODO: consider per-STA encryption algorithm.
 	BssFrameHdrLng = Frame_FrameHdrLng(mpdu) + pMgntInfo->SecurityInfo.EncryptionHeadOverhead;
-	
+
 	PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
 
 	if(bNeedCopy == FALSE)
-	{ // case 1: Reuse the buffer in RFD. 
+	{ // case 1: Reuse the buffer in RFD.
 		//
 		// Note that, in this case:
-		// pTcb->BufferList[0]: 802.11 Header with Addr4 (including QoS and Security), 
+		// pTcb->BufferList[0]: 802.11 Header with Addr4 (including QoS and Security),
 		// which references to pTcb->Header[0].
-		// pTcb->BufferList[1]: 802.11 frame body (begine with LLC), 
-		// which reuses pRfd->Buffer with proper offset. 
+		// pTcb->BufferList[1]: 802.11 frame body (begine with LLC),
+		// which reuses pRfd->Buffer with proper offset.
 		// 2006.06.11, by rcnjko.
 		//
 
@@ -2050,8 +2050,8 @@ AP_FromBssToWds(
 		{
 			// Copy the incoming frame to local buffer with proper offset.
 			PlatformMoveMemory(
-				pBuf->Buffer.VirtualAddress + WdsFrameHdrLng, 
-				mpdu.Octet + BssFrameHdrLng, 
+				pBuf->Buffer.VirtualAddress + WdsFrameHdrLng,
+				mpdu.Octet + BssFrameHdrLng,
 				mpdu.Length - BssFrameHdrLng);
 
 			// Set up TCB.
@@ -2082,13 +2082,13 @@ AP_FromBssToWds(
 		u1Byte	SrcAddr[6];
 		u1Byte	DstAddr[6];
 		pu1Byte	pHeader;
-	
+
 		// Back up SA/DA addresses.
 		PlatformMoveMemory(SrcAddr, Frame_pSaddr(mpdu), 6);
 		PlatformMoveMemory(DstAddr, Frame_pDaddr(mpdu), 6);
-	
+
 		pHeader = pTcb->BufferList[0].VirtualAddress;
-	
+
 		// Frame Control field.
 		// Clear Flag
 		SET_80211_HDR_MORE_FRAG(pHeader, 0);
@@ -2097,7 +2097,7 @@ AP_FromBssToWds(
 		SET_80211_HDR_MORE_DATA(pHeader, 0);
 		SET_80211_HDR_WEP(pHeader, 0);
 		SET_80211_HDR_ORDER(pHeader, 0);
-		
+
 		SET_80211_HDR_FRAME_CONTROL(pHeader, 0); // clear all flags before set
 		SET_80211_HDR_TYPE_AND_SUBTYPE(pHeader, Type_Data);
 		SET_80211_HDR_FROM_DS(pHeader, 1);
@@ -2108,15 +2108,15 @@ AP_FromBssToWds(
 		SET_80211_HDR_ADDRESS2(pHeader, pMgntInfo->Bssid); // TA
 		SET_80211_HDR_ADDRESS3(pHeader, DstAddr); // DA
 		SET_80211_HDR_ADDRESS4(pHeader, SrcAddr); // SA
-	
+
 		// <RJ_NOTE> Duration and Sequence control will be set up in TransmitTcb().
 		SET_80211_HDR_DURATION(pHeader, 0);
 		SET_80211_HDR_FRAGMENT_SEQUENCE(pHeader, 0);
 
 		RT_PRINT_DATA(COMP_AP, DBG_TRACE, ("AP_FromBssToWds(): "), pTcb->BufferList[0].VirtualAddress, pTcb->BufferList[0].Length);
-	
+
 		// Forward it.
-		// <NOTE> AP_PS_SendPacket() will queue the packet to send in proper queue 
+		// <NOTE> AP_PS_SendPacket() will queue the packet to send in proper queue
 		// if necessary, 2005.07.05, by rcnjko.
 		pTcb->pAdapter = Adapter;
 		NicIFSendPacket(Adapter, pTcb);
@@ -2132,19 +2132,19 @@ AP_FromBssToWds(
 //		Translate header or send packet to to WDS.
 //
 //	Assumption:
-//		1. We are in AP mode and WDS is enabled.	
+//		1. We are in AP mode and WDS is enabled.
 //		2. pTcb contains 802.11 Data frame from us.
 //		3. TX spinlock is acquired.
-//		4. Usage of pTcb->BufferList[]: 
+//		4. Usage of pTcb->BufferList[]:
 //			pTcb->BufferList[0]: 802.11 header (including QoS and Security header).
 //			pTcb->BufferList[1]: LLC.
 //			pTcb->BufferList[2-n]: frame body (starting from TypeLength).
 //
-//	2006.06.11, by rcnjko. 
+//	2006.06.11, by rcnjko.
 //
 VOID
 AP_LocalToWds(
-	IN	PADAPTER		Adapter, 
+	IN	PADAPTER		Adapter,
 	IN	PRT_TCB			pTcbSrc,
 	IN	BOOLEAN			bCopyAndForward
 	)
@@ -2161,9 +2161,9 @@ AP_LocalToWds(
 
 		// Change 802.11 header length and related.
 		// <RJ_TODO_WDS> Consider WDS frame with Security/QoS case.
-		pTcbToWds->PacketLength -= pTcbToWds->BufferList[0].Length; 
+		pTcbToWds->PacketLength -= pTcbToWds->BufferList[0].Length;
 		pTcbToWds->BufferList[0].Length = 30;
-		pTcbToWds->PacketLength += pTcbToWds->BufferList[0].Length; 
+		pTcbToWds->PacketLength += pTcbToWds->BufferList[0].Length;
 	}
 	else
 	{ // Copy frame to local buffer.
@@ -2179,16 +2179,16 @@ AP_LocalToWds(
 			for(idx = 1; idx < pTcbSrc->BufferCount; idx++)
 			{
 				PlatformMoveMemory(
-					pBuf->Buffer.VirtualAddress + BytesCopied, 
-					pTcbSrc->BufferList[idx].VirtualAddress, 
+					pBuf->Buffer.VirtualAddress + BytesCopied,
+					pTcbSrc->BufferList[idx].VirtualAddress,
 					pTcbSrc->BufferList[idx].Length);
 
 				BytesCopied += pTcbSrc->BufferList[idx].Length;
 			}
-	
+
 			// Set up TCB.
 			pTcbToWds->BufferList[0] = pBuf->Buffer;
-			pTcbToWds->BufferList[0].Length = BytesCopied; 
+			pTcbToWds->BufferList[0].Length = BytesCopied;
 
 			pTcbToWds->PacketLength = pTcbToWds->BufferList[0].Length;
 			pTcbToWds->BufferCount = 1;
@@ -2231,7 +2231,7 @@ AP_LocalToWds(
 		SET_80211_HDR_FRAME_CONTROL(pHeader, 0);// clear all flags before set
 		SET_80211_HDR_TYPE_AND_SUBTYPE(pHeader, Type_Data);
 		SET_80211_HDR_FROM_DS(pHeader, 1);
-		SET_80211_HDR_TO_DS(pHeader, 1);	
+		SET_80211_HDR_TO_DS(pHeader, 1);
 
 		// Change addresses (RA/TA/DA/SA).
 		SET_80211_HDR_ADDRESS1(pHeader, pMgntInfo->WdsApAddr);
@@ -2251,7 +2251,7 @@ AP_LocalToWds(
 		if(bCopyAndForward)
 		{
 			// Forward it.
-			// <NOTE> AP_PS_SendPacket() will queue the packet to send in proper queue 
+			// <NOTE> AP_PS_SendPacket() will queue the packet to send in proper queue
 			// if necessary, 2005.07.05, by rcnjko.
 			pTcbToWds->pAdapter = Adapter;
 			NicIFSendPacket(Adapter, pTcbToWds);
@@ -2265,21 +2265,21 @@ AP_LocalToWds(
 //		Dispatch the data frame to WDS if necessary.
 //
 //	Assumption:
-//		1. We are in AP mode and WDS is enabled.	
+//		1. We are in AP mode and WDS is enabled.
 //		2. pTcb contains 802.11 Data frame from us.
 //		3. TX spinlock is acquired.
 //
-//	2006.06.11, by rcnjko. 
+//	2006.06.11, by rcnjko.
 //
 VOID
 AP_WdsTx(
 	IN	PADAPTER		Adapter,
 	IN	PRT_TCB			pTcb)
 {
-	PMGNT_INFO pMgntInfo = &(Adapter->MgntInfo);	
+	PMGNT_INFO pMgntInfo = &(Adapter->MgntInfo);
 
 	if(MacAddr_isMulticast(pTcb->DestinationAddress))
-	{ // Mcst/Bcst destination => forward one copy to WDS AP. 
+	{ // Mcst/Bcst destination => forward one copy to WDS AP.
 		AP_LocalToWds(Adapter, pTcb, TRUE);
 	}
 	else
@@ -2295,7 +2295,7 @@ AP_WdsTx(
 
 //
 // Description:	Handle incoming Authentication frames with odd arSeq.
-// Output:		Return TRUE if we will response the incoming auth frame, FALSE o.w.. 
+// Output:		Return TRUE if we will response the incoming auth frame, FALSE o.w..
 //
 // 2005.06.01, by rcnjko.
 //
@@ -2359,7 +2359,7 @@ AP_OnAuthOdd(
 			allowed = TRUE;
 		}
 		else
-			return FALSE;		
+			return FALSE;
 	}
 	else if(pMgntInfo->LockType == MAC_FILTER_REJECT)
 	{
@@ -2408,35 +2408,35 @@ AP_OnAuthOdd(
 				RT_TRACE( COMP_AP, DBG_LOUD, ("AP_OnAuthOdd(): unknow STA MAC address!\n") );
 				return FALSE;
 			}
-		}	
+		}
 	}
 
 #if 1 //Added by Jay 0713 for processing integrity failure
-	
+
 	// Refuse all Authentication Requests within 60 sec after Integrity Failure event happened
 	if(pMgntInfo->globalKeyInfo.TimeSlot_IntegrityFail2 != 0 &&
 		pMgntInfo->globalKeyInfo.CurrentTimeSlot < pMgntInfo->globalKeyInfo.TimeSlot_IntegrityFail2 + 60)
 	{
 		return FALSE;
 	}
-#endif	
+#endif
 
 	// Initialize default value for Auth to resonse.
 	AuthStatusCode = StatusCode_Unspecified_failure;
 	FillOctetString(AuthChallengetext, NULL, 0);
-	
+
 	// Gather information from incoming Auth frame.
-	arSta = Frame_Addr2(authpdu); 
+	arSta = Frame_Addr2(authpdu);
 	arAlg = (AUTH_ALGORITHM)Frame_AuthAlgorithmNum(authpdu);
 	arSeq = Frame_AuthTransactionSeqNum(authpdu);
 
 	RT_TRACE(COMP_MLME, DBG_LOUD, ("AP_OnAuthOdd(): STA: %2.2x-%2.2x-%2.2x-%2.2x-%2.2x-%2.2x\n", arSta[0], arSta[1], arSta[2], arSta[3], arSta[4], arSta[5]));
-	
-	// Classify with arSeq. 
+
+	// Classify with arSeq.
 	switch(arSeq)
 	{
 		case 1:
-			// Classify with arAlg. 
+			// Classify with arAlg.
 			switch(arAlg)
 			{
 			case OPEN_SYSTEM:
@@ -2454,14 +2454,14 @@ AP_OnAuthOdd(
 							// routine might cause bug check code DPC_WATCHDOG_VIOLATION (133).
 							// 2013.06.26.
 							//
-							AsocEntry_BecomeDisassoc(Adapter, pEntry); 
+							AsocEntry_BecomeDisassoc(Adapter, pEntry);
 							MacIdDeregisterSpecificMacId(Adapter, pEntry->AssociatedMacId);
-							
+
 							RT_TRACE( COMP_AP, DBG_LOUD, ("AP_OnAuthOdd(): pEntry->bAssociated\n") );
-							if(MgntActQuery_ApType(Adapter) == RT_AP_TYPE_IBSS_EMULATED 
+							if(MgntActQuery_ApType(Adapter) == RT_AP_TYPE_IBSS_EMULATED
 							 || MgntActQuery_ApType(Adapter) == RT_AP_TYPE_LINUX)
 							{
-								MgntUpdateAsocInfo(Adapter, UpdateDeauthAddr, pEntry->MacAddr, 6); 
+								MgntUpdateAsocInfo(Adapter, UpdateDeauthAddr, pEntry->MacAddr, 6);
 								DrvIFIndicateDisassociation(Adapter, unspec_reason, pEntry->MacAddr);
 							}
 							else if(MgntActQuery_ApType(Adapter) == RT_AP_TYPE_VWIFI_AP)
@@ -2473,12 +2473,12 @@ AP_OnAuthOdd(
 						}
 						else if(MgntActQuery_ApType(Adapter) == RT_AP_TYPE_VWIFI_AP)
 						{
-							bDuplicateAuth = TRUE;							
+							bDuplicateAuth = TRUE;
 							AuthStatusCode = StatusCode_success;
 							pMgntInfo->pCurrentSta = pEntry;
 							DrvIFIndicateIncommingAssociationComplete(Adapter, unspec_reason);
 						}
-						
+
 						if(!bDuplicateAuth)
 						{
 							RT_TRACE( COMP_AP, DBG_LOUD, ("AP_OnAuthOdd(): AsocEntry_RemoveStation\n") );
@@ -2491,7 +2491,7 @@ AP_OnAuthOdd(
 						if(!AsocEntry_AddStation(Adapter, arSta, arAlg))
 						{
 							RT_TRACE( COMP_AP, DBG_LOUD, ("AP_OnAuthOdd(): StatusCode_assoc_deniedbyap\n") );
-							AuthStatusCode = StatusCode_assoc_deniedbyap; 
+							AuthStatusCode = StatusCode_assoc_deniedbyap;
 							break;
 						}
 					}
@@ -2503,7 +2503,7 @@ AP_OnAuthOdd(
 						pEntry = AsocEntry_GetEntry(pMgntInfo, arSta);
 
 						pEntry->AuthPassSeq = 2;
-						AuthStatusCode = StatusCode_success; 
+						AuthStatusCode = StatusCode_success;
 					}
 					else
 					{
@@ -2522,7 +2522,7 @@ AP_OnAuthOdd(
 							if(MgntActQuery_ApType(Adapter) == RT_AP_TYPE_IBSS_EMULATED
 							 || MgntActQuery_ApType(Adapter) == RT_AP_TYPE_LINUX)
 							{
-								MgntUpdateAsocInfo(Adapter, UpdateDeauthAddr, pEntry->MacAddr, 6); 
+								MgntUpdateAsocInfo(Adapter, UpdateDeauthAddr, pEntry->MacAddr, 6);
 								DrvIFIndicateDisassociation(Adapter, unspec_reason, pEntry->MacAddr);
 							}
 							else if(MgntActQuery_ApType(Adapter) == RT_AP_TYPE_VWIFI_AP)
@@ -2537,7 +2537,7 @@ AP_OnAuthOdd(
 
 					if(!AsocEntry_AddStation(Adapter, arSta, arAlg))
 					{
-						AuthStatusCode = StatusCode_assoc_deniedbyap; 
+						AuthStatusCode = StatusCode_assoc_deniedbyap;
 						break;
 					}
 
@@ -2545,7 +2545,7 @@ AP_OnAuthOdd(
 						pMgntInfo->AuthReq_auAlg == SHARED_KEY)
 					{
 						pEntry = AsocEntry_GetEntry(pMgntInfo, arSta);
-	
+
 						pEntry->AuthPassSeq = 2;
 
 						// <RJ_TODO_AP> We shall keep challenge text in each STA, and randomize them.
@@ -2568,7 +2568,7 @@ AP_OnAuthOdd(
 
 		case 3:
 			{
-				if(	arAlg == SHARED_KEY && 
+				if(	arAlg == SHARED_KEY &&
 					(pMgntInfo->SecurityInfo.AuthMode == RT_802_11AuthModeAutoSwitch ||
 					 pMgntInfo->AuthReq_auAlg == SHARED_KEY) )
 				{
@@ -2579,9 +2579,9 @@ AP_OnAuthOdd(
 						if( pEntry->bAssociated == FALSE && pEntry->AuthAlg == SHARED_KEY && pEntry->AuthPassSeq == 2 )
 						{
 							OCTET_STRING	OurCText, PeerCText;
-									
+
 							FillOctetString(OurCText, pMgntInfo->arChalng, 128);
-							PeerCText = PacketGetElement(authpdu, EID_Ctext, OUI_SUB_DONT_CARE, OUI_SUBTYPE_DONT_CARE); 
+							PeerCText = PacketGetElement(authpdu, EID_Ctext, OUI_SUB_DONT_CARE, OUI_SUBTYPE_DONT_CARE);
 
 							// Compare the challenge text.
 							if(EqualOS( OurCText, PeerCText))
@@ -2598,7 +2598,7 @@ AP_OnAuthOdd(
 						}
 						else
 						{
-							// The authentication/association state of the STA is not as expected. 
+							// The authentication/association state of the STA is not as expected.
 							AuthStatusCode = StatusCode_Unspecified_failure;
 						}
 					}
@@ -2622,16 +2622,16 @@ AP_OnAuthOdd(
 			break;
 	}
 
-	// Remove association entry of the STA if AuthStatusCode is not successful. 
+	// Remove association entry of the STA if AuthStatusCode is not successful.
 	if(AuthStatusCode != StatusCode_success)
 	{
 		RT_TRACE( COMP_AP, DBG_LOUD, ("AP_OnAuthOdd(): Remove association entry of the STA if AuthStatusCode is not successful. \n") );
 		AsocEntry_RemoveStation(Adapter, arSta);
 	}
-	
+
 	// Send auth frame.
-	SendAuthenticatePacket( 
-		Adapter, 
+	SendAuthenticatePacket(
+		Adapter,
 		arSta, // auStaAddr,
 		arAlg, // AuthAlg,
 		arSeq+1, // AuthSeq,
@@ -2649,15 +2649,15 @@ AP_OnAuthOdd(
 //
 BOOLEAN
 AP_DisassociateStation(
-	IN	PADAPTER		Adapter, 
-	IN	PRT_WLAN_STA	pSta, 
+	IN	PADAPTER		Adapter,
+	IN	PRT_WLAN_STA	pSta,
 	IN	u1Byte			asRsn
 	)
 {
 	// Check input parameter.
 	if(pSta == NULL)
 		return FALSE;
-//	RT_ASSERT((pSta->bUsed && pSta->bAssociated), 
+//	RT_ASSERT((pSta->bUsed && pSta->bAssociated),
 //		("AP_DisassociateStation(): bUsed: %x, bAssociated: %x !!!\n", pSta->bUsed, pSta->bAssociated));
 	RT_TRACE(COMP_AP, DBG_LOUD, ("AP_DisassociateStation() pSta->AssociatedMacId %d\n", pSta->AssociatedMacId));
 
@@ -2673,7 +2673,7 @@ AP_DisassociateStation(
 	RemovePeerTS(Adapter, pSta->MacAddr);
 
 	// Send disassoc frame to the STA.
-	SendDisassociation(Adapter, pSta->MacAddr, asRsn);	
+	SendDisassociation(Adapter, pSta->MacAddr, asRsn);
 
 //Added to del cam entrys for this station
 //If pPeerMac is not NULL, then just del this  cam entry,by wl,2009-09-27
@@ -2713,7 +2713,7 @@ AP_DisassociateAllStation(
 {
 	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);
 	int				i;
-	PRT_WLAN_STA	pSta;	
+	PRT_WLAN_STA	pSta;
 
 	for(i = 0; i < ASSOCIATE_ENTRY_NUM; i++)
 	{
@@ -2747,12 +2747,12 @@ AP_ResetVariables(
 	FunctionIn(COMP_AP);
 
 	DefAdapter->MgntInfo.bSwitchingSTAStateInProgress = FALSE;
-	
+
 	// Added by Annie, 2006-01-26.
 	MgntCancelAllTimer(Adapter);
 	RemoveAllTS(Adapter);
 
-	// <RJ_TODO> We shall randomize it? 
+	// <RJ_TODO> We shall randomize it?
 	for(i = 0; i < 128; i++)
 	{
 		pMgntInfo->arChalng[i] = (u1Byte)i;
@@ -2760,11 +2760,11 @@ AP_ResetVariables(
 
 	// Reset Association Table.
 	AsocEntry_ResetAll(Adapter);
-		
+
 	Authenticator_GlobalReset(Adapter);	// added by Annie
-	
+
 	ActUpdate_ProtectionMode(Adapter, FALSE); // 2010.11.26. by tynli.
-	
+
 
 	if(ACTING_AS_AP(Adapter))
 	{ // AP mode.
@@ -2776,20 +2776,20 @@ AP_ResetVariables(
 			MgntUpdateAsocInfo(Adapter, UpdateAsocBeacon, pMgntInfo->beaconframe.Octet, pMgntInfo->beaconframe.Length);
 
 			//
-			// step 1. Indicate wildcard disassocation event to 
+			// step 1. Indicate wildcard disassocation event to
 			// disassociate all STA associated before.
 			//
 			/*****************************************************************
-			20150416 Sinda. 
+			20150416 Sinda.
 			We need to delete peer in WDI architecture, but peer had been deleted before.
 			pass NULL to skip this case to avoid delete incorrect peer.
 			*****************************************************************/
-			DrvIFIndicateDisassociation(Adapter, unspec_reason, NULL); 
+			DrvIFIndicateDisassociation(Adapter, unspec_reason, NULL);
 
 			//
 			// step 2. Indicate dummy STA assocation event.
 			//
-			// 061228, rcnjko: UI need fake AP mode to enter connected 
+			// 061228, rcnjko: UI need fake AP mode to enter connected
 			// state immediate for ICS easy implementation.
 			//
 			MgntUpdateAsocInfo(Adapter, UpdateAsocPeerAddr, DummySta, 6);
@@ -2798,29 +2798,29 @@ AP_ResetVariables(
 		}
 
 		// Change Link status to connected.
-		MgntIndicateMediaStatus(Adapter, RT_MEDIA_CONNECT, TRUE);	
+		MgntIndicateMediaStatus(Adapter, RT_MEDIA_CONNECT, TRUE);
 	}
 	else
 	{ // STA mode.
 		if(MgntActQuery_ApType(Adapter) == RT_AP_TYPE_IBSS_EMULATED)
 		{
 			//
-			// step 1. Indicate wildcard disassocation event to 
+			// step 1. Indicate wildcard disassocation event to
 			// disassociate all STA associated before.
 			//
 			/*****************************************************************
-			20150416 Sinda. 
+			20150416 Sinda.
 			We need to delete peer in WDI architecture, but peer had been deleted before.
 			pass NULL to skip this case to avoid delete incorrect peer.
 			*****************************************************************/
-			DrvIFIndicateDisassociation(Adapter, unspec_reason, NULL); 
+			DrvIFIndicateDisassociation(Adapter, unspec_reason, NULL);
 		}
 
 		// Change Link status to disconnected.
 		MgntIndicateMediaStatus(Adapter, RT_MEDIA_DISCONNECT, TRUE);
 
 		// Reset TStream related, 070614, by rcnjko.
-		QosResetAllTs(Adapter); 
+		QosResetAllTs(Adapter);
 	}
 	FunctionOut(COMP_AP);
 }
@@ -2847,8 +2847,8 @@ AP_SetupStartApInfo(
 	PlatformCancelTimer(Adapter, &pMgntInfo->globalKeyInfo.KeyMgntTimer );
 
 	DFS_TimerContrl(Adapter, DFS_TIMER_CANCEL);
-	
-	// Reset scan related state. 
+
+	// Reset scan related state.
 	if(MgntScanInProgress(pMgntInfo))
 		MgntResetScanProcess(Adapter);
 
@@ -2869,10 +2869,10 @@ AP_SetupStartApInfo(
 			RT_TRACE_F(COMP_MLME, DBG_LOUD, ("reset in progress case 4\n"));
 			return;
 		}
-	
+
 		MgntRoamComplete(Adapter, MlmeStatus_invalid);
 	}
-	
+
 	// Initialize dirver operating states to AP mode.
 	RT_ASSERT(ACTING_AS_AP(Adapter), ("AP_SetupStartApInfo(): ACTING_AS_AP(Adapter) == FALSE!!!\n"));
 	pMgntInfo->OpMode = RT_OP_MODE_AP;
@@ -2887,7 +2887,7 @@ AP_SetupStartApInfo(
 	RT_TRACE(COMP_SCAN, DBG_LOUD, ("[REDX]: AP_SetupStartApInfo(), clear NumBssDesc4Query\n"));
 	// BSSID
 	PlatformMoveMemory(pMgntInfo->Bssid, Adapter->CurrentAddress, 6);
-	
+
 	RT_PRINT_ADDR(COMP_AP, DBG_LOUD, "AP_SetupStartApInfo(): BSSID = ", pMgntInfo->Bssid);
 
 	// Capability.
@@ -2905,7 +2905,7 @@ AP_SetupStartApInfo(
 
 	// DTIM Period.
 	pMgntInfo->dot11DtimPeriod = pMgntInfo->Regdot11DtimPeriod;
-	
+
 	//Set dot11currentchannelnumber--------------
 	if(pDefMgntInfo->mAssoc && !IsDefaultAdapter(Adapter))
 		pMgntInfo->dot11CurrentChannelNumber = pDefMgntInfo->dot11CurrentChannelNumber;
@@ -2914,8 +2914,8 @@ AP_SetupStartApInfo(
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("GetFirstGOPort(Adapter): %p\n", GetFirstGOPort(Adapter)));
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("Adapter: %p\n", Adapter));
 		RT_TRACE_F(COMP_P2P, DBG_LOUD, ("pMgntInfo->dot11CurrentChannelNumber: %d\n", pMgntInfo->dot11CurrentChannelNumber));
-		
-#if (MULTICHANNEL_SUPPORT == 1 && P2P_SUPPORT == 1)			
+
+#if (MULTICHANNEL_SUPPORT == 1 && P2P_SUPPORT == 1)
 		if(Adapter == GetFirstGOPort(Adapter))
 		{
 			// Win8 will set the GO channel:
@@ -2925,26 +2925,26 @@ AP_SetupStartApInfo(
 
 			PP2P_INFO	pP2PInfo = GET_P2P_INFO(Adapter);
 			PADAPTER	pDeviceAdapter = NULL;
-			if(RT_MEDIA_CONNECT != MgntLinkStatusQuery(pDefaultAdapter) && 
+			if(RT_MEDIA_CONNECT != MgntLinkStatusQuery(pDefaultAdapter) &&
 				(NULL != (pDeviceAdapter = GetFirstDevicePort(Adapter))))
-			{				
+			{
 				pDefMgntInfo->dot11CurrentChannelNumber = pP2PInfo->OperatingChannel;
 				pMgntInfo->dot11CurrentChannelNumber = pP2PInfo->OperatingChannel;
 				pDeviceAdapter->MgntInfo.dot11CurrentChannelNumber = pP2PInfo->OperatingChannel;
 			}
 			else
 			{
-				pMgntInfo->dot11CurrentChannelNumber = pMgntInfo->Regdot11ChannelNumber;			
+				pMgntInfo->dot11CurrentChannelNumber = pMgntInfo->Regdot11ChannelNumber;
 			}
 		}
 		else
-#endif				
+#endif
 		{
 			pMgntInfo->dot11CurrentChannelNumber = pMgntInfo->Regdot11ChannelNumber;
 		}
 	}
 
-	
+
 
 	//[Win7] Default port and Extension port can use different wireless mode, but they
 	// should share the same bandwidth and QoS parameters like EDCA . 2009.07.09, by Bohn
@@ -2958,7 +2958,7 @@ AP_SetupStartApInfo(
 		else if(IS_WIRELESS_MODE_24G(Adapter) && IS_WIRELESS_MODE_5G(pDefaultAdapter))
 			bSetDefPortWirelessMode = TRUE;
 
-		//If they use different band , after ScanComplete of Default port, band will mismatch of Ext AP port.  
+		//If they use different band , after ScanComplete of Default port, band will mismatch of Ext AP port.
 		if(bSetDefPortWirelessMode)
 			Adapter->HalFunc.SetWirelessModeHandler(pDefaultAdapter, pMgntInfo->dot11CurrentWirelessMode);
 	}
@@ -2978,32 +2978,32 @@ AP_SetupStartApInfo(
 
 	// Protection mode.
 	ActUpdate_ProtectionMode(Adapter, FALSE);
-	
+
 	// Reset roaming status, 2004.10.12, by rcnjko.
 	pMgntInfo->AsocRetryCount = 0;
 
 	// Set Key management timer. Annie, 2005-07-06.
-	if( (pMgntInfo->SecurityInfo.AuthMode == RT_802_11AuthModeWPAPSK || 
+	if( (pMgntInfo->SecurityInfo.AuthMode == RT_802_11AuthModeWPAPSK ||
 		pMgntInfo->SecurityInfo.SecLvl == RT_SEC_LVL_WPA2	)  &&
-		MgntActQuery_ApType(Adapter) != RT_AP_TYPE_VWIFI_AP 
+		MgntActQuery_ApType(Adapter) != RT_AP_TYPE_VWIFI_AP
 		&& MgntActQuery_ApType(Adapter) != RT_AP_TYPE_LINUX) // key mgnt is done by OS in Win7 AP mode
 	{
 		PlatformSetTimer( Adapter, &pMgntInfo->globalKeyInfo.KeyMgntTimer, KEY_MGNT_INTERVAL );
 	}
-	
+
 	DFS_TimerContrl(Adapter, DFS_TIMER_SET);
 
 	// Reset CCX related setting.
 	CCX_OnBssReset(Adapter);
-	
+
 	// Set default EDCA parameter for AP mode.
 	if(pMgntInfo->pStaQos->QosCapability != QOS_DISABLE)
 	{
 		// TODO: CurrentQosMode can be set to others. Now only support WMM.
 		pMgntInfo->pStaQos->CurrentQosMode = QOS_WMM;
 		pMgntInfo->pStaQos->QBssWirelessMode = pMgntInfo->dot11CurrentWirelessMode;
-			
-		//[Win7 For Two Port Shared Data this function will retrurn the Right Port Ones]2009.07.22, by Bohn 
+
+		//[Win7 For Two Port Shared Data this function will retrurn the Right Port Ones]2009.07.22, by Bohn
 		SET_WMM_PARAM_ELE_AC_PARAMS(
 		(pu1Byte)GetTwoPortSharedResource(Adapter,TWO_PORT_SHARED_OBJECT__SET_OF_pStaQos_WMMParamEle,pMgntInfo->pStaQos->WMMParamEle,NULL)
 		, Adapter->AP_EDCA_PARAM);
@@ -3015,7 +3015,7 @@ AP_SetupStartApInfo(
 	else
 	{
 		pMgntInfo->pStaQos->CurrentQosMode = QOS_DISABLE;
-		pMgntInfo->pStaQos->QBssWirelessMode = WIRELESS_MODE_UNKNOWN;	
+		pMgntInfo->pStaQos->QBssWirelessMode = WIRELESS_MODE_UNKNOWN;
 	}
 
 	// Using HT Default setting when startup AP mode.
@@ -3035,15 +3035,15 @@ AP_SetupStartApInfo(
 			pMgntInfo->IOTPeer = pDefMgntInfo->IOTPeer;
 		else
 			pMgntInfo->IOTPeer = HT_IOT_PEER_SELF_SOFTAP;
-	}	
+	}
 
 	// Reset TStream related, 070614, by rcnjko.
-	QosResetAllTs(Adapter); 
+	QosResetAllTs(Adapter);
 
 	FunctionOut(COMP_AP);
 }
 
-// 
+//
 // Configure HW to start AP mode.
 //
 VOID
@@ -3078,11 +3078,11 @@ AP_StartApRequest(
 	pMgntInfo->BeaconState = BEACON_STARTING;
 
 	MultichannelEnableGoQueue(Adapter);
-	
+
 	//--------------------------------------------------------------------------------
 	// Infrastructure AP mode HW Configuration.
 	//--------------------------------------------------------------------------------
-	
+
 	pHalData->bNeedIQK = TRUE;
 	pHalData->DM_OutSrc.RFCalibrateInfo.bNeedIQK = TRUE;
 
@@ -3092,8 +3092,8 @@ AP_StartApRequest(
 	//
 	// Update Capability field related setting.
 	//
-	// <NOTE> To solve Win98 IRQL==PASIVE_LEVEL in timer callback function, 
-	// we call ActUpdate_mCapInfo() here to make sure related IOs are perfomed in correct IRQL, 
+	// <NOTE> To solve Win98 IRQL==PASIVE_LEVEL in timer callback function,
+	// we call ActUpdate_mCapInfo() here to make sure related IOs are perfomed in correct IRQL,
 	// that is, PASSIVE_LEVEL=>Syn IO for this case. 2005.03.15, by rcnjko.
 	//
 	ActUpdate_mCapInfo( Adapter, pMgntInfo->mCap );
@@ -3102,16 +3102,16 @@ AP_StartApRequest(
 	Adapter->HalFunc.SetHwRegHandler( Adapter, HW_VAR_BSSID, pMgntInfo->Bssid );
 
 	// Set Beacon related registers
-	// <RJ_TODO>  We shall update AtimWindow specified in Beacon of the IBSS if "every thing is ready." 
+	// <RJ_TODO>  We shall update AtimWindow specified in Beacon of the IBSS if "every thing is ready."
 	pMgntInfo->dot11AtimWindow = 2;	// ATIM Window (in unit of TU).
 	Adapter->HalFunc.SetBeaconRelatedRegistersHandler(Adapter, (PVOID)(&pMgntInfo->OpMode), \
 								pMgntInfo->dot11BeaconPeriod, pMgntInfo->dot11AtimWindow);
 
-	// Set operation mode to IBSS.	
+	// Set operation mode to IBSS.
 	Adapter->HalFunc.SetHwRegHandler( Adapter, HW_VAR_RETRY_LIMIT, (pu1Byte)(&RetryLimit));
 	Adapter->HalFunc.SetHalDefVarHandler(Adapter, HAL_DEF_AP_IBSS_INTERRUPT, (pu1Byte)&intMode);
-	
-	PlatformAtomicExchange((pu4Byte)(&GET_HAL_DATA(Adapter)->RegBcnCtrlVal), GET_HAL_DATA(Adapter)->RegBcnCtrlVal|BIT2);		
+
+	PlatformAtomicExchange((pu4Byte)(&GET_HAL_DATA(Adapter)->RegBcnCtrlVal), GET_HAL_DATA(Adapter)->RegBcnCtrlVal|BIT2);
 	PlatformEFIOWrite1Byte(Adapter, REG_BCN_CTRL, (u1Byte)(GET_HAL_DATA(Adapter)->RegBcnCtrlVal));
 
 	// Set EDCA Parameter Set for QAP
@@ -3134,7 +3134,7 @@ AP_StartApRequest(
 
 	HTSetCCKSupport(Adapter, TRUE, NULL);
 
-	// Adjust rate related setting according to current wireless mode and current bandwidth. 
+	// Adjust rate related setting according to current wireless mode and current bandwidth.
 	SelectRateSet( Adapter, pMgntInfo->Regdot11OperationalRateSet );
 
 	// To ensure AP is started at default channel to prevent from that STA cannot scan AP. (e.g., single-band STA)
@@ -3142,11 +3142,11 @@ AP_StartApRequest(
 	if((!(P2P_ENABLED(GET_P2P_INFO(Adapter)) && (GET_P2P_INFO(Adapter)->Role == P2P_GO)))
 		&& (pDefaultMgntInfo->mAssoc == FALSE) )
 #else
-	if(pDefaultMgntInfo->mAssoc == FALSE) 
+	if(pDefaultMgntInfo->mAssoc == FALSE)
 #endif
 		pMgntInfo->dot11CurrentChannelNumber = pDefaultMgntInfo->Regdot11ChannelNumber;;
-	
-	//Fix Vwifi channel show error	
+
+	//Fix Vwifi channel show error
 	N62CAPIndicateFrequencyAdopted(Adapter);
 
 	// Send beacon shall be delay until finish bw & channel offset setttings.
@@ -3159,11 +3159,11 @@ AP_StartApRequest(
 	{	// note that only win7 enters here since only win7 has vwifi ap
 		//
 		// In this case, we are called from PnpSetPower().
-		// NDISTest preview 3 SoftAP_Power_ext requries us to stop beaconing 
+		// NDISTest preview 3 SoftAP_Power_ext requries us to stop beaconing
 		// after resuming from hibernation. So we do nothing here.
 		// 2008.12.05, haich
 		//
-		
+
 		//
 		// We have to set MSR to no link so that HW will not send beacon automatically.
 		//
@@ -3190,11 +3190,11 @@ AP_StartApRequest(
 			PlatformSetTimer(Adapter, &pMgntInfo->SwBeaconTimer, 0);
 		}
 		else
-		{ // H/W Beacon.	
+		{ // H/W Beacon.
 			RT_TRACE(COMP_AP, DBG_LOUD, ("AP_StartApRequest(): Send H/W Beacon....\n"));
-			
+
 			ResumeTxBeacon_92C(Adapter);
-			
+
 			ConstructBeaconFrame(Adapter);
 			SendBeaconFrame(Adapter, BEACON_QUEUE);
 			Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_DIS_SW_BCN, (pu1Byte)(&Adapter));
@@ -3233,7 +3233,7 @@ AP_StartApRequest(
 
 	P2P_StartApRequest(Adapter);
 
-	// 2014/02/11 MH For ICS/DHCP delay, if ics and dhcp are not ready. And we start to 
+	// 2014/02/11 MH For ICS/DHCP delay, if ics and dhcp are not ready. And we start to
 	// send beacon. Then the client ca not acces ip directly, we need to delay until ICS is ready
 	// wait OID to trigger.
 	if(!pDefaultAdapter->bInHctTest && pMgntInfo->Regbcndelay)
@@ -3248,7 +3248,7 @@ AP_StartApRequest(
 }
 
 
-// 
+//
 // Start AP mode.
 // 2005.05.27, by rcnjko.
 //
@@ -3256,7 +3256,7 @@ VOID
 AP_Restart(
 	IN	PADAPTER		Adapter
 	)
-{		
+{
 	FunctionIn(COMP_AP);
 #if USE_WORKITEM
 	{
@@ -3287,8 +3287,8 @@ AP_Restart(
 	FunctionOut(COMP_AP);
 }
 
-// 
-// Reset SW and start AP mode. 
+//
+// Reset SW and start AP mode.
 // 2005.05.27, by rcnjko.
 //
 VOID
@@ -3305,10 +3305,10 @@ AP_Reset(
 	FunctionIn(COMP_AP);
 
 	Adapter->HalFunc.GetHalDefVarHandler(Adapter, HAL_DEF_USE_RA_MASK, &bUseRAMask);
-	
+
 	// Disable Beacon early interrupt mask.
 	Adapter->HalFunc.SetHalDefVarHandler(Adapter, HAL_DEF_AP_IBSS_INTERRUPT, (pu1Byte)&intMode);
-	
+
 	// Return all packets queued (TxQ, PsQ, etc.).
 	PlatformAcquireSpinLock(Adapter, RT_TX_SPINLOCK);
 	AP_PS_ReturnAllQueuedPackets(Adapter,FALSE);
@@ -3322,16 +3322,16 @@ AP_Reset(
 
 	// Start AP mode if requested.
 	if(ACTING_AS_AP(Adapter))
-	{	
+	{
 		if(GET_TDLS_ENABLED(pDefMgntInfo))
 		{
 			if(pDefMgntInfo->mAssoc)
 				TDLS_Stop(GetDefaultAdapter(Adapter));
 		}
 
-		//sherry moved set check bssid here 
+		//sherry moved set check bssid here
 		//for wlk1.6 VWifiInfraSoftAP_ext, 20110926
-		if(bUseRAMask && 
+		if(bUseRAMask &&
 			(MgntActQuery_ApType(Adapter) == RT_AP_TYPE_VWIFI_AP ||
 			MgntActQuery_ApType(Adapter) == RT_AP_TYPE_EXT_AP))
 		{
@@ -3345,7 +3345,7 @@ AP_Reset(
 			Adapter->HalFunc.SetHwRegHandler(Adapter, HW_VAR_CHECK_BSSID, (pu1Byte)(&bFilterOutNonAssociatedBSSID));
 		}
 
-		AP_Restart(Adapter);		
+		AP_Restart(Adapter);
 	}
 	else
 	{ // STA mode setting. Added by Annie, 2005-11-23.
@@ -3353,7 +3353,7 @@ AP_Reset(
 		u1Byte	RetryLimit = HAL_RETRY_LIMIT_INFRA;
 
 		pMgntInfo->OpMode = RT_OP_MODE_NO_LINK;
-		
+
 		// Under Win7, when AP mode is stopped,
 		// default port may still connect to AP.
 		// Hence, we have to set HwReg back to Infrastructure mode.
@@ -3394,10 +3394,10 @@ AP_Reset(
 		}
 
 		//
-		// In AP_StartApRequest(), this flag is set to true, therefore if we are going to stop AP mode, 
+		// In AP_StartApRequest(), this flag is set to true, therefore if we are going to stop AP mode,
 		// we should recover this flag.
-		// When Win7 starts SoftAP, it does reset for 2 times, at the second time, if this flag is still true, 
-		// the driver would call MgntDisconnectAP and send disassociation to itself. 
+		// When Win7 starts SoftAP, it does reset for 2 times, at the second time, if this flag is still true,
+		// the driver would call MgntDisconnectAP and send disassociation to itself.
 		// 2010.11.15, haich.
 		//
 		pMgntInfo->mAssoc = FALSE;
@@ -3427,15 +3427,15 @@ Ap_SendDisassocWithOldChnlWorkitemCallback(
 	PMGNT_INFO			pExtMgntInfo = &pAdapter->MgntInfo;
 	PRT_CHANNEL_INFO	pExtChnlInfo = GET_CHNL_INFO(pExtMgntInfo);
 	WIRELESS_MODE		wirelessModebackup = pDefMgntInfo->dot11CurrentWirelessMode;
-	
+
 	RT_TRACE(COMP_AP, DBG_LOUD, ("====> Ap_SendDisassocWithOldChnlWorkitemCallback\n"));
 
 	pExtAdapter->bAPChannelInprogressForNewconnected = TRUE;
 
-#if (P2P_SUPPORT == 1)    
+#if (P2P_SUPPORT == 1)
 	P2PIndicateChangingApChnl(GET_P2P_INFO(pExtAdapter), pExtMgntInfo->dot11CurrentChannelNumber, pDefMgntInfo->dot11CurrentChannelNumber);
 #endif
-	
+
 // 1. ==========     AP Swith to Original Channel Send DisAssoc    ==========
 	pExtAdapter->HalFunc.SetWirelessModeHandler(pExtAdapter,pExtMgntInfo->dot11CurrentWirelessMode);
 
@@ -3443,7 +3443,7 @@ Ap_SendDisassocWithOldChnlWorkitemCallback(
 						pExtChnlInfo->PrimaryChannelNumber,
 						pExtChnlInfo->CurrentChannelBandWidth,
 						pExtChnlInfo->Ext20MHzChnlOffsetOf40MHz
-						);	
+						);
 
 	//wait for switch channel successful before sending disassociation by sherry 20130117
 	while(RT_IsSwChnlAndBwInProgress(pAdapter))
@@ -3482,13 +3482,13 @@ Ap_SendDisassocWithOldChnlWorkitemCallback(
 	//4 [win7 Two Port BW40Mhz issue] We May Recard the value for Extension Port, by Bohn, 2009.06.05
 	//CHNL_SetChnlInfoFromDestPort(pExtAdapter, pDefAdapter);
 	MgntStopBeacon(pExtAdapter);
-// 3. =============	 Restart AP     ======================	
+// 3. =============	 Restart AP     ======================
 	if(1)//pDefAdapter->bInHctTest)	// In HctTest, do not delay beacon for 20seconds.
 		PlatformSetTimer(pAdapter, &pExtMgntInfo->DelaySendBeaconTimer , 1000);
-	else		
+	else
 		PlatformSetTimer(pAdapter, &pExtMgntInfo->DelaySendBeaconTimer , pDefMgntInfo->ResumeBeaconTime);
 
-	N62CAPIndicateFrequencyAdopted(pExtAdapter);	
+	N62CAPIndicateFrequencyAdopted(pExtAdapter);
 
 	pExtAdapter->bAPChannelInprogressForNewconnected = FALSE;
 
@@ -3497,8 +3497,8 @@ Ap_SendDisassocWithOldChnlWorkitemCallback(
 
 
 // Called by Two port System
-VOID 
-AP_DisconnectAfterSTANewConnected(	
+VOID
+AP_DisconnectAfterSTANewConnected(
 	PADAPTER Adapter
 	)
 {
@@ -3517,19 +3517,19 @@ AP_DisconnectAfterSTANewConnected(
 	PMGNT_INFO			pExtMgntInfo = &ExtAdapter->MgntInfo;
 	PRT_CHANNEL_INFO	pDefChnlInfo = GET_CHNL_INFO(pDefMgntInfo);
 	PRT_CHANNEL_INFO	pExtChnlInfo = GET_CHNL_INFO(pExtMgntInfo);
-	
+
 	RT_TRACE(COMP_AP, DBG_LOUD, ("Def Channel  %d  Ext Channel  %d \n",
 		pDefMgntInfo->dot11CurrentChannelNumber, pExtMgntInfo->dot11CurrentChannelNumber));
-	RT_TRACE(COMP_AP, DBG_LOUD, ("Ext BW=%d, offset=%d\n", 
+	RT_TRACE(COMP_AP, DBG_LOUD, ("Ext BW=%d, offset=%d\n",
 		pExtChnlInfo->CurrentChannelBandWidth, pExtChnlInfo->Ext20MHzChnlOffsetOf40MHz));
-	RT_TRACE(COMP_AP, DBG_LOUD, ("Def BW=%d, offset=%d\n", 
+	RT_TRACE(COMP_AP, DBG_LOUD, ("Def BW=%d, offset=%d\n",
 		pDefChnlInfo->CurrentChannelBandWidth, pDefChnlInfo->Ext20MHzChnlOffsetOf40MHz));
-	
+
 	if(	AP_DetermineAlive(ExtAdapter) &&
 		( (pExtMgntInfo->dot11CurrentChannelNumber !=pDefMgntInfo->dot11CurrentChannelNumber) ||
 		(pExtChnlInfo->CurrentChannelCenterFrequency != pDefChnlInfo->CurrentChannelCenterFrequency))
 		)
-	{		
+	{
 		PlatformScheduleWorkItem( &(pExtMgntInfo->ApSendDisassocWithOldChnlWorkitem));
 	}
 	else
@@ -3537,17 +3537,17 @@ AP_DisconnectAfterSTANewConnected(
 		RT_TRACE( COMP_AP, DBG_LOUD, ("Channel are the Same, Wouldn't Change\n"));
 	}
 
-	// Under win7, we may have an adapter running in AP/IBSS mode, 
+	// Under win7, we may have an adapter running in AP/IBSS mode,
 	// this action would stop updating beacon (UpdateBeaconFrame()).
 	// If one of the adapters needs to send beacon, we skip this action.
 	// 2008.07.10, haich.
-	// Update Interrup Mask for STA in infrastructure mode. 
-	// Currently, we only remove the masks set in IBSS mode. 2005.12.14, by rcnjko.	
+	// Update Interrup Mask for STA in infrastructure mode.
+	// Currently, we only remove the masks set in IBSS mode. 2005.12.14, by rcnjko.
 	if(!(pDefMgntInfo->OpMode == RT_OP_MODE_AP || pDefMgntInfo->OpMode  == RT_OP_MODE_IBSS ||
 		pExtMgntInfo->OpMode  == RT_OP_MODE_AP ||pExtMgntInfo->OpMode  == RT_OP_MODE_IBSS))
 	{
 		HAL_AP_IBSS_INT_MODE	intMode = HAL_AP_IBSS_INT_DISABLE;
-		
+
 		Adapter->HalFunc.SetHalDefVarHandler(Adapter, HAL_DEF_AP_IBSS_INTERRUPT, (pu1Byte)&intMode);
 	}
 
@@ -3575,7 +3575,7 @@ AP_StatusWatchdog(
 		pDefMgntInfo->bSwitchingSTAStateInProgress = FALSE;
 		RT_TRACE(COMP_AP,DBG_LOUD, ("Handle bDelaySwitchToApMode in AP_StatusWatchdog\n"));
 		EXT_AP_START_AP_MODE(Adapter);
-	}		
+	}
 	else if(pDefMgntInfo->bSwitchingSTAStateInProgress)
 	{
 		pDefMgntInfo->bSwitchingSTAStateInProgress = FALSE;
@@ -3637,7 +3637,7 @@ AP_CheckRSNIE(
 		pEntry->perSTAKeyInfo.NumOfPTKReplayCounter = 0;
 		pEntry->perSTAKeyInfo.NumOfGTKReplayCounter = 0;
 	}
-	
+
 	RSNIE = PacketGetElement(asocpdu, EID_WPA2, OUI_SUB_DONT_CARE, OUI_SUBTYPE_DONT_CARE);
 	if(RSNIE.Length != 0){
 		pEntry->perSTAKeyInfo.SecLvl = RT_SEC_LVL_WPA2;
@@ -3649,18 +3649,18 @@ AP_CheckRSNIE(
 		else if (pEntry->AuthAlg == OPEN_SYSTEM && bWPSEnable)
 		{
 			pEntry->Capability = GET_ASOC_REQ_CAPABILITY_INFO(asocpdu.Octet);
-		
+
 			if(pEntry->Capability & cPrivacy)
 			{
 				u1Byte count;
-			
+
 				pEntry->perSTAKeyInfo.GroupCipherSuite = RT_ENC_ALG_WEP;
 				for(count = 0; count < MAX_CIPHER_SUITE_NUM; count++){
 					pEntry->perSTAKeyInfo.PairwiseCipherSuite[count] = RT_ENC_ALG_WEP;
-				}			
+				}
 				pEntry->AuthMode = RT_802_11AuthModeOpen;
 			}
-			
+
 			Match = TRUE;
 			return Match;
 		}
@@ -3668,7 +3668,7 @@ AP_CheckRSNIE(
 
 	if(RSNIE.Length != 0){
 		u2Byte	count;
-		
+
 		//2004/09/15, kcwu, parse WPA2 packet
 		if(pEntry->perSTAKeyInfo.SecLvl == RT_SEC_LVL_WPA)
 		{
@@ -3707,14 +3707,14 @@ AP_CheckRSNIE(
 			GET_OUI_WITH_TYPE(GET_RSN_IE_GROUP_CIPHER_SUITE(RSNIE.Octet), tmpOUI, tmpOUIType);
 			Sec_MapOUITypeToCipherSuite(tmpOUI, &tmpOUIType, RT_SEC_LVL_WPA2, &(pEntry->perSTAKeyInfo.GroupCipherSuite));
 
-			// Pairwise Cipher			
+			// Pairwise Cipher
 			pEntry->perSTAKeyInfo.PairwiseCipherCount = GET_RSN_IE_PAIRWISE_CIPHER_SUITE_CNT(RSNIE.Octet);
 
 			// Bruce_Test
 			DbgPrint("Client PairwiseCipherCount = %d\n", pEntry->perSTAKeyInfo.PairwiseCipherCount);
 			for(count = 0; count < pEntry->perSTAKeyInfo.PairwiseCipherCount && count < MAX_CIPHER_SUITE_NUM; count ++)
 			{
-				GET_OUI_WITH_TYPE(GET_RSN_IE_PAIRWISE_CIPHER_SUITE_LIST(RSNIE.Octet, count), tmpOUI, tmpOUIType);				
+				GET_OUI_WITH_TYPE(GET_RSN_IE_PAIRWISE_CIPHER_SUITE_LIST(RSNIE.Octet, count), tmpOUI, tmpOUIType);
 				Sec_MapOUITypeToCipherSuite(tmpOUI, &tmpOUIType, RT_SEC_LVL_WPA2, &(pEntry->perSTAKeyInfo.PairwiseCipherSuite[count]));
 				// Bruce_Test
 				DbgPrint("Pairwise[%d] OUI = %02X-%02X-%02X-%02X, Pairwise = 0x%08X\n", count, tmpOUI[0], tmpOUI[1], tmpOUI[2], tmpOUIType, pEntry->perSTAKeyInfo.PairwiseCipherSuite[count]);
@@ -3736,12 +3736,12 @@ AP_CheckRSNIE(
 		else
 		{
 			RT_TRACE( COMP_AUTHENTICATOR, DBG_LOUD, ("RSNIE parsing error!") );
-		}		
+		}
 	}
 
 
 	//2 Step 2. Compare with Authenticator's RSNIE
-	
+
 	// Code reference: SelectNetworkBySSID()
 	{
 		int	i;
@@ -3763,7 +3763,7 @@ AP_CheckRSNIE(
 				RT_TRACE_F(COMP_AP, DBG_LOUD, ("Cannot find matched pairwise cipher suite with ours (0x%08X)\n", pMgntInfo->SecurityInfo.PairwiseEncAlgorithm));
 				Match = FALSE;
 			}
-			
+
 		}
 	}
 
@@ -3774,7 +3774,7 @@ AP_CheckRSNIE(
 
 }
 
-void 
+void
 AP_OnEAPOL(
 	IN	PADAPTER		Adapter,
 	IN	PRT_RFD			pRfd
@@ -3863,16 +3863,16 @@ AP_HTResetSTAEntry(
 )
 {
 	pSTAEntry->HTInfo.bEnableHT = FALSE;
-	
+
 	// LDPC support
 	CLEAR_FLAGS(pSTAEntry->HTInfo.LDPC);
-	
+
 	// STBC support
 	CLEAR_FLAGS(pSTAEntry->HTInfo.STBC);
-	
+
 	pSTAEntry->HTInfo.AMPDU_Factor = 0;
 	pSTAEntry->HTInfo.AMSDU_MaxSize = 0;
-	pSTAEntry->HTInfo.MPDU_Density = 0;	
+	pSTAEntry->HTInfo.MPDU_Density = 0;
 	pSTAEntry->HTInfo.bSupportCck = FALSE;
 	pSTAEntry->HTInfo.HTHighestOperaRate = 0;
 }
@@ -3892,13 +3892,13 @@ AP_HTCheckHTCap(
 	OCTET_STRING 			osHTCap = PacketGetElement(asocpdu, EID_HTCapability, OUI_SUB_DONT_CARE, OUI_SUBTYPE_DONT_CARE);
 
 	//1 Reject STA to connect in N mode
-	// If we do not support CCK rate in N mode, reject the B mode 
+	// If we do not support CCK rate in N mode, reject the B mode
 	if(IS_WIRELESS_MODE_HT_24G(Adapter) && pHTInfo->bCurSuppCCK==FALSE)
 	{
 		if(pEntry->WirelessMode == WIRELESS_MODE_B)
 			return FALSE;
 	}
-	
+
 	//1 Set Wireless Mode
 	if(osHTCap.Length != 0)
 	{
@@ -3917,9 +3917,9 @@ AP_HTCheckHTCap(
 	}
 
 	HTCheckHTCap(Adapter, pEntry, pPeerHTCap);
-	
+
 	return TRUE;
-	
+
 }
 
 
@@ -3950,12 +3950,12 @@ DelaySendBeaconTimerCallback(
 	if(AP_DetermineAlive(pExtAdapter) == FALSE)
 	{
 		RT_TRACE(COMP_AP, DBG_LOUD, ("DelaySendBeaconTimerCallback:() AP not started\n"));
-		return;	
+		return;
 	}
 
 	//[Win7] For Default-G _Extension-N20 case, we must reset SW and HW part. 2009.07.09, by Bohn
 	AP_SetupStartApInfo(pExtAdapter);
-	
+
 	PlatformScheduleWorkItem( &(pMgntInfo->ApStartRequestWorkItem) );
 }
 
@@ -3963,9 +3963,9 @@ DelaySendBeaconTimerCallback(
 /** Get AP state */
 AP_STATE
 GetAPState(
-	IN	PADAPTER		pAdapter	
+	IN	PADAPTER		pAdapter
 	)
-{	
+{
 	return (AP_STATE)PlatformAtomicOr((pu1Byte)(&pAdapter->MgntInfo.APState),0);
 }
 
@@ -3990,7 +3990,7 @@ AP_DetermineApType(
 	BOOLEAN bFakeApFlagSet = FALSE;
 	PMGNT_INFO pMgntInfo = &pAdapter->MgntInfo;
 	RT_AP_TYPE ApType = RT_AP_TYPE_NONE;
-	
+
 	if(IsDefaultAdapter(pAdapter))
 		bFakeApFlagSet = TRUE;
 
@@ -4025,10 +4025,10 @@ AP_DetermineApType(
 	{
 		ApType = RT_AP_TYPE_NORMAL;
 	}
-	RT_TRACE(COMP_AP, DBG_LOUD, 
+	RT_TRACE(COMP_AP, DBG_LOUD,
 		("AP_DetermineApType(): pMgntInfo->NdisVersion: %u, ApType is determined to be: %u\n", pMgntInfo->NdisVersion, ApType));
 	return ApType;
-	
+
 }
 
 
@@ -4040,7 +4040,7 @@ AP_DetermineAlive(
 	BOOLEAN 	bFakeApFlagSet = FALSE;
 	PMGNT_INFO 	pMgntInfo = &pAdapter->MgntInfo;
 	BOOLEAN		bAlive = FALSE;
-	
+
 	if(IsDefaultAdapter(pAdapter))
 		bFakeApFlagSet = TRUE;
 
@@ -4059,14 +4059,14 @@ AP_DetermineAlive(
 				bAlive = TRUE;
 			else
 				bAlive = FALSE;
-		}	
+		}
 		else
 		{
 			if(GetAPState(pAdapter)==AP_STATE_STARTED)
 				bAlive = TRUE;
 			else
 				bAlive = FALSE;
-		}	
+		}
 	}
 	else if(pMgntInfo->NdisVersion == RT_NDIS_VERSION_6_1)
 	{// vista, only fake AP mode is valid
@@ -4096,7 +4096,7 @@ AP_DetermineAlive(
 	{
 		bAlive = FALSE;
 	}
-	RT_TRACE(COMP_AP, DBG_TRACE, 
+	RT_TRACE(COMP_AP, DBG_TRACE,
 		("AP_DetermineAlive(): pMgntInfo->NdisVersion: %u, Ap alive is determined to be: %u\n", pMgntInfo->NdisVersion, bAlive));
 	return bAlive;
 }
@@ -4292,7 +4292,7 @@ Ap_PsTxFeedbackCallback(
 	pEntry = (PRT_WLAN_STA)pTxFeedbackInfo->pContext;
 	if(pEntry == NULL)
 		return;
-	
+
 	RT_TRACE(COMP_AP, DBG_LOUD, ("Ap_PsTxFeedbackCallback()=====>\n"));
 
 	// This tx packet feedback is the wmm ps packet.
@@ -4314,10 +4314,10 @@ Ap_PsTxFeedbackCallback(
 	if(WmmSp && pEntry->WmmEosp == RT_STA_EOSP_STATE_OPENED)
 	{
 		PRT_TCB				pTcb;
-		OCTET_STRING		osMpdu;				
+		OCTET_STRING		osMpdu;
 
 		if(!RTIsListEmpty(&pEntry->WmmPsQueue))
-		{	
+		{
 			pTcb = (PRT_TCB)RTRemoveHeadList(&pEntry->WmmPsQueue);
 			FillOctetString(osMpdu, GET_FRAME_OF_FIRST_FRAG(pAdapter, pTcb), (u2Byte)pTcb->BufferList[0].Length);
 
@@ -4331,10 +4331,10 @@ Ap_PsTxFeedbackCallback(
 			if(TxFeedbackInstallTxFeedbackInfoForTcb(pAdapter, pTcb))
 			{
 				TxFeedbackFillTxFeedbackInfoUserConfiguration(
-						pTcb, 
-						(pEntry->WmmEosp == RT_STA_EOSP_STATE_OPENED) ? RT_TX_FEEDBACK_ID_AP_WMM_PS_PKT : RT_TX_FEEDBACK_ID_AP_WMM_EOSP_ENDING, 
-						pTxFeedbackInfo->pAdapter, 
-						Ap_PsTxFeedbackCallback, 
+						pTcb,
+						(pEntry->WmmEosp == RT_STA_EOSP_STATE_OPENED) ? RT_TX_FEEDBACK_ID_AP_WMM_PS_PKT : RT_TX_FEEDBACK_ID_AP_WMM_EOSP_ENDING,
+						pTxFeedbackInfo->pAdapter,
+						Ap_PsTxFeedbackCallback,
 						(PVOID)pEntry
 					);
 			}
@@ -4358,7 +4358,7 @@ Ap_PsTxFeedbackCallback(
 		{
 			PRT_TX_LOCAL_BUFFER 	pBuf;
 			u1Byte					AC = 0;
-			
+
 			if(GET_VO_UAPSD(pEntry->WmmStaQosInfo))
 				AC = 7;
 			else if(GET_VI_UAPSD(pEntry->WmmStaQosInfo))
@@ -4367,11 +4367,11 @@ Ap_PsTxFeedbackCallback(
 				AC = 3;
 			else if(GET_BK_UAPSD(pEntry->WmmStaQosInfo))
 				AC = 2;
-			
+
 			if(MgntGetBuffer(pTxFeedbackInfo->pAdapter, &pTcb, &pBuf))
 			{
 				ConstructNullFunctionData(
-					pTxFeedbackInfo->pAdapter, 
+					pTxFeedbackInfo->pAdapter,
 					pBuf->Buffer.VirtualAddress,
 					&pTcb->PacketLength,
 					pEntry->MacAddr,
@@ -4384,10 +4384,10 @@ Ap_PsTxFeedbackCallback(
 				if(TxFeedbackInstallTxFeedbackInfoForTcb(pAdapter, pTcb))
 				{
 					TxFeedbackFillTxFeedbackInfoUserConfiguration(
-							pTcb, 
-							RT_TX_FEEDBACK_ID_AP_WMM_EOSP_ENDING, 
-							pTxFeedbackInfo->pAdapter, 
-							Ap_PsTxFeedbackCallback, 
+							pTcb,
+							RT_TX_FEEDBACK_ID_AP_WMM_EOSP_ENDING,
+							pTxFeedbackInfo->pAdapter,
+							Ap_PsTxFeedbackCallback,
 							(PVOID)pEntry
 						);
 
@@ -4407,11 +4407,11 @@ Ap_PsTxFeedbackCallback(
 }
 
 
-VOID 
+VOID
 AP_AllPowerSaveDisable(
 	IN PADAPTER		pAdapter
 )
-{	
+{
 	PADAPTER					Adapter  = GetDefaultAdapter(pAdapter);
 	PMGNT_INFO				pMgntInfo = &(Adapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL	pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
@@ -4433,12 +4433,12 @@ AP_AllPowerSaveReturn(
 	PADAPTER						Adapter  = GetDefaultAdapter(pAdapter);
 	PMGNT_INFO					pMgntInfo = &(Adapter->MgntInfo);
 	PRT_POWER_SAVE_CONTROL		pPSC = GET_POWER_SAVE_CONTROL(pMgntInfo);
-		
+
 	IPSReturn(Adapter, IPS_DISABLE_EXT_OPMODE);
 	// Return LPS by UpdateLPSStatus(). by tynli. 2011.01.04.
 	Adapter->HalFunc.UpdateLPSStatusHandler(
-			Adapter, 
-			pPSC->RegLeisurePsMode, 
+			Adapter,
+			pPSC->RegLeisurePsMode,
 			pPSC->RegPowerSaveMode);
 
 	pPSC->bGpioRfSw = REGISTRY(Adapter, bRegGpioRfSw);
@@ -4489,10 +4489,10 @@ AP_PS_SendAllMcastPkts(
 	// RT_TRACE_F(COMP_AP, DBG_LOUD, ("Send all Mcst/Bcst pkts!\n"));
 
 	RTInitializeListHead(&tmpList);
-			
+
 	PlatformAcquireSpinLock(pAdapter, RT_TX_SPINLOCK);
 	//
-	// We remove all TCBs from the PsQueue and insert into the tmp list to prevent that the TCBs may be  recurcively 
+	// We remove all TCBs from the PsQueue and insert into the tmp list to prevent that the TCBs may be  recurcively
 	// inserted back into the PsQueue when the client enters and leaves PS mode frequently.
 	// By Bruce, 2010-06-02.
 	//
@@ -4517,7 +4517,7 @@ AP_PS_SendAllMcastPkts(
 		else
 		{
 			SET_80211_HDR_MORE_DATA(osMpdu.Octet, 0);
-		}				
+		}
 
 		rtStatus = TransmitTCB(pAdapter, pTcb);
 		if(RT_STATUS_SUCCESS != rtStatus && RT_STATUS_PKT_DROP != rtStatus)
@@ -4543,7 +4543,7 @@ AP_VHTResetSTAEntry	(
 
 	// LDPC support
 	CLEAR_FLAGS(pSTAEntry->VHTInfo.LDPC);
-	
+
 	// STBC support
 	CLEAR_FLAGS(pSTAEntry->VHTInfo.STBC);
 }
@@ -4566,7 +4566,7 @@ AP_VHTCheckVHTCap(
 
 		pEntry->VHTInfo.bEnableVHT = TRUE;
 		pVHTCap = (pu1Byte)osVHTCap.Octet;
-	
+
 		if(pEntry->WirelessMode == WIRELESS_MODE_N_24G)
 			pEntry->WirelessMode = WIRELESS_MODE_AC_24G;
 		else
@@ -4597,17 +4597,17 @@ AP_GetBandWidth(
 
 	PRT_CHANNEL_INFO pDefChnlInfo = GET_CHNL_INFO(pDefaultMgntInfo);
 
-	
+
 	EXTCHNL_OFFSET	ExtChnlOffset= EXTCHNL_OFFSET_NO_EXT;
 	CHANNEL_WIDTH	ChnlWidth;
 
 
 	ChnlWidth = (CHANNEL_WIDTH)AP_CheckBwWidth(pDefaultAdapter);
-	RT_TRACE(COMP_AP, DBG_LOUD, ("AP_GetBandWidth(): set to %d mode Ch=%d\n", ChnlWidth, pMgntInfo->dot11CurrentChannelNumber));				
+	RT_TRACE(COMP_AP, DBG_LOUD, ("AP_GetBandWidth(): set to %d mode Ch=%d\n", ChnlWidth, pMgntInfo->dot11CurrentChannelNumber));
 
-	//[Win 7] Two Port Issue	
+	//[Win 7] Two Port Issue
 	// Extension Port Must Set Offset Accroding to Default Port's if he connected
-	// by Bohn, 2009.06.05	
+	// by Bohn, 2009.06.05
 	if(!ACTING_AS_AP(pDefaultAdapter) && pDefaultMgntInfo->bMediaConnect)
 	{
 		RT_TRACE(COMP_AP, DBG_LOUD, ("Def Connected.\n"));
@@ -4630,14 +4630,14 @@ AP_GetBandWidth(
 			{
 				if(pMgntInfo->dot11CurrentChannelNumber == 1 || pMgntInfo->dot11CurrentChannelNumber == 5)
 					ExtChnlOffset = EXTCHNL_OFFSET_UPPER;
-				else 
+				else
 					ExtChnlOffset = EXTCHNL_OFFSET_LOWER;
 			}
-			else 
+			else
 				ExtChnlOffset =(pMgntInfo->dot11CurrentChannelNumber<=7)? EXTCHNL_OFFSET_UPPER:EXTCHNL_OFFSET_LOWER;
-		}	
+		}
 	}
-	RT_TRACE(COMP_AP , DBG_LOUD, ("ExtChnlOffset=%d\n", ExtChnlOffset));				
+	RT_TRACE(COMP_AP , DBG_LOUD, ("ExtChnlOffset=%d\n", ExtChnlOffset));
 
 
 	*pChnlBW =  ChnlWidth;
@@ -4653,13 +4653,13 @@ AP_SetBandWidth(
 
 	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);
 	PMGNT_INFO 		pDefaultMgntInfo = GetDefaultMgntInfo(Adapter);
-	
+
 	EXTCHNL_OFFSET	ExtChnlOffset= EXTCHNL_OFFSET_NO_EXT;
 	CHANNEL_WIDTH	ChnlWidth;
 
 	AP_GetBandWidth(Adapter, &ChnlWidth, &ExtChnlOffset);
 	RT_TRACE(COMP_AP, DBG_LOUD,("AP_SetBandWidth: ChnlWidth %d \n", ChnlWidth));
-			
+
 	if(Adapter->bInHctTest )
 	{
 		if(!((pDefaultMgntInfo->mAssoc || pDefaultMgntInfo->mIbss) && (!ACTING_AS_AP(pDefaultAdapter))))
@@ -4674,7 +4674,7 @@ AP_SetBandWidth(
 	}
 	else
 	{
-		CHNL_SetBwChnl(Adapter,  pMgntInfo->dot11CurrentChannelNumber, ChnlWidth, ExtChnlOffset);	
+		CHNL_SetBwChnl(Adapter,  pMgntInfo->dot11CurrentChannelNumber, ChnlWidth, ExtChnlOffset);
 	}
 }
 
@@ -4683,9 +4683,9 @@ u1Byte
 AP_CheckBwWidth	(
 	PADAPTER	Adapter
 )
-{	
+{
 	u1Byte ret = (u1Byte)CHANNEL_WIDTH_80;
-	
+
 	// XP, Win7 Follow default port first. (Two port)
 	// XP, Vista bCurBW40MHz  <- pHTInfo->bRegBW40MHz (One port)
 	GetTwoPortSharedResource(Adapter,TWO_PORT_SHARED_OBJECT__BW,NULL,(pu1Byte)(&ret));
@@ -4695,7 +4695,7 @@ AP_CheckBwWidth	(
 
 	if (Adapter->MgntInfo.bRegVht24g == 1)
 		ret = CHANNEL_WIDTH_40;
-	
+
 	RT_TRACE(COMP_AP, DBG_TRACE, ("AP_CheckBwWidth(): set to %s mode\n", (ret==CHANNEL_WIDTH_80)?"80MHz":"20_40MHz"));
 	return ret;
 
@@ -4703,7 +4703,7 @@ AP_CheckBwWidth	(
 
 //
 // Description: Handle incoming Association Request.
-// Output:		Return TRUE if we will response the incoming auth frame, FALSE o.w.. 
+// Output:		Return TRUE if we will response the incoming auth frame, FALSE o.w..
 //
 // 2005.06.01, by rcnjko.
 //
@@ -4724,7 +4724,7 @@ AP_OnAsocReq(
 	BOOLEAN			bQosSTA = FALSE, bIndicate = TRUE;
 	BOOLEAN			bSendRsp = TRUE;
 	u8Byte			curTime = PlatformGetCurrentTime();
-	
+
 
 	FunctionIn(COMP_MLME);
 	// Check Bssid.
@@ -4764,7 +4764,7 @@ AP_OnAsocReq(
 	}
 
 	// Check RSN-IE if necessary.
-	if(   pMgntInfo->SecurityInfo.AuthMode == RT_802_11AuthModeWPAPSK ||	
+	if(   pMgntInfo->SecurityInfo.AuthMode == RT_802_11AuthModeWPAPSK ||
 		pMgntInfo->SecurityInfo.AuthMode == RT_802_11AuthModeWPA2PSK )
 	{
 		if( !AP_CheckRSNIE(Adapter, pEntry, asocpdu) )
@@ -4785,7 +4785,7 @@ AP_OnAsocReq(
 	if(pEntry->bAssociated)
 	{
 		//
-		// If the STA failed to receive the AssocRsp previously sent, 
+		// If the STA failed to receive the AssocRsp previously sent,
 		// it may keep retry but we have already indicate asoc complete to OS and
 		// 4-way is started. In this case, we indicate disassociation and process the AsocReq
 		// to prevent association failure. 2011.05.31, haich.
@@ -4847,7 +4847,7 @@ AP_OnAsocReq(
 		//
 		if(!MgntIsRateSupport(pEntry->bdSupportRateEXBuf[i], pMgntInfo->dot11OperationalRateSet))
 			continue;
-	
+
 		if( (pEntry->bdSupportRateEXBuf[i] & 0x7f) > pEntry->HighestOperaRate)
 			pEntry->HighestOperaRate = pEntry->bdSupportRateEXBuf[i] & 0x7f;
 	}
@@ -4876,7 +4876,7 @@ AP_OnAsocReq(
 	AsocStatusCode = StatusCode_success;
 
 	// AP QOS mode select
-	if((pMgntInfo->pStaQos->CurrentQosMode & QOS_WMM) 
+	if((pMgntInfo->pStaQos->CurrentQosMode & QOS_WMM)
 		||(pMgntInfo->pStaQos->CurrentQosMode & QOS_WMMSA))
 	{
 		osQosInfo = PacketGetElement(asocpdu, EID_Vendor, OUI_SUB_WMM, OUI_SUBTYPE_WMM_INFO);
@@ -4921,12 +4921,12 @@ AP_OnAsocReq(
 	}
 
 
-	// Enable protection mode and Disable short slot time if an [B-mode STA joined] or[ G-mode Connect to Soft N AP]		
+	// Enable protection mode and Disable short slot time if an [B-mode STA joined] or[ G-mode Connect to Soft N AP]
 	// Do not update bUseProtection bit when G mode STA add or leave. 2010.11.24. by tynli.
 	if(pEntry->WirelessMode == WIRELESS_MODE_B)
 	{
 		ActUpdate_ProtectionMode(Adapter, TRUE);
-		
+
 		if(pEntry->WirelessMode == WIRELESS_MODE_B)
 			pMgntInfo->mCap &= (~cShortSlotTime);
 		else
@@ -4952,26 +4952,26 @@ AP_OnAsocReq(
 	//
 	// Association Request.
 	//
-	AsocEntry_UpdateAsocInfo(Adapter, 
-		pEntry->MacAddr, 
-		NULL, 
-		0, 
+	AsocEntry_UpdateAsocInfo(Adapter,
+		pEntry->MacAddr,
+		NULL,
+		0,
 		ALLOCATE_ASOC_REQ);
-	AsocEntry_UpdateAsocInfo(Adapter, 
-		pEntry->MacAddr, 
-		asocpdu.Octet, 
-		asocpdu.Length, 
+	AsocEntry_UpdateAsocInfo(Adapter,
+		pEntry->MacAddr,
+		asocpdu.Octet,
+		asocpdu.Length,
 		UPDATE_ASOC_REQ);
 
 	//
 	// IE from OS that is to be carried in Association Response.
 	//
-	AsocEntry_UpdateAsocInfo(Adapter, 
-		pEntry->MacAddr, 
-		NULL, 
-		0, 
+	AsocEntry_UpdateAsocInfo(Adapter,
+		pEntry->MacAddr,
+		NULL,
+		0,
 		ALLOCATE_ASOC_RSP_IE_FROM_OS);
-	
+
 	if(MgntActQuery_ApType(Adapter) == RT_AP_TYPE_VWIFI_AP && bIndicate)
 	{
 		//
@@ -4981,23 +4981,23 @@ AP_OnAsocReq(
 		// cached in the station entry already. We need to process it now.
 		//
 		pMgntInfo->pCurrentSta = pEntry;
-		DrvIFIndicateIncommingAssociationStart(Adapter);		
+		DrvIFIndicateIncommingAssociationStart(Adapter);
 		DrvIFIndicateIncommingAssocReqRecv(Adapter);
 		if(OS_SUPPORT_WDI(Adapter))
 		{// let WDI to decide whether to send the rsp
 			bSendRsp = FALSE;
 		}
-		else 
+		else
 		if(!pEntry->bOsDecisionMade)
 		{
-			RT_TRACE_F(COMP_INDIC, DBG_WARNING, 
+			RT_TRACE_F(COMP_INDIC, DBG_WARNING,
 				("[WARNING] OS did not make decision whether to accept the AsocReq.\n"));
 
 			AsocStatusCode = StatusCode_Unspecified_failure;
 		}
 		else if(pEntry->bNotAcceptedByOs)
-		{	
-			RT_TRACE_F(COMP_INDIC, DBG_WARNING, 
+		{
+			RT_TRACE_F(COMP_INDIC, DBG_WARNING,
 				("[WARNING] the AssocReq is not accepted by OS.\n"));
 
 			AsocStatusCode = pEntry->OsReasonCode;
@@ -5012,8 +5012,8 @@ AP_OnAsocReq(
 	// This client is associated our AP successfully.
 	// These actions must be updated before sending assoication response because there may be some packets will be
 	// received immediately after sending the response packet.
-	if(AsocStatusCode == StatusCode_success)	
-	{ 
+	if(AsocStatusCode == StatusCode_success)
+	{
 		// Change the last scan complete time to block scan request for a while from the default port.
 		// If the scan process is executed, the next handshake may fail because this port is not in the
 		// correct channel now.
@@ -5042,8 +5042,8 @@ AP_OnAsocReq(
 			pEntry->MacAddr,
 			NULL,
 			0,
-			FREE_ASOC_RSP_IE_FROM_OS);	
-	
+			FREE_ASOC_RSP_IE_FROM_OS);
+
 	if(pEntry->HTInfo.bEnableHT)
 	{
 		u4Byte	Length = 0;
@@ -5056,7 +5056,7 @@ AP_OnAsocReq(
 		Length += BroadcomElement.Length;
 		BroadcomElement = PacketGetElement( asocpdu, EID_Vendor, OUI_SUB_BROADCOM_IE_3, OUI_SUBTYPE_DONT_CARE);
 		Length += BroadcomElement.Length;
-		
+
 		if(	pMgntInfo->SecurityInfo.PairwiseEncAlgorithm == RT_ENC_ALG_WEP40||
 			pMgntInfo->SecurityInfo.PairwiseEncAlgorithm == RT_ENC_ALG_WEP104
 			||pMgntInfo->SecurityInfo.PairwiseEncAlgorithm == RT_ENC_ALG_TKIP)
@@ -5064,9 +5064,9 @@ AP_OnAsocReq(
 			//DbgPrint("WEP DON't Use AMSDU\n");
 			pEntry->IOTAction = 0;
 		}
-		
+
 		OnMimoPs(Adapter, pRfd,&asocpdu);
-		
+
 	}
 
 	FunctionOut(COMP_MLME);
@@ -5114,7 +5114,7 @@ AP_SendAsocRsp(
 	else
 	{
 		pAdapter->HalFunc.UpdateHalRATRTableHandler(
-									pAdapter, 
+									pAdapter,
 									&pMgntInfo->dot11OperationalRateSet,
 									pMgntInfo->dot11HTOperationalRateSet,pEntry);
 	}
@@ -5128,7 +5128,7 @@ AP_SendAsocRsp(
 	// Added by Annie, 2005-06-30.
 	if( pMgntInfo->SecurityInfo.AuthMode == RT_802_11AuthModeWPAPSK  ||  pMgntInfo->SecurityInfo.AuthMode == RT_802_11AuthModeWPA2PSK)
 	{
-#if (WPS_SUPPORT == 1)	
+#if (WPS_SUPPORT == 1)
 		PSIMPLE_CONFIG_T pSimpleConfig = GET_SIMPLE_CONFIG(pDefaultMgntInfo);
 		BOOLEAN bWpsInProgress = pSimpleConfig->bEnabled;
 #else
@@ -5141,11 +5141,11 @@ AP_SendAsocRsp(
 				Authenticator_OnAuthenticationRequest(pAdapter, &pEntry->perSTAKeyInfo);
 	}
 
-	
+
 	//
-	// 061227, rcnjko: 
+	// 061227, rcnjko:
 	// Just Indicate association start and association complete events,
-	// connection start and connection complete events will be indicate up 
+	// connection start and connection complete events will be indicate up
 	// when UI set the fake profile before.
 	//
 	if(MgntActQuery_ApType(pAdapter) == RT_AP_TYPE_IBSS_EMULATED
@@ -5160,16 +5160,16 @@ AP_SendAsocRsp(
 		pMgntInfo->pCurrentSta = pEntry;
 		DrvIFIndicateIncommingAssociationComplete(pAdapter, status);
 	}
-	
+
 	AsocEntry_UpdateAsocInfo(pAdapter,
 			pEntry->MacAddr,
 			NULL,
 			0,
 			FREE_ASOC_RSP);
-	
+
 }
 
 #else
 
 
-#endif	
+#endif

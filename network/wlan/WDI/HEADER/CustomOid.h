@@ -60,7 +60,7 @@
 #define		OID_RT_PRO_READ_EEPROM							0xFF818022
 #define		OID_RT_PRO_RESET_TX_PACKET_SENT					0xFF818023
 #define		OID_RT_PRO_QUERY_TX_PACKET_SENT					0xFF818024
-#define		OID_RT_PRO_RESET_RX_PACKET_RECEIVED				0xFF818025 
+#define		OID_RT_PRO_RESET_RX_PACKET_RECEIVED				0xFF818025
 #define		OID_RT_PRO_QUERY_RX_PACKET_RECEIVED				0xFF818026
 #define		OID_RT_PRO_QUERY_RX_PACKET_CRC32_ERROR			0xFF818027
 #define		OID_RT_PRO_QUERY_CURRENT_ADDRESS				0xFF818028
@@ -74,7 +74,7 @@
 #define		OID_RT_PRO_SET_MODULATION						0xFF81802F
 //
 
-// 200705/24 mh add for bandwitdh test of mp temporarily 
+// 200705/24 mh add for bandwitdh test of mp temporarily
 #define		OID_RT_PRO_SET_BANDWIDTH						0xFF818030
 #define		OID_RT_PRO_QUERY_BANDWIDTH						0xFF818031
 #define		OID_RT_PRO_SET_TX_AGC_OFFSET					0xFF818032
@@ -100,7 +100,7 @@
 #define		OID_RT_PRO_DBGCMD_CHECK							0xFF818041
 #define		OID_RT_PRO_DBGCMD_RETURN						0xFF818042
 #define		OID_RT_PRO_SET_SINGLE_TONE_TX                   0xFF818043
-// Add EFUSE R/W after 92S 
+// Add EFUSE R/W after 92S
 #define		OID_RT_PRO_WRITE_EFUSE							0xFF818044
 #define		OID_RT_PRO_READ_EFUSE							0xFF818045
 #define		OID_RT_PRO_UPDATE_EFUSE							0xFF818046
@@ -122,7 +122,7 @@
 
 #define		OID_RT_PRO_DBG_CONTROL							0xFF81807F
 
-//Sean		
+//Sean
 #define		OID_RT_DRIVER_OPTION							0xFF818080
 #define		OID_RT_RF_OFF									0xFF818081
 #define		OID_RT_AUTH_STATUS								0xFF818082
@@ -183,7 +183,7 @@
 #define 	OID_RT_SET_CHANNEL								0xFF010182
 #define 	OID_RT_SET_SNIFFER_MODE                 		0xFF010183
 #define 	OID_RT_GET_SIGNAL_QUALITY              	 		0xFF010184
-#define 	OID_RT_GET_SMALL_PACKET_CRC						0xFF010185		
+#define 	OID_RT_GET_SMALL_PACKET_CRC						0xFF010185
 #define 	OID_RT_GET_MIDDLE_PACKET_CRC					0xFF010186
 #define 	OID_RT_GET_LARGE_PACKET_CRC						0xFF010187
 #define 	OID_RT_GET_TX_RETRY								0xFF010188
@@ -231,7 +231,7 @@
 #define 	OID_RT_IO_READ_WRITE_INFO						0xFF0101BF
 #define 	OID_RT_IO_READ_WRITE							0xFF0101C0
 // For Netgear request.
-#define 	OID_RT_FORCED_DATA_RATE							0xFF0101C1	
+#define 	OID_RT_FORCED_DATA_RATE							0xFF0101C1
 // Auto-Config OID.
 #define 	OID_RT_WIRELESS_MODE_FOR_SCAN_LIST          	0xFF0101C2
 #define 	OID_RT_GET_BSS_WIRELESS_MODE			   		0xFF0101C3
@@ -422,7 +422,7 @@
 #define 	OID_RT_AP_SET_PASSPHRASE						0xFF010305	// Set WPA-PSK passphrase into authenticator. 2005.07.08, byrcnjko.
 
 #define 	OID_RT_AP_WDS_MODE								0xFF010306 // 0: WDS disabled, 1: WDS enabled. 2006.06.12, by rcnjko.
-#define 	OID_RT_AP_WDS_AP_LIST							0xFF010307 // WDS AP address list. 
+#define 	OID_RT_AP_WDS_AP_LIST							0xFF010307 // WDS AP address list.
 #define	OID_RT_AP_GET_VWIFI_STATUS						0xFF010308
 #define	OID_RT_AP_GET_ASSOC_STA_COUNT					0xFF010310
 #define	OID_RT_AP_GET_CLOUD_KEY_EX						0xFF010313   	// Get EFUSE 0x122-12F content,.
@@ -450,7 +450,7 @@
 #define	OID_RT_SDIO_REG_CTRL								0xFF010412
 
 
-//For MacOSX 10.4.0 "Network Utility" LinkSpeed workaround 
+//For MacOSX 10.4.0 "Network Utility" LinkSpeed workaround
 #define 	OID_RT_SET_TIGER_WORKAROUND						0xFF010413
 //For MacOSX UI
 #define 	OID_RT_COUNTRY_NOT_SUPPORT_AC					0xFF010414
@@ -462,25 +462,25 @@
 #define		OID_RT_SHAREDKEY_AUTHENTICATION					0xFF01041A
 #define		OID_RT_SCAN_SSID_AND_LINK						0xFF01041B
 //--------------------------------------------------------------------
-//		0xFF0105xx: For Exta AP mode  
+//		0xFF0105xx: For Exta AP mode
 //--------------------------------------------------------------------
-// Star or Stop Exta AP mode  
-#define 	OID_RT_EXTAP_SWITCH_INTO_AP_MODE			0xFF010501 
+// Star or Stop Exta AP mode
+#define 	OID_RT_EXTAP_SWITCH_INTO_AP_MODE			0xFF010501
 #define 	OID_RT_EXTAP_GET_APMODE						0xFF010502
-// Set or Get Auth mode : OPEN WPA  WPA2 
+// Set or Get Auth mode : OPEN WPA  WPA2
 #define 	OID_RT_EXTAP_SET_AUTHENTICATION_MODE		0xFF010503
 #define 	OID_RT_EXTAP_GET_AUTHENTICATION_MODE		0xFF010504
 // Set or Get Encrypt Mode
 #define 	OID_RT_EXTAP_SET_ENCRYPTION_ALGORITHM		0xFF010505
 #define 	OID_RT_EXTAP_GET_ENCRYPTION_ALGORITHM		0xFF010506
-// Set WPA or WPA2 PSK 
+// Set WPA or WPA2 PSK
 #define 	OID_RT_EXTAP_SET_PASSPHRASE					0xFF010507
 // Set Key : Just for WEP key and Transmit Key index
 #define 	OID_RT_EXTAP_SET_ADD_WEP_KEY					0xFF010508
 #define 	OID_RT_EXTAP_SET_DEFAULT_KEY_ID				0xFF010509
 // Set Exta AP SSID
 #define 	OID_RT_EXTAP_SET_SSID						0xFF01050a
-// Query Exta AP Station List 
+// Query Exta AP Station List
 #define	OID_RT_EXTAP_GET_ASSOCIATED_STATION_LIST	0xFF01050b
 
 
@@ -504,7 +504,7 @@
 //	Query
 // Remark:
 //	This REQ_ID supports query only.
-//	
+//
 #define	OID_RT_OBJ_HDR_VERSION						0xFF0106A2
 
 //
@@ -533,7 +533,7 @@
 
 #define 	OID_RT_FORCED_BUG_CHECK						0xff010804
 
-// For LC 
+// For LC
 #define 	OID_RT_LC_STOP_SCAN       						0xFF010901
 #define	OID_RT_SYSTEM_POWER_STATE_SHUTDOWN		0xFF010902 // LC S5 WoWLAN
 
@@ -541,7 +541,7 @@
 #define OID_RT_GET_CUSTOMIZE_BSS_LIST				0xFF010910
 
 //3--------------------------------------------------------------------
-//3 			0xFF8185xx: 
+//3 			0xFF8185xx:
 //3--------------------------------------------------------------------
 // by Owen for RTL8185 Phy Status Report Utility
 #define		OID_RT_UTILITY_FALSE_ALARM_COUNTERS				0xFF818580
@@ -562,7 +562,7 @@
 
 
 
-// Start for Real WoW v2 
+// Start for Real WoW v2
 #define 		OID_RT_CUSTOMER_ID_INFO						0xFF8168FA
 #define 		OID_RT_CUSTOMER_WOW_WAKEUPCODE			0xFF8168FB
 #define 		OID_RT_CUSTOMER_WOW_S5_SUPPORT			0xFF8168FC
@@ -709,7 +709,7 @@
 #define  	MH_OID_CCX_FAST_ROAM               					0xFFEDC105
 #define  	MH_OID_CCX_FAST_ROAM_RESULT           				0xFFEDC106
 #define  	MH_OID_CCX_ADD_KRK                   				0xFFEDC107
-#define  	MH_OID_CCX_REMOVE_KRK             					0xFFEDC108 
+#define  	MH_OID_CCX_REMOVE_KRK             					0xFFEDC108
 #define  	MH_OID_CCX_VERSION                   				0xFFEDC109
 #define  	MH_OID_CCX_ENABLE                    				0xFFEDC10A
 #define		MH_OID_CCX_RM_ENABLE								0xFFEDC10C
@@ -758,34 +758,34 @@ typedef struct _RT_DEVICE_ID_HEADER{
 	//
 	// Identify which IC.
 	// Examples of (ChipID, ChipVer):
-	// (0x8185, 0x1)	=> 8185 
-	// (0x8187, 0x1)	=> 8187 
-	// (0x8185, 0x2)	=> 8185B 
-	// (0x8187, 0x2)	=> 8187B 
+	// (0x8185, 0x1)	=> 8185
+	// (0x8187, 0x1)	=> 8187
+	// (0x8185, 0x2)	=> 8185B
+	// (0x8187, 0x2)	=> 8187B
 	//
 	ULONG	ChipID;
 	ULONG	ChipVer;
 
 	//
-	// BusType is used to identify BUS type of the device and corresponding data type, 
+	// BusType is used to identify BUS type of the device and corresponding data type,
 	// for example:
 	// RT_PCI_DEVICE => struc _RT_PCI_ID_INFO
 	// RT_USB_DEVICE => struc _RT_USB_ID_INFO
 	//
-	ULONG	BusType; 
+	ULONG	BusType;
 }RT_DEVICE_ID_HEADER, *PRT_DEVICE_ID_HEADER;
 
 typedef struct _RT_PCI_ID_INFO{
 	RT_DEVICE_ID_HEADER	DevIDHeader;
 
-	// 
-	// Vendor ID and Device ID from PCI configuration space. 
+	//
+	// Vendor ID and Device ID from PCI configuration space.
 	//
 	USHORT	VID;
 	USHORT	DID;
 
-	// 
-	// Sub Vendor ID and Subsystem ID from PCI configuration space. 
+	//
+	// Sub Vendor ID and Subsystem ID from PCI configuration space.
 	//
 	USHORT	SVID;
 	USHORT	SMID;
@@ -804,7 +804,7 @@ typedef struct _RT_PCI_ID_INFO{
 typedef struct _RT_USB_ID_INFO{
 	RT_DEVICE_ID_HEADER	DevIDHeader;
 
-	// 
+	//
 	// Vendor ID and Product ID from USB Device Descriptor.
 	//
 	USHORT	VID;
@@ -824,12 +824,12 @@ typedef struct _RT_USB_ID_INFO{
 typedef struct _RT_SDIO_ID_INFO{
 	RT_DEVICE_ID_HEADER	DevIDHeader;
 
-	// 
+	//
 	// Vendor ID and Product ID from SDIO Device.
 	//
 	USHORT	VID;
 	USHORT	PID;
-	
+
 	USHORT	RevID;
 
 //

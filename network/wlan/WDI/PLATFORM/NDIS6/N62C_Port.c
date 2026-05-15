@@ -38,7 +38,7 @@ N62CCompletePendingCreateDeleteMacOidRequest(
 	else
 		PlatformReleaseSpinLock(pAdapter, RT_PENDED_OID_SPINLOCK);
 #endif
-	
+
 	// 20130917 Joseph:
 	// Pending OID is restore in 2 different place.
 	// This shall be revised and add a new OID pending queue for OID completion.
@@ -52,7 +52,7 @@ N62CCompletePendingCreateDeleteMacOidRequest(
 	{
 	bCompleteStatus = WDI_CompleteCreateDeleteMac(pAdapter, NdisStatus);
 	}
-	
+
 	pPortHelper->pCreateDeleteOID = NULL;
 	PlatformReleaseSpinLock(pAdapter, RT_PORT_SPINLOCK);
 
@@ -77,7 +77,7 @@ N62C_OID_DOT11_CREATE_MAC(
 	PPORT_HELPER		pPortHelper = pAdapter->pPortCommonInfo->pPortHelper;
 	PNDIS_OID_REQUEST	OidRequest = (PNDIS_OID_REQUEST)NdisRequest;
 	KIRQL 				irql = NDIS_CURRENT_IRQL();
-	u4Byte				createPollingCnt=0x0;	
+	u4Byte				createPollingCnt=0x0;
 
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("N62C_OID_DOT11_CREATE_MAC(): Oid(%#x)--->\n", NdisRequest->DATA.METHOD_INFORMATION.Oid));
 	N6C_DOT11_DUMP_OID(NdisRequest->DATA.METHOD_INFORMATION.Oid);
@@ -85,7 +85,7 @@ N62C_OID_DOT11_CREATE_MAC(
 #if DRV_LOG_REGISTRY
 	// Reset all MAC deletion registry settings
 	RT_CLEAR_DRV_STATE(pAdapter, (DrvStateMacDeleting|DrvStateMacDeleted));
-	
+
 	// Reset all MAC creation registry settings
 	RT_CLEAR_DRV_STATE(pAdapter, (DrvStateMacCreating|DrvStateMacCreated));
 
@@ -103,7 +103,7 @@ N62C_OID_DOT11_CREATE_MAC(
 		{
 			PlatformReleaseSpinLock(pAdapter, RT_PORT_SPINLOCK);
 			createPollingCnt++;
-			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("N62C_OID_DOT11_CREATE_MAC(): pollCnt/bCreateMac/bDeleteMac= %d/ %d/ %d\n", 
+			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("N62C_OID_DOT11_CREATE_MAC(): pollCnt/bCreateMac/bDeleteMac= %d/ %d/ %d\n",
 				createPollingCnt, pPortHelper->bCreateMac, pPortHelper->bDeleteMac));
 			if(createPollingCnt >= 1000)
 				break;
@@ -132,7 +132,7 @@ N62C_OID_DOT11_CREATE_MAC(
 		NdisRequest->DATA.METHOD_INFORMATION.BytesWritten = 0;
 		NdisRequest->DATA.METHOD_INFORMATION.BytesRead = 0;
 		NdisRequest->DATA.METHOD_INFORMATION.BytesNeeded = 0;
-		
+
 		if(!pAdapter->bInHctTest &&	!pDefaultAdapter->pNdisCommon->bRegVWifiSupport)
 		{
 			ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
@@ -149,7 +149,7 @@ N62C_OID_DOT11_CREATE_MAC(
 
 		if (NdisRequest->DATA.METHOD_INFORMATION.OutputBufferLength < sizeof(DOT11_MAC_INFO))
 		{
-			RT_TRACE(COMP_OID_SET, DBG_WARNING, ("The buffer being passed into OID_DOT11_CREATE_MAC is too small(%d)\n", 
+			RT_TRACE(COMP_OID_SET, DBG_WARNING, ("The buffer being passed into OID_DOT11_CREATE_MAC is too small(%d)\n",
 				NdisRequest->DATA.METHOD_INFORMATION.OutputBufferLength));
 			NdisRequest->DATA.METHOD_INFORMATION.BytesNeeded = sizeof(DOT11_MAC_INFO);
 			RT_SET_DRV_STATE(pAdapter, DrvStateMacCreate_NO_DO);
@@ -159,14 +159,14 @@ N62C_OID_DOT11_CREATE_MAC(
 
 		//
 		// Since OID calls are serialized, we do not expect the NumberOfPorts to change
-		// while we are checking the following until this OID is completed. So we do not need 
+		// while we are checking the following until this OID is completed. So we do not need
 		// to protect the NumberOfPorts in any way
 		//
-		
+
 		// The default port should be considered --------------------------------------------
 		if (MultiPortGetNumberOfActiveExtAdapters(pAdapter) + 1 >= MP_MAX_NUMBER_OF_PORT)
 		{
-			RT_TRACE(COMP_OID_SET, DBG_WARNING, ("Number of existing ports exceed max supported. Failing new port creation\n"));      
+			RT_TRACE(COMP_OID_SET, DBG_WARNING, ("Number of existing ports exceed max supported. Failing new port creation\n"));
 			ndisStatus =  NDIS_STATUS_OPEN_LIST_FULL;
 			RT_SET_DRV_STATE(pAdapter, DrvStateMacCreate_NO_DO);
 			break;
@@ -174,9 +174,9 @@ N62C_OID_DOT11_CREATE_MAC(
 
 		PlatformAcquireSpinLock(pAdapter, RT_PORT_SPINLOCK);
 		if(pPortHelper->pCreateDeleteOID != NULL)
-		{// Another CreateDeleteOID has already pended, maybe from another port number		
+		{// Another CreateDeleteOID has already pended, maybe from another port number
 			PlatformReleaseSpinLock(pAdapter, RT_PORT_SPINLOCK);
-			
+
 //			RT_ASSERT(FALSE, ("N62C_OID_DOT11_CREATE_MAC(): Another CreateDeleteOID has already pended!!\n"));
 			RT_TRACE(COMP_OID_SET, DBG_SERIOUS, ("N62C_OID_DOT11_CREATE_MAC(): Another CreateDeleteOID has already pended!!\n"));
 			ndisStatus =  NDIS_STATUS_FAILURE; // Need to check this return status
@@ -189,7 +189,7 @@ N62C_OID_DOT11_CREATE_MAC(
 			pPortHelper->pCreateDot11MacInfo = (PDOT11_MAC_INFO)OidRequest->DATA.METHOD_INFORMATION.InformationBuffer;
 			NdisMoveMemory(pPortHelper->pCreateDot11MacInfo->MacAddr, pAdapter->CurrentAddress, sizeof(DOT11_MAC_ADDRESS));
 			OidRequest->DATA.METHOD_INFORMATION.BytesWritten = sizeof(DOT11_MAC_INFO);
-		
+
 			// Save corresponding NdisRequest for MAC Creation and Deletion
 			pPortHelper->bCreateMac=TRUE;
 			pPortHelper->pCreateDeleteOID = NdisRequest;
@@ -214,20 +214,20 @@ N62C_OID_DOT11_CREATE_MAC(
 //			{
 //				ndisStatus = NDIS_STATUS_PENDING;
 //			}
-			
-			PlatformReleaseSpinLock(pAdapter, RT_PORT_SPINLOCK);	
+
+			PlatformReleaseSpinLock(pAdapter, RT_PORT_SPINLOCK);
 		}
 
-			
+
 		RT_ASSERT(pPortHelper->pCreateDeleteOID, ("N62C_OID_DOT11_CREATE_MAC(): pCreateDeleteOID has already completed!!\n"));
-		
+
 
 	}
 	while(FALSE);
-	
+
 	if( irql < DISPATCH_LEVEL ){
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("N62C_OID_DOT11_CREATE_MAC(): Restore IRQL!!\n"));
-		KeLowerIrql(irql);	
+		KeLowerIrql(irql);
 	}
 
 #if DRV_LOG_REGISTRY
@@ -237,9 +237,9 @@ N62C_OID_DOT11_CREATE_MAC(
 		RT_CLEAR_DRV_STATE_ERROR(pAdapter);
 	}
 #endif
-	
+
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("N62C_OID_DOT11_CREATE_MAC(): <---\n"));
-	
+
 	return ndisStatus;
 }
 
@@ -279,7 +279,7 @@ N62C_OID_DOT11_DELETE_MAC(
 		{
 			PlatformReleaseSpinLock(pAdapter, RT_PORT_SPINLOCK);
 			deletePollingCnt++;
-			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("N62C_OID_DOT11_DELETE_MAC(): pollCnt/bCreateMac/bDeleteMac= %d/ %d/ %d\n", 
+			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("N62C_OID_DOT11_DELETE_MAC(): pollCnt/bCreateMac/bDeleteMac= %d/ %d/ %d\n",
 				deletePollingCnt, pPortHelper->bCreateMac, pPortHelper->bDeleteMac));
 			if(deletePollingCnt >= 1000)
 				break;
@@ -295,7 +295,7 @@ N62C_OID_DOT11_DELETE_MAC(
 
 	if( irql < DISPATCH_LEVEL ){
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("N62C_OID_DOT11_DELETE_MAC(): Raise IRQL!!\n"));
-		KeRaiseIrql(DISPATCH_LEVEL, &irql);	
+		KeRaiseIrql(DISPATCH_LEVEL, &irql);
 	}
 
 	do
@@ -311,7 +311,7 @@ N62C_OID_DOT11_DELETE_MAC(
 
 		if (NdisRequest->RequestType != NdisRequestSetInformation)
 		{
-			RT_TRACE(COMP_OID_SET, DBG_WARNING, ("Invalid request type %d for OID_DOT11_DELETE_MAC\n", 
+			RT_TRACE(COMP_OID_SET, DBG_WARNING, ("Invalid request type %d for OID_DOT11_DELETE_MAC\n",
 				NdisRequest->RequestType));
 			RT_SET_DRV_STATE(pAdapter, DrvStateMacDelete_NO_DO);
 			ndisStatus = NDIS_STATUS_NOT_SUPPORTED;
@@ -320,7 +320,7 @@ N62C_OID_DOT11_DELETE_MAC(
 
 		if (NdisRequest->DATA.SET_INFORMATION.InformationBufferLength < sizeof(DOT11_MAC_INFO))
 		{
-			RT_TRACE(COMP_OID_SET, DBG_WARNING, ("The buffer being passed into OID_DOT11_DELETE_MAC is too small(%d)", 
+			RT_TRACE(COMP_OID_SET, DBG_WARNING, ("The buffer being passed into OID_DOT11_DELETE_MAC is too small(%d)",
 				NdisRequest->DATA.SET_INFORMATION.InformationBufferLength));
 			NdisRequest->DATA.SET_INFORMATION.BytesNeeded = sizeof(DOT11_MAC_INFO);
 			ndisStatus = NDIS_STATUS_INVALID_LENGTH;
@@ -346,7 +346,7 @@ N62C_OID_DOT11_DELETE_MAC(
 		{// Another CreateDeleteOID has already pended, maybe from another port number
 
 			PlatformReleaseSpinLock(pAdapter, RT_PORT_SPINLOCK);
-			
+
 //			RT_ASSERT(FALSE, ("N62C_OID_DOT11_DELETE_MAC(): Another CreateDeleteOID has already pended!!\n"));
 			RT_TRACE(COMP_OID_SET, DBG_SERIOUS, ("N62C_OID_DOT11_DELETE_MAC(): Another CreateDeleteOID has already pended!!\n"));
 			ndisStatus = NDIS_STATUS_FAILURE; // Need to check this return status
@@ -356,8 +356,8 @@ N62C_OID_DOT11_DELETE_MAC(
 		else
 		{
 			pPortHelper->bDeleteMac=TRUE;
-			pPortHelper->pCreateDot11MacInfo= (PDOT11_MAC_INFO)NdisRequest->DATA.SET_INFORMATION.InformationBuffer;	
-			NdisRequest->DATA.SET_INFORMATION.BytesRead = sizeof(DOT11_MAC_INFO);	
+			pPortHelper->pCreateDot11MacInfo= (PDOT11_MAC_INFO)NdisRequest->DATA.SET_INFORMATION.InformationBuffer;
+			NdisRequest->DATA.SET_INFORMATION.BytesRead = sizeof(DOT11_MAC_INFO);
 
 			// Save corresponding NdisRequest for MAC Creation and Deletion
 			pPortHelper->pCreateDeleteOID = NdisRequest;
@@ -383,17 +383,17 @@ N62C_OID_DOT11_DELETE_MAC(
 //				ndisStatus = NDIS_STATUS_PENDING;
 //			}
 
-			PlatformReleaseSpinLock(pAdapter, RT_PORT_SPINLOCK);	
+			PlatformReleaseSpinLock(pAdapter, RT_PORT_SPINLOCK);
 		}
 
 		RT_ASSERT(pPortHelper->pCreateDeleteOID, ("N62C_OID_DOT11_DELETE_MAC(): pCreateDeleteOID is not completed!!\n"));
 
 	}while (FALSE);
-	
+
 
 	if( irql < DISPATCH_LEVEL ){
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("N62C_OID_DOT11_DELETE_MAC(): Restore IRQL!!\n"));
-		KeLowerIrql(irql);	
+		KeLowerIrql(irql);
 	}
 
 #if DRV_LOG_REGISTRY
@@ -403,9 +403,9 @@ N62C_OID_DOT11_DELETE_MAC(
 		RT_CLEAR_DRV_STATE_ERROR(pAdapter);
 	}
 #endif
-	
+
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("N62C_OID_DOT11_DELETE_MAC():< ---\n"));
-	
+
 	return ndisStatus;
 }
 
@@ -429,14 +429,14 @@ N62CCreateDeleteMacTimerCallback(
 	}
 	else
 		PlatformReleaseSpinLock(pAdapter, RT_PENDED_OID_SPINLOCK);
-		
+
 	// debug if workitem scheduled successfully or not
 	//pPortHelper->CreateDeleteMacWorkitem.bWriteRegistry = TRUE;
 	if( !PlatformScheduleWorkItem( &(pPortHelper->CreateDeleteMacWorkitem)) )
 	{
 		RT_SET_DRV_STATE(pAdapter, DrvStateMacCreDel_WI_FAIL);
 
-		RT_TRACE(COMP_OID_SET, DBG_WARNING, ("N62CCreateDeleteMacTimerCallback():(): Fail to schedule WI!!\n"));   
+		RT_TRACE(COMP_OID_SET, DBG_WARNING, ("N62CCreateDeleteMacTimerCallback():(): Fail to schedule WI!!\n"));
 		N62CCompletePendingCreateDeleteMacOidRequest(pAdapter, NDIS_STATUS_REQUEST_ABORTED);
 	}
 
@@ -450,8 +450,8 @@ N62CCreateDeleteMacWorkItemCallback(
 {
 	PADAPTER pAdapter = (PADAPTER)pContext;
 	PRT_NDIS62_COMMON	pNdis62Common = pAdapter->pNdis62Common;
-	PPORT_HELPER				pPortHelper = pAdapter->pPortCommonInfo->pPortHelper;	
-	NDIS_STATUS			ndisStatus = NDIS_STATUS_SUCCESS;	
+	PPORT_HELPER				pPortHelper = pAdapter->pPortCommonInfo->pPortHelper;
+	NDIS_STATUS			ndisStatus = NDIS_STATUS_SUCCESS;
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("====> N62CCreateDeleteMacWorkItemCallback()\n"));
 
 	PlatformAcquireSpinLock(pAdapter, RT_PORT_SPINLOCK);
@@ -461,12 +461,12 @@ N62CCreateDeleteMacWorkItemCallback(
 		ndisStatus=N62CCreateMac(pAdapter);
 
 		RT_SET_DRV_STATE(pAdapter, DrvStateMacCreated);
-		
+
 		pPortHelper->bCreateMac=FALSE;
 		if(ndisStatus !=NDIS_STATUS_SUCCESS)
 		{
 			RT_SET_DRV_STATE(pAdapter, DrvStateMacCreate_Fail);
-			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("bCreateMac   Fail\n"));		
+			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("bCreateMac   Fail\n"));
 		}
 		else
 		{
@@ -483,13 +483,13 @@ N62CCreateDeleteMacWorkItemCallback(
 		ndisStatus=N62CDeleteMac(pAdapter);
 
 		RT_SET_DRV_STATE(pAdapter, DrvStateMacDeleted);
-		
+
 		pPortHelper->bDeleteMac=FALSE;
 		if(ndisStatus !=NDIS_STATUS_SUCCESS)
 		{
 			RT_SET_DRV_STATE(pAdapter, DrvStateMacDelete_Fail);
-			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("bdeleteMac   Fail\n"));	
-		}		
+			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("bdeleteMac   Fail\n"));
+		}
 		else
 		{
 			// Re-hook association entry to keep fresh when delete port.
@@ -502,7 +502,7 @@ N62CCreateDeleteMacWorkItemCallback(
 	else
 	{
 		PlatformReleaseSpinLock(pAdapter, RT_PORT_SPINLOCK);
-		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("UnKnow Operation\n"));	
+		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("UnKnow Operation\n"));
 	}
 
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("<==== N62CCreateDeleteMacWorkItemCallback()\n"));
@@ -517,7 +517,7 @@ N62CCreateMac(
 {
 	PADAPTER				pDefaultAdapter = GetDefaultAdapter(Adapter);
 	PRT_NDIS62_COMMON		Ndis62Common = pDefaultAdapter->pNdis62Common;
-	PPORT_HELPER			pPortHelper = pDefaultAdapter->pPortCommonInfo->pPortHelper;		
+	PPORT_HELPER			pPortHelper = pDefaultAdapter->pPortCommonInfo->pPortHelper;
 	NDIS_STATUS				ndisStatus = NDIS_STATUS_SUCCESS;
 	BOOLEAN					ndisPortAllocated = FALSE, ndisPortActivated = FALSE;
 	NDIS_PORT_NUMBER		portNumber = DEFAULT_NDIS_PORT_NUMBER;
@@ -525,28 +525,28 @@ N62CCreateMac(
 	PADAPTER				pTargetAdapter = NULL;
 	PADAPTER				pAllocFailAdapter = NULL;
 	BOOLEAN					bCompleteStatus = FALSE;
-	
+
     RT_TRACE(COMP_OID_SET, DBG_LOUD, ("====> N62CCreateMac()\n"));
 
 	logCnt++;
 	if(logCnt >= 10)
 		logCnt = 10;
 	logValue[logCnt-1] |= BIT1;
-	
+
 	/*
-		Pause the miniport before we modify the adapter's port list. 
+		Pause the miniport before we modify the adapter's port list.
 		This is an expensive way to achieve this but it is simple to implement
 	*/
 	do
 	{
-		ndisStatus = N62CHandleMiniportPause(pAdapter, NULL);			
-	
+		ndisStatus = N62CHandleMiniportPause(pAdapter, NULL);
+
 		if (ndisStatus != NDIS_STATUS_SUCCESS)
 		{
 			RT_TRACE(COMP_INIT, DBG_LOUD, (" N62CCreateMac(), N62CHandleMiniportPause() FAIL!!!\n"));
 			break;
-		}	  
-	
+		}
+
 		pAdapter = GetNextExtAdapter(pAdapter);
 	} while(pAdapter!=NULL);
 
@@ -592,9 +592,9 @@ N62CCreateMac(
 			RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Allocate Ndis Port fail\n"));
 			break;
 		}
-		
+
 		pTargetAdapter = pAdapter;
-		pPortHelper->pCreateDot11MacInfo->uNdisPortNumber = portNumber;					
+		pPortHelper->pCreateDot11MacInfo->uNdisPortNumber = portNumber;
 		ndisPortAllocated = TRUE;
 
 		pAdapter->pNdisCommon->dot11CurrentOperationMode.uCurrentOpMode = DOT11_OPERATION_MODE_EXTENSIBLE_STATION;
@@ -614,20 +614,20 @@ N62CCreateMac(
 		pAdapter->CamBtStartIndex = pDefaultAdapter->CamBtStartIndex;
 		pAdapter->BtHwCamStart = pDefaultAdapter->BtHwCamStart;
 		SetAPState(pAdapter, AP_STATE_STOPPED);
-		
+
 	 	if(IS_WIRELESS_MODE_N(pAdapter))
 	 		pAdapter->MgntInfo.pHTInfo->bEnableHT = TRUE;
 	 	else
 	 		pAdapter->MgntInfo.pHTInfo->bEnableHT = FALSE;
-		
+
 	 	MgntRefreshSuppRateSet( pAdapter );
-		
+
 		N6C_SET_MP_DRIVER_STATE(pAdapter, MINIPORT_PAUSED);
 
 		RT_TRACE(COMP_OID_SET, DBG_LOUD, ("Created a new Port \n" ));
-		
+
 	} while (FALSE);
-    
+
 	pAdapter = pDefaultAdapter;
 
 	// Restart the miniport driver
@@ -638,7 +638,7 @@ N62CCreateMac(
 			{
 				RT_TRACE(COMP_INIT, DBG_LOUD, (" N62CCreateMac(), N62CHelperHandleMiniportRestart() FAIL!!!\n"));
 				break;
-			} 
+			}
 		}
 		pAdapter = GetNextExtAdapter(pAdapter);
 	}while(pAdapter!=NULL);
@@ -654,10 +654,10 @@ N62CCreateMac(
 
 	bCompleteStatus = N62CCompletePendingCreateDeleteMacOidRequest(Adapter, ndisStatus);
 	RT_TRACE(COMP_INIT, DBG_LOUD, (" N62CCreateMac(), N62CCompletePendingCreateDeleteMacOidRequest() bCompleteStatus=%d.\n", bCompleteStatus));
-	
+
 	//
 	// We can now activate/deactivate the port. We cannot do this while we are processing
-	// the OID, else the OS would deadlock. 
+	// the OID, else the OS would deadlock.
 	//
 	if (ndisStatus == NDIS_STATUS_SUCCESS && bCompleteStatus)
 	{
@@ -712,13 +712,13 @@ N62CDeleteMac(
 	PMP_PORT                    destinationPort = NULL;
 	NDIS_PORT_NUMBER            portNumber;
 	BOOLEAN                     destroyPortNumber = FALSE;
-	PRT_NDIS62_COMMON  	pNdis62Common = pAdapter->pNdis62Common;	
+	PRT_NDIS62_COMMON  	pNdis62Common = pAdapter->pNdis62Common;
 	PADAPTER	pDefaultAdapter = GetDefaultAdapter(pAdapter);
 	PPORT_HELPER	pPortHelper = pAdapter->pPortCommonInfo->pPortHelper;
 	PADAPTER	pTargetAdapter = NULL;
 	PADAPTER pLoopAdapter = NULL;
 	BOOLEAN	bCompleteStatus = FALSE;
-	
+
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("====> N62CDeleteMac()\n"));
 	do
 	{
@@ -744,33 +744,33 @@ N62CDeleteMac(
 		if(!IsDefaultAdapter(pTargetAdapter))
 		{
 			/*
-			Pause the miniport before we modify the adapter's port list. 
+			Pause the miniport before we modify the adapter's port list.
 			This is an expensive way to achieve this but it is simple to implement
 			*/
 			pLoopAdapter = GetDefaultAdapter(pAdapter);
-			
+
 			do
 			{
 				N6C_SET_MP_DRIVER_STATE_BACKUP(pLoopAdapter, N6C_GET_MP_DRIVER_STATE(pLoopAdapter));
-			
+
 				if(N6C_GET_MP_DRIVER_STATE(pLoopAdapter) == MINIPORT_RUNNING)
-				{				
-				ndisStatus = N62CHandleMiniportPause(pLoopAdapter, NULL);			
+				{
+				ndisStatus = N62CHandleMiniportPause(pLoopAdapter, NULL);
 
 				if (ndisStatus != NDIS_STATUS_SUCCESS)
 				{
 					RT_TRACE(COMP_OID_SET, DBG_LOUD, ("HelperPortHandleMiniportPause failed 0x%x\n", ndisStatus));
 					break;
-				}        
+				}
 				}
 
 				pLoopAdapter = GetNextExtAdapter(pLoopAdapter);
 			} while(pLoopAdapter!=NULL);
-			
+
 
 			// MultiPort Disable the Port ----------------------------------------
 			MultiPortChangeExtAdapterActiveState(pTargetAdapter, FALSE);
-			
+
 			//sherry added for revise to default for fix wlk1.6 error
 			pTargetAdapter->pNdis62Common->CurrentOpState = INIT_STATE;
 			SetAPState(pTargetAdapter, AP_STATE_STOPPED);
@@ -795,7 +795,7 @@ N62CDeleteMac(
 			PlatformAcquireSpinLock(pAdapter, RT_TX_SPINLOCK);
 			PlatformReleaseDataFrameQueued(pTargetAdapter);
 			PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
-			
+
 			pTargetAdapter->bSWInitReady = FALSE;
 
 			/*
@@ -803,7 +803,7 @@ N62CDeleteMac(
 			*/
 			// TODO: should do deactive port.
 			pLoopAdapter = GetDefaultAdapter(pAdapter);
-			
+
 			do{
 				if(N6C_GET_MP_DRIVER_STATE_BACKUP(pLoopAdapter) == MINIPORT_RUNNING)
 				{
@@ -812,7 +812,7 @@ N62CDeleteMac(
 				{
 					RT_TRACE(COMP_OID_SET, DBG_LOUD, ("HelperPortHandleMiniportRestart failed 0x%x", ndisStatus));
 					break;
-				}        
+				}
 				}
 				pLoopAdapter = GetNextExtAdapter(pLoopAdapter);
 			}while(pLoopAdapter!=NULL);
@@ -825,14 +825,14 @@ N62CDeleteMac(
 			PlatformReleaseDataFrameQueued(pTargetAdapter);
 			PlatformReleaseSpinLock(pAdapter, RT_TX_SPINLOCK);
 		}
-		
+
 	} while (FALSE);
 
-	bCompleteStatus = N62CCompletePendingCreateDeleteMacOidRequest(pAdapter, NDIS_STATUS_SUCCESS);	
+	bCompleteStatus = N62CCompletePendingCreateDeleteMacOidRequest(pAdapter, NDIS_STATUS_SUCCESS);
 
 	//
 	// We can now deactivate the port. We cannot do this while we are processing
-	// the OID, else the OS would deadlock. 
+	// the OID, else the OS would deadlock.
 	//
 	if ((ndisStatus == NDIS_STATUS_SUCCESS) && (destroyPortNumber == TRUE) && bCompleteStatus)
 	{
@@ -841,7 +841,7 @@ N62CDeleteMac(
 		if(!OS_SUPPORT_WDI)
 		{
 		N62CHelperDeactivateNdisPort(pTargetAdapter, portNumber);
-		N62CHelperFreeNdisPort(pTargetAdapter, portNumber);			
+		N62CHelperFreeNdisPort(pTargetAdapter, portNumber);
 	}
 #endif
 	}
@@ -884,7 +884,7 @@ N62CHelperAllocateNdisPort(
 	}
 	else
 	{
-		RT_TRACE(COMP_INIT, DBG_LOUD, ("Associated Port Number %d with allocated port\n", 
+		RT_TRACE(COMP_INIT, DBG_LOUD, ("Associated Port Number %d with allocated port\n",
 		portChar.PortNumber));
 
 		// Return the NDIS port number that has been allocated to this port
@@ -895,7 +895,7 @@ N62CHelperAllocateNdisPort(
 }
 
 // MiniportOidRequest - Called from MP layer to Port
-NDIS_STATUS 
+NDIS_STATUS
 N62CStaOidHandler(
 	IN  PADAPTER			pAdapter,
 	IN  PMP_PORT                Port,
@@ -908,7 +908,7 @@ N62CStaOidHandler(
 }
 
 /* See prototype for documentation */
-NDIS_STATUS 
+NDIS_STATUS
 N62CStaSendEventHandler(
     IN  PMP_PORT                Port,
    // IN  PMP_TX_MSDU             PacketList,
@@ -968,7 +968,7 @@ Return Value:
 	N6C_MP_DRIVER_STATE CurrDriverState;
 
 	UNREFERENCED_PARAMETER(MiniportRestartParameters);
-	
+
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("==> N62CHelperHandleMiniportRestart(), DriverState(%d)\n", N6C_GET_MP_DRIVER_STATE(pAdapter)));
 
 	//
@@ -1047,7 +1047,7 @@ N62CHelperActivateNdisPort(
 
 	// Refill the characteristics structure for the port
 	portChar = &(ndisPort.PortCharacteristics);
-	
+
 	N6_ASSIGN_OBJECT_HEADER(portChar->Header, NDIS_OBJECT_TYPE_DEFAULT,
 	NDIS_PORT_CHARACTERISTICS_REVISION_1, sizeof(NDIS_PORT_CHARACTERISTICS));
 
@@ -1069,17 +1069,17 @@ N62CHelperActivateNdisPort(
 	// We need to save a pointer to the NDIS_PORT in the NetPnPEvent::Buffer field
 	netPnpEventNotification.NetPnPEvent.Buffer = (PVOID)&ndisPort;
 	netPnpEventNotification.NetPnPEvent.BufferLength = sizeof(NDIS_PORT);
-	
+
 	ndisStatus = NdisMNetPnPEvent(pAdapter->pNdisCommon->hNdisAdapter, &netPnpEventNotification);
 	if (ndisStatus != NDIS_STATUS_SUCCESS)
 	{
-		RT_TRACE(COMP_INIT, DBG_LOUD, ("Failed to activate NDIS port %d. Status = 0x%08x\n", 
+		RT_TRACE(COMP_INIT, DBG_LOUD, ("Failed to activate NDIS port %d. Status = 0x%08x\n",
 		PortNumberToActivate, ndisStatus));
 	}
 	else
 	{
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("Activated Port Number %d\n", PortNumberToActivate));
-	} 
+	}
 
 	return ndisStatus;
 }
@@ -1102,20 +1102,20 @@ N62CHelperDeactivateNdisPort(
 	netPnpEventNotification.NetPnPEvent.NetEvent = NetEventPortDeactivation;
 
 	// We need to save a pointer to the NDIS_PORT_NUMBER in the NetPnPEvent::Buffer field
-	portNumberArray[0] = PortNumberToDeactivate;            
+	portNumberArray[0] = PortNumberToDeactivate;
 	netPnpEventNotification.NetPnPEvent.Buffer = (PVOID)portNumberArray;
 	netPnpEventNotification.NetPnPEvent.BufferLength = sizeof(NDIS_PORT_NUMBER);
 
 	ndisStatus = NdisMNetPnPEvent(pAdapter->pNdisCommon->hNdisAdapter, &netPnpEventNotification);
 	if (ndisStatus != NDIS_STATUS_SUCCESS)
 	{
-		RT_TRACE(COMP_INIT, DBG_LOUD, ("Failed to deactivate NDIS port %d. Status = 0x%08x\n", 
+		RT_TRACE(COMP_INIT, DBG_LOUD, ("Failed to deactivate NDIS port %d. Status = 0x%08x\n",
 		PortNumberToDeactivate, ndisStatus));
 	}
 	else
 	{
 		RT_TRACE(COMP_INIT, DBG_LOUD, ("Deactivated Port Number %d\n", PortNumberToDeactivate));
-	}        
+	}
 }
 
 VOID
@@ -1159,7 +1159,7 @@ N62CHandleMiniportPause(
 
 	RT_TRACE(COMP_INIT, DBG_LOUD, ("<== N62CHandleMiniportPause(), DriverState(%d)\n", N6C_GET_MP_DRIVER_STATE(pAdapter)));
 
-	return NDIS_STATUS_SUCCESS;	
+	return NDIS_STATUS_SUCCESS;
 }
 
 
@@ -1179,7 +1179,7 @@ N62CGetPortTypeByOpMode(
 
         case DOT11_OPERATION_MODE_EXTENSIBLE_AP:
             return EXTAP_PORT;
-			
+
 	case DOT11_OPERATION_MODE_WFD_DEVICE:
 		return EXT_P2P_DEVICE_PORT;
 	case DOT11_OPERATION_MODE_WFD_GROUP_OWNER:
@@ -1269,9 +1269,9 @@ N62CChangePortTypeByOpMode(
 {
 	PRT_NDIS62_COMMON	pNdis62Common = pAdapter->pNdis62Common;
 	NDIS_STATUS			ndisStatus = NDIS_STATUS_SUCCESS;
-	MP_PORT_TYPE		newPortType = N62CGetPortTypeByOpMode(dot11OpMode->uCurrentOpMode);	
+	MP_PORT_TYPE		newPortType = N62CGetPortTypeByOpMode(dot11OpMode->uCurrentOpMode);
 	PADAPTER			pDefaultAdapter = GetDefaultAdapter(pAdapter);
-	
+
 
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===>N62CChangePortTypeByOpMode(): Port Number: %d\n", pNdis62Common->PortNumber));
 	RT_TRACE(COMP_OID_SET, DBG_LOUD, ("===>N62CChangePortTypeByOpMode(): MP_PORT_TYPE: newPortType %d,  DOT11_CURRENT_OPERATION_MODE: newOpMode %d\n", newPortType, dot11OpMode->uCurrentOpMode));
@@ -1284,16 +1284,16 @@ N62CChangePortTypeByOpMode(
 		ndisStatus = N62CHandleMiniportPause(pAdapter, NULL);
 		if (ndisStatus != NDIS_STATUS_SUCCESS)
 		{
-			RT_TRACE(COMP_OID_SET, DBG_LOUD, 
-				("Failed to pause port %d to change Op Mode. Status = 0x%08x\n", 
+			RT_TRACE(COMP_OID_SET, DBG_LOUD,
+				("Failed to pause port %d to change Op Mode. Status = 0x%08x\n",
 				pNdis62Common->PortNumber, ndisStatus));
 
 			return ndisStatus;
 		}
-				
+
 		// ExtAP and ExtSTA are handled here
  		N62CChangePortType(pAdapter, pNdis62Common->PortType, newPortType);
-		
+
 		pNdis62Common->PortType = newPortType;
 
 
@@ -1313,15 +1313,15 @@ N62CChangePortTypeByOpMode(
 				break;
 
 			default:
-				RT_TRACE(COMP_OID_SET, DBG_LOUD, 
-					("Unknown Port Type Observed:  dot11OpMode->uCurrentOpMode %d!\n", 
+				RT_TRACE(COMP_OID_SET, DBG_LOUD,
+					("Unknown Port Type Observed:  dot11OpMode->uCurrentOpMode %d!\n",
 					dot11OpMode->uCurrentOpMode)
 				);
 				break;
 		}
 
 		if(PortRole != P2P_NONE)
-		{ 
+		{
 			ndisStatus = N63CResetWifiDirectPorts(pAdapter, PortRole, RESET_LEVEL_FULL);
 		}
 }
@@ -1332,8 +1332,8 @@ N62CChangePortTypeByOpMode(
 		ndisStatus = N62CHelperHandleMiniportRestart(pAdapter, NULL);
 		if (ndisStatus != NDIS_STATUS_SUCCESS)
 		{
-			RT_TRACE(COMP_INIT, DBG_LOUD, 
-				("Failed to restart port %d after change of Op Mode. Status = 0x%08x\n", 
+			RT_TRACE(COMP_INIT, DBG_LOUD,
+				("Failed to restart port %d after change of Op Mode. Status = 0x%08x\n",
 			pNdis62Common->PortNumber, ndisStatus));
 		}
 
@@ -1359,7 +1359,7 @@ N62CChangePortType(
 	{
 		if(OldPortType==NewPortType)
 		{
-			break;	
+			break;
 		}
 		switch(NewPortType)
 
@@ -1379,7 +1379,7 @@ N62CChangePortType(
 						MgntActSet_P2PMode(pAdapter, FALSE, FALSE, 0, 0, 0);
 					}
 					#endif
-					
+
 					break;
 				}
 			case EXTAP_PORT:
@@ -1396,14 +1396,14 @@ N62CChangePortType(
 						MgntActSet_P2PMode(pAdapter, FALSE, FALSE, 0, 0, 0);
 					}
 					#endif
-					
+
 					break;
 				}
 			default:
 			break;
 		}
 	}while(FALSE);
-	return ;	
+	return ;
 }
 
 VOID
@@ -1423,7 +1423,7 @@ N62CExtAdapterHandleNBLInWaitQueue(
 
 		if(PlatformAtomicExchange(&pAdapter->IntrNBLRefCount, TRUE)==TRUE)
 			return;
-	
+
 		//
 		// Send NBL in wait queue.
 		//
@@ -1450,7 +1450,7 @@ N62CExtAdapterHandleNBLInWaitQueue(
 				}
 
 				if( !N6SdioSendSingleNetBufferList(
-						pAdapter, 
+						pAdapter,
 						pNetBufferList,
 						TRUE)) // bFromQueue
 				{

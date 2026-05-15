@@ -6,7 +6,7 @@
 // MAX_TX_QUEUE Should be the MAX Tx queue number
 //=============================================================================
 
-#define MAX_TX_QUEUE							9	// BK, BE, VI, VO, HCCA, MANAGEMENT, COMMAND, HIGH, BEACON. 
+#define MAX_TX_QUEUE							9	// BK, BE, VI, VO, HCCA, MANAGEMENT, COMMAND, HIGH, BEACON.
 #define MAX_RX_QUEUE							1	// MSDU packet queue, After C serie no Rx Command Queue
 //
 
@@ -28,12 +28,12 @@
 #define	MAX_TX_REG_NUM		20
 #define	MAX_RX_REG_NUM		20
 //=============================================================
-// TCB buffer management related definition 
+// TCB buffer management related definition
 //=============================================================
 #define MAX_FIRMWARE_INFORMATION_SIZE		32 //2006/04/30 by Emily forRTL8190
 // TODO: MAX_802_11_HEADER_LENGTH should be hardware platform independent
-// Emily: The reason to set this value differently on different hardware platform 
-// is because  if we set this value more than 40 , and use 8187b with TKIP mode, 
+// Emily: The reason to set this value differently on different hardware platform
+// is because  if we set this value more than 40 , and use 8187b with TKIP mode,
 // system crash for some unknown reason. 2006.10.20. After we fix this bug, we
 // should modify this definition
 
@@ -57,7 +57,7 @@
 
 #define ASSOCIATE_ENTRY_NUM					64 // Max size of AsocEntry[].
 #define MAX_LOCKED_STA_LIST_NUM				32	// Max size of LockedSTAList.
-#define MAX_STA_DATARATE_LIST_NUM			ASSOCIATE_ENTRY_NUM	// Max size of ForcedDataRateStaList[]. 
+#define MAX_STA_DATARATE_LIST_NUM			ASSOCIATE_ENTRY_NUM	// Max size of ForcedDataRateStaList[].
 
 
 // Excluded MAC address list.
@@ -105,8 +105,8 @@
 #define	BATCH_INDICATION_STABLE_NUM						4
 #define	BATCH_INDICATION_START_POINT						5000//3000  //YJ,mod for 88E,111229
 #define	BATCH_INDICATION_PERCENTAGE_OF_DATA_RATE		38
-#define	MAX_BATCH_INDICATION_NUMBER						24 
-#define	MAX_BATCH_INDICATION_NUMBER_8814A				127 //add by ylb 20130729 
+#define	MAX_BATCH_INDICATION_NUMBER						24
+#define	MAX_BATCH_INDICATION_NUMBER_8814A				127 //add by ylb 20130729
 
 #define	MAX_TCP_SEQ_ENTRY_NUM	512
 
@@ -188,7 +188,7 @@ typedef enum _PS_BBREGBACKUP{
 typedef enum _PA_MODE {
 	PA_MODE_EXTERNAL = 0x00,
 	PA_MODE_INTERNAL_SP3T = 0x01,
-	PA_MODE_INTERNAL_SPDT = 0x02	
+	PA_MODE_INTERNAL_SPDT = 0x02
 } PA_MODE;
 
 // Added for different registry settings to adjust TxPwr index. added by Roger, 2010.03.09.
@@ -196,7 +196,7 @@ typedef enum _TX_PWR_PERCENTAGE{
 	TX_PWR_PERCENTAGE_0 = 0x01, // 12.5%
 	TX_PWR_PERCENTAGE_1 = 0x02, // 25%
 	TX_PWR_PERCENTAGE_2 = 0x04, // 50%
-	TX_PWR_PERCENTAGE_3 = 0x08, //100%, default target output power.	
+	TX_PWR_PERCENTAGE_3 = 0x08, //100%, default target output power.
 } TX_PWR_PERCENTAGE;
 
 
@@ -239,7 +239,7 @@ typedef enum _TX_PWR_PERCENTAGE{
 // <Roger_Notes> Auto channel selection mechanism for P2P GO, i.e., Operation channel
 // 2015.05.15.
 //
-#if (AUTO_CHNL_SEL_NHM ==1)	
+#if (AUTO_CHNL_SEL_NHM ==1)
 #define IS_AUTO_CHNL_SUPPORT(_Adapter)	(GetDefaultAdapter(_Adapter)->MgntInfo.AutoChnlSel.bAutoChnlSel)
 #define IS_AUTO_CHNL_IN_PROGRESS(_Adapter)	(_Adapter->MgntInfo.AutoChnlSel.AutoChnlSelCalInProgress)
 #define GET_AUTO_CHNL_SELECTED_NUM(_Adapter)		(GetDefaultAdapter(_Adapter)->MgntInfo.AutoChnlSel.AutoChnlNumberSelected)
@@ -287,11 +287,11 @@ typedef enum _AUTO_CHNL_SEL_STATE{
 } AUTO_CHNL_SEL_STATE, *PAUTO_CHNL_SEL_STATE;
 
 typedef   struct _RT_AUTO_CHNL_SEL
-{	
-	BOOLEAN			bAutoChnlSel;	
+{
+	BOOLEAN			bAutoChnlSel;
 	RT_WORK_ITEM	AutoChnlSelWorkitem;
 	u1Byte			AutoChnlSelCalInProgress;
-	u1Byte			AutoChnlStep;	
+	u1Byte			AutoChnlStep;
 	u2Byte			AutoChnlSelPeriod; // NHM measured period
 	u1Byte			AutoChnlNumberSelected; // Channel number selected by NHM
 }RT_AUTO_CHNL_SEL, *PRT_AUTO_CHNL_SEL;
@@ -341,7 +341,7 @@ typedef enum _RT_JOIN_ACTION{
 
 typedef enum _RT_LED_ASSOC_STATE{
 	LED_ASSOC_SECURITY_BEGIN	= 1,
-	LED_ASSOC_SECURITY_END	= 2,	
+	LED_ASSOC_SECURITY_END	= 2,
 	LED_ASSOC_SECURITY_NONE	= 3,
 }RT_LED_ASSOC_STATE;
 
@@ -372,7 +372,7 @@ typedef enum{
 // Indication of roaming status, by Bruce, 2008-05-16.
 //
 typedef enum _RT_ROAM_TYPE{
-	RT_ROAMING_NONE = 0,	// Non-roaming. 
+	RT_ROAMING_NONE = 0,	// Non-roaming.
 	RT_ROAMING_NORMAL,		// Standard 802.11 roaming procedure. (= bRoaming)
 	RT_ROAMING_BY_DEAUTH,	// Not real 802.11 roaming, just for Ndis event to keep re-connecting to the original AP. ( = bRoamingByDeauth)
 	RT_ROAMING_BY_SLEEP,	// Not real 802.11 roaming, just for Ndis event to keep re-connecting to the original AP after S3/S4. ( = bRoamingbySleep)
@@ -404,7 +404,7 @@ typedef enum _IO_READ_WRITE_TYPE{
 typedef enum _IO_READ_WITE_OPERATION{
 	IO_READ_WRITE_OPERATION_READ = 0,
 	IO_READ_WRITE_OPERATION_WRITE = 1,
-}IO_READ_WRITE_OPERATION, *PIO_READ_WRITE_OPERATION;	
+}IO_READ_WRITE_OPERATION, *PIO_READ_WRITE_OPERATION;
 //end test joseph
 
 typedef enum _MAC_FILTER_TYPE{
@@ -448,8 +448,8 @@ typedef enum _RT_NDIS_VERSION{
 	RT_NDIS_VERSION_6_1,
 	RT_NDIS_VERSION_6_20,
 	RT_NDIS_VERSION_6_30,
-	RT_NDIS_VERSION_6_40,	
-	RT_NDIS_VERSION_6_50,	
+	RT_NDIS_VERSION_6_40,
+	RT_NDIS_VERSION_6_50,
 }RT_NDIS_VERSION, *PRT_NDIS_VERSION;
 
 typedef enum _RT_STA_INDICATE_STATE
@@ -491,13 +491,13 @@ typedef struct _RT_GEN_TEMP_BUFFER{
 
 typedef enum _TWO_PORT_STATUS
 {
-	TWO_PORT_STATUS__DEFAULT_ONLY,				// Win7, XP				
-	TWO_PORT_STATUS__EXTENSION_ONLY,			// Win7, XP(AP)							
-	TWO_PORT_STATUS__EXTENSION_FOLLOW_DEFAULT,	// Win7, XP				
+	TWO_PORT_STATUS__DEFAULT_ONLY,				// Win7, XP
+	TWO_PORT_STATUS__EXTENSION_ONLY,			// Win7, XP(AP)
+	TWO_PORT_STATUS__EXTENSION_FOLLOW_DEFAULT,	// Win7, XP
 	TWO_PORT_STATUS__DEFAULT_G_EXTENSION_N20,	// Win7, XP
 	TWO_PORT_STATUS__DEFAULT_A_EXTENSION_N20,	// Win7, XP
-	TWO_PORT_STATUS__ADHOC,						// Win7, XP				
-	TWO_PORT_STATUS__WITHOUT_ANY_ASSOCIATE		// Win7, XP				
+	TWO_PORT_STATUS__ADHOC,						// Win7, XP
+	TWO_PORT_STATUS__WITHOUT_ANY_ASSOCIATE		// Win7, XP
 }TWO_PORT_STATUS;
 
 typedef enum _TWO_PORT_SHARED_OBJECT
@@ -524,13 +524,13 @@ enum _TX_IPTYPE{
 typedef struct _RT_RFD_STATUS{
 	//
 	// The section must be the same as _ODM_Phy_Status_Info_ If someone add one
-	// element in ODM structure you need to update the element in the RFD status 
+	// element in ODM structure you need to update the element in the RFD status
 	// structure and in the end of the relative area.
 	//
 	// _ODM_Phy_Status_Info_ Start
 	//
-	u4Byte			RxPWDBAll;	
-	u1Byte			SignalQuality;	 		// in 0-100 index. 
+	u4Byte			RxPWDBAll;
+	u1Byte			SignalQuality;	 		// in 0-100 index.
 	s1Byte			RxMIMOSignalQuality[4];	//per-path's EVM
 	u1Byte			RxMIMOEVMdbm[4]; 		//per-path's EVM dbm
 	u1Byte			RxMIMOSignalStrength[4];// in 0~100 index
@@ -540,11 +540,11 @@ typedef struct _RT_RFD_STATUS{
 
 	s1Byte			RxPower; 				// in dBm Translate from PWdB
 	s1Byte			RecvSignalPower;		// Real power in dBm for this packet, no beautification and aggregation. Keep this raw info to be used for the other procedures.
-	u1Byte			BTRxRSSIPercentage;	
+	u1Byte			BTRxRSSIPercentage;
 	u1Byte			SignalStrength; 			// in 0-100 index.
 
 	s1Byte			RxPwr[4];				//per-path's pwdb
-	s1Byte			RxSNR[4];				//per-path's SNR	
+	s1Byte			RxSNR[4];				//per-path's SNR
 #if ((RTL8822B_SUPPORT == 1) || (RTL8723D_SUPPORT == 1))
 	u1Byte			RxCount:2;					/* RX path counter---*/
 	u1Byte			BandWidth:2;
@@ -564,11 +564,11 @@ typedef struct _RT_RFD_STATUS{
 
 	//
 	// The section must be the same as _ODM_Per_Pkt_Info_ If someone add one
-	// element in ODM structure you need to update the element in the RFD status 
+	// element in ODM structure you need to update the element in the RFD status
 	// structure and in the end of the relative area.
 	//
 	//	_ODM_Per_Pkt_Info_ Start
-	//	
+	//
 	u1Byte			RawData;		// Accordign Luke, ODM want to use raw data.
 	u1Byte			StationID;
 	BOOLEAN			bPacketMatchBSSID;
@@ -583,7 +583,7 @@ typedef struct _RT_RFD_STATUS{
 
 	u1Byte				DataRate;
 	BOOLEAN				bIsCCK;
-	
+
 	u2Byte				bHwError:1;
 	u2Byte				bCRC:1;
 	u2Byte				bICV:1;
@@ -608,14 +608,14 @@ typedef struct _RT_RFD_STATUS{
 
 	u1Byte				RxDrvInfoSize;
 	u1Byte				RxBufShift;
-	u1Byte				PacketReportType;	
-	
+	u1Byte				PacketReportType;
+
 	u2Byte				Seq_Num;
 	PRX_TS_RECORD		pRxTS;
-	
+
 	u4Byte				MacID;
 	u1Byte				WakeMatch;
-	
+
 	u4Byte				MacIDValidEntry[2];	// 64 bits present 64 entry.
 	BOOLEAN				bForward;
 
@@ -681,7 +681,7 @@ typedef struct _RT_TCB{
 
 	//add by ylb for ExtTxBD
 	BOOLEAN				isUseExtTxBDBlock;
-	RT_LIST_ENTRY		ExtTxBDBlockUsedQueue;		
+	RT_LIST_ENTRY		ExtTxBDBlockUsedQueue;
 
 	//2004/07/22, kcwu
 	STA_ENC_INFO_T		EncInfo;
@@ -738,11 +738,11 @@ typedef struct _RT_TCB{
 	u1Byte				SubHdrIndexAry[AMSDU_MAX_NUM];
 
 	// TxFeedback Tcb Context Place Holder for Private Data: -----------------------------
-	//	+ Only access this private data inside the module by TxFeedbackGetTcbZone()	
+	//	+ Only access this private data inside the module by TxFeedbackGetTcbZone()
 	PRIVATE_DATA_ZONE 	TxFeedbackTcbZone[TX_FEEDBACK_SIZE_OF_TCB_ZONE];
 	// ----------------------------------------------------------------------------
 
-//1 The section is used for shortcut entry. 
+//1 The section is used for shortcut entry.
 /*******************************************************************************************
 Sinda 2011/12/09
 1. All of these variable used by RT_TCB and TXSC_TCB_ENTRY.
@@ -763,18 +763,18 @@ Sinda 2011/12/09
 	u1Byte			bLDPC:1;
 	u1Byte			bSTBC:1;
 	u1Byte			bEncrypt:1;
-	u1Byte			bUseShortPreamble:1; 
+	u1Byte			bUseShortPreamble:1;
 	u1Byte			bUseShortGI:1;	//This Match "SHORT" field in TxFwInfo in datasheet.
 	u1Byte			bSpecifShortGI:1;
 	u1Byte			bTxDisableRateFallBack:1;
 	u1Byte			bTxUseDriverAssingedRate:1;
 	u1Byte			bBroadcast:1;
-	u1Byte			bMulticast:1; 
+	u1Byte			bMulticast:1;
 	u1Byte			bBTTxPacket:1;
 	u1Byte			bFromUpperLayer:1;
 
 	u1Byte			bNeedAckReply:1;
-	u1Byte			bNeedCRCAppend:1;	
+	u1Byte			bNeedCRCAppend:1;
 	u1Byte			bTxEnableSwCalcDur:1;
 	u1Byte			bTxCalculatedSwDur:1;
 
@@ -782,7 +782,7 @@ Sinda 2011/12/09
 	u1Byte			RTSSC;
 	u1Byte			RTSCCA;
 	u1Byte			RTSBW;
-	u2Byte			RTSRate; 
+	u2Byte			RTSRate;
 	u1Byte			bHwProtection:1;
 	u1Byte			bCTSEnable:1;
 	u1Byte			bRTSEnable:1;
@@ -804,26 +804,26 @@ Sinda 2011/12/09
 	u1Byte			macId;
 	u1Byte			OdmAid;		// For ODM Luke's requirement for antenna switch.
 	u2Byte			P_AID;
-	u1Byte			G_ID;	
+	u1Byte			G_ID;
 	u1Byte			RATRIndex;
 
 	// BT
 	u1Byte			BT_macId;
-	
+
 	BOOLEAN			bTDLPacket;
 	BOOLEAN			bNeedTxReport;
 	BOOLEAN			bSendPTIRsp;
 	BOOLEAN			bSleepPkt;
 
 	// Add for TCpChecksum
-	u4Byte			TcpOffloadMode;	
+	u4Byte			TcpOffloadMode;
 	u4Byte			MACHeardLen;
-//1 The section is used for shortcut entry. 
+//1 The section is used for shortcut entry.
 
 	s1Byte			SNForShortcut;
 
 	CHANNEL_WIDTH	BWOfPacket;
-	
+
 	u2Byte			CurrentWritePoint;
 
 	u8Byte			sysTime[4];
@@ -854,7 +854,7 @@ typedef enum _RX_IPVER{
 	IPV6		= 1,
 } RX_IPVER, *PRX_IPVER;
 
-typedef enum _RX_MAC_PACKET_TYPE { 
+typedef enum _RX_MAC_PACKET_TYPE {
   	RXPacketTypeUndefined  	= 0,
   	RXPacketTypeUnicast    	= 1,
   	RXPacketTypeMulticast  	= 2,
@@ -867,18 +867,18 @@ typedef struct _RX_FILTER_INFO{
 	pu1Byte		pDA;
 	pu1Byte		pSA;
 	u1Byte		PacketType;  // RX_PACKET_TYPE
-	pu1Byte		pEtherType;  // 2 bytes : IPv4 , IPv6 , ARP ...  
+	pu1Byte		pEtherType;  // 2 bytes : IPv4 , IPv6 , ARP ...
 	// IP
-	pu1Byte		ARPOption;  // 2 bytes Request or Response 
-	pu1Byte		ARPSPA;      // 4 bytes ARP Sender IP 
-	pu1Byte		ARPTPA;      // 4 bytes ARP Target IP 
+	pu1Byte		ARPOption;  // 2 bytes Request or Response
+	pu1Byte		ARPSPA;      // 4 bytes ARP Sender IP
+	pu1Byte		ARPTPA;      // 4 bytes ARP Target IP
 	u1Byte		Protocol;      // UDP : 0x11  , TCP : 0x06
 	//UDP
 	pu1Byte		pDestinationPort; // 2 bytes
 }RX_FILTER_INFO,*PRX_FILTER_INFO;
 
-typedef struct _RT_RFD{	
-	RT_LIST_ENTRY			List;	
+typedef struct _RT_RFD{
+	RT_LIST_ENTRY			List;
 	u2Byte				PacketLength;			// Total packet length: Must equal to sum of all FragLength
 	u2Byte				FragLength;			// FragLength should equal to PacketLength in non-fragment case
 	u2Byte				FragOffset;			// Data offset for this fragment
@@ -892,7 +892,7 @@ typedef struct _RT_RFD{
 	PVOID				DriverReserved;
 	// 2007/01/12 MH add a element to record RX queue ID for test
 	u2Byte				queue_id;
-	struct _RT_RFD			*NextRfd;	
+	struct _RT_RFD			*NextRfd;
 
 	// If this flag is set, this RFD must contain bad data; therefore, insert into its own RFD queue
 	BOOLEAN				bReturnDirectly;
@@ -914,7 +914,7 @@ typedef struct _RT_RFD{
 	u1Byte				WapiSrcAddr[6];
 	BOOLEAN				bWapiCheckPNInDecrypt;
 
-	// TCP Offload 
+	// TCP Offload
 	BOOLEAN				bHWChecksum;
 	RX_IPVER				IPver;
 	RX_IPTYPE			IPType;
@@ -933,7 +933,7 @@ typedef struct _RT_RFD{
 	// Data Buffer --------------------------------
 	MEMORY_BUFFER		mbCloneRfdDataBuffer;
 	// ------------------------------------------
-	
+
 #endif
 
 
@@ -1050,12 +1050,12 @@ typedef enum _RATE_INDEX{
 	RATE_MCS_30			= 42,
 	RATE_MCS_31			= 43,
 	RATE_VHT_1SS_MCS_0	= 44,
-	RATE_VHT_1SS_MCS_1	= 45,	
+	RATE_VHT_1SS_MCS_1	= 45,
 	RATE_VHT_1SS_MCS_2	= 46,
 	RATE_VHT_1SS_MCS_3	= 47,
 	RATE_VHT_1SS_MCS_4	= 48,
 	RATE_VHT_1SS_MCS_5	= 49,
-	RATE_VHT_1SS_MCS_6	= 50, 
+	RATE_VHT_1SS_MCS_6	= 50,
 	RATE_VHT_1SS_MCS_7	= 51,
 	RATE_VHT_1SS_MCS_8	= 52,
 	RATE_VHT_1SS_MCS_9	= 53,
@@ -1090,7 +1090,7 @@ typedef enum _RATE_INDEX{
 	RATE_VHT_4SS_MCS_8	= 82,
 	RATE_VHT_4SS_MCS_9	= 83,
 	RATE_MCS_32			= 84,
-	RATE_UNKNOWN		= 85,	
+	RATE_UNKNOWN		= 85,
 	PKT_MGNT			= 86,
 	PKT_CTRL			= 87,
 	PKT_UNKNOWN			= 88,
@@ -1135,14 +1135,14 @@ typedef	struct _RT_TX_STATISTICS {
 	u4Byte		NumTxFeedBackOk;
 	u4Byte		NumTxFeedBackFail;
 
-	u4Byte		TransmittedRateHistogram[RATE_MAX];	
-	u4Byte		AllTransmittedRateHistogram[RATE_MAX];	
-	u4Byte		TransmittedRateRetry[RATE_MAX];	
+	u4Byte		TransmittedRateHistogram[RATE_MAX];
+	u4Byte		AllTransmittedRateHistogram[RATE_MAX];
+	u4Byte		TransmittedRateRetry[RATE_MAX];
 	u4Byte		AllTransmittedRateRetry[RATE_MAX];
 
 	u4Byte		TxAMSDUSizeHistogram[5];		// level: (<1k), (1k~2k), (2k~4k), (4k~6k), (6K~8K)
 	u4Byte		TxAMSDUNumHistogram[5];		// level: (<3), (3~5), (6~9), (10~19), (>20)
-	
+
 	// For AMSDU efficiency, added by Emily, 2007.10.01
 	u4Byte		AMSDUTxBufferNotAvaliable;
 	u4Byte		AMSDUTxDescNotAvaliable;
@@ -1150,7 +1150,7 @@ typedef	struct _RT_TX_STATISTICS {
 	u1Byte		LastPacketRate;	//cosa add for debug 11/19/2007
 
 	// 2008/03/35 MH Collect all transmit rate history for 9x series.
-	RT_TX_RAHIS_T	TxRate;		
+	RT_TX_RAHIS_T	TxRate;
 
 	//for show Tx DataRate , by Jacken 2008/03/28
 	u1Byte		CurrentInitTxRate;
@@ -1159,14 +1159,14 @@ typedef	struct _RT_TX_STATISTICS {
 
 	//Added for remember last tx ok packet for every adapter 20130116
 	//by sherry
-	u4Byte		LastNumTxOkBytesTotal; 
+	u4Byte		LastNumTxOkBytesTotal;
 	u8Byte		StartNumTxOkBytesTotal;
 }RT_TX_STATISTICS, *PRT_TX_STATISTICS;
 
 typedef struct _TX_GENERAL{
 	RT_THREAD			txGenThread;
 	PlatformSemaphore	txGenSemaphore;
-	
+
 
 }TX_GENERAL, *PTX_GENERAL;
 
@@ -1209,7 +1209,7 @@ typedef struct _RT_RX_STATISTICS {
 	u8Byte		NumRxWEPICVErrorUnicast;
 	u8Byte		NumRxWEPICVErrorMulticast;
 	u8Byte		NumRxWEPICVErrorBroadcast;
-	u8Byte		NumRxWEPUndecryptableUnicast;	
+	u8Byte		NumRxWEPUndecryptableUnicast;
 	u8Byte		NumRxWEPUndecryptableMulticast;
 	u8Byte		NumRxWEPUndecryptableBroadcast;
 	u8Byte		NumRxTKIPReplayMulticast;
@@ -1218,7 +1218,7 @@ typedef struct _RT_RX_STATISTICS {
 	u8Byte		NumRxCCMPReplayUnicast;
 	u8Byte		NumRxDecryptSuccessUnicast;		//fake, for Ndistest
 	u8Byte		NumRxDecryptSuccessMulticast;		//fake, for Ndistest
-	u8Byte		NumRxDecryptSuccessBroadcast;		//fake, for Ndistest	
+	u8Byte		NumRxDecryptSuccessBroadcast;		//fake, for Ndistest
 	u8Byte		NumRxDecryptFailureUnicast;		//fake, for Ndistest
 	u8Byte		NumRxDecryptFailureMulticast;		//fake, for Ndistest
 	u8Byte		NumRxDecryptFailureBroadcast;		//fake, for Ndistest
@@ -1242,7 +1242,7 @@ typedef struct _RT_RX_STATISTICS {
 	u4Byte		RssiCalculateCnt;	// counter for RSSI calculation for Antenna lock test
 	u4Byte		PWDBAllCnt;
 	u4Byte		PWDBAllOldCnt;
-	
+
 
 	RT_SMOOTH_DATA 		ui_rssi;
 	RT_SMOOTH_DATA 		ui_link_quality;
@@ -1250,16 +1250,16 @@ typedef struct _RT_RX_STATISTICS {
 	s4Byte		LastSignalQualityInPercent; // In percentange, used for smoothing, e.g. Moving Average.
 	u1Byte		LastLinkQuality;
 	s4Byte		SignalQuality; // Transformed.
-	u1Byte		QueryAfterFirstReset;		//20061208 for ndistest by David. 
+	u1Byte		QueryAfterFirstReset;		//20061208 for ndistest by David.
 	u8Byte		NumRxFramgment;
 	u4Byte		ReceivedRateHistogram[RATE_MAX];	//2013/05/16 revised by cosa
 	u4Byte		ReceivedRateHwErr[RATE_MAX];		//2013/08/14 cosa added for bt coex
 	BOOLEAN		RxRateHistory;
-		
+
 	// used for bt coex, cosa add 2013/08/15
 	u4Byte		ReceivedRateHistogramBtCoex[RATE_MAX];
 	u4Byte		ReceivedRateHwErrBtCoex[RATE_MAX];
-	
+
 	u4Byte		RxAMPDUSizeHistogram[5]; // level: (<4K), (4K~8K), (8K~16K), (16K~32K), (32K~64K)
 	u4Byte		RxAMPDUNumHistogram[5]; // level: (<5), (5~10), (10~20), (20~40), (>40)
 	u4Byte		RxAMSDUSizeHistogram[5];		// level: (<1k), (1k~2k), (2k~4k), (4k~6k), (6K~8K)
@@ -1269,8 +1269,8 @@ typedef struct _RT_RX_STATISTICS {
 
 	s4Byte		RxSNRdB[4];
 	u1Byte		RxRSSIPercentage[4];
-	
-	u1Byte		RxEVMdbm[4]; 		
+
+	u1Byte		RxEVMdbm[4];
 	u1Byte		RxEVMPercentage[2];
 
 	s2Byte		RxCfoShort[4];
@@ -1282,7 +1282,7 @@ typedef struct _RT_RX_STATISTICS {
 	u4Byte		NumRxInterrupt;
 	u4Byte		NumRxDescFilled[MAX_RX_QUEUE];
 	u4Byte		NumRxDescReturn[MAX_RX_QUEUE];
-	
+
 	u8Byte		NumQryPhyStatus;		// debug use only.
 	u8Byte		NumQryPhyStatusCCK;	// debug use only.
 	u8Byte		NumQryPhyStatusHT;		// debug use only.
@@ -1305,7 +1305,7 @@ typedef struct _RT_RX_STATISTICS {
 
 	u4Byte		CurrentRxTP;
 	u4Byte		CurrentRxTP_Kbps;
-	
+
 	//Added for remember last rx ok packet for every adapter 20130116
 	//by sherry
 	u4Byte		LastNumRxOkBytesTotal;
@@ -1349,7 +1349,7 @@ typedef struct _RT_LINK_DETECT_T{
 	u4Byte				NumRecvBcnInPeriod;
 	u4Byte				NumRecvDataInPeriod;
 
-	BOOLEAN 			bClientAskForFCS; //When Client is asking for FCS, GO shall skip scanning. 
+	BOOLEAN 			bClientAskForFCS; //When Client is asking for FCS, GO shall skip scanning.
 	u4Byte				ClientAskForFCSNum;	// number of Client asking for FCS
 	u4Byte				RxNullDataNum;	// number of Rx Null Data
 
@@ -1383,7 +1383,7 @@ typedef struct _RT_LINK_DETECT_T{
 	BOOLEAN				bRxBusyTrafficAccordingTP;
 
 	u1Byte 				LastConnectedCenterFrequency;
-	CHANNEL_WIDTH 		LastConnectedBandwidth;	
+	CHANNEL_WIDTH 		LastConnectedBandwidth;
 	u4Byte				ConnectButNoBcnInPeriodCnt;			//debug only
 	u4Byte				ConnectButNoDataInPeriodCnt;		//debug only
 	u4Byte				OnBeaconCnt_OnBeacon;				//debug only
@@ -1423,7 +1423,7 @@ typedef struct _RT_STA_DATARATE{
 
 //
 // 2010/12/09 MH When merging the linux code from SC, we find that the XP linker pop
-// up error information. OnBeacon_Join can not be refernced in mgntengine.c object. It is 
+// up error information. OnBeacon_Join can not be refernced in mgntengine.c object. It is
 // caused by the linker stack limitation. We declare too much local variable in the function.
 // To solve the problem temporarily we decrease the max BSS_IE_BUF_LEN to 1024. Because
 // linux declare two buffer as 256+256. The right way is not to use so much local buffer in stack
@@ -1450,7 +1450,7 @@ typedef struct _ChnlSwitchAnnouncement{
 	BOOLEAN				bWithCSA;
 	u1Byte				channelSwtichMode;
 	u1Byte				NewChnlNum;
-	u1Byte				channelSwitchCnt;	
+	u1Byte				channelSwitchCnt;
 }ChnlSwitchAnnouncement, *PChnlSwitchAnnouncement;
 
 
@@ -1488,14 +1488,14 @@ typedef struct _RT_WLAN_BSS{
 	// Our TSF when receving thisp packet.
 	u4Byte			RecvTsfLow;
 	u4Byte			RecvTsfHigh;
-	
+
 	u2Byte						SecVersion;
 
 	RT_ENC_ALG					GroupCipherSuite;
 	RT_ENC_ALG					PairwiseCipherSuite[MAX_CIPHER_SUITE_NUM];
 	u2Byte						PairwiseCipherCount;
 	AKM_SUITE_TYPE				AuthSuite[MAX_AUTH_SUITE_NUM];
-	u2Byte						AuthSuiteCount;	
+	u2Byte						AuthSuiteCount;
 
 	u2Byte						PMKIDCount;
 	RT_PMKID_TYPE				PMKIDList[1];
@@ -1521,7 +1521,7 @@ typedef struct _RT_WLAN_BSS{
 	u1Byte						IEBuf[BSS_IE_BUF_LEN];
 	OCTET_STRING				IE;
 	RT_SECURITY_LEVEL			SecLvl;
-	
+
 	u1Byte						WpaIeBuf[MAX_WPA_IE_BUF_LEN];
 	OCTET_STRING	 			WpaIe;
 
@@ -1549,7 +1549,7 @@ typedef struct _RT_WLAN_BSS{
 	OCTET_STRING				bdCountryIE;
 
 	//
-	// WMM parameter IE 
+	// WMM parameter IE
 	//
 	OCTET_STRING				osWmmAcParaIE;
 	u1Byte						WmmAcParaBuf[WMM_PARAM_ELEMENT_SIZE];	// Max WMM parameter size is 24 octets.
@@ -1563,11 +1563,11 @@ typedef struct _RT_WLAN_BSS{
 	// HT Related, by Emily, 2006.08.14
 	BSS_HT						BssHT;
 	BSS_VHT						BssVHT;
-	u1Byte					 	Vender;	
+	u1Byte					 	Vender;
 	u1Byte						SubTypeOfVender;
 	u8Byte						HistoryTime;
-	u1Byte						HistoryCount;	
-		
+	u1Byte						HistoryCount;
+
 	//
 	// For Chiper check !! add by CCW 2008/0918
 	//
@@ -1595,7 +1595,7 @@ typedef struct _RT_WLAN_RSSI{
 	u1Byte			bdSsIdLen;
 
 	s4Byte			CumRecvSignalPower;	// In dBm. (Cumulate with weighted ratio and a small in/decrease)
-	
+
 }RT_WLAN_RSSI, *PRT_WLAN_RSSI;
 
 #pragma pack(4)
@@ -1613,9 +1613,9 @@ typedef struct _RT_WLAN_BSS_Customized{
 #pragma pack()
 
 //
-// 061122, rcnjko: 
-// We SHALL use this macro to change RT_WLA_BSS's IE to 
-// prevent malicious buffer overflow attack. 
+// 061122, rcnjko:
+// We SHALL use this macro to change RT_WLA_BSS's IE to
+// prevent malicious buffer overflow attack.
 //
 #define CopyRtWlanBssIE(__pRtWlanBss, __pBuf, __BufLen) \
 			(__pRtWlanBss)->IE.Octet = (__pRtWlanBss)->IEBuf; \
@@ -1623,7 +1623,7 @@ typedef struct _RT_WLAN_BSS_Customized{
 			CopyMem((__pRtWlanBss)->IE.Octet, (__pBuf), (__pRtWlanBss)->IE.Length)
 
 typedef struct _SW_CAM_TABLE{
-	
+
 	u1Byte				macAddress[6];
 	BOOLEAN			       bUsed;
 	u1Byte				pucKey[PTK_LEN];
@@ -1631,7 +1631,7 @@ typedef struct _SW_CAM_TABLE{
 	u4Byte				ulUseDK;
 	u4Byte				ulKeyId;				// CAM entry in CAM
 	u1Byte			        portNumber;			//vivi added for new cam search flow, 20091028...ID different port
-	
+
 }SW_CAM_TABLE,*PSW_CAM_TABLE;
 
 typedef struct _RSSI_STA{
@@ -1646,7 +1646,7 @@ typedef struct _RSSI_STA{
 	s4Byte					RSSI_CCK_Path_cnt[4];
 	u4Byte					OFDM_Pkt_Cnt;
 	u4Byte					CCK_Pkt_Cnt;
-	
+
 }RSSI_STA, *PRSSI_STA;
 
 typedef enum	_RT_STA_EOSP_STATE
@@ -1661,7 +1661,7 @@ typedef struct _RT_WLAN_STA{
 	BOOLEAN				bLocked;		// TRUE if this STA MAC Address is locked.
 	u1Byte				Sum;			// Sum of MacAddr, used for hash purpose.
 	u1Byte				MacAddr[6];		// Mac address of this STA.
-	AUTH_ALGORITHM		AuthAlg;		// AuthAlg of the STA. 
+	AUTH_ALGORITHM		AuthAlg;		// AuthAlg of the STA.
 	RT_AUTH_MODE		AuthMode;
 	u1Byte				AuthPassSeq;	// 0: Not yet authenticated / 2: STA has receive an successful Auth2. / 4: STA has received an successful Auth4.
 	BOOLEAN				bAssociated;	// TRUE if this STA is associated to this BSS.
@@ -1673,13 +1673,13 @@ typedef struct _RT_WLAN_STA{
 	// --------------------------------------------------
 
 	u1Byte				MultiPortStationIdx;
-	
-	u8Byte				LastActiveTime; // Last active time in ms. 
+
+	u8Byte				LastActiveTime; // Last active time in ms.
 	u1Byte				WmmStaQosInfo;	// Qos Info field when sent from WMM STA in the (re-)association packet.
 	BOOLEAN				bPowerSave;		// TRUE if the STA is in power save mode, FALSE is for active one.
 	RT_LIST_ENTRY		PsQueue;		// Packet queued for this STA if it is in legacy power save mode.
 	RT_LIST_ENTRY		WmmPsQueue;		// Packets belong to WMM APSD ACs queued.
-	RT_STA_EOSP_STATE	WmmEosp;		// If true, the USP is end now for this STA.	
+	RT_STA_EOSP_STATE	WmmEosp;		// If true, the USP is end now for this STA.
 
 	AUTH_PKEY_MGNT_TAG	perSTAKeyInfo;	// WPA-PSK related variable
 
@@ -1699,7 +1699,7 @@ typedef struct _RT_WLAN_STA{
 	//add for HW enc ,By CCW
 	u4Byte				keyindex;
 
-	// add to Clear PS tcb 
+	// add to Clear PS tcb
 	u1Byte				PSIdleCunt;
 
 
@@ -1707,7 +1707,7 @@ typedef struct _RT_WLAN_STA{
 	RT_VHTINFO_STA_ENTRY	VHTInfo;
 	u1Byte					ratr_index;
 	u1Byte					Ratr_State;
-	u4Byte					IOTAction;	
+	u4Byte					IOTAction;
 	u2Byte				IOTMaxMpduLen;
 
 
@@ -1716,10 +1716,10 @@ typedef struct _RT_WLAN_STA{
 	u4Byte				AP_RecvAsocReqLength;
 	pu1Byte				AP_SendAsocResp;
 	u4Byte				AP_SendAsocRespLength;
-	
+
 	pu1Byte				AP_AsocRspIEFromOS;
 	u4Byte				AP_AsocRspIEFromOSLength;
-	
+
 	u2Byte				Capability;
 	u2Byte				usListenInterval;
 	u8Byte				AssociationUpTime;
@@ -1727,8 +1727,8 @@ typedef struct _RT_WLAN_STA{
 	BOOLEAN 			bOsDecisionMade;
 	BOOLEAN 			bNotAcceptedByOs; // Use "NotAccepted" instead of  "Accepted" because 0 is the default value we want after reset.
 	u2Byte				OsReasonCode;
-	
-	RT_STA_INDICATE_STATE_MACHINE 	IndicationEngine;	
+
+	RT_STA_INDICATE_STATE_MACHINE 	IndicationEngine;
 
 	RSSI_STA			rssi_stat;
 
@@ -1736,7 +1736,7 @@ typedef struct _RT_WLAN_STA{
 	u1Byte				LastRxUniFragNum;
 	u2Byte				LastRxUniSeqNum;
 	// ------------------------------------------
-	
+
 #if (P2P_SUPPORT == 1)
 	BOOLEAN 			bP2PClient;
 	P2P_CLIENT_INFO_DISCRIPTOR P2PClientInfoDesc;
@@ -1756,11 +1756,11 @@ typedef struct _RT_WLAN_STA{
 
 	// ODM Write
 	//1 PHY_STATUS_INFO
-	UINT8		RSSI_Path[4];		// 
+	UINT8		RSSI_Path[4];		//
 	UINT8		RSSI_Ave;
 	UINT8		RXEVM[4];
 	UINT8		RXSNR[4];
-	
+
 }RT_WLAN_STA,*PRT_WLAN_STA;
 
 typedef struct _RT_802_11_BSSID_LIST
@@ -1780,9 +1780,9 @@ typedef struct _RT_802_11_BSSID_LIST_Customized
 #define	WDS_AP_MODE			1
 
 //
-// Customer ID, note that: 
-// This variable is initiailzed through EEPROM or registry, 
-// however, its definition may be different with that in EEPROM for 
+// Customer ID, note that:
+// This variable is initiailzed through EEPROM or registry,
+// however, its definition may be different with that in EEPROM for
 // EEPROM size consideration. So, we have to perform proper translation between them.
 // Besides, CustomerID of registry has precedence of that of EEPROM.
 // defined below. 060703, by rcnjko.
@@ -1791,7 +1791,7 @@ typedef enum _RT_CUSTOMER_ID
 {
 	RT_CID_DEFAULT = 0,
 	RT_CID_WHQL = 5,
-	
+
 }RT_CUSTOMER_ID, *PRT_CUSTOMER_ID;
 
 //----------------------------------------
@@ -1878,30 +1878,30 @@ typedef struct _RT_TURBO_CA
 	u4Byte		CheckCnt; // Min: 1, Max: CheckInterVal.
 	u4Byte		CheckInterval;
 
-	// Per-packet contention window for TCA on. 
-	// Note that, this is one of means of TCA, 
+	// Per-packet contention window for TCA on.
+	// Note that, this is one of means of TCA,
 	// we also can information of other means here.
 	//u1Byte		ECWMin;	// For Restore.
 	//u1Byte		ECWMax;//For Restore.
 
-	// Statistics in last TCA_CHECK_INTERVAL. 
+	// Statistics in last TCA_CHECK_INTERVAL.
 	RT_TX_STATISTICS	LastTxStats;
 	RT_RX_STATISTICS	LastRxStats;
 	u4Byte		LastTxRetryCnt;
-	u4Byte		TxThroughput; // in KBps. 
-	u4Byte		RxThroughput; // in KBps. 
+	u4Byte		TxThroughput; // in KBps.
+	u4Byte		RxThroughput; // in KBps.
 	u4Byte		TotalThroughput; //in MBps
 
-	// Statistics in last nomal channel access setting. 
+	// Statistics in last nomal channel access setting.
 	RT_TX_STATISTICS	LastNormalTxStats;
 	RT_RX_STATISTICS	LastNormalRxStats;
-	u4Byte		NormalTotalThroughput; // in KBps. 
+	u4Byte		NormalTotalThroughput; // in KBps.
 }RT_TURBO_CA, *PRT_TURBO_CA;
 
 
-// Add for Real WOW 
+// Add for Real WOW
 #define 	MAX_RS_PACKET_LEN		1024
-#define 	MAX_RealWoW_KCP_SIZE 	124 //(100 + 24) 
+#define 	MAX_RealWoW_KCP_SIZE 	124 //(100 + 24)
 #define 	MAX_RealWoW_KAP_SIZE 	48
 #define 	MAX_RealWoW_Payload 		64
 #pragma pack (1)	// Set our value.
@@ -1919,7 +1919,7 @@ typedef struct _TEREDOINFO
 
 
 typedef struct _KCPInfo{
-	u4Byte			nId; // = id 
+	u4Byte			nId; // = id
 	int 				destAddr;
 	u1Byte			MacID[6];
 	u2Byte			desPort;
@@ -1927,27 +1927,27 @@ typedef struct _KCPInfo{
 }KCPInfo, *PKCPInfo;
 
 typedef struct _KCPContent{
-	u4Byte 			id; // = id 
-	u4Byte 			mSec; // = msec 
+	u4Byte 			id; // = id
+	u4Byte 			mSec; // = msec
 	u4Byte 			size; // =size
 	u1Byte 			bPacket[MAX_RealWoW_KCP_SIZE]; // put packet here
 } KCPContent, *PKCPContent;
 
-typedef struct _RealWoWAckPktInfo { 
+typedef struct _RealWoWAckPktInfo {
 	u2Byte			ackLostCnt;
 	u2Byte		 	patterntSize;
 	u1Byte 			pattern[MAX_RealWoW_Payload];
 }RealWoWAckPktInfo,*PRealWoWAckPktInfo;
 
-typedef struct _RealWoWWPInfo { 
+typedef struct _RealWoWWPInfo {
 	u2Byte 			patterntSize;
 	u1Byte 			pattern[MAX_RealWoW_Payload];
-}RealWoWWPInfo,*PRealWoWWPInfo; 
+}RealWoWWPInfo,*PRealWoWWPInfo;
 
-typedef struct _RT_S5WakeUPInfo { 
+typedef struct _RT_S5WakeUPInfo {
 	 u1Byte			PSK[PASSPHRASE_LEN];
 	 u4Byte			PSKLen;
-}RT_S5WakeUPInfo,*PRT_S5WakeUPInfo; 
+}RT_S5WakeUPInfo,*PRT_S5WakeUPInfo;
 
 
 #pragma pack()
@@ -1956,12 +1956,12 @@ typedef struct _RT_S5WakeUPInfo {
 typedef struct _WIRELESS_SETTING_BEFORE_SCAN
 {
 	/*WirelessModeScanInProgress is designed for driver to keep the previous band(2.4G/5G)
-	   during scan. It is only meaningful for a/b/g device which require to switch band twice 
+	   during scan. It is only meaningful for a/b/g device which require to switch band twice
 	   during scan (either 2.4->5->2.4 or 5->2.4->5*/
-	WIRELESS_MODE		WirelessModeScanInProgress;	
+	WIRELESS_MODE		WirelessModeScanInProgress;
 
 	/*WirelessMode is designed to keep the original wireless mode setting before scan*/
-	WIRELESS_MODE		WirelessMode;		
+	WIRELESS_MODE		WirelessMode;
 
 	/*ChannelNumber is designd to keep the original channel number before scan*/
 	u1Byte				ChannelNumber;
@@ -2005,7 +2005,7 @@ typedef struct _TXBBGain_Struct
 } TXBBGain_Struct, *PTXBBGain_Struct;
 typedef struct _CCKTXBBGain_Struct
 {
-	//The Value is from a22 to a29 one Byte one time is much Safer 
+	//The Value is from a22 to a29 one Byte one time is much Safer
 	u1Byte	CCKTXBBValueArray[8];
 } CCKTXBBGain_Struct,*PCCKTXBBGain_Struct;
 /*---------------------End Define--------------------------------------*/
@@ -2023,7 +2023,7 @@ typedef enum _Fsync_State{
 	Default_Fsync,
 	HW_Fsync,
 	SW_Fsync
-}Fsync_State;	
+}Fsync_State;
 
 typedef enum _RT_AP_TYPE
 {
@@ -2133,7 +2133,7 @@ typedef	u4Byte	RT_CUSTOM_EVENT, *PRT_CUSTOM_EVENT;
 #if 0
 #define	MAX_SUPPORT_WOL_PATTERN_NUM_COMM	\
 	((MAX_SUPPORT_WOL_PATTERN_NUM_88E > MAX_SUPPORT_WOL_PATTERN_NUM_92C)? (MAX_SUPPORT_WOL_PATTERN_NUM_88E) : (MAX_SUPPORT_WOL_PATTERN_NUM_92C))
-#else 
+#else
 #define 	MAX2(a, b) (a>b?a:b)
 #define 	MAX4(a,b,c,d) (MAX2(MAX2(a,b), MAX2(c,d)))
 #define	MAX_SUPPORT_WOL_PATTERN_NUM_COMM (MAX4(MAX_SUPPORT_WOL_PATTERN_NUM_88E,MAX_SUPPORT_WOL_PATTERN_NUM_8723A,MAX_SUPPORT_WOL_PATTERN_NUM_92C,MAX_SUPPORT_WOL_PATTERN_NUM_8814A))
@@ -2155,7 +2155,7 @@ typedef	u4Byte	RT_CUSTOM_EVENT, *PRT_CUSTOM_EVENT;
 #define	USE_FW_PATTERN_MATCH(_pAdapter)	\
 	(IS_HARDWARE_TYPE_8723A(_pAdapter) ? ((GET_POWER_SAVE_CONTROL(&(_pAdapter->MgntInfo))->WoLPatternNum > MAX_HW_PATTERN_MATCH_NUM_8723A) ? TRUE: FALSE): FALSE)
 #else
-#define	USE_FW_PATTERN_MATCH(_pAdapter)	FALSE	
+#define	USE_FW_PATTERN_MATCH(_pAdapter)	FALSE
 #endif
 typedef enum _WOLPATTERN_TYPE
 {
@@ -2211,7 +2211,7 @@ typedef struct _RT_POWER_SAVE_CONTROL
 {
 	//
 	// Inactive Power Save(IPS) : Disable RF when disconnected
-	//		
+	//
 	BOOLEAN				bInactivePs;
 	// When AP mode stop in DC mode,  STA mode will return to IPS enable by this backup.
 	BOOLEAN				bIPSModeBackup;
@@ -2225,7 +2225,7 @@ typedef struct _RT_POWER_SAVE_CONTROL
 
 	// Return point for join action
 	IPS_CALLBACK_FUNCION	ReturnPoint;
-	
+
 	// Recored Parameters for rescheduled JoinRequest
 	PADAPTER			ptmpAdapter;// for reschedule reason, need to use original port, 2015.01.07 hsiao_ho
 	                                // because we need to use the correct port to restart JOIN / MGNTLINK Request
@@ -2254,16 +2254,16 @@ typedef struct _RT_POWER_SAVE_CONTROL
 
 	//
 	// Leisre Poswer Save : Disable RF if connected but traffic is not busy
-	//		
+	//
 	BOOLEAN				bLeisurePs;
 	// When AP mode stop in DC mode,  STA mode will return to LPS enable by this backup.
 	BOOLEAN				bLeisurePsModeBackup;
 	u1Byte				LpsIdleCount;
 	u1Byte				PowerSetting;
-	u1Byte				PowerPolicy;	
+	u1Byte				PowerPolicy;
 	u4Byte				PowerProfile;
-	u4Byte				PowerSaveLevel;	
-	u4Byte				ConnectionQuality;	
+	u4Byte				PowerSaveLevel;
+	u4Byte				ConnectionQuality;
 	u1Byte				PowerMode;
 	u1Byte				RegMaxLPSAwakeIntvl;
 	u1Byte				LPSAwakeIntvl;
@@ -2275,7 +2275,7 @@ typedef struct _RT_POWER_SAVE_CONTROL
 	u4Byte				CurPsLevel;
 	u4Byte				RegRfPsLevel;
 	u1Byte				RegAMDPciASPM;
-	
+
 	// 2009/10/28 MH Add for DMA 64 bit support switch
 	u1Byte				RegDMA64Support;
 
@@ -2328,7 +2328,7 @@ typedef struct _RT_POWER_SAVE_CONTROL
 	BOOLEAN				bInDxFwIPSPeriod; // IPS during device state in Dx (x=1~3)
 	BOOLEAN				CardDisableInLowClk;
 	u1Byte				FwIPSLevel;
-	
+
 	//  Record wake up frame for WoWLAN. by tynli. 2009.06.10.
 	RT_PM_WOL_PATTERN_INFO		PmWoLPatternInfo[MAX_SUPPORT_WOL_PATTERN_NUM_COMM]; //by tynli. To keep the WoWLAN wake up pattern information, ex: pattern Id, bit mask.
 	u1Byte						WoLPatternNum;
@@ -2431,10 +2431,10 @@ typedef enum _RT_RECEIVE_FILTER_TEST
 
 typedef struct _RT_DO_COALESICING_FIELD_INFO
 {
-	u1Byte							Heard[8];   // Resvad for ndis 
+	u1Byte							Heard[8];   // Resvad for ndis
 	RT_FRAME_HEADER				FrameHead;
 	RT_RECEIVE_FILTER_TEST			FilterTest;
-	
+
 	 union
     	{
 	        RT_MAC_HEADER_FIELD       	MacHeaderField;
@@ -2443,8 +2443,8 @@ typedef struct _RT_DO_COALESICING_FIELD_INFO
 	        RT_IPV6_HEADER_FIELD      	IPv6HeaderField;
 	        RT_UDP_HEADER_FIELD       	UdpHeaderField;
     	}HeaderField;
-    	
-	union 
+
+	union
 	{
 	        u1Byte			FieldByteValue;
 	        u2Byte			FieldShortValue;
@@ -2461,25 +2461,25 @@ typedef struct _RT_DO_COALESICING_FIELD_INFO
 	        ULONGLONG   	ResultLong64Value;
 	        u1Byte               	ResultByteArrayValue[16];
     	}ResultValue;
-    	
-	
+
+
 }RT_DO_COALESICING_FIELD_INFO,*PRT_DO_COALESICING_FIELD_INFO;
 
 
 typedef struct _RT_DO_COALESICING_FILTER_PARAMETER
 {
 	u4Byte									FilterID;       		// != 0 : in used !!
-	u4Byte									Delaytime;   	 	// how long to flush packet  
+	u4Byte									Delaytime;   	 	// how long to flush packet
 	u4Byte									NumOfElem; 	// For keep number of field !!
-	RT_DO_COALESICING_FIELD_INFO			dFieldArry[5];     // We define in 5 in windows 8.1  !! 
-	
+	RT_DO_COALESICING_FIELD_INFO			dFieldArry[5];     // We define in 5 in windows 8.1  !!
+
 }RT_DO_COALESICING_FILTER_PARAMETER,*PRT_DO_COALESICING_FILTER_PARAMETER;
 
 typedef struct _RT_DO_COALESICING_FILTER_INFO
 {
 	BOOLEAN									bEnable;   // Do or not !!
-	RT_DO_COALESICING_FILTER_PARAMETER	dFilterArry[10]; // We define in 10 in windows 8.1  !! 
-	
+	RT_DO_COALESICING_FILTER_PARAMETER	dFilterArry[10]; // We define in 10 in windows 8.1  !!
+
 }RT_DO_COALESICING_FILTER_INFO,*PRT_DO_COALESICING_FILTER_INFO;
 
 typedef struct _RT_DBG_CONTROL
@@ -2592,7 +2592,7 @@ typedef struct _MGNT_INFO{
 	BOOLEAN				bMediaConnect;
 	BOOLEAN				init_adpt_in_progress;
 
-	
+
 
 	BOOLEAN				bFlushScanList; // If this flag is set true when querying scan list, it means the OS has flushed the scan list.
 
@@ -2602,7 +2602,7 @@ typedef struct _MGNT_INFO{
 	BOOLEAN				bRoamRequest;
 	BOOLEAN				bPrepareRoaming;
 	RT_PREPARE_ROAM_TYPE	PrepareRoamState;
-	
+
 	// Set when authentication type, capability changes.
 	// Refered in MgntActSet_802_11_SSID().
 	RT_MLMESTARTREQ_RSN	bMlmeStartReqRsn;
@@ -2630,7 +2630,7 @@ typedef struct _MGNT_INFO{
 	BOOLEAN				bSetWatchDogTimerByDriver;
 	// ---------------------------------------------------------------
 
-#if (DFS_SUPPORT == 1)	
+#if (DFS_SUPPORT == 1)
 	DFS_MGNT			DFSMgnt;
 #endif
 	WIRELESS_SETTING_BEFORE_SCAN	SettingBeforeScan;
@@ -2722,7 +2722,7 @@ typedef struct _MGNT_INFO{
 	OCTET_STRING		mBrates;
 
 	u1Byte				HighestBasicRate;
-	u1Byte				LowestBasicRate;	
+	u1Byte				LowestBasicRate;
 	u1Byte				HighestOperaRate;
 	u1Byte				CurrentBasicRate;
 	u1Byte				CurrentOperaRate;
@@ -2733,7 +2733,7 @@ typedef struct _MGNT_INFO{
 	u1Byte				Regdot11OperationalRateBuf[MAX_NUM_RATES];
 
 	// -- Supported Rate --
-	OCTET_STRING		SupportedRates; 
+	OCTET_STRING		SupportedRates;
 	u1Byte				SupportedRatesBuf[MAX_NUM_RATES];
 	OCTET_STRING		RegSuppRateSets[MAX_WIRELESS_MODE_CNT];
 	u1Byte				RegSuppRateSetsBuf[MAX_WIRELESS_MODE_CNT][MAX_NUM_RATES];
@@ -2746,13 +2746,13 @@ typedef struct _MGNT_INFO{
 	u1Byte				VHTHighestOperaRate;
 	u1Byte				RegVHTHighestOperaRate;
 	u1Byte				RegVHTSuppRateSet[2];
-	u1Byte				dot11VHTOperationalRateSet[2];		
-	u1Byte				Regdot11VHTOperationalRateSet[2];		
+	u1Byte				dot11VHTOperationalRateSet[2];
+	u1Byte				Regdot11VHTOperationalRateSet[2];
 
 	// For basic rate set maintain. 2010.11.03. by tynli.
 	u1Byte				SupportRatesfromBCNBuf[MAX_NUM_RATES];
 	OCTET_STRING		SupportRatesfromBCN;
-	
+
         // For Min spacing configurations, Added by Roger, 2008.08.30.
 	u1Byte				MinSpaceCfg;
 
@@ -2780,18 +2780,18 @@ typedef struct _MGNT_INFO{
 	// For AP mode delay mechanism test ,.
 	BOOLEAN				bDelayApBeaconMode;
 	u4Byte				DelayApBeaconCnt;
-	
+
 	RT_WORK_ITEM		IbssStartRequestWorkItem;
 	RT_WORK_ITEM		ApStartRequestWorkItem;
-	RT_WORK_ITEM		ApSendDisassocWithOldChnlWorkitem;	 
+	RT_WORK_ITEM		ApSendDisassocWithOldChnlWorkitem;
 
 	// To protect drop packet progress
 	BOOLEAN				bDropPktInProgress;
 	RT_WORK_ITEM		DropPacketWorkItem;
-	
+
 	IbssParms			mIbssParms;    // empty if infrastructure BSS
 
-	
+
 	u1Byte				dot11CurrentPreambleMode; // It represents current preamble mode. 2005.01.06, by rcnjko.
 
 	BOOLEAN				bDisableUseProtection; // TRUE if protection mode forced disabled by User.
@@ -2827,9 +2827,9 @@ typedef struct _MGNT_INFO{
 	RT_TIMER			SwBeaconTimer;
 	BEACON_SEND_STATE	BeaconState;	// The current sending state of Beacon
 	RT_WORK_ITEM		TbttPollingWorkItem; // Workitem to simulate TBTT notification by polling MAC.TSF, 070124, by rcnjko.
-	
+
 	u4Byte				MaxBeaconSize;	//2010.06.23. Added by tynli. To observe the max beacon size.
-	
+
 	// Roaming flags
 	// -----------------------------------------
 	RT_ROAM_TYPE		RoamingType;
@@ -2841,7 +2841,7 @@ typedef struct _MGNT_INFO{
 
 	//
 	// When wake up, AP would be reset by MgntActSet_802_11_SSID().
-	// We should not restart beaconning under win7. 
+	// We should not restart beaconning under win7.
 	// This flag is for AP_StartAPRequest() to determine whether to start beaconning.
 	//
 	BOOLEAN				bStartApDueToWakeup;
@@ -2853,11 +2853,11 @@ typedef struct _MGNT_INFO{
 	u1Byte				Regdot11DtimPeriod;
 
 	//Set when load default value and MgntActSet_802_11_INFRASTRUCTURE_MODE()
-	u1Byte				Regdot11networktype; 
+	u1Byte				Regdot11networktype;
 	u2Byte				RegmCap;
 
-	
-	u1Byte				RegPreambleMode; // It represents default setting about preamble mode. 2006.01.06, by rcnjko. 
+
+	u1Byte				RegPreambleMode; // It represents default setting about preamble mode. 2006.01.06, by rcnjko.
 
 	// Power Save Ralated
 	BOOLEAN				RegRfOff;
@@ -2885,7 +2885,7 @@ typedef struct _MGNT_INFO{
 	BOOLEAN				bPSPXlinkMode; // Current enable XLink mode (promicuous mode).
 	BOOLEAN				bDefaultPSPXlinkMode; // Enable XLink mode (promicuous mode) for default settings, i.e., from registry or UI.
 	BOOLEAN				bNetMonitorMode;  // 2007.08.06, by shien chang.
-	
+
 	//----------------------------------------------------------------------------
 	// Power save mode, 070104, by rcnjko.
 	//----------------------------------------------------------------------------
@@ -2903,7 +2903,7 @@ typedef struct _MGNT_INFO{
 	// AP mode related, 2005.05.27, by rcnjko.
 	//----------------------------------------------------------------------------
 
-	u1Byte				arChalng[128]; // Challenge text for shared-key authenticatin. 
+	u1Byte				arChalng[128]; // Challenge text for shared-key authenticatin.
 
 #if 1//(AP_MODE_SUPPORT == 1)
 	// 2012/01/12 MH Add one RT_WLAN_STA for ODM default port conpatiable with other SW team.
@@ -2912,7 +2912,7 @@ typedef struct _MGNT_INFO{
 	RT_WLAN_STA		AsocEntry[ASSOCIATE_ENTRY_NUM]; // Information of STAs. <RJ_TODO_AP> Revise the data type name and its variables.
 #endif
 	u2Byte				AvailableAsocEntryNum; // # of entries of AsocEntry[] available.
-	u2Byte				PowerSaveStationNum; // # of STA in PS mode. <RJ_TODO_AP> 
+	u2Byte				PowerSaveStationNum; // # of STA in PS mode. <RJ_TODO_AP>
 	RT_LIST_ENTRY		GroupPsQueue; // Mcst/Bcst packet queued for one or more STA is in power-save mode.
 	OCTET_STRING		Tim; // A octet string for TIM IE.
 	u1Byte 				TimBuf[254]; // 254=3+251, Buffer for TIM IE.
@@ -2926,7 +2926,7 @@ typedef struct _MGNT_INFO{
 	// Annie TOADD: VirtualCAM
 
 	// for indication
-	PRT_WLAN_STA		pCurrentSta; // the STA we are dealing with for indication. we get the state machine through here, similar as pMgntInfo->AsocInfo 
+	PRT_WLAN_STA		pCurrentSta; // the STA we are dealing with for indication. we get the state machine through here, similar as pMgntInfo->AsocInfo
 
 	// Additonal IEs for beacon
 	u4Byte                   		AdditionalBeaconIESize;
@@ -2934,7 +2934,7 @@ typedef struct _MGNT_INFO{
 
 	//Additonal IEs for probe response
 	u4Byte                   		AdditionalResponseIESize;
-	PVOID                   		AdditionalResponseIEData;   
+	PVOID                   		AdditionalResponseIEData;
 
 	u4Byte				AdditionalAssocReqIESize;
 	PVOID				AdditionalAssocReqIEData;
@@ -2951,7 +2951,7 @@ typedef struct _MGNT_INFO{
 	// For Turbo mode. Added by Roger, 2006.12.07.
 	//
 	RT_TURBO_CA			TurboChannelAccess;
-	
+
 	// Security Information
 	RT_SECURITY_T		SecurityInfo;
 
@@ -2976,7 +2976,7 @@ typedef struct _MGNT_INFO{
 
 	// Qos related. Added by Annie, 2005-11-01.
 	PSTA_QOS			pStaQos;
-	
+
 	BOOLEAN				bUpdateTxPowerInProgress; // TRUE if the operation to update all tx power of all channel is in progress.
 	s4Byte				PowerToUpdateInDbm; // Tx power to update in dBm.
 	s4Byte				ClientConfigPwrInDbm; // Client configured power in dbm for CCX
@@ -3018,15 +3018,15 @@ typedef struct _MGNT_INFO{
 	// WDS, 2006.06.11, by rcnjko.
 	u1Byte				WdsMode;
 	u1Byte				WdsApAddr[6];
-	
+
 	//
 	// For RF state maintance.
 	//
-	RT_RF_CHANGE_SOURCE	RfOffReason;	
-	BOOLEAN				ClkReqState;	
+	RT_RF_CHANGE_SOURCE	RfOffReason;
+	BOOLEAN				ClkReqState;
 
 	CHANNEL_ACCESS_SETTING	ChannelAccessSetting;
-	
+
 	//ADD for AP HW ENC ,CCW
 	BOOLEAN				bAPGlobRest;
 	SW_CAM_TABLE           SWCamTable[32];
@@ -3055,7 +3055,7 @@ typedef struct _MGNT_INFO{
 	u1Byte				NumRejectedAsocAP;
 
 	BOOLEAN				bExcludeUnencrypted;
-	BOOLEAN				SafeModeEnabled;	
+	BOOLEAN				SafeModeEnabled;
 
 	//For NDIS6 RSNA ,by CCW
 	BOOLEAN				bRSNAPSKMode;
@@ -3063,7 +3063,7 @@ typedef struct _MGNT_INFO{
 	// For turbo mode. Added by Roger, 2006.12.07.
 	// -----------------------------------------
 	BOOLEAN				bAutoTurboBy8186;		// 8186 "AutoTurbo" mode switch.
-	BOOLEAN				bSupportTurboMode;		// 8187 Turbo mode switch.	
+	BOOLEAN				bSupportTurboMode;		// 8187 Turbo mode switch.
 	BOOLEAN				bRealtekAggCapExist;
 	//The following variables have NOT checked yet....Roger, 2006.12.07
 	BOOLEAN				bRealtekCapType1Exist ;		// 8186 "AutoTurbo" mode: 8186 IE exists or not in current association.
@@ -3071,20 +3071,20 @@ typedef struct _MGNT_INFO{
 
 	RT_RF_POWER_STATE	eSwRfPowerState;		// SW RF power state, 2006.12.18, by shien chang.
 
-	// disable tx power+ by rate 
+	// disable tx power+ by rate
 	BOOLEAN				bDisableTXPowerByRate;
 	// disable tx power training
 	BOOLEAN				bDisableTXPowerTraining;
 	BOOLEAN				bSetTXPowerTrainingByOid;
 	BOOLEAN				bDecreaseTXPowerTraining;
-	
+
         //
 	// For simple config. by CCW - copy from 818x
 	//
-#if (WPS_SUPPORT == 1)	
+#if (WPS_SUPPORT == 1)
 	PVOID				pSimpleConfig;
 #endif
-	BOOLEAN				bPbcPressed;		
+	BOOLEAN				bPbcPressed;
 
 	//For alpha LED control
 	u1Byte				CustomizedPbcPressTimer;
@@ -3100,15 +3100,15 @@ typedef struct _MGNT_INFO{
 	//
 	// For 802.11d.
 	//
-	PVOID				pDot11dInfo;	
+	PVOID				pDot11dInfo;
 
-	PVOID				pChannelList;	
-	
+	PVOID				pChannelList;
+
 	//
 	// IHV Support Type
 	//
 	IHV_SUPPORT_TYPE	IhvType;
-	
+
 	//
 	// For CCX related information.
 	//
@@ -3118,7 +3118,7 @@ typedef struct _MGNT_INFO{
 
 	//For generic parser.
 	PVOID				pGenericParser;
-		
+
 	// For AP mode information
 #if 1//(AP_MODE_SUPPORT == 1)
 	PVOID				pApModeInfo;
@@ -3134,9 +3134,9 @@ typedef struct _MGNT_INFO{
 
 	// For 802.11z
 	PVOID				pTDLSTInfo;
-			
+
 #if (MULTICHANNEL_SUPPORT == 1)
-	PVOID				pMultiChnl;	
+	PVOID				pMultiChnl;
 #endif
 
 	PVOID				pCustomScanInfo;
@@ -3146,7 +3146,7 @@ typedef struct _MGNT_INFO{
 	//1 if sniffer mode. 0 turn off sniffer mode
 	BOOLEAN				SnifferTurnOnFlag;
 	u4Byte				SnifferSavedRCR;
-	
+
 	// Protection mode related
 	u1Byte				ForcedProtectionMode;
 	u1Byte				ForcedProtectRate;
@@ -3155,14 +3155,14 @@ typedef struct _MGNT_INFO{
 	u1Byte				ForcedProtectCCA;
 	BOOLEAN				bForcedProtectRTSFrame;
 	BOOLEAN				bForcedProtectCTSFrame;
-	
+
 	// for HT operation rate set.  we use this one for HT data rate to seperate different descriptors
 	//the way fill this is the same as in the IE
 
 	BOOLEAN				bReg11nAdhoc;
 	BOOLEAN				bRegIOTBcm256QAM;
 	u1Byte				bRegVht24g;
-		
+
 	BOOLEAN				bScan_20MHz;
 
 	//For Backup Initial Gain
@@ -3173,7 +3173,7 @@ typedef struct _MGNT_INFO{
 
 	u1Byte				DM_Type;
 	//Dynamic Tx power for near/far range enable/Disable  , by Jacken , 2008-03-06
-	BOOLEAN				bDynamicTxPowerEnable;   
+	BOOLEAN				bDynamicTxPowerEnable;
 
 	//2008-05-09  indicate set power progress
 	BOOLEAN				bSetPnpPwrInProgress;
@@ -3188,7 +3188,7 @@ typedef struct _MGNT_INFO{
 	u2Byte				FirmwareVersionRev;
 	u2Byte				FirmwareSubVersion;
 	u2Byte				FirmwareSignature;
-	
+
 	// For IOT issue.
 	u1Byte				IOTPeer;
 	u1Byte				IOTPeerSubtype;
@@ -3201,10 +3201,10 @@ typedef struct _MGNT_INFO{
 	// 2008/05/20 MH For verification console.
 #if DBG_CMD
 	RT_WORK_ITEM		NICVerify;
-#endif	
+#endif
 	BOOLEAN				bNicVerifyPkt;
 
-	// Roam Sensitive Level 
+	// Roam Sensitive Level
 	s1Byte				RegROAMSensitiveLevel;
 
 	// Roam Hysteresis
@@ -3212,7 +3212,7 @@ typedef struct _MGNT_INFO{
 
 	// For leisure power save in connection state, 2007-12-17 by Isaiah
 	u1Byte				LPSDelayCnt;
-	
+
 	// Keep Alive mechanism
 	u1Byte				keepAliveLevel;
 
@@ -3230,7 +3230,7 @@ typedef struct _MGNT_INFO{
 	// dm control initial gain flag
 	BOOLEAN				bDMInitialGainEnable;
 
-	//Record NDIS Version For Compatibile 
+	//Record NDIS Version For Compatibile
 	RT_NDIS_VERSION 		NdisVersion;
 
 	RT_TIMER				PnpWakeUpJoinTimer;
@@ -3247,7 +3247,7 @@ typedef struct _MGNT_INFO{
 
 	// 2009/08/05 MH To protect halt adapter process.
 	BOOLEAN				bHaltInProgress;
-	
+
 	//2009/08/10 This is asked by AzWava Mr. Six. To Make TKIP in N mode
 	BOOLEAN				bTKIPinNmodeFromReg;
 	BOOLEAN				bWEPinNmodeFromReg;
@@ -3266,17 +3266,17 @@ typedef struct _MGNT_INFO{
 
 	u8Byte				TSFValue; //by tynli, from Rx beacon
 	u8Byte				NowTSF;
-	u8Byte				NextBeacon;	
+	u8Byte				NextBeacon;
 
 	BOOLEAN				bUseRxInterruptWorkItem;
 
 	BOOLEAN				bWakeupAutoLinkInProgressing;
 
-	u4Byte				uLastDecryptedErrorSeqNum;	
+	u4Byte				uLastDecryptedErrorSeqNum;
 
 	BOOLEAN				bDisableCck;
 	BOOLEAN				bRegVelocity;
-	u4Byte				AcceptFirstEAPOLPacket;	
+	u4Byte				AcceptFirstEAPOLPacket;
 
 	BOOLEAN				bAPTimExtend;
 	BOOLEAN				bConcurrentMode;
@@ -3288,7 +3288,7 @@ typedef struct _MGNT_INFO{
 
 	// 2010/05/11 MH Add a timer for GPIO detect.
 	// 2011/11/03 MH Use the same GPIO timer.
-	RT_TIMER			GpioDetectTimer;	
+	RT_TIMER			GpioDetectTimer;
 	BOOLEAN				GpioDetectTimerStart;
 	BOOLEAN				HwPBCDetectTimerStart;
 
@@ -3299,32 +3299,32 @@ typedef struct _MGNT_INFO{
 
 	// 2010/08/25 MH Add to support pdn mode switch.
 	u1Byte				bRegPDNMode;
-	
-	// 2010/09/01 MH According to PM's request, we support dongle selective suspend mode switch.	
+
+	// 2010/09/01 MH According to PM's request, we support dongle selective suspend mode switch.
 	u1Byte				bRegDongleSS;
-	
-	// 2010/09/13 MH According to PM's request, we support different SS power seave level.	
+
+	// 2010/09/13 MH According to PM's request, we support different SS power seave level.
 	u1Byte				bRegSSPwrLvl;
-	
+
 	// 2011/02/16 MH Add for SS HW radio detect workaround temporarily.
 	u1Byte				bRegSSWakeCnt;
-	
-	// 2010/12/17 MH Add for RX aggregation mode switch according to TX/RX traffic.	
-	u1Byte				bRegAggDMEnable;
-        BOOLEAN			bSendPacketByTimer;	
 
-	// 2010/12/31 MH Add for UPHY dynamic chaneg.	
+	// 2010/12/17 MH Add for RX aggregation mode switch according to TX/RX traffic.
+	u1Byte				bRegAggDMEnable;
+        BOOLEAN			bSendPacketByTimer;
+
+	// 2010/12/31 MH Add for UPHY dynamic chaneg.
 	u1Byte				bRegUPDMEnable;
 
 	// 2011/07/08 MH Add for different link speed display.
-	u1Byte				bRegLinkSpeedLevel;	
+	u1Byte				bRegLinkSpeedLevel;
 
 	u1Byte				RSSI2GridMode;
-	
-	// 2011/07/14 MH Add for rx short cut.	
+
+	// 2011/07/14 MH Add for rx short cut.
 	u1Byte				bRegRxSC;
 
-	// 2011/07/15 Sinda Add for tx short cut.	
+	// 2011/07/15 Sinda Add for tx short cut.
 	u1Byte				bRegTxSC;
 
 	// 2011/09/15 MH Add registry for switching packet compete method.
@@ -3347,7 +3347,7 @@ typedef struct _MGNT_INFO{
 	u4Byte				RegTxPwrLimit;
 
 	// 2012/11/28 MH Add for BB team AMPDU test.
-	u1Byte				RegAMfactor;	
+	u1Byte				RegAMfactor;
 	u1Byte				RegVHTRSec;
 
 	// 2012/11/07 Awk add PowerBase for customers to define their power base.
@@ -3376,7 +3376,7 @@ typedef struct _MGNT_INFO{
 	OCTET_STRING		RegPwrLimitFile;
 	OCTET_STRING		RegSecondaryPwrLimitFile;
 	OCTET_STRING		RegChannelPlan2G;
-	OCTET_STRING		RegChannelPlan5G;	
+	OCTET_STRING		RegChannelPlan5G;
 	u1Byte				RegDecryptCustomFile;
 
 	// 2013/04/16 VincentLan Add to switch Spur Calibration Method
@@ -3386,40 +3386,40 @@ typedef struct _MGNT_INFO{
 	// 2013/11/23 VincentLan add for for KFree Feature Requested by RF David
 	u1Byte				RegRfKFreeEnable;
 
-	
-	
+
+
 	u1Byte				RegTxDutyEnable;
-	
+
 	// 2011/11/15 MH Add for user can select different region and map to dedicated power gain offset table.
 	u1Byte				RegPwrTblSel;
 
 	u1Byte				RegTxPwrLevel;
 
 	// 2011/11/15 MH Add for user can select different tx power by rate switch by default value and registry value.
-	u1Byte				RegPwrByRate;	
-	u4Byte				RegPwrRaTbl1;	
-	u4Byte				RegPwrRaTbl2;	
-	u4Byte				RegPwrRaTbl3;	
-	u4Byte				RegPwrRaTbl4;	
-	u4Byte				RegPwrRaTbl5;	
-	u4Byte				RegPwrRaTbl6;	
-	u4Byte				RegPwrRaTbl7;	
-	u4Byte				RegPwrRaTbl8;	
-	u4Byte				RegPwrRaTbl9;	
-	u4Byte				RegPwrRaTbl10;	
-	u4Byte				RegPwrRaTbl11;	
-	u4Byte				RegPwrRaTbl12;	
-	u4Byte				RegPwrRaTbl13;	
-	u4Byte				RegPwrRaTbl14;	
-	u4Byte				RegPwrRaTbl15;	
-	u4Byte				RegPwrRaTbl16;	
+	u1Byte				RegPwrByRate;
+	u4Byte				RegPwrRaTbl1;
+	u4Byte				RegPwrRaTbl2;
+	u4Byte				RegPwrRaTbl3;
+	u4Byte				RegPwrRaTbl4;
+	u4Byte				RegPwrRaTbl5;
+	u4Byte				RegPwrRaTbl6;
+	u4Byte				RegPwrRaTbl7;
+	u4Byte				RegPwrRaTbl8;
+	u4Byte				RegPwrRaTbl9;
+	u4Byte				RegPwrRaTbl10;
+	u4Byte				RegPwrRaTbl11;
+	u4Byte				RegPwrRaTbl12;
+	u4Byte				RegPwrRaTbl13;
+	u4Byte				RegPwrRaTbl14;
+	u4Byte				RegPwrRaTbl15;
+	u4Byte				RegPwrRaTbl16;
 
 	// 2012/07/24 MH Add for win8 usb whql tst & WFD multi channel.
 	u1Byte				RegUseDefaultCID;
 
 	u1Byte				RegWfdTime;
 	u1Byte				RegWfdChnl;
-	
+
 #if 1//HARDWARE_TYPE_IS_RTL8192D == 1 // Disable by MH
 	//for checkEDCATurbo
 	u8Byte			lastTxOkCnt ;
@@ -3430,7 +3430,7 @@ typedef struct _MGNT_INFO{
 
 	// Justin: Timer for Tx/Rx LED blinking
 	RT_TIMER		LedTimer;
-	
+
 	// Add for USB/PCIE rx packetr indicate header.
 	u1Byte			header[100][(sMacHdrLng+N6_LLC_SIZE)];
 
@@ -3441,7 +3441,7 @@ typedef struct _MGNT_INFO{
 	//	Do not access this variable outside of WFD_xxx() functoions.
 	PVOID				pWFDInfo;
 
-	// Just for need report  power save state to OS or not ( Win8 )!! 
+	// Just for need report  power save state to OS or not ( Win8 )!!
 	BOOLEAN				bInAutoPowerSavemode;
 
 	u1Byte				RegFakeRoamSignal[3];	// For testing only, RegFakeRoamSignal[0] = initial signal, RegFakeRoamSignal[1] = reducing signal
@@ -3450,7 +3450,7 @@ typedef struct _MGNT_INFO{
 	u4Byte				targetAKMSuite;
 
 	FT_INFO_ENTRY		FtEntryList[MAX_FT_ENTRY_NUM];
-		
+
 	OCTET_STRING		TIE;
 	u1Byte		TIEBuff[8];
 
@@ -3459,7 +3459,7 @@ typedef struct _MGNT_INFO{
 	BOOLEAN		bCustomizedAsocIE;
 	u2Byte		CustomizedAsocIELength;
 	u1Byte		CustomizedAsocIEBuf[MAX_IE_LEN];
-#endif	
+#endif
 
 	// For 92D CCK hang issue when dual band.
 	BOOLEAN			bDisableCCKForDualBand;
@@ -3488,9 +3488,9 @@ typedef struct _MGNT_INFO{
 	// For memory management to record the objects allocation info.
 	RT_LIST_ENTRY		ObjectList;
 
-       // add for stable  traffic check 
+       // add for stable  traffic check
 	Check_Stable_Traffic           CheckTraffic;
-	   
+
 	BOOLEAN		bDisableCCKRateForVWIFIChangeChannel;
 
 	//For GTK/ARP offload. by tynli.
@@ -3498,7 +3498,7 @@ typedef struct _MGNT_INFO{
 	RT_PM_IPV4_ARP_PARAMETERS PMIPV4ARPPara;
 	RT_PM_IPV6_NS_PARAMETERS PMIPV6NSPara[2];
 	RT_PM_DOT11_RSN_REKEY_PARAMETERS PMDot11RSNRekeyPara;
-	
+
 	// Add for TCP_CHECK
 	RT_SUPPORT_TCPOFFLOAD_CAP		TCPOffloadCap;
 	RT_SUPPORT_TCPOFFLOAD_CAP		CurrTCPOffloadCap;
@@ -3539,7 +3539,7 @@ typedef struct _MGNT_INFO{
 	u1Byte				mbS5PMK[PMK_LEN];
 	u1Byte				mbS5PTK[PTK_LEN_TKIP];
 
-	// Add for D0 filter coalesci 
+	// Add for D0 filter coalesci
 	RT_DO_COALESICING_FILTER_INFO		mRtD0ColesFilterInfo;
 
 	BOOLEAN				bEDCCASupport;
@@ -3549,7 +3549,7 @@ typedef struct _MGNT_INFO{
 	u1Byte				RegDownloadFW;
 
 	CHANNEL_WIDTH		currentRABw;
-	
+
 	u2Byte				RegScanLarge;
 	u2Byte				RegScanMiddle;
 	u2Byte				RegScanNormal;
@@ -3562,19 +3562,19 @@ typedef struct _MGNT_INFO{
 	BOOLEAN		bPreTransPnP;
 
 	BOOLEAN 	bDisconnectInProgress; //indicate disconnect in progress 20130117
-	
+
 	//20130117 Used for Invitation No/After to Pass, with skip scan when Go is connected
 	u1Byte		bGoSkipScanForWFD;
 	u1Byte		bClientSkipScanForWFD;
-	
+
 	BOOLEAN		bForceGoTxData20MBw;
 	u1Byte		bWaitBeforeGoSkipScan;
-	
+
 
 	BOOLEAN				bHWRTSEnable;
 
 	u1Byte		ScanOffloadType;
-	
+
 	// 2013/02/05 MH Add for streamMode switch.
 	u1Byte				RegStreamMode;
 	// 2013/02/06 MH Add Transmit power control level for all customer in the future.
@@ -3597,8 +3597,8 @@ typedef struct _MGNT_INFO{
 	u1Byte				EnableResetTxStuck;
 
 	u1Byte				RegSifsThresh;
-	
-	u1Byte				RegFwload;	
+
+	u1Byte				RegFwload;
 
 	u1Byte				RegUsbSafetySwitch;
 
@@ -3612,7 +3612,7 @@ typedef struct _MGNT_INFO{
 	u1Byte				Reg8822BFPGAVerification;
 
 	BOOLEAN 	RegClearAMDWakeUpStatus; // zhiyuan add for 88ee Lenovo AMD platform
-	
+
 	BOOLEAN		RegbCustomizedScanPeriod;
 	u2Byte		RegIntelCustomizedScanPeriod;
 	u2Byte		RegAMDCustomizedScanPeriod;
@@ -3627,18 +3627,18 @@ typedef struct _MGNT_INFO{
 	u1Byte				RegPassiveScan;
 
 	BOOLEAN		bSupportPacketCoalescing;
-	BOOLEAN 	IsAMDIOIC;	
-	
+	BOOLEAN 	IsAMDIOIC;
+
 	BOOLEAN		bPendScanOID;
 	BOOLEAN		bCheckScanTime;
-	u8Byte		ScanOnlyStartTime;	
+	u8Byte		ScanOnlyStartTime;
 	u1Byte		RegMultiChannelFcsMode;
 	BOOLEAN		bFcsUpdateTSF;
 	u1Byte		WFDOpChannel;
 
 	u4Byte		RegWmmPage;
 	u1Byte		WFDPeerOpChannel;
-	u2Byte		ConnectionConfigTimeIntv;	
+	u2Byte		ConnectionConfigTimeIntv;
 	u4Byte				Regbcndelay;
 	BOOLEAN		bWPSProcess;
 	u1Byte		RetryTimes;
@@ -3670,7 +3670,7 @@ typedef struct _MGNT_INFO{
 	// SDIO polling interrupt mode
 	BOOLEAN 	bSdioPollIntrHandler;
 	u2Byte		SdioIntrPollingLimit;
-    
+
     // For Rx Reorder Control
     u1Byte				RegRxReorder;
     u1Byte				RegRxReorder_WinSize;
@@ -3682,7 +3682,7 @@ typedef struct _MGNT_INFO{
 	u2Byte		RegTxSendAsap;
 	u2Byte		CurTxSendAsap;
 
-	// MAC Address Randomization 
+	// MAC Address Randomization
 	u1Byte		RegSupportMACRandom;
 
 	//ECSA
@@ -3716,7 +3716,7 @@ typedef struct _RT_NDIS_DBG_CONTEXT
 {
 	BOOLEAN			bDbgDrvUnload;
 
-	// Work Item for debugging. 
+	// Work Item for debugging.
 	RT_WORK_ITEM 	DbgWorkItem;
 	PlatformEvent	DbgWorkItemEvent;
 	NDIS_SPIN_LOCK	DbgWorkItemSpinLock; // To protect the following variables.
@@ -3726,20 +3726,20 @@ typedef struct _RT_NDIS_DBG_CONTEXT
 
 	// Variable needed in each implementation of CurrDbgAct.
 	ULONG	DbgActType; // Type of action performed in CurrDbgAct.
-	ULONG	DbgIoOffset; // The type of IO operation is depend of DbgActType.  
+	ULONG	DbgIoOffset; // The type of IO operation is depend of DbgActType.
 	ULONG	DbgIoValue; // The type of IO operation is depend of DbgActType.
 	ULONG	DbgOutLen;
     u1Byte	DbgOutBuf[100];
 	UCHAR	DbgIoBuf[64];
 	ULONG	DbgRfPath;	// The RF path of IO operation. Added by Roger, 2008.09.10.
 
-	//cosa add for bt control	
+	//cosa add for bt control
 	// Event used to sync H2c for BT control
 	PlatformEvent	dbgH2cRspEvent;
 	PlatformEvent	dbgBtC2hEvent;
 	PlatformEvent	dbgBtCoexEvent;
 	u1Byte			h2cReqNum;
-	u1Byte			btInBuf[100];	
+	u1Byte			btInBuf[100];
 } RT_NDIS_DBG_CONTEXT, *PRT_NDIS_DBG_CONTEXT;
 //
 // Reason code for surprisely removing.
@@ -3851,10 +3851,10 @@ typedef struct _DUAL_MAC_EASY_CONCURRENT_CONTROL{
 	BOOLEAN			bChangeToDMSP;
 	BOOLEAN			bSwitchInProcess;
 	u1Byte			JoinAction;
-	RT_WLAN_BSS	BssDesc;	
+	RT_WLAN_BSS	BssDesc;
 	BOOLEAN			bTmpBssDesc;
 	BOOLEAN			bLinkWithNAP;
-	BOOLEAN			bRestartAPForMac0ConnectOnDmsp;  
+	BOOLEAN			bRestartAPForMac0ConnectOnDmsp;
 	BOOLEAN			bLinkInProgress;
 	BOOLEAN			bDynamicSwitchToDmspInProgress;
 	BOOLEAN			bDynamicSwitchToDmspRetry;
@@ -3918,8 +3918,8 @@ typedef struct _PORT_COMMON_INFO
 	// ================================================================================================
 
 
-		PPORT_HELPER	pPortHelper;	
-	
+		PPORT_HELPER	pPortHelper;
+
 	// MacId Context Place Holder for Private Data: ------------------------------------
 	//	+ Only access this private data inside the module by MacIdGetCommonContext()
 	PRIVATE_DATA_ZONE MacIdCommon[HAL_MAC_ID_SIZE_OF_COMMON_CONTEXT];
@@ -3930,7 +3930,7 @@ typedef struct _PORT_COMMON_INFO
 	PRIVATE_DATA_ZONE ActionTimerCommon[ACTION_TIMER_SIZE_OF_COMMON_CONTEXT];
 	// -------------------------------------------------------------------------------
 
-	
+
 #if (MULTIPORT_SUPPORT == 1)
 
 	// MultiPort Common Context Place Holder for Private Data: ----------------------------
@@ -3945,7 +3945,7 @@ typedef struct _PORT_COMMON_INFO
 	//	+ Only access this private data inside the module by MultiChannelGetCommonContext()
 	PRIVATE_DATA_ZONE MultiChannelCommon[MULTICHANNEL_SIZE_OF_COMMON_CONTEXT];
 	// -------------------------------------------------------------------------------
-	
+
 #endif
 #endif
 
@@ -3957,7 +3957,7 @@ typedef struct _PORT_COMMON_INFO
 
 	RT_LIST_ENTRY			TimerResourceList; // Timer resource list for further handling
 	u4Byte					uNumberOfInsertedTimerRes; // Number of Timer resource has been inserted for handling
-	
+
 } PORT_COMMON_INFO, * PPORT_COMMON_INFO;
 
 typedef enum
@@ -3988,7 +3988,7 @@ typedef struct _ADAPTER{
 	PRT_NDIS_COMMON		pNdisCommon;
 
 		PRT_NDIS62_COMMON	pNdis62Common;
-	
+
 	//=====================================================
 	// Please put tx related variables in TX_GENERAL.
 	//=====================================================
@@ -4012,10 +4012,10 @@ typedef struct _ADAPTER{
 #if (MULTICHANNEL_SUPPORT == 1)
 
 	// MultiChannel Port Context Place Holder for Private Data: ---------------------------
-	//	+ Only access this private data inside the module by MultiChannelGetPortContext()	
+	//	+ Only access this private data inside the module by MultiChannelGetPortContext()
 	PRIVATE_DATA_ZONE MultiChannel[MULTICHANNEL_SIZE_OF_PORT_CONTEXT];
 	// --------------------------------------------------------------------------
-	
+
 #endif
 #endif
 
@@ -4031,7 +4031,7 @@ typedef struct _ADAPTER{
 
 	BOOLEAN 			bIMRDisable;
 
-	BOOLEAN				bvWifiStopBeforeSleep;	
+	BOOLEAN				bvWifiStopBeforeSleep;
 	BOOLEAN				bDriverStopped;
 	BOOLEAN				bSurpriseRemoved;
 	u4Byte				SurpriseRemovedReason;
@@ -4042,7 +4042,7 @@ typedef struct _ADAPTER{
 
 
 	u2Byte				MAX_NUM_RFD;
-	u2Byte				MAX_NUM_RX_DESC;	
+	u2Byte				MAX_NUM_RX_DESC;
 	u2Byte				MAX_RECEIVE_BUFFER_SIZE;
 	u2Byte				MAX_SUBFRAME_TOTAL_COUNT;
 
@@ -4063,7 +4063,7 @@ typedef struct _ADAPTER{
 	u2Byte				MAX_TRANSMIT_BUFFER_SIZE;
 	BOOLEAN				bEarlyQueueTimeout;
 	//
-	// Union of functions disabled. 
+	// Union of functions disabled.
 	// Each bit indicated one function that is disabled, such as Tx, Rx, IO.
 	// See DF_XX_BIT and related operation defined above.
 	//
@@ -4081,9 +4081,9 @@ typedef struct _ADAPTER{
 	WIRELESS_MODE		RegOrigWirelessMode;
 	WIRELESS_MODE		RegWirelessMode;
 	HT_MODE				RegHTMode;
-	
+
 	BOOLEAN				bFWReady;
-	BOOLEAN				bHWInitReady;	
+	BOOLEAN				bHWInitReady;
 	BOOLEAN				bSWInitReady;
 	BOOLEAN				bInitializeInProgress;
 	BOOLEAN				bInitComplete;
@@ -4107,7 +4107,7 @@ typedef struct _ADAPTER{
 	u8Byte				updateBeQReadPointTime[10];
 	u8Byte				latestUpdatedTxDescTime;
 	u4Byte				wrongrwTxpointCnt;
-	
+
 	u4Byte				abnormalAvaiDescLogIndex[MAX_TX_QUEUE];
 	u2Byte				abnormalCurrentTXWritePoint[MAX_TX_QUEUE][10];
 	//=======================================
@@ -4124,9 +4124,9 @@ typedef struct _ADAPTER{
 	u2Byte				NextTxDescToCheck[MAX_TX_QUEUE];
 	u2Byte				nBufInTxDesc[MAX_TX_QUEUE];
 	u1Byte				nFragDescUsed;
-	
+
 	// For WIN7 Context switch
-	LIST_ENTRY			HVLContextLinked;	
+	LIST_ENTRY			HVLContextLinked;
 
 	//2 Receive related variables
 	BOOLEAN				bRxLocked;	// For debugging RT_RX_SPINLOCK. Note that! we SHOULD ONLY change it at PlatformXXXSpinLock(). 2005.11.17, by rcnjko.
@@ -4141,7 +4141,7 @@ typedef struct _ADAPTER{
 	PNDIS_RECEIVE_THROTTLE_PARAMETERS pThrottle;
 	BOOLEAN				bFirstMpduOfInterrupt;
 #endif
-	
+
 	u2Byte				NextRxDescToFill[MAX_RX_QUEUE];
 	u2Byte				NextRxDescToCheck[MAX_RX_QUEUE];
 	u2Byte				nBufInRxDesc[MAX_RX_QUEUE];
@@ -4159,7 +4159,7 @@ typedef struct _ADAPTER{
 	u2Byte				NumLocalFWBufferIdle;	//tynli_test
 	VIRTUAL_MEMORY		LocalBufferArray;
 	VIRTUAL_MEMORY		LocalFWBufferArray;	// For download Firmware
-	RT_LIST_ENTRY		LocalBufferQueue;	
+	RT_LIST_ENTRY		LocalBufferQueue;
 	RT_LIST_ENTRY		LocalFWBufferQueue;	// For download Firmware
 
 	//2 Receive local buffer
@@ -4178,7 +4178,7 @@ typedef struct _ADAPTER{
 
 	//2 General Templorary Buffer
 	VIRTUAL_MEMORY		GenTempBufferArray;		// for General Templorary Buffer
-	RT_LIST_ENTRY		GenTempBufferQueue;	
+	RT_LIST_ENTRY		GenTempBufferQueue;
 	u4Byte				NumGenTempBufferIdle;
 	u1Byte				TempBufferforcoalsece[2000];
 
@@ -4190,7 +4190,7 @@ typedef struct _ADAPTER{
 	u4Byte 				AP_EDCA_PARAM[4];
 	u4Byte 				STA_EDCA_PARAM[4];
 
-	// MISC.	
+	// MISC.
 	u8Byte				DriverUpTime; // Yves: Driver up time.
 	u8Byte				lastscantime;//lastscantime
 	u8Byte				LastScanCompleteTime;	// Last scan complete time.
@@ -4204,19 +4204,19 @@ typedef struct _ADAPTER{
 	LARGE_INTEGER		PnPIOTime;
 
 	// For HCT test, 2005.07.15, by rcnjko.
-	BOOLEAN				bInHctTest;	
-	BOOLEAN				bInWFDTest;	
-	BOOLEAN				bScanTimeCheck;	
+	BOOLEAN				bInHctTest;
+	BOOLEAN				bInWFDTest;
+	BOOLEAN				bScanTimeCheck;
 	BOOLEAN				bFixedMacAddr;
-	
+
 	BOOLEAN				bReduceImr;
-	
+
 	BOOLEAN				bInChaosTest;
 	BOOLEAN 			bDisable11ac;
 
 	// For USB IF test, 060505, by rcnjko.
 	BOOLEAN				bInUsbIfTest;
-	
+
 	//2 System Reset
 	RESET_TYPE			ResetProgress;
 	u4Byte				ResetCount;
@@ -4233,11 +4233,11 @@ typedef struct _ADAPTER{
 	//
 	// Pointer to the memory block storing pointers to DRV_LOG_POOL_T objects.
 	// Each log pool is corresponding to one type of log.
-	// Use GET_DRV_LOG_POOL() and SET_DRV_LOG_POOL() to manipulate log pool, 
+	// Use GET_DRV_LOG_POOL() and SET_DRV_LOG_POOL() to manipulate log pool,
 	// see LogMgnt.c for details.
 	//
 #if DRV_LOG
-	VOID**				ppLogPools; 
+	VOID**				ppLogPools;
 
 #endif
 
@@ -4256,7 +4256,7 @@ typedef struct _ADAPTER{
 	BOOLEAN				bInWoWLANPowerState;
 	BOOLEAN				bReInitHW; // record
 
-	// Interrupt debug message	
+	// Interrupt debug message
 	u4Byte				handleIntFailCnt;
 	u8Byte				lastHandleIntFailTime[10];
 	u8Byte				preHandlIntTime;
@@ -4264,7 +4264,7 @@ typedef struct _ADAPTER{
 	u4Byte				intLogTimeIndex;
 	u8Byte				handleIntTime[10];
 
-	// Tx hang debug info 
+	// Tx hang debug info
 	HW_REG_VALUE		txMacReg[MAX_TX_REG_NUM];
 	HW_REG_VALUE		txBbReg[MAX_TX_REG_NUM];
 	BOOLEAN				bTxHangCheck;
@@ -4293,7 +4293,7 @@ typedef struct _ADAPTER{
 
 	BOOLEAN				bStartVwifi;
 
-	//Rx reorder related Reference variables	
+	//Rx reorder related Reference variables
 	u4Byte				rxReorderRefCount;
 	u4Byte				rxReorderIndEnterCnt;
 	u4Byte				rxReorderIndAllowCnt;
@@ -4311,10 +4311,10 @@ typedef struct _ADAPTER{
 
 	u4Byte				IntrInterruptRefCount;
 	u4Byte				RxPktPendingTimeoutRefCount;
-	
+
 	BOOLEAN				bIntInProgress; // Interrupt handling is in progress
 	PlatformSemaphore	InterruptSema;	//For interrupt sync flow control
-	
+
 
 	// Interrupt Thread
 	BOOLEAN				bUseThreadHandleInterrupt;
@@ -4328,7 +4328,7 @@ typedef struct _ADAPTER{
 	// 2010/12/25 MH Add for _DFS support flag.
 	// 2010/12/27 MH Add for Dual Mode switch support flag
 	// 2010/12/28 MH Add for Dual Mode smart concurrent support flag
-	// 2010/12/30 MH Add WAPI and other fucuter support support flag.	
+	// 2010/12/30 MH Add WAPI and other fucuter support support flag.
 #ifdef REMOVE_PACK
 #pragma pack(1)
 #endif
@@ -4343,7 +4343,7 @@ typedef struct _ADAPTER{
 	UINT32		DebugPhase:2;				// Free build/chk build/ debug module.
 	UINT32		MpSupport:1;				// Normal or MP driver
 	UINT32		MsiSupport:2;				// PCIE different interrupt type support traditional/ MIS/ MSI_X based on different PCIE spec
-	UINT32		EthSupport:1;				// Ethner simulation switch. for 8715 in the future.or IC verification	
+	UINT32		EthSupport:1;				// Ethner simulation switch. for 8715 in the future.or IC verification
 	UINT32		TDLSSupport:1;
 #ifdef REMOVE_PACK
 #pragma pack()
@@ -4354,7 +4354,7 @@ typedef struct _ADAPTER{
 	UINT32		TXSCSupport:1;
 	UINT32		RXSCSupport:1;
 	UINT32		RASupport:1;
-	UINT32		Reserve:7;	
+	UINT32		Reserve:7;
 
 	//2 92D related variables
 	u1Byte 			MacPhyModeFor8192D;
@@ -4363,11 +4363,11 @@ typedef struct _ADAPTER{
 	u1Byte			EarlyMode_Threshold;
 	u1Byte			EarlyMode_QueueNum[8]; //The tid from 0--7
 	u1Byte			EarlyModebuf[1600];
-		
-	// 2010/12/27 MH We need to reduce the declareation to prevent occupying too much memory 
+
+	// 2010/12/27 MH We need to reduce the declareation to prevent occupying too much memory
 	// The better way is to ise the union structure for bit declaration in the future.
 	RT_LIST_ENTRY	List;
-	//PADAPTER		BuddyAdapter;   
+	//PADAPTER		BuddyAdapter;
 	//BOOLEAN			bMasterOfDMSP;
 	//BOOLEAN			bSlaveOfDMSP;
 
@@ -4384,19 +4384,19 @@ typedef struct _ADAPTER{
 	u4Byte 		PS_BBRegBackup[PSBBREG_MAX];
 
 	RT_LIST_ENTRY		ListEntry;
-	
+
 	u1Byte				ShortcutIndex;	//record entry index of array for shortcut and it's 1 based
 	s1Byte				SNForShortcut;
-	
+
 	BOOLEAN				bNeedToTriggerLA;
-	
+
 	BOOLEAN				bBtFwSupport;
 
 	BOOLEAN				bNromalRQPN;
 
 #if USB_TX_THREAD_ENABLE
 	BOOLEAN				bUseUsbTxThread; // Dynamically enable USB Tx thread. 2012.06.18. by tynli.
-#endif	
+#endif
 
 	BOOLEAN				bRemoveTsInRxPath;
 
@@ -4410,7 +4410,7 @@ typedef struct _ADAPTER{
 	// 2013.1213
 	//
 #if DRV_LOG_REGISTRY
-	u4Byte				DrvState;	
+	u4Byte				DrvState;
 	u4Byte				WriteRegRefCount;
 	BOOLEAN				bDrvStateError;
 #endif
@@ -4423,8 +4423,8 @@ typedef struct _ADAPTER{
 	BOOLEAN				bFixBTTdma;
 	u4Byte				CPWMTimeoutCount;
 	BOOLEAN				bRxPsWorkAround;
-	
-	RT_THREAD			RxNotifyThread;	
+
+	RT_THREAD			RxNotifyThread;
 
 	// Rx queue.
 	RT_SINGLE_LIST_HEAD		RxPeerQueue[MAX_PEER_NUM];

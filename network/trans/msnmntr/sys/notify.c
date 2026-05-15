@@ -9,7 +9,7 @@ Abstract:
 Environment:
 
     Kernel mode
-    
+
 --*/
 
 #include <ntddk.h>
@@ -31,7 +31,7 @@ Environment:
 #include "notify.h"
 
 //
-// Software Tracing Definitions 
+// Software Tracing Definitions
 //
 #define WPP_CONTROL_GUIDS \
     WPP_DEFINE_CONTROL_GUID(MsnMntrNotify,(aca2f74a, 7a0d, 4f47, be4b, 66900813b8e5),  \
@@ -71,7 +71,7 @@ MonitorNfpFindCharacters(
 {
    size_t currentOffset = 0;
    void* subStreamPtr = NULL;
-   
+
    *bytesLeft = streamLength;
 
    if (subStreamLength > streamLength)
@@ -91,7 +91,7 @@ MonitorNfpFindCharacters(
       }
       currentOffset += subStreamLength;
    }
-   
+
    return subStreamPtr;
 }
 
@@ -122,9 +122,9 @@ MonitorNfParseMessageInboundHttpHeader(
    BYTE* msgStart = NULL;
    size_t bytesLeft;
    NTSTATUS status = STATUS_INVALID_PARAMETER;
-   
+
    // Walk past the HTTP header.
-   msgStart = (BYTE*) MonitorNfpFindCharacters((char*)stream, 
+   msgStart = (BYTE*) MonitorNfpFindCharacters((char*)stream,
                                                streamLength,
                                                "\r\n\r\n",
                                                (ULONG)strlen("\r\n\r\n"),
@@ -136,7 +136,7 @@ MonitorNfParseMessageInboundHttpHeader(
       msgStart += 4; // step past \r\n\r\n.
 
       msgLength = streamLength - (ULONG)(ULONG_PTR)(msgStart - stream);
-      
+
       // Do the final inbound message processing.
       status = MonitorNfParseMessageInbound(msgStart,
                                             msgLength,
@@ -174,9 +174,9 @@ MonitorNfParseMessageOutboundHttpHeader(
    BYTE* msgStart = NULL;
    size_t bytesLeft;
    NTSTATUS status = STATUS_SUCCESS;
-   
+
    // Walk past the HTTP header.
-   msgStart = (BYTE*) MonitorNfpFindCharacters((char*)stream, 
+   msgStart = (BYTE*) MonitorNfpFindCharacters((char*)stream,
                                                streamLength,
                                                "\r\n\r\n",
                                                (ULONG)strlen("\r\n\r\n"),
@@ -193,7 +193,7 @@ MonitorNfParseMessageOutboundHttpHeader(
                                              localPort,
                                              remotePort);
    }
-   
+
    return status;
 }
 
@@ -216,7 +216,7 @@ MonitorNfParseStreamAndTraceMessage(
                                                       streamLength,
                                                       localPort,
                                                       remotePort)) != STATUS_SUCCESS)
-           return STATUS_INSUFFICIENT_RESOURCES; 
+           return STATUS_INSUFFICIENT_RESOURCES;
       }
       else
       {

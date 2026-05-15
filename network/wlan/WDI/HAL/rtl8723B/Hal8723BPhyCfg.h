@@ -4,18 +4,18 @@
  * Module:	__INC_HAL8188EPHYCFG_H
  *
  *
- * Note:	
- *			
+ * Note:
+ *
  *
  * Export:	Constants, macro, functions(API), global variables(None).
  *
- * Abbrev:	
+ * Abbrev:
  *
  * History:
- *		Data		Who		Remark 
+ *		Data		Who		Remark
  *      08/07/2007  MHC    	1. Porting from 9x series PHYCFG.h.
  *							2. Reorganize code architecture.
- * 
+ *
  *****************************************************************************/
  /* Check to see if the file has been included already.  */
 #ifndef __INC_HAL8723BPHYCFG_H
@@ -42,10 +42,10 @@
 /*--------------------------Define Parameters-------------------------------*/
 
 
-/*------------------------------Define structure----------------------------*/ 
+/*------------------------------Define structure----------------------------*/
 
 
-/*------------------------------Define structure----------------------------*/ 
+/*------------------------------Define structure----------------------------*/
 
 
 /*------------------------Export global variable----------------------------*/
@@ -59,27 +59,27 @@
 /*--------------------------Exported Function prototype---------------------*/
 //1   1. BB register R/W API
 
-extern	u4Byte	
+extern	u4Byte
 PHY_QueryBBReg8723B(	IN	PADAPTER	Adapter,
 								IN	u4Byte		RegAddr,
 								IN	u4Byte		BitMask	);
 
 
-VOID	
+VOID
 PHY_SetBBReg8723B(	IN	PADAPTER	Adapter,
 								IN	u4Byte		RegAddr,
 								IN	u4Byte		BitMask,
 								IN	u4Byte		Data	);
 
 
-extern	u4Byte	
+extern	u4Byte
 PHY_QueryRFReg8723B(	IN	PADAPTER			Adapter,
 								IN	u1Byte			eRFPath,
 								IN	u4Byte			RegAddr,
 								IN	u4Byte			BitMask	);
 
 
-void	
+void
 PHY_SetRFReg8723B(	IN	PADAPTER			Adapter,
 								IN	u1Byte			eRFPath,
 								IN	u4Byte				RegAddr,
@@ -94,14 +94,14 @@ phy_BB8723B_Config_ParaFile(
 
 RT_STATUS
 PHY_RFConfig8723B(
-	IN	PADAPTER	Adapter	
+	IN	PADAPTER	Adapter
 	);
 
 //
 // RF Power setting
 //
-BOOLEAN	
-PHY_SetRFPowerState8723B(			IN	PADAPTER			Adapter, 
+BOOLEAN
+PHY_SetRFPowerState8723B(			IN	PADAPTER			Adapter,
 											IN	RT_RF_POWER_STATE	eRFPowerState);
 
 //1 5. Tx  Power setting API
@@ -109,7 +109,7 @@ VOID
 PHY_SetTxPowerIndex_8723B(
 	IN	PADAPTER			Adapter,
 	IN	u4Byte				PowerIndex,
-	IN	u1Byte				RFPath,	
+	IN	u1Byte				RFPath,
 	IN	u1Byte				Rate
 	);
 
@@ -117,21 +117,21 @@ u1Byte
 PHY_GetTxPowerIndex_8723B(
 	IN	PADAPTER			pAdapter,
 	IN  u1Byte  			RFPath,
-	IN	u1Byte				Rate,	
-	IN	CHANNEL_WIDTH		BandWidth,	
+	IN	u1Byte				Rate,
+	IN	CHANNEL_WIDTH		BandWidth,
 	IN	u1Byte				Channel
 	);
 
-VOID	
-PHY_GetTxPowerLevel8723B(			
+VOID
+PHY_GetTxPowerLevel8723B(
 	IN	PADAPTER		Adapter,
-	OUT ps4Byte    		powerlevel	
+	OUT ps4Byte    		powerlevel
 	);
 
-VOID	
-PHY_SetTxPowerLevel8723B(			
+VOID
+PHY_SetTxPowerLevel8723B(
 	IN	PADAPTER		Adapter,
-	IN	u1Byte			channel	
+	IN	u1Byte			channel
 	);
 
 BOOLEAN
@@ -146,7 +146,7 @@ PHY_SetBWModeWorkItemCallback8723B(
 	);
 
 
-VOID	
+VOID
 PHY_SetBWModeTimerCallback8723B(	IN	PRT_TIMER		pTimer	);
 
 VOID
@@ -157,14 +157,14 @@ PHY_HandleSetBWMode8723B(	IN	PADAPTER			pAdapter,
 
 //1 6. Channel setting API
 
-void	
+void
 PHY_SwChnlTimerCallback8723B(		IN	PRT_TIMER		pTimer	);
 
-void	
+void
 PHY_HandleSwChnl8723B(		IN	PADAPTER		pAdapter,
 									IN	u1Byte			channel	);
 
-void	
+void
 PHY_SwChnlSynchronously8723B(	IN	PADAPTER		pAdapter,
 									IN	u1Byte			channel	);
 VOID
@@ -176,37 +176,37 @@ PHY_SwChnlWorkItemCallback8723B(
 
 //1 7.	IQK
 
-void	
-PHY_IQCalibrate_8188E(	IN	PADAPTER	pAdapter,	
+void
+PHY_IQCalibrate_8188E(	IN	PADAPTER	pAdapter,
 							IN	BOOLEAN 	bReCovery);
 
 
 //
 // LC calibrate
 //
-void	
+void
 PHY_LCCalibrate_8188E(		IN	PADAPTER	pAdapter);
 
 //
 // AP calibrate
 //
-void	
+void
 PHY_APCalibrate_8188E(		IN	PADAPTER	pAdapter,
 							IN 	s1Byte		delta);
-void	
+void
 PHY_DigitalPredistortion_8188E(		IN	PADAPTER	pAdapter);
 
 #endif
 
-extern VOID 
+extern VOID
 PHY_SetRFPathSwitch_8723B(	IN	PADAPTER	pAdapter,
 							IN  BOOLEAN		bMain);
 
-extern BOOLEAN 
+extern BOOLEAN
 PHY_QueryRFPathSwitch_8723B(	IN	PADAPTER	pAdapter);
 
 
-void	
+void
 PHY_SetMonitorMode8723B(IN	PADAPTER	pAdapter,
 										IN	BOOLEAN		bEnableMonitorMode	);
 
@@ -217,13 +217,13 @@ RtCheckForHangWorkItemCallback8723B(
 );
 #endif
 
-VOID 
+VOID
 PHY_ScanOperationBackup8723B(	IN	PADAPTER	Adapter,
 										IN	u1Byte		Operation	);
 
 
 
-BOOLEAN 
+BOOLEAN
 HalSetIO8723B(					IN	PADAPTER			Adapter,
 									IN	IO_TYPE				IOType);
 
@@ -234,7 +234,7 @@ PHY_HandleSwChnl8723B(	// Call after initialization
 	);
 
 
-#if USE_WORKITEM	
+#if USE_WORKITEM
 void SetIOWorkItemCallback8723B( IN PVOID            pContext );
 #endif
 void SetIOTimerCallback8723B( IN PRT_TIMER		pTimer);
@@ -244,7 +244,7 @@ void SetIOTimerCallback8723B( IN PRT_TIMER		pTimer);
 BOOLEAN
 SetAntennaConfig8723B(
 	IN	PADAPTER	Adapter,
-	IN	u1Byte		DefaultAnt	
+	IN	u1Byte		DefaultAnt
 	);
 
 RT_STATUS

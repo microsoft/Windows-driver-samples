@@ -3,14 +3,14 @@
 
 #define CRC32_POLY 0x04c11db7
 
-void 
+void
 EncodeWEP(
 	pu1Byte key,
 	s4Byte 	keysize,
 	pu1Byte plaintext,
 	s4Byte 	len,
 	pu1Byte out);
-BOOLEAN 
+BOOLEAN
 DecodeWEP(
 	pu1Byte key,
 	s4Byte 	keysize,
@@ -18,23 +18,23 @@ DecodeWEP(
 	s4Byte 	len,
 	pu1Byte out);
 
-u1Byte 
-ReverseBit( 
-	u1Byte data 
+u1Byte
+ReverseBit(
+	u1Byte data
 	);
 
 // Isaiah note: previous declaration in libkern.h
 //              uint32_t	crc32(uint32_t crc, const void *bufp, size_t len);
 
-u1Byte 
-ReverseBit( 
-	u1Byte data 
+u1Byte
+ReverseBit(
+	u1Byte data
 	);
 
 
-ULONG 
+ULONG
 crc32(
-	pu1Byte buf, 
+	pu1Byte buf,
 	u4Byte len);
 
 

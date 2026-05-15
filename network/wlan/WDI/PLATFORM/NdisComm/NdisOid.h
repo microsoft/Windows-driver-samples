@@ -9,7 +9,7 @@ typedef struct _RTK_DBG_CTRL_OIDS{
 } RTK_DBG_CTRL_OIDS, *PRTK_DBG_CTRL_OIDS;
 
 typedef enum _RTK_DBG_TYPE_OIDS
-{	
+{
 	RTK_DBG_OIDS_BT_PROFILE			=0,
 }RTK_DBG_TYPE_OIDS;
 #pragma pack()
@@ -70,6 +70,6 @@ OIDS_RTKDbgControl(
 	IN	PVOID		InformationBuffer,
 	IN	ULONG		InformationBufferLength,
 	OUT	PULONG		BytesRead,
-	OUT	PULONG		BytesNeeded	
+	OUT	PULONG		BytesNeeded
 	);
 #endif

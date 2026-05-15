@@ -12,7 +12,7 @@
 //
 //      <Scope><Object><Action><Modifier>
 //      <Scope><Object><Action>
-//  
+//
 //      i.e.
 //
 //       <Scope>
@@ -22,7 +22,7 @@
 //          }
 //       <Object>
 //          {
-//            ScenarioBasicPacketExamination - Function pertains to all of the Basic Packet 
+//            ScenarioBasicPacketExamination - Function pertains to all of the Basic Packet
 //                                                Examination Scenarios
 //            RPC                            - Function is and RPC entry point.
 //          }
@@ -57,7 +57,7 @@
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
 //      December  13,   2013  -     1.1   -  Prune filters for enumeration and limit scenario to
-//                                              only the supported layers 
+//                                              only the supported layers
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -65,10 +65,10 @@
 
 /**
  @private_function="PrvScenarioBasicPacketExaminationDeleteFwpmObjects"
- 
+
    Purpose:  Function that disables the SCENARIO_BASIC_PACKET_EXAMINATION scenarios.            <br>
                                                                                                 <br>
-   Notes:    Scenario removes the filters using specified filtering conditions at the 
+   Notes:    Scenario removes the filters using specified filtering conditions at the
              specified layer. Associated callouts are removed as well.                          <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -159,12 +159,12 @@ UINT32 PrvScenarioBasicPacketExaminationDeleteFwpmObjects(_In_ const FWPM_FILTER
 
 /**
  @private_function="PrvScenarioBasicPacketExaminationAddFwpmObjects"
- 
+
    Purpose:  Function that enables the SCENARIO_BASIC_PACKET_EXAMINATION scenarios.             <br>
                                                                                                 <br>
-   Notes:    Scenario adds a filter using specified filtering conditions to the specified 
-             layer.  This filter is associated with WFPSampler's default provider and the 
-             built-in inspection sublayer.  The appropriate callout is then added and 
+   Notes:    Scenario adds a filter using specified filtering conditions to the specified
+             layer.  This filter is associated with WFPSampler's default provider and the
+             built-in inspection sublayer.  The appropriate callout is then added and
              associated with the filter.                                                        <br>
                                                                                                 <br>
    MSDN_Ref:                                                                                    <br>
@@ -246,9 +246,9 @@ UINT32 PrvScenarioBasicPacketExaminationAddFwpmObjects(_In_ const FWPM_FILTER* p
       pFilter->layerKey == FWPM_LAYER_ALE_BIND_REDIRECT_V6 ||
       pFilter->layerKey == FWPM_LAYER_STREAM_PACKET_V4 ||
       pFilter->layerKey == FWPM_LAYER_STREAM_PACKET_V6
-   
+
 #if(NTDDI_VERSION >= NTDDI_WIN8)
-   
+
       ||
       pFilter->layerKey == FWPM_LAYER_INBOUND_MAC_FRAME_ETHERNET ||
       pFilter->layerKey == FWPM_LAYER_OUTBOUND_MAC_FRAME_ETHERNET ||
@@ -275,7 +275,7 @@ UINT32 PrvScenarioBasicPacketExaminationAddFwpmObjects(_In_ const FWPM_FILTER* p
                     sizeof(FWPM_FILTER));
 
       callout.calloutKey              = WFPSAMPLER_CALLOUT_BASIC_PACKET_EXAMINATION;
-      callout.calloutKey.Data4[7]     = HlprFwpmLayerGetIDByKey(&(filter.layerKey));                /// Uniquely identifies the layer the callout will use 
+      callout.calloutKey.Data4[7]     = HlprFwpmLayerGetIDByKey(&(filter.layerKey));                /// Uniquely identifies the layer the callout will use
       callout.displayData.name        = L"WFPSampler's Basic Packet Examination Callout";
       callout.displayData.description = L"Causes callout invocation which examines traffic";
       callout.providerKey             = (GUID*)&WFPSAMPLER_PROVIDER;
@@ -330,8 +330,8 @@ UINT32 PrvScenarioBasicPacketExaminationAddFwpmObjects(_In_ const FWPM_FILTER* p
 
 /**
  @scenario_function="ScenarioBasicPacketExaminationRemove"
- 
-   Purpose:  Function that removes corresponding objects for a previously added 
+
+   Purpose:  Function that removes corresponding objects for a previously added
              SCENARIO_BASIC_PACKET_EXAMINATION.                                                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>
@@ -347,10 +347,10 @@ UINT32 ScenarioBasicPacketExaminationRemove(_In_ const FWPM_FILTER* pFilter)
 
 /**
  @scenario_function="ScenarioBasicPacketExaminationAdd"
- 
+
    Purpose:  Scenario which will blindly reinject the classified traffic.                       <br>
                                                                                                 <br>
-   Notes:    Adds a filter which references one of the 
+   Notes:    Adds a filter which references one of the
              WFPSAMPLER_CALLOUT_BASIC_PACKET_EXAMINATION callouts for the provided layer.       <br>
                                                                                                 <br>
              No data modification is made to the traffic.  No injection occurs.                 <br>
@@ -366,8 +366,8 @@ UINT32 ScenarioBasicPacketExaminationAdd(_In_ const FWPM_FILTER* pFilter)
 
 /**
  @rpc_function="RPCInvokeScenarioBasicPacketExamination"
- 
-   Purpose:  RPC exposed function used to dipatch the scenario routines for 
+
+   Purpose:  RPC exposed function used to dipatch the scenario routines for
              SCENARIO_BASIC_PACKET_EXAMINATION.                                                 <br>
                                                                                                 <br>
    Notes:                                                                                       <br>

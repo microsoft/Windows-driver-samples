@@ -1,7 +1,7 @@
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
- *                                        
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
@@ -23,7 +23,7 @@
 #define    __PHYDMPREDEFINE_H__
 
 //1 ============================================================
-//1  Definition 
+//1  Definition
 //1 ============================================================
 
 //Max path of IC
@@ -225,9 +225,9 @@
 #else
 	#if (RTL8192E_SUPPORT == 1)
 		#define ODM_NUM_RATE_IDX (ODM_RATEMCS15+1)
-	#elif (RTL8723B_SUPPORT == 1) || (RTL8188E_SUPPORT == 1) || (RTL8188F_SUPPORT == 1) 
+	#elif (RTL8723B_SUPPORT == 1) || (RTL8188E_SUPPORT == 1) || (RTL8188F_SUPPORT == 1)
 		#define ODM_NUM_RATE_IDX (ODM_RATEMCS7+1)
-	#elif (RTL8821A_SUPPORT == 1) || (RTL8881A_SUPPORT == 1) 
+	#elif (RTL8821A_SUPPORT == 1) || (RTL8881A_SUPPORT == 1)
 		#define ODM_NUM_RATE_IDX (ODM_RATEVHTSS1MCS9+1)
 	#elif (RTL8812A_SUPPORT == 1)
 		#define ODM_NUM_RATE_IDX (ODM_RATEVHTSS2MCS9+1)
@@ -266,9 +266,9 @@ typedef enum tag_ODM_Support_IC_Type_Definition
 	ODM_RTL8188E 	=	BIT4,
 	ODM_RTL8812 	=	BIT5,
 	ODM_RTL8821 	=	BIT6,
-	ODM_RTL8192E 	=	BIT7,	
+	ODM_RTL8192E 	=	BIT7,
 	ODM_RTL8723B	=	BIT8,
-	ODM_RTL8814A	=	BIT9,	
+	ODM_RTL8814A	=	BIT9,
 	ODM_RTL8881A 	=	BIT10,
 	ODM_RTL8821B 	=	BIT11,
 	ODM_RTL8822B 	=	BIT12,
@@ -304,7 +304,7 @@ typedef enum tag_ODM_Support_IC_Type_Definition
 #define ODM_IC_11N_SERIES_SUPPORT			1
 #define ODM_CONFIG_BT_COEXIST				1
 
-#else 
+#else
 
 #if((RTL8192C_SUPPORT == 1) || (RTL8192D_SUPPORT == 1) || (RTL8723A_SUPPORT == 1) || (RTL8188E_SUPPORT == 1) ||\
 (RTL8723B_SUPPORT == 1) || (RTL8192E_SUPPORT == 1) || (RTL8195A_SUPPORT == 1) || (RTL8703B_SUPPORT == 1) || \
@@ -337,7 +337,7 @@ typedef enum tag_ODM_Cut_Version_Definition
 
 	ODM_CUT_I 		=	8,
 	ODM_CUT_J 		=	9,
-	ODM_CUT_K 		=	10,	
+	ODM_CUT_K 		=	10,
 	ODM_CUT_TEST 	=	15,
 }ODM_CUT_VERSION_E;
 
@@ -390,7 +390,7 @@ typedef enum tag_ODM_MAC_PHY_Mode_Definition
 
 
 typedef enum tag_BT_Coexist_Definition
-{	
+{
 	ODM_BT_BUSY 		= 1,
 	ODM_BT_ON 			= 2,
 	ODM_BT_OFF 		= 3,
@@ -480,7 +480,7 @@ typedef enum tag_Security_Definition
 
 // ODM_CMNINFO_BW
 typedef enum tag_Bandwidth_Definition
-{	
+{
 	ODM_BW20M 		= 0,
 	ODM_BW40M 		= 1,
 	ODM_BW80M 		= 2,
@@ -508,10 +508,10 @@ typedef enum tag_Board_Definition
 
 typedef enum tag_ODM_Package_Definition
 {
-    ODM_PACKAGE_DEFAULT  	 = 0, 	  
-    ODM_PACKAGE_QFN68        = BIT(0), 
-    ODM_PACKAGE_TFBGA90      = BIT(1), 
-    ODM_PACKAGE_TFBGA79      = BIT(2),	
+    ODM_PACKAGE_DEFAULT  	 = 0,
+    ODM_PACKAGE_QFN68        = BIT(0),
+    ODM_PACKAGE_TFBGA90      = BIT(1),
+    ODM_PACKAGE_TFBGA79      = BIT(2),
 }ODM_Package_TYPE_E;
 
 typedef enum tag_ODM_TYPE_GPA_Definition {

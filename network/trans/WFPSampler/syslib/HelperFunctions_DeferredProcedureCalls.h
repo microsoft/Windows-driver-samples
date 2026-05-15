@@ -6,7 +6,7 @@
 //      HelperFunctions_DeferredProcedureCalls.h
 //
 //   Abstract:
-//      This module contains prototypes for kernel helper functions that assist with DPC and 
+//      This module contains prototypes for kernel helper functions that assist with DPC and
 //         threaded DPC routines.
 //
 //   Author:
@@ -16,7 +16,7 @@
 //
 //      [ Month ][Day] [Year] - [Revision]-[ Comments ]
 //      May       01,   2010  -     1.0   -  Creation
-//      December  13,   2013  -     1.1   -  Add support for serializing asynchronous 
+//      December  13,   2013  -     1.1   -  Add support for serializing asynchronous
 //                                              FWPM_LAYER_STREAM injections
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
