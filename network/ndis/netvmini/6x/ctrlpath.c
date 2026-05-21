@@ -20,6 +20,7 @@ Abstract:
 
 
 #include "netvmin6.h"
+#include <ntintsafe.h>
 #include "ctrlpath.tmh"
 
 
@@ -1671,6 +1672,9 @@ Return Value:
 
     do
     {
+        ULONG ClassificationBytes = 0;
+        ULONG BytesRead = 0;
+
         //
         // Verify that the request matches our requirements.
         //
@@ -1681,8 +1685,18 @@ Return Value:
         //
         // Request is well formed, set bytes read.
         //
-        Method->BytesRead = NDIS_SIZEOF_QOS_PARAMETERS_REVISION_1 +
-                            Params->NumClassificationElements * Params->ClassificationElementSize;
+        if (!NT_SUCCESS(RtlULongMult(Params->NumClassificationElements,
+                                     Params->ClassificationElementSize,
+                                     &ClassificationBytes)) ||
+            !NT_SUCCESS(RtlULongAdd(NDIS_SIZEOF_QOS_PARAMETERS_REVISION_1,
+                                    ClassificationBytes,
+                                    &BytesRead)))
+        {
+            Status = NDIS_STATUS_INVALID_LENGTH;
+            break;
+        }
+
+        Method->BytesRead = BytesRead;
 
         Status = SetQOSParameters(Adapter, Params);
         if (Status != NDIS_STATUS_SUCCESS)
