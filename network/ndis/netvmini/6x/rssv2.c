@@ -210,7 +210,7 @@ Return Value:
 
 --*/
 {
-    UINT8 index;
+    ULONG index;
     PNDIS_RSS_PROCESSOR processor;
 
     for (index = 0;
@@ -222,7 +222,7 @@ Return Value:
         if ((processor->ProcNum.Group == ProcessorNumber.Group) &&
             (processor->ProcNum.Number == ProcessorNumber.Number))
         {
-            return index;
+            return (UINT8)index;
         }
     }
 
