@@ -51,6 +51,7 @@ Abstract:
 
 #define FAT_FILL_FREE 0
 
+static
 INLINE
 PCCB
 FatAllocateCcb (
@@ -59,6 +60,7 @@ FatAllocateCcb (
     return (PCCB) FsRtlAllocatePoolWithTag( PagedPool, sizeof(CCB), TAG_CCB );
 }
 
+static
 INLINE
 VOID
 FatFreeCcb (
@@ -72,6 +74,7 @@ FatFreeCcb (
     ExFreePool( Ccb );
 }
 
+static
 INLINE
 PFCB
 FatAllocateFcb (
@@ -80,6 +83,7 @@ FatAllocateFcb (
     return (PFCB) FsRtlAllocatePoolWithTag( PagedPool, sizeof(FCB), TAG_FCB );
 }
 
+static
 INLINE
 VOID
 FatFreeFcb (
@@ -93,6 +97,7 @@ FatFreeFcb (
     ExFreePool( Fcb );
 }
 
+static
 INLINE
 PNON_PAGED_FCB
 FatAllocateNonPagedFcb (
@@ -101,6 +106,7 @@ FatAllocateNonPagedFcb (
     return (PNON_PAGED_FCB) ExAllocateFromNPagedLookasideList( &FatNonPagedFcbLookasideList );
 }
 
+static
 INLINE
 VOID
 FatFreeNonPagedFcb (
@@ -114,6 +120,7 @@ FatFreeNonPagedFcb (
     ExFreeToNPagedLookasideList( &FatNonPagedFcbLookasideList, (PVOID) NonPagedFcb );
 }
 
+static
 INLINE
 PERESOURCE
 FatAllocateResource (
@@ -128,6 +135,7 @@ FatAllocateResource (
     return Resource;
 }
 
+static
 INLINE
 VOID
 FatFreeResource (
@@ -143,6 +151,7 @@ FatFreeResource (
     ExFreeToNPagedLookasideList( &FatEResourceLookasideList, (PVOID) Resource );
 }
 
+static
 INLINE
 PIRP_CONTEXT
 FatAllocateIrpContext (
@@ -151,6 +160,7 @@ FatAllocateIrpContext (
     return (PIRP_CONTEXT) ExAllocateFromNPagedLookasideList( &FatIrpContextLookasideList );
 }
 
+static
 INLINE
 VOID
 FatFreeIrpContext (
@@ -2682,6 +2692,7 @@ Return Value:
 }
 
 
+static
 BOOLEAN
 FatSwapVpb (
     IN PIRP_CONTEXT IrpContext,
