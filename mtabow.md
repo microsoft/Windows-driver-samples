@@ -1,4 +1,4 @@
-# mtabow - Microsoft Teams App Behaves on Windows
+# mtabow
 
 ## Overview
 
