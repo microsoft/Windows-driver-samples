@@ -15,13 +15,18 @@
 * Gather Clips
 ```
 powershell
+cd C:\
+
 Start-BitsTransfer `
   -Source "https://go.microsoft.com/fwlink/?linkid=2343402" `
   -Destination "C:\Clips.iso" `
   -DisplayName "Download Clips.ISO" `
-  -Description "Downloading Clips.ISO" `
-mount to, say, E:\
-robocopy /mir /nfl /ndl E:\ C:\Clips
+  -Description "Downloading Clips.ISO"
+$diskImage = Mount-DiskImage -NoDriveLetter -PassThru -ImagePath C:\Clips.iso
+$volumeInfo = $diskImage | Get-Disk | Get-Partition | Get-Volume
+mountvol M: $volumeInfo.UniqueId
+robocopy /mir /nfl /ndl M:\ C:\Clips
+Dismount-DiskImage -ImagePath C:\Clips.iso
 ```
 
 * Manually deploy MVHV from HLK controller to HLK Client
