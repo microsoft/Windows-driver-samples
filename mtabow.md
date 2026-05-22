@@ -20,7 +20,7 @@ Start-BitsTransfer `
   -Destination "C:\Clips.iso" `
   -DisplayName "Download Clips.ISO" `
   -Description "Downloading Clips.ISO" `
-mount to E:\
+mount to, say, E:\
 robocopy /mir /nfl /ndl E:\ C:\Clips
 ```
 
