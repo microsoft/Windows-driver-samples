@@ -48,7 +48,7 @@ class CMuxVirtualMiniport
                         GUID    *guidAdapter);
 
     virtual ~CMuxVirtualMiniport(VOID);
-                                 
+
     HRESULT LoadConfiguration(VOID);
 
     VOID    GetAdapterGUID (GUID *);

@@ -325,7 +325,7 @@ Return Value:
 #if (NDIS_SUPPORT_NDIS630)
         HwCapabilities.SupportedQueueProperties |= NDIS_RECEIVE_FILTER_DYNAMIC_PROCESSOR_AFFINITY_CHANGE_SUPPORTED;
 #endif
-        
+
         HwCapabilities.SupportedFilterTests = NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_EQUAL_SUPPORTED;
         HwCapabilities.SupportedHeaders = NDIS_RECEIVE_FILTER_MAC_HEADER_SUPPORTED;
         HwCapabilities.SupportedMacHeaderFields = NDIS_RECEIVE_FILTER_MAC_HEADER_DEST_ADDR_SUPPORTED | NDIS_RECEIVE_FILTER_MAC_HEADER_VLAN_ID_SUPPORTED;
