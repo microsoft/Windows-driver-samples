@@ -918,7 +918,7 @@ SxExtQueryPortFeatureStatus(
 SxExtProcessNicRequest
 
 Routine Description:
-    This function is called upon the reciept of an OID_SWITCH_NIC_REQUEST
+    This function is called upon the receipt of an OID_SWITCH_NIC_REQUEST
     to the extension.
     If an extension wishes to redirect the OID, it must return a valid
     DestinationPortId and DestinationNicIndex, which it has taken a
@@ -1016,12 +1016,12 @@ SxExtProcessNicRequestComplete(
 SxExtProcessNicStatus
 
 Routine Description:
-    This function is called upon the reciept of an NDIS_STATUS_SWITCH_NIC_STATUS
+    This function is called upon the receipt of an NDIS_STATUS_SWITCH_NIC_STATUS
     to the extension.
     If the extension wishes to modify the status indication, it should
     send its own status indication using NdisFIndicateStatus and return a
     failure status.
-    If the extension wishes to drop the status indiction, it should return
+    If the extension wishes to drop the status indication, it should return
     failure status, though this should be done very sparingly and carefully.
 
     !! This function should only be used by forwarding extensions. !!

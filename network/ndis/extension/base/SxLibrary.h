@@ -261,7 +261,7 @@ Routine Description:
     This function is called to get the current array
     of ports.
 
-    NOTE: It is necessary to synchonize this with SxExtPortCreate
+    NOTE: It is necessary to synchronize this with SxExtPortCreate
     and SxExtPortTeardown.
 
 Arguments:
@@ -292,7 +292,7 @@ Routine Description:
     This function is called to get the current array
     of NICs.
 
-    NOTE: It is necessary to synchonize this with SxExtNicConnect
+    NOTE: It is necessary to synchronize this with SxExtNicConnect
     and SxExtNicDisconnect.
 
 Arguments:
@@ -322,7 +322,7 @@ Routine Description:
     This function is called to get the current array of the switch
     property queried.
 
-    NOTE: It is necessary to synchonize this with SxExtAddSwitchProperty
+    NOTE: It is necessary to synchronize this with SxExtAddSwitchProperty
     and SxExtDeleteSwitchProperty.
 
 Arguments:
@@ -358,7 +358,7 @@ Routine Description:
     This function is called to get the current array of the switch
     property queried.
 
-    NOTE: It is necessary to synchonize this with SxExtAddPortProperty
+    NOTE: It is necessary to synchronize this with SxExtAddPortProperty
     and SxExtDeletePortProperty.
 
 Arguments:
