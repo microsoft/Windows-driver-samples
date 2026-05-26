@@ -825,7 +825,7 @@ Arguments:
     ExtensionContext - The extension context allocated in SxExtCreateSwitch
                        for the switch
 
-    SwitchProperty - the property to be deleted
+    PortProperty - the property to be deleted
 
 Return Value:
     TRUE - if the policy is not consumed by this extension
@@ -982,7 +982,15 @@ Arguments:
     ExtensionContext - The extension context allocated in SxExtCreateSwitch
                        for the switch
 
-    NicOidRequest - the OID buffer, encapsulated with source/destination info
+    OidRequest - the OID buffer, encapsulated with source/destination info
+
+    SourcePortId - the source PortId of the OID completion
+
+    SourceNicIndex - the source NicIndex of the OID completion
+
+    DestinationPortId - the destination PortId of the OID completion
+
+    DestinationNicIndex - the destination NicIndex of the OID completion
 
     Status - the status the OID completed with
 

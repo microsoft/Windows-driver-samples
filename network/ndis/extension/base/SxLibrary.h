@@ -190,7 +190,7 @@ Routine Description:
 
 Arguments:
 
-    Switch - pointer to our switch object.
+    SxSwitch - pointer to our switch object.
 
     RequestType - NdisRequest[Set|Query|method]Information.
 
@@ -297,7 +297,7 @@ Routine Description:
 
 Arguments:
 
-    Switch - the Switch context
+    SxSwitch - the Switch context
 
     NicArray - the returned NIC array
 
@@ -332,8 +332,6 @@ Arguments:
     PropertyType - the PropertyType to query for
 
     PropertyId - the GUID of the property (from mof file)
-
-    PropertyVersion - the version of the property
 
     SwitchPropertyEnumParameters - the returned property enum
 
