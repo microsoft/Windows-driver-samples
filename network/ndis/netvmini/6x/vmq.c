@@ -3104,7 +3104,7 @@ Routine Description:
 Arguments:
 
     Adapter                - Pointer to our adapter
-    Rcb                    - RCB to queue for recieve
+    Rcb                    - RCB to queue for receive
 
 Return Value:
 

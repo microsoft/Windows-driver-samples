@@ -1563,7 +1563,7 @@ VOID ShowBindingPathMenu (HWND hwndOwner,
 //    lpdwItemType [out] Type, binding path or network component.
 //    fEnabled     [out] TRUE if the binding path or component is enabled.
 //
-// Returns:   TRUE on sucess.
+// Returns:   TRUE on success.
 //
 // Notes:
 //

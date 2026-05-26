@@ -348,7 +348,7 @@ SxNdisDetach(
     ExFreePool(switchObject);
 
     //
-    // Alway return success.
+    // Always return success.
     //
     DEBUGP(DL_TRACE, ("<===SxDetach Successfully\n"));
 

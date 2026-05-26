@@ -58,7 +58,7 @@ SxExtInitialize
 
 Routine Description:
     This function is called from the SxBase Library during DriverEntry.
-    An extension should allocate/initalize all global data in this function.
+    An extension should allocate/initialize all global data in this function.
 
 Arguments:
     NULL
@@ -410,7 +410,7 @@ SxExtDeleteNic
 
 Routine Description:
     This function is called to delete a NIC from a switch.
-    No futher traffic/control will be recieved for this NIC.
+    No further traffic/control will be received for this NIC.
 
 Arguments:
     Switch - the Switch context
@@ -438,7 +438,7 @@ SxExtTeardownPort
 
 Routine Description:
     This function is called to start deletion of a port on a switch.
-    Upon recieving this call, no further references may be taken
+    Upon receiving this call, no further references may be taken
     on the given port.
 
 Arguments:
@@ -467,7 +467,7 @@ SxExtDeletePort
 
 Routine Description:
     This function is called to finish deletion of a port on a switch.
-    Upon recieving this call, no traffic/control will be recieved
+    Upon receiving this call, no traffic/control will be received
     for this port.
 
 Arguments:

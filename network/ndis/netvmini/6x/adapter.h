@@ -52,14 +52,14 @@ typedef struct _MP_ADAPTER_RECEIVE_DPC
 {
     LIST_ENTRY Entry;
     //
-    // Kernel DPC used for recieve
+    // Kernel DPC used for receive
     //
     KDPC Dpc;
     USHORT ProcessorGroup;
     ULONG ProcessorNumber;
 
     //
-    // Tracks which receive blocks need to be recieved on this DPC.
+    // Tracks which receive blocks need to be received on this DPC.
     //
     BOOLEAN RecvBlock[NIC_SUPPORTED_NUM_QUEUES];
     volatile LONG RecvBlockCount;

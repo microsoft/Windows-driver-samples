@@ -23,7 +23,7 @@ Routine Description:
     This function is called to forward NBLs on ingress.
     The extension MUST call this function, or call
     SxLibCompleteNetBufferListsIngress for every NBL in NetBufferLists,
-    recieved in SxExtStartNetBufferListsIngress.
+    received in SxExtStartNetBufferListsIngress.
 
     This function can also be called to inject NBLs.
     If there are NBLs in NetBufferLists that are initiated by the
@@ -62,7 +62,7 @@ Routine Description:
     This function is called to forward NBLs on egress.
     The extension MUST call this function, or call
     SxLibCompleteNetBufferListsEgress for every NBL in NetBufferLists
-    recieved in SxExtStartNetBufferListsEgress.
+    received in SxExtStartNetBufferListsEgress.
 
 Arguments:
 
@@ -94,7 +94,7 @@ SxLibCompleteNetBufferListsEgress
 
 Routine Description:
     This function is called to complete NBLs on egress.
-    The extension MUST call this function for all NBLs recieved
+    The extension MUST call this function for all NBLs received
     in SxExtStartCompleteNetBufferListsEgress.
 
 Arguments:
@@ -124,7 +124,7 @@ SxLibCompleteNetBufferListsIngress
 Routine Description:
     This function is called to complete NBLs on ingress.
     The extension MUST call this function, or
-    SxLibCompletedInjectedNetBufferLists for all NBLs recieved in
+    SxLibCompletedInjectedNetBufferLists for all NBLs received in
     SxExtStartCompleteNetBufferListsEgress.
 
 Arguments:

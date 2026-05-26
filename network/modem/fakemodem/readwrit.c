@@ -49,8 +49,8 @@ Arguments:
 
     Length - Length of the IO operation
                  The default property of the queue is to not dispatch
-                 zero lenght read & write requests to the driver and
-                 complete is with status success. So we will never get
+                 zero length read & write requests to the driver and
+                 complete it with status success. So we will never get
                  a zero length request.
 
 Return Value:
@@ -117,8 +117,8 @@ Arguments:
 
     Length - Length of the IO operation
                  The default property of the queue is to not dispatch
-                 zero lenght read & write requests to the driver and
-                 complete is with status success. So we will never get
+                 zero length read & write requests to the driver and
+                 complete it with status success. So we will never get
                  a zero length request.
 
 Return Value:
@@ -193,8 +193,8 @@ Arguments:
 
     Length - Length of the IO operation
                  The default property of the queue is to not dispatch
-                 zero lenght read & write requests to the driver and
-                 complete is with status success. So we will never get
+                 zero length read & write requests to the driver and
+                 complete it with status success. So we will never get
                  a zero length request.
 
 Return Value:
