@@ -130,7 +130,7 @@ C_ASSERT(sizeof(NIC_FRAME_HEADER) == HW_FRAME_HEADER_SIZE);
 
 //
 // Maximum number of receives that will be processed per DPC.
-// This constraints the amount of time spent for a single receive DPC. 
+// This constraints the amount of time spent for a single receive DPC.
 //
 #define NIC_MAX_RECVS_PER_DPC              64
 
@@ -179,9 +179,9 @@ C_ASSERT(sizeof(NIC_FRAME_HEADER) == HW_FRAME_HEADER_SIZE);
 // and suspend.  Ensure the correct flags are set for your hardware.
 //
 // If your hardware supports busmaster DMA, you must specify
-// NDIS_MINIPORT_ATTRIBUTES_BUS_MASTER. Our virtual miniport will 
-// not be allocating hardware resources such as interrupts, so we set the 
-// WDM attribute.  
+// NDIS_MINIPORT_ATTRIBUTES_BUS_MASTER. Our virtual miniport will
+// not be allocating hardware resources such as interrupts, so we set the
+// WDM attribute.
 //
 #define NIC_ADAPTER_ATTRIBUTES_FLAGS (\
                 NDIS_MINIPORT_ATTRIBUTES_SURPRISE_REMOVE_OK | NDIS_MINIPORT_ATTRIBUTES_NDIS_WDM)
@@ -239,21 +239,21 @@ C_ASSERT(sizeof(NIC_FRAME_HEADER) == HW_FRAME_HEADER_SIZE);
 //
 // The NIC must reserve at least one filter available HW queue. More filters allows
 // the VMQ queues to be assigned asymmetrically. For this sample we chose to allow
-// twice as many filters as queues. 
+// twice as many filters as queues.
 //
 #define NIC_SUPPORTED_NUM_QUEUES 8
 #define NIC_MAX_HEADER_FILTERS (NIC_SUPPORTED_NUM_QUEUES*2)
 
 //
 // Determines the minimum and maximum amount of lookahead split that we can do. Real hardware
-// might have tighter constraints on the range depending on the HW design. 
+// might have tighter constraints on the range depending on the HW design.
 //
 #define NIC_MIN_LOOKAHEAD_SPLIT 64
 #define NIC_MAX_LOOKAHEAD_SPLIT 128
 
 //
 // Determines the minimum amount of receive blocks we will attempt to allocate if the full allocations fail and
-// we retry with a reduced count. If we fail with this amount we fail the allocation. 
+// we retry with a reduced count. If we fail with this amount we fail the allocation.
 //
 #define NIC_MIN_BUSY_RECVS 64
 

@@ -108,7 +108,7 @@ Return Value:
 
         //
         // TODO: Most handlers are optional, however, this sample includes them
-        // all for illustrative purposes.  If you do not need a particular 
+        // all for illustrative purposes.  If you do not need a particular
         // handler, set it to NULL and NDIS will more efficiently pass the
         // operation through on your behalf.
         //
@@ -250,7 +250,7 @@ Return Value:
     NDIS_STATUS_FAILURE: FilterAttach could not set up this instance of this filter and it has called
                          NdisWriteErrorLogEntry with parameters specifying the reason for failure.
 
-N.B.:  FILTER can use NdisRegisterDeviceEx to create a device, so the upper 
+N.B.:  FILTER can use NdisRegisterDeviceEx to create a device, so the upper
     layer can send Irps to the filter.
 
 --*/
@@ -275,7 +275,7 @@ N.B.:  FILTER can use NdisRegisterDeviceEx to create a device, so the upper
         // Verify the media type is supported.  This is a last resort; the
         // the filter should never have been bound to an unsupported miniport
         // to begin with.  If this driver is marked as a Mandatory filter (which
-        // is the default for this sample; see the INF file), failing to attach 
+        // is the default for this sample; see the INF file), failing to attach
         // here will leave the network adapter in an unusable state.
         //
         // Your setup/install code should not bind the filter to unsupported
@@ -401,10 +401,10 @@ Return Value:
     NDIS_STATUS_SUCCESS if filter pauses successfully, NDIS_STATUS_PENDING
     if not.  No other return value is allowed (pause must succeed, eventually).
 
-N.B.: When the filter is in Pausing state, it can still process OID requests, 
+N.B.: When the filter is in Pausing state, it can still process OID requests,
     complete sending, and returning packets to NDIS, and also indicate status.
-    After this function completes, the filter must not attempt to send or 
-    receive packets, but it may still process OID requests and status 
+    After this function completes, the filter must not attempt to send or
+    receive packets, but it may still process OID requests and status
     indications.
 
 --*/
@@ -429,7 +429,7 @@ N.B.: When the filter is in Pausing state, it can still process OID requests,
     //
     // Do whatever work is required to bring the filter into the Paused state.
     //
-    // If you have diverted and queued any send or receive NBLs, return them 
+    // If you have diverted and queued any send or receive NBLs, return them
     // now.
     //
     // If you send or receive original NBLs, stop doing that and wait for your
@@ -498,7 +498,7 @@ Return Value:
 
 #if 0
         //
-        // The code is here just to demonstrate how to call NDIS to write an 
+        // The code is here just to demonstrate how to call NDIS to write an
         // event to the eventlog.
         //
         PWCHAR              ErrorString = L"Ndislwf";
@@ -518,7 +518,7 @@ Return Value:
     //
     // This sample doesn't actually do anything with the configuration handle;
     // it is opened here for illustrative purposes.  If you do not need to
-    // read configuration, you may omit the code manipulating the 
+    // read configuration, you may omit the code manipulating the
     // ConfigurationHandle.
     //
 
@@ -530,9 +530,9 @@ Return Value:
     NdisRestartAttributes = RestartParameters->RestartAttributes;
 
     //
-    // If NdisRestartAttributes is not NULL, then the filter can modify generic 
-    // attributes and add new media specific info attributes at the end. 
-    // Otherwise, if NdisRestartAttributes is NULL, the filter should not try to 
+    // If NdisRestartAttributes is not NULL, then the filter can modify generic
+    // attributes and add new media specific info attributes at the end.
+    // Otherwise, if NdisRestartAttributes is NULL, the filter should not try to
     // modify/add attributes.
     //
     if (NdisRestartAttributes != NULL)
@@ -777,7 +777,7 @@ NOTE: Called at <= DISPATCH_LEVEL  (unlike a miniport's MiniportOidRequest)
     //
     // If your filter driver does not need to modify any OID requests, then
     // you may simply omit this routine entirely; NDIS will pass OID requests
-    // down on your behalf.  This is more efficient than implementing a 
+    // down on your behalf.  This is more efficient than implementing a
     // routine that does nothing but clone all requests, as in the sample here.
     //
 
@@ -864,8 +864,8 @@ Routine Description:
     If your filter driver does not intercept and hold onto any OID requests,
     then you do not need to implement this routine.  You may simply omit it.
     Furthermore, if the filter only holds onto OID requests so it can pass
-    down a clone (the most common case) the filter does not need to implement 
-    this routine; NDIS will then automatically request that the lower-level 
+    down a clone (the most common case) the filter does not need to implement
+    this routine; NDIS will then automatically request that the lower-level
     filter/miniport cancel your cloned OID.
 
     Most filters do not need to implement this routine.
@@ -1021,7 +1021,7 @@ Arguments:
 
 NOTE: called at <= DISPATCH_LEVEL
 
-  FILTER driver may call NdisFIndicateStatus to generate a status indication to 
+  FILTER driver may call NdisFIndicateStatus to generate a status indication to
   all higher layer modules.
 
 --*/
@@ -1037,8 +1037,8 @@ NOTE: called at <= DISPATCH_LEVEL
     //
     // The filter may do processing on the status indication here, including
     // intercepting and dropping it entirely.  However, the sample does nothing
-    // with status indications except pass them up to the higher layer.  It is 
-    // more efficient to omit the FilterStatus handler entirely if it does 
+    // with status indications except pass them up to the higher layer.  It is
+    // more efficient to omit the FilterStatus handler entirely if it does
     // nothing, but it is included in this sample for illustrative purposes.
     //
 
@@ -1154,7 +1154,7 @@ NOTE: called at PASSIVE_LEVEL
     NDIS_STATUS               Status = NDIS_STATUS_SUCCESS;
 
     //
-    // The filter may do processing on the event here, including intercepting 
+    // The filter may do processing on the event here, including intercepting
     // and dropping it entirely.  However, the sample does nothing with Net PNP
     // events, except pass them up to the next higher layer.  It is more
     // efficient to omit the FilterNetPnPEvent handler entirely if it does
@@ -1179,10 +1179,10 @@ Routine Description:
 
     Send complete handler
 
-    This routine is invoked whenever the lower layer is finished processing 
+    This routine is invoked whenever the lower layer is finished processing
     sent NET_BUFFER_LISTs.  If the filter does not need to be involved in the
     send path, you should remove this routine and the FilterSendNetBufferLists
-    routine.  NDIS will pass along send packets on behalf of your filter more 
+    routine.  NDIS will pass along send packets on behalf of your filter more
     efficiently than the filter can.
 
 Arguments:
@@ -1260,7 +1260,7 @@ Routine Description:
     This function is an optional function for filter drivers. If provided, NDIS
     will call this function to transmit a linked list of NetBuffers, described by a
     NetBufferList, over the network. If this handler is NULL, NDIS will skip calling
-    this filter when sending a NetBufferList and will call the next lower 
+    this filter when sending a NetBufferList and will call the next lower
     driver in the stack.  A filter that doesn't provide a FilerSendNetBufferList
     handler can not originate a send on its own.
 
@@ -1324,7 +1324,7 @@ Arguments:
             }
             FILTER_RELEASE_LOCK(&pFilter->Lock, DispatchLevel);
         }
-        
+
         //
         // If necessary, queue the NetBufferLists in a local structure for later
         // processing.  However, do not queue them for "too long", or else the
@@ -1332,7 +1332,7 @@ Arguments:
         // NBL for an unbounded amount of time, then allocate memory, perform a
         // deep copy, and complete the original NBL.
         //
-        
+
         NdisFSendNetBufferLists(pFilter->FilterHandle, NetBufferLists, PortNumber, SendFlags);
 
 
@@ -1365,8 +1365,8 @@ Routine Description:
 Arguments:
 
     FilterInstanceContext       - our filter context area
-    NetBufferLists              - a linked list of NetBufferLists that this 
-                                  filter driver indicated in a previous call to 
+    NetBufferLists              - a linked list of NetBufferLists that this
+                                  filter driver indicated in a previous call to
                                   NdisFIndicateReceiveNetBufferLists
     ReturnFlags                 - flags specifying if the caller is at DISPATCH_LEVEL
 
@@ -1383,7 +1383,7 @@ Arguments:
 
     //
     // If your filter injected any receive packets into the datapath to be
-    // received, you must identify their NBLs here and remove them from the 
+    // received, you must identify their NBLs here and remove them from the
     // chain.  Do not attempt to receive-return your NBLs down to the lower
     // layer.
     //
@@ -1405,7 +1405,7 @@ Arguments:
         }
     }
 
-    
+
     // Return the received NBLs.  If you removed any NBLs from the chain, make
     // sure the chain isn't empty (i.e., NetBufferLists!=NULL).
 
@@ -1449,7 +1449,7 @@ Routine Description:
     filter when processing a receive indication and will call the next higher
     driver in the stack. A filter that doesn't provide a
     FilterReceiveNetBufferLists handler cannot provide a
-    FilterReturnNetBufferLists handler and cannot a initiate an original receive 
+    FilterReturnNetBufferLists handler and cannot a initiate an original receive
     indication on its own.
 
 Arguments:
@@ -1460,7 +1460,7 @@ Arguments:
     ReceiveFlags             -
 
 N.B.: It is important to check the ReceiveFlags in NDIS_TEST_RECEIVE_CANNOT_PEND.
-    This controls whether the receive indication is an synchronous or 
+    This controls whether the receive indication is an synchronous or
     asynchronous function call.
 
 --*/
@@ -1509,7 +1509,7 @@ N.B.: It is important to check the ReceiveFlags in NDIS_TEST_RECEIVE_CANNOT_PEND
         //
         //     if NDIS_TEST_RECEIVE_CANNOT_PEND(ReceiveFlags):
         //         For each NBL that is NOT dropped, temporarily unlink it from
-        //         the linked list, and indicate it up alone with 
+        //         the linked list, and indicate it up alone with
         //         NdisFIndicateReceiveNetBufferLists and the
         //         NDIS_RECEIVE_FLAGS_RESOURCES flag set.  Then immediately
         //         relink the NBL back into the chain.  When all NBLs have been
@@ -1520,8 +1520,8 @@ N.B.: It is important to check the ReceiveFlags in NDIS_TEST_RECEIVE_CANNOT_PEND
         //         Return the first chain with NdisFReturnNetBufferLists, and
         //         indicate up the rest with NdisFIndicateReceiveNetBufferLists.
         //
-        // Note: on the receive path for Ethernet packets, one NBL will have 
-        // exactly one NB.  So (assuming you are receiving on Ethernet, or are 
+        // Note: on the receive path for Ethernet packets, one NBL will have
+        // exactly one NB.  So (assuming you are receiving on Ethernet, or are
         // attached above Native WiFi) you do not need to worry about dropping
         // one NB, but trying to indicate up the remaining NBs on the same NBL.
         // In other words, if the first NB should be dropped, drop the whole NBL.
@@ -1589,7 +1589,7 @@ Routine Description:
     This function cancels any NET_BUFFER_LISTs pended in the filter and then
     calls the NdisFCancelSendNetBufferLists to propagate the cancel operation.
 
-    If your driver does not queue any send NBLs, you may omit this routine.  
+    If your driver does not queue any send NBLs, you may omit this routine.
     NDIS will propagate the cancelation on your behalf more efficiently.
 
 Arguments:

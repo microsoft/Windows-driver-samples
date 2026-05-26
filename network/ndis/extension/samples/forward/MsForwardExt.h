@@ -28,7 +28,7 @@ typedef struct _MSFORWARD_CONTEXT
     NDIS_SWITCH_PORT_ID     ExternalPortId;
     NDIS_SWITCH_NIC_INDEX   ExternalNicIndex;
     BOOLEAN                 ExternalNicConnected;
-    
+
     //
     // This sample uses linked lists for the NICs and property
     // lookup. THIS IS NOT RECOMMENDED.
@@ -36,7 +36,7 @@ typedef struct _MSFORWARD_CONTEXT
     LIST_ENTRY              NicList;
     LIST_ENTRY              PropertyList;
     PNDIS_RW_LOCK_EX        DispatchLock;
-    
+
     UINT32                  NumDestinations;
     BOOLEAN                 IsInitialRestart;
 } MSFORWARD_CONTEXT, *PMSFORWARD_CONTEXT;
@@ -119,7 +119,7 @@ extern const NDIS_SWITCH_OBJECT_ID MacAddressPolicyStatusGuid;
 
 //
 // Switch Property Macros
-//                             
+//
 #define MAC_ADDRESS_POLICY_VERSION  0x0100
 #define MAC_ADDRESS_POLICY_SERIALIZATION_VERSION  NDIS_SWITCH_OBJECT_SERIALIZATION_VERSION_1
 
@@ -142,26 +142,26 @@ MsForwardAddNicUnsafe(
     _In_ NDIS_SWITCH_NIC_TYPE NicType,
     _In_ BOOLEAN Connected
     );
-    
+
 NDIS_STATUS
 MsForwardDeleteNicUnsafe(
    _In_ PMSFORWARD_CONTEXT SwitchContext,
    _In_ NDIS_SWITCH_PORT_ID PortId,
    _In_ NDIS_SWITCH_NIC_INDEX NicIndex
    );
-   
+
 VOID
 MsForwardClearNicListUnsafe(
     _In_ PMSFORWARD_CONTEXT SwitchContext
     );
-    
+
 PMSFORWARD_NIC_LIST_ENTRY
 MsForwardFindNicByPortIdUnsafe(
     _In_ PMSFORWARD_CONTEXT SwitchContext,
     _In_ NDIS_SWITCH_PORT_ID PortId,
     _In_ NDIS_SWITCH_NIC_INDEX NicIndex
     );
-    
+
 PMSFORWARD_NIC_LIST_ENTRY
 MsForwardFindNicByMacAddressUnsafe(
     _In_ PMSFORWARD_CONTEXT SwitchContext,
@@ -174,7 +174,7 @@ MsForwardAddMacPolicyUnsafe(
     _In_ PMSFORWARD_MAC_ADDRESS_POLICY MacPolicyBuffer,
     _In_ PNDIS_SWITCH_OBJECT_INSTANCE_ID PropertyInstanceId
     );
-    
+
 VOID
 MsForwardDeleteMacPolicyUnsafe(
     _In_ PMSFORWARD_CONTEXT SwitchContext,
@@ -185,25 +185,25 @@ VOID
 MsForwardClearPropertyListUnsafe(
     _In_ PMSFORWARD_CONTEXT SwitchContext
     );
-    
+
 PMSFORWARD_MAC_POLICY_LIST_ENTRY
 MsForwardFindPolicyByMacAddressUnsafe(
     _In_ PMSFORWARD_CONTEXT SwitchContext,
     _In_reads_bytes_(6) PUCHAR MacAddress
     );
-    
+
 PMSFORWARD_MAC_POLICY_LIST_ENTRY
 MsForwardFindPolicyByPropertyInstanceIdUnsafe(
     _In_ PMSFORWARD_CONTEXT SwitchContext,
     _In_ PNDIS_SWITCH_OBJECT_INSTANCE_ID PropertyInstanceId
     );
-    
+
 BOOLEAN
 MsForwardNicHasPolicy(
     _In_ PMSFORWARD_CONTEXT SwitchContext,
     _In_reads_bytes_(6) PUCHAR MacAddress
     );
-    
+
 VOID
 MsForwardMakeBroadcastArrayUnsafe(
     _In_ PMSFORWARD_CONTEXT SwitchContext,
@@ -211,7 +211,7 @@ MsForwardMakeBroadcastArrayUnsafe(
     _In_ NDIS_SWITCH_PORT_ID SourcePortId,
     _In_ NDIS_SWITCH_NIC_INDEX SourceNicIndex
     );
-    
+
 NDIS_STATUS
 MsForwardInitSwitch(
     _In_ PSX_SWITCH_OBJECT Switch,

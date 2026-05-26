@@ -124,7 +124,7 @@ VOID
 #define MUX_ADAPTER_PACKET_FILTER           \
             NDIS_PACKET_TYPE_PROMISCUOUS
 
-                                         
+
 
 #define MIN_PACKET_POOL_SIZE            255
 #define MAX_PACKET_POOL_SIZE            4096
@@ -466,7 +466,7 @@ typedef struct _ADAPT
     NDIS_MEDIUM                 Medium ;
 
     //
-    // BindParameters passed to protocol giving it information on 
+    // BindParameters passed to protocol giving it information on
     // the miniport below
     //
     NDIS_BIND_PARAMETERS        BindParameters;
@@ -474,7 +474,7 @@ typedef struct _ADAPT
     NDIS_RECEIVE_SCALE_CAPABILITIES RcvScaleCapabilities;
     NDIS_LINK_STATE             LastIndicatedLinkState;
     MUX_ADAPTER_BINDING_STATE   BindingState;
-    
+
     ULONG                       OutstandingSends;
     PNDIS_EVENT                 PauseEvent;
     NDIS_SPIN_LOCK              Lock;
@@ -552,7 +552,7 @@ typedef struct _VELAN
     // serializes requests to a miniport, we only need one of these
     // per VELAN.
     //
-    MUX_NDIS_REQUEST            Request;        
+    MUX_NDIS_REQUEST            Request;
     // Have we queued a request because the lower binding is
     // at a low power state?
     BOOLEAN                     QueuedRequest;
@@ -609,7 +609,7 @@ typedef struct _VELAN
     // Multicast list
     MUX_MAC_ADDRESS             McastAddrs[VELAN_MAX_MCAST_LIST];
     ULONG                       McastAddrCount;
-    
+
 
     NDIS_STATUS                 LastIndicatedStatus;
     NDIS_STATUS                 LatestUnIndicateStatus;
@@ -626,7 +626,7 @@ typedef struct _VELAN
     ULONG                       RcvFormatErrors;
     ULONG                       RcvVlanIdErrors;
     BOOLEAN                     RestoreLookaheadSize;
-    NPAGED_LOOKASIDE_LIST       TagLookaside;    
+    NPAGED_LOOKASIDE_LIST       TagLookaside;
 #endif
 
     NET_IFINDEX                 IfIndex;
@@ -661,22 +661,22 @@ typedef struct _VELAN
 
 #if IEEE_VLAN_SUPPORT
 
-#define TPID                            0x0081    
+#define TPID                            0x0081
 //
 // Define tag_header structure
 //
 typedef struct _VLAN_TAG_HEADER
 {
-    UCHAR       TagInfo[2];    
+    UCHAR       TagInfo[2];
 } VLAN_TAG_HEADER, *PVLAN_TAG_HEADER;
 
 
 //
 // Macro definitions for VLAN support
-// 
-#define VLAN_TAG_HEADER_SIZE        4 
+//
+#define VLAN_TAG_HEADER_SIZE        4
 
-#define VLANID_DEFAULT              0 
+#define VLANID_DEFAULT              0
 #define VLAN_ID_MAX                 0xfff
 #define VLAN_ID_MIN                 0x0
 
@@ -686,7 +686,7 @@ typedef struct _VLAN_TAG_HEADER
 
 //
 // Get information for tag headre
-// 
+//
 #define GET_CANONICAL_FORMAT_ID_FROM_TAG(_pTagHeader)         \
     ((_pTagHeader)->TagInfo[0] & CANONICAL_FORMAT_ID_MASK)
 
@@ -698,23 +698,23 @@ typedef struct _VLAN_TAG_HEADER
 
 //
 // Clear the tag header struct
-// 
+//
 #define INITIALIZE_TAG_HEADER_TO_ZERO(_pTagHeader) \
 {                                                  \
      (_pTagHeader)->TagInfo[0] = 0;                  \
      (_pTagHeader)->TagInfo[1] = 0;                  \
 }
-     
+
 //
 // Set VLAN information to tag header
 // Before we called all the set macro, first we need to initialize pTagHeader  to be 0
 //
 #define SET_CANONICAL_FORMAT_ID_TO_TAG(_pTagHeader, _CanonicalFormatId)     \
     (_pTagHeader)->TagInfo[0] |= ((UCHAR)(_CanonicalFormatId) << 4)
-     
+
 #define SET_USER_PRIORITY_TO_TAG(_pTagHeader, _UserPriority)                \
     (_pTagHeader)->TagInfo[0] |= ((UCHAR)(_UserPriority) << 5)
-     
+
 #define SET_VLAN_ID_TO_TAG(_pTagHeader, _VlanId)                            \
     {                                                                       \
         (_pTagHeader)->TagInfo[0] |= (((UCHAR)((_VlanId) >> 8)) & 0x0f);    \
@@ -724,7 +724,7 @@ typedef struct _VLAN_TAG_HEADER
 
 //
 // Copy tagging information in the indicated frame to per packet info
-// 
+//
 #define COPY_TAG_INFO_FROM_HEADER_TO_PACKET_INFO(_Ieee8021qInfo, _pTagHeader)                                   \
 {                                                                                                               \
     (_Ieee8021qInfo).TagHeader.UserPriority = ((_pTagHeader->TagInfo[0] & USER_PRIORITY_MASK) >> 5);              \
@@ -744,7 +744,7 @@ typedef struct _VLAN_TAG_HEADER
 
 //
 // Every NBL that is indicated up to a protocol needs to advance the buffer
-// in case the VLAN tag is present. It should be restored before returning the 
+// in case the VLAN tag is present. It should be restored before returning the
 // packet to the miniport. This structure is used for that purpose
 //
 typedef struct _RECV_NBL_ENTRY
@@ -770,11 +770,11 @@ typedef struct _IM_SEND_NB_ENTRY
 
 #endif //IEEE_VLAN_SUPPORT
 
-typedef struct _IM_NBL_ENTRY 
+typedef struct _IM_NBL_ENTRY
 {
     NDIS_HANDLE  PreviousSourceHandle;
     PVELAN       pVElan;
-#if IEEE_VLAN_SUPPORT    
+#if IEEE_VLAN_SUPPORT
     ULONG        Flags;
     PNET_BUFFER  MdlAllocatedNetBuffers;
 #endif
@@ -847,7 +847,7 @@ typedef struct _IM_NBL_ENTRY
 
 #define ASSERT_AT_PASSIVE()                                     \
     ASSERT(KeGetCurrentIrql() == PASSIVE_LEVEL)
-    
+
 #define ASSERT_AT_DISPATCH()                                     \
     ASSERT(KeGetCurrentIrql() == DISPATCH_LEVEL)
 
@@ -912,13 +912,13 @@ MuxAllocateMdl(
     IN OUT PULONG               BufferSize
     );
 
-NDIS_STATUS 
+NDIS_STATUS
 MPHandleSendTaggingNB(
     IN PVELAN           pVElan,
     IN PNET_BUFFER_LIST NetBufferList
     );
 
-VOID 
+VOID
 MPRestoreSendNBL(
     IN PVELAN               pVElan,
     IN PNET_BUFFER_LIST     NetBufferList,
@@ -926,21 +926,21 @@ MPRestoreSendNBL(
     IN PNET_BUFFER          MdlAllocatedNetBuffers
     );
 
-NDIS_STATUS 
+NDIS_STATUS
 PtHandleReceiveTaggingNB(
     IN PVELAN                   pVElan,
     IN PNET_BUFFER_LIST         NetBufferList,
-    IN PNDIS_NET_BUFFER_LIST_8021Q_INFO  NdisPacket8021qInfo    
+    IN PNDIS_NET_BUFFER_LIST_8021Q_INFO  NdisPacket8021qInfo
     );
 
-NDIS_STATUS 
+NDIS_STATUS
 PtStripVlanTagNB(
     IN PNET_BUFFER_LIST         NetBufferList,
     OUT PNDIS_NET_BUFFER_LIST_8021Q_INFO NdisPacket8021qInfo,
-    OUT PRECV_NBL_ENTRY         RecvContext    
+    OUT PRECV_NBL_ENTRY         RecvContext
     );
 
-NDIS_STATUS 
+NDIS_STATUS
 PtRestoreReceiveNBL(
     IN PNET_BUFFER_LIST         NetBufferList
     );

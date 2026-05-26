@@ -34,29 +34,29 @@ SxLibSendNetBufferListsIngress(
     PNET_BUFFER_LIST *curDropNbl = &dropNbl;
     NDIS_SWITCH_PORT_ID curSourcePort;
     NDIS_STRING filterReason;
-    
+
     dispatch = NDIS_TEST_SEND_AT_DISPATCH_LEVEL(SendFlags);
     sameSource = NDIS_TEST_SEND_FLAG(SendFlags, NDIS_SEND_FLAGS_SWITCH_SINGLE_SOURCE);
-    
+
     InterlockedAdd(&Switch->PendingInjectedNblCount, NumInjectedNetBufferLists);
     KeMemoryBarrier();
-    
+
     if (Switch->DataFlowState != SxSwitchRunning)
     {
         RtlInitUnicodeString(&filterReason, L"Extension Paused");
-        
+
         sendCompleteFlags = (dispatch) ? NDIS_SEND_COMPLETE_FLAGS_DISPATCH_LEVEL : 0;
         sendCompleteFlags |= (sameSource) ? NDIS_SEND_COMPLETE_FLAGS_SWITCH_SINGLE_SOURCE : 0;
-        
+
         fwdDetail = NET_BUFFER_LIST_SWITCH_FORWARDING_DETAIL(NetBufferLists);
-    
+
         if (sameSource)
         {
             for (curNbl = NetBufferLists; curNbl != NULL; curNbl = curNbl->Next)
             {
                 ++numNbls;
             }
-            
+
             Switch->NdisSwitchHandlers.ReportFilteredNetBufferLists(
                                          Switch->NdisSwitchContext,
                                          &SxExtensionGuid,
@@ -66,11 +66,11 @@ SxLibSendNetBufferListsIngress(
                                          numNbls,
                                          NetBufferLists,
                                          &filterReason);
-                                         
+
             SxExtStartCompleteNetBufferListsIngress(Switch,
                                                     Switch->ExtensionContext,
                                                     NetBufferLists,
-                                                    sendCompleteFlags);    
+                                                    sendCompleteFlags);
         }
         else
         {
@@ -79,9 +79,9 @@ SxLibSendNetBufferListsIngress(
             {
                 nextNbl = curNbl->Next;
                 curNbl->Next = NULL;
-                
+
                 fwdDetail = NET_BUFFER_LIST_SWITCH_FORWARDING_DETAIL(curNbl);
-                
+
                 if(curSourcePort == fwdDetail->SourcePortId)
                 {
                     *curDropNbl = curNbl;
@@ -99,7 +99,7 @@ SxLibSendNetBufferListsIngress(
                                                  numNbls,
                                                  dropNbl,
                                                  &filterReason);
-                     
+
                     SxExtStartCompleteNetBufferListsIngress(Switch,
                                                             Switch->ExtensionContext,
                                                             dropNbl,
@@ -111,7 +111,7 @@ SxLibSendNetBufferListsIngress(
                     curSourcePort = fwdDetail->SourcePortId;
                 }
             }
-            
+
             Switch->NdisSwitchHandlers.ReportFilteredNetBufferLists(
                                              Switch->NdisSwitchContext,
                                              &SxExtensionGuid,
@@ -121,21 +121,21 @@ SxLibSendNetBufferListsIngress(
                                              numNbls,
                                              dropNbl,
                                              &filterReason);
-                 
+
             SxExtStartCompleteNetBufferListsIngress(Switch,
                                                     Switch->ExtensionContext,
                                                     dropNbl,
                                                     sendCompleteFlags);
-        }                                
-                                            
+        }
+
         goto Cleanup;
     }
-    
+
     NdisFSendNetBufferLists(Switch->NdisFilterHandle,
                             NetBufferLists,
                             NDIS_DEFAULT_PORT_NUMBER,
                             SendFlags);
-                                
+
 Cleanup:
     return;
 }
@@ -159,23 +159,23 @@ SxLibSendNetBufferListsEgress(
     PNET_BUFFER_LIST dropNbl = NULL;
     PNET_BUFFER_LIST *curDropNbl = &dropNbl;
     NDIS_STRING filterReason;
-    
+
     dispatch = NDIS_TEST_RECEIVE_AT_DISPATCH_LEVEL(ReceiveFlags);
     sameSource = NDIS_TEST_RECEIVE_FLAG(ReceiveFlags, NDIS_RECEIVE_FLAGS_SWITCH_SINGLE_SOURCE);
-                          
+
     if (Switch->DataFlowState != SxSwitchRunning)
     {
         RtlInitUnicodeString(&filterReason, L"Extension Paused");
-        
+
         returnFlags = (dispatch) ? NDIS_RETURN_FLAGS_DISPATCH_LEVEL : 0;
         returnFlags |= NDIS_RETURN_FLAGS_SWITCH_SINGLE_SOURCE;
-        
+
         fwdDetail = NET_BUFFER_LIST_SWITCH_FORWARDING_DETAIL(NetBufferLists);
-        
+
         if (sameSource)
         {
             sourcePortId = fwdDetail->SourcePortId;
-            
+
             Switch->NdisSwitchHandlers.ReportFilteredNetBufferLists(
                                                      Switch->NdisSwitchContext,
                                                      &SxExtensionGuid,
@@ -185,7 +185,7 @@ SxLibSendNetBufferListsEgress(
                                                      NumberOfNetBufferLists,
                                                      NetBufferLists,
                                                      &filterReason);
-                                                     
+
             SxExtStartCompleteNetBufferListsEgress(Switch,
                                                    Switch->ExtensionContext,
                                                    NetBufferLists,
@@ -199,9 +199,9 @@ SxLibSendNetBufferListsEgress(
             {
                 nextNbl = curNbl->Next;
                 curNbl->Next = NULL;
-                
+
                 fwdDetail = NET_BUFFER_LIST_SWITCH_FORWARDING_DETAIL(curNbl);
-                
+
                 if(curSourcePort == fwdDetail->SourcePortId)
                 {
                     *curDropNbl = curNbl;
@@ -219,7 +219,7 @@ SxLibSendNetBufferListsEgress(
                                                  numNbls,
                                                  dropNbl,
                                                  &filterReason);
-                     
+
                     SxExtStartCompleteNetBufferListsEgress(Switch,
                                                            Switch->ExtensionContext,
                                                            dropNbl,
@@ -231,7 +231,7 @@ SxLibSendNetBufferListsEgress(
                     curSourcePort = fwdDetail->SourcePortId;
                 }
             }
-            
+
             Switch->NdisSwitchHandlers.ReportFilteredNetBufferLists(
                                              Switch->NdisSwitchContext,
                                              &SxExtensionGuid,
@@ -241,22 +241,22 @@ SxLibSendNetBufferListsEgress(
                                              numNbls,
                                              dropNbl,
                                              &filterReason);
-                 
+
             SxExtStartCompleteNetBufferListsEgress(Switch,
                                                    Switch->ExtensionContext,
                                                    dropNbl,
                                                    returnFlags);
-        }             
-        
+        }
+
         goto Cleanup;
     }
-    
+
     NdisFIndicateReceiveNetBufferLists(Switch->NdisFilterHandle,
                                        NetBufferLists,
                                        NDIS_DEFAULT_PORT_NUMBER,
                                        NumberOfNetBufferLists,
                                        ReceiveFlags);
-                                
+
 Cleanup:
     return;
 }
@@ -407,17 +407,17 @@ Cleanup:
     {
         *BytesNeeded = bytesNeeded;
     }
-    
+
     if (!asyncCompletion)
     {
         NdisInterlockedDecrement(&Switch->PendingOidCount);
     }
-    
+
     if (oidRequest != NULL)
     {
         ExFreePoolWithTag(oidRequest, SxExtAllocationTag);
     }
-    
+
     return status;
 }
 
@@ -429,11 +429,11 @@ SxLibGetSwitchParametersUnsafe(
     )
 {
     NDIS_STATUS status;
-    
+
     SwitchParameters->Header.Revision = NDIS_SWITCH_PARAMETERS_REVISION_1;
     SwitchParameters->Header.Type = NDIS_OBJECT_TYPE_DEFAULT;
     SwitchParameters->Header.Size = sizeof(NDIS_SWITCH_PARAMETERS);
-    
+
     status = SxLibIssueOidRequest(Switch,
                                   NdisRequestQueryInformation,
                                   OID_SWITCH_PARAMETERS,
@@ -443,7 +443,7 @@ SxLibGetSwitchParametersUnsafe(
                                   0,
                                   0,
                                   NULL);
-                                  
+
     return status;
 }
 
@@ -458,32 +458,32 @@ SxLibGetPortArrayUnsafe(
     ULONG BytesNeeded = 0;
     PNDIS_SWITCH_PORT_ARRAY portArray = NULL;
     ULONG arrayLength = 0;
-    
-    do 
+
+    do
     {
         if (portArray != NULL)
         {
             ExFreePoolWithTag(portArray, SxExtAllocationTag);
         }
-        
+
         if (BytesNeeded != 0)
         {
             arrayLength = BytesNeeded;
             portArray = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                         arrayLength,
                                         SxExtAllocationTag);
-            
+
             if (portArray == NULL)
             {
                 status = NDIS_STATUS_RESOURCES;
                 goto Cleanup;
             }
-            
+
             portArray->Header.Revision = NDIS_SWITCH_PORT_ARRAY_REVISION_1;
             portArray->Header.Type = NDIS_OBJECT_TYPE_DEFAULT;
             portArray->Header.Size = (USHORT)arrayLength;
         }
-    
+
         status = SxLibIssueOidRequest(Switch,
                                       NdisRequestQueryInformation,
                                       OID_SWITCH_PORT_ARRAY,
@@ -493,9 +493,9 @@ SxLibGetPortArrayUnsafe(
                                       0,
                                       0,
                                       &BytesNeeded);
-        
+
     } while(status == NDIS_STATUS_INVALID_LENGTH);
-    
+
     *PortArray = portArray;
 Cleanup:
     if (status != NDIS_STATUS_SUCCESS &&
@@ -503,7 +503,7 @@ Cleanup:
     {
         ExFreePoolWithTag(portArray, SxExtAllocationTag);
     }
-    
+
     return status;
 }
 
@@ -518,32 +518,32 @@ SxLibGetNicArrayUnsafe(
     ULONG BytesNeeded = 0;
     PNDIS_SWITCH_NIC_ARRAY nicArray = NULL;
     ULONG arrayLength = 0;
-    
-    do 
+
+    do
     {
         if (nicArray != NULL)
         {
             ExFreePoolWithTag(nicArray, SxExtAllocationTag);
         }
-        
+
         if (BytesNeeded != 0)
         {
             arrayLength = BytesNeeded;
             nicArray = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                        arrayLength,
                                        SxExtAllocationTag);
-            
+
             if (nicArray == NULL)
             {
                 status = NDIS_STATUS_RESOURCES;
                 goto Cleanup;
             }
-            
+
             nicArray->Header.Revision = NDIS_SWITCH_PORT_ARRAY_REVISION_1;
             nicArray->Header.Type = NDIS_OBJECT_TYPE_DEFAULT;
             nicArray->Header.Size = (USHORT)arrayLength;
         }
-    
+
         status = SxLibIssueOidRequest(Switch,
                                       NdisRequestQueryInformation,
                                       OID_SWITCH_NIC_ARRAY,
@@ -553,9 +553,9 @@ SxLibGetNicArrayUnsafe(
                                       0,
                                       0,
                                       &BytesNeeded);
-        
+
     } while(status == NDIS_STATUS_INVALID_LENGTH);
-    
+
     *NicArray = nicArray;
 Cleanup:
     if (status != NDIS_STATUS_SUCCESS &&
@@ -563,7 +563,7 @@ Cleanup:
     {
         ExFreePoolWithTag(nicArray, SxExtAllocationTag);
     }
-    
+
     return status;
 }
 
@@ -581,13 +581,13 @@ SxLibGetSwitchPropertyUnsafe(
     ULONG bytesNeeded = 0;
     PNDIS_SWITCH_PROPERTY_ENUM_PARAMETERS outputBuffer = NULL;
     USHORT outputBufferLength = sizeof(NDIS_SWITCH_PROPERTY_ENUM_PARAMETERS);
-    
+
     propertyParameters.Header.Type = NDIS_OBJECT_TYPE_DEFAULT;
     propertyParameters.Header.Revision = NDIS_SWITCH_PROPERTY_ENUM_PARAMETERS_REVISION_1;
-    
+
     propertyParameters.PropertyType = PropertyType;
     propertyParameters.SerializationVersion = NDIS_SWITCH_OBJECT_SERIALIZATION_VERSION_1;
-    
+
     //
     // For Built-in properties, the ID is unnecessary.
     //
@@ -601,18 +601,18 @@ SxLibGetSwitchPropertyUnsafe(
     {
         ASSERT(PropertyType != NdisSwitchPropertyTypeCustom);
     }
-    
+
     outputBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                    outputBufferLength,
                                    SxExtAllocationTag);
-                                         
+
     if (outputBuffer == NULL)
     {
         status = NDIS_STATUS_RESOURCES;
         goto Cleanup;
     }
-    
-    do 
+
+    do
     {
         if (bytesNeeded != 0)
         {
@@ -622,20 +622,20 @@ SxLibGetSwitchPropertyUnsafe(
             outputBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                            outputBufferLength,
                                            SxExtAllocationTag);
-            
+
             if (outputBuffer == NULL)
             {
                 status = NDIS_STATUS_RESOURCES;
                 goto Cleanup;
             }
         }
-        
+
         if(outputBufferLength >= sizeof(propertyParameters))
         {
             NdisMoveMemory(outputBuffer, &propertyParameters, sizeof(propertyParameters));
-            
+
         }
-    
+
         status = SxLibIssueOidRequest(Switch,
                                       NdisRequestMethod,
                                       OID_SWITCH_PROPERTY_ENUM,
@@ -645,19 +645,19 @@ SxLibGetSwitchPropertyUnsafe(
                                       0,
                                       0,
                                       &bytesNeeded);
-        
+
     } while(status == NDIS_STATUS_INVALID_LENGTH);
-    
-Cleanup:    
+
+Cleanup:
     if (status != NDIS_STATUS_SUCCESS &&
         outputBuffer != NULL)
     {
         ExFreePoolWithTag(outputBuffer, SxExtAllocationTag);
         outputBuffer = NULL;
     }
-    
+
     *SwitchPropertyEnumParameters = outputBuffer;
-    
+
     return status;
 }
 
@@ -676,14 +676,14 @@ SxLibGetPortPropertyUnsafe(
     ULONG bytesNeeded = 0;
     PNDIS_SWITCH_PORT_PROPERTY_ENUM_PARAMETERS outputBuffer = NULL;
     USHORT outputBufferLength = sizeof(NDIS_SWITCH_PORT_PROPERTY_ENUM_PARAMETERS);
-    
+
     propertyParameters.Header.Type = NDIS_OBJECT_TYPE_DEFAULT;
     propertyParameters.Header.Revision = NDIS_SWITCH_PORT_PROPERTY_ENUM_PARAMETERS_REVISION_1;
-    
+
     propertyParameters.PortId = PortId;
     propertyParameters.PropertyType = PropertyType;
     propertyParameters.SerializationVersion = NDIS_SWITCH_OBJECT_SERIALIZATION_VERSION_1;
-    
+
     //
     // For Built-in properties, the ID is unnecessary.
     //
@@ -697,18 +697,18 @@ SxLibGetPortPropertyUnsafe(
     {
         ASSERT(PropertyType != NdisSwitchPortPropertyTypeCustom);
     }
-    
+
     outputBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                    outputBufferLength,
                                    SxExtAllocationTag);
-                                         
+
     if (outputBuffer == NULL)
     {
         status = NDIS_STATUS_RESOURCES;
         goto Cleanup;
     }
-    
-    do 
+
+    do
     {
         if (bytesNeeded != 0)
         {
@@ -718,20 +718,20 @@ SxLibGetPortPropertyUnsafe(
             outputBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED,
                                            outputBufferLength,
                                            SxExtAllocationTag);
-            
+
             if (outputBuffer == NULL)
             {
                 status = NDIS_STATUS_RESOURCES;
                 goto Cleanup;
             }
         }
-        
+
         if(outputBufferLength >= sizeof(propertyParameters))
         {
             outputBuffer->Header.Size = outputBufferLength;
             NdisMoveMemory(outputBuffer, &propertyParameters, sizeof(propertyParameters));
         }
-    
+
         status = SxLibIssueOidRequest(Switch,
                                       NdisRequestMethod,
                                       OID_SWITCH_PORT_PROPERTY_ENUM,
@@ -741,9 +741,9 @@ SxLibGetPortPropertyUnsafe(
                                       0,
                                       0,
                                       &bytesNeeded);
-        
+
     } while(status == NDIS_STATUS_INVALID_LENGTH);
-    
+
 Cleanup:
     if (status != NDIS_STATUS_SUCCESS &&
         outputBuffer != NULL)
@@ -751,9 +751,9 @@ Cleanup:
         ExFreePoolWithTag(outputBuffer, SxExtAllocationTag);
         outputBuffer = NULL;
     }
-    
+
     *PortPropertyEnumParameters = outputBuffer;
-    
+
     return status;
 }
 
@@ -788,27 +788,27 @@ SxLibIssueNicStatusIndicationUnsafe(
     NDIS_STATUS_INDICATION statusIndication;
     NDIS_STATUS_INDICATION wrappedIndication;
     NDIS_SWITCH_NIC_STATUS_INDICATION nicIndication;
-    
+
     NdisZeroMemory(&wrappedIndication, sizeof(wrappedIndication));
-    
+
     wrappedIndication.Header.Type = NDIS_OBJECT_TYPE_STATUS_INDICATION;
     wrappedIndication.Header.Revision = NDIS_STATUS_INDICATION_REVISION_1;
     wrappedIndication.Header.Size = NDIS_SIZEOF_STATUS_INDICATION_REVISION_1;
-    
+
     wrappedIndication.SourceHandle = Switch->NdisFilterHandle;
     wrappedIndication.PortNumber = NDIS_DEFAULT_PORT_NUMBER;
-    
+
     wrappedIndication.StatusCode = StatusCode;
     wrappedIndication.StatusBuffer = StatusBuffer;
     wrappedIndication.StatusBufferSize = StatusBufferSize;
-    
+
     NdisZeroMemory(&nicIndication, sizeof(nicIndication));
-    
+
     nicIndication.Header.Type = NDIS_OBJECT_TYPE_DEFAULT;
     nicIndication.Header.Revision = NDIS_SWITCH_NIC_STATUS_INDICATION_REVISION_1;
     nicIndication.Header.Size = NDIS_SIZEOF_SWITCH_NIC_STATUS_REVISION_1;
     nicIndication.StatusIndication = &wrappedIndication;
-    
+
     if (IsDestination)
     {
         nicIndication.DestinationPortId = PortId;
@@ -819,20 +819,20 @@ SxLibIssueNicStatusIndicationUnsafe(
         nicIndication.SourcePortId = PortId;
         nicIndication.SourceNicIndex = NicIndex;
     }
-    
+
     NdisZeroMemory(&statusIndication, sizeof(statusIndication));
-    
+
     statusIndication.Header.Type = NDIS_OBJECT_TYPE_STATUS_INDICATION;
     statusIndication.Header.Revision = NDIS_STATUS_INDICATION_REVISION_1;
     statusIndication.Header.Size = NDIS_SIZEOF_STATUS_INDICATION_REVISION_1;
-    
+
     statusIndication.SourceHandle = Switch->NdisFilterHandle;
     statusIndication.PortNumber = NDIS_DEFAULT_PORT_NUMBER;
-    
+
     statusIndication.StatusCode = NDIS_STATUS_SWITCH_NIC_STATUS;
     statusIndication.StatusBuffer = &nicIndication;
     statusIndication.StatusBufferSize = sizeof(nicIndication);
-    
+
     NdisFIndicateStatus(Switch->NdisFilterHandle,
                         &statusIndication);
 }

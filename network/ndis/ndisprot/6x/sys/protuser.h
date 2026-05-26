@@ -87,6 +87,6 @@ typedef struct _NDISPROT_QUERY_BINDING
     ULONG            DeviceDescrLength;    // in bytes
 
 } NDISPROT_QUERY_BINDING, *PNDISPROT_QUERY_BINDING;
- 
+
 #endif // __NPROTUSER__H
 
