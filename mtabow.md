@@ -15,9 +15,12 @@
 * HLK MVHV tests: New HLK tests for testing Microsoft Teams Scenarios. These are simply thin wrappers around MVHV.  Note: MVHV is shipped as part of HLK MVHV tests.
 * "Underlying MVHV tests": The actual MVHV tests that are shipped inside the HLK.
 
+## Mapping HLK MVHV Tests to underlying MVHV Test Suites
+* TODO. Will show: HLK test type (system or device), HLK targeting information, matching MVHV command.
+
 ## Running  MVHV as part of the Hardware Lab Kit (HLK)
 
-This document assumes a rudimentary experience with HLK.
+This document assumes rudimentary experience with HLK.
 
 ### Prerequisites:
 #### Setup HLK Controller
@@ -72,5 +75,16 @@ powershell
 robocopy /mir /nfl /ndl \\hlkcontroller\C$\...\arm64 C:\mvhv
 ```
 
-### ...
-...
+## Running HLK MVHV Tests
+TODO. How to run, how to inspect test ran succesfully, how to analyze results, how to get detailed logs from client
+
+## Our Test Experiments and Results
+TODO: Will showcase the specific hardware we have tested on and results
+
+## FAQ / Tips and Tricks
+TODO
+
+## Known issues and planned changes
+* TODO: Today detailed MVHV logs are left on Client machine. We hope to pull them back into HLK test results.
+* TODO: Today Clips deployment is a little messy. We hope to clean this up.
+* TODO: Today detecting prerequisites is not done well.  We hope to remove some prerequisites (say, MVHV robocopy) and hope to add better detection of other prerequisites.
