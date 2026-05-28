@@ -7,7 +7,7 @@
 * Email: mtabow@microsoft.com
 
 ## Terminology
-* HLK: Windws Hardware Lab Kit.
+* HLK: Windows Hardware Lab Kit.
 * HLK Controller: A Windows Server running HLK's server side components. Orchestrates HLK tests.
 * HLK Client: A device under test and under the HLK controller's control.  Also referred to as a Device under Test (DUT) or a Target.
 * HLK Test: A specific tests shipped in the HLK.
