@@ -85,6 +85,8 @@ TODO: Will showcase the specific hardware we have tested on and results
 TODO
 
 ## Known issues and planned changes
+* TODO: Today you have to manually copy MVHV logs to target.   We hope to fix this.
+* TODO: Today you have only a few rudimentary tests.  We hope to have complete exposure of all of MVHV test.
 * TODO: Today detailed MVHV logs are left on Client machine. We hope to pull them back into HLK test results.
 * TODO: Today Clips deployment is a little messy. We hope to clean this up.
 * TODO: Today detecting prerequisites is not done well.  We hope to remove some prerequisites (say, MVHV robocopy) and hope to add better detection of other prerequisites.
