@@ -16,7 +16,6 @@
 * "Underlying MVHV tests": The actual MVHV tests that are shipped inside the HLK.
 
 ## Mapping HLK MVHV Tests to underlying MVHV Test Suites
-* TODO. Will show: HLK test type (system or device), HLK targeting information, matching MVHV command.
 
 | NO   | HLK Test Name         |                        MVHV Test Command                                                       |         Associated Logfile                |
 |:-----|:---------------------:|-----------------------------------------------------------------------------------------------:|:-----------------------------------------:|
