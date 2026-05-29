@@ -97,7 +97,7 @@ In case any such lines are missing you can manually edit file to have these entr
 
 
 ## Running HLK MVHV Tests
-TODO. How to run, how to inspect test ran succesfully, how to analyze results, how to get detailed logs from client
+How to run, how to inspect test ran succesfully, how to analyze results, how to get detailed logs from client
 How to Run tests:
 ----------------
 To Run tests from HLK Controller you have to connect controller with a Device that has GPU and a Camera.
