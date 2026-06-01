@@ -16,6 +16,7 @@
 * "Underlying MVHV tests": The actual MVHV tests that are shipped inside the HLK.
 
 ## Mapping HLK MVHV Tests to underlying MVHV Test Suites
+* TODO. Will show: HLK test type (system or device), HLK targeting information, matching MVHV command.
 
 | NO   | HLK Test Name         |                        MVHV Test Command                                                       |         Associated Logfile                |
 |:-----|:---------------------:|-----------------------------------------------------------------------------------------------:|:-----------------------------------------:|
@@ -72,19 +73,30 @@ For ARM64 devices please download .net from https://aka.ms/dotnet-core-applaunch
 
 As a technical (and hopefully very temporary) limitation you must manually deploy the underlying MVHV tests from HLK controller to HLK client.
 
+On HLK Controller run following commands
+```
+
+robocopy /mir /nfl /ndl "C:\Program Files (x86)\Windows Kits\10\Hardware Lab Kit\Tests\amd64\nttest\multimediatest\Microsoft_Video_Hardware_Validator\x64" "C:\Program Files (x86)\Windows Kits\10\Hardware Lab Kit\Controller\WTTInstall\mvhv\x64"
+
+robocopy /mir /nfl /ndl "C:\Program Files (x86)\Windows Kits\10\Hardware Lab Kit\Tests\arm64\nttest\multimediatest\Microsoft_Video_Hardware_Validator\arm64" "C:\Program Files (x86)\Windows Kits\10\Hardware Lab Kit\Controller\WTTInstall\mvhv\arm64"
+
+```
+
+
 For x64 based Clients:
 ```
 powershell
-robocopy /mir /nfl /ndl \\hlkcontroller\C$\...\x64 C:\mvhv
+robocopy /mir /nfl /ndl \\hlkcontroller\HLKInstall\mvhv\x64 C:\mvhv\
 ```
 
 For arm64 based Clients:
 ```
 powershell
-robocopy /mir /nfl /ndl \\hlkcontroller\C$\...\arm64 C:\mvhv
+robocopy /mir /nfl /ndl \\hlkcontroller\HLKInstall\mvhv\arm64 C:\mvhv\
 ```
 
 After installing mvhv on client machine please make sure that MicrosoftVideoHardwareValidator.config file is present under c:\mvhv and it has following entries.
+```
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
         <appSettings>
@@ -94,10 +106,10 @@ After installing mvhv on client machine please make sure that MicrosoftVideoHard
         </appSettings>
 </configuration>
 In case any such lines are missing you can manually edit file to have these entries. 
-
+```
 
 ## Running HLK MVHV Tests
-How to run, how to inspect test ran succesfully, how to analyze results, how to get detailed logs from client
+TODO. How to run, how to inspect test ran succesfully, how to analyze results, how to get detailed logs from client
 How to Run tests:
 ----------------
 To Run tests from HLK Controller you have to connect controller with a Device that has GPU and a Camera.
@@ -125,4 +137,3 @@ TODO
 * TODO: Today detailed MVHV logs are left on Client machine. We hope to pull them back into HLK test results by release 0.0.3.
 * TODO: Today Clips deployment is a little messy. We hope to clean this up by release TBD.
 * TODO: Today detecting prerequisites is not done well.  We hope to remove some prerequisites (say, MVHV robocopy) and hope to add better detection of other prerequisites by release TBD.
-* TODO: Redundant copies of MVHV inside HLK.
