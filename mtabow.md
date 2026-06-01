@@ -109,7 +109,7 @@ In case any such lines are missing you can manually edit file to have these entr
 ```
 
 ## Running HLK MVHV Tests
-TODO. How to run, how to inspect test ran succesfully, how to analyze results, how to get detailed logs from client
+How to run, how to inspect test ran succesfully, how to analyze results, how to get detailed logs from client
 How to Run tests:
 ----------------
 To Run tests from HLK Controller you have to connect controller with a Device that has GPU and a Camera.
@@ -137,3 +137,4 @@ TODO
 * TODO: Today detailed MVHV logs are left on Client machine. We hope to pull them back into HLK test results by release 0.0.3.
 * TODO: Today Clips deployment is a little messy. We hope to clean this up by release TBD.
 * TODO: Today detecting prerequisites is not done well.  We hope to remove some prerequisites (say, MVHV robocopy) and hope to add better detection of other prerequisites by release TBD.
+* TODO: Redundant copies of MVHV inside HLK.
