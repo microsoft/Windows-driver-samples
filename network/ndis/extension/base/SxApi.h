@@ -58,7 +58,7 @@ SxExtInitialize
 
 Routine Description:
     This function is called from the SxBase Library during DriverEntry.
-    An extension should allocate/initalize all global data in this function.
+    An extension should allocate/initialize all global data in this function.
 
 Arguments:
     NULL
@@ -410,7 +410,7 @@ SxExtDeleteNic
 
 Routine Description:
     This function is called to delete a NIC from a switch.
-    No futher traffic/control will be recieved for this NIC.
+    No further traffic/control will be received for this NIC.
 
 Arguments:
     Switch - the Switch context
@@ -438,7 +438,7 @@ SxExtTeardownPort
 
 Routine Description:
     This function is called to start deletion of a port on a switch.
-    Upon recieving this call, no further references may be taken
+    Upon receiving this call, no further references may be taken
     on the given port.
 
 Arguments:
@@ -467,7 +467,7 @@ SxExtDeletePort
 
 Routine Description:
     This function is called to finish deletion of a port on a switch.
-    Upon recieving this call, no traffic/control will be recieved
+    Upon receiving this call, no traffic/control will be received
     for this port.
 
 Arguments:
@@ -825,7 +825,7 @@ Arguments:
     ExtensionContext - The extension context allocated in SxExtCreateSwitch
                        for the switch
 
-    SwitchProperty - the property to be deleted
+    PortProperty - the property to be deleted
 
 Return Value:
     TRUE - if the policy is not consumed by this extension
@@ -918,7 +918,7 @@ SxExtQueryPortFeatureStatus(
 SxExtProcessNicRequest
 
 Routine Description:
-    This function is called upon the reciept of an OID_SWITCH_NIC_REQUEST
+    This function is called upon the receipt of an OID_SWITCH_NIC_REQUEST
     to the extension.
     If an extension wishes to redirect the OID, it must return a valid
     DestinationPortId and DestinationNicIndex, which it has taken a
@@ -982,7 +982,15 @@ Arguments:
     ExtensionContext - The extension context allocated in SxExtCreateSwitch
                        for the switch
 
-    NicOidRequest - the OID buffer, encapsulated with source/destination info
+    OidRequest - the OID buffer, encapsulated with source/destination info
+
+    SourcePortId - the source PortId of the OID completion
+
+    SourceNicIndex - the source NicIndex of the OID completion
+
+    DestinationPortId - the destination PortId of the OID completion
+
+    DestinationNicIndex - the destination NicIndex of the OID completion
 
     Status - the status the OID completed with
 
@@ -1008,12 +1016,12 @@ SxExtProcessNicRequestComplete(
 SxExtProcessNicStatus
 
 Routine Description:
-    This function is called upon the reciept of an NDIS_STATUS_SWITCH_NIC_STATUS
+    This function is called upon the receipt of an NDIS_STATUS_SWITCH_NIC_STATUS
     to the extension.
     If the extension wishes to modify the status indication, it should
     send its own status indication using NdisFIndicateStatus and return a
     failure status.
-    If the extension wishes to drop the status indiction, it should return
+    If the extension wishes to drop the status indication, it should return
     failure status, though this should be done very sparingly and carefully.
 
     !! This function should only be used by forwarding extensions. !!

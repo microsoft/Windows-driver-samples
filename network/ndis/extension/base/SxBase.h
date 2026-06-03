@@ -4,7 +4,7 @@ Copyright (c) Microsoft Corporation. All Rights Reserved.
 
 Module Name:
 
-    SxBase.c
+    SxBase.h
 
 Abstract:
 

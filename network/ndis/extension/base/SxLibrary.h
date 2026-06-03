@@ -23,7 +23,7 @@ Routine Description:
     This function is called to forward NBLs on ingress.
     The extension MUST call this function, or call
     SxLibCompleteNetBufferListsIngress for every NBL in NetBufferLists,
-    recieved in SxExtStartNetBufferListsIngress.
+    received in SxExtStartNetBufferListsIngress.
 
     This function can also be called to inject NBLs.
     If there are NBLs in NetBufferLists that are initiated by the
@@ -62,7 +62,7 @@ Routine Description:
     This function is called to forward NBLs on egress.
     The extension MUST call this function, or call
     SxLibCompleteNetBufferListsEgress for every NBL in NetBufferLists
-    recieved in SxExtStartNetBufferListsEgress.
+    received in SxExtStartNetBufferListsEgress.
 
 Arguments:
 
@@ -94,7 +94,7 @@ SxLibCompleteNetBufferListsEgress
 
 Routine Description:
     This function is called to complete NBLs on egress.
-    The extension MUST call this function for all NBLs recieved
+    The extension MUST call this function for all NBLs received
     in SxExtStartCompleteNetBufferListsEgress.
 
 Arguments:
@@ -124,7 +124,7 @@ SxLibCompleteNetBufferListsIngress
 Routine Description:
     This function is called to complete NBLs on ingress.
     The extension MUST call this function, or
-    SxLibCompletedInjectedNetBufferLists for all NBLs recieved in
+    SxLibCompletedInjectedNetBufferLists for all NBLs received in
     SxExtStartCompleteNetBufferListsEgress.
 
 Arguments:
@@ -190,7 +190,7 @@ Routine Description:
 
 Arguments:
 
-    Switch - pointer to our switch object.
+    SxSwitch - pointer to our switch object.
 
     RequestType - NdisRequest[Set|Query|method]Information.
 
@@ -261,7 +261,7 @@ Routine Description:
     This function is called to get the current array
     of ports.
 
-    NOTE: It is necessary to synchonize this with SxExtPortCreate
+    NOTE: It is necessary to synchronize this with SxExtPortCreate
     and SxExtPortTeardown.
 
 Arguments:
@@ -292,12 +292,12 @@ Routine Description:
     This function is called to get the current array
     of NICs.
 
-    NOTE: It is necessary to synchonize this with SxExtNicConnect
+    NOTE: It is necessary to synchronize this with SxExtNicConnect
     and SxExtNicDisconnect.
 
 Arguments:
 
-    Switch - the Switch context
+    SxSwitch - the Switch context
 
     NicArray - the returned NIC array
 
@@ -322,7 +322,7 @@ Routine Description:
     This function is called to get the current array of the switch
     property queried.
 
-    NOTE: It is necessary to synchonize this with SxExtAddSwitchProperty
+    NOTE: It is necessary to synchronize this with SxExtAddSwitchProperty
     and SxExtDeleteSwitchProperty.
 
 Arguments:
@@ -332,8 +332,6 @@ Arguments:
     PropertyType - the PropertyType to query for
 
     PropertyId - the GUID of the property (from mof file)
-
-    PropertyVersion - the version of the property
 
     SwitchPropertyEnumParameters - the returned property enum
 
@@ -360,7 +358,7 @@ Routine Description:
     This function is called to get the current array of the switch
     property queried.
 
-    NOTE: It is necessary to synchonize this with SxExtAddPortProperty
+    NOTE: It is necessary to synchronize this with SxExtAddPortProperty
     and SxExtDeletePortProperty.
 
 Arguments:

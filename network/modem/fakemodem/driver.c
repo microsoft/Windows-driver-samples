@@ -15,8 +15,8 @@ Abstract:
 
     This is a simple form of function driver for fakemodem device. The driver
     doesn't handle any PnP and Power events because the framework provides
-    default behaviour for those events. This driver has enough support to
-    allow an user application (toast/notify.exe) to open the device
+    default behavior for those events. This driver has enough support to
+    allow a user application (toast/notify.exe) to open the device
     interface registered by the driver and send read, write or ioctl requests.
 
 Environment:

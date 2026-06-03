@@ -14,7 +14,7 @@ Module Name:
 Abstract:
 
 
- --*/
+--*/
 
 
 #ifndef _TRACE_H
