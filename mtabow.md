@@ -15,25 +15,35 @@
 * HLK MVHV tests: New HLK tests for testing Microsoft Teams Scenarios. These are simply thin wrappers around MVHV.  Note: MVHV is shipped as part of HLK MVHV tests.
 * "Underlying MVHV tests": The actual MVHV tests that are shipped inside the HLK.
 
+## Releases
+* HLK MVHV tests are under active development.  To refer to releases on this page we use terminology HLK_MVHV 0.01, HLK_MVHV 0.02, and so on.
+* HLK_MVHV 0.01:
+  * Released via EEAP "HLK- MVHV Integration"
+  * Link: https://partner.microsoft.com/en-us/dashboard/collaborate/packages/19783
+  * Initial release.
+  * Release date: 2026/06/03.
+* HLK_MVHV 0.02:
+  * Upcoming release.
+  * New functionality: System tests, more tests, log gathering.
 ## Mapping HLK  Tests to underlying MVHV Tests
 
 | No  | HLK Test Name                                 | HLK Test Type | MicrosoftVideoHardwareValidator.exe Command  | Comment                      | Associated Logfile    |
 |:----|:---------------------------------------------:|:-------------:|---------------------------------------------:|:----------------------------:|:---------------------:|
-|   1 | MVHV Basic Test                               | Device        | -v                                           | v0.01 test                   | MvhvVersionOutput.txt |
-|   2 | MVHV AV Encoder Test                          | Device        | execute_test Instantiation -c H264           | v0.01 test                   | MvhvSanityOutput.txt  |
-|   3 | MVHV Camera Test                              | Device        | execute_test --mode Camera                   | v0.01 test                   | MvhvCameraOutput.txt  |
-|   4 | Microsoft Teams MVHV Test Basic Test          | Device        | execute_testcategory -v                      | v0.02 test. To replace No 1? | mvhvoutput.txt        | 
-|   5 | Microsoft Teams MVHV Test AV Encoder Test     | Device/System | execute_testcategory Instantiation -c H264   | v0.02 test. To replace No 2? | mvhvoutput.txt        |
-|   6 | Microsoft Teams MVHV Test Camera Test         | Device/System | execute_test --mode Camera                   | v0.02 test. To replace No 3? | mvhvoutput.txt        |
-|   7 | Microsoft Teams MVHV Test Instantiation       | Device/System | execute_testcategory Instantiation           | v0.03 test. To replace No 2? | mvhvoutput.txt        |
-|   8 | Microsoft Teams MVHV Test DynamicControl      | Device/System | execute_testcategory DynamicControl          | v0.03 test.                  | mvhvoutput.txt        |
-|   9 | Microsoft Teams MVHV Test IDR                 | Device/System | execute_testcategory IDR                     | v0.03 test.                  | mvhvoutput.txt        |
-|  10 | Microsoft Teams MVHV Test Simulcast           | Device/System | execute_testcategory Simulcast               | v0.03 test.                  | mvhvoutput.txt        |
-|  11 | Microsoft Teams MVHV Test QualitySingleStream | Device/System | execute_testcategory QualitySingleStream     | v0.03 test.                  | mvhvoutput.txt        |
-|  12 | Microsoft Teams MVHV Test Basic               | Device/System | execute_testcategory Basic                   | v0.03 test.                  | mvhvoutput.txt        |
-|  13 | Microsoft Teams MVHV Test Camera              | Device/System | execute_test --mode Camera                   | v0.03 test. To replace No 3 and/or No 6? | mvhvoutput.txt        |
-|  14 | Microsoft Teams MVHV Test Audio               | Device/System | execute_test --mode Audio                    | v0.03 test.                  | mvhvoutput.txt        |
-|  15 | Microsoft Teams MVHV Test Render              | Device/System | execute_test --mode Render                   | v0.03 test.                  | mvhvoutput.txt        |
+|   1 | MVHV Basic Test                               | Device        | -v                                           | HLK_MVHV 0.01 test.           | MvhvVersionOutput.txt |
+|   2 | MVHV AV Encoder Test                          | Device        | execute_test Instantiation -c H264           | HLK_MVHV 0.01 test.           | MvhvSanityOutput.txt  |
+|   3 | MVHV Camera Test                              | Device        | execute_test --mode Camera                   | HLK_MVHV 0.01 test.           | MvhvCameraOutput.txt  |
+|   4 | Microsoft Teams MVHV Test Basic Test          | Device        | execute_testcategory -v                      | Future test. To replace No 1? | mvhvoutput.txt        | 
+|   5 | Microsoft Teams MVHV Test AV Encoder Test     | Device/System | execute_testcategory Instantiation -c H264   | Future test. To replace No 2? | mvhvoutput.txt        |
+|   6 | Microsoft Teams MVHV Test Camera Test         | Device/System | execute_test --mode Camera                   | Future test. To replace No 3? | mvhvoutput.txt        |
+|   7 | Microsoft Teams MVHV Test Instantiation       | Device/System | execute_testcategory Instantiation           | Future test. To replace No 2? | mvhvoutput.txt        |
+|   8 | Microsoft Teams MVHV Test DynamicControl      | Device/System | execute_testcategory DynamicControl          | Future test.                  | mvhvoutput.txt        |
+|   9 | Microsoft Teams MVHV Test IDR                 | Device/System | execute_testcategory IDR                     | Future test.                  | mvhvoutput.txt        |
+|  10 | Microsoft Teams MVHV Test Simulcast           | Device/System | execute_testcategory Simulcast               | Future test.                  | mvhvoutput.txt        |
+|  11 | Microsoft Teams MVHV Test QualitySingleStream | Device/System | execute_testcategory QualitySingleStream     | Future test.                  | mvhvoutput.txt        |
+|  12 | Microsoft Teams MVHV Test Basic               | Device/System | execute_testcategory Basic                   | Future test.                  | mvhvoutput.txt        |
+|  13 | Microsoft Teams MVHV Test Camera              | Device/System | execute_test --mode Camera                   | Future test. To replace No 3? | mvhvoutput.txt        |
+|  14 | Microsoft Teams MVHV Test Audio               | Device/System | execute_test --mode Audio                    | Future test.                  | mvhvoutput.txt        |
+|  15 | Microsoft Teams MVHV Test Render              | Device/System | execute_test --mode Render                   | Future test.                  | mvhvoutput.txt        |
 
 Device Test
 Device and System Test
@@ -72,16 +82,10 @@ robocopy /mir /nfl /ndl M:\ C:\Clips
 Dismount-DiskImage -ImagePath C:\Clips.iso
 ```
 
-##### Install appropriate .NET on Client
-The underlying Microsoft Teams Test Suite requires a special .NET version.  Unfortunately as of 0.0.1 release this is not automatically installed. As such you need to manually install.
-
-As of release 0.0.1 (MVP) we are supporting AMD64 and ARM64 architectures for clients or DUTs.
-
-For AMD64 devices please download .net from https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-9.0.16-windows-x64-installer?cid=getdotnetcore and run a setup wizard.
-
-For ARM64 devices please download .net from https://aka.ms/dotnet-core-applaunch?missing_runtime=true&arch=arm64&rid=win-arm64&os=win10&apphost_version=9.0.15  and run a setup wizard.
-
-
+##### Install .NET on Client
+The underlying Microsoft Teams Test Suite requires a special .NET version.  This is not automatically installed. As such you need to manually install.
+* For AMD64 devices: Download and run https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-9.0.16-windows-x64-installer?cid=getdotnetcore .
+* For ARM64 devices: Download and run https://aka.ms/dotnet-core-applaunch?missing_runtime=true&arch=arm64&rid=win-arm64&os=win10&apphost_version=9.0.15 .
 
 ##### Manually deploy MVHV from HLK controller to HLK Client
 
@@ -146,10 +150,11 @@ TODO: Will showcase the specific hardware we have tested on and results
 TODO
 
 ## Known issues and planned changes
-* TODO: Today you have to manually copy MVHV logs to target.   We hope to fix this by release 0.0.3.
-* TODO: Today you have only a few rudimentary tests.  We hope to have complete exposure of all of MVHV test by release 0.0.5.
-* TODO: Today detailed MVHV logs are left on Client machine. We hope to pull them back into HLK test results by release 0.0.3.
-* TODO: Today Clips deployment is a little messy. We hope to clean this up by release TBD.
-* TODO: Today detecting prerequisites is not done well.  We hope to remove some prerequisites (say, MVHV robocopy) and hope to add better detection of other prerequisites by release TBD.
-* TODO: Redundant copies of MVHV inside HLK.
-* TODO. Refine list of tests and targeting type.
+* TODO: Today you have to manually copy MVHV logs to target.   We hope to fix this by HLK_MVHV 0.0.2.
+* TODO: Today you have only a few rudimentary tests.  We hope to have a more complete exposure of all of MVHV test by HLK_MVHV 0.0.2.
+* TODO: Today detailed MVHV logs are left on Client machine. We hope to pull them back into HLK test results by HLK_MVHV 0.0.2.
+* TODO: Today Clips deployment is a little messy. We hope to clean this up by HLK_MVHV 0.02.
+* TODO: Today detecting prerequisites is not done well.  We hope to remove some prerequisites (say, MVHV robocopy) and hope to add better detection of other prerequisites by HLK_MVHV 0.02
+* TODO: Redundant copies of MVHV inside HLK. Fixed in HLK_MVHV 0.02.
+* TODO. Refine list of tests and targeting type. To be fixed post HLK_MVHV 0.02
+* TODO: .NET Installation: Why different/assymmetric installer link styles for AMD64 and for ARM64 versions?  As I can best see the homepage is https://dotnet.microsoft.com/en-us/download/dotnet/9.0 and the specific symmetric download links are https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-9.0.16-windows-x64-installer and https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-9.0.16-windows-arm64-installer , but I'd really prefer just a winget command, see https://learn.microsoft.com/en-us/dotnet/core/install/windows?WT.mc_id=dotnet-35129-website#install-with-windows-package-manager-winget .
