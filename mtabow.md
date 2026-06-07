@@ -15,7 +15,7 @@
 * HLK MVHV tests: New HLK tests for testing Microsoft Teams Scenarios. These are simply thin wrappers around MVHV.  Note: MVHV is shipped as part of HLK MVHV tests.
 * "Underlying MVHV tests": The actual MVHV tests that are shipped inside the HLK.
 
-## Mapping HLK MVHV Tests to underlying MVHV Test Suites
+## Mapping HLK  Tests to underlying MVHV Tests
 
 | No  | HLK Test Name                                 | HLK Test Type | MicrosoftVideoHardwareValidator.exe Command  | Associated Logfile    |
 |:----|:---------------------------------------------:|:-------------:|---------------------------------------------:|:---------------------:|
