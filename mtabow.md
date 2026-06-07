@@ -16,13 +16,27 @@
 * "Underlying MVHV tests": The actual MVHV tests that are shipped inside the HLK.
 
 ## Mapping HLK MVHV Tests to underlying MVHV Test Suites
-* TODO. Will show: HLK test type (system or device), HLK targeting information, matching MVHV command.
 
-| NO   | HLK Test Name         |                        MVHV Test Command                                                       |         Associated Logfile                |
-|:-----|:---------------------:|-----------------------------------------------------------------------------------------------:|:-----------------------------------------:|
-| 1    |  MVHV Basic Test      |                        MicrosoftVideoHardwareValidator.exe -v                                  |      MvhvVersionOutput.txt                |
-| 2    |  MVHV AV Encoder Test |                        MicrosoftVideoHardwareValidator.exe  execute_test Instantiation -c H264 |      MvhvSanityOutput.txt                 |
-| 3    |  MVHV Camera Test     |                        MicrosoftVideoHardwareValidator.exe  execute_test --mode Camera         |      MvhvCameraOutput.txt                 |
+| No  | HLK Test Name                                 | HLK Test Type | MicrosoftVideoHardwareValidator.exe Command  | Associated Logfile    |
+|:----|:---------------------------------------------:|:-------------:|---------------------------------------------:|:---------------------:|
+|   1 | MVHV Basic Test                               | Device        | -v                                           | MvhvVersionOutput.txt |
+|   2 | MVHV AV Encoder Test                          | Device        | execute_test Instantiation -c H264           | MvhvSanityOutput.txt  |
+|   3 | MVHV Camera Test                              | Device        | execute_test --mode Camera                   | MvhvCameraOutput.txt  |
+|   4 | Microsoft Teams MVHV Test Basic Test          | Device/System | execute_testcategory -v                      | mvhvoutput.txt        | 
+|   5 | Microsoft Teams MVHV Test AV Encoder Test     | Device/System | execute_testcategory Instantiation -c H264   | mvhvoutput.txt        |
+|   6 | Microsoft Teams MVHV Test Camera Test         | Device/System | execute_test --mode Camera                   | mvhvoutput.txt        |
+|   7 | Microsoft Teams MVHV Test Instantiation       | Device/System | execute_testcategory Instantiation           | mvhvoutput.txt        |
+|   8 | Microsoft Teams MVHV Test DynamicControl      | Device/System | execute_testcategory DynamicControl          | mvhvoutput.txt        |
+|   9 | Microsoft Teams MVHV Test IDR                 | Device/System | execute_testcategory IDR                     | mvhvoutput.txt        |
+|  10 | Microsoft Teams MVHV Test Simulcast           | Device/System | execute_testcategory Simulcast               | mvhvoutput.txt        |
+|  11 | Microsoft Teams MVHV Test QualitySingleStream | Device/System | execute_testcategory QualitySingleStream     | mvhvoutput.txt        |
+|  12 | Microsoft Teams MVHV Test Basic               | Device/System | execute_testcategory Basic                   | mvhvoutput.txt        |
+|  13 | Microsoft Teams MVHV Test Camera              | Device/System | execute_test --mode Camera                   | mvhvoutput.txt        |
+|  14 | Microsoft Teams MVHV Test Audio               | Device/System | execute_test --mode Audio                    | mvhvoutput.txt        |
+|  15 | Microsoft Teams MVHV Test Render              | Device/System | execute_test --mode Render                   | mvhvoutput.txt        |
+
+Device Test
+Device and System Test
 
 ## Running  MVHV as part of the Hardware Lab Kit (HLK)
 
@@ -138,3 +152,4 @@ TODO
 * TODO: Today Clips deployment is a little messy. We hope to clean this up by release TBD.
 * TODO: Today detecting prerequisites is not done well.  We hope to remove some prerequisites (say, MVHV robocopy) and hope to add better detection of other prerequisites by release TBD.
 * TODO: Redundant copies of MVHV inside HLK.
+* TODO. Refine list of tests and targeting type.
