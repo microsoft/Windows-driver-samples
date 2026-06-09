@@ -126,6 +126,7 @@ After installing mvhv on client machine please make sure that MicrosoftVideoHard
 In case any such lines are missing you can manually edit file to have these entries. 
 ```
 
+
 ## Running HLK MVHV Tests
 How to run, how to inspect test ran succesfully, how to analyze results, how to get detailed logs from client
 
@@ -136,6 +137,15 @@ In selection screen you have to select your GPU and select Device.Streaming.HMFT
 To run camera tests you have to do similar step for camera entry in selection screen and picking Device.Streaming.Camera.Videocapture
 Afterwards you will see MVHV tests in your Tests tab on your HLK Controller. 
 Select the test you wish to run and choose run selected option by right clicking the view 
+
+
+During Test Execution:
+----------------------
+While test is running relevant DUT (Device Under Test) will reboot a few times. In first cycle of reboot your device
+may enter OOBE setup. OOBE stands for Out Of Box Experience. Device may ask for some permissions and some setup questions.
+For the first time in current version please select and satify all the OOBE settings. After first iteration this won't be
+asked again until you reset the device or reinstall the Operating System on device.
+
 
 Test Results:
 -------------
