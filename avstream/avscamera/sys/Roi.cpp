@@ -143,7 +143,7 @@ Return Value:
 
     //  We assume the controls have been validated first.
     PKSCAMERA_EXTENDEDPROP_ROI_ISPCONTROL pIspCtrl =
-        reinterpret_cast<PKSCAMERA_EXTENDEDPROP_ROI_ISPCONTROL> (this+1);
+        reinterpret_cast<PKSCAMERA_EXTENDEDPROP_ROI_ISPCONTROL>(reinterpret_cast<PBYTE>(this) + sizeof(CRoiProperty));
 
     //  Loop thru the controls.
     for( ULONG i=0; i<m_Hdr.ControlCount; i++ )
@@ -155,6 +155,11 @@ Return Value:
 
         //  Advance to the next control.
         pIspCtrl = NextCtrl( pIspCtrl );
+        if(pIspCtrl == nullptr)
+        {
+            NT_ASSERTMSG("NextCtrl( pCtrl ) returned 0!  Should never happen!", FALSE);
+            return nullptr;
+		}
     }
 
     return nullptr;
@@ -192,13 +197,18 @@ Return Value:
     {
         //  We assume the controls have been validated first.
         PKSCAMERA_EXTENDEDPROP_ROI_ISPCONTROL pIspCtrl =
-            reinterpret_cast<PKSCAMERA_EXTENDEDPROP_ROI_ISPCONTROL> (this+1);
+            reinterpret_cast<PKSCAMERA_EXTENDEDPROP_ROI_ISPCONTROL>(reinterpret_cast<PBYTE>(this) + sizeof(CRoiProperty));
 
         //  Loop thru all the controls.
         for( ULONG i=0; i<m_Hdr.ControlCount; i++ )
         {
             //  Advance to the next control.
             pIspCtrl = NextCtrl( pIspCtrl );
+            if (pIspCtrl == nullptr)
+            {
+                NT_ASSERTMSG("NextCtrl( pCtrl ) returned 0!  Should never happen!", FALSE);
+                return nullptr;
+            }
         }
 
         ULONG SizeToCopy = ::GetSize(pCtrl);
@@ -277,14 +287,14 @@ Return Value:
     }
 
     PKSCAMERA_EXTENDEDPROP_ROI_ISPCONTROL pIspCtrl =
-        reinterpret_cast<PKSCAMERA_EXTENDEDPROP_ROI_ISPCONTROL> (this+1);
+        reinterpret_cast<PKSCAMERA_EXTENDEDPROP_ROI_ISPCONTROL>(reinterpret_cast<BYTE*>(this) + sizeof(*this));
 
     //  Loop thru the controls.
     for( ULONG i=0; i<m_Hdr.ControlCount; i++ )
     {
         //  Make sure there is room to inspect this control
-        if( Size < ByteDiffPtrs( this, pIspCtrl+1 ) ||
-                m_Hdr.Size < ByteDiffPtrs( &m_Hdr, pIspCtrl+1 ) )
+        if( Size < ByteDiffPtrs( this, reinterpret_cast<PBYTE>(pIspCtrl) + sizeof(*pIspCtrl) ) ||
+                m_Hdr.Size < ByteDiffPtrs( &m_Hdr, reinterpret_cast<PBYTE>(pIspCtrl) + sizeof(*pIspCtrl) ) )
         {
             //NT_ASSERT(FALSE);
             DBG_TRACE( "Failed(1): Size=%d, should be at least %Iu", Size, ByteDiffPtrs( this, pIspCtrl+1 ) );
@@ -324,7 +334,7 @@ Return Value:
             //  Index into to the control's ROI list.  Get the equivilent of "pIspCtrl->RoiInfo[j]"
             PKSCAMERA_EXTENDEDPROP_ROI_INFO pRoiInfo =
                 reinterpret_cast<PKSCAMERA_EXTENDEDPROP_ROI_INFO>
-                (((PBYTE) (pIspCtrl+1)) + (j * GetSizeOfRoiInfo(pIspCtrl->ControlId) ));
+                ((reinterpret_cast<PBYTE>(pIspCtrl) + sizeof(*pIspCtrl)) + (j * GetSizeOfRoiInfo(pIspCtrl->ControlId) ));
 
             //  Validate the cooridinates
             if( pRoiInfo->Region.top    < (LONG) TO_Q31(0) ||
@@ -500,6 +510,11 @@ Log()
 
         //  Advance to the next control.
         pIspCtrl = reinterpret_cast<CRoiIspControl *>( NextCtrl( pIspCtrl ) ) ;
+        if (pIspCtrl == nullptr)
+        {
+            NT_ASSERTMSG("NextCtrl( pCtrl ) returned 0!  Should never happen!", FALSE);
+            return;
+        }
     }
 }
 
