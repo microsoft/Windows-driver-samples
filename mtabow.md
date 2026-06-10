@@ -74,10 +74,10 @@ cd C:\
 
 Start-BitsTransfer `
   -Source "https://go.microsoft.com/fwlink/?LinkId=2368809" `
-  -Destination "C:\Clips.iso" `
-  -DisplayName "Download Clips.ISO" `
-  -Description "Downloading Clips.ISO"
-$diskImage = Mount-DiskImage -NoDriveLetter -PassThru -ImagePath C:\Clips.iso
+  -Destination "C:\MVHV_Clips_260603.iso" `
+  -DisplayName "Download ISO" `
+  -Description "Downloading ISO"
+$diskImage = Mount-DiskImage -NoDriveLetter -PassThru -ImagePath C:\MVHV_Clips_260603.iso
 $volumeInfo = $diskImage | Get-Disk | Get-Partition | Get-Volume
 mountvol M: $volumeInfo.UniqueId
 robocopy /mir /nfl /ndl M:\ C:\Clips
