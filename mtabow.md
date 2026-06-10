@@ -77,11 +77,18 @@ Start-BitsTransfer `
   -Destination "C:\MVHV_Clips_260603.iso" `
   -DisplayName "Download ISO" `
   -Description "Downloading ISO"
+
+(Get-FileHash "C:\MVHV_Clips_260603.iso").Hash
+# Expected:
+# AF70E5AA5469F1A915095E8B3A9BB1B7F429F9D59739BAF4C1D0C77FCF4F31FB
+
 $diskImage = Mount-DiskImage -NoDriveLetter -PassThru -ImagePath C:\MVHV_Clips_260603.iso
 $volumeInfo = $diskImage | Get-Disk | Get-Partition | Get-Volume
 mountvol M: $volumeInfo.UniqueId
+
 robocopy /mir /nfl /ndl M:\ C:\Clips
-Dismount-DiskImage -ImagePath C:\Clips.iso
+
+Dismount-DiskImage -ImagePath C:\MVHV_Clips_260603.iso
 ```
 
 ##### Install .NET on Client
