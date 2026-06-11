@@ -69,24 +69,38 @@ The underlying Microsoft Teams Test Suite requires a 45 GB (!!!) large collectio
 Here follows instructions how to install and you may of course adjust those based on your lab setup.  Ultimately however the Clips files must end up on the HLK Client device and packed out in C:\Clips .
 
 ```
+(Elevated Command Prompt)
+
 powershell
+
 cd C:\
 
-Start-BitsTransfer `
+#
+# Download MVHV_Clips_260603.iso locally.
+# Return number of minutes to download - on a fast connection as little as an hour.
+# 
+
+(Measure-Command { `
+  Start-BitsTransfer `
   -Source "https://go.microsoft.com/fwlink/?LinkId=2368809" `
   -Destination "C:\MVHV_Clips_260603.iso" `
-  -DisplayName "Download ISO" `
-  -Description "Downloading ISO"
+}).TotalMinutes
 
-(Get-FileHash "C:\MVHV_Clips_260603.iso").Hash
-# Expected:
-# AF70E5AA5469F1A915095E8B3A9BB1B7F429F9D59739BAF4C1D0C77FCF4F31FB
+#
+# Check ISO hash.  Should return true.
+#
 
-$diskImage = Mount-DiskImage -NoDriveLetter -PassThru -ImagePath C:\MVHV_Clips_260603.iso
-$volumeInfo = $diskImage | Get-Disk | Get-Partition | Get-Volume
-mountvol M: $volumeInfo.UniqueId
+(((Get-FileHash "C:\MVHV_Clips_260603.iso").Hash) -eq "AF70E5AA5469F1A915095E8B3A9BB1B7F429F9D59739BAF4C1D0C77FCF4F31FB")
 
-robocopy /mir /nfl /ndl M:\ C:\Clips
+#
+# Mount and deploy files.
+#
+
+$diskImage = Mount-DiskImage -PassThru -ImagePath C:\MVHV_Clips_260603.iso
+$volume = $diskImage | Get-Volume
+$driveLetter = $volume.DriveLetter + ":"
+
+robocopy /mir "$driveLetter\" C:\Clips
 
 Dismount-DiskImage -ImagePath C:\MVHV_Clips_260603.iso
 ```
