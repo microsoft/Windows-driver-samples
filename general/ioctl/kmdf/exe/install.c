@@ -531,11 +531,7 @@ SetupDriverName(
     //
     // Close open file handle.
     //
-
-    if (fileHandle) {
-
-        CloseHandle(fileHandle);
-    }
+    CloseHandle(fileHandle);
 
     //
     // Indicate success.
