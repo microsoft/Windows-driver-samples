@@ -77,32 +77,32 @@ cd C:\
 
 #
 # Download MVHV_Clips_260603.iso locally.
-# Return number of minutes to download - on a fast connection as little as an hour.
+# On a fast connection as little as an hour.
 # 
 
-(Measure-Command { `
-  Start-BitsTransfer `
+$iso = "C:\MVHV_Clips_260603.iso"
+
+Start-BitsTransfer `
   -Source "https://go.microsoft.com/fwlink/?LinkId=2368809" `
-  -Destination "C:\MVHV_Clips_260603.iso" `
-}).TotalMinutes
+  -Destination $iso
 
 #
-# Check ISO hash.  Should return true.
+# Check ISO size and hash.  Both should return true.
 #
-
-(((Get-FileHash "C:\MVHV_Clips_260603.iso").Hash) -eq "AF70E5AA5469F1A915095E8B3A9BB1B7F429F9D59739BAF4C1D0C77FCF4F31FB")
+(Get-Item $iso).Length -eq 62675183616
+(((Get-FileHash $iso).Hash) -eq "AF70E5AA5469F1A915095E8B3A9BB1B7F429F9D59739BAF4C1D0C77FCF4F31FB")
 
 #
 # Mount and deploy files.
 #
 
-$diskImage = Mount-DiskImage -PassThru -ImagePath C:\MVHV_Clips_260603.iso
+$diskImage = Mount-DiskImage -PassThru -ImagePath $iso
 $volume = $diskImage | Get-Volume
 $driveLetter = $volume.DriveLetter + ":"
 
 robocopy /mir "$driveLetter\" C:\Clips
 
-Dismount-DiskImage -ImagePath C:\MVHV_Clips_260603.iso
+Dismount-DiskImage -ImagePath $iso
 ```
 
 ##### Install .NET on Client
