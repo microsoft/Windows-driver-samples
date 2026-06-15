@@ -2,7 +2,7 @@
 
 If you use GitHub to host your code, you can leverage [GitHub Actions](https://docs.github.com/en/actions) to create automated workflows to build your driver projects.
 
-`windows-2022` runner (provided by `windows-latest`) is configured with Windows Driver Kit version 22H2 and Visual Studio 2022 off the box, so most solutions can be built by running `msbuild` directly.
+`windows-2025-vs2026` runner is configured with Visual Studio 2026 off the box, so most solutions can be built by running `msbuild` directly using the WDK NuGet package.
 
 ```yaml
 name: Build driver solution
@@ -16,7 +16,7 @@ jobs:
       matrix:
         configuration: [Debug, Release]
         platform: [x64]
-    runs-on: windows-2022
+    runs-on: windows-2025-vs2026
     env:
       Solution_Path: path\to\driver\solution.sln
     steps:

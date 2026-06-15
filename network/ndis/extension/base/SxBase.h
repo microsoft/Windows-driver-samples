@@ -4,7 +4,7 @@ Copyright (c) Microsoft Corporation. All Rights Reserved.
 
 Module Name:
 
-    SxBase.c
+    SxBase.h
 
 Abstract:
 
@@ -58,18 +58,18 @@ typedef struct _SX_SWITCH_OBJECT
     //
     SX_SWITCH_DATAFLOW_STATE DataFlowState;
     SX_SWITCH_CONTROLFLOW_STATE ControlFlowState;
-    
+
     //
     // Management fields.
     //
     volatile LONG PendingInjectedNblCount;
     volatile LONG PendingOidCount;
-    
+
     //
     // Control Path Management.
     //
     PNDIS_SWITCH_NIC_OID_REQUEST OldNicRequest;
-    
+
 } SX_SWITCH_OBJECT, *PSX_SWITCH_OBJECT;
 
 typedef struct _SX_OID_REQUEST

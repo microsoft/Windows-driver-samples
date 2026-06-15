@@ -34,7 +34,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Framework_WFPSamplerCalloutDriver.h" /// . 
-#include "NotifyFunctions_BasicCallouts.tmh"   /// $(OBJ_PATH)\$(O)\ 
+#include "NotifyFunctions_BasicCallouts.tmh"   /// $(OBJ_PATH)\$(O)\
 
 /**
  @private_function="PrvBasicNotificationWorkItemRoutine"

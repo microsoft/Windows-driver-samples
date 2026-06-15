@@ -15,7 +15,7 @@ The AvsCamera sample provides a pin-centric AVStream capture driver for a simula
 
 This sample features strong parameter validation and overflow detection.  It provides validation and simulation logic for all advanced camera controls in the CCaptureFilter class.  A real camera driver would replace the filter automation table and CSensor and CSynthesizer class hierarchies to produce a new camera driver.
 
-The sample comes with its own MFT0 called AvsCameraMft0.dll.  This MFT0 is used to parse metadata supplied in the AvsCamera driver samples.  The metadata communications from the driver is primarily a private channel to its MFT0.  The MFT0 is responsible for reformatting that information for the capture pipeline.
+The sample comes with its own DeviceMFT called AvsCameraMft0.dll.  This DeviceMFT is used to parse metadata supplied in the AvsCamera driver samples.  The metadata communications from the driver is primarily a private channel to its DeviceMFT.  The DeviceMFT is responsible for reformatting that information for the capture pipeline.
 
 ## Universal Windows Driver Compliant
 
@@ -23,4 +23,4 @@ This sample builds a Universal Windows Driver. It uses only APIs and DDIs that a
 
 ## Building the sample
 
-The AvsCamera sample can be built by opening the AvsCamera.sln solution file. A successful build produces AvsCamera.sys, AvsCameraMft0.dll, AvsCamera.inf and AvsCamera.cat.
+The AvsCamera sample can be built by opening the AvsCamera.sln solution file. A successful build produces AvsCamera.sys, AvsCameraDMFT.dll, AvsCamera.inf and AvsCamera.cat.

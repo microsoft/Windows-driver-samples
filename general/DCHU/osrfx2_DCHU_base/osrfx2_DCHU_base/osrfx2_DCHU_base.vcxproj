@@ -26,7 +26,7 @@
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
     <SampleGuid>{F915ED95-7BE9-4CDB-B09A-0D3F4C9657FE}</SampleGuid>
     <ProjectName>osrfx2_DCHU_base</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -136,12 +136,15 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;UNICODE;_UNICODE</PreprocessorDefinitions>
     </Midl>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\onecore.lib;$(SDK_LIB_PATH)\WppRecorderUM.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);onecore.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries />
     </Link>
     <Inf>
       <TimeStamp>1.0.0.0</TimeStamp>
     </Inf>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -162,12 +165,15 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;UNICODE;_UNICODE</PreprocessorDefinitions>
     </Midl>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\onecore.lib;$(SDK_LIB_PATH)\WppRecorderUM.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);onecore.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries />
     </Link>
     <Inf>
       <TimeStamp>1.0.0.0</TimeStamp>
     </Inf>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -188,12 +194,15 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;UNICODE;_UNICODE</PreprocessorDefinitions>
     </Midl>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\onecore.lib;$(SDK_LIB_PATH)\WppRecorderUM.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);onecore.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries />
     </Link>
     <Inf>
       <TimeStamp>1.0.0.0</TimeStamp>
     </Inf>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -214,12 +223,15 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions);EVENT_TRACING;UNICODE;_UNICODE</PreprocessorDefinitions>
     </Midl>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SDK_LIB_PATH)\onecore.lib;$(SDK_LIB_PATH)\WppRecorderUM.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);onecore.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries />
     </Link>
     <Inf>
       <TimeStamp>1.0.0.0</TimeStamp>
     </Inf>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemGroup>
     <FilesToPackage Include="$(SolutionDir)$(Platform)\$(ConfigurationName)\osrfx2_DCHU_base.dll" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

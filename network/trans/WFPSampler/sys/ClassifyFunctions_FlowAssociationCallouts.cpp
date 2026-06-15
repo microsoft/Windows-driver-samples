@@ -39,7 +39,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Framework_WFPSamplerCalloutDriver.h"           /// .
-#include "ClassifyFunctions_FlowAssociationCallouts.tmh" /// $(OBJ_PATH)\$(O)\ 
+#include "ClassifyFunctions_FlowAssociationCallouts.tmh" /// $(OBJ_PATH)\$(O)\
 
 NTSTATUS PerformFlowAssociation(_In_ const FWPS_INCOMING_METADATA_VALUES* pMetadata,
                                 _In_ const PC_FLOW_ASSOCIATION_DATA* pFlowAssociationData)

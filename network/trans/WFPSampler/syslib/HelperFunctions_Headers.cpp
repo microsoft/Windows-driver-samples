@@ -84,7 +84,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "HelperFunctions_Include.h"   /// .
-#include "HelperFunctions_Headers.tmh" /// $(OBJ_PATH)\$(O)\ 
+#include "HelperFunctions_Headers.tmh" /// $(OBJ_PATH)\$(O)\
 
 /**
  @private_kernel_helper_function="PrvKrnlHlprCopyBufferToMDL"

@@ -813,42 +813,42 @@ PlatformRequestPreAuthentication(
 
 RT_STATUS
 PlatformReadFile(
-	IN		PVOID		Adapter,
-	IN		ps1Byte		szFileName,
-	IN OUT	pu1Byte		pBufOfLines,
-	IN		s4Byte		nMaxNumLine,
-	IN		s4Byte		nMaxByteCntLine,
-	OUT		ps4Byte		pnNumLines	
+	IN		PVOID				Adapter,
+	IN		UNICODE_STRING*		fileName,
+	IN OUT	pu1Byte				pBufOfLines,
+	IN		s4Byte				nMaxNumLine,
+	IN		s4Byte				nMaxByteCntLine,
+	OUT		ps4Byte				pnNumLinesRead
 	);
 
 RT_STATUS
 PlatformOpenFile(
-	IN		PVOID		Adapter,
-	IN		ps1Byte		szFileName,
-	IN OUT	PRT_FILE_HANDLER		pFileHandler
+	IN		UNICODE_STRING*		fileName,
+	IN OUT	HANDLE*				fileHandle
 	);
 
 RT_STATUS
 PlatformMapFile(
-	IN OUT	PRT_FILE_HANDLER	pFileHandler
+	IN OUT	HANDLE*	fileHandle,
+	OUT		u1Byte* contentBuffer,
+	OUT		s4Byte* contentBufferLength
 	);
 
 VOID
 PlatformUnMapFile(
-	IN OUT	PRT_FILE_HANDLER	pFileHandler
+	IN OUT	u1Byte* contentBuffer
 	);
 
 VOID
 PlatformCloseFile(
-	IN OUT	PRT_FILE_HANDLER	pFileHandler
+	IN OUT	HANDLE* fileHandle
 	);
 
 RT_STATUS
 PlatformReadAndMapFile(
-	IN		PVOID		Adapter,
-	IN		ps1Byte		szFileName,
-	IN OUT	pu1Byte		pOutFile,
-	IN OUT	pu4Byte	UNALIGNED	pFileSize
+	IN		UNICODE_STRING*		fileName,
+	OUT		u1Byte*				outFileBuffer,
+	OUT		u4Byte*				outFileBufferLength
 	);
 
 BOOLEAN

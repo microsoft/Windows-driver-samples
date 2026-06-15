@@ -1,8 +1,0 @@
-[Version]
-Signature="$WINDOWS NT$"
-
-[nonpnp.NT.Wdf]
-KmdfService = nonpnp, nonpnp_Service_kmdfInst
-
-[nonpnp_Service_kmdfInst]
-KmdfLibraryVersion = 1.11

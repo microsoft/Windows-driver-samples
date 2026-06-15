@@ -23,7 +23,10 @@ void* __cdecl operator new(size_t Size, POOL_TYPE PoolType)
 
     Size = (Size != 0) ? Size : 1;
     
-    void* pObject = ExAllocatePoolWithTag(PoolType, Size, BDDTAG);
+    // Note that ExAllocatePool2 replaces ExAllocatePool* APIs in OS's starting
+    // with Windows 10, version 2004. If your driver targets previous versions it
+    // should use ExAllocatePoolZero instead.
+    void* pObject = ExAllocatePool2(PoolType, Size, BDDTAG);
 
 #if DBG
     if (pObject != NULL)
@@ -44,7 +47,7 @@ void* __cdecl operator new[](size_t Size, POOL_TYPE PoolType)
 
     Size = (Size != 0) ? Size : 1;
     
-    void* pObject = ExAllocatePoolWithTag(PoolType, Size, BDDTAG);
+    void* pObject = ExAllocatePool2(PoolType, Size, BDDTAG);
 
 #if DBG
     if (pObject != NULL)

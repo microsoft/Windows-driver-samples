@@ -30,7 +30,7 @@ CBasePin::CBasePin( _In_ ULONG id, _In_ CMultipinMft *parent) :
     , m_setMediaType(nullptr)
     , m_nRefCount(0)
     , m_state(DeviceStreamState_Stop)
-    , m_dwWorkQueueId(MFASYNC_CALLBACK_QUEUE_UNDEFINED)
+    , m_dwWorkQueueId(MFASYNC_CALLBACK_QUEUE_MULTITHREADED)
 {
     
 }
@@ -505,7 +505,7 @@ STDMETHODIMP COutPin::AddPin(
 
     }
 #if defined MF_DEVICEMFT_ADD_GRAYSCALER_ // Take this out to remove the gray scaler
-    m_queue = new (std::nothrow) CPinQueueWithGrayScale(inputPinId);
+    m_queue = new (std::nothrow) CPinQueueWithGrayScale(inputPinId,Parent());
 #else
     m_queue = new (std::nothrow) CPinQueue(inputPinId,Parent());
 #endif

@@ -988,7 +988,7 @@ Return Value:
 
     NcCompatInit( );
 
-    Status = NcInitializeMapping( RegistryPath );
+    Status = NcInitializeMapping( DriverObject, RegistryPath );
     if (!NT_SUCCESS( Status )) {
         return Status;
     }

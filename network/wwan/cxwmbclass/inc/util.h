@@ -2,14 +2,12 @@
 //    Copyright (C) Microsoft.  All rights reserved.
 //
 #pragma once
-typedef enum
-{
-    MbbPoolTagDefault = '0CBM',
-    MbbPoolTagNtbSend = '1CBM',
-    MbbPoolTagNblSend = '2CBM',
-    MbbPoolTagNbSend = '3CBM',
-    MbbPoolTagMdlReceive = '6CBM'
-} MBB_POOL_TAG;
+
+#define MbbPoolTagDefault '0CBM'
+#define MbbPoolTagNtbSend '1CBM'
+#define MbbPoolTagNblSend '2CBM'
+#define MbbPoolTagNbSend '3CBM'
+#define MbbPoolTagMdlReceive '6CBM'
 
 #define ALLOCATE_PAGED_POOL(_y) ExAllocatePool2(POOL_FLAG_PAGED, _y, MbbPoolTagDefault)
 #define ALLOCATE_NONPAGED_POOL(_y) ExAllocatePool2(POOL_FLAG_NON_PAGED, _y, MbbPoolTagDefault)

@@ -111,7 +111,7 @@ Return Value:
             {
                 //
                 // The adapter is no longer in a ready state, so we were not able to take a reference on the
-                // receive block. Add the RCB back to the free list and fail this receive. 
+                // receive block. Add the RCB back to the free list and fail this receive.
                 //
                 NdisInterlockedInsertTailList(
                     &Adapter->FreeRcbList,
@@ -136,14 +136,14 @@ Return Value:
             //
             if(Status == NDIS_STATUS_RESOURCES)
             {
-                ++Adapter->RxResourceErrors;   
+                ++Adapter->RxResourceErrors;
             }
             else if(Status != NDIS_STATUS_INVALID_ADDRESS)
             {
                 ++Adapter->RxRuntErrors;
             }
             //
-            // Recover RCB 
+            // Recover RCB
             //
             ReturnRCB(Adapter, Rcb);
             Rcb = NULL;
@@ -186,7 +186,7 @@ Return Value:
 --*/
 {
     PUCHAR Data = Rcb->Data;
-    ASSERT(Data); 
+    ASSERT(Data);
 
     DEBUGP(MP_TRACE, "[%p] ---> ReturnRCB. RCB: %p\n", Adapter, Rcb);
 

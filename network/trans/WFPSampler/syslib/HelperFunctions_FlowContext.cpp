@@ -42,7 +42,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "HelperFunctions_Include.h"        /// .
-#include "HelperFunctions_FlowContext.tmh"  /// $(OBJ_PATH)\$(O)\ 
+#include "HelperFunctions_FlowContext.tmh"  /// $(OBJ_PATH)\$(O)\
 
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
@@ -105,7 +105,7 @@ _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
 _Success_(return == STATUS_SUCCESS && *ppFlowContext == 0)
-inline NTSTATUS KrnlHlprFlowContextDestroy(_Inout_ FLOW_CONTEXT** ppFlowContext)
+NTSTATUS KrnlHlprFlowContextDestroy(_Inout_ FLOW_CONTEXT** ppFlowContext)
 {
 #if DBG
       

@@ -27,11 +27,11 @@ STRINGTABLE DISCARDABLE
 // Version resources
 //
 #include <ntverp.h>
-#define VER_FILETYPE                VFT_DLL
+#define VER_FILETYPE                VFT_APP
 #define VER_FILESUBTYPE             VFT2_UNKNOWN
-#define VER_FILEDESCRIPTION_STR     "Windows Setup API"
-#define VER_INTERNALNAME_STR        "SETUPAPI.DLL"
-#define VER_ORIGINALFILENAME_STR    "SETUPAPI.DLL"
+#define VER_FILEDESCRIPTION_STR     "Device Console"
+#define VER_INTERNALNAME_STR        "DevCon.exe"
+#define VER_ORIGINALFILENAME_STR    "DevCon.exe"
 #include <common.ver>
 
 #include "msg.rc"

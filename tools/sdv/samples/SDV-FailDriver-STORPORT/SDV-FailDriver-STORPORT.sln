@@ -1,24 +1,26 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 12.0
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lsi_u3", "driver\lsi_u3.vcxproj", "{67CDF2E4-3B00-4AD2-9DEC-6B673C8C125C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Win32 = Debug|Win32
-		Release|Win32 = Release|Win32
+		Debug|ARM64 = Debug|ARM64
 		Debug|x64 = Debug|x64
+		Release|ARM64 = Release|ARM64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{67CDF2E4-3B00-4AD2-9DEC-6B673C8C125C}.Debug|Win32.ActiveCfg = Debug|Win32
-		{67CDF2E4-3B00-4AD2-9DEC-6B673C8C125C}.Debug|Win32.Build.0 = Debug|Win32
-		{67CDF2E4-3B00-4AD2-9DEC-6B673C8C125C}.Release|Win32.ActiveCfg = Release|Win32
-		{67CDF2E4-3B00-4AD2-9DEC-6B673C8C125C}.Release|Win32.Build.0 = Release|Win32
+		{67CDF2E4-3B00-4AD2-9DEC-6B673C8C125C}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{67CDF2E4-3B00-4AD2-9DEC-6B673C8C125C}.Debug|ARM64.Build.0 = Debug|ARM64
+		{67CDF2E4-3B00-4AD2-9DEC-6B673C8C125C}.Debug|ARM64.Deploy.0 = Debug|ARM64
 		{67CDF2E4-3B00-4AD2-9DEC-6B673C8C125C}.Debug|x64.ActiveCfg = Debug|x64
 		{67CDF2E4-3B00-4AD2-9DEC-6B673C8C125C}.Debug|x64.Build.0 = Debug|x64
+		{67CDF2E4-3B00-4AD2-9DEC-6B673C8C125C}.Release|ARM64.ActiveCfg = Release|ARM64
+		{67CDF2E4-3B00-4AD2-9DEC-6B673C8C125C}.Release|ARM64.Build.0 = Release|ARM64
+		{67CDF2E4-3B00-4AD2-9DEC-6B673C8C125C}.Release|ARM64.Deploy.0 = Release|ARM64
 		{67CDF2E4-3B00-4AD2-9DEC-6B673C8C125C}.Release|x64.ActiveCfg = Release|x64
 		{67CDF2E4-3B00-4AD2-9DEC-6B673C8C125C}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection

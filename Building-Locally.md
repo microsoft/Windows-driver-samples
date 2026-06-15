@@ -1,76 +1,175 @@
-# How to build locally
+# Building Driver Samples Locally
 
-## Step 1: Install git and pwsh 7.3.0
-```
+## Prerequisites
+
+### Required tools
+
+Install PowerShell and Git if you don't have them already:
+
+```powershell
 winget install --id Microsoft.Powershell --source winget
-winget install --id Git.Git --source winget`
+winget install --id Git.Git --source winget
 ```
 
-## Step 2: Create a "driver build environment"
+### Install a supported version of the WDK
 
-There are multiple ways to achieve this. For example, [install Visual Studio and the Windows Driver Kit](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk#download-and-install-the-windows-11-version-22h2-wdk). 
+See [Download the Windows Driver Kit (WDK)](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) for all available installation options (NuGet packages, MSI installer, EWDK ISO).
 
-You can also just download and mount the EWDK as well and in the following example that is what we will do:
-  * Download the Windows 11, version 22H2 EWDK ISO image from the [official site](https://learn.microsoft.com/en-us/legal/windows/hardware/enterprise-wdk-license-2022)
-  * Mount ISO image
-  * Open a terminal
-  * `.\LaunchBuildEnv`
-  
-## Step 3: Clone Windows Driver Samples and checkout main branch
+### Clone the repository
 
-```
-cd path\to\your\repos
-git clone --recurse-submodules https://github.com/microsoft/Windows-driver-samples.git
-cd Windows-driver-samples
+```powershell
+git clone --recurse-submodules "https://github.com/microsoft/Windows-driver-samples.git"
+cd ".\Windows-driver-samples"
 ```
 
-## Step 4: Check all samples builds with expected results for all flavors
+### Environment specific requisites
 
-```
-pwsh
-.\Build-AllSamples
-```
-Above builds all samples for all configurations and platforms.  
+- If you are using the WDK via **NuGet**: install NuGet and restore the packages:
 
-You can refine, for example as follows:
-```
-pwsh
-.\Build-AllSamples -Samples '^tools.' -Configurations 'Debug','Release' -Platforms 'x64','arm64'
+```powershell
+winget install --id Microsoft.NuGet --source winget
+nuget restore -PackagesDirectory ".\packages"
 ```
 
-Expected output:
+- If you are using the WDK via **EWDK**: mount the EWDK ISO, open a terminal in the mounted drive, and launch the build environment:
+
+```powershell
+.\LaunchBuildEnv
 ```
-Samples:              153
-Configurations:       2 (Debug Release)
-Platforms:            2 (x64 arm64)
-Combinations:         612
-Logical Processors:   12
-Throttle factor:      5
-Throttle limit:       60
 
-T: Combinations
-B: Built
-R: Build is running currently
-P: Build is pending an available build slot
 
-S: Built and result was 'Succeeded'
-E: Built and result was 'Excluded'
-U: Built and result was 'Unsupported' (Platform and Configuration combination)
-F: Built and result was 'Failed'
+---
+
+## Building the Samples
+
+The `Build-Samples.ps1` script auto-detects which WDK environment is active and will build all the samples with all the configurations by default. Just run the following command from **PowerShell**:
+
+```powershell
+.\Build-Samples.ps1
+```
+
+---
+
+## Expected Output
+
+```
+--- WDK Sample Build Plan ------------------------------------------
+  Environment:      NuGet
+  Build Number:     26100
+  NuGet Version:    10.0.26100.1
+  WDK VS Component: 10.0.26100.1882
+  InfVerif Options: /samples
+
+  Samples:          132 (0 skipped)
+  Configurations:   Debug, Release
+  Platforms:        x64, arm64
+  Combinations:     528
+  Exclusions:       4
+
+  Parallelism:      60 jobs (12 cores x 5)
+  Disk Free (GB):   ...
+  Wipe Outputs:     False
+--------------------------------------------------------------------
+
+Progress legend:
+  T=Total  B=Built  R=Running  P=Pending
+  S=Succeeded  E=Excluded  U=Unsupported  F=Failed  O=Sporadic
 
 Building all combinations...
 
-Built all combinations.
+--- Build Complete -------------------------------------------------
+  Elapsed:          12m 42s
+  Disk Free (GB):   ...
 
-Elapsed time:         12 minutes, 34 seconds.
-Samples:              153
-Configurations:       2 (Debug Release)
-Platforms:            2 (x64 arm64)
-Combinations:         612
-Succeeded:            326
-Excluded:             56
-Unsupported:          230
-Failed:               0
-Log files directory:  .\_logs
-Overview report:      .\_logs\overview.htm
+  Samples:          132
+  Configurations:   Debug, Release
+  Platforms:        x64, arm64
+  Combinations:     528
+
+  Succeeded:        526
+  Excluded:         0
+  Unsupported:      2
+  Failed:           0
+  Sporadic:         0
+
+  Log directory:    .\_logs
+  CSV report:       .\_logs\_overview.csv
+  HTML report:      .\_logs\_overview.htm
+--------------------------------------------------------------------
 ```
+
+---
+
+## Ways to Run
+
+```powershell
+# Show full parameter reference:
+Get-Help .\Build-Samples.ps1 -Detailed
+
+# Build everything (all samples, configurations, platforms):
+.\Build-Samples.ps1
+
+# Verbose output — prints start/finish of each sample:
+.\Build-Samples.ps1 -Verbose
+
+# Limit parallelism (useful for debugging build failures):
+.\Build-Samples.ps1 -ThrottleLimit 1
+
+# Build only samples inside the 'tools' folder:
+.\Build-Samples.ps1 -Samples 'tools.*'
+
+# Build a specific sample for Debug|x64 only:
+.\Build-Samples.ps1 -Samples 'tools.sdv.samples.sampledriver' -Configurations 'Debug' -Platforms 'x64'
+```
+
+---
+
+## Additional Notes
+
+### Pre-release WDK: disable strong name validation
+
+Required only when using pre-release WDK versions. Run from an elevated command prompt:
+
+```
+reg add HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\StrongName\Verification\*,31bf3856ad364e35 /v TestPublicKey /t REG_SZ /d 00240000048000009400000006020000002400005253413100040000010001003f8c902c8fe7ac83af7401b14c1bd103973b26dfafb2b77eda478a2539b979b56ce47f36336741b4ec52bbc51fecd51ba23810cec47070f3e29a2261a2d1d08e4b2b4b457beaa91460055f78cc89f21cd028377af0cc5e6c04699b6856a1e49d5fad3ef16d3c3d6010f40df0a7d6cc2ee11744b5cfb42e0f19a52b8a29dc31b0 /f
+
+reg add HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\StrongName\Verification\*,31bf3856ad364e35 /v TestPublicKey /t REG_SZ /d 00240000048000009400000006020000002400005253413100040000010001003f8c902c8fe7ac83af7401b14c1bd103973b26dfafb2b77eda478a2539b979b56ce47f36336741b4ec52bbc51fecd51ba23810cec47070f3e29a2261a2d1d08e4b2b4b457beaa91460055f78cc89f21cd028377af0cc5e6c04699b6856a1e49d5fad3ef16d3c3d6010f40df0a7d6cc2ee11744b5cfb42e0f19a52b8a29dc31b0 /f
+```
+
+See [Installing preview versions of the WDK](https://learn.microsoft.com/en-us/windows-hardware/drivers/installing-preview-versions-wdk) for more details.
+
+### Building `usb\usbview`: .NET Framework targeting packs
+
+The `usb\usbview` sample requires .NET Framework 4.7.2 and 4.8.1. Choose one option:
+
+- **VS installer** — add the *.NET Framework 4.7.2 targeting pack* and *.NET Framework 4.8.1 SDK* individual components when installing Visual Studio.
+- **EWDK** — all required prerequisites are already included.
+- **Manual** — download both Developer Packs from https://aka.ms/msbuild/developerpacks.
+
+### NuGet: restoring a specific WDK version
+
+To pin a specific WDK NuGet version before running `nuget restore`:
+
+1. Open `.\packages.config` and update the version in all entries.
+2. Open `.\Directory.build.props` and set the same version.
+3. Run `nuget restore -PackagesDirectory ".\packages"`.
+
+Useful NuGet commands:
+
+```powershell
+# Add an online feed:
+nuget sources add -Name "MyFeed" -Source "https://nugetserver.com/_packaging/feedname/nuget/v3/index.json"
+
+# Add a local feed:
+nuget sources add -Name "MyFeed" -Source "\\path\to\mylocalrepo"
+
+# Remove a feed:
+nuget sources remove -Name "MyFeed"
+
+# List local caches:
+nuget locals all -list
+
+# Clear local caches:
+nuget locals all -clear
+```
+

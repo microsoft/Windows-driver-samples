@@ -84,9 +84,6 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
                              argumentList);
    if(status != NO_ERROR)
    {
-      wprintf(L"HlprLogError : StringCchVPrintf() [status: %#x]",
-              status);
-
       HLPR_BAIL;
    }
 
@@ -95,9 +92,6 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
                             &size);
    if(status != NO_ERROR)
    {
-      wprintf(L"HlprLogError : StringCchLength() [status: %#x]",
-              status);
-
       HLPR_BAIL;
    }
 
@@ -115,13 +109,8 @@ VOID HlprLogError(_In_ PCWSTR pMessage,
                             pLogMessage);
    if(status != NO_ERROR)
    {
-      wprintf(L"HlprLogError : StringCchPrintf() [status: %#x]",
-              status);
-
       HLPR_BAIL;
    }
-
-   wprintf(pActualMessage);
 
    HLPR_BAIL_LABEL:
 
@@ -200,8 +189,6 @@ VOID HlprLogInfo(_In_ PCWSTR pMessage,
 
       HLPR_BAIL;
    }
-
-   wprintf(pActualMessage);
 
    HLPR_BAIL_LABEL:
 

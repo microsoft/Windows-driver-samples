@@ -3588,8 +3588,7 @@ bSetDataDlgProc(
                 break;
             }
 
-            #pragma prefast(suppress: 28750, "Banned API check.")
-            CharUpperBuff(DataString, lstrlen(DataString));
+            CharUpperBuff(DataString, (DWORD)strlen(DataString));
 
             if (0 == lstrcmp(DataString, "TRUE"))
             {

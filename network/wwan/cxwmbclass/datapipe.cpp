@@ -428,6 +428,7 @@ MbbBusWriteData(__in MBB_BUS_HANDLE BusHandle, __in MBB_REQUEST_HANDLE RequestHa
     WDFMEMORY BufferMemoryObject = NULL;
     WDFREQUEST WriteRequestZLP = NULL;
     PUSB_WRITE_REQ_CONTEXT writeContextZLP = NULL;
+    NTSTATUS ZlpStatus;
 
     usbDeviceContext = GetUsbDeviceContext(BusObject->WdfUsbDevice);
 
@@ -641,7 +642,7 @@ MbbBusWriteData(__in MBB_BUS_HANDLE BusHandle, __in MBB_REQUEST_HANDLE RequestHa
         if (WriteRequestZLP != NULL)
         {
 
-            NTSTATUS ZlpStatus;
+            
 
             Status = WdfUsbTargetPipeFormatRequestForWrite(usbDeviceContext->BulkOutputPipe, WriteRequestZLP, NULL, NULL);
             if (!NT_SUCCESS(Status))
@@ -696,6 +697,7 @@ Cleanup:
 
     if (WriteRequestZLP != NULL)
     {
+        Status = ZlpStatus;
         FreeWriteRequest(BusObject->WdfUsbDevice, WriteRequestZLP);
         WriteRequestZLP = NULL;
     }

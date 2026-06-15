@@ -15,8 +15,8 @@ Abstract:
 
     This is a simple form of function driver for fakemodem device. The driver
     doesn't handle any PnP and Power events because the framework provides
-    default behaviour for those events. This driver has enough support to
-    allow an user application (toast/notify.exe) to open the device
+    default behavior for those events. This driver has enough support to
+    allow a user application (toast/notify.exe) to open the device
     interface registered by the driver and send read, write or ioctl requests.
 
 Environment:
@@ -232,7 +232,7 @@ Return Value:
                              &defQueue // pointer to default queue
                              );
     __analysis_assume(queueConfig.EvtIoStop == 0);
-	
+
     if (!NT_SUCCESS (status)) {
 
         //
@@ -256,7 +256,7 @@ Return Value:
                               &fmDeviceData->FmReadQueue
                              );
     __analysis_assume(queueConfig.EvtIoStop == 0);
-	
+
     if (!NT_SUCCESS (status)) {
         KdPrint( ("WdfIoQueueCreate failed 0x%x\n", status));
         return status;
@@ -276,7 +276,7 @@ Return Value:
                               &fmDeviceData->FmMaskWaitQueue
                              );
     __analysis_assume(queueConfig.EvtIoStop == 0);
-	
+
     if (!NT_SUCCESS (status)) {
         KdPrint( ("WdfIoQueueCreate failed 0x%x\n", status));
         return status;

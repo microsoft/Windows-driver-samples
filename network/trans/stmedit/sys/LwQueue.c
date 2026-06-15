@@ -37,8 +37,8 @@ LwInitializeQueue(
     KeInitializeSpinLock(&Queue->Lock);
 
     Queue->WorkItem =
-        ExAllocatePoolZero(
-        NonPagedPool, IoSizeofWorkItem(), STMEDIT_TAG_LQWI);
+        ExAllocatePool2(
+            POOL_FLAG_NON_PAGED, IoSizeofWorkItem(), STMEDIT_TAG_LQWI);
 
     if (Queue->WorkItem == NULL) 
 	{

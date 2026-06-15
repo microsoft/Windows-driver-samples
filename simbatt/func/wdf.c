@@ -19,7 +19,7 @@ Abstract:
 
 #include "simbatt.h"
 #include "simbattdriverif.h"
-#include "batclass_prepublish.h"
+#include <batclass.h>
 
 //------------------------------------------------------------------- Prototypes
 
@@ -510,6 +510,8 @@ Return Value:
 {
 
     UNREFERENCED_PARAMETER(Device);
+
+    PAGED_CODE();
 
     return STATUS_UNSUCCESSFUL;
 }

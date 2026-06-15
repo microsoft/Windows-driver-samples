@@ -254,8 +254,6 @@ Return Value
         }
     }
 
-    free( message );
-
     return hr;
 }
 
@@ -268,13 +266,12 @@ main (
 {
     DWORD requestCount = SCANNER_DEFAULT_REQUEST_COUNT;
     DWORD threadCount = SCANNER_DEFAULT_THREAD_COUNT;
-    HANDLE threads[SCANNER_MAX_THREAD_COUNT];
+    HANDLE threads[SCANNER_MAX_THREAD_COUNT] = { NULL };
     SCANNER_THREAD_CONTEXT context;
     HANDLE port, completion;
-    PSCANNER_MESSAGE msg;
+    PSCANNER_MESSAGE messages;
     DWORD threadId;
     HRESULT hr;
-    DWORD i, j;
 
     //
     //  Check how many threads and per thread requests are desired.
@@ -343,11 +340,23 @@ main (
     context.Completion = completion;
 
     //
+    //  Allocate messages.
+    //
+
+    messages = calloc(((size_t) threadCount) * requestCount, sizeof(SCANNER_MESSAGE));
+
+    if (messages == NULL) {
+
+        hr = ERROR_NOT_ENOUGH_MEMORY;
+        goto main_cleanup;
+    }
+    
+    //
     //  Create specified number of threads.
     //
 
-    for (i = 0; i < threadCount; i++) {
-
+    for (DWORD i = 0; i < threadCount; i++) {
+        
         threads[i] = CreateThread( NULL,
                                    0,
                                    (LPTHREAD_START_ROUTINE) ScannerWorker,
@@ -366,20 +375,9 @@ main (
             goto main_cleanup;
         }
 
-        for (j = 0; j < requestCount; j++) {
-
-            //
-            //  Allocate the message.
-            //
-
-#pragma prefast(suppress:__WARNING_MEMORY_LEAK, "msg will not be leaked because it is freed in ScannerWorker")
-            msg = malloc( sizeof( SCANNER_MESSAGE ) );
-
-            if (msg == NULL) {
-
-                hr = ERROR_NOT_ENOUGH_MEMORY;
-                goto main_cleanup;
-            }
+        for (DWORD j = 0; j < requestCount; j++) {
+        
+            PSCANNER_MESSAGE msg = &(messages[i * requestCount + j]);
 
             memset( &msg->Ovlp, 0, sizeof( OVERLAPPED ) );
 
@@ -393,23 +391,25 @@ main (
                                    &msg->Ovlp );
 
             if (hr != HRESULT_FROM_WIN32( ERROR_IO_PENDING )) {
-
-                free( msg );
                 goto main_cleanup;
             }
         }
     }
 
     hr = S_OK;
-
-    WaitForMultipleObjectsEx( i, threads, TRUE, INFINITE, FALSE );
-
+    
 main_cleanup:
 
+    for (INT i = 0; threads[i] != NULL; ++i) {
+        WaitForSingleObjectEx(threads[i], INFINITE, FALSE);
+    }
+    
     printf( "Scanner:  All done. Result = 0x%08x\n", hr );
 
     CloseHandle( port );
     CloseHandle( completion );
+
+    free(messages);
 
     return hr;
 }

@@ -71,22 +71,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
     <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
-    <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath);$(KIT_SHARED_INC_PATH)\netcx\shared\1.0</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
     <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
-    <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath);$(KIT_SHARED_INC_PATH)\netcx\shared\1.0</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
     <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
-    <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath);$(KIT_SHARED_INC_PATH)\netcx\shared\1.0</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
     <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
-    <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(KIT_SHARED_INC_PATH_WDK)\netcx\shared\1.0;$(KM_IncludePath)\mbbcx\1.0;$(KIT_SHARED_INC_PATH_WDK);$(KM_IncludePath)\netcx\kmdf\adapter\2.3;$(ExternalIncludePath);$(KIT_SHARED_INC_PATH)\netcx\shared\1.0</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DriverSign>

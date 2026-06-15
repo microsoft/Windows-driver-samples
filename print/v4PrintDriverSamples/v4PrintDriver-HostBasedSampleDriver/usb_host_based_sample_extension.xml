@@ -1,8 +1,0 @@
-<?xml version='1.0'?>
-<bidi:Schema xmlns:bidi="http://schemas.microsoft.com/windows/2010/09/printing/usbbidi">
-    <Property name='Printer'>
-        <Property name='Extension'>
-            <Event name="ManualDuplexEvent" />
-        </Property>
-    </Property>
-</bidi:Schema>

@@ -78,8 +78,31 @@ CtxInstanceTeardownComplete (
 
 #if DBG
 
+typedef
+NTSTATUS
+(*PFN_IoOpenDriverRegistryKey) (
+    PDRIVER_OBJECT     DriverObject,
+    DRIVER_REGKEY_TYPE RegKeyType,
+    ACCESS_MASK        DesiredAccess,
+    ULONG              Flags,
+    PHANDLE            DriverRegKey
+    );
+
+PFN_IoOpenDriverRegistryKey
+CtxGetIoOpenDriverRegistryKey (
+    VOID
+    );
+
+NTSTATUS
+CtxOpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    );
+
 VOID
 CtxInitializeDebugLevel (
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     );
 
@@ -93,6 +116,8 @@ CtxInitializeDebugLevel (
 #pragma alloc_text(INIT, DriverEntry)
 
 #if DBG
+#pragma alloc_text(INIT, CtxGetIoOpenDriverRegistryKey)
+#pragma alloc_text(INIT, CtxOpenServiceParametersKey)
 #pragma alloc_text(INIT, CtxInitializeDebugLevel)
 #endif
 
@@ -217,7 +242,7 @@ Return Value:
     //
     //  Default to NonPagedPoolNx for non paged pool allocations where supported.
     //
-    
+
     ExInitializeDriverRuntime( DrvRtPoolNxOptIn );
 
     RtlZeroMemory( &Globals, sizeof( Globals ) );
@@ -228,7 +253,7 @@ Return Value:
     //  Initialize global debug level
     //
 
-    CtxInitializeDebugLevel( RegistryPath );
+    CtxInitializeDebugLevel( DriverObject, RegistryPath );
 
 #else
 
@@ -274,8 +299,147 @@ Return Value:
 
 #if DBG
 
+PFN_IoOpenDriverRegistryKey
+CtxGetIoOpenDriverRegistryKey (
+    VOID
+    )
+{
+    static PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey = NULL;
+    UNICODE_STRING FunctionName = {0};
+
+    if (pIoOpenDriverRegistryKey == NULL) {
+
+        RtlInitUnicodeString(&FunctionName, L"IoOpenDriverRegistryKey");
+
+        pIoOpenDriverRegistryKey = (PFN_IoOpenDriverRegistryKey)MmGetSystemRoutineAddress(&FunctionName);
+    }
+
+    return pIoOpenDriverRegistryKey;
+}
+
+NTSTATUS
+CtxOpenServiceParametersKey (
+    _In_ PDRIVER_OBJECT DriverObject,
+    _In_ PUNICODE_STRING ServiceRegistryPath,
+    _Out_ PHANDLE ServiceParametersKey
+    )
+/*++
+
+Routine Description:
+
+    This routine opens the service parameters key, using the isolation-compliant
+    APIs when possible.
+
+Arguments:
+
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
+
+    RegistryPath - The path key passed to the driver during DriverEntry.
+
+    ServiceParametersKey - Returns a handle to the service parameters subkey.
+
+Return Value:
+
+    STATUS_SUCCESS if the function completes successfully.  Otherwise a valid
+    NTSTATUS code is returned.
+
+--*/
+{
+    NTSTATUS status;
+    PFN_IoOpenDriverRegistryKey pIoOpenDriverRegistryKey;
+    UNICODE_STRING Subkey;
+    HANDLE ParametersKey = NULL;
+    HANDLE ServiceRegKey = NULL;
+    OBJECT_ATTRIBUTES Attributes;
+
+    //
+    //  Open the parameters key to read values from the INF, using the API to
+    //  open the key if possible
+    //
+
+    pIoOpenDriverRegistryKey = CtxGetIoOpenDriverRegistryKey();
+
+    if (pIoOpenDriverRegistryKey != NULL) {
+
+        //
+        //  Open the parameters key using the API
+        //
+
+        status = pIoOpenDriverRegistryKey( DriverObject,
+                                           DriverRegKeyParameters,
+                                           KEY_READ,
+                                           0,
+                                           &ParametersKey );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto cleanup;
+        }
+
+    } else {
+
+        //
+        //  Open specified service root key
+        //
+
+        InitializeObjectAttributes( &Attributes,
+                                    ServiceRegistryPath,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    NULL,
+                                    NULL );
+
+        status = ZwOpenKey( &ServiceRegKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto cleanup;
+        }
+
+        //
+        //  Open the parameters key relative to service key path
+        //
+
+        RtlInitUnicodeString( &Subkey, L"Parameters" );
+
+        InitializeObjectAttributes( &Attributes,
+                                    &Subkey,
+                                    OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
+                                    ServiceRegKey,
+                                    NULL );
+
+        status = ZwOpenKey( &ParametersKey,
+                            KEY_READ,
+                            &Attributes );
+
+        if (!NT_SUCCESS( status )) {
+
+            goto cleanup;
+        }
+    }
+
+    //
+    //  Return value to caller
+    //
+
+    *ServiceParametersKey = ParametersKey;
+
+cleanup:
+
+    if (ServiceRegKey != NULL) {
+
+        ZwClose( ServiceRegKey );
+    }
+
+    return status;
+
+}
+
 VOID
 CtxInitializeDebugLevel (
+    _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
     )
 /*++
@@ -288,6 +452,9 @@ Routine Description:
 
 Arguments:
 
+    DriverObject - Pointer to driver object created by the system to
+        represent this driver.
+
     RegistryPath - The path key passed to the driver during DriverEntry.
 
 Return Value:
@@ -296,8 +463,7 @@ Return Value:
 
 --*/
 {
-    OBJECT_ATTRIBUTES attributes;
-    HANDLE driverRegKey;
+    HANDLE driverRegKey = NULL;
     NTSTATUS status;
     ULONG resultLength;
     UNICODE_STRING valueName;
@@ -306,47 +472,46 @@ Return Value:
     Globals.DebugLevel = DEBUG_TRACE_ERROR;
 
     //
-    //  Open the desired registry key
+    //  Open service parameters key to query values from.
     //
 
-    InitializeObjectAttributes( &attributes,
-                                RegistryPath,
-                                OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE,
-                                NULL,
-                                NULL );
+    status = CtxOpenServiceParametersKey( DriverObject,
+                                          RegistryPath,
+                                          &driverRegKey );
 
-    status = ZwOpenKey( &driverRegKey,
-                        KEY_READ,
-                        &attributes );
+    if (!NT_SUCCESS( status )) {
+
+        driverRegKey = NULL;
+        goto cleanup;
+    }
+
+    //
+    // Read the DebugFlags value from the registry.
+    //
+
+    RtlInitUnicodeString( &valueName, L"DebugLevel" );
+
+    status = ZwQueryValueKey( driverRegKey,
+                              &valueName,
+                              KeyValuePartialInformation,
+                              buffer,
+                              sizeof(buffer),
+                              &resultLength );
 
     if (NT_SUCCESS( status )) {
 
-        //
-        // Read the DebugFlags value from the registry.
-        //
-
-        RtlInitUnicodeString( &valueName, L"DebugLevel" );
-
-        status = ZwQueryValueKey( driverRegKey,
-                                  &valueName,
-                                  KeyValuePartialInformation,
-                                  buffer,
-                                  sizeof(buffer),
-                                  &resultLength );
-
-        if (NT_SUCCESS( status )) {
-
-            Globals.DebugLevel = *((PULONG) &(((PKEY_VALUE_PARTIAL_INFORMATION) buffer)->Data));
-        }
-
-        //
-        //  Close the registry entry
-        //
-
-        ZwClose( driverRegKey );        
-
+        Globals.DebugLevel = *((PULONG) &(((PKEY_VALUE_PARTIAL_INFORMATION) buffer)->Data));
     }
 
+cleanup:
+
+    //
+    //  Close the registry entry
+    //
+
+    if (driverRegKey != NULL) {
+        ZwClose( driverRegKey );
+    }
 }
 
 #endif

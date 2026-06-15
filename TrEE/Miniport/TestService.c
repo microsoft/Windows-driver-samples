@@ -4,8 +4,8 @@
 #include <wdmguid.h>
 #include <TrustedRuntimeClx.h>
 #include "SampleMiniport.h"
-#include <SampleSecureService.h>
-#include <SampleOSService.h>
+#include "..\inc\SampleSecureService.h"
+#include "..\inc\SampleOSService.h"
 
 EVT_TR_CREATE_SECURE_SERVICE_CONTEXT TestServiceCreateSecureServiceContext;
 EVT_TR_DESTROY_SECURE_SERVICE_CONTEXT TestServiceDestroySecureServiceContext;
@@ -956,7 +956,7 @@ Test2ServiceTwiceReversed(
         goto TestServiceTwiceReversedEnd;
     }
 
-    TemporaryBuffer = ExAllocatePoolWithTag(PagedPool,
+    TemporaryBuffer = ExAllocatePool2(PagedPool,
                                             (SIZE_T)Request->InputBufferSize,
                                             'PMET');
 

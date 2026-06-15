@@ -248,7 +248,7 @@ HRESULT HrInstallNetComponent (IN INetCfg *pnc,
             {
                 hr = E_OUTOFMEMORY;
                 break;
-            }               
+            }
             ZeroMemory(DirWithDrive, (_MAX_DRIVE + _MAX_DIR) * sizeof(WCHAR));
 
             //
@@ -329,7 +329,7 @@ HRESULT HrInstallNetComponent (IN INetCfg *pnc,
     {
         CoTaskMemFree(DirWithDrive);
         DirWithDrive = NULL;
-    }    
+    }
 
     return hr;
 }

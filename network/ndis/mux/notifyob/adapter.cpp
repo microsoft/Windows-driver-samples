@@ -114,7 +114,7 @@ CMuxPhysicalAdapter::~CMuxPhysicalAdapter (VOID)
 //
 // Function:  CMuxPhysicalAdapter::LoadConfiguration
 //
-// Purpose:   Read the registry to get the device IDs of the 
+// Purpose:   Read the registry to get the device IDs of the
 //            virtual miniports installed on the adapter and
 //            crate an instance to represent each virtual miniport.
 //
@@ -142,7 +142,7 @@ HRESULT CMuxPhysicalAdapter::LoadConfiguration (VOID)
     TraceMsg( L"-->CMuxPhysicalAdapter::LoadConfiguration.\n" );
 
     //
-    // Build the registry key using the adapter guid under which 
+    // Build the registry key using the adapter guid under which
     // device IDs of the virtual miniports are stored.
     //
 
@@ -159,7 +159,7 @@ HRESULT CMuxPhysicalAdapter::LoadConfiguration (VOID)
         L"%s\\%s",
         c_szAdapterList,
         szAdapterGuid );
-    
+
     szAdapterGuidKey[MAX_PATH]='\0';
     lResult = RegCreateKeyExW( HKEY_LOCAL_MACHINE,
                                 szAdapterGuidKey,
@@ -211,14 +211,14 @@ HRESULT CMuxPhysicalAdapter::LoadConfiguration (VOID)
                 if ( lResult == ERROR_SUCCESS ) {
 
                     lpMiniport = lpMiniportList;
-                    
+
 
 #ifndef PASSTHRU_NOTIFY
 
                     //
                     // In case of mux, c_szUpperBindings is a REG_MULTI_SZ string.
                     //
-                  
+
                     lpMiniport[dwBytes-1] = '\0';
                     while ( wcslen(lpMiniport) ) {
 
@@ -510,14 +510,14 @@ HRESULT CMuxPhysicalAdapter::Remove (VOID)
 //
 // Arguments:
 //          IN eApplyAction:  Action that was last performed.
-//                            
+//
 //
 // Returns: S_OK.
 //
 // Notes:
 //        More than one action could have been performed by the user
 //        but this function is called only once at the end. So, the argument
-//        only denotes the very last action performed. For example, if the 
+//        only denotes the very last action performed. For example, if the
 //        user deletes one miniport and adds two miniports then, the argument
 //        will denote an add action.
 //
@@ -705,14 +705,14 @@ HRESULT CMuxPhysicalAdapter::ApplyRegistryChanges (ConfigAction eApplyAction)
 // Arguments:
 //          IN pfCallback  :  SendPnpConfig Callback interface.
 //          IN eApplyAction:  Action that was last performed.
-//                            
+//
 //
 // Returns: S_OK.
 //
 // Notes:
 //        More than one action could have been performed by the user
 //        but this function is called only once at the end. So, the argument
-//        only denotes the very last action performed. For example, if the 
+//        only denotes the very last action performed. For example, if the
 //        user deletes one miniport and adds two miniports then, the argument
 //        will denote an add action.
 //
@@ -727,7 +727,7 @@ HRESULT CMuxPhysicalAdapter::ApplyPnpChanges(
     DWORD                   i;
     HRESULT                 hr;
 
-#ifdef CUSTOM_EVENTS    
+#ifdef CUSTOM_EVENTS
     LPWSTR                  lpDevice;
     WCHAR                   szMiniportGuid[MAX_PATH+1];
     DWORD                   dwBytes;
@@ -739,7 +739,7 @@ HRESULT CMuxPhysicalAdapter::ApplyPnpChanges(
     UNREFERENCED_PARAMETER(eApplyAction);
     TraceMsg( L"-->CMuxPhysicalAdapter::ApplyPnpChanges.\n" );
 
-#ifdef CUSTOM_EVENTS    
+#ifdef CUSTOM_EVENTS
 
     //
     // Find the instance of the adapter to get its bindname.
@@ -767,7 +767,7 @@ HRESULT CMuxPhysicalAdapter::ApplyPnpChanges(
                hr );
     }
 
-#endif    
+#endif
 
     dwMiniportCount = m_MiniportsToAdd.ListCount();
 
@@ -848,7 +848,7 @@ HRESULT CMuxPhysicalAdapter::ApplyPnpChanges(
             }
             free( lpDevice );
         }
-#endif        
+#endif
     }
 
     dwMiniportCount = m_MiniportsToRemove.ListCount();
@@ -935,11 +935,11 @@ HRESULT CMuxPhysicalAdapter::ApplyPnpChanges(
                 free( lpDevice );
             }
         }
-#endif         
+#endif
 
     }
 
-#ifdef CUSTOM_EVENTS    
+#ifdef CUSTOM_EVENTS
     CoTaskMemFree( lpszBindName );
 #endif
 
@@ -956,7 +956,7 @@ HRESULT CMuxPhysicalAdapter::ApplyPnpChanges(
 // Purpose:   Cancel any changes made.
 //
 // Arguments: None
-//                            
+//
 //
 // Returns: S_OK.
 //
@@ -980,7 +980,7 @@ HRESULT CMuxPhysicalAdapter::CancelChanges (VOID)
 // Purpose:   Find out if there is no miniport installed on the adapter.
 //
 // Arguments: None
-//                            
+//
 //
 // Returns: TRUE if all the miniports associated with this adapter have been
 //          uninstalled and there is none pending to be added, otherwise FALSE.

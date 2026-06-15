@@ -2511,7 +2511,7 @@ Return Value:
 
         // Allocate the key value name string
         pwstrKeyValueName = (PWSTR)ExAllocatePool2(POOL_FLAG_NON_PAGED, kvFullInfo->NameLength + sizeof(WCHAR)*2, MINADAPTER_POOLTAG);
-        IF_TRUE_ACTION_JUMP(kvFullInfo == NULL, ntStatus = STATUS_INSUFFICIENT_RESOURCES, loop_exit);
+        IF_TRUE_ACTION_JUMP(pwstrKeyValueName == NULL, ntStatus = STATUS_INSUFFICIENT_RESOURCES, loop_exit);
 
         // Copy the key value name from the full information struct
         RtlStringCbCopyNW(pwstrKeyValueName, kvFullInfo->NameLength + sizeof(WCHAR)*2, kvFullInfo->Name, kvFullInfo->NameLength);
@@ -2531,6 +2531,7 @@ Return Value:
         if (pwstrKeyValueName)
         {
             ExFreePoolWithTag(pwstrKeyValueName, MINADAPTER_POOLTAG);
+            pwstrKeyValueName = NULL;
         }
 
         // Bail if anything failed
@@ -2618,7 +2619,7 @@ Return Value:
 
         // Allocate the key name string 
         pwstrKeyName = (PWSTR)ExAllocatePool2(POOL_FLAG_NON_PAGED, kBasicInfo->NameLength + sizeof(WCHAR), MINADAPTER_POOLTAG);
-        IF_TRUE_ACTION_JUMP(kBasicInfo == NULL, ntStatus = STATUS_INSUFFICIENT_RESOURCES, loop_exit);
+        IF_TRUE_ACTION_JUMP(pwstrKeyName == NULL, ntStatus = STATUS_INSUFFICIENT_RESOURCES, loop_exit);
 
         // Copy the key name from the basic information struct
         RtlStringCbCopyNW(pwstrKeyName, kBasicInfo->NameLength + sizeof(WCHAR), kBasicInfo->Name, kBasicInfo->NameLength);
@@ -2652,6 +2653,7 @@ Return Value:
         if (pwstrKeyName)
         {
             ExFreePoolWithTag(pwstrKeyName, MINADAPTER_POOLTAG);
+            pwstrKeyName = NULL;
         }
 
         // Close the current source key

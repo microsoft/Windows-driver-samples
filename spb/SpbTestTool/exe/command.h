@@ -183,6 +183,8 @@ public:
         _In_opt_              string        Tag
         ) : CCommand("open", Parameters)
     {
+        UNREFERENCED_PARAMETER(Tag);
+
         return;
     }
 
@@ -208,6 +210,8 @@ public:
         _In_opt_              string        Tag
         ) : CCommand("close", Parameters)
     {
+        UNREFERENCED_PARAMETER(Tag);
+
         return;
     }
 
@@ -233,6 +237,8 @@ public:
         _In_opt_              string        Tag
         ) : CCommand("lock", Parameters)
     {
+        UNREFERENCED_PARAMETER(Tag);
+
         return;
     }
 
@@ -258,6 +264,8 @@ public:
         _In_opt_              string        Tag
         ) : CCommand("unlock", Parameters)
     {
+        UNREFERENCED_PARAMETER(Tag);
+
         return;
     }
 
@@ -283,6 +291,8 @@ public:
         _In_opt_              string        Tag
         ) : CCommand("lockconn", Parameters)
     {
+        UNREFERENCED_PARAMETER(Tag);
+
         return;
     }
 
@@ -308,6 +318,8 @@ public:
         _In_opt_              string        Tag
         ) : CCommand("unlockconn", Parameters)
     {
+        UNREFERENCED_PARAMETER(Tag);
+
         return;
     }
 
@@ -335,6 +347,8 @@ public:
         _In_opt_              string        Tag
         ) : CCommand("read", Parameters)
     {
+        UNREFERENCED_PARAMETER(Tag);
+
         return;
     }
 
@@ -392,6 +406,8 @@ public:
         _In_opt_              string        Tag
         ) : CCommand("write", Parameters)
     {
+        UNREFERENCED_PARAMETER(Tag);
+
         return;
     }
 
@@ -446,6 +462,8 @@ public:
         _In_opt_              string        Tag
         ) : CCommand("writeread", Parameters)
     {
+        UNREFERENCED_PARAMETER(Tag);
+
         WriteBuffer = NULL;
         return;
     }
@@ -524,6 +542,8 @@ public:
         _In_opt_              string        Tag
         ) : CCommand("fullduplex", Parameters)
     {
+        UNREFERENCED_PARAMETER(Tag);
+
         WriteBuffer = NULL;
         return;
     }
@@ -597,6 +617,8 @@ public:
         _In_opt_              string        Tag
         ) : CCommand("signal", Parameters)
     {
+        UNREFERENCED_PARAMETER(Tag);
+
         return;
     }
 
@@ -622,6 +644,8 @@ public:
         _In_opt_              string        Tag
         ) : CCommand("waitoninterrupt", Parameters)
     {
+        UNREFERENCED_PARAMETER(Tag);
+
         return;
     }
 

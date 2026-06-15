@@ -1,9 +1,0 @@
-; WpdServiceSampleDriver.def : Declares the module parameters.
-
-LIBRARY "WpdServiceSampleDriver.DLL"
-
-EXPORTS
-        DllCanUnloadNow         PRIVATE
-        DllGetClassObject       PRIVATE
-        DllRegisterServer       PRIVATE
-        DllUnregisterServer     PRIVATE

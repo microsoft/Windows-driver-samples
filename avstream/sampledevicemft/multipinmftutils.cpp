@@ -1055,7 +1055,7 @@ HRESULT CreateDecoderFromLuid( _In_ LUID ullAdapterLuidRunningOn,
     DMFTCHECKHR_GOTO(pOutputType->GetGUID(MF_MT_SUBTYPE, &OutputType.guidSubtype), done);
 
     DMFTCHECKHR_GOTO(MFCreateAttributes(&spAttribs, 1), done);
-    DMFTCHECKHR_GOTO(spAttribs->SetBlob(MFT_ENUM_ADAPTER_LUID, (byte*)&ullAdapterLuidRunningOn, sizeof(ullAdapterLuidRunningOn)), done);
+    DMFTCHECKHR_GOTO(spAttribs->SetBlob(MFT_ENUM_ADAPTER_LUID, (BYTE*)&ullAdapterLuidRunningOn, sizeof(ullAdapterLuidRunningOn)), done);
     DMFTCHECKHR_GOTO(MFTEnum2(MFT_CATEGORY_VIDEO_DECODER, dwFlags, &InputType, &OutputType, spAttribs.Get(), &ppActivates, &cMFTActivate), done);
 
     for (DWORD i = 0; i < cMFTActivate; i++)
@@ -1292,7 +1292,10 @@ UpdateAllocatorAttributes(
         level = spDevice->GetFeatureLevel();
         dwBindFlags |= ((level >= D3D_FEATURE_LEVEL_10_0) ? D3D11_BIND_SHADER_RESOURCE : 0);
     }
-
+    else
+    {
+        dwBindFlags |= D3D11_BIND_RENDER_TARGET;
+    }
     DMFTCHECKHR_GOTO(pAttributes->SetUINT32(MF_SA_D3D11_BINDFLAGS, dwBindFlags), done);
 
 done:

@@ -20,7 +20,7 @@
 
 #include "Framework_WFPSamplerCalloutDriver.h" /// .
 #include "Framework_Include.h"                 /// .
-#include "Framework_Events.tmh"                /// $(OBJ_PATH)\$(O)\ 
+#include "Framework_Events.tmh"                /// $(OBJ_PATH)\$(O)\
 
 /**
  @framework_function="EventDriverUnload"

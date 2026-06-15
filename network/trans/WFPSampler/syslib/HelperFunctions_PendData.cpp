@@ -49,7 +49,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "HelperFunctions_Include.h"    /// .
-#include "HelperFunctions_PendData.tmh" /// $(OBJ_PATH)\$(O)\ 
+#include "HelperFunctions_PendData.tmh" /// $(OBJ_PATH)\$(O)\
 
 /**
  @kernel_helper_function="KrnlHlprPendDataPurge"
@@ -142,7 +142,7 @@ _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _IRQL_requires_same_
 _Success_(*ppPendData == 0)
-inline VOID KrnlHlprPendDataDestroy(_Inout_ PEND_DATA** ppPendData)
+VOID KrnlHlprPendDataDestroy(_Inout_ PEND_DATA** ppPendData)
 {
 #if DBG
    

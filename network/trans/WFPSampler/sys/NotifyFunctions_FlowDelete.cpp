@@ -32,7 +32,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Framework_WFPSamplerCalloutDriver.h" /// .
-#include "NotifyFunctions_FlowDelete.tmh"      /// $(OBJ_PATH)\$(O)\ 
+#include "NotifyFunctions_FlowDelete.tmh"      /// $(OBJ_PATH)\$(O)\
 
 _IRQL_requires_min_(PASSIVE_LEVEL)
 _IRQL_requires_max_(DISPATCH_LEVEL)

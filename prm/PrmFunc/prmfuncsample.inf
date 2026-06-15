@@ -1,0 +1,55 @@
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%ProviderName%
+DriverVer=2/1/2023
+CatalogFile=prmfuncsample.cat
+PnpLockdown=1
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+prmfuncsample.sys = 1,,
+
+[DestinationDirs]
+Drivers_Dir = 13
+
+[ControlFlags]
+ExcludeFromSelect = *
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$.10.0...26048
+
+[Standard.NT$ARCH$.10.0...26048]
+%PMT10000.DeviceDesc% = PrmFuncSample_Inst,*PMT10000
+
+[PrmFuncSample_Inst.NT.Services]
+AddService = PrmFuncSample,%SPSVCINST_ASSOCSERVICE%,PrmFuncSample_Service_Inst
+
+[PrmFuncSample_Inst.NT]
+CopyFiles = Drivers_Dir
+
+[Drivers_Dir]
+prmfuncsample.sys
+
+[PrmFuncSample_Service_Inst]
+DisplayName    = %PRMFUNCSAMPLE.SvcDesc%
+ServiceType    = %SERVICE_KERNEL_DRIVER%
+StartType      = %SERVICE_SYSTEM_START%
+ErrorControl   = %SERVICE_ERROR_NORMAL%
+ServiceBinary  = %13%\prmfuncsample.sys
+LoadOrderGroup = Extended Base
+
+[strings]
+ProviderName        = "TODO-Set-Provider"
+ManufacturerName    = "TODO-Set-Manufacturer"
+DiskId1 = "PRM Func Sample Driver Installation Disk #1"
+PMT10000.DeviceDesc        = "PRM Func Sample Device"
+PRMFUNCSAMPLE.SvcDesc          = "PRM Func Sample Driver"
+
+SPSVCINST_ASSOCSERVICE = 0x00000002
+SERVICE_KERNEL_DRIVER = 1
+SERVICE_SYSTEM_START  = 1
+SERVICE_ERROR_NORMAL  = 1

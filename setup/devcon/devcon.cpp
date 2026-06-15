@@ -1149,7 +1149,12 @@ Return Value:
     for(dispIndex = 0;DispatchTable[dispIndex].cmd;dispIndex++) {
         if ((_tcsicmp(cmd,DispatchTable[dispIndex].cmd) == 0) &&
             (argc >= firstArg)) {
-            retval = DispatchTable[dispIndex].func(baseName,machine,flags,argc-firstArg,argv+firstArg);
+            if (argc == firstArg) {
+                retval = DispatchTable[dispIndex].func(baseName,machine,flags,0,NULL);
+            } else {
+                retval = DispatchTable[dispIndex].func(baseName,machine,flags,argc-firstArg,argv+firstArg);
+            }            
+            
             switch(retval) {
                 case EXIT_USAGE:
                     CommandUsage(baseName,DispatchTable[dispIndex].cmd);

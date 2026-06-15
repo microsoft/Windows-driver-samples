@@ -3740,7 +3740,7 @@ ClassIoComplete(
     PSCSI_REQUEST_BLOCK srb = Context;
     PFUNCTIONAL_DEVICE_EXTENSION fdoExtension = Fdo->DeviceExtension;
     PCLASS_PRIVATE_FDO_DATA fdoData = fdoExtension->PrivateFdoData;
-    NTSTATUS status;
+    NTSTATUS status = STATUS_SUCCESS;
     BOOLEAN retry;
     BOOLEAN callStartNextPacket;
     ULONG srbFlags;
@@ -6055,7 +6055,7 @@ __ClassInterpretSenseInfo_ProcessingInvalidSenseBuffer:
                         logErrorInternal = FALSE;
                         logError = FALSE;
                     } else if (cdbOpcode == SCSIOP_MODE_SENSE10) {
-                        USHORT allocationLength;
+                        USHORT allocationLength = 0;
                         REVERSE_BYTES_SHORT(&(cdb->MODE_SENSE10.AllocationLength), &allocationLength);
                         if (SrbGetDataTransferLength(Srb) <= allocationLength) {
                             *Status = STATUS_SUCCESS;
@@ -6063,7 +6063,7 @@ __ClassInterpretSenseInfo_ProcessingInvalidSenseBuffer:
                             logError = FALSE;
                         }
                     } else if (ClasspIsReceiveTokenInformation(cdb)) {
-                        ULONG allocationLength;
+                        ULONG allocationLength = 0;
                         REVERSE_BYTES(&(cdb->RECEIVE_TOKEN_INFORMATION.AllocationLength), &allocationLength);
                         if (SrbGetDataTransferLength(Srb) <= allocationLength) {
                             *Status = STATUS_SUCCESS;
