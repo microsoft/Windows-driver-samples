@@ -11,7 +11,7 @@ struct TransitionContext
     PWIFI_IHV_DEVICE_CONTEXT DevCtx;
     WIFIREQUEST WifiRequest;
     PWDI_MESSAGE_HEADER Header;
-    void* RawBuffer;
+    void* RawBuffer; // from WifiRequestGetInOutBuffer in EvtWifiDeviceSendCommand
     UINT InLen;
     UINT OutLen;
 };

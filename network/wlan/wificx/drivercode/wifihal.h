@@ -28,6 +28,21 @@ public:
     NTSTATUS WifiIhvConnect(_In_ const WDI_TASK_CONNECT_PARAMETERS& ConnectParameters, _In_ const PWDI_MESSAGE_HEADER pWdiHeader, _In_ UINT BytesWritten);
     NTSTATUS WifiIhvSetSaeAuthParams(_In_ const WDI_SET_SAE_AUTH_PARAMS_COMMAND& setSAEAuthParams, _In_ const PWDI_MESSAGE_HEADER pWdiHeader, _In_ UINT BytesWritten);
     NTSTATUS WifiIhvDisconnect(_In_ const WDI_TASK_DISCONNECT_PARAMETERS& disconnectParameters, _In_ const PWDI_MESSAGE_HEADER pWdiHeader, _In_ UINT BytesWritten);
+
+    // Device service property handlers (OID_WDI_GET_SUPPORTED_DEVICES / OID_WDI_DEVICE_SERVICE_COMMAND).
+    // Match the PropertyTransitionTraits handler shape: (const parsed input&, out-buffer,
+    // out-buffer length, bytesWritten&). The handler serializes the response TLV stream into
+    // OutBuffer and reports the number of bytes written; the dispatch layer completes the request.
+    NTSTATUS WifiIhvGetSupportedDeviceServices(
+        _In_ const WDI_GET_SUPPORTED_DEVICE_SERVICES_INPUTS& Inputs,
+        _Out_writes_bytes_to_(OutBufferLen, BytesWritten) void* OutBuffer,
+        _In_ ULONG OutBufferLen,
+        _Out_ ULONG& BytesWritten);
+    NTSTATUS WifiIhvDeviceServiceCommand(
+        _In_ const WDI_DEVICE_SERVICE_COMMAND_INPUTS& Inputs,
+        _Out_writes_bytes_to_(OutBufferLen, BytesWritten) void* OutBuffer,
+        _In_ ULONG OutBufferLen,
+        _Out_ ULONG& BytesWritten);
 private:
     NTSTATUS WifiIhvPerformAssociation(_In_ const struct ArrayOfElements<WDI_CONNECT_BSS_ENTRY_CONTAINER>* pPreferredBSSEntryList, _In_ const struct ArrayOfElements<WDI_AUTH_ALGORITHM>* pAuthenticationAlgorithms, _In_ const PWDI_MESSAGE_HEADER pWdiHeader);
     NTSTATUS WifiIhvSendLinkStateIndication(_In_ const PWDI_MESSAGE_HEADER pWdiHeader, ULONG numLinks);

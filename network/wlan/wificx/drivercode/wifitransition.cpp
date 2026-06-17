@@ -192,6 +192,98 @@ NTSTATUS RunTransition(TransitionContext& ctx)
     return m4Status;
 }
 
+// ============================================================================
+// Property GET/SET messages (single M3 completion)
+// ----------------------------------------------------------------------------
+// Unlike the M3/M4 task flow above, a property GET/SET is a single M3 step that
+// returns its result synchronously in the request's in/out buffer. The HAL
+// handler writes the response TLV stream and reports the real number of bytes
+// written (by reference); the request is completed (M3) with that length.
+// No M4 indication.
+// ============================================================================
+template<
+    UINT16 TMsgId,
+    typename TParam,
+    bool TDumpTlvStream,
+    NDIS_STATUS (*TParseFn)(ULONG, const UINT8*, PCTLV_CONTEXT, TParam*),
+    void (*TCleanupFn)(TParam*),
+    NTSTATUS (WifiHAL::*TPreFn)(),                                                   // optional pre-check hook (may be nullptr)
+    NTSTATUS (WifiHAL::*TPropertyFn)(const TParam&, void*, ULONG, ULONG&)            // mandatory property HAL handler
+>
+struct PropertyM3Traits
+{
+    using ParamType = TParam;
+
+    NTSTATUS Parse(TransitionContext& ctx, ParamType& p)
+    {
+        if (ctx.InLen < sizeof(WDI_MESSAGE_HEADER))
+        {
+            return STATUS_INVALID_PARAMETER;
+        }
+
+        auto* tlvBytes = static_cast<UCHAR*>(ctx.RawBuffer) + sizeof(WDI_MESSAGE_HEADER);
+        auto tlvLen = static_cast<ULONG>(ctx.InLen - sizeof(WDI_MESSAGE_HEADER));
+
+        if (TDumpTlvStream)
+        {
+            DumpMessageTlvByteStream(TMsgId, TRUE, ctx.DevCtx->TlvContext.PeerVersion, tlvLen, tlvBytes, 0, nullptr);
+        }
+
+        auto ndisStatus = TParseFn(tlvLen, tlvBytes, &ctx.DevCtx->TlvContext, &p);
+        return Wifi::ConvertNDISSTATUSToNTSTATUS(ndisStatus);
+    }
+
+    void Cleanup(ParamType& p) { TCleanupFn(&p); }
+
+    // Runs the optional pre-check then the property handler. The handler writes the
+    // out-buffer and reports the number of bytes written.
+    NTSTATUS Handle(TransitionContext& ctx, ParamType& p, ULONG& bytesWritten)
+    {
+        bytesWritten = sizeof(WDI_MESSAGE_HEADER);
+
+        WifiHAL* hal = GetWifiHalFromHandle(ctx.Device);
+
+        if (TPreFn)
+        {
+            NTSTATUS preStatus = (hal->*TPreFn)();
+            if (!NT_SUCCESS(preStatus))
+            {
+                return preStatus;
+            }
+        }
+
+        return (hal->*TPropertyFn)(p, ctx.RawBuffer, ctx.OutLen, bytesWritten);
+    }
+};
+
+// Primary traits template for property GET/SET messages (specialize per MessageId)
+template<UINT16 MsgId>
+struct PropertyTraits;
+
+// Generic runner for property GET/SET messages: parse -> handle -> complete (M3).
+// Completes the request synchronously with the number of bytes the HAL wrote.
+template<UINT16 MsgId>
+NTSTATUS RunPropertyM3(TransitionContext& ctx)
+{
+    PropertyTraits<MsgId> traits;
+    typename PropertyTraits<MsgId>::ParamType params{};
+
+    NTSTATUS status = traits.Parse(ctx, params);
+    if (!NT_SUCCESS(status))
+    {
+        traits.Cleanup(params);
+        WifiRequestComplete(ctx.WifiRequest, status, sizeof(WDI_MESSAGE_HEADER));
+        return status;
+    }
+
+    ULONG bytesWritten = sizeof(WDI_MESSAGE_HEADER);
+    status = traits.Handle(ctx, params, bytesWritten);
+
+    traits.Cleanup(params);
+    WifiRequestComplete(ctx.WifiRequest, status, bytesWritten);
+    return status;
+}
+
 //// -------- SCENARIO: [Connect with a SAE WI-FI7 network --------
 ///     Demo: Handle WDI_TASK_CONNECT + WDI_SET_SAE_AUTH_PARAMS then WDI_TASK_DISCONNECT
 ///     Scope:
@@ -313,6 +405,38 @@ struct TransitionTraits<WDI_TASK_SET_RADIO_STATE>
 {
 };
 
+// -------- WDI_GET_SUPPORTED_DEVICE_SERVICES (property GET) --------
+// Request body is empty (header sufficient); the HAL produces the
+// WDI_TLV_DEVICE_SERVICE_GUID_LIST result into the out-buffer.
+template<>
+struct PropertyTraits<WDI_GET_SUPPORTED_DEVICE_SERVICES>
+    : PropertyM3Traits<
+    WDI_GET_SUPPORTED_DEVICE_SERVICES,
+    WDI_GET_SUPPORTED_DEVICE_SERVICES_INPUTS,
+    true, // dump TLV stream
+    ParseWdiGetSupportedDeviceServices,
+    CleanupParsedWdiGetSupportedDeviceServices,
+    &WifiHAL::WifiIhvIsDeviceReadyForRequest, // pre-check
+    &WifiHAL::WifiIhvGetSupportedDeviceServices // property handler
+    >
+{};
+
+// -------- WDI_DEVICE_SERVICE_COMMAND (property SET/GET) --------
+// Reads the request data blob (WDI_TLV_DEVICE_SERVICE_PARAMS_*) and the HAL writes
+// the response data blob into the out-buffer.
+template<>
+struct PropertyTraits<WDI_DEVICE_SERVICE_COMMAND>
+    : PropertyM3Traits<
+    WDI_DEVICE_SERVICE_COMMAND,
+    WDI_DEVICE_SERVICE_COMMAND_INPUTS,
+    true, // dump TLV stream
+    ParseWdiDeviceServiceCommand,
+    CleanupParsedWdiDeviceServiceCommand,
+    &WifiHAL::WifiIhvIsDeviceReadyForRequest, // pre-check
+    &WifiHAL::WifiIhvDeviceServiceCommand // property handler
+    >
+{};
+
 // Runtime dispatcher switches on MessageId and invokes the matching compile-time runner.
 NTSTATUS RunTransitionByMessage(TransitionContext& ctx, UINT16 messageId)
 {
@@ -330,6 +454,10 @@ NTSTATUS RunTransitionByMessage(TransitionContext& ctx, UINT16 messageId)
         return RunTransition<WDI_TASK_DISCONNECT>(ctx);
     case WDI_SET_SAE_AUTH_PARAMS:
         return RunTransition<WDI_SET_SAE_AUTH_PARAMS>(ctx);
+    case WDI_GET_SUPPORTED_DEVICE_SERVICES:
+        return RunPropertyM3<WDI_GET_SUPPORTED_DEVICE_SERVICES>(ctx);
+    case WDI_DEVICE_SERVICE_COMMAND:
+        return RunPropertyM3<WDI_DEVICE_SERVICE_COMMAND>(ctx);
     default:
         UINT bytesWritten = sizeof(WDI_MESSAGE_HEADER);
         WifiRequestComplete(ctx.WifiRequest, STATUS_NOT_SUPPORTED, bytesWritten);

@@ -982,3 +982,137 @@ NTSTATUS WifiHAL::WifiIhvDisconnect(const WDI_TASK_DISCONNECT_PARAMETERS&, const
 
     return STATUS_SUCCESS;
 }
+
+// -------- WDI_GET_SUPPORTED_DEVICE_SERVICES (OID_WDI_GET_SUPPORTED_DEVICES) --------
+// Property GET: the request has no input (Inputs is empty). Builds the
+// WDI_TLV_DEVICE_SERVICE_GUID_LIST result advertising GUID_OEM_SAMPLE_DEVICE_SERVICE and
+// serializes it via the generated TLV generator, so the OS learns which device services
+// this driver supports.
+// OutBuffer receives the full WDI message (header + TLVs); BytesWritten = total length.
+_Use_decl_annotations_
+NTSTATUS WifiHAL::WifiIhvGetSupportedDeviceServices(const WDI_GET_SUPPORTED_DEVICE_SERVICES_INPUTS& Inputs, void* OutBuffer, ULONG OutBufferLen, ULONG& BytesWritten)
+{
+    UNREFERENCED_PARAMETER(Inputs); // GET request carries no input data
+
+    BytesWritten = sizeof(WDI_MESSAGE_HEADER);
+
+    if (OutBuffer == nullptr || OutBufferLen < sizeof(WDI_MESSAGE_HEADER))
+    {
+        WFCError("GetSupportedDeviceServices: invalid out buffer (OutBufferLen=%u)", OutBufferLen);
+        return STATUS_INVALID_PARAMETER;
+    }
+
+    // WDI_TLV_DEVICE_SERVICE_GUID_LIST: a list containing our single device service GUID.
+    // WDI_GUID_LIST_CONTAINER is ArrayOfElements<GUID>; SimpleAssign points it at our
+    // stack array (the generator copies the data while serializing the TLV).
+    GUID supportedServices[] = { GUID_OEM_SAMPLE_DEVICE_SERVICE };
+
+    WDI_GET_SUPPORTED_DEVICE_SERVICES_PARAMETERS results{};
+    results.DeviceServiceGUIDList.SimpleAssign(supportedServices, ARRAYSIZE(supportedServices));
+
+    // Generate the TLV byte stream. ReservedHeaderLength reserves room for the
+    // WDI_MESSAGE_HEADER at the front of the produced buffer.
+    ULONG generatedLength = 0;
+    UINT8* pGenerated = nullptr;
+
+    NDIS_STATUS genStatus = GenerateWdiGetSupportedDeviceServices(
+        &results, sizeof(WDI_MESSAGE_HEADER), m_TlvContext, &generatedLength, &pGenerated);
+
+    NTSTATUS ntStatus = Wifi::ConvertNDISSTATUSToNTSTATUS(genStatus);
+    if (!NT_SUCCESS(ntStatus) || pGenerated == nullptr)
+    {
+        WFCError("GetSupportedDeviceServices: Generate failed, status=%!STATUS!", ntStatus);
+        return ntStatus;
+    }
+
+    if (OutBufferLen < generatedLength)
+    {
+        WFCError("GetSupportedDeviceServices: out buffer too small (have=%u need=%u)",
+            OutBufferLen, generatedLength);
+        FreeGenerated(pGenerated);
+        return STATUS_BUFFER_TOO_SMALL;
+    }
+
+    RtlCopyMemory(OutBuffer, pGenerated, generatedLength);
+    BytesWritten = generatedLength;
+    FreeGenerated(pGenerated);
+
+    WFCInfo("GetSupportedDeviceServices: advertised %u device service(s), %u bytes",
+        ARRAYSIZE(supportedServices), BytesWritten);
+    return STATUS_SUCCESS;
+}
+
+// -------- OEM Device Service Command (OID_WDI_DEVICE_SERVICE_COMMAND) --------
+// Reads the request data blob (WDI_TLV_DEVICE_SERVICE_PARAMS_DATA_BLOB) parsed into
+// Inputs.Params, expects "Hello, My Driver", and returns "Nice to meet you, My OEM"
+// as the response data blob, serialized via the generated TLV generator.
+// OutBuffer receives the full WDI message (header + TLVs); BytesWritten = total length.
+_Use_decl_annotations_
+NTSTATUS WifiHAL::WifiIhvDeviceServiceCommand(const WDI_DEVICE_SERVICE_COMMAND_INPUTS& Inputs, void* OutBuffer, ULONG OutBufferLen, ULONG& BytesWritten)
+{
+    BytesWritten = sizeof(WDI_MESSAGE_HEADER);
+
+    if (OutBuffer == nullptr || OutBufferLen < sizeof(WDI_MESSAGE_HEADER))
+    {
+        WFCError("OEM device service: invalid out buffer (OutBufferLen=%u)", OutBufferLen);
+        return STATUS_INVALID_PARAMETER;
+    }
+
+    // Log the request data blob ("Hello, My Driver"), if present.
+    if (Inputs.Optional.Params_IsPresent &&
+        Inputs.Params.ElementCount > 0 &&
+        Inputs.Params.pElements[0].ElementCount > 0 &&
+        Inputs.Params.pElements[0].pElements != nullptr)
+    {
+        WFCInfo("OEM device service: opcode=0x%08X, received %u-byte data blob: %hs",
+            Inputs.Opcode,
+            Inputs.Params.pElements[0].ElementCount,
+            reinterpret_cast<const char*>(Inputs.Params.pElements[0].pElements));
+    }
+    else
+    {
+        WFCInfo("OEM device service: opcode=0x%08X, no input data blob", Inputs.Opcode);
+    }
+
+    // Build the response data blob ("Nice to meet you, My OEM"), including the null terminator.
+    // SimpleAssign points the blob at this buffer (no copy); the generator copies the bytes
+    // while serializing, and the buffer outlives that call.
+    UINT8 responseBytes[] = OEM_DEVICE_SERVICE_RESPONSE_STRING;
+
+    WDI_BYTE_BLOB responseBlob{};
+    responseBlob.SimpleAssign(responseBytes, static_cast<UINT32>(sizeof(responseBytes)));
+
+    WDI_DEVICE_SERVICE_COMMAND_PARAMETERS params{};
+    params.Optional.Params_IsPresent = TRUE;
+    params.Params.SimpleAssign(&responseBlob, 1);
+
+    // Serialize WDI_TLV_DEVICE_SERVICE_PARAMS_DATA_BLOB into the response message.
+    ULONG generatedLength = 0;
+    UINT8* pGenerated = nullptr;
+
+    NDIS_STATUS genStatus = GenerateWdiDeviceServiceCommand(
+        &params, sizeof(WDI_MESSAGE_HEADER), m_TlvContext, &generatedLength, &pGenerated);
+
+    NTSTATUS ntStatus = Wifi::ConvertNDISSTATUSToNTSTATUS(genStatus);
+    if (!NT_SUCCESS(ntStatus) || pGenerated == nullptr)
+    {
+        WFCError("OEM device service: Generate failed, status=%!STATUS!", ntStatus);
+        return ntStatus;
+    }
+
+    if (OutBufferLen < generatedLength)
+    {
+        WFCError("OEM device service: out buffer too small (have=%u need=%u)",
+            OutBufferLen, generatedLength);
+        FreeGenerated(pGenerated);
+        return STATUS_BUFFER_TOO_SMALL;
+    }
+
+    RtlCopyMemory(OutBuffer, pGenerated, generatedLength);
+    BytesWritten = generatedLength;
+    FreeGenerated(pGenerated);
+
+    WFCInfo("OEM device service: responded with \"%hs\" (%u bytes)",
+        reinterpret_cast<const char*>(responseBytes), BytesWritten);
+    return STATUS_SUCCESS;
+}
