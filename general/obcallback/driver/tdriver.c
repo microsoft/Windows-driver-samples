@@ -48,6 +48,7 @@ TdCreateProcessNotifyRoutine2 (
     _In_opt_ PPS_CREATE_NOTIFY_INFO CreateInfo
     )
 {
+    UNREFERENCED_PARAMETER(Status);
     NTSTATUS Status = STATUS_SUCCESS;
 
     if (CreateInfo != NULL)
