@@ -1444,7 +1444,7 @@ VOID ShowComponentMenu (HWND hwndOwner,
                         LPARAM lParam)
 {
     ULONG   ulSelection;
-    POINT   pt;
+    POINT   pt{};
 
     GetCursorPos( &pt );
     ulSelection = (ULONG)TrackPopupMenu( hComponentSubMenu,
@@ -1496,7 +1496,7 @@ VOID ShowBindingPathMenu (HWND hwndOwner,
 {
     MENUITEMINFOW  menuItemInfo;
     ULONG   ulSelection;
-    POINT   pt;
+    POINT   pt{};
 
     //
     // Build the shortcut menu depending on whether path is
@@ -1563,7 +1563,7 @@ VOID ShowBindingPathMenu (HWND hwndOwner,
 //    lpdwItemType [out] Type, binding path or network component.
 //    fEnabled     [out] TRUE if the binding path or component is enabled.
 //
-// Returns:   TRUE on sucess.
+// Returns:   TRUE on success.
 //
 // Notes:
 //
@@ -1787,7 +1787,7 @@ HTREEITEM AddToTreeEx (HWND hwndTree,
     LPWSTR           lpszId;
     GUID             guidClass;
     BOOL             fEnabled;
-    ULONG            ulStatus;
+    ULONG            ulStatus{};
     HTREEITEM        hTreeItem;
     TV_INSERTSTRUCTW tvInsertStruc;
     HRESULT          hr;

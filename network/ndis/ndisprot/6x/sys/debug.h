@@ -80,7 +80,7 @@ ndisprotReleaseSpinLock(
     IN  ULONG               LineNumber
 );
 
-extern 
+extern
 VOID
 ndisprotFreeDbgLock(
     VOID

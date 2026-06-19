@@ -39,7 +39,7 @@ ndisprotAuditAllocMem(
 )
 {
     PVOID                pBuffer;
-    PNPROTD_ALLOCATION    pAllocInfo;
+    PNPROTD_ALLOCATION   pAllocInfo = NULL;
 
     if (!ndisprotdInitDone)
     {

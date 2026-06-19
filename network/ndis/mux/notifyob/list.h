@@ -5,7 +5,7 @@
 //
 //  File:       LIST . H
 //
-//  Contents:   
+//  Contents:
 //
 //  Notes: List manipulation functions.
 //
@@ -20,7 +20,7 @@
 #include <windows.h>
 
 
-template<class X, class Y> class List { 
+template<class X, class Y> class List {
      struct Node {
         X    item;
         Y    key;
@@ -107,7 +107,7 @@ template<class X, class Y> HRESULT List<X, Y>::Remove (X *item)
 
   return S_OK;
 }
-  
+
 template<class X, class Y> HRESULT List<X, Y>::RemoveThis (X item)
 {
   Node *temp;

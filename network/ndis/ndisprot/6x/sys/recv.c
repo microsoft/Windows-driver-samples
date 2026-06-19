@@ -312,7 +312,7 @@ Return Value:
         //  Copy as much data as possible from the receive packet to
         //  the IRP MDL.
         //
-        
+
         pDst = NULL;
         NdisQueryMdl(pIrp->MdlAddress, &pDst, &BytesRemaining, NormalPagePriority | MdlMappingNoExecute);
         NPROT_ASSERT(pDst != NULL);  // since it was already mapped

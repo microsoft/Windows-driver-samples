@@ -20,6 +20,7 @@ Abstract:
 
 
 #include "netvmin6.h"
+#include <ntintsafe.h>
 #include "ctrlpath.tmh"
 
 
@@ -223,7 +224,7 @@ MPSynchronousOidRequest(
 
 Routine Description:
 
-    Entry point called by NDIS to get or set the value of a specified 
+    Entry point called by NDIS to get or set the value of a specified
     synchronous OID.
 
 Arguments:
@@ -516,7 +517,7 @@ Return Value:
 #if (NDIS_SUPPORT_NDIS61 && !NDIS_SUPPORT_NDIS620)
         case OID_PNP_CAPABILITIES:
             //
-            // This OID is obsolete for NDIS 6.20 drivers 
+            // This OID is obsolete for NDIS 6.20 drivers
             //
             // Return the wake-up capabilities of its NIC. If you return
             // NDIS_STATUS_NOT_SUPPORTED, NDIS considers the miniport driver
@@ -773,7 +774,7 @@ Return Value:
         case OID_GEN_INTERRUPT_MODERATION:
         {
             PNDIS_INTERRUPT_MODERATION_PARAMETERS Moderation = (PNDIS_INTERRUPT_MODERATION_PARAMETERS)Query->InformationBuffer;
-            Moderation->Header.Type = NDIS_OBJECT_TYPE_DEFAULT; 
+            Moderation->Header.Type = NDIS_OBJECT_TYPE_DEFAULT;
             Moderation->Header.Revision = NDIS_INTERRUPT_MODERATION_PARAMETERS_REVISION_1;
             Moderation->Header.Size = NDIS_SIZEOF_INTERRUPT_MODERATION_PARAMETERS_REVISION_1;
             Moderation->Flags = 0;
@@ -906,10 +907,10 @@ Return Value:
 
         case OID_RECEIVE_FILTER_FREE_QUEUE:
             //
-            // Free the requested receive queue. 
+            // Free the requested receive queue.
             //
             Status = NICFreeRxQueue(
-                            Adapter, 
+                            Adapter,
                             NdisSetRequest);
             break;
 
@@ -928,17 +929,17 @@ Return Value:
             //
             Status = NICUpdateRxQueue(
                             Adapter,
-                            NdisSetRequest);             
+                            NdisSetRequest);
              break;
 #endif
 
         case OID_PNP_SET_POWER:
             //
-            // Update power state 
+            // Update power state
             //
             Status = MPSetPower(
                             Adapter,
-                            NdisSetRequest);             
+                            NdisSetRequest);
             break;
 
 #if (NDIS_SUPPORT_NDIS680)
@@ -962,7 +963,7 @@ Return Value:
         case OID_PNP_REMOVE_WAKE_UP_PATTERN:
         case OID_PNP_ENABLE_WAKE_UP:
 #endif
-            ASSERT(!"NIC does not support wake on LAN OIDs"); 
+            ASSERT(!"NIC does not support wake on LAN OIDs");
         default:
             Status = NDIS_STATUS_NOT_SUPPORTED;
             break;
@@ -1015,24 +1016,24 @@ Return Value:
 
     switch (Oid)
     {
-    
+
 #if (NDIS_SUPPORT_NDIS620)
         case OID_RECEIVE_FILTER_ALLOCATE_QUEUE:
             //
             // Allocate the requested receive queue.
             //
             Status = NICAllocateRxQueue(
-                            Adapter, 
+                            Adapter,
                             NdisRequest);
 
             break;
 
         case OID_RECEIVE_FILTER_QUEUE_ALLOCATION_COMPLETE:
             //
-            // Complete any remaining allocation for receive queues. 
+            // Complete any remaining allocation for receive queues.
             //
             Status = NICCompleteAllocationRxQueue(
-                            Adapter, 
+                            Adapter,
                             NdisRequest);
 
             break;
@@ -1305,7 +1306,7 @@ NICAllocateRxQueue(
 Routine Description:
 
     This routine will allocate a receive queue according to the passed in allocation request. It verifies that the request
-    is well formed, then passes the request to underlying queue management code. 
+    is well formed, then passes the request to underlying queue management code.
 
 Arguments:
 
@@ -1321,22 +1322,22 @@ Return Value:
     NDIS_STATUS Status = NDIS_STATUS_SUCCESS;
     struct _METHOD *Method = &NdisMethodRequest->DATA.METHOD_INFORMATION;
     PNDIS_RECEIVE_QUEUE_PARAMETERS QueueParams = (PNDIS_RECEIVE_QUEUE_PARAMETERS)Method->InformationBuffer;
-        
+
     PAGED_CODE();
 
     DEBUGP(MP_TRACE, "[%p] ---> NICAllocateRxQueue\n", Adapter);
-    
+
     do
     {
         //
         // Verify that the request matches our requirements
         //
-        VERIFY_OID_METHOD(NdisMethodRequest, 
-                          NDIS_RECEIVE_QUEUE_PARAMETERS_REVISION_1, 
+        VERIFY_OID_METHOD(NdisMethodRequest,
+                          NDIS_RECEIVE_QUEUE_PARAMETERS_REVISION_1,
                           NDIS_SIZEOF_RECEIVE_QUEUE_PARAMETERS_REVISION_1);
 
         //
-        // Request is well formed, set bytes read 
+        // Request is well formed, set bytes read
         //
         Method->BytesRead = NDIS_SIZEOF_RECEIVE_QUEUE_PARAMETERS_REVISION_1;
 
@@ -1373,7 +1374,7 @@ NICCompleteAllocationRxQueue(
 Routine Description:
 
     This routine will complete any remaining queue allocation, including shared memory. It verifies that the request
-    is well formed, then passes the request to underlying queue management code. 
+    is well formed, then passes the request to underlying queue management code.
 
 Arguments:
 
@@ -1384,7 +1385,7 @@ Return Value:
 
     NDIS_STATUS
 
---*/    
+--*/
 {
 
     NDIS_STATUS Status = NDIS_STATUS_SUCCESS;
@@ -1394,21 +1395,21 @@ Return Value:
     PAGED_CODE();
 
     DEBUGP(MP_TRACE, "[%p] ---> NICCompleteAllocationRxQueue\n", Adapter);
-    
+
     do
     {
 
         //
         // Verify that the request matches our requirements
         //
-        VERIFY_OID_METHOD(NdisMethodRequest, 
-                          NDIS_RECEIVE_QUEUE_ALLOCATION_COMPLETE_ARRAY_REVISION_1, 
+        VERIFY_OID_METHOD(NdisMethodRequest,
+                          NDIS_RECEIVE_QUEUE_ALLOCATION_COMPLETE_ARRAY_REVISION_1,
                           NDIS_SIZEOF_RECEIVE_QUEUE_ALLOCATION_COMPLETE_ARRAY_REVISION_1);
 
         //
-        // Request is well formed, set bytes read 
+        // Request is well formed, set bytes read
         //
-        Method->BytesRead = NDIS_SIZEOF_RECEIVE_QUEUE_ALLOCATION_COMPLETE_ARRAY_REVISION_1+ 
+        Method->BytesRead = NDIS_SIZEOF_RECEIVE_QUEUE_ALLOCATION_COMPLETE_ARRAY_REVISION_1+
                              (CompleteArray->NumElements * CompleteArray->ElementSize);
 
         //
@@ -1417,9 +1418,9 @@ Return Value:
         Status = CompleteAllocationRxQueue(Adapter, CompleteArray);
 
     }while(FALSE);
-    
+
     DEBUGP(MP_TRACE, "[%p] <--- NICCompleteAllocationRxQueue Status 0x%08x\n", Adapter, Status);
-    
+
     return Status;
 
 }
@@ -1432,7 +1433,7 @@ NICFreeRxQueue(
 Routine Description:
 
     This routine will handle the passed in queue free request. It verifies that the request
-    is well formed, then passes the request to underlying queue management code. 
+    is well formed, then passes the request to underlying queue management code.
 
 Arguments:
 
@@ -1452,21 +1453,21 @@ Return Value:
     PAGED_CODE();
 
     DEBUGP(MP_TRACE, "[%p] ---> NICFreeRxQueue\n", Adapter);
-    
+
     do
     {
         //
         // Verify that the request matches our requirements
         //
-        VERIFY_OID_SET(NdisSetRequest, 
-                       NDIS_RECEIVE_QUEUE_FREE_PARAMETERS_REVISION_1, 
+        VERIFY_OID_SET(NdisSetRequest,
+                       NDIS_RECEIVE_QUEUE_FREE_PARAMETERS_REVISION_1,
                        NDIS_SIZEOF_RECEIVE_QUEUE_FREE_PARAMETERS_REVISION_1);
 
         //
-        // Request is well formed, set bytes read 
+        // Request is well formed, set bytes read
         //
         Set->BytesRead = NDIS_SIZEOF_RECEIVE_QUEUE_FREE_PARAMETERS_REVISION_1;
-    
+
         //
         // Default queue cannot be freed
         //
@@ -1478,14 +1479,14 @@ Return Value:
         }
 
         //
-        // Ready to attempt a free. 
+        // Ready to attempt a free.
         //
         Status = FreeRxQueue(Adapter, QueueFreeParams, NdisSetRequest);
 
     }while(FALSE);
-    
+
     DEBUGP(MP_TRACE, "[%p] <--- NICFreeRxQueuee Status 0x%08x\n", Adapter, Status);
-    
+
     return Status;
 }
 
@@ -1498,7 +1499,7 @@ NICSetRxFilter(
 Routine Description:
 
     This routine will handle the passed filter set request. It verifies that the request
-    is well formed, then passes the request to underlying filter management code. 
+    is well formed, then passes the request to underlying filter management code.
 
 Arguments:
 
@@ -1509,7 +1510,7 @@ Return Value:
 
     NDIS_STATUS
 
---*/    
+--*/
 {
 
     NDIS_STATUS Status = NDIS_STATUS_SUCCESS;
@@ -1523,12 +1524,12 @@ Return Value:
         //
         // Verify that the request matches our requirements
         //
-        VERIFY_OID_METHOD(NdisMethodRequest, 
-                          NDIS_RECEIVE_FILTER_PARAMETERS_REVISION_1, 
+        VERIFY_OID_METHOD(NdisMethodRequest,
+                          NDIS_RECEIVE_FILTER_PARAMETERS_REVISION_1,
                           NDIS_SIZEOF_RECEIVE_FILTER_PARAMETERS_REVISION_1);
 
         //
-        // Request is well formed, set bytes read 
+        // Request is well formed, set bytes read
         //
         Method->BytesRead = NDIS_SIZEOF_RECEIVE_FILTER_PARAMETERS_REVISION_1;
 
@@ -1536,7 +1537,7 @@ Return Value:
         // Ready to set Filter
         //
         Status = SetRxFilter(Adapter, FilterParams);
-    
+
     }while(FALSE);
 
     return Status;
@@ -1551,7 +1552,7 @@ NICClearRxFilter(
 Routine Description:
 
     This routine will handle the passed filter clear request. It verifies that the request
-    is well formed, then passes the request to underlying filter management code. 
+    is well formed, then passes the request to underlying filter management code.
 
 Arguments:
 
@@ -1562,7 +1563,7 @@ Return Value:
 
     NDIS_STATUS
 
---*/      
+--*/
 {
     NDIS_STATUS Status = NDIS_STATUS_SUCCESS;
     struct _SET  *Set = &NdisSetRequest->DATA.SET_INFORMATION;
@@ -1576,15 +1577,15 @@ Return Value:
         //
         // Verify that the request matches our requirements
         //
-        VERIFY_OID_SET(NdisSetRequest, 
-                       NDIS_RECEIVE_FILTER_CLEAR_PARAMETERS_REVISION_1, 
+        VERIFY_OID_SET(NdisSetRequest,
+                       NDIS_RECEIVE_FILTER_CLEAR_PARAMETERS_REVISION_1,
                        NDIS_SIZEOF_RECEIVE_FILTER_CLEAR_PARAMETERS_REVISION_1);
 
         //
-        // Request is well formed, set bytes read 
+        // Request is well formed, set bytes read
         //
         Set->BytesRead = NDIS_SIZEOF_RECEIVE_FILTER_CLEAR_PARAMETERS_REVISION_1;
-    
+
         //
         // Ready to clear the filter
         //
@@ -1613,15 +1614,15 @@ NICUpdateRxQueue(
         //
         // Verify that the request matches our requirements
         //
-        VERIFY_OID_SET(NdisSetRequest, 
-                       NDIS_RECEIVE_QUEUE_PARAMETERS_REVISION_1, 
+        VERIFY_OID_SET(NdisSetRequest,
+                       NDIS_RECEIVE_QUEUE_PARAMETERS_REVISION_1,
                        NDIS_SIZEOF_RECEIVE_QUEUE_PARAMETERS_REVISION_1);
 
         //
-        // Request is well formed, set bytes read 
+        // Request is well formed, set bytes read
         //
         Set->BytesRead = NDIS_SIZEOF_RECEIVE_FILTER_CLEAR_PARAMETERS_REVISION_1;
-    
+
         //
         // Ready to clear the filter
         //
@@ -1671,6 +1672,9 @@ Return Value:
 
     do
     {
+        ULONG ClassificationBytes = 0;
+        ULONG BytesRead = 0;
+
         //
         // Verify that the request matches our requirements.
         //
@@ -1681,8 +1685,18 @@ Return Value:
         //
         // Request is well formed, set bytes read.
         //
-        Method->BytesRead = NDIS_SIZEOF_QOS_PARAMETERS_REVISION_1 +
-                            Params->NumClassificationElements * Params->ClassificationElementSize;
+        if (!NT_SUCCESS(RtlULongMult(Params->NumClassificationElements,
+                                     Params->ClassificationElementSize,
+                                     &ClassificationBytes)) ||
+            !NT_SUCCESS(RtlULongAdd(NDIS_SIZEOF_QOS_PARAMETERS_REVISION_1,
+                                    ClassificationBytes,
+                                    &BytesRead)))
+        {
+            Status = NDIS_STATUS_INVALID_LENGTH;
+            break;
+        }
+
+        Method->BytesRead = BytesRead;
 
         Status = SetQOSParameters(Adapter, Params);
         if (Status != NDIS_STATUS_SUCCESS)
@@ -1711,7 +1725,7 @@ MPSetPower(
 /*++
 Routine Description:
 
-    This routine handles OID_PNP_SET_POWER request. 
+    This routine handles OID_PNP_SET_POWER request.
 
 Arguments:
 
@@ -1720,9 +1734,9 @@ Arguments:
 
 Return Value:
 
-    NDIS_STATUS   
+    NDIS_STATUS
 
---*/      
+--*/
 {
     NDIS_STATUS Status = NDIS_STATUS_SUCCESS;
     struct _SET *Set = &NdisSetRequest->DATA.SET_INFORMATION;
@@ -1775,9 +1789,9 @@ Arguments:
 
 Return Value:
 
-    NDIS_STATUS   
+    NDIS_STATUS
 
---*/      
+--*/
 {
     NDIS_STATUS Status = NDIS_STATUS_SUCCESS;
 
@@ -1799,19 +1813,19 @@ MPSetPowerLow(
 /*++
 Routine Description:
 
-    The NIC is about to be transitioned to a low power state. 
+    The NIC is about to be transitioned to a low power state.
     Prepare the NIC for the sleeping state:
-        - Disable interrupts and the NIC's DMA engine, cancel timers.  
-        - Save any hardware context that the NIC cannot preserve in 
-          a sleeping state (packet filters, multicast addresses, 
+        - Disable interrupts and the NIC's DMA engine, cancel timers.
+        - Save any hardware context that the NIC cannot preserve in
+          a sleeping state (packet filters, multicast addresses,
           the current MAC address, etc.)
-    A miniport driver cannot access the NIC hardware after 
+    A miniport driver cannot access the NIC hardware after
     the NIC has been set to the D3 state by the bus driver.
 
-    Miniport drivers NDIS v6.30 and above 
-        Do NOT wait for NDIS to return the ownership of all 
+    Miniport drivers NDIS v6.30 and above
+        Do NOT wait for NDIS to return the ownership of all
         NBLs from outstanding receive indications
-        Retain ownership of all the receive descriptors and 
+        Retain ownership of all the receive descriptors and
         packet buffers previously owned by the hardware.
 
 Arguments:
@@ -1821,9 +1835,9 @@ Arguments:
 
 Return Value:
 
-    NDIS_STATUS   
+    NDIS_STATUS
 
---*/      
+--*/
 {
     NDIS_STATUS Status = NDIS_STATUS_SUCCESS;
     LONG        nSendWaitCount = 0;
@@ -1837,8 +1851,8 @@ Return Value:
 #if (NDIS_SUPPORT_NDIS630)
 
     //
-    // Miniport drivers NDIS v6.30 and above are not 
-    // necessarily paused prior the low power transition 
+    // Miniport drivers NDIS v6.30 and above are not
+    // necessarily paused prior the low power transition
     //
 
     //
@@ -1848,7 +1862,7 @@ Return Value:
 
     //
     // Wait for outstanding sends
-    // Do NOT wait for outstanding receives 
+    // Do NOT wait for outstanding receives
     //
     while(Adapter->nBusySend)
     {
@@ -1867,8 +1881,8 @@ Return Value:
     UNREFERENCED_PARAMETER(nSendWaitCount);
 
     //
-    // Miniport drivers NDIS v6.20 and below are 
-    // paused prior the low power transition 
+    // Miniport drivers NDIS v6.20 and below are
+    // paused prior the low power transition
     //
     ASSERT(MP_TEST_FLAG(Adapter, fMP_ADAPTER_PAUSED));
     ASSERT(!NICIsBusy(Adapter));
@@ -1888,7 +1902,7 @@ MPSetRSSv2Parameters(
 /*++
 Routine Description:
 
-    This routine handles OID_GEN_RECEIVE_SCALE_PARAMETERS_V2 set request. 
+    This routine handles OID_GEN_RECEIVE_SCALE_PARAMETERS_V2 set request.
 
 Arguments:
 
@@ -1897,9 +1911,9 @@ Arguments:
 
 Return Value:
 
-    NDIS_STATUS   
+    NDIS_STATUS
 
---*/      
+--*/
 {
     struct _SET *Set;
 
@@ -1908,7 +1922,7 @@ Return Value:
     //
     // Validate the request
     //
-    if (Set->InformationBufferLength < 
+    if (Set->InformationBufferLength <
         NDIS_SIZEOF_RECEIVE_SCALE_PARAMETERS_V2_REVISION_1)
     {
         DEBUGP(MP_ERROR, "OID_GEN_RECEIVE_SCALE_PARAMETERS_V2: Invalid InformationBufferLength\n");
@@ -1928,7 +1942,7 @@ MPSetRSSv2IndirectionTableEntries(
 /*++
 Routine Description:
 
-    This routine handles OID_GEN_RSS_SET_INDIRECTION_TABLE_ENTRIES method request. 
+    This routine handles OID_GEN_RSS_SET_INDIRECTION_TABLE_ENTRIES method request.
 
 Arguments:
 
@@ -1937,9 +1951,9 @@ Arguments:
 
 Return Value:
 
-    NDIS_STATUS   
+    NDIS_STATUS
 
---*/      
+--*/
 {
     struct _METHOD *Method;
 
@@ -1950,7 +1964,7 @@ Return Value:
     //
     // Validate the request
     //
-    if (Method->InputBufferLength < 
+    if (Method->InputBufferLength <
         NDIS_SIZEOF_RSS_SET_INDIRECTION_ENTRIES_REVISION_1)
     {
         DEBUGP(MP_ERROR, "OID_GEN_RSS_SET_INDIRECTION_TABLE_ENTRIES: Invalid InformationBufferLength\n");

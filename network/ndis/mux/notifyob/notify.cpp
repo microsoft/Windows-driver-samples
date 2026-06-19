@@ -6,7 +6,7 @@
 //  File:       N O T I F Y . C P P
 //
 //  Contents:   Sample notify object code
-//  
+//
 //  Notes:
 //
 //  Author:     Alok Sinha
@@ -103,10 +103,10 @@ CMuxNotify::~CMuxNotify (VOID)
 //
 
 //----------------------------------------------------------------------------
-// INetCfgComponentControl                                           
-//                                                                       
+// INetCfgComponentControl
+//
 // The following functions provide the INetCfgComponentControl interface.
-//                                                                       
+//
 //----------------------------------------------------------------------------
 
 //
@@ -125,7 +125,7 @@ CMuxNotify::~CMuxNotify (VOID)
 //
 
 STDMETHODIMP CMuxNotify::Initialize (INetCfgComponent* pncc,
-                                     INetCfg* pnc, 
+                                     INetCfg* pnc,
                                      BOOL fInstalling)
 {
     HRESULT hr = S_OK;
@@ -150,7 +150,7 @@ STDMETHODIMP CMuxNotify::Initialize (INetCfgComponent* pncc,
 
 
     //
-    // If this not an installation, then we need to 
+    // If this not an installation, then we need to
     // initialize all of our data and classes
     //
 
@@ -222,7 +222,7 @@ STDMETHODIMP CMuxNotify::ApplyRegistryChanges(VOID)
 
         m_AdaptersToAdd.Find( i,
                               &pAdapter );
-   
+
         pAdapter->ApplyRegistryChanges( eActAdd );
 
     }
@@ -240,7 +240,7 @@ STDMETHODIMP CMuxNotify::ApplyRegistryChanges(VOID)
 
         m_AdaptersToRemove.Find( i,
                                  &pAdapter );
-           
+
         pAdapter->ApplyRegistryChanges( eActRemove );
     }
 
@@ -276,7 +276,7 @@ STDMETHODIMP CMuxNotify::ApplyRegistryChanges(VOID)
 //
 // Returns:   S_OK.
 //
-// Notes:     
+// Notes:
 
 STDMETHODIMP CMuxNotify::ApplyPnpChanges (
                                        INetCfgPnpReconfigCallback* pfCallback)
@@ -353,10 +353,10 @@ STDMETHODIMP CMuxNotify::ApplyPnpChanges (
 
 
 //----------------------------------------------------------------------------
-// INetCfgComponentSetup                                           
-//                                                                       
+// INetCfgComponentSetup
+//
 // The following functions provide the INetCfgComponentSetup interface.
-//                                                                       
+//
 //----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
@@ -445,7 +445,7 @@ STDMETHODIMP CMuxNotify::ReadAnswerFile (PCWSTR pszAnswerFile,
 
     UNREFERENCED_PARAMETER(pszAnswerFile);
     UNREFERENCED_PARAMETER(pszAnswerSection);
-    
+
     TraceMsg( L"-->CMuxNotify INetCfgSetup::ReadAnswerFile.\n" );
 
     // We will pretend here that szParamReadFromAnswerFile was actually
@@ -498,20 +498,20 @@ STDMETHODIMP CMuxNotify::Removing (VOID)
 
 
 //----------------------------------------------------------------------------
-// INetCfgComponentNotifyBinding                                          
-//                                                                       
+// INetCfgComponentNotifyBinding
+//
 // The following functions provide the INetCfgComponentNotifyBinding interface.
-//                                                                       
+//
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 //
 // Function:  CMuxNotify::QueryBindingPath
 //
-// Purpose:  This is specific to the component being installed. This will 
+// Purpose:  This is specific to the component being installed. This will
 //           ask us if we want to bind to the Item being passed into
 //           this routine. We can disable the binding by returning
-//           NETCFG_S_DISABLE_QUERY 
+//           NETCFG_S_DISABLE_QUERY
 //
 //
 // Arguments:
@@ -522,7 +522,7 @@ STDMETHODIMP CMuxNotify::Removing (VOID)
 //
 // Notes:
 //
-STDMETHODIMP CMuxNotify::QueryBindingPath (IN DWORD dwChangeFlag,  
+STDMETHODIMP CMuxNotify::QueryBindingPath (IN DWORD dwChangeFlag,
                                            IN INetCfgBindingPath *pncbp)
 {
     UNREFERENCED_PARAMETER(pncbp);
@@ -543,7 +543,7 @@ STDMETHODIMP CMuxNotify::QueryBindingPath (IN DWORD dwChangeFlag,
 //
 // Function:  CMuxNotify::NotifyBindingPath
 //
-// Purpose:  We are now being told to bind to the component passed to us. 
+// Purpose:  We are now being told to bind to the component passed to us.
 //
 //
 // Arguments:
@@ -557,7 +557,7 @@ STDMETHODIMP CMuxNotify::QueryBindingPath (IN DWORD dwChangeFlag,
 
 
 
-STDMETHODIMP CMuxNotify::NotifyBindingPath (IN DWORD dwChangeFlag,  
+STDMETHODIMP CMuxNotify::NotifyBindingPath (IN DWORD dwChangeFlag,
                                             IN INetCfgBindingPath *pncbp)
 {
     INetCfgComponent     *pnccLower;
@@ -608,7 +608,7 @@ STDMETHODIMP CMuxNotify::NotifyBindingPath (IN DWORD dwChangeFlag,
                         //
                         // We are interested only in binding to a
                         // physical ethernet adapters.
-                        // 
+                        //
 
                         if ( dwCharcteristics & NCF_PHYSICAL ) {
 
@@ -631,7 +631,7 @@ STDMETHODIMP CMuxNotify::NotifyBindingPath (IN DWORD dwChangeFlag,
                                     m_eApplyAction = eActRemove;
                                 }
                             }
-                        } // Physical Adapters. 
+                        } // Physical Adapters.
                         else if (dwCharcteristics & NCF_VIRTUAL) {
 
                         }
@@ -651,7 +651,7 @@ STDMETHODIMP CMuxNotify::NotifyBindingPath (IN DWORD dwChangeFlag,
 
         } // Got the upper and lower components.
 
-    } 
+    }
 
     TraceMsg( L"<--CMuxNotify INetCfgNotifyBinding::NotifyBindingPath(HRESULT = %x).\n",
             S_OK );
@@ -664,9 +664,9 @@ STDMETHODIMP CMuxNotify::NotifyBindingPath (IN DWORD dwChangeFlag,
 
 //----------------------------------------------------------------------------
 // INetCfgComponentNotifyGlobal
-//                                                                       
+//
 // The following functions provide the INetCfgComponentNotifyGlobal interface.
-//                                                                       
+//
 //----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
@@ -749,9 +749,9 @@ STDMETHODIMP CMuxNotify::SysQueryBindingPath (DWORD dwChangeFlag,
                     if ( hr == S_OK ) {
 
                         //
-                        // We are interested only in bindings to physical 
+                        // We are interested only in bindings to physical
                         // ethernet adapters.
-                        // 
+                        //
 
                         if ( dwCharcteristics & NCF_PHYSICAL ) {
 
@@ -774,7 +774,7 @@ STDMETHODIMP CMuxNotify::SysQueryBindingPath (DWORD dwChangeFlag,
                             }
 #endif
 
-                        } // Physical Adapters. 
+                        } // Physical Adapters.
                         else {
                             if (dwCharcteristics & NCF_VIRTUAL) {
 
@@ -784,7 +784,7 @@ STDMETHODIMP CMuxNotify::SysQueryBindingPath (DWORD dwChangeFlag,
 
                                 if ( !_wcsicmp(pszwInfIdLower, c_szMuxMiniport) &&
                                      !_wcsicmp(pszwInfIdUpper, c_szMuxProtocol) ) {
-                                  
+
                                     TraceMsg( L"   Disabling the binding between %s "
                                               L"and %s.\n",
                                               pszwInfIdUpper,
@@ -886,10 +886,10 @@ STDMETHODIMP CMuxNotify::SysNotifyComponent (DWORD dwChangeFlag,
 
 
 //----------------------------------------------------------------------------
-// INetCfgComponentPropertyUi                                          
-//                                                                       
+// INetCfgComponentPropertyUi
+//
 // The following functions provide the INetCfgComponentPropertyUi interface.
-//                                                                       
+//
 //----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
@@ -1034,7 +1034,7 @@ STDMETHODIMP CMuxNotify::CancelProperties (VOID)
 //
 // Returns:   S_OK on success, otherwise an error code
 //
-// Notes:     
+// Notes:
 //
 STDMETHODIMP CMuxNotify::ApplyProperties (VOID)
 {
@@ -1118,7 +1118,7 @@ STDMETHODIMP CMuxNotify::QueryPropertyUi (IUnknown * pUnk)
                               reinterpret_cast<PVOID *>(&pLanConnUiInfo));
 
         ReleaseObj( pLanConnUiInfo );
-    } 
+    }
 #endif
 
     TraceMsg(L"<--CMuxNotify INetCfgPropertyUi::QueryPropertyUi(HRESULT = %x).\n",
@@ -1133,7 +1133,7 @@ STDMETHODIMP CMuxNotify::QueryPropertyUi (IUnknown * pUnk)
 //
 // Purpose:   Save the LAN connection context.
 //
-// Arguments: 
+// Arguments:
 //            IN pUnk: Pointer to IUnknown.
 //
 // Returns:   S_OK on success, otherwise an error code
@@ -1169,7 +1169,7 @@ STDMETHODIMP CMuxNotify::SetContext (IUnknown * pUnk)
 //
 //  Function:   CMuxNotify::HrLoadAdapterConfiguration
 //
-//  Purpose:    This loads the Miniport and adapters that have already been 
+//  Purpose:    This loads the Miniport and adapters that have already been
 //              installed into our own data structures
 //
 //  Arguments:  None.
@@ -1209,7 +1209,7 @@ HRESULT CMuxNotify::HrLoadAdapterConfiguration (VOID)
         //
         // If dwDisp indicates that a new key is created then, we know there
         // is no adapter currently listed underneath and we simply
-        // return, otherwise, we enumerate the subkeys, each one representing an 
+        // return, otherwise, we enumerate the subkeys, each one representing an
         // adapter.
         //
 
@@ -1299,7 +1299,7 @@ HRESULT CMuxNotify::HrLoadAdapterConfiguration (VOID)
 //  Purpose:    Get the upper and lower component of the first interface
 //              of a binding path.
 //
-//  Arguments:  
+//  Arguments:
 //              IN  pncbp     : Binding path.
 //              OUT ppnccUpper: Upper component.
 //              OUT ppnccLower: Lower component.
@@ -1327,7 +1327,7 @@ HRESULT CMuxNotify::HrGetUpperAndLower (INetCfgBindingPath* pncbp,
     hr = pncbp->EnumBindingInterfaces(&pencbi);
 
     if (S_OK == hr) {
-     
+
         //
         // get the first binding interface
         //
@@ -1368,7 +1368,7 @@ HRESULT CMuxNotify::HrGetUpperAndLower (INetCfgBindingPath* pncbp,
 //  Purpose:    Create an instance representing the physical adapter and install
 //              a virtual miniport.
 //
-//  Arguments:  
+//  Arguments:
 //              IN pnccAdapter: Pointer to the physical adapter.
 //
 //  Returns:    S_OK, or an error.
@@ -1411,7 +1411,7 @@ HRESULT CMuxNotify::HrAddAdapter (INetCfgComponent *pnccAdapter)
         else {
             hr = HRESULT_FROM_WIN32( ERROR_NOT_ENOUGH_MEMORY );
         }
-    } 
+    }
 
     TraceMsg( L"<--CMuxNotify::HrAddAdapter(HRESULT = %x).\n",
             hr );
@@ -1426,7 +1426,7 @@ HRESULT CMuxNotify::HrAddAdapter (INetCfgComponent *pnccAdapter)
 //  Purpose:    Deletes the instance representing the physical adapter
 //              and uninstalls all the virtual miniports.
 //
-//  Arguments:  
+//  Arguments:
 //              IN pnccAdapter: Pointer to the physical adapter.
 //
 //  Returns:    S_OK, or an error.
@@ -1453,7 +1453,7 @@ HRESULT CMuxNotify::HrRemoveAdapter (INetCfgComponent *pnccAdapter)
 
          if ( hr == S_OK ) {
 
-            m_AdaptersToRemove.Insert( pAdapter,  
+            m_AdaptersToRemove.Insert( pAdapter,
                                        guidAdapter );
             hr = pAdapter->Remove();
 
@@ -1463,7 +1463,7 @@ HRESULT CMuxNotify::HrRemoveAdapter (INetCfgComponent *pnccAdapter)
             // Restore the bindings of other protocols to the physical
             // adapter.
             //
- 
+
             EnableBindings( pnccAdapter,
                             TRUE );
 #endif
@@ -1482,14 +1482,14 @@ HRESULT CMuxNotify::HrRemoveAdapter (INetCfgComponent *pnccAdapter)
 //
 //  Purpose:    Installs a virtual miniport.
 //
-//  Arguments:  
+//  Arguments:
 //              IN pAdapter    : Pointer to the physical adapter class instance.
 //              IN pguidAdapter: Pointer to the GUID of the adapter.
 //
 //  Returns:    S_OK, or an error.
 //
 //
-//  Notes:      
+//  Notes:
 //
 
 HRESULT CMuxNotify::HrAddMiniport (CMuxPhysicalAdapter *pAdapter,
@@ -1502,15 +1502,15 @@ HRESULT CMuxNotify::HrAddMiniport (CMuxPhysicalAdapter *pAdapter,
     TraceMsg( L"-->CMuxNotify::HrAddMiniport.\n" );
 
     //
-    // Limit the number of virtual miniports 
+    // Limit the number of virtual miniports
     //
     if ((pAdapter->MiniportCount() + pAdapter->MiniportAddCount()) >= MAX_VIRTUAL_MP_PER_ADAPTER)
     {
-        hr = HRESULT_FROM_WIN32( ERROR_NO_SYSTEM_RESOURCES );   
+        hr = HRESULT_FROM_WIN32( ERROR_NO_SYSTEM_RESOURCES );
         TraceMsg( L"   Virtual miniport limit reached\n" );
     }
 
-    if ( hr == S_OK ) 
+    if ( hr == S_OK )
     {
         #pragma prefast(suppress:8197, "The instance is freed in the destructor")
         pMiniport = new CMuxVirtualMiniport( m_pnc,
@@ -1578,14 +1578,14 @@ HRESULT CMuxNotify::HrAddMiniport (CMuxPhysicalAdapter *pAdapter,
 //
 //  Purpose:    Uninstalls a virtual miniport.
 //
-//  Arguments:  
+//  Arguments:
 //              IN pAdapter    : Pointer to the physical adapter class instance.
 //              IN pguidAdapter: Pointer to the GUID of the adapter.
 //
 //  Returns:    S_OK, or an error.
 //
 //
-//  Notes:      
+//  Notes:
 //
 
 HRESULT CMuxNotify::HrRemoveMiniport (CMuxPhysicalAdapter *pAdapter,
@@ -1673,7 +1673,7 @@ LRESULT CMuxNotify::OnOk (IN HWND hWndPage)
 
     if ( ::SendMessage(GetDlgItem(hWndPage, IDC_ADD),
                        BM_GETCHECK, 0, 0) == BST_CHECKED ) {
-     
+
         m_eApplyAction = eActPropertyUIAdd;
     }
     else {
@@ -1785,7 +1785,7 @@ INT_PTR CALLBACK NotifyDialogProc (HWND hWnd,
             LPNMHDR pnmh = (LPNMHDR)lParam;
 
             switch (pnmh->code) {
-        
+
             case PSN_KILLACTIVE:
 
                 //
@@ -1851,7 +1851,7 @@ UINT CALLBACK NotifyPropSheetPageProc(HWND hWnd,
 //
 // Function:  CMuxNotify::EnableBindings
 //
-// Purpose:   Enable/Disable the bindings of other protocols to 
+// Purpose:   Enable/Disable the bindings of other protocols to
 //            the physical adapter.
 //
 // Arguments:
@@ -1869,7 +1869,7 @@ VOID CMuxNotify::EnableBindings (INetCfgComponent *pnccAdapter,
     IEnumNetCfgBindingPath      *pencbp;
     INetCfgBindingPath          *pncbp;
     HRESULT                     hr;
-  
+
     TraceMsg( L"-->CMuxNotify::EnableBindings.\n" );
 
 
