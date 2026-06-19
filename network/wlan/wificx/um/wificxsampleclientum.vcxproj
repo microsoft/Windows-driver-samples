@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|ARM64">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <Inf Include="wificxsampleclientum.inf" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C804D7D0-80D8-1409-44DA-91EF3260D07F}</ProjectGuid>
+    <TemplateGuid>{2177f19c-eb4c-4687-9e7f-f9eec1f12cf1}</TemplateGuid>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
+    <Configuration>Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">x64</Platform>
+    <RootNamespace>wificxsampleclientum</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
+    <UMDF_VERSION_MINOR>35</UMDF_VERSION_MINOR>
+    <UMDF_MINIMUM_VERSION_REQUIRED>35</UMDF_MINIMUM_VERSION_REQUIRED>
+    <NetAdapterDriver>true</NetAdapterDriver>
+    <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
+    <NETADAPTER_VERSION_MINOR>6</NETADAPTER_VERSION_MINOR>
+    <WifiDriver>true</WifiDriver>
+    <WIFI_VERSION_MAJOR>1</WIFI_VERSION_MAJOR>
+    <WIFI_VERSION_MINOR>2</WIFI_VERSION_MINOR>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
+    <UMDF_VERSION_MINOR>35</UMDF_VERSION_MINOR>
+    <UMDF_MINIMUM_VERSION_REQUIRED>35</UMDF_MINIMUM_VERSION_REQUIRED>
+    <NetAdapterDriver>true</NetAdapterDriver>
+    <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
+    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
+    <WifiDriver>true</WifiDriver>
+    <WIFI_VERSION_MAJOR>1</WIFI_VERSION_MAJOR>
+    <WIFI_VERSION_MINOR>2</WIFI_VERSION_MINOR>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
+    <UMDF_VERSION_MINOR>35</UMDF_VERSION_MINOR>
+    <UMDF_MINIMUM_VERSION_REQUIRED>35</UMDF_MINIMUM_VERSION_REQUIRED>
+    <NetAdapterDriver>true</NetAdapterDriver>
+    <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
+    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
+    <WifiDriver>true</WifiDriver>
+    <WIFI_VERSION_MAJOR>1</WIFI_VERSION_MAJOR>
+    <WIFI_VERSION_MINOR>2</WIFI_VERSION_MINOR>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
+    <UMDF_VERSION_MINOR>35</UMDF_VERSION_MINOR>
+    <UMDF_MINIMUM_VERSION_REQUIRED>35</UMDF_MINIMUM_VERSION_REQUIRED>
+    <NetAdapterDriver>true</NetAdapterDriver>
+    <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
+    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
+    <WifiDriver>true</WifiDriver>
+    <WIFI_VERSION_MAJOR>1</WIFI_VERSION_MAJOR>
+    <WIFI_VERSION_MINOR>2</WIFI_VERSION_MINOR>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DebuggerFlavor>DbgengRemoteDebugger</DebuggerFlavor>
+    <EnableInf2cat>false</EnableInf2cat>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DebuggerFlavor>DbgengRemoteDebugger</DebuggerFlavor>
+    <EnableInf2cat>false</EnableInf2cat>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <DebuggerFlavor>DbgengRemoteDebugger</DebuggerFlavor>
+    <EnableInf2cat>false</EnableInf2cat>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <DebuggerFlavor>DbgengRemoteDebugger</DebuggerFlavor>
+    <EnableInf2cat>false</EnableInf2cat>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\netadaptercx\netvadapterlibrary\Interface;$(WDK_UM_INC_PATH)wlan\2.0;$(KIT_SHARED_INC_PATH_WDK);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIFICX_TEMPORARY_REMOVED_FOR_USERMODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WppEnabled>true</WppEnabled>
+      <WppScanConfigurationData>..\drivercode\trace.h</WppScanConfigurationData>
+      <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
+      <PreprocessToFile>false</PreprocessToFile>
+      <WppRecorderEnabled>true</WppRecorderEnabled>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(WDK_UM_LIB_PATH)wlan\2.0\WificxTLVGenParse.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\netadaptercx\netvadapterlibrary\Interface;$(WDK_UM_INC_PATH)wlan\2.0;$(KIT_SHARED_INC_PATH_WDK);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIFICX_TEMPORARY_REMOVED_FOR_USERMODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WppEnabled>true</WppEnabled>
+      <WppScanConfigurationData>..\drivercode\trace.h</WppScanConfigurationData>
+      <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
+      <PreprocessToFile>false</PreprocessToFile>
+      <WppRecorderEnabled>true</WppRecorderEnabled>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(WDK_UM_LIB_PATH)wlan\2.0\WificxTLVGenParse.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\netadaptercx\netvadapterlibrary\Interface;$(WDK_UM_INC_PATH)wlan\2.0;$(KIT_SHARED_INC_PATH_WDK);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIFICX_TEMPORARY_REMOVED_FOR_USERMODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WppEnabled>true</WppEnabled>
+      <WppScanConfigurationData>..\drivercode\trace.h</WppScanConfigurationData>
+      <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
+      <PreprocessToFile>false</PreprocessToFile>
+      <WppRecorderEnabled>true</WppRecorderEnabled>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(WDK_UM_LIB_PATH)wlan\2.0\WificxTLVGenParse.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\netadaptercx\netvadapterlibrary\Interface;$(WDK_UM_INC_PATH)wlan\2.0;$(KIT_SHARED_INC_PATH_WDK);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIFICX_TEMPORARY_REMOVED_FOR_USERMODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WppEnabled>true</WppEnabled>
+      <WppScanConfigurationData>..\drivercode\trace.h</WppScanConfigurationData>
+      <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
+      <PreprocessToFile>false</PreprocessToFile>
+      <WppRecorderEnabled>true</WppRecorderEnabled>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(WDK_UM_LIB_PATH)wlan\2.0\WificxTLVGenParse.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <FilesToPackage Include="$(TargetPath)" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\drivercode\adapter.h" />
+    <ClInclude Include="..\drivercode\device.h" />
+    <ClInclude Include="..\drivercode\driver.h" />
+    <ClInclude Include="..\drivercode\precomp.h" />
+    <ClInclude Include="..\drivercode\sharedtypes.h" />
+    <ClInclude Include="..\drivercode\wifihaltestdata.h" />
+    <ClInclude Include="..\drivercode\trace.h" />
+    <ClInclude Include="..\drivercode\wifihal.h" />
+    <ClInclude Include="..\drivercode\wifirequest.h" />
+    <ClInclude Include="..\drivercode\umkmfusion.h" />
+    <ClInclude Include="..\drivercode\wifitransition.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\drivercode\adapter.cpp" />
+    <ClCompile Include="..\drivercode\device.cpp" />
+    <ClCompile Include="..\drivercode\driver.cpp" />
+    <ClCompile Include="..\drivercode\memorymanagement.cpp" />
+    <ClCompile Include="..\drivercode\wifihal.cpp" />
+    <ClCompile Include="..\drivercode\wifirequest.cpp" />
+    <ClCompile Include="..\drivercode\wifitransition.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\netadaptercx\netvadapterlibrary\wifi_um\netvadapterlibraryum.vcxproj">
+      <Project>{612f33ad-430c-4fe7-8000-35e15a5eb757}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>
