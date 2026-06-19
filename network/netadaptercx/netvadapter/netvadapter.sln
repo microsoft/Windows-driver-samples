@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.7.34221.43
+# Visual Studio Version 18
+VisualStudioVersion = 18.7.11911.148 stable
 MinimumVisualStudioVersion = 12.0
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "netvadapterkm", "km\netvadapterkm.vcxproj", "{B4044984-19DD-456F-9D47-565F59A47F5E}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -12,9 +12,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "netvadapterum", "um\netvada
 		{612F33AD-430C-4FE7-8000-35E15A5EB757} = {612F33AD-430C-4FE7-8000-35E15A5EB757}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "netvadapterlibrarykm", "..\netvadapterlibrary\km\netvadapterlibrarykm.vcxproj", "{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "netvadapterlibrarykm", "..\netvadapterlibrary\ethernet_km\netvadapterlibrarykm.vcxproj", "{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "netvadapterlibraryum", "..\netvadapterlibrary\um\netvadapterlibraryum.vcxproj", "{612F33AD-430C-4FE7-8000-35E15A5EB757}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "netvadapterlibraryum", "..\netvadapterlibrary\ethernet_um\netvadapterlibraryum.vcxproj", "{612F33AD-430C-4FE7-8000-35E15A5EB757}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,28 +50,20 @@ Global
 		{1CDC2CE3-19F3-4200-87C7-C343FB2D8ED3}.Release|x64.Deploy.0 = Release|x64
 		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Debug|ARM64.ActiveCfg = Debug|ARM64
 		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Debug|ARM64.Build.0 = Debug|ARM64
-		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Debug|ARM64.Deploy.0 = Debug|ARM64
 		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Debug|x64.ActiveCfg = Debug|x64
 		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Debug|x64.Build.0 = Debug|x64
-		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Debug|x64.Deploy.0 = Debug|x64
 		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Release|ARM64.ActiveCfg = Release|ARM64
 		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Release|ARM64.Build.0 = Release|ARM64
-		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Release|ARM64.Deploy.0 = Release|ARM64
 		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Release|x64.ActiveCfg = Release|x64
 		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Release|x64.Build.0 = Release|x64
-		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Release|x64.Deploy.0 = Release|x64
 		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Debug|ARM64.ActiveCfg = Debug|ARM64
 		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Debug|ARM64.Build.0 = Debug|ARM64
-		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Debug|ARM64.Deploy.0 = Debug|ARM64
 		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Debug|x64.ActiveCfg = Debug|x64
 		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Debug|x64.Build.0 = Debug|x64
-		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Debug|x64.Deploy.0 = Debug|x64
 		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Release|ARM64.ActiveCfg = Release|ARM64
 		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Release|ARM64.Build.0 = Release|ARM64
-		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Release|ARM64.Deploy.0 = Release|ARM64
 		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Release|x64.ActiveCfg = Release|x64
 		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Release|x64.Build.0 = Release|x64
-		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Release|x64.Deploy.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

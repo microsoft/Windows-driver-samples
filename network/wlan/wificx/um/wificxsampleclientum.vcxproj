@@ -59,7 +59,7 @@
     <UMDF_MINIMUM_VERSION_REQUIRED>35</UMDF_MINIMUM_VERSION_REQUIRED>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
-    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
+    <NETADAPTER_VERSION_MINOR>6</NETADAPTER_VERSION_MINOR>
     <WifiDriver>true</WifiDriver>
     <WIFI_VERSION_MAJOR>1</WIFI_VERSION_MAJOR>
     <WIFI_VERSION_MINOR>2</WIFI_VERSION_MINOR>
@@ -221,7 +221,7 @@
     <ClCompile Include="..\drivercode\wifitransition.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\netadaptercx\netvadapterlibrary\um\netvadapterlibraryum.vcxproj">
+    <ProjectReference Include="..\..\..\netadaptercx\netvadapterlibrary\wifi_um\netvadapterlibraryum.vcxproj">
       <Project>{612f33ad-430c-4fe7-8000-35e15a5eb757}</Project>
     </ProjectReference>
   </ItemGroup>

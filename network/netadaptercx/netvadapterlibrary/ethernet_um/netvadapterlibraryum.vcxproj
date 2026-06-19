@@ -33,10 +33,9 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <DriverType>KMDF</DriverType>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
-    <UMDF_VERSION_MINOR>35</UMDF_VERSION_MINOR>
+    <UMDF_VERSION_MINOR>33</UMDF_VERSION_MINOR>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
     <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
@@ -46,10 +45,9 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <DriverType>KMDF</DriverType>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
-    <UMDF_VERSION_MINOR>35</UMDF_VERSION_MINOR>
+    <UMDF_VERSION_MINOR>33</UMDF_VERSION_MINOR>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
     <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
@@ -59,10 +57,9 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <DriverType>KMDF</DriverType>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
-    <UMDF_VERSION_MINOR>35</UMDF_VERSION_MINOR>
+    <UMDF_VERSION_MINOR>33</UMDF_VERSION_MINOR>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
     <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
@@ -72,10 +69,9 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <DriverType>KMDF</DriverType>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
-    <UMDF_VERSION_MINOR>35</UMDF_VERSION_MINOR>
+    <UMDF_VERSION_MINOR>33</UMDF_VERSION_MINOR>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
     <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>

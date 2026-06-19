@@ -18,55 +18,38 @@
       <Platform>ARM64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <Inf Include="netvadapterum.inf" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{1CDC2CE3-19F3-4200-87C7-C343FB2D8ED3}</ProjectGuid>
-    <TemplateGuid>{2177f19c-eb4c-4687-9e7f-f9eec1f12cf1}</TemplateGuid>
+    <ProjectGuid>{612F33AD-430C-4FE7-8000-35E15A5EB757}</ProjectGuid>
+    <TemplateGuid>{1bc93793-694f-48fe-9372-81e2b05556fd}</TemplateGuid>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration>Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">x64</Platform>
-    <RootNamespace>netvadapterum</RootNamespace>
-  </PropertyGroup>
-  <PropertyGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
-  </PropertyGroup>
-  <PropertyGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
-  </PropertyGroup>
-  <PropertyGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
-  </PropertyGroup>
-  <PropertyGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
-    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <RootNamespace>KMDF_Driver1</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <DriverType>KMDF</DriverType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
-    <UMDF_VERSION_MINOR>33</UMDF_VERSION_MINOR>
-    <UMDF_MINIMUM_VERSION_REQUIRED>33</UMDF_MINIMUM_VERSION_REQUIRED>
+    <UMDF_VERSION_MINOR>35</UMDF_VERSION_MINOR>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
-    <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
+    <NETADAPTER_VERSION_MINOR>6</NETADAPTER_VERSION_MINOR>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <DriverType>KMDF</DriverType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
-    <UMDF_VERSION_MINOR>33</UMDF_VERSION_MINOR>
-    <UMDF_MINIMUM_VERSION_REQUIRED>33</UMDF_MINIMUM_VERSION_REQUIRED>
+    <UMDF_VERSION_MINOR>35</UMDF_VERSION_MINOR>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
     <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
@@ -74,9 +57,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <DriverType>KMDF</DriverType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
-    <UMDF_VERSION_MINOR>33</UMDF_VERSION_MINOR>
-    <UMDF_MINIMUM_VERSION_REQUIRED>33</UMDF_MINIMUM_VERSION_REQUIRED>
+    <UMDF_VERSION_MINOR>35</UMDF_VERSION_MINOR>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
     <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
@@ -84,9 +70,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
     <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <DriverType>KMDF</DriverType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
-    <UMDF_VERSION_MINOR>33</UMDF_VERSION_MINOR>
-    <UMDF_MINIMUM_VERSION_REQUIRED>33</UMDF_MINIMUM_VERSION_REQUIRED>
+    <UMDF_VERSION_MINOR>35</UMDF_VERSION_MINOR>
     <NetAdapterDriver>true</NetAdapterDriver>
     <NETADAPTER_VERSION_MAJOR>2</NETADAPTER_VERSION_MAJOR>
     <NETADAPTER_VERSION_MINOR>5</NETADAPTER_VERSION_MINOR>
@@ -99,40 +88,34 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
-  <PropertyGroup>
-    <SkipPackageVerification>true</SkipPackageVerification>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <DebuggerFlavor>DbgengRemoteDebugger</DebuggerFlavor>
-    <EnableInf2cat>false</EnableInf2cat>
-    <TargetName>netvadapterum</TargetName>
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <IncludePath>$(MSBuildProjectDirectory)\..\Interface;$(MSBuildProjectDirectory)\..\code\rtl;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <DebuggerFlavor>DbgengRemoteDebugger</DebuggerFlavor>
-    <EnableInf2cat>false</EnableInf2cat>
-    <TargetName>netvadapterum</TargetName>
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <IncludePath>$(MSBuildProjectDirectory)\..\Interface;$(MSBuildProjectDirectory)\..\code\rtl;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <DebuggerFlavor>DbgengRemoteDebugger</DebuggerFlavor>
-    <EnableInf2cat>false</EnableInf2cat>
-    <TargetName>netvadapterum</TargetName>
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <IncludePath>$(MSBuildProjectDirectory)\..\Interface;$(MSBuildProjectDirectory)\..\code\rtl;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
-    <DebuggerFlavor>DbgengRemoteDebugger</DebuggerFlavor>
-    <EnableInf2cat>false</EnableInf2cat>
-    <TargetName>netvadapterum</TargetName>
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <IncludePath>$(MSBuildProjectDirectory)\..\Interface;$(MSBuildProjectDirectory)\..\code\rtl;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DriverSign>
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\netvadapterlibrary\Interface;..\..\netvadapterlibrary\code;..\..\..\..\wil\include;$(KIT_SHARED_INC_PATH_WDK);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WppEnabled>true</WppEnabled>
-      <WppScanConfigurationData>..\..\netvadapterlibrary\code\trace.h</WppScanConfigurationData>
+    </ClCompile>
+    <ClCompile>
       <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
-      <PreprocessToFile>false</PreprocessToFile>
       <WppRecorderEnabled>true</WppRecorderEnabled>
+      <WppScanConfigurationData>..\code\trace.h</WppScanConfigurationData>
+      <AdditionalIncludeDirectories>..\..\..\..\wil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,12 +123,13 @@
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\netvadapterlibrary\Interface;..\..\netvadapterlibrary\code;..\..\..\..\wil\include;$(KIT_SHARED_INC_PATH_WDK);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WppEnabled>true</WppEnabled>
-      <WppScanConfigurationData>..\..\netvadapterlibrary\code\trace.h</WppScanConfigurationData>
+    </ClCompile>
+    <ClCompile>
       <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
-      <PreprocessToFile>false</PreprocessToFile>
       <WppRecorderEnabled>true</WppRecorderEnabled>
+      <WppScanConfigurationData>..\code\trace.h</WppScanConfigurationData>
+      <AdditionalIncludeDirectories>..\..\..\..\wil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
@@ -153,12 +137,13 @@
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\netvadapterlibrary\Interface;..\..\netvadapterlibrary\code;..\..\..\..\wil\include;$(KIT_SHARED_INC_PATH_WDK);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WppEnabled>true</WppEnabled>
-      <WppScanConfigurationData>..\..\netvadapterlibrary\code\trace.h</WppScanConfigurationData>
+    </ClCompile>
+    <ClCompile>
       <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
-      <PreprocessToFile>false</PreprocessToFile>
       <WppRecorderEnabled>true</WppRecorderEnabled>
+      <WppScanConfigurationData>..\code\trace.h</WppScanConfigurationData>
+      <AdditionalIncludeDirectories>..\..\..\..\wil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
@@ -166,32 +151,39 @@
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\netvadapterlibrary\Interface;..\..\netvadapterlibrary\code;..\..\..\..\wil\include;$(KIT_SHARED_INC_PATH_WDK);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WppEnabled>true</WppEnabled>
-      <WppScanConfigurationData>..\..\netvadapterlibrary\code\trace.h</WppScanConfigurationData>
+    </ClCompile>
+    <ClCompile>
       <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
-      <PreprocessToFile>false</PreprocessToFile>
       <WppRecorderEnabled>true</WppRecorderEnabled>
+      <WppScanConfigurationData>..\code\trace.h</WppScanConfigurationData>
+      <AdditionalIncludeDirectories>..\..\..\..\wil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <FilesToPackage Include="$(TargetPath)" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\drivercode\pch.hpp" />
-    <ClInclude Include="..\drivercode\device.h" />
-    <ClInclude Include="..\drivercode\power.h" />
+    <ClInclude Include="..\code\configuration.h" />
+    <ClInclude Include="..\code\enl.h" />
+    <ClInclude Include="..\code\enlthreads.h" />
+    <ClInclude Include="..\code\memory.h" />
+    <ClInclude Include="..\code\pch.hpp" />
+    <ClInclude Include="..\code\queue.h" />
+    <ClInclude Include="..\code\rxqueue.h" />
+    <ClInclude Include="..\code\trace.h" />
+    <ClInclude Include="..\code\txqueue.h" />
+    <ClInclude Include="..\Interface\netvadapter.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\drivercode\driver.cpp" />
-    <ClCompile Include="..\drivercode\device.cpp" />
-    <ClCompile Include="..\drivercode\power.cpp" />
-    <ClCompile Include="..\drivercode\memorymanagement.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\netvadapterlibrary\ethernet_um\netvadapterlibraryum.vcxproj">
-      <Project>{612f33ad-430c-4fe7-8000-35e15a5eb757}</Project>
-    </ProjectReference>
+    <ClCompile Include="..\code\adapter.cpp" />
+    <ClCompile Include="..\code\configuration.cpp" />
+    <ClCompile Include="..\code\enl.cpp" />
+    <ClCompile Include="..\code\enlthreads.cpp" />
+    <ClCompile Include="..\code\memory.cpp" />
+    <ClCompile Include="..\code\queue.cpp" />
+    <ClCompile Include="..\code\rxqueue.cpp" />
+    <ClCompile Include="..\code\txqueue.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

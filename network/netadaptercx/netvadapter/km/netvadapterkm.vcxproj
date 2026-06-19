@@ -209,7 +209,7 @@
     <ClInclude Include="..\drivercode\power.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\netvadapterlibrary\km\netvadapterlibrarykm.vcxproj">
+    <ProjectReference Include="..\..\netvadapterlibrary\ethernet_km\netvadapterlibrarykm.vcxproj">
       <Project>{e2a65efd-25cc-4af0-b180-0cd56ee277a9}</Project>
     </ProjectReference>
   </ItemGroup>
