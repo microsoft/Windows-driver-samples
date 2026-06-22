@@ -120,7 +120,20 @@ Get-Help .\Build-Samples.ps1 -Detailed
 
 # Build a specific sample for Debug|x64 only:
 .\Build-Samples.ps1 -Samples 'tools.sdv.samples.sampledriver' -Configurations 'Debug' -Platforms 'x64'
+
+# Build every sample targeting an older OS version (default is the latest, Windows10):
+.\Build-Samples.ps1 -TargetVersion Windows7
 ```
+
+The `-TargetVersion` values come from the WDK `DriverGeneral.xml` rule and are listed
+newest-first. The default is the latest, `Windows10`:
+
+| Value         | Target OS              |
+| ------------- | ---------------------- |
+| `Windows10`   | Windows 10 or higher (default) |
+| `WindowsV6.3` | Windows 8.1            |
+| `Windows8`    | Windows 8              |
+| `Windows7`    | Windows 7              |
 
 ---
 

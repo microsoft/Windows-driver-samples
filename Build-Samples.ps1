@@ -27,6 +27,15 @@
 .PARAMETER Platforms
     Build platforms (e.g. 'x64','arm64'). Defaults to $env:WDS_Platform or ('x64','arm64').
 
+.PARAMETER TargetVersion
+    Target OS version the drivers are built for (the msbuild 'TargetVersion' property).
+    Valid values are defined by the WDK DriverGeneral.xml rule and are listed newest-first:
+      Windows10    - Windows 10 or higher (default, latest)
+      WindowsV6.3  - Windows 8.1
+      Windows8     - Windows 8
+      Windows7     - Windows 7
+    Defaults to $env:WDS_TargetVersion, or 'Windows10' (the latest) when unset.
+
 .PARAMETER LogFilesDirectory
     Directory for build log files. Defaults to _logs in the current directory.
 
@@ -69,6 +78,11 @@
     .\Build-Samples -RunMode WDK
 
     Forces WDK mode regardless of environment variables.
+
+.EXAMPLE
+    .\Build-Samples -TargetVersion Windows7
+
+    Builds all samples targeting Windows 7 instead of the default (latest) Windows10.
 #>
 
 #Requires -Version 7.0
@@ -78,6 +92,9 @@ param(
     [string[]]$Samples,
     [string[]]$Configurations = @(if ([string]::IsNullOrEmpty($env:WDS_Configuration)) { ('Debug', 'Release') } else { $env:WDS_Configuration }),
     [string[]]$Platforms = @(if ([string]::IsNullOrEmpty($env:WDS_Platform)) { ('x64', 'arm64') } else { $env:WDS_Platform }),
+    # Valid TargetVersion values come from the WDK DriverGeneral.xml rule (newest first).
+    [ValidateSet('Windows10', 'WindowsV6.3', 'Windows8', 'Windows7')]
+    [string]$TargetVersion = $(if ([string]::IsNullOrEmpty($env:WDS_TargetVersion)) { 'Windows10' } else { $env:WDS_TargetVersion }),
     [string]$LogFilesDirectory = (Join-Path (Get-Location) "_logs"),
     [string]$ReportFileName = $(if ([string]::IsNullOrEmpty($env:WDS_ReportFileName)) { "_overview" } else { $env:WDS_ReportFileName }),
     [string]$InfOptions,
@@ -172,6 +189,7 @@ function Build-SingleSample {
         [string]$SampleName,
         [string]$Configuration = 'Debug',
         [string]$Platform = 'x64',
+        [string]$TargetVersion = 'Windows10',
         [string]$InfVerif_AdditionalOptions = '/samples',
         [string]$LogFilesDirectory = (Get-Location),
         [bool]$Verbose = $false
@@ -248,7 +266,7 @@ function Build-SingleSample {
             -clp:Verbosity=m -t:rebuild `
             -property:Configuration=$Configuration `
             -property:Platform=$Platform `
-            -p:TargetVersion=Windows10 `
+            -p:TargetVersion=$TargetVersion `
             -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" `
             -warnaserror `
             -binaryLogger:LogFile=$binLogFilePath`;ProjectImports=None `
@@ -417,6 +435,7 @@ Write-Output ""
 Write-Output "  Samples:          $($sampleSet.Count) ($skippedCount skipped)"
 Write-Output "  Configurations:   $($Configurations -join ', ')"
 Write-Output "  Platforms:        $($Platforms -join ', ')"
+Write-Output "  Target Version:   $TargetVersion"
 Write-Output "  Combinations:     $combinationsTotal"
 Write-Output "  Exclusions:       $($exclusions.Count)"
 Write-Output ""
@@ -463,6 +482,7 @@ $sampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
     $configs    = $using:Configurations
     $platforms  = $using:Platforms
     $infOpts    = $using:infVerifOptions
+    $targetVer  = $using:TargetVersion
     $isVerbose  = $using:verbose
     $state      = $using:buildState
     $total      = $using:combinationsTotal
@@ -513,7 +533,8 @@ $sampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
                 $buildResult = Build-SingleSample `
                     -Directory $directory -SampleName $sampleName `
                     -LogFilesDirectory $logDir -Configuration $configuration `
-                    -Platform $platform -InfVerif_AdditionalOptions $infOpts `
+                    -Platform $platform -TargetVersion $targetVer `
+                    -InfVerif_AdditionalOptions $infOpts `
                     -Verbose:$isVerbose
 
                 # Return codes from Build-SingleSample:
@@ -631,6 +652,7 @@ Write-Output ""
 Write-Output "  Samples:          $($sampleSet.Count)"
 Write-Output "  Configurations:   $($Configurations -join ', ')"
 Write-Output "  Platforms:        $($Platforms -join ', ')"
+Write-Output "  Target Version:   $TargetVersion"
 Write-Output "  Combinations:     $combinationsTotal"
 Write-Output ""
 Write-Output "  Succeeded:        $($buildState.Succeeded)"
@@ -650,7 +672,7 @@ Write-Output "------------------------------------------------------------------
 
 $sortedResults = $buildState.Results | Sort-Object { $_.Sample }
 $sortedResults | ConvertTo-Csv  | Out-File $reportCsvPath
-$sortedResults | ConvertTo-Html -Title "WDK Sample Build Overview" | Out-File $reportHtmlPath
+$sortedResults | ConvertTo-Html -Title "WDK Sample Build Overview - TargetVersion $TargetVersion" | Out-File $reportHtmlPath
 
 # Only open the HTML report interactively (not in CI/automation)
 if (-not $env:BUILD_BUILDID -and [Environment]::UserInteractive) {
