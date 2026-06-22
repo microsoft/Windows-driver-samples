@@ -36,6 +36,13 @@
       Windows7     - Windows 7
     Defaults to $env:WDS_TargetVersion, or 'Windows10' (the latest) when unset.
 
+.PARAMETER NtTargetVersion
+    The _NT_TARGET_VERSION value - the WDK library version the driver links against
+    ("OS version of libraries"), which is independent of the Target OS Version. Accepts the
+    Windows build-number form (e.g. '10.0.28000'); valid values come from the WDK
+    DriverGeneral.xml rule and are listed newest-first. Defaults to $env:WDS_NtTargetVersion,
+    or '10.0.28000' (the latest) when unset.
+
 .PARAMETER LogFilesDirectory
     Directory for build log files. Defaults to _logs in the current directory.
 
@@ -95,6 +102,10 @@ param(
     # Valid TargetVersion values come from the WDK DriverGeneral.xml rule (newest first).
     [ValidateSet('Windows10', 'WindowsV6.3', 'Windows8', 'Windows7')]
     [string]$TargetVersion = $(if ([string]::IsNullOrEmpty($env:WDS_TargetVersion)) { 'Windows10' } else { $env:WDS_TargetVersion }),
+    # _NT_TARGET_VERSION = the WDK library version the driver links against (newest first;
+    # values come from the WDK DriverGeneral.xml rule). Default is the latest.
+    [ValidateSet('10.0.28000', '10.0.26100', '10.0.22621', '10.0.22000', '10.0.20348', '10.0.19041', '10.0.18362', '10.0.17763', '10.0.17134', '10.0.16299', '10.0.15063', '10.0.14393', '10.0.10586', '10.0.10240')]
+    [string]$NtTargetVersion = $(if ([string]::IsNullOrEmpty($env:WDS_NtTargetVersion)) { '10.0.28000' } else { $env:WDS_NtTargetVersion }),
     [string]$LogFilesDirectory = (Join-Path (Get-Location) "_logs"),
     [string]$ReportFileName = $(if ([string]::IsNullOrEmpty($env:WDS_ReportFileName)) { "_overview" } else { $env:WDS_ReportFileName }),
     [string]$InfOptions,
@@ -204,6 +215,7 @@ function Build-SingleSample {
         [string]$Configuration = 'Debug',
         [string]$Platform = 'x64',
         [string]$TargetVersion = 'Windows10',
+        [string]$NtTargetVersionCode = '0xA000012',
         [string]$InfVerif_AdditionalOptions = '/samples',
         [string]$LogFilesDirectory = (Get-Location),
         [bool]$Verbose = $false
@@ -281,6 +293,7 @@ function Build-SingleSample {
             -property:Configuration=$Configuration `
             -property:Platform=$Platform `
             -p:TargetVersion=$TargetVersion `
+            -p:_NT_TARGET_VERSION=$NtTargetVersionCode `
             -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" `
             -warnaserror `
             -binaryLogger:LogFile=$binLogFilePath`;ProjectImports=None `
@@ -425,6 +438,22 @@ else {
 }
 
 # =============================================================================
+#  Step 5b - Resolve _NT_TARGET_VERSION code
+# =============================================================================
+#
+# _NT_TARGET_VERSION selects the WDK library version the driver links against
+# (independent of the Target OS Version). The MSBuild property takes the NTDDI hex
+# code, so map the friendly build number to it. Codes come from WDK DriverGeneral.xml.
+$ntTargetVersionCodes = [ordered]@{
+    '10.0.28000' = '0xA000012'; '10.0.26100' = '0xA000010'; '10.0.22621' = '0xA00000C'
+    '10.0.22000' = '0xA00000B'; '10.0.20348' = '0xA00000A'; '10.0.19041' = '0xA000008'
+    '10.0.18362' = '0xA000007'; '10.0.17763' = '0xA000006'; '10.0.17134' = '0xA000005'
+    '10.0.16299' = '0xA000004'; '10.0.15063' = '0xA000003'; '10.0.14393' = '0xA000002'
+    '10.0.10586' = '0xA000001'; '10.0.10240' = '0x0A00'
+}
+$ntTargetVersionCode = $ntTargetVersionCodes[$NtTargetVersion]
+
+# =============================================================================
 #  Step 6 - Load Exclusions
 # =============================================================================
 
@@ -450,6 +479,7 @@ Write-Output "  Samples:          $($sampleSet.Count) ($skippedCount skipped)"
 Write-Output "  Configurations:   $($Configurations -join ', ')"
 Write-Output "  Platforms:        $($Platforms -join ', ')"
 Write-Output "  Target Version:   $TargetVersion"
+Write-Output "  NT Target Ver:    $NtTargetVersion ($ntTargetVersionCode)"
 Write-Output "  Combinations:     $combinationsTotal"
 Write-Output "  Exclusions:       $($exclusions.Count)"
 Write-Output ""
@@ -497,6 +527,7 @@ $sampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
     $platforms  = $using:Platforms
     $infOpts    = $using:infVerifOptions
     $targetVer  = $using:TargetVersion
+    $ntCode     = $using:ntTargetVersionCode
     $isVerbose  = $using:verbose
     $state      = $using:buildState
     $total      = $using:combinationsTotal
@@ -548,6 +579,7 @@ $sampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
                     -Directory $directory -SampleName $sampleName `
                     -LogFilesDirectory $logDir -Configuration $configuration `
                     -Platform $platform -TargetVersion $targetVer `
+                    -NtTargetVersionCode $ntCode `
                     -InfVerif_AdditionalOptions $infOpts `
                     -Verbose:$isVerbose
 
@@ -667,6 +699,7 @@ Write-Output "  Samples:          $($sampleSet.Count)"
 Write-Output "  Configurations:   $($Configurations -join ', ')"
 Write-Output "  Platforms:        $($Platforms -join ', ')"
 Write-Output "  Target Version:   $TargetVersion"
+Write-Output "  NT Target Ver:    $NtTargetVersion ($ntTargetVersionCode)"
 Write-Output "  Combinations:     $combinationsTotal"
 Write-Output ""
 Write-Output "  Succeeded:        $($buildState.Succeeded)"
@@ -686,7 +719,7 @@ Write-Output "------------------------------------------------------------------
 
 $sortedResults = $buildState.Results | Sort-Object { $_.Sample }
 $sortedResults | ConvertTo-Csv  | Out-File $reportCsvPath
-$sortedResults | ConvertTo-Html -Title "WDK Sample Build Overview - TargetVersion $TargetVersion" | Out-File $reportHtmlPath
+$sortedResults | ConvertTo-Html -Title "WDK Sample Build Overview - TargetVersion $TargetVersion, _NT_TARGET_VERSION $NtTargetVersion" | Out-File $reportHtmlPath
 
 # Only open the HTML report interactively (not in CI/automation)
 if (-not $env:BUILD_BUILDID -and [Environment]::UserInteractive) {

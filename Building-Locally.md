@@ -123,6 +123,9 @@ Get-Help .\Build-Samples.ps1 -Detailed
 
 # Build every sample targeting an older OS version (default is the latest, Windows10):
 .\Build-Samples.ps1 -TargetVersion Windows7
+
+# Build every sample linking against an older WDK library set (default is the latest):
+.\Build-Samples.ps1 -NtTargetVersion 10.0.22000
 ```
 
 The `-TargetVersion` values come from the WDK `DriverGeneral.xml` rule and are listed
@@ -134,6 +137,20 @@ newest-first. The default is the latest, `Windows10`:
 | `WindowsV6.3` | Windows 8.1            |
 | `Windows8`    | Windows 8              |
 | `Windows7`    | Windows 7              |
+
+`-TargetVersion` (Target OS Version) selects the driver's *platform model* and is gated to
+Windows 10+ for Universal / Windows Driver samples. To instead vary the **library version the
+driver links against** - the WDK's `_NT_TARGET_VERSION` ("OS version of libraries") - while
+keeping the platform on Windows 10, use `-NtTargetVersion`. It accepts a Windows build number;
+values come from the WDK `DriverGeneral.xml` rule (newest-first), default latest `10.0.28000`:
+
+| `-NtTargetVersion` | Links against     |
+| ------------------ | ----------------- |
+| `10.0.28000`       | latest (default)  |
+| `10.0.26100`       | 24H2              |
+| `10.0.22621`       | 22H2              |
+| `10.0.22000`       | 21H2              |
+| ...                | down to `10.0.10240` |
 
 ---
 
