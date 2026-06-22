@@ -651,7 +651,9 @@ VOID FreeDeviceProperties(
 BOOL
 DisplayAudioDescriptor (
     PUSB_AUDIO_COMMON_DESCRIPTOR CommonDesc,
-    UCHAR                        bInterfaceSubClass
+    UCHAR                        bInterfaceSubClass,
+    PSTRING_DESCRIPTOR_NODE      StringDescs,
+    DEVICE_POWER_STATE           LatestDevicePowerState
     );
 
 //
