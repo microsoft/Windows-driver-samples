@@ -1,6 +1,6 @@
 ---
 page_type: sample
-description: "An iterative series of samples that demonstrate KDMF and UDMF1 driver development."
+description: "An iterative series of samples that demonstrate KMDF driver development."
 languages:
 - cpp
 products:
@@ -10,7 +10,7 @@ products:
 
 # Toaster Sample Driver
 
-The Toaster collection is an iterative series of samples that demonstrate fundamental aspects of Windows driver development for both Kernel-Mode Driver Framework (KMDF).
+The Toaster collection is an iterative series of samples that demonstrate fundamental aspects of Windows driver development for Kernel-Mode Driver Framework (KMDF).
 
 All the samples work with a hypothetical toaster bus, over which toaster devices can be connected to a PC.
 
