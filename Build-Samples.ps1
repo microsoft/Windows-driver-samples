@@ -119,15 +119,21 @@ function Import-SampleExclusions {
           - Configurations: semicolon-separated config|platform patterns (or '*' for all)
           - Reason:         human-readable explanation
 
-        Only exclusions whose [MinBuild, MaxBuild] range includes the given build number
-        are returned. Exclusions outside the range are silently skipped.
+        A row is only returned when BOTH of the following match the current build:
+          - its [MinBuild, MaxBuild] range includes the given build number, and
+          - its TargetVersions list matches the given TargetVersion. TargetVersions is
+            blank/'*' for all versions, or a ';'-separated list of -like patterns
+            (e.g. 'Windows8', 'Windows7;Windows8', 'Windows*').
+        Rows outside the build range, or whose TargetVersions does not match, are skipped.
     .NOTES
-        CSV format:  Path,Configurations,MinBuild,MaxBuild,Reason
-        Example row: network\wlan\wdi,*,,27100,"failure introduced in VS17.14"
+        CSV format:  Path,Configurations,TargetVersions,MinBuild,MaxBuild,Reason
+        Example row: network\wlan\wdi,*,,,27100,"failure introduced in VS17.14"
+        Target-specific: somepath,*|ARM64,Windows8,,,"ARM not supported when targeting Windows 8"
     #>
     param(
         [string]$CsvPath,
-        [int]$BuildNumber
+        [int]$BuildNumber,
+        [string]$TargetVersion = 'Windows10'
     )
 
     if (-not (Test-Path $CsvPath)) {
@@ -139,16 +145,24 @@ function Import-SampleExclusions {
     Import-Csv $CsvPath | ForEach-Object {
         $pattern  = $_.Path.Trim('\').Replace('\', '.').ToLower()
         $configs  = if ([string]::IsNullOrWhiteSpace($_.Configurations)) { '*' } else { $_.Configurations }
+        # TargetVersions column is optional; blank or missing means "all target versions".
+        $targets  = if ([string]::IsNullOrWhiteSpace($_.TargetVersions)) { '*' } else { $_.TargetVersions }
         $minBuild = if ([string]::IsNullOrWhiteSpace($_.MinBuild)) { 0 }     else { [int]$_.MinBuild }
         $maxBuild = if ([string]::IsNullOrWhiteSpace($_.MaxBuild)) { 99999 } else { [int]$_.MaxBuild }
 
-        if ($minBuild -le $BuildNumber -and $BuildNumber -le $maxBuild) {
+        # TargetVersion is constant for the whole run, so (like the build number) filter here.
+        $targetMatches = $targets.Split(';') | Where-Object { $TargetVersion -like $_.Trim() }
+
+        if (-not $targetMatches) {
+            Write-Verbose "Exclusion skipped: '$pattern' - target '$TargetVersion' not in '$targets'"
+        }
+        elseif ($minBuild -le $BuildNumber -and $BuildNumber -le $maxBuild) {
             [void]$exclusions.Add([PSCustomObject]@{
                 Pattern        = $pattern
                 Configurations = $configs
                 Reason         = $_.Reason
             })
-            Write-Verbose "Exclusion applied: '$pattern' configs='$configs' reason='$($_.Reason)'"
+            Write-Verbose "Exclusion applied: '$pattern' configs='$configs' targets='$targets' reason='$($_.Reason)'"
         }
         else {
             Write-Verbose "Exclusion skipped: '$pattern' - build $BuildNumber outside [$minBuild, $maxBuild]"
@@ -414,7 +428,7 @@ else {
 #  Step 6 - Load Exclusions
 # =============================================================================
 
-$exclusions = Import-SampleExclusions -CsvPath (Join-Path $root 'exclusions.csv') -BuildNumber $buildNumber
+$exclusions = Import-SampleExclusions -CsvPath (Join-Path $root 'exclusions.csv') -BuildNumber $buildNumber -TargetVersion $TargetVersion
 
 # =============================================================================
 #  Step 7 - Print Build Plan

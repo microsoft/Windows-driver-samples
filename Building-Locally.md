@@ -137,6 +137,37 @@ newest-first. The default is the latest, `Windows10`:
 
 ---
 
+## Excluding samples from the build
+
+Samples that are known not to build for a given environment are listed in `exclusions.csv`
+at the repo root. Each row excludes a path (with wildcards) for specific
+configuration/platform combinations, an optional WDK build-number range, and an optional
+set of target versions:
+
+```
+Path,Configurations,TargetVersions,MinBuild,MaxBuild,Reason
+```
+
+| Column           | Meaning                                                                                  |
+| ---------------- | ---------------------------------------------------------------------------------------- |
+| `Path`           | Sample path (backslashes); supports `*`/`?` wildcards.                                    |
+| `Configurations` | `;`-separated `Config\|Platform` patterns, or `*` for all (e.g. `*\|ARM64`, `Debug\|x64`). |
+| `TargetVersions` | `;`-separated `-like` patterns matched against `-TargetVersion`; blank or `*` = all (e.g. `Windows8`, `Windows7;Windows8`, `Windows*`). |
+| `MinBuild`/`MaxBuild` | Inclusive WDK build-number range; blank = unbounded.                                |
+| `Reason`         | Human-readable explanation (keep this column last; quote it if it contains commas).      |
+
+A row is applied only when every populated condition matches the current run (path,
+configuration/platform, build-number range, and target version are AND-ed together). Leave
+`TargetVersions` blank to exclude regardless of target version (the default for most rows).
+
+For example, to exclude all ARM platforms only when building for Windows 8:
+
+```
+somepath,*|ARM64,Windows8,,,"ARM not supported when targeting Windows 8"
+```
+
+---
+
 ## Additional Notes
 
 ### Pre-release WDK: disable strong name validation
