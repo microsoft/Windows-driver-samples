@@ -27,25 +27,20 @@
   * New functionality: System tests, more tests, log gathering.
 ## Mapping HLK  Tests to underlying MVHV Tests
 
-| No  | HLK Test Name                                      | HLK Test Type | MicrosoftVideoHardwareValidator.exe Command      | Comment                       | Associated Logfile    |
-|:----|:--------------------------------------------------:|:-------------:|-------------------------------------------------:|:-----------------------------:|:---------------------:|
-|   1 | MVHV Basic Test                                    | Device        | -v                                               | HLK_MVHV 0.01 test.           | MvhvVersionOutput.txt |
-|   2 | MVHV AV Encoder Test                               | Device        | execute_test Instantiation -c H264               | HLK_MVHV 0.01 test.           | MvhvSanityOutput.txt  |
-|   3 | MVHV Camera Test                                   | Device        | execute_test --mode Camera                       | HLK_MVHV 0.01 test.           | MvhvCameraOutput.txt  |
-|   4 | Microsoft Teams MVHV Test Basic Test               | Device        | execute_testcategory -v                          | Future test. To replace No 1? | mvhvoutput.txt        | 
-|   5 | Microsoft Teams MVHV Test AV Encoder Test          | Device/System | execute_testcategory Instantiation -c H264       | Future test. To replace No 2? | mvhvoutput.txt        |
-|   6 | Microsoft Teams MVHV Test Camera Test              | Device/System | execute_test --mode Camera                       | Future test. To replace No 3? | mvhvoutput.txt        |
-|   7 | Microsoft Teams MVHV Test Instantiation            | Device/System | execute_testcategory Instantiation               | Future test. To replace No 2? | mvhvoutput.txt        |
-|   8 | Microsoft Teams MVHV Test DynamicControl           | Device/System | execute_testcategory DynamicControl              | Future test.                  | mvhvoutput.txt        |
-|   9 | Microsoft Teams MVHV Test IDR                      | Device/System | execute_testcategory IDR                         | Future test.                  | mvhvoutput.txt        |
-|  10 | Microsoft Teams MVHV Test Simulcast                | Device/System | execute_testcategory Simulcast                   | Future test.                  | mvhvoutput.txt        |
-|  11 | Microsoft Teams MVHV Test QualitySingleStream H264 | Device/System | execute_testcategory QualitySingleStream -c H264 | Future test.                  | mvhvoutput.txt        |
-|  12 | Microsoft Teams MVHV Test QualitySingleStream AV1  | Device/System | execute_testcategory QualitySingleStream -c AV1  | Future test.                  | mvhvoutput.txt        |
-|  13 | Microsoft Teams MVHV Test QualitySingleStream H265 | Device/System | execute_testcategory QualitySingleStream -c H265 | Future test.                  | mvhvoutput.txt        |
-|  14 | Microsoft Teams MVHV Test Basic                    | Device/System | execute_testcategory Basic                       | Future test.                  | mvhvoutput.txt        |
-|  15 | Microsoft Teams MVHV Test Camera                   | Device/System | execute_test --mode Camera                       | Future test. To replace No 3? | mvhvoutput.txt        |
-|  16 | Microsoft Teams MVHV Test Audio                    | Device/System | execute_test --mode Audio                        | Future test.                  | mvhvoutput.txt        |
-|  17 | Microsoft Teams MVHV Test Render                   | Device/System | execute_test --mode Render                       | Future test.                  | mvhvoutput.txt        |
+| No  | HLK Test Name                                      | HLK Test Type | MicrosoftVideoHardwareValidator.exe Command      | Comment                  |
+|:----|:--------------------------------------------------:|:-------------:|-------------------------------------------------:|:------------------------:|
+|   1 | Microsoft teams MVHV Test Version Check            | Device/System | -v                                               |                          |
+|   2 | Microsoft Teams MVHV Test Instantiation            | Device/System | execute_testcategory Instantiation               |                          |
+|   3 | Microsoft Teams MVHV Test DynamicControl           | Device/System | execute_testcategory DynamicControl              |                          |
+|   4 | Microsoft Teams MVHV Test IDR                      | Device/System | execute_testcategory IDR                         |                          |
+|   5 | Microsoft Teams MVHV Test Simulcast                | Device/System | execute_testcategory Simulcast                   |                          |
+|   6 | Microsoft Teams MVHV Test QualitySingleStream H264 | Device/System | execute_testcategory QualitySingleStream -c H264 |                          |
+|   7 | Microsoft Teams MVHV Test QualitySingleStream AV1  | Device/System | execute_testcategory QualitySingleStream -c AV1  |                          |
+|   8 | Microsoft Teams MVHV Test QualitySingleStream H265 | Device/System | execute_testcategory QualitySingleStream -c H265 |                          |
+|   9 | Microsoft Teams MVHV Test Basic                    | Device/System | execute_testcategory Basic                       |                          |
+|  10 | Microsoft Teams MVHV Test Camera                   | Device/System | execute_test --mode Camera                       |                          |
+|  11 | Microsoft Teams MVHV Test Audio                    | Device/System | execute_test --mode Audio                        |                          |
+|  12 | Microsoft Teams MVHV Test Render                   | Device/System | execute_test --mode Render                       |                          |
 
 Device Test
 Device and System Test
