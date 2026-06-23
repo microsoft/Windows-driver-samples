@@ -1,5 +1,7 @@
 name: Build all driver samples
 on:
+  # Allows the workflow to be triggered manually from the Actions tab ("Run workflow").
+  workflow_dispatch:
   push:
     branches:
       - main
