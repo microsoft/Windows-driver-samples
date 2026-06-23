@@ -121,36 +121,20 @@ Get-Help .\Build-Samples.ps1 -Detailed
 # Build a specific sample for Debug|x64 only:
 .\Build-Samples.ps1 -Samples 'tools.sdv.samples.sampledriver' -Configurations 'Debug' -Platforms 'x64'
 
-# Build every sample targeting an older OS version (default is the latest, Windows10):
-.\Build-Samples.ps1 -TargetVersion Windows7
-
 # Build every sample linking against an older WDK library set (default is the latest):
 .\Build-Samples.ps1 -NtTargetVersion 10.0.22000
 ```
 
-The `-TargetVersion` values come from the WDK `DriverGeneral.xml` rule and are listed
-newest-first. The default is the latest, `Windows10`:
+`-NtTargetVersion` selects the WDK **`_NT_TARGET_VERSION`** — the OS version of the libraries
+the driver links against. It accepts the Windows build number (`10.0.<build>`) or the short
+`<build>` tag (e.g. `10.0.22000` or `22000`); when omitted it uses the latest. The valid
+values are **auto-discovered from the active WDK** — `Get-NtTargetVersions.ps1` parses the
+WDK's `DriverGeneral.xml` rule — so a new WDK version is picked up automatically with no edits.
+List what's available with:
 
-| Value         | Target OS              |
-| ------------- | ---------------------- |
-| `Windows10`   | Windows 10 or higher (default) |
-| `WindowsV6.3` | Windows 8.1            |
-| `Windows8`    | Windows 8              |
-| `Windows7`    | Windows 7              |
-
-`-TargetVersion` (Target OS Version) selects the driver's *platform model* and is gated to
-Windows 10+ for Universal / Windows Driver samples. To instead vary the **library version the
-driver links against** - the WDK's `_NT_TARGET_VERSION` ("OS version of libraries") - while
-keeping the platform on Windows 10, use `-NtTargetVersion`. It accepts a Windows build number;
-values come from the WDK `DriverGeneral.xml` rule (newest-first), default latest `10.0.28000`:
-
-| `-NtTargetVersion` | Links against     |
-| ------------------ | ----------------- |
-| `10.0.28000`       | latest (default)  |
-| `10.0.26100`       | 24H2              |
-| `10.0.22621`       | 22H2              |
-| `10.0.22000`       | 21H2              |
-| ...                | down to `10.0.10240` |
+```powershell
+.\Get-NtTargetVersions.ps1
+```
 
 ---
 
@@ -159,36 +143,29 @@ values come from the WDK `DriverGeneral.xml` rule (newest-first), default latest
 Samples that are known not to build for a given environment are listed in `exclusions.csv`
 at the repo root. Each row excludes a path (with wildcards) for specific
 configuration/platform combinations, an optional WDK build-number range, and an optional
-set of target versions:
+`_NT_TARGET_VERSION` range:
 
 ```
-Path,Configurations,TargetVersions,MinBuild,MaxBuild,MinNtTargetVersion,MaxNtTargetVersion,Reason
+Path,Configurations,MinBuild,MaxBuild,MinNtTargetVersion,MaxNtTargetVersion,Reason
 ```
 
 | Column           | Meaning                                                                                  |
 | ---------------- | ---------------------------------------------------------------------------------------- |
 | `Path`           | Sample path (backslashes); supports `*`/`?` wildcards.                                    |
 | `Configurations` | `;`-separated `Config\|Platform` patterns, or `*` for all (e.g. `*\|ARM64`, `Debug\|x64`). |
-| `TargetVersions` | `;`-separated `-like` patterns matched against `-TargetVersion`; blank or `*` = all (e.g. `Windows8`, `Windows7;Windows8`, `Windows*`). |
 | `MinBuild`/`MaxBuild` | Inclusive WDK build-number range; blank = unbounded.                                |
 | `MinNtTargetVersion`/`MaxNtTargetVersion` | Inclusive `-NtTargetVersion` build-number range (e.g. `22621` matches `10.0.22621`); blank = unbounded. Use this for samples that fail only when linking against older libraries. |
 | `Reason`         | Human-readable explanation (keep this column last; quote it if it contains commas).      |
 
 A row is applied only when every populated condition matches the current run (path,
-configuration/platform, WDK build-number range, NT target-version range, and target version
-are AND-ed together). Leave a column blank to ignore that dimension (the default for most rows).
+configuration/platform, WDK build-number range, and NT target-version range are AND-ed
+together). Leave a column blank to ignore that dimension (the default for most rows).
 
-For example, to exclude all ARM platforms only when building for Windows 8:
-
-```
-somepath,*|ARM64,Windows8,,,,,"ARM not supported when targeting Windows 8"
-```
-
-Or to exclude a sample (Debug builds only) when linking against the `10.0.22621` library set
-or older, because it uses a newer API:
+For example, to exclude a sample (Debug builds only) when linking against the `10.0.22621`
+library set or older, because it uses a newer API:
 
 ```
-somepath,Debug|*,,,,,22621,uses an API newer than the 10.0.22621 library
+somepath,Debug|*,,,,22621,uses an API newer than the 10.0.22621 library
 ```
 
 ---
