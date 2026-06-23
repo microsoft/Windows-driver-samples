@@ -105,14 +105,59 @@ robocopy /mir "$driveLetter\" C:\Clips
 Dismount-DiskImage -ImagePath $iso
 ```
 
-##### Install .NET on Client
-The underlying Microsoft Teams Test Suite requires a special .NET version.  This is not automatically installed. As such you need to manually install.
-* For AMD64 devices: Download and run https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-9.0.16-windows-x64-installer?cid=getdotnetcore .
-* For ARM64 devices: Download and run https://aka.ms/dotnet-core-applaunch?missing_runtime=true&arch=arm64&rid=win-arm64&os=win10&apphost_version=9.0.15 .
+##### Install .NET Runtime on Client
+The underlying Microsoft Teams Test Suite requires .NET 9 Runtime.  This is not automatically installed. As such you need to manually install.
+```
+winget install Microsoft.DotNet.Runtime.9
+```
 
-##### Manually deploy MVHV from HLK controller to HLK Client
+## Running HLK MVHV Tests
+How to run, how to inspect test ran succesfully, how to analyze results, how to get detailed logs from client
 
-As a technical (and hopefully very temporary) limitation you must manually deploy the underlying MVHV tests from HLK controller to HLK client.
+How to Run tests:
+----------------
+To Run tests from HLK Controller you have to connect controller with a Device that has GPU and a Camera.
+In selection screen you have to select your GPU and select Device.Streaming.HMFT.MLVEC by right clicking and adding feature.
+To run camera tests you have to do similar step for camera entry in selection screen and picking Device.Streaming.Camera.Videocapture
+Afterwards you will see MVHV tests in your Tests tab on your HLK Controller. 
+Select the test you wish to run and choose run selected option by right clicking the view 
+
+
+During Test Execution:
+----------------------
+While test is running relevant DUT (Device Under Test) will reboot a few times. In first cycle of reboot your device
+may enter OOBE setup. OOBE stands for Out Of Box Experience. Device may ask for some permissions and some setup questions.
+For the first time in current version please select and satify all the OOBE settings. After first iteration this won't be
+asked again until you reset the device or reinstall the Operating System on device.
+
+
+Test Results:
+-------------
+If all the tests show green check sign it means tests ran successfully and they passed. Instead if they show red cross sign test failed.
+For initial test name and result related log you can check the associated logfile name from table in section "Mapping HLK MVHV Tests to 
+underlying MVHV Test Suites" and look for that file under c:\mvhv folder. It is a text file editable in notepad or any other text editor.
+For detailed logs there will be a folder called Results under c:\mvhv. For highly technical users please provide these set of logs. 
+
+## FAQ / Tips and Tricks
+TODO
+
+## Known issues and planned changes
+* TODO: Today you have to manually copy MVHV logs to target.   We hope to fix this by HLK_MVHV 0.0.2.
+* TODO: Today you have only a few rudimentary tests.  We hope to have a more complete exposure of all of MVHV test by HLK_MVHV 0.0.2.
+* TODO: Today detailed MVHV logs are left on Client machine. We hope to pull them back into HLK test results by HLK_MVHV 0.0.2.
+* TODO: Today Clips deployment is a little messy. We hope to clean this up by HLK_MVHV 0.02.
+* TODO: Today detecting prerequisites is not done well.  We hope to remove some prerequisites (say, MVHV robocopy) and hope to add better detection of other prerequisites by HLK_MVHV 0.02
+* TODO: Redundant copies of MVHV inside HLK. Fixed in HLK_MVHV 0.02.
+* TODO. Refine list of tests and targeting type. To be fixed post HLK_MVHV 0.02
+* TODO: .NET Installation: Why different/assymmetric installer link styles for AMD64 and for ARM64 versions?  As I can best see the homepage is https://dotnet.microsoft.com/en-us/download/dotnet/9.0 and the specific symmetric download links are https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-9.0.16-windows-x64-installer and https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-9.0.16-windows-arm64-installer , but I'd really prefer just a winget command, see https://learn.microsoft.com/en-us/dotnet/core/install/windows?WT.mc_id=dotnet-35129-website#install-with-windows-package-manager-winget .
+
+
+# Appendix: Manually run MVHV tests on HLK Client
+
+## 1. Handle prerequisites
+See section "Prerequisites" above.
+
+## 2. Manually grab MVHV
 
 On HLK Controller run following commands
 ```
@@ -149,40 +194,26 @@ After installing mvhv on client machine please make sure that MicrosoftVideoHard
 In case any such lines are missing you can manually edit file to have these entries. 
 ```
 
+## 3. Run test manually
+From elevated command prompt run tool using command from table above.
 
-## Running HLK MVHV Tests
-How to run, how to inspect test ran succesfully, how to analyze results, how to get detailed logs from client
+Example:
+```
+cd /d C:\mvhv
+.\MicrosoftVideoHardwareValidator execute_testcategory Basic
+```
 
-How to Run tests:
-----------------
-To Run tests from HLK Controller you have to connect controller with a Device that has GPU and a Camera.
-In selection screen you have to select your GPU and select Device.Streaming.HMFT.MLVEC by right clicking and adding feature.
-To run camera tests you have to do similar step for camera entry in selection screen and picking Device.Streaming.Camera.Videocapture
-Afterwards you will see MVHV tests in your Tests tab on your HLK Controller. 
-Select the test you wish to run and choose run selected option by right clicking the view 
+# Appendix: Our Test Experiments and Results
+## Hardware Overview
+This is tested on following  hardware:
 
+| No  | System Model                                         | System Type    | Comment           |
+|:----|:----------------------------------------------------:|:--------------:|------------------:|
+|   1 | Virtual Machine                                      | x64-based PC   |                   |
+|   2 | Surface Laptop 6 for Business                        | x64-based PC   |                   |
+|   3 | Surface Pro for Business 12in 1st Ed with Snapdragon | ARM64-based PC |                   |
 
-During Test Execution:
-----------------------
-While test is running relevant DUT (Device Under Test) will reboot a few times. In first cycle of reboot your device
-may enter OOBE setup. OOBE stands for Out Of Box Experience. Device may ask for some permissions and some setup questions.
-For the first time in current version please select and satify all the OOBE settings. After first iteration this won't be
-asked again until you reset the device or reinstall the Operating System on device.
-
-
-Test Results:
--------------
-If all the tests show green check sign it means tests ran successfully and they passed. Instead if they show red cross sign test failed.
-For initial test name and result related log you can check the associated logfile name from table in section "Mapping HLK MVHV Tests to 
-underlying MVHV Test Suites" and look for that file under c:\mvhv folder. It is a text file editable in notepad or any other text editor.
-For detailed logs there will be a folder called Results under c:\mvhv. For highly technical users please provide these set of logs. 
-
-## Our Test Experiments and Results
-This is tested on following pieces of hardware:
-1. HyperV VM - AMD64
-2. Surface Laptop 6 for Business - Surface_Laptop_6_for_Business_2033 - AMD64
-3. Surface Pro for Business - Surface_Pro_for_Business_12in_1st_Ed_with_Snapdragon_2109 - ARM64
-  
+## Hardware Details
 ### 1. HyperV VM - AMD64
 ```
 OS Name	Microsoft Windows 11 Enterprise Insider Preview
@@ -230,7 +261,6 @@ A hypervisor has been detected. Features required for Hyper-V will not be displa
 ### 2. Surface Laptop 6 for Business - Surface_Laptop_6_for_Business_2033 - AMD64
 
 ```
-Configuration For AMD64
 OS Name	Microsoft Windows 11 Enterprise Insider Preview  
 Version	10.0.26605 Build 26605  
 Other OS Description 	Not Available   
@@ -325,16 +355,3 @@ Security Features Enabled	Return Address Signing (Kernel-mode)
 Automatic Device Encryption Support	Elevation Required to View  
 A hypervisor has been detected. Features required for Hyper-V will not be displayed.	  
 ```
-
-## FAQ / Tips and Tricks
-TODO
-
-## Known issues and planned changes
-* TODO: Today you have to manually copy MVHV logs to target.   We hope to fix this by HLK_MVHV 0.0.2.
-* TODO: Today you have only a few rudimentary tests.  We hope to have a more complete exposure of all of MVHV test by HLK_MVHV 0.0.2.
-* TODO: Today detailed MVHV logs are left on Client machine. We hope to pull them back into HLK test results by HLK_MVHV 0.0.2.
-* TODO: Today Clips deployment is a little messy. We hope to clean this up by HLK_MVHV 0.02.
-* TODO: Today detecting prerequisites is not done well.  We hope to remove some prerequisites (say, MVHV robocopy) and hope to add better detection of other prerequisites by HLK_MVHV 0.02
-* TODO: Redundant copies of MVHV inside HLK. Fixed in HLK_MVHV 0.02.
-* TODO. Refine list of tests and targeting type. To be fixed post HLK_MVHV 0.02
-* TODO: .NET Installation: Why different/assymmetric installer link styles for AMD64 and for ARM64 versions?  As I can best see the homepage is https://dotnet.microsoft.com/en-us/download/dotnet/9.0 and the specific symmetric download links are https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-9.0.16-windows-x64-installer and https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-9.0.16-windows-arm64-installer , but I'd really prefer just a winget command, see https://learn.microsoft.com/en-us/dotnet/core/install/windows?WT.mc_id=dotnet-35129-website#install-with-windows-package-manager-winget .
