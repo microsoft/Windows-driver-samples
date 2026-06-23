@@ -23,7 +23,8 @@
   * Initial release.
   * Release date: 2026/06/03.
 * HLK_MVHV 0.02:
-  * Upcoming release.
+  * Released via EEAP "HLK- MVHV Integration"
+  * Link: https://partner.microsoft.com/en-us/dashboard/collaborate/packages/19783
   * New functionality: System tests, more tests, log gathering.
 ## Mapping HLK  Tests to underlying MVHV Tests
 
