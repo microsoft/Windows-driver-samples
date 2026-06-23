@@ -26,12 +26,6 @@ if (-not (Test-Path $logsPath)) {
     return
 }
 
-# --- Friendly labels for the known _NT_TARGET_VERSION build tags --------------
-$ntLabel = @{
-    '28000' = 'latest'; '26100' = '24H2'; '22621' = '22H2'; '22000' = '21H2'
-    '20348' = 'Server 2022'; '19041' = '2004'; '18362' = '1903'; '17763' = '1809'
-}
-
 # --- Load every per-job CSV ---------------------------------------------------
 # data[sample][tag][combo] = status
 $data       = @{}
@@ -130,16 +124,15 @@ $csvRows | Export-Csv -Path (Join-Path $logsPath "$reportFileName.csv") -NoTypeI
 
 # --- HTML (colour-coded sample x version matrix) ------------------------------
 $generated = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
-$sumHead = "<tr><th>_NT_TARGET_VERSION</th><th>Release</th><th>Pass</th><th>Flaky</th><th>Partial</th><th>Fail</th><th>n/a</th><th>Combos OK</th><th>Sporadic</th><th>Failed</th><th>Excluded</th><th>Pass rate</th></tr>"
+$sumHead = "<tr><th>_NT_TARGET_VERSION</th><th>Pass</th><th>Flaky</th><th>Partial</th><th>Fail</th><th>n/a</th><th>Combos OK</th><th>Sporadic</th><th>Failed</th><th>Excluded</th><th>Pass rate</th></tr>"
 $sumRows = ''
 foreach ($t in $tags) {
     $x = $totals[$t]; $tot = $x.pass + $x.flaky + $x.partial + $x.fail + $x.na; $elig = $tot - $x.na
     $rate = if ($elig -gt 0) { '{0:N0}%' -f (100.0 * ($x.pass + $x.flaky) / $elig) } else { 'n/a' }
-    $rel = $ntLabel[$t]; if (-not $rel) { $rel = '' }
-    $sumRows += "<tr><td class='sample'>$t</td><td>$rel</td><td class='pass'>$($x.pass)</td><td class='flaky'>$($x.flaky)</td><td class='partial'>$($x.partial)</td><td class='fail'>$($x.fail)</td><td class='na'>$($x.na)</td><td>$($x.S)</td><td>$($x.O)</td><td>$($x.F)</td><td>$($x.E)</td><td><b>$rate</b></td></tr>`n"
+    $sumRows += "<tr><td class='sample'>$t</td><td class='pass'>$($x.pass)</td><td class='flaky'>$($x.flaky)</td><td class='partial'>$($x.partial)</td><td class='fail'>$($x.fail)</td><td class='na'>$($x.na)</td><td>$($x.S)</td><td>$($x.O)</td><td>$($x.F)</td><td>$($x.E)</td><td><b>$rate</b></td></tr>`n"
 }
 $matHead = "<tr><th class='sample'>Sample</th>"
-foreach ($t in $tags) { $rel = $ntLabel[$t]; if (-not $rel) { $rel = '' }; $matHead += "<th>$t<br><span class='sub'>$rel</span></th>" }
+foreach ($t in $tags) { $matHead += "<th>$t</th>" }
 $matHead += "</tr>"
 
 $html = @"
@@ -181,13 +174,12 @@ if ($env:GITHUB_STEP_SUMMARY) {
     [void]$md.AppendLine("Columns are **_NT_TARGET_VERSION** (the WDK library version drivers link against). Each version was built for Debug/Release x x64/arm64.")
     [void]$md.AppendLine()
     [void]$md.AppendLine("## Summary by _NT_TARGET_VERSION")
-    [void]$md.AppendLine("| _NT_TARGET_VERSION | Release | :white_check_mark: Pass | :warning: Flaky | :large_orange_diamond: Partial | :x: Fail | :heavy_minus_sign: n/a | Pass rate |")
-    [void]$md.AppendLine("|---|---|---:|---:|---:|---:|---:|---:|")
+    [void]$md.AppendLine("| _NT_TARGET_VERSION | :white_check_mark: Pass | :warning: Flaky | :large_orange_diamond: Partial | :x: Fail | :heavy_minus_sign: n/a | Pass rate |")
+    [void]$md.AppendLine("|---|---:|---:|---:|---:|---:|---:|")
     foreach ($t in $tags) {
         $x = $totals[$t]; $tot = $x.pass + $x.flaky + $x.partial + $x.fail + $x.na; $elig = $tot - $x.na
         $rate = if ($elig -gt 0) { '{0:N0}%' -f (100.0 * ($x.pass + $x.flaky) / $elig) } else { 'n/a' }
-        $rel = $ntLabel[$t]; if (-not $rel) { $rel = '' }
-        [void]$md.AppendLine("| ``$t`` | $rel | $($x.pass) | $($x.flaky) | $($x.partial) | $($x.fail) | $($x.na) | **$rate** |")
+        [void]$md.AppendLine("| ``$t`` | $($x.pass) | $($x.flaky) | $($x.partial) | $($x.fail) | $($x.na) | **$rate** |")
     }
     [void]$md.AppendLine()
 

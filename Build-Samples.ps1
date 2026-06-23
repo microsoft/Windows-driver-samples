@@ -131,7 +131,7 @@ function Import-SampleExclusions {
     param(
         [string]$CsvPath,
         [int]$BuildNumber,
-        [string]$NtTargetVersion = '10.0.28000'
+        [string]$NtTargetVersion
     )
 
     if (-not (Test-Path $CsvPath)) {
@@ -140,8 +140,14 @@ function Import-SampleExclusions {
     }
 
     # The _NT_TARGET_VERSION param is the friendly build-number form (e.g. '10.0.22000');
-    # take its last dotted component for numeric range comparisons.
-    $ntBuild = [int]($NtTargetVersion -replace '.*\.', '')
+    # take its last dotted component for numeric range comparisons. An empty value (or
+    # 'latest') means the newest libraries, so no NT-version-scoped row applies.
+    $ntBuild = if ([string]::IsNullOrWhiteSpace($NtTargetVersion) -or $NtTargetVersion -eq 'latest') {
+        [int]::MaxValue
+    }
+    else {
+        [int]($NtTargetVersion -replace '.*\.', '')
+    }
 
     $exclusions = [System.Collections.ArrayList]::new()
     Import-Csv $CsvPath | ForEach-Object {
@@ -151,7 +157,7 @@ function Import-SampleExclusions {
         $maxBuild = if ([string]::IsNullOrWhiteSpace($_.MaxBuild)) { 99999 } else { [int]$_.MaxBuild }
         # Min/MaxNtTargetVersion columns are optional; blank or missing means "all NT versions".
         $minNt    = if ([string]::IsNullOrWhiteSpace($_.MinNtTargetVersion)) { 0 }       else { [int]$_.MinNtTargetVersion }
-        $maxNt    = if ([string]::IsNullOrWhiteSpace($_.MaxNtTargetVersion)) { 9999999 } else { [int]$_.MaxNtTargetVersion }
+        $maxNt    = if ([string]::IsNullOrWhiteSpace($_.MaxNtTargetVersion)) { [int]::MaxValue } else { [int]$_.MaxNtTargetVersion }
 
         # _NT_TARGET_VERSION is constant for the whole run, so (like the build number) filter
         # these rows out here at load time.
@@ -205,7 +211,7 @@ function Build-SingleSample {
         [string]$SampleName,
         [string]$Configuration = 'Debug',
         [string]$Platform = 'x64',
-        [string]$NtTargetVersionCode = '0xA000012',
+        [string]$NtTargetVersionCode,
         [string]$InfVerif_AdditionalOptions = '/samples',
         [string]$LogFilesDirectory = (Get-Location),
         [bool]$Verbose = $false
