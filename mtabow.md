@@ -178,9 +178,58 @@ underlying MVHV Test Suites" and look for that file under c:\mvhv folder. It is 
 For detailed logs there will be a folder called Results under c:\mvhv. For highly technical users please provide these set of logs. 
 
 ## Our Test Experiments and Results
-TODO: Will showcase the specific hardware we have tested on and results
-This software was tested on following two device configurations.
+This is tested on following pieces of hardware:
+1. HyperV VM - AMD64
+2. Surface Laptop 6 for Business - Surface_Laptop_6_for_Business_2033 - AMD64
+3. Surface Pro for Business - Surface_Pro_for_Business_12in_1st_Ed_with_Snapdragon_2109 - ARM64
+  
+### 1. HyperV VM - AMD64
+```
+OS Name	Microsoft Windows 11 Enterprise Insider Preview
+Version	10.0.26640 Build 26640
+Other OS Description 	Not Available
+OS Manufacturer	Microsoft Corporation
+System Name	DESKTOP-RS1M2DO
+System Manufacturer	Microsoft Corporation
+System Model	Virtual Machine
+System Type	x64-based PC
+System SKU	None
+Processor	12th Gen Intel(R) Core(TM) i9-12900K, 3187 Mhz, 6 Core(s), 12 Logical Processor(s)
+BIOS Version/Date	Microsoft Corporation Hyper-V UEFI Release v4.1, 9/25/2025
+SMBIOS Version	3.1
+Embedded Controller Version	255.255
+BIOS Mode	UEFI
+BaseBoard Manufacturer	Microsoft Corporation
+BaseBoard Product	Virtual Machine
+BaseBoard Version	Hyper-V UEFI Release v4.1
+Platform Role	Desktop
+Secure Boot State	On
+PCR7 Configuration	Binding Not Possible
+Windows Directory	C:\Windows
+System Directory	C:\Windows\system32
+Boot Device	\Device\HarddiskVolume1
+Locale	United States
+Hardware Abstraction Layer	Version = "10.0.26640.1000"
+User Name	Not Available
+Time Zone	Pacific Daylight Time
+Installed Physical Memory (RAM)	4.40 GB
+Total Physical Memory	4.40 GB
+Available Physical Memory	1.81 GB
+Total Virtual Memory	8.40 GB
+Available Virtual Memory	4.66 GB
+Page File Space	4.00 GB
+Page File	C:\pagefile.sys
+Kernel DMA Protection	Off
+Virtualization-based security	Not enabled
+App Control for Business policy	Enforced
+App Control for Business user mode policy	Audit
+Automatic Device Encryption Support	Reasons for failed automatic device encryption: TPM is not usable, PCR7 binding is not supported, Hardware Security Test Interface failed and device is not Modern Standby, Un-allowed DMA capable bus/device(s) detected, TPM is not usable
+A hypervisor has been detected. Features required for Hyper-V will not be displayed.	
+```
 
+### 2. Surface Laptop 6 for Business - Surface_Laptop_6_for_Business_2033 - AMD64
+
+```
 Configuration For AMD64
 OS Name	Microsoft Windows 11 Enterprise Insider Preview  
 Version	10.0.26605 Build 26605  
@@ -226,11 +275,10 @@ App Control for Business policy	Enforced
 App Control for Business user mode policy	Audit  
 Automatic Device Encryption Support	Elevation Required to View  
 A hypervisor has been detected. Features required for Hyper-V will not be displayed.	  
+```
 
-
-
-
-Configuration For ARM64  
+### 3. Surface Pro for Business - Surface_Pro_for_Business_12in_1st_Ed_with_Snapdragon_2109 - ARM64
+```
 OS Name	Microsoft Windows 11 Pro Insider Preview  
 Version	10.0.26630 Build 26630  
 Other OS Description 	Not Available  
@@ -276,7 +324,7 @@ App Control for Business user mode policy	Audit
 Security Features Enabled	Return Address Signing (Kernel-mode)  
 Automatic Device Encryption Support	Elevation Required to View  
 A hypervisor has been detected. Features required for Hyper-V will not be displayed.	  
-
+```
 
 ## FAQ / Tips and Tricks
 TODO
