@@ -46,7 +46,7 @@
 
 | No  | HLK Test Name                                      | HLK Test Type | MicrosoftVideoHardwareValidator.exe Command      | Comment                  |
 |:----|:--------------------------------------------------:|:-------------:|-------------------------------------------------:|:------------------------:|
-|   1 | Microsoft teams MVHV Test Version Check            | Device/System | -v                                               |                          |
+|   1 | Microsoft Teams MVHV Test Version Check            | Device/System | -v                                               |                          |
 |   2 | Microsoft Teams MVHV Test Instantiation            | Device/System | execute_testcategory Instantiation               |                          |
 |   3 | Microsoft Teams MVHV Test DynamicControl           | Device/System | execute_testcategory DynamicControl              |                          |
 |   4 | Microsoft Teams MVHV Test IDR                      | Device/System | execute_testcategory IDR                         |                          |
