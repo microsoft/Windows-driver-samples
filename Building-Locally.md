@@ -162,7 +162,7 @@ configuration/platform combinations, an optional WDK build-number range, and an 
 set of target versions:
 
 ```
-Path,Configurations,TargetVersions,MinBuild,MaxBuild,Reason
+Path,Configurations,TargetVersions,MinBuild,MaxBuild,MinNtTargetVersion,MaxNtTargetVersion,Reason
 ```
 
 | Column           | Meaning                                                                                  |
@@ -171,16 +171,24 @@ Path,Configurations,TargetVersions,MinBuild,MaxBuild,Reason
 | `Configurations` | `;`-separated `Config\|Platform` patterns, or `*` for all (e.g. `*\|ARM64`, `Debug\|x64`). |
 | `TargetVersions` | `;`-separated `-like` patterns matched against `-TargetVersion`; blank or `*` = all (e.g. `Windows8`, `Windows7;Windows8`, `Windows*`). |
 | `MinBuild`/`MaxBuild` | Inclusive WDK build-number range; blank = unbounded.                                |
+| `MinNtTargetVersion`/`MaxNtTargetVersion` | Inclusive `-NtTargetVersion` build-number range (e.g. `22621` matches `10.0.22621`); blank = unbounded. Use this for samples that fail only when linking against older libraries. |
 | `Reason`         | Human-readable explanation (keep this column last; quote it if it contains commas).      |
 
 A row is applied only when every populated condition matches the current run (path,
-configuration/platform, build-number range, and target version are AND-ed together). Leave
-`TargetVersions` blank to exclude regardless of target version (the default for most rows).
+configuration/platform, WDK build-number range, NT target-version range, and target version
+are AND-ed together). Leave a column blank to ignore that dimension (the default for most rows).
 
 For example, to exclude all ARM platforms only when building for Windows 8:
 
 ```
-somepath,*|ARM64,Windows8,,,"ARM not supported when targeting Windows 8"
+somepath,*|ARM64,Windows8,,,,,"ARM not supported when targeting Windows 8"
+```
+
+Or to exclude a sample (Debug builds only) when linking against the `10.0.22621` library set
+or older, because it uses a newer API:
+
+```
+somepath,Debug|*,,,,,22621,uses an API newer than the 10.0.22621 library
 ```
 
 ---

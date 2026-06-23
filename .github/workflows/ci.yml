@@ -12,12 +12,19 @@ on:
     - cron: '0 8 * * 6'
 jobs:
   build:
-    name: Build driver samples
+    name: build ${{ matrix.nt.tag }} ${{ matrix.configuration }} ${{ matrix.platform }}
     strategy:
       fail-fast: false
       matrix:
         configuration: [Debug, Release]
         platform: [x64, arm64]
+        # _NT_TARGET_VERSION = the WDK library version drivers link against (newest first).
+        # Each { version, tag } runs as its own parallel job; trim this list to reduce CI load.
+        nt:
+          - { version: '10.0.28000', tag: '28000' }
+          - { version: '10.0.26100', tag: '26100' }
+          - { version: '10.0.22621', tag: '22621' }
+          - { version: '10.0.22000', tag: '22000' }
     runs-on: windows-2025-vs2026
     steps:
       - name: Check out repository code
@@ -33,13 +40,14 @@ jobs:
         env:
           WDS_Configuration: ${{ matrix.configuration }}
           WDS_Platform: ${{ matrix.platform }}
-          WDS_ReportFileName: _overview.${{ matrix.configuration }}.${{ matrix.platform }}
+          WDS_NtTargetVersion: ${{ matrix.nt.version }}
+          WDS_ReportFileName: _overview.${{ matrix.nt.tag }}.${{ matrix.configuration }}.${{ matrix.platform }}
 
       - name: Archive build logs and overview build reports
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: logs-${{ matrix.configuration }}-${{ matrix.platform }}
+          name: logs-${{ matrix.nt.tag }}-${{ matrix.configuration }}-${{ matrix.platform }}
           path: _logs
 
   report:
