@@ -6,6 +6,16 @@
 * Web: https://aka.ms/mtabow
 * Email: mtabow@microsoft.com
 
+## Call to Action
+* Publish date: 2026/06/23.
+* For: Hardware Partners
+* Download HLK_MVHV 0.02. HLK and OS. See beneath.
+* Install HLK Controller.
+* Install HLK Client OS.  Run one time prerequisited. See beneath.
+* Run 12 MVHV tests. See beneath.  You may want to start with "Microsoft teams MVHV Test Version Check" as a sanity check.
+* Create HLKX file.
+* Review and/or share with Microsoft.
+
 ## Terminology
 * HLK: Windows Hardware Lab Kit.
 * HLK Controller: A Windows Server running HLK's server side components. Orchestrates HLK tests.
@@ -18,14 +28,20 @@
 ## Releases
 * HLK MVHV tests are under active development.  To refer to releases on this page we use terminology HLK_MVHV 0.01, HLK_MVHV 0.02, and so on.
 * HLK_MVHV 0.01:
+  * Initial release.  Now obsolete - Do not use!
   * Released via EEAP "HLK- MVHV Integration"
   * Link: https://partner.microsoft.com/en-us/dashboard/collaborate/packages/19783
-  * Initial release.
   * Release date: 2026/06/03.
+  * File: 26629.1003.260531-2108.ge_current_directsparc_amd64fre_HLK.iso
+  * File: 26629.1003.260531-2108.ge_current_directsparc_amd64fre_HLK_DXVA.iso
 * HLK_MVHV 0.02:
+  * Current Version - Please use!
   * Released via EEAP "HLK- MVHV Integration"
   * Link: https://partner.microsoft.com/en-us/dashboard/collaborate/packages/19783
   * New functionality: System tests, more tests, log gathering.
+  * File: 26640.1000.260618-1936.ge_current_directsparc_ddx_amd64fre_HLK.iso
+  * File: 26640.1000.260618-1936.ge_current_directsparc_ddx_CLIENTENTERPRISE_VOL_x64FRE_en-us.iso
+
 ## Mapping HLK  Tests to underlying MVHV Tests
 
 | No  | HLK Test Name                                      | HLK Test Type | MicrosoftVideoHardwareValidator.exe Command      | Comment                  |
