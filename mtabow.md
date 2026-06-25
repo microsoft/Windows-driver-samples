@@ -9,14 +9,21 @@
 ## Call to Action
 * Publish date: 2026/06/23.
 * For: Hardware Partners
-* Download HLK_MVHV 0.02. HLK and OS. See beneath.
-* Install HLK Controller.
-* Install HLK Client OS.  Run one time prerequisited. See beneath.
-* Run the System test "Microsoft Teams MVHV Test Version Check".  Test should Pass.
-* Run the other 11 System tests.  The test should complete, but may not all pass (errors are fine and we will refine - but we'd love to look at them)
-* You are not asked to run the Device version of the tests.
-* Create HLKX file.
-* Review results and/or share with your Microsoft partner please.
+  * Download HLK_MVHV 0.02. HLK and OS. See beneath.
+  * Install HLK Controller.
+  * Install HLK Client OS.  Run one time prerequisited. See beneath.
+  * Run the System test "Microsoft Teams MVHV Test Version Check".  Test should Pass.
+  * Run the other 11 System tests.  The test should complete, but may not all pass (errors are fine and we will refine - but we'd love to look at them)
+  * You are not asked to run the Device version of the tests.
+  * Create HLKX file.
+  * Review results and/or share with your Microsoft partner please.
+* Goals:
+  * Ability to install HLK w/MVHV and run tests.
+  * Pass the  "Microsoft Teams MVHV Test Version Check" test.
+  * Run (but not pass or investiage) the other 11 tests.
+  * Ability to share hlkx package for future collaboration.
+* Non-goals:
+  * Detailed analysis of results
 
 ## Terminology
 * HLK: Windows Hardware Lab Kit.
