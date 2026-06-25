@@ -242,6 +242,17 @@ Install WinPE Add-on: **Important:** Install **ADK first**, then WinPE add-on
 ---
 
 ## Troubleshooting
+### ERROR: Script "Makewinpemedia.cmd" failed to make WinPE USB bootable!
+- If your Host Controller is connected to a secured IT network, the actions in this script may have been blocked.
+- Check to see if **"bootsect.exe"** was blocked by Windows Security.
+```txt
+      - Run "Windows Security"
+      - Select "Virus & threat protection"
+      - Click link "Manage ransomware protection" at the bottom
+      - Click link "Allow an app through Controlled folder access"
+      - Click button "Add an allowed app" button, then select option "Recently blocked apps"
+      - Scroll down and look for the "bootsect.exe" app to add to allow list
+```
 ### USB won't boot
 - Check BIOS boot order
 - Disable Secure Boot
