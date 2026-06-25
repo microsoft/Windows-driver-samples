@@ -9,7 +9,7 @@
 ## Call to Action
 * Publish date: 2026/06/23.
 * For: Hardware Partners
-* What:
+* What is the ask:
   * Download HLK_MVHV 0.02. HLK and OS. See beneath.
   * Install HLK Controller.
   * Install HLK Client OS.  Run one time prerequisited. See beneath.
