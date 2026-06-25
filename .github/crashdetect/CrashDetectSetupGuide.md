@@ -91,8 +91,8 @@ Install WinPE Add-on: **Important:** Install **ADK first**, then WinPE add-on
 ---
 
 ### Unattend and Script Files from GitHub
-- [Windows-driver-samples/tree/main/.github/crashdetect](https://github.com/microsoft/Windows-driver-samples/tree/main/.github/crashdetect)
-- Create directory **"C:\WinPE_USB\Scripts\"** and copy the downloaded files here.
+- Download files from [Windows-driver-samples/tree/main/.github/crashdetect](https://github.com/microsoft/Windows-driver-samples/tree/main/.github/crashdetect)
+- Create directory **"C:\WinPE_USB\Scripts\"** and copy the following downloaded files to there.
   - CrashDetectCreateUsb.cmd
   - CrashDetectOsReinstall.cmd
   - Unattend.xml
@@ -100,18 +100,18 @@ Install WinPE Add-on: **Important:** Install **ADK first**, then WinPE add-on
 ---
 
 ## D) Create Bootable WinPE USB
-
-- [Create bootable Windows PE media](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/winpe-create-usb-bootable-drive)
 - **TIP:** It's a good idea to make a backup copy of the original **"winpe.wim"** image file before editing it in the following steps.
-- Plug a USB into the Host Controller.
+  - C:\Program Files (x86)\Windows Kits\10\Assessment and Deployment Kit\Windows Preinstallation Environment\amd64\en-us\winpe.wim
 
+- Plug a USB into the Host Controller.
+- Check to make sure drive letters **A:** and **B:** are not currently used by any other drive. If used by the target USB, it's okay.
 - Confirm the folder **"C:\WinPE_USB"** and its subfolders **"Scripts"** and **"Images"** exist.
-- Confirm the "Scripts" subfolder contains the following files that were downloaded from previous steps.
+- Confirm the **"Scripts"** subfolder contains the following files that were downloaded from previous steps.
 ```
       CrashDetectOsReinstall.cmd
       Unattend.xml
 ```
-- Confirm the "Images" subfolder contains the Win11 OS image file.
+- Confirm the **"Images"** subfolder contains the Win11 OS image file.
 ```
       install.wim
 ```
@@ -137,8 +137,8 @@ Install WinPE Add-on: **Important:** Install **ADK first**, then WinPE add-on
   - Mount the WinPE boot image (winpe.wim) using DISM.
 ```text
       cd "..\Windows Preinstallation Environment\amd64"
-      md C:\WinPE_amd64\mount
-      Dism /Mount-Image /ImageFile:"en-us\winpe.wim" /index:1 /MountDir:"C:\WinPE_amd64\mount"
+      md C:\WinPE_USB\WinPE_amd64\mount
+      Dism /Mount-Image /ImageFile:"en-us\winpe.wim" /index:1 /MountDir:"C:\WinPE_USB\WinPE_amd64\mount"
 ```
   - Adds the "CrashDetectOsReinstall.cmd" script to the "startnet.cmd" script.
 ```text
@@ -153,15 +153,15 @@ Install WinPE Add-on: **Important:** Install **ADK first**, then WinPE add-on
       echo         goto EOF
       echo     ^)
       echo ^)
-      ) > "C:\WinPE_amd64\mount\Windows\System32\startnet.cmd"
+      ) > "C:\WinPE_USB\WinPE_amd64\mount\Windows\System32\startnet.cmd"
 ```
   - Unmount the WinPE image using DISM.
 ```text
-      Dism /Unmount-Image /MountDir:"C:\WinPE_amd64\mount" /commit
+      Dism /Unmount-Image /MountDir:"C:\WinPE_USB\WinPE_amd64\mount" /commit
 ```
-  - Delete folder "C:\WinPE_amd64", else the next step below will fail to copy PE files.
+  - Delete folder "C:\WinPE_USB\WinPE_amd64", else the "copype.cmd" below will fail if the folder is already present.
 ```text
-      rmdir /s /q "C:\WinPE_amd64"
+      rmdir /s /q "C:\WinPE_USB\WinPE_amd64"
 ```
 
 #### 3. Create and format a multiple partition USB drive. 
@@ -176,21 +176,21 @@ Install WinPE Add-on: **Important:** Install **ADK first**, then WinPE add-on
       create partition primary size=2048
       active
       format fs=FAT32 quick label="WinPE"
-      assign letter=P
+      assign letter=A
       create partition primary
       format fs=NTFS quick label="WinUSB"
-      assign letter=U
+      assign letter=B
       exit
 ```
 
 #### 4. Create a bootable Windows PE USB drive.
   - Copying WinPE boot files to a working directory.
 ```txt
-      copype amd64 C:\WinPE_amd64
+      copype.cmd amd64 "C:\WinPE_USB\WinPE_amd64"
 ```
   - Copy the WinPE files to the WinPE partition on USB.
 ```txt
-      MakeWinPEMedia /UFD C:\WinPE_amd64 P: /bootex
+      MakeWinPEMedia.cmd /UFD /F "C:\WinPE_USB\WinPE_amd64" "A:" /bootex
 ```
 
 ---
@@ -199,11 +199,11 @@ Install WinPE Add-on: **Important:** Install **ADK first**, then WinPE add-on
 
   - Copy Script files over to USB.
 ```txt
-      xcopy "C:\WinPE_USB\Scripts\" "U:\Scripts\" /e /i
+      xcopy "C:\WinPE_USB\Scripts\" "B:\Scripts\" /E /I /R /Y
 ```
   - Copy Windows 11 OS WIM file over to USB, this could take a while...
 ```txt
-      xcopy "C:\WinPE_USB\Images\install.wim" "U:\Images\" /i
+      robocopy "C:\WinPE_USB\Images" "B:\Images" install.wim /ETA /J
 ```
 
 ---
@@ -221,8 +221,8 @@ Install WinPE Add-on: **Important:** Install **ADK first**, then WinPE add-on
 
 ---
 
-## F). OPTIONAL: Install OS on new Target System
-### - On the bootable USB's second partition "WinPE_USB"
+## F) OPTIONAL: Install OS on new Target System
+### On the bootable USB's second partition "WinPE_USB"
 - Create the folder **"Logs"**.
 - Create an empty file **"InstallOs.flg"** in that folder.
   - (In File Explorer, ensure file name extensions are visible, else the filename may be accidentally set to "InstallOs.flg.txt")
@@ -233,33 +233,35 @@ Install WinPE Add-on: **Important:** Install **ADK first**, then WinPE add-on
 
 ---
 
+## G) OPTIONAL: Add a Custom Script to Windows Setup
+### Setupcomplete.cmd and ErrorHandler.cmd
+- These are custom scripts that run during or after the Windows Setup process. They can be used to install applications or run other tasks by using cscript/wscript scripts.
+- Follow instructions on this website:
+  - (https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/add-a-custom-script-to-windows-setup)
+
+---
+
 ## Troubleshooting
-
 ### USB won't boot
-- Check BIOS boot order  
-- Disable Secure Boot if needed  
-
+- Check BIOS boot order
+- Disable Secure Boot
 ### Disk not visible in WinPE
-- Missing storage drivers  
-
+- Missing storage drivers
 ### Windows doesn't boot
-- Re-run `bcdboot`  
-- Verify partition layout  
+- Re-run `bcdboot`
+- Verify partition layout
 
 ---
 
 ## Reference Documentation
-
-- [WinPE: Create bootable media](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/winpe-create-usb-bootable-drive)
 - [WinPE overview](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/winpe-intro)
+- [WinPE: Create bootable media](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/winpe-create-usb-bootable-drive)
 - [Capture and apply Windows (WIM)](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/capture-and-apply-windows-using-a-single-wim)
 
 ---
 
 ## Summary
-
 This setup uses:
-
-- **ADK + WinPE** -> build bootable environment  
-- **ISO** -> get Windows image  
-- **DISM + BCDBoot** -> deploy OS  
+- **ADK + WinPE** -> build bootable environment
+- **ISO** -> get Windows image
+- **DISM + BCDBoot** -> deploy OS
