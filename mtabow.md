@@ -50,7 +50,8 @@
   * Link: https://partner.microsoft.com/en-us/dashboard/collaborate/packages/19783
   * New functionality: System tests, more tests, log gathering.
   * File: 26640.1000.260618-1936.ge_current_directsparc_ddx_amd64fre_HLK.iso
-  * File: 26640.1000.260618-1936.ge_current_directsparc_ddx_CLIENTENTERPRISE_VOL_x64FRE_en-us.iso
+  * File: 26640.1000.260618-1936.ge_current_directsparc_ddx_CLIENTENTERPRISE_VOL_x64FRE_en-us.iso <-- AMD64 Test OS.
+  * File: 26640.1000.260618-1936.ge_current_directsparc_ddx_CLIENTENTERPRISE_VOL_a64FRE_en-us.iso <-- ARM64 Test OS.
 
 ## Mapping HLK  Tests to underlying MVHV Tests
 
