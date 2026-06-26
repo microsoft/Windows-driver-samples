@@ -110,10 +110,10 @@ Install WinPE Add-on: <br>**Important:** Install **ADK first**, then WinPE add-o
 - Check to make sure drive letters **A:** and **B:** are not currently used by any other drive. If used by the target USB, it's okay.
 - Confirm the folder **`C:\WinPE_USB`** and its subfolders **`Scripts`** and **`Images`** exist.
 - Confirm the **`Scripts`** subfolder contains the following files that were downloaded from previous steps.
-      `CrashDetectOsReinstall.cmd`
-      `Unattend.xml`
+  - `CrashDetectOsReinstall.cmd`
+  - `Unattend.xml`
 - Confirm the **`Images`** subfolder contains the Win11 OS image file.
-      `install.wim`
+  - `install.wim`
 
 ### OPTION 1: Use the `CrashDetectCreateUsb.cmd` script to create the USB automatically.
 
@@ -134,10 +134,6 @@ Install WinPE Add-on: <br>**Important:** Install **ADK first**, then WinPE add-o
 
 #### 2. Update the `startnet.cmd` autorun script in the WinPE boot image.
   - Mount the WinPE boot image (`winpe.wim`) using DISM.
-```text
-      cd "..\Windows Preinstallation Environment\amd64"
-      mkdir "C:\WinPE_USB\WinPE_amd64\mount"
-      Dism /Mount-Image /ImageFile:"en-us\winpe.wim" /index:1 /MountDir:"C:\WinPE_USB\WinPE_amd64\mount"
 ```
   - Adds the `CrashDetectOsReinstall.cmd` script to the `startnet.cmd` script.
 ```text
@@ -244,14 +240,12 @@ Install WinPE Add-on: <br>**Important:** Install **ADK first**, then WinPE add-o
 ### ERROR: Script "Makewinpemedia.cmd" failed to make WinPE USB bootable!
 - If your Host Controller is connected to a secured IT network, the actions in this script may have been blocked.
 - Check to see if **"bootsect.exe"** was blocked by Windows Security.
-```txt
-      - Run "Windows Security"
-      - Select "Virus & threat protection"
-      - Click link "Manage ransomware protection" at the bottom
-      - Click link "Allow an app through Controlled folder access"
-      - Click button "Add an allowed app" button, then select option "Recently blocked apps"
-      - Scroll down and look for the "bootsect.exe" app to add to allow list
-```
+  - Run "Windows Security"
+  - Select "Virus & threat protection"
+  - Click link "Manage ransomware protection" at the bottom
+  - Click link "Allow an app through Controlled folder access"
+  - Click button "Add an allowed app" button, then select option "Recently blocked apps"
+  - Scroll down and look for the "bootsect.exe" app to add to allow list
 ### USB won't boot
 - Check BIOS boot order
 - Disable Secure Boot
@@ -267,11 +261,3 @@ Install WinPE Add-on: <br>**Important:** Install **ADK first**, then WinPE add-o
 - [WinPE overview](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/winpe-intro)
 - [WinPE: Create bootable media](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/winpe-create-usb-bootable-drive)
 - [Capture and apply Windows (WIM)](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/capture-and-apply-windows-using-a-single-wim)
-
----
-
-## Summary
-This setup uses:
-- **ADK + WinPE** -> build bootable environment
-- **ISO** -> get Windows image
-- **DISM + BCDBoot** -> deploy OS
