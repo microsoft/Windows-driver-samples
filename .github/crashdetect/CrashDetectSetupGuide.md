@@ -106,8 +106,8 @@ Install WinPE Add-on: <br>**Important:** Install **ADK first**, then WinPE add-o
 - **TIP:** It's a good idea to make a backup copy of the original **"winpe.wim"** image file before editing it in the following steps.
   - `C:\Program Files (x86)\Windows Kits\10\Assessment and Deployment Kit\Windows Preinstallation Environment\amd64\en-us\winpe.wim`
 
-- Plug a USB into the Host Controller.
-- Check to make sure drive letters **A:** and **B:** are not currently used by any other drive. If used by the target USB, it's okay.
+- Plug a USB drive into the Host Controller.
+- Check to make sure drive letters **A:** and **B:** are not currently used by any other drive. If used by the target USB drive, it's okay.
 - Confirm the folder **`C:\WinPE_USB`** and its subfolders **`Scripts`** and **`Images`** exist.
 - Confirm the **`Scripts`** subfolder contains the following files that were downloaded from previous steps.
   - `CrashDetectOsReinstall.cmd`
@@ -122,9 +122,9 @@ Install WinPE Add-on: <br>**Important:** Install **ADK first**, then WinPE add-o
 ```cmd
 C:\WinPE_USB\Scripts\CrashDetectCreateUsb.cmd
 ```
-- The script will display a list of detected disk drives, usually Disk 0 is the OS disk, do not select that disk.
+- The script will display a list of detected disk drives, usually Disk 0 is the OS disk, DO NOT select that disk.
 - Prompt 1: will ask you to enter the Disk number of your USB drive.
-- Prompt 2: will confirm one last time before wiping out the USB drive.
+- Prompt 2: will ask you to confirm one last time before wiping out the USB drive.
 - The last step will copy over the `install.wim` OS image to the USB, which could take a while.
 
 ### OPTION 2: Follow the steps below to create the USB manually.
@@ -134,58 +134,56 @@ C:\WinPE_USB\Scripts\CrashDetectCreateUsb.cmd
 
 #### 2. Update the `startnet.cmd` autorun script in the WinPE boot image.
   - Mount the WinPE boot image (`winpe.wim`) using DISM.
-```
   - Adds the `CrashDetectOsReinstall.cmd` script to the `startnet.cmd` script.
-```text
-      (
-      echo wpeinit
-      echo.
-      echo @echo off
-      echo REM Find USB drive.
-      echo for %%D in (D E F G H I J K L M N O P Q R S T U V W Y Z^) do ^(
-      echo     if exist %%D:Scripts\CrashDetectOsReinstall.cmd ^(
-      echo         call %%D:Scripts\CrashDetectOsReinstall.cmd
-      echo         goto EOF
-      echo     ^)
-      echo ^)
-      ) > "C:\WinPE_USB\WinPE_amd64\mount\Windows\System32\startnet.cmd"
+```cmd
+(
+echo wpeinit
+echo.
+echo @echo off
+echo REM Find USB drive.
+echo for %%D in (D E F G H I J K L M N O P Q R S T U V W Y Z^) do ^(
+echo     if exist %%D:Scripts\CrashDetectOsReinstall.cmd ^(
+echo         call %%D:Scripts\CrashDetectOsReinstall.cmd
+echo         goto EOF
+echo     ^)
+echo ^)
+) > "C:\WinPE_USB\WinPE_amd64\mount\Windows\System32\startnet.cmd"
 ```
   - Unmount the WinPE image using DISM.
-```text
-      Dism /Unmount-Image /MountDir:"C:\WinPE_USB\WinPE_amd64\mount" /commit
+```cmd
+Dism /Unmount-Image /MountDir:"C:\WinPE_USB\WinPE_amd64\mount" /commit
 ```
   - Delete folder `C:\WinPE_USB\WinPE_amd64`, else the `copype.cmd` below will fail if the folder is already present.
-```text
-      rmdir /s /q "C:\WinPE_USB\WinPE_amd64"
+```cmd
+rmdir /s /q "C:\WinPE_USB\WinPE_amd64"
 ```
 
 #### 3. Create and format a multiple partition USB drive. 
-  - [Create a multiple partition USB drive](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/winpe--use-a-single-usb-key-for-winpe-and-a-wim-file---wim#option-1-create-a-multiple-partition-usb-drive)
   - Attach a USB large enough for 2GB WinPE partition + WinUSB partition (Win11 WIM 8GB + Memory dump files 16GB-64GB + Scripts).
-  - Follow instructions for Option 1 on the following website to partition and format your USB drive.
-```txt
-      diskpart
-      list disk
-      select disk X    (where X is your USB drive)
-      clean
-      create partition primary size=2048
-      active
-      format fs=FAT32 quick label="WinPE"
-      assign letter=A
-      create partition primary
-      format fs=NTFS quick label="WinUSB"
-      assign letter=B
-      exit
+  - Enter the following commands into the command prompt.
+```cmd
+diskpart
+list disk
+select disk X    (where X is your USB drive)
+clean
+create partition primary size=2048
+active
+format fs=FAT32 quick label="WinPE"
+assign letter=A
+create partition primary
+format fs=NTFS quick label="WinUSB"
+assign letter=B
+exit
 ```
 
 #### 4. Create a bootable Windows PE USB drive.
   - Copying WinPE boot files to a working directory.
-```txt
-      copype.cmd amd64 "C:\WinPE_USB\WinPE_amd64"
+```cmd
+copype.cmd amd64 "C:\WinPE_USB\WinPE_amd64"
 ```
   - Copy the WinPE files to the WinPE partition on USB.
-```txt
-      MakeWinPEMedia.cmd /UFD /F "C:\WinPE_USB\WinPE_amd64" "A:" /bootex
+```cmd
+MakeWinPEMedia.cmd /UFD /F "C:\WinPE_USB\WinPE_amd64" "A:" /bootex
 ```
 
 ---
@@ -193,12 +191,12 @@ C:\WinPE_USB\Scripts\CrashDetectCreateUsb.cmd
 #### 5. Copy scripts and OS install image over to WinUSB partition on USB. 
 
   - Copy Script files over to USB.
-```txt
-      xcopy "C:\WinPE_USB\Scripts\" "B:\Scripts\" /E /I /R /Y
+```cmd
+xcopy "C:\WinPE_USB\Scripts\" "B:\Scripts\" /E /I /R /Y
 ```
   - Copy Windows 11 OS WIM file over to USB, this could take a while...
-```txt
-      robocopy "C:\WinPE_USB\Images" "B:\Images" install.wim /ETA /J
+```cmd
+robocopy "C:\WinPE_USB\Images" "B:\Images" install.wim /ETA /J
 ```
 
 ---
@@ -259,5 +257,7 @@ C:\WinPE_USB\Scripts\CrashDetectCreateUsb.cmd
 
 ## Reference Documentation
 - [WinPE overview](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/winpe-intro)
+- [Create a USB drive with WinPE and data partitions](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/winpe--use-a-single-usb-key-for-winpe-and-a-wim-file---wim#create-a-usb-drive-with-winpe-and-data-partitions)
 - [WinPE: Create bootable media](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/winpe-create-usb-bootable-drive)
 - [Capture and apply Windows (WIM)](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/capture-and-apply-windows-using-a-single-wim)
+- [Answer files (unattend.xml)](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/update-windows-settings-and-scripts-create-your-own-answer-file-sxs)
