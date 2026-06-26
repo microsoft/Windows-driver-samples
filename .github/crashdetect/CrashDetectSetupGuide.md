@@ -3,7 +3,6 @@
 ---
 
 ## A) Overview
-
 This guide walks through setting up a new bootable WinPE USB drive using:
 
 - A **Host Controller** (to build the USB)
@@ -11,13 +10,13 @@ This guide walks through setting up a new bootable WinPE USB drive using:
 - A **target test system**
 
 ### High-level flow
-
 1. Download Windows image (ISO)
 2. Install Windows ADK + WinPE add-on
 3. Create bootable WinPE USB
 4. Copy image + scripts to USB
 5. Boot up target system
 6. OPTIONAL: Install OS on new Target System
+7. OPTIONAL: Add a Custom Script to Windows Setup
 
 ---
 
@@ -40,7 +39,6 @@ This guide walks through setting up a new bootable WinPE USB drive using:
 ## C) Download Required Software and Scripts onto the Host Controller
 
 ### Windows OS Image (ISO)
-
 - [Download Windows 11 (official)](https://www.microsoft.com/en-us/software-download/windows11)
 - Go to section "Download Windows 11 Disk Image (ISO) for x64 devices".
 - Select the option "Windows 11 (multi-edition ISO for x64 devices)".
@@ -65,7 +63,6 @@ Mount ISO:
 ---
 
 ### Windows Assessment and Deployment Kit (Deployment Tools) & Windows PE Add-on
-
 - [Download Windows ADK & WinPE Add-on](https://learn.microsoft.com/en-us/windows-hardware/get-started/adk-install)
 - Go to section "Download the ADK 10.1.26100.2454 (December 2024)".
 - Click on the link "Download the Windows ADK 10.1.26100.2454 (December 2024)" to download the `adksetup.exe` installer.
@@ -116,7 +113,6 @@ Install WinPE Add-on: <br>**Important:** Install **ADK first**, then WinPE add-o
   - `install.wim`
 
 ### OPTION 1: Use the `CrashDetectCreateUsb.cmd` script to create the USB automatically.
-
 - Start a `Command Prompt` running as administrator.
 - Run the script by typing the following line into the Command Prompt.
 ```cmd
@@ -128,7 +124,6 @@ C:\WinPE_USB\Scripts\CrashDetectCreateUsb.cmd
 - The last step will copy over the `install.wim` OS image to the USB, which could take a while.
 
 ### OPTION 2: Follow the steps below to create the USB manually.
-
 #### 1. Make sure your PC has the ADK and ADK Windows PE add-on installed.
   - Start the `Deployment and Imaging Tools Environment` running as administrator.
 
@@ -189,7 +184,6 @@ MakeWinPEMedia.cmd /UFD /F "C:\WinPE_USB\WinPE_amd64" "A:" /bootex
 ---
 
 #### 5. Copy scripts and OS install image over to WinUSB partition on USB. 
-
   - Copy Script files over to USB.
 ```cmd
 xcopy "C:\WinPE_USB\Scripts\" "B:\Scripts\" /E /I /R /Y
@@ -202,7 +196,6 @@ robocopy "C:\WinPE_USB\Images" "B:\Images" install.wim /ETA /J
 ---
 
 ## E) Boot Up Target System
-
 - Insert USB into target PC  
 - Power on  
 - Enter boot menu (F12 / ESC / DEL depending on vendor)  
