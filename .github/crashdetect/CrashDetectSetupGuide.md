@@ -104,7 +104,7 @@ Install WinPE Add-on: <br>**Important:** Install **ADK first**, then WinPE add-o
 
 ## D) Create Bootable WinPE USB
 - **TIP:** It's a good idea to make a backup copy of the original **"winpe.wim"** image file before editing it in the following steps.
-  - C:\Program Files (x86)\Windows Kits\10\Assessment and Deployment Kit\Windows Preinstallation Environment\amd64\en-us\winpe.wim
+  - `C:\Program Files (x86)\Windows Kits\10\Assessment and Deployment Kit\Windows Preinstallation Environment\amd64\en-us\winpe.wim`
 
 - Plug a USB into the Host Controller.
 - Check to make sure drive letters **A:** and **B:** are not currently used by any other drive. If used by the target USB, it's okay.
