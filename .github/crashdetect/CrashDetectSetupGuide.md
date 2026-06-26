@@ -1,5 +1,4 @@
-# Crash Detect USB Setup Guide: 
-# Automating Crash Detection and OS Reinstall of Target Test Systems
+# Crash Detect USB Setup Guide: <br>Automating Crash Detection and OS Reinstall of Target Test Systems
 
 ---
 
@@ -51,12 +50,14 @@ This guide walks through setting up a new bootable WinPE USB drive using:
 - Click "Confirm" button.
 - Section "Download - Windows 11 English" should appear.
 - Click "64-bit Download" button.
-- In File Explorer, go to the location you downloaded the ISO file "Win11_25H2_English_x64_v2.iso" to.
+
+Mount ISO:
+- In File Explorer, go to the location you downloaded the ISO file `Win11_25H2_English_x64_v2.iso` to.
 - Right-click on the ISO file and select "Mount".
   - If the "Open File - Security Warning" prompt pops up after a minute then click "Open".
   - (The prompt may be hidden behind other Windows.)
-- Create new folder and subfolder "C:\WinPE_USB\Images".
-- Go to the "%MountDriveLetter%:\sources" folder and copy the **"install.wim"** file to **"C:\WinPE_USB\Images"**.
+- Create new folder and subfolder `C:\WinPE_USB\Images`.
+- Go to the `%MountDriveLetter%:\sources` folder and copy the **`install.wim`** file to **`C:\WinPE_USB\Images`**.
   - This is the Windows 11 OS image file that the DISM tool will need to deploy the OS.
   - This file will be copied over to the USB later after bootable WinPE USB creation.
 - Right-click on the %MountDriveLetter% and select "Eject" to unmount the ISO image.
@@ -67,10 +68,11 @@ This guide walks through setting up a new bootable WinPE USB drive using:
 
 - [Download Windows ADK & WinPE Add-on](https://learn.microsoft.com/en-us/windows-hardware/get-started/adk-install)
 - Go to section "Download the ADK 10.1.26100.2454 (December 2024)".
-- Click on the link "Download the Windows ADK 10.1.26100.2454 (December 2024)" to download the "adksetup.exe" installer.
-- Click on the link "Download the Windows PE add-on for the Windows ADK 10.1.26100.2454 (December 2024)" to download the "adkwinpesetup.exe" installer.
+- Click on the link "Download the Windows ADK 10.1.26100.2454 (December 2024)" to download the `adksetup.exe` installer.
+- Click on the link "Download the Windows PE add-on for the Windows ADK 10.1.26100.2454 (December 2024)" to download the `adkwinpesetup.exe` installer.
+
 Install ADK:
-- Double-click on the "adksetup.exe" from the location you downloaded the file to launch the installer.
+- Double-click on the `adksetup.exe` from the location you downloaded the file to launch the installer.
 - "Specify Location" page, click "Next", to install at default location.
 - "Windows Kits Privacy" page, select your privacy option, click "Next".
 - "License Agreement" page, click "Accept".
@@ -78,8 +80,9 @@ Install ADK:
 - If "User Account Control" prompt appears, click "Yes" to begin installation process.
 - "Installing features..." page, wait for installation process to complete.
 - "Welcome to the Windows Assessment and Deployment Kit!" page, click "Close".
-Install WinPE Add-on: **Important:** Install **ADK first**, then WinPE add-on
-- Double-click on the "adkwinpesetup.exe" from the location you downloaded the file to launch the installer.
+
+Install WinPE Add-on: <br>**Important:** Install **ADK first**, then WinPE add-on
+- Double-click on the `adkwinpesetup.exe` from the location you downloaded the file to launch the installer.
 - "Specify Location" page, click "Next", to install at default location.
 - "Windows Kits Privacy" page, select your privacy option, click "Next".
 - "License Agreement" page, click "Accept".
@@ -92,10 +95,10 @@ Install WinPE Add-on: **Important:** Install **ADK first**, then WinPE add-on
 
 ### Unattend and Script Files from GitHub
 - Download files from [Windows-driver-samples/tree/main/.github/crashdetect](https://github.com/microsoft/Windows-driver-samples/tree/main/.github/crashdetect)
-- Create directory **"C:\WinPE_USB\Scripts\"** and copy the following downloaded files to there.
-  - CrashDetectCreateUsb.cmd
-  - CrashDetectOsReinstall.cmd
-  - Unattend.xml
+- Create directory **`C:\WinPE_USB\Scripts\`** and copy the following downloaded files to there.
+  - `CrashDetectCreateUsb.cmd`
+  - `CrashDetectOsReinstall.cmd`
+  - `Unattend.xml`
 
 ---
 
@@ -105,20 +108,16 @@ Install WinPE Add-on: **Important:** Install **ADK first**, then WinPE add-on
 
 - Plug a USB into the Host Controller.
 - Check to make sure drive letters **A:** and **B:** are not currently used by any other drive. If used by the target USB, it's okay.
-- Confirm the folder **"C:\WinPE_USB"** and its subfolders **"Scripts"** and **"Images"** exist.
-- Confirm the **"Scripts"** subfolder contains the following files that were downloaded from previous steps.
-```
-      CrashDetectOsReinstall.cmd
-      Unattend.xml
-```
-- Confirm the **"Images"** subfolder contains the Win11 OS image file.
-```
-      install.wim
-```
+- Confirm the folder **`C:\WinPE_USB`** and its subfolders **`Scripts`** and **`Images`** exist.
+- Confirm the **`Scripts`** subfolder contains the following files that were downloaded from previous steps.
+      `CrashDetectOsReinstall.cmd`
+      `Unattend.xml`
+- Confirm the **`Images`** subfolder contains the Win11 OS image file.
+      `install.wim`
 
-### OPTION 1: Use the "CrashDetectCreateUsb.cmd" script to create the USB automatically.
+### OPTION 1: Use the `CrashDetectCreateUsb.cmd` script to create the USB automatically.
 
-- Start a "Command Prompt" running as administrator.
+- Start a `Command Prompt` running as administrator.
 - Run the script by typing the following line into the Command Prompt.
 ```
       "C:\WinPE_USB\Scripts\CrashDetectCreateUsb.cmd"
@@ -126,21 +125,21 @@ Install WinPE Add-on: **Important:** Install **ADK first**, then WinPE add-on
 - The script will display a list of detected disk drives, usually Disk 0 is the OS disk, do not select that disk.
 - Prompt 1: will ask you to enter the Disk number of your USB drive.
 - Prompt 2: will confirm one last time before wiping out the USB drive.
-- The last step will copy over the "install.wim" OS image to the USB, which could take a while.
+- The last step will copy over the `install.wim` OS image to the USB, which could take a while.
 
 ### OPTION 2: Follow the steps below to create the USB manually.
 
 #### 1. Make sure your PC has the ADK and ADK Windows PE add-on installed.
-  - Start the "Deployment and Imaging Tools Environment" running as administrator.
+  - Start the `Deployment and Imaging Tools Environment` running as administrator.
 
-#### 2. Update the "startnet.cmd" autorun script in the WinPE boot image.
-  - Mount the WinPE boot image (winpe.wim) using DISM.
+#### 2. Update the `startnet.cmd` autorun script in the WinPE boot image.
+  - Mount the WinPE boot image (`winpe.wim`) using DISM.
 ```text
       cd "..\Windows Preinstallation Environment\amd64"
-      md C:\WinPE_USB\WinPE_amd64\mount
+      mkdir "C:\WinPE_USB\WinPE_amd64\mount"
       Dism /Mount-Image /ImageFile:"en-us\winpe.wim" /index:1 /MountDir:"C:\WinPE_USB\WinPE_amd64\mount"
 ```
-  - Adds the "CrashDetectOsReinstall.cmd" script to the "startnet.cmd" script.
+  - Adds the `CrashDetectOsReinstall.cmd` script to the `startnet.cmd` script.
 ```text
       (
       echo wpeinit
@@ -159,7 +158,7 @@ Install WinPE Add-on: **Important:** Install **ADK first**, then WinPE add-on
 ```text
       Dism /Unmount-Image /MountDir:"C:\WinPE_USB\WinPE_amd64\mount" /commit
 ```
-  - Delete folder "C:\WinPE_USB\WinPE_amd64", else the "copype.cmd" below will fail if the folder is already present.
+  - Delete folder `C:\WinPE_USB\WinPE_amd64`, else the `copype.cmd` below will fail if the folder is already present.
 ```text
       rmdir /s /q "C:\WinPE_USB\WinPE_amd64"
 ```
@@ -222,10 +221,10 @@ Install WinPE Add-on: **Important:** Install **ADK first**, then WinPE add-on
 ---
 
 ## F) OPTIONAL: Install OS on new Target System
-### On the bootable USB's second partition "WinPE_USB"
-- Create the folder **"Logs"**.
-- Create an empty file **"InstallOs.flg"** in that folder.
-  - (In File Explorer, ensure file name extensions are visible, else the filename may be accidentally set to "InstallOs.flg.txt")
+### On the bootable USB's second partition `WinPE_USB`
+- Create the folder **`Logs`**.
+- Create an empty file **`InstallOs.flg`** in that folder.
+  - (In File Explorer, ensure file name extensions are visible, else the filename may be accidentally set to `InstallOs.flg.txt`)
 - Plug USB into target system and reboot into USB.
 - The USB will detect the flag and begin reinstalling the OS immediately.
   - **WARNING**: There will be **NO** prompt to reconfirm OS install, be sure to plug into the correct target system.
