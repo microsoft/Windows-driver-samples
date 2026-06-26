@@ -119,8 +119,8 @@ Install WinPE Add-on: <br>**Important:** Install **ADK first**, then WinPE add-o
 
 - Start a `Command Prompt` running as administrator.
 - Run the script by typing the following line into the Command Prompt.
-```
-      "C:\WinPE_USB\Scripts\CrashDetectCreateUsb.cmd"
+```cmd
+C:\WinPE_USB\Scripts\CrashDetectCreateUsb.cmd
 ```
 - The script will display a list of detected disk drives, usually Disk 0 is the OS disk, do not select that disk.
 - Prompt 1: will ask you to enter the Disk number of your USB drive.
