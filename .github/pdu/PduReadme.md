@@ -38,7 +38,6 @@ Tera Term:
   - `ping <IP Address>`
 - Now that you have the IP address, it may be easier to switch over to the browser interface to configure the rest of the PDU.
 
-
 ## Network Connection
 - Connect an Ethernet cable from the PC to the PDU Ethernet port.
 - Since we have the IP of the PDU, it's easier to configure the PDU via a browser interface.
@@ -54,7 +53,6 @@ Tera Term:
 - Click on the `State` slider to show the Load options, `Turn Off Load` and `Cycle Load`.
 - To enable SSH for PowerShell scripting later, select `Network` tab, then `Services`, then enable `SSH Enabled`.
 
-
 ## Scripting
 - The `Pdu.ps1` PowerShell script can be used for automating power ON/OFF/CYCLE of the PDU ports.
 - Usage: `.\Pdu.ps1 [on | off | cycle]  [1-16]`
@@ -62,3 +60,6 @@ Tera Term:
   - `$PduIP = "169.254.0.1"`
   - `$Password = "@Password123"`
 - The script will check first if there's a serial connection first, then network connection if serial is not present, before issuing the PDU command.
+
+## References
+- Eaton Tripp Lite Switched PDU (PDUMH15NET): [Manuals & User Guides](https://www.eaton.com/us/en-us/skuPage.PDUMH15NET.html#tab-2)
