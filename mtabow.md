@@ -215,8 +215,9 @@ After installing mvhv on client machine please make sure that c:\mvhv\MicrosoftV
                 <add key="rundxdiag" value="True" />
         </appSettings>
 </configuration>
-You can manually edit file to have these entries. 
 ```
+
+You can manually edit file as need be.
 
 ## 3. Run test manually
 From elevated command prompt run tool using command from table above.
