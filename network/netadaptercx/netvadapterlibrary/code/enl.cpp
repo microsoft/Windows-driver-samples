@@ -15,6 +15,7 @@
 
 ENL_MLINK NetvEnlMLink[MAX_ADAPTER_COUNT / 2];
 
+
 /*++
 The iteration routine performs one full pass over all input queues and
 any internal queues (that might be holding previous items waiting to be
@@ -50,6 +51,59 @@ CopyTxPacketDataToBuffer(
     }
 
     return bytesCopied;
+}
+
+//
+// Emulate the AP relay for Native 802.11 frames.
+//
+// Both sample stations associate (in software) to the same hard-coded AP
+// BSSID, and the ENL link is the wireless medium.  nwifi builds a
+// station-to-peer frame as a "to-DS" frame whose Address1/RA is the AP BSSID,
+// expecting the (nonexistent) AP to relay it.  Copied verbatim into the peer's
+// receive ring, that RA is not the peer's address, so nwifi on the peer drops
+// it before it reaches TCP/IP.  Rewrite the header in place into the "from-DS"
+// frame the peer accepts, exactly as a real AP would when forwarding:
+//     Addr1 (RA) <- old Addr3 (final destination = peer MAC)
+//     Addr2 (TA) <- old Addr1 (BSSID)
+//     Addr3 (SA) <- old Addr2 (original sender)
+//     FrameControl: clear ToDS, set FromDS
+// The address offsets are identical for data and QoS-data frames, and the
+// guard below makes this a no-op for non-802.11 (802.3 netvmini) traffic.
+static
+VOID
+EnlpRelayWiFiFrame(
+    _Inout_updates_bytes_(Length) PUCHAR Frame,
+    _In_ SIZE_T Length)
+{
+    // FrameControl[2] Duration[2] Addr1[6] Addr2[6] Addr3[6] SeqCtrl[2] ...
+    SIZE_T const k80211HeaderLength = 24;
+    if (Length < k80211HeaderLength)
+    {
+        return;
+    }
+
+    // Relay only 802.11 data-type (Type == 10b) frames headed to the DS.
+    UCHAR const type = Frame[0] & 0x0C;
+    UCHAR const dsBits = Frame[1] & 0x03;
+    if (type != 0x08 || dsBits != 0x01)
+    {
+        return;
+    }
+
+    PUCHAR const addr1 = Frame + 4;
+    PUCHAR const addr2 = Frame + 10;
+    PUCHAR const addr3 = Frame + 16;
+
+    UCHAR ra[6], ta[6], sa[6];
+    RtlCopyMemory(ra, addr3, 6);
+    RtlCopyMemory(ta, addr1, 6);
+    RtlCopyMemory(sa, addr2, 6);
+
+    RtlCopyMemory(addr1, ra, 6);
+    RtlCopyMemory(addr2, ta, 6);
+    RtlCopyMemory(addr3, sa, 6);
+
+    Frame[1] = (Frame[1] & ~0x01) | 0x02;     // ToDS -> FromDS
 }
 
 VOID
@@ -363,6 +417,11 @@ EnlpIterationRoutine(
                                     &txPi,
                                     &txq->TxQueue->VirtualAddressExtension,
                                     static_cast<SIZE_T>(fragment->Capacity));
+
+                            // Relay the frame as an AP would (see function).
+                            EnlpRelayWiFiFrame(
+                                fragmentBuffer,
+                                static_cast<SIZE_T>(fragment->ValidLength));
 
                             auto rxPacket = NetPacketIteratorGetPacket(&rxPi);
                             rxPacket->FragmentIndex =  NetFragmentIteratorGetIndex(&rxFi);
