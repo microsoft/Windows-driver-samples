@@ -99,11 +99,12 @@ powershell
 cd C:\
 
 #
-# Download MVHV_Clips_260603.iso locally.
+# Download Clips locally.
 # On a fast connection as little as an hour.
 # 
 
-$iso = "C:\MVHV_Clips_260603.iso"
+# Old Version: $iso = "C:\MVHV_Clips_260603.iso"
+$iso = "C:\MVHV_Clips_1.0.0_260618-2045.iso"
 
 Start-BitsTransfer `
   -Source "https://go.microsoft.com/fwlink/?LinkId=2368809" `
