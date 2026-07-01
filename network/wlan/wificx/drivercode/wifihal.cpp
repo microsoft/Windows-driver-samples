@@ -544,6 +544,8 @@ NTSTATUS WifiHAL::WifiIhvSetRadioState(const WDI_SET_RADIO_STATE_PARAMETERS& Rad
     RadioStatusParams.RadioState.SoftwareState = TRUE;
     if (GenerateWdiIndicationRadioStatus(&RadioStatusParams, 0, m_TlvContext, &cbOutput, &pOutput) == NDIS_STATUS_SUCCESS)
     {
+        WFC_TRACE(
+            "WiFiCx WifiIhvSetRadioState: forcing Software=On\n");
         WifiIhvSendUnsolicitedIndicationToOs(m_Device, pWdiHeader, WDI_INDICATION_RADIO_STATUS, pOutput, cbOutput);
         FreeGenerated(pOutput);
     }
@@ -602,6 +604,9 @@ NTSTATUS WifiHAL::WifiIhvScan(const WDI_SCAN_PARAMETERS& ScanParameters, const P
 _Use_decl_annotations_
 NTSTATUS WifiHAL::WifiIhvConnect(const WDI_TASK_CONNECT_PARAMETERS& ConnectParameters, const PWDI_MESSAGE_HEADER pWdiHeader, UINT)
 {
+    WFC_TRACE(
+        "WiFiCx WifiIhvConnect ENTER PortId=%u BSSCount=%u\n",
+        pWdiHeader->PortId, ConnectParameters.PreferredBSSEntryList.ElementCount);
     NT_ASSERT(m_LastConnectEntryId == 0);
 #ifdef NETV_SUPPORT_TX_DEMUXING
     if (m_LastConnectEntryId != 0) // Not Disconnected State
@@ -613,6 +618,8 @@ NTSTATUS WifiHAL::WifiIhvConnect(const WDI_TASK_CONNECT_PARAMETERS& ConnectParam
 #endif //NETV_SUPPORT_TX_DEMUXING
     NTSTATUS assocStatus = WifiIhvPerformAssociation(
         &ConnectParameters.PreferredBSSEntryList, &ConnectParameters.ConnectParameters.AuthenticationAlgorithms, pWdiHeader);
+    WFC_TRACE(
+        "WiFiCx WifiIhvPerformAssociation returned 0x%08X\n", assocStatus);
     if (!NT_SUCCESS(assocStatus))
     {
         return assocStatus;
@@ -630,7 +637,13 @@ NTSTATUS WifiHAL::WifiIhvConnect(const WDI_TASK_CONNECT_PARAMETERS& ConnectParam
         m_LastConnectTransactionId = 0;
     }
 
+    WFC_TRACE(
+        "WiFiCx WifiIhvConnect done PortId=%u AuthAlgo=%u EntryId=%u\n",
+        pWdiHeader->PortId, m_LastAuthAlgo, m_LastConnectEntryId);
     NETADAPTER netAdapter = WifiGetIhvDeviceContext(m_Device)->netAdapters[pWdiHeader->PortId];
+    WFC_TRACE(
+        "WiFiCx netAdapter[%u]=%p\n",
+        pWdiHeader->PortId, (void*)netAdapter);
     if (netAdapter != WDF_NO_HANDLE)
     {
         NET_ADAPTER_LINK_STATE linkState;
@@ -642,6 +655,9 @@ NTSTATUS WifiHAL::WifiIhvConnect(const WDI_TASK_CONNECT_PARAMETERS& ConnectParam
             NetAdapterPauseFunctionTypeUnsupported,
             NetAdapterAutoNegotiationFlagNone);
         NetAdapterSetLinkState(netAdapter, &linkState);
+        WFC_TRACE(
+            "WiFiCx SetLinkState(Connected) PortId=%u\n",
+            pWdiHeader->PortId);
     }
 
     return STATUS_SUCCESS;

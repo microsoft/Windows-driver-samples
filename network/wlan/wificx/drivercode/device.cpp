@@ -135,6 +135,8 @@ _Use_decl_annotations_
 NTSTATUS
 EvtAdapterCreateTxQueue(NETADAPTER Adapter, NETTXQUEUE_INIT* Init)
 {
+    WFC_TRACE(
+        "WiFiCx EvtAdapterCreateTxQueue called\n");
     TraceEntry();
     return WifiNetvAdapterGetContext(Adapter)->CreateTxQueue(Init);
 }
@@ -143,6 +145,8 @@ _Use_decl_annotations_
 NTSTATUS
 EvtAdapterCreateRxQueue(NETADAPTER Adapter, NETRXQUEUE_INIT* Init)
 {
+    WFC_TRACE(
+        "WiFiCx EvtAdapterCreateRxQueue called\n");
     TraceEntry();
     return WifiNetvAdapterGetContext(Adapter)->CreateRxQueue(Init);
 }

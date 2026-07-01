@@ -5,6 +5,12 @@
 #include "rxqueue.h"
 #include "memory.h"
 
+#if defined(_KERNEL_MODE) && defined(NETV_DATAPATH_DEBUG)
+// Rx-indication logging budget.  Non-static so enl.cpp can reset it when the
+// link goes idle (see g_enlFwdDbg).
+LONG g_rxAdvDbg = 0;
+#endif
+
 static
 void
 CheckForWakeFrame(
@@ -117,10 +123,24 @@ NetvRxQueue::Advance(
 
     // Ideally this would run in EvtQueueStart, but at that point the receive buffers are not
     // attached to the fragment yet
+#if defined(_KERNEL_MODE) && defined(NETV_DATAPATH_DEBUG)
+    bool const ranWake = ! CheckedWakeFrame;
+#endif
     if (! CheckedWakeFrame)
     {
         CheckForWakeFrame(this);
     }
+
+#if defined(_KERNEL_MODE) && defined(NETV_DATAPATH_DEBUG)
+    ULONG const dbgFBegin = fr->BeginIndex;
+    ULONG const dbgFEnd   = fr->EndIndex;
+    int   const dbgHaveFrag = NetFragmentIteratorHasAny(&fi) ? 1 : 0;
+    int   const dbgHavePkt  = NetPacketIteratorHasAny(&pi)  ? 1 : 0;
+    int         dbgFirstScratch = -1;
+    if (dbgHaveFrag)
+        dbgFirstScratch = (int)NetFragmentIteratorGetFragment(&fi)->Scratch;
+    ULONG dbgDrained = 0;
+#endif
 
     // Move begin index forward for all fragments with Scratch == 1, thus returning them to the OS since we're done processing them.
     for (; NetFragmentIteratorHasAny(&fi) && NetPacketIteratorHasAny(&pi); NetPacketIteratorAdvance(&pi), NetFragmentIteratorAdvance(&fi))
@@ -130,11 +150,23 @@ NetvRxQueue::Advance(
         {
             break;
         }
+#if defined(_KERNEL_MODE) && defined(NETV_DATAPATH_DEBUG)
+        dbgDrained++;
+#endif
     }
 
     NetFragmentIteratorSet(&fi);
     NetPacketIteratorSet(&pi);
     EnlRingDoorBell(EnlQueueHandle, fr->EndIndex);
+
+#if defined(_KERNEL_MODE) && defined(NETV_DATAPATH_DEBUG)
+    if ((dbgDrained > 0 || ranWake || dbgFirstScratch == 1) &&
+        InterlockedIncrement(&g_rxAdvDbg) <= 40)
+        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL,
+            "RX adv port=%u fBegin=%lu fEnd=%lu haveFrag=%d havePkt=%d firstScr=%d drained=%lu wake=%d\n",
+            (ULONG)m_adapter.EnlPortIndex, dbgFBegin, dbgFEnd,
+            dbgHaveFrag, dbgHavePkt, dbgFirstScratch, dbgDrained, ranWake ? 1 : 0);
+#endif
 }
 
 _Use_decl_annotations_

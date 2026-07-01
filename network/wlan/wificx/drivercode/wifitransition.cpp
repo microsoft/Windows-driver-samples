@@ -495,11 +495,17 @@ NTSTATUS RunTransitionByMessage(TransitionContext& ctx, UINT16 messageId)
         UINT16 indicationId = GetTaskCompletionIndication(messageId);
         if (indicationId != 0)
         {
+            WFC_TRACE(
+                "WiFiCx UNHANDLED task MessageId=0x%04X PortId=%u (M3+M4)\n",
+                messageId, ctx.Header->PortId);
             WifiIhvNotifyM3Completion(ctx.WifiRequest, STATUS_SUCCESS, bytesWritten);
             WifiIhvSendM4IndicationToOs(ctx.Device, indicationId, ctx.Header, STATUS_SUCCESS);
         }
         else
         {
+            WFC_TRACE(
+                "WiFiCx UNHANDLED property MessageId=0x%04X PortId=%u (M3)\n",
+                messageId, ctx.Header->PortId);
             WifiRequestComplete(ctx.WifiRequest, STATUS_SUCCESS, bytesWritten);
         }
         return STATUS_SUCCESS;

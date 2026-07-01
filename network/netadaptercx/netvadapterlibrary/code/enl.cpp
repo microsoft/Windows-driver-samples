@@ -15,6 +15,12 @@
 
 ENL_MLINK NetvEnlMLink[MAX_ADAPTER_COUNT / 2];
 
+#if defined(_KERNEL_MODE) && defined(NETV_DATAPATH_DEBUG)
+// Forward-logging budgets, reset when the link goes idle so each tx burst
+// starts fresh.  g_rxAdvDbg is defined in rxqueue.cpp.
+static LONG g_enlFwdDbg = 0;
+extern LONG g_rxAdvDbg;
+#endif
 
 /*++
 The iteration routine performs one full pass over all input queues and
@@ -383,10 +389,18 @@ EnlpIterationRoutine(
                     EnlDisarmWake(enlLink);
                 }
 
+#if defined(_KERNEL_MODE) && defined(NETV_DATAPATH_DEBUG)
+                int dbgRxState = -1;
+                int dbgHasFrag = -1;
+                int dbgHasPkt  = -1;
+#endif
                 if (rxport->RxQueueCount > 0)
                 {
                     //TODO: Currently does 1:1 mapping between Tx and Rx. Need to set up indirection table
                     auto rxq = &rxport->RxQueue[ci];
+#if defined(_KERNEL_MODE) && defined(NETV_DATAPATH_DEBUG)
+                    dbgRxState = rxq->State;
+#endif
 
                     if (rxq->State == Started)
                     {
@@ -395,6 +409,10 @@ EnlpIterationRoutine(
                         };
 
                         auto rxPi = NetRingGetPostPackets(rxq->Queue->m_rings);
+#if defined(_KERNEL_MODE) && defined(NETV_DATAPATH_DEBUG)
+                        dbgHasFrag = NetFragmentIteratorHasAny(&rxFi) ? 1 : 0;
+                        dbgHasPkt  = NetPacketIteratorHasAny(&rxPi)  ? 1 : 0;
+#endif
 
                         if (NetFragmentIteratorHasAny(&rxFi) && NetPacketIteratorHasAny(&rxPi))
                         {
@@ -512,6 +530,13 @@ EnlpIterationRoutine(
                     }
                 }
 
+#if defined(_KERNEL_MODE) && defined(NETV_DATAPATH_DEBUG)
+                if (InterlockedIncrement(&g_enlFwdDbg) <= 30)
+                    DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL,
+                        "ENL fwd tx-port=%zu rx-port=%zu rxQCount=%lu rxState=%d hasFrag=%d hasPkt=%d drop=%d\n",
+                        pi, pi ^ 0x1, (ULONG)rxport->RxQueueCount,
+                        dbgRxState, dbgHasFrag, dbgHasPkt, rxDrop ? 1 : 0);
+#endif
                 if (rxDrop)
                 {
                     // TODO - add rxdrop stat
@@ -539,6 +564,11 @@ EnlpIterationRoutine(
 
     if (emptyTx)
     {
+#if defined(_KERNEL_MODE) && defined(NETV_DATAPATH_DEBUG)
+        // Link idle: give the next tx burst a fresh logging budget.
+        InterlockedExchange(&g_enlFwdDbg, 0);
+        InterlockedExchange(&g_rxAdvDbg, 0);
+#endif
         if (enlLink->Poll == FALSE)
         {
             enlpArmAndWait(enlLink);
