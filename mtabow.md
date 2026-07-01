@@ -103,7 +103,6 @@ cd C:\
 # On a fast connection as little as an hour.
 # 
 
-# Old Version: $iso = "C:\MVHV_Clips_260603.iso"
 $iso = "C:\MVHV_Clips_1.0.0_260618-2045.iso"
 
 Start-BitsTransfer `
@@ -113,8 +112,21 @@ Start-BitsTransfer `
 #
 # Check ISO size and hash.  Both should return true.
 #
-(Get-Item $iso).Length -eq 62675183616
-(((Get-FileHash $iso).Hash) -eq "AF70E5AA5469F1A915095E8B3A9BB1B7F429F9D59739BAF4C1D0C77FCF4F31FB")
+(Get-Item $iso).Length -eq 64966397952
+(((Get-FileHash $iso).Hash) -eq "D97B4DB01E8E232D23FD6ADB1FC0A890301BBD3C0E29DE71C63189FF539135CB")
+
+## OLD Old Version: $iso = "C:\MVHV_Clips_260603.iso"
+
+## OLD Start-BitsTransfer `
+## OLD   -Source "https://go.microsoft.com/fwlink/?LinkId=2368809" `
+## OLD   -Destination $iso
+
+## OLD #
+## OLD # Check ISO size and hash.  Both should return true.
+## OLD #
+## OLD (Get-Item $iso).Length -eq 62675183616
+## OLD (((Get-FileHash $iso).Hash) -eq "AF70E5AA5469F1A915095E8B3A9BB1B7F429F9D59739BAF4C1D0C77FCF4F31FB")
+## OLD 
 
 #
 # Mount and deploy files.
