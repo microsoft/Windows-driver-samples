@@ -195,29 +195,17 @@ See section "Prerequisites" above.
 
 ## 2. Manually grab MVHV
 
-On HLK Controller run following commands
+For amd64 based Clients:
 ```
-
-robocopy /mir /nfl /ndl "C:\Program Files (x86)\Windows Kits\10\Hardware Lab Kit\Tests\amd64\nttest\multimediatest\Microsoft_Video_Hardware_Validator\x64" "C:\Program Files (x86)\Windows Kits\10\Hardware Lab Kit\Controller\WTTInstall\mvhv\x64"
-
-robocopy /mir /nfl /ndl "C:\Program Files (x86)\Windows Kits\10\Hardware Lab Kit\Tests\arm64\nttest\multimediatest\Microsoft_Video_Hardware_Validator\arm64" "C:\Program Files (x86)\Windows Kits\10\Hardware Lab Kit\Controller\WTTInstall\mvhv\arm64"
-
-```
-
-
-For x64 based Clients:
-```
-powershell
-robocopy /mir /nfl /ndl \\hlkcontroller\HLKInstall\mvhv\x64 C:\mvhv\
+robocopy /mir \\hlkcontroller\Tests\amd64\nttest\multimediatest\Microsoft_Video_Hardware_Validator\mvhv C:\mvhv
 ```
 
 For arm64 based Clients:
 ```
-powershell
-robocopy /mir /nfl /ndl \\hlkcontroller\HLKInstall\mvhv\arm64 C:\mvhv\
+robocopy /mir \\hlkcontroller\Tests\arm64\nttest\multimediatest\Microsoft_Video_Hardware_Validator\mvhv C:\mvhv
 ```
 
-After installing mvhv on client machine please make sure that MicrosoftVideoHardwareValidator.config file is present under c:\mvhv and it has following entries.
+After installing mvhv on client machine please make sure that c:\mvhv\MicrosoftVideoHardwareValidator.config file is present with following entries.
 ```
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
@@ -227,7 +215,7 @@ After installing mvhv on client machine please make sure that MicrosoftVideoHard
                 <add key="rundxdiag" value="True" />
         </appSettings>
 </configuration>
-In case any such lines are missing you can manually edit file to have these entries. 
+You can manually edit file to have these entries. 
 ```
 
 ## 3. Run test manually
