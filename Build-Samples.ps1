@@ -27,6 +27,14 @@
 .PARAMETER Platforms
     Build platforms (e.g. 'x64','arm64'). Defaults to $env:WDS_Platform or ('x64','arm64').
 
+.PARAMETER NtTargetVersion
+    The _NT_TARGET_VERSION value - the WDK library version the driver links against
+    ("OS version of libraries"). Accepts the Windows build-number form '10.0.<build>' or the
+    short '<build>' tag (e.g. '10.0.28000' or '28000'). The valid values are auto-discovered
+    from the active WDK's DriverGeneral.xml rule (see Get-NtTargetVersions.ps1), so a new WDK
+    version is picked up with no script change. Defaults to $env:WDS_NtTargetVersion, or the
+    latest discovered version when unset.
+
 .PARAMETER LogFilesDirectory
     Directory for build log files. Defaults to _logs in the current directory.
 
@@ -69,6 +77,11 @@
     .\Build-Samples -RunMode WDK
 
     Forces WDK mode regardless of environment variables.
+
+.EXAMPLE
+    .\Build-Samples -NtTargetVersion 10.0.22000
+
+    Builds all samples linking against the 10.0.22000 library set instead of the latest.
 #>
 
 #Requires -Version 7.0
@@ -78,6 +91,9 @@ param(
     [string[]]$Samples,
     [string[]]$Configurations = @(if ([string]::IsNullOrEmpty($env:WDS_Configuration)) { ('Debug', 'Release') } else { $env:WDS_Configuration }),
     [string[]]$Platforms = @(if ([string]::IsNullOrEmpty($env:WDS_Platform)) { ('x64', 'arm64') } else { $env:WDS_Platform }),
+    # _NT_TARGET_VERSION = the WDK library version the driver links against. Valid values are
+    # auto-discovered from the WDK (Get-NtTargetVersions.ps1); empty = the latest discovered.
+    [string]$NtTargetVersion = $env:WDS_NtTargetVersion,
     [string]$LogFilesDirectory = (Join-Path (Get-Location) "_logs"),
     [string]$ReportFileName = $(if ([string]::IsNullOrEmpty($env:WDS_ReportFileName)) { "_overview" } else { $env:WDS_ReportFileName }),
     [string]$InfOptions,
@@ -102,20 +118,35 @@ function Import-SampleExclusions {
           - Configurations: semicolon-separated config|platform patterns (or '*' for all)
           - Reason:         human-readable explanation
 
-        Only exclusions whose [MinBuild, MaxBuild] range includes the given build number
-        are returned. Exclusions outside the range are silently skipped.
+        A row is only returned when ALL of the following match the current build:
+          - its [MinBuild, MaxBuild] range includes the given build number, and
+          - its [MinNtTargetVersion, MaxNtTargetVersion] range includes the current
+            _NT_TARGET_VERSION build number (e.g. 22000 parsed from '10.0.22000').
+        Rows outside either range are skipped; blank range bounds mean unbounded.
     .NOTES
-        CSV format:  Path,Configurations,MinBuild,MaxBuild,Reason
-        Example row: network\wlan\wdi,*,,27100,"failure introduced in VS17.14"
+        CSV format:  Path,Configurations,MinBuild,MaxBuild,MinNtTargetVersion,MaxNtTargetVersion,Reason
+        Example row:         network\wlan\wdi,*,26100,,,,"failure introduced in VS17.14"
+        NT-version-specific: somepath,*,,,,22621,"needs an API newer than the 10.0.22621 library"
     #>
     param(
         [string]$CsvPath,
-        [int]$BuildNumber
+        [int]$BuildNumber,
+        [string]$NtTargetVersion
     )
 
     if (-not (Test-Path $CsvPath)) {
         Write-Warning "Exclusions file not found: $CsvPath. No exclusions will be applied."
         return @()
+    }
+
+    # The _NT_TARGET_VERSION param is the friendly build-number form (e.g. '10.0.22000');
+    # take its last dotted component for numeric range comparisons. An empty value (or
+    # 'latest') means the newest libraries, so no NT-version-scoped row applies.
+    $ntBuild = if ([string]::IsNullOrWhiteSpace($NtTargetVersion) -or $NtTargetVersion -eq 'latest') {
+        [int]::MaxValue
+    }
+    else {
+        [int]($NtTargetVersion -replace '.*\.', '')
     }
 
     $exclusions = [System.Collections.ArrayList]::new()
@@ -124,14 +155,22 @@ function Import-SampleExclusions {
         $configs  = if ([string]::IsNullOrWhiteSpace($_.Configurations)) { '*' } else { $_.Configurations }
         $minBuild = if ([string]::IsNullOrWhiteSpace($_.MinBuild)) { 0 }     else { [int]$_.MinBuild }
         $maxBuild = if ([string]::IsNullOrWhiteSpace($_.MaxBuild)) { 99999 } else { [int]$_.MaxBuild }
+        # Min/MaxNtTargetVersion columns are optional; blank or missing means "all NT versions".
+        $minNt    = if ([string]::IsNullOrWhiteSpace($_.MinNtTargetVersion)) { 0 }       else { [int]$_.MinNtTargetVersion }
+        $maxNt    = if ([string]::IsNullOrWhiteSpace($_.MaxNtTargetVersion)) { [int]::MaxValue } else { [int]$_.MaxNtTargetVersion }
 
-        if ($minBuild -le $BuildNumber -and $BuildNumber -le $maxBuild) {
+        # _NT_TARGET_VERSION is constant for the whole run, so (like the build number) filter
+        # these rows out here at load time.
+        if ($ntBuild -lt $minNt -or $ntBuild -gt $maxNt) {
+            Write-Verbose "Exclusion skipped: '$pattern' - _NT_TARGET_VERSION $ntBuild outside [$minNt, $maxNt]"
+        }
+        elseif ($minBuild -le $BuildNumber -and $BuildNumber -le $maxBuild) {
             [void]$exclusions.Add([PSCustomObject]@{
                 Pattern        = $pattern
                 Configurations = $configs
                 Reason         = $_.Reason
             })
-            Write-Verbose "Exclusion applied: '$pattern' configs='$configs' reason='$($_.Reason)'"
+            Write-Verbose "Exclusion applied: '$pattern' configs='$configs' ntRange=[$minNt,$maxNt] reason='$($_.Reason)'"
         }
         else {
             Write-Verbose "Exclusion skipped: '$pattern' - build $BuildNumber outside [$minBuild, $maxBuild]"
@@ -172,6 +211,7 @@ function Build-SingleSample {
         [string]$SampleName,
         [string]$Configuration = 'Debug',
         [string]$Platform = 'x64',
+        [string]$NtTargetVersionCode,
         [string]$InfVerif_AdditionalOptions = '/samples',
         [string]$LogFilesDirectory = (Get-Location),
         [bool]$Verbose = $false
@@ -249,6 +289,7 @@ function Build-SingleSample {
             -property:Configuration=$Configuration `
             -property:Platform=$Platform `
             -p:TargetVersion=Windows10 `
+            -p:_NT_TARGET_VERSION=$NtTargetVersionCode `
             -p:InfVerif_AdditionalOptions="$InfVerif_AdditionalOptions" `
             -warnaserror `
             -binaryLogger:LogFile=$binLogFilePath`;ProjectImports=None `
@@ -393,10 +434,36 @@ else {
 }
 
 # =============================================================================
+#  Step 5b - Resolve _NT_TARGET_VERSION
+# =============================================================================
+#
+# _NT_TARGET_VERSION selects the WDK library version the driver links against. The valid
+# values (and their NTDDI codes) are auto-discovered from the active WDK by
+# Get-NtTargetVersions.ps1, so nothing here needs updating when a new WDK version ships.
+# msbuild takes the NTDDI code.
+$ntVersions = & (Join-Path $PSScriptRoot 'Get-NtTargetVersions.ps1')
+if (-not $ntVersions) {
+    Write-Error "Could not discover any _NT_TARGET_VERSION values from the active WDK."
+    exit 1
+}
+if ([string]::IsNullOrWhiteSpace($NtTargetVersion) -or $NtTargetVersion -eq 'latest') {
+    $ntSelected = $ntVersions[0]      # newest
+}
+else {
+    $ntSelected = $ntVersions | Where-Object { $_.Version -eq $NtTargetVersion -or $_.Tag -eq $NtTargetVersion } | Select-Object -First 1
+    if (-not $ntSelected) {
+        Write-Error "Invalid -NtTargetVersion '$NtTargetVersion'. Valid values: $(($ntVersions.Version) -join ', ')"
+        exit 1
+    }
+}
+$NtTargetVersion     = $ntSelected.Version
+$ntTargetVersionCode = $ntSelected.Code
+
+# =============================================================================
 #  Step 6 - Load Exclusions
 # =============================================================================
 
-$exclusions = Import-SampleExclusions -CsvPath (Join-Path $root 'exclusions.csv') -BuildNumber $buildNumber
+$exclusions = Import-SampleExclusions -CsvPath (Join-Path $root 'exclusions.csv') -BuildNumber $buildNumber -NtTargetVersion $NtTargetVersion
 
 # =============================================================================
 #  Step 7 - Print Build Plan
@@ -417,6 +484,7 @@ Write-Output ""
 Write-Output "  Samples:          $($sampleSet.Count) ($skippedCount skipped)"
 Write-Output "  Configurations:   $($Configurations -join ', ')"
 Write-Output "  Platforms:        $($Platforms -join ', ')"
+Write-Output "  NT Target Ver:    $NtTargetVersion ($ntTargetVersionCode)"
 Write-Output "  Combinations:     $combinationsTotal"
 Write-Output "  Exclusions:       $($exclusions.Count)"
 Write-Output ""
@@ -463,6 +531,7 @@ $sampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
     $configs    = $using:Configurations
     $platforms  = $using:Platforms
     $infOpts    = $using:infVerifOptions
+    $ntCode     = $using:ntTargetVersionCode
     $isVerbose  = $using:verbose
     $state      = $using:buildState
     $total      = $using:combinationsTotal
@@ -513,7 +582,8 @@ $sampleSet.GetEnumerator() | ForEach-Object -ThrottleLimit $ThrottleLimit -Paral
                 $buildResult = Build-SingleSample `
                     -Directory $directory -SampleName $sampleName `
                     -LogFilesDirectory $logDir -Configuration $configuration `
-                    -Platform $platform -InfVerif_AdditionalOptions $infOpts `
+                    -Platform $platform -NtTargetVersionCode $ntCode `
+                    -InfVerif_AdditionalOptions $infOpts `
                     -Verbose:$isVerbose
 
                 # Return codes from Build-SingleSample:
@@ -631,6 +701,7 @@ Write-Output ""
 Write-Output "  Samples:          $($sampleSet.Count)"
 Write-Output "  Configurations:   $($Configurations -join ', ')"
 Write-Output "  Platforms:        $($Platforms -join ', ')"
+Write-Output "  NT Target Ver:    $NtTargetVersion ($ntTargetVersionCode)"
 Write-Output "  Combinations:     $combinationsTotal"
 Write-Output ""
 Write-Output "  Succeeded:        $($buildState.Succeeded)"
@@ -650,9 +721,61 @@ Write-Output "------------------------------------------------------------------
 
 $sortedResults = $buildState.Results | Sort-Object { $_.Sample }
 $sortedResults | ConvertTo-Csv  | Out-File $reportCsvPath
-$sortedResults | ConvertTo-Html -Title "WDK Sample Build Overview" | Out-File $reportHtmlPath
+$sortedResults | ConvertTo-Html -Title "WDK Sample Build Overview - _NT_TARGET_VERSION $NtTargetVersion" | Out-File $reportHtmlPath
 
 # Only open the HTML report interactively (not in CI/automation)
 if (-not $env:BUILD_BUILDID -and [Environment]::UserInteractive) {
     Invoke-Item $reportHtmlPath
+}
+
+# =============================================================================
+#  Step 12 - GitHub Actions job summary (CI only; no-op when run locally)
+# =============================================================================
+# When $GITHUB_STEP_SUMMARY is set, emit an easy-to-scan markdown summary for the run
+# page: a status header, a counts table, and (if any) a table of failures with the first
+# compiler/linker error so problems are obvious without opening the logs.
+if ($env:GITHUB_STEP_SUMMARY) {
+    $icon = if ($buildState.Failed -gt 0) { ':x:' } elseif ($buildState.Sporadic -gt 0) { ':warning:' } else { ':white_check_mark:' }
+    $cfgLabel = "$($Configurations -join ',')|$($Platforms -join ',')"
+
+    $md = [System.Text.StringBuilder]::new()
+    [void]$md.AppendLine("## $icon ``$cfgLabel`` &nbsp;&middot;&nbsp; _NT_TARGET_VERSION ``$NtTargetVersion``")
+    [void]$md.AppendLine()
+    [void]$md.AppendLine("Environment **$($buildEnv.Name)** &middot; WDK build **$buildNumber** &middot; **$($sampleSet.Count)** samples &middot; $($elapsed.Minutes)m $($elapsed.Seconds)s")
+    [void]$md.AppendLine()
+    [void]$md.AppendLine("| :white_check_mark: Succeeded | :x: Failed | :warning: Sporadic | :heavy_minus_sign: Excluded | :grey_question: Unsupported |")
+    [void]$md.AppendLine("|---:|---:|---:|---:|---:|")
+    [void]$md.AppendLine("| $($buildState.Succeeded) | $($buildState.Failed) | $($buildState.Sporadic) | $($buildState.Excluded) | $($buildState.Unsupported) |")
+    [void]$md.AppendLine()
+
+    if ($buildState.FailSet.Count -gt 0) {
+        [void]$md.AppendLine("<details open><summary><b>:x: $($buildState.FailSet.Count) failed</b></summary>")
+        [void]$md.AppendLine()
+        [void]$md.AppendLine("| Sample | Config/Platform | First error |")
+        [void]$md.AppendLine("|---|---|---|")
+        foreach ($entry in ($buildState.FailSet | Sort-Object)) {
+            if ($entry -match '^(?<name>.*)\s+(?<config>\w+)\|(?<platform>\w+)$') {
+                $fName = $Matches.name; $fConfig = $Matches.config; $fPlatform = $Matches.platform
+                $errLog = Join-Path $LogFilesDirectory "$fName.$fConfig.$fPlatform.0.err"
+                $msg = ''
+                if (Test-Path $errLog) {
+                    $line = Get-Content $errLog | Where-Object { $_ -match ': (error|fatal error) ' } | Select-Object -First 1
+                    if ($line -match ':\s*((?:fatal )?error\s.+?)\s*\[[^\[]*\]\s*$') { $msg = $Matches[1] } else { $msg = $line }
+                }
+                $msg = ("$msg" -replace '\|', '\|').Trim()
+                if ($msg.Length -gt 180) { $msg = $msg.Substring(0, 177) + '...' }
+                [void]$md.AppendLine("| ``$fName`` | $fConfig/$fPlatform | $msg |")
+            }
+        }
+        [void]$md.AppendLine("</details>")
+        [void]$md.AppendLine()
+    }
+
+    if ($buildState.SporadicSet.Count -gt 0) {
+        $sp = ($buildState.SporadicSet | Sort-Object | ForEach-Object { "``$_``" }) -join ', '
+        [void]$md.AppendLine(":warning: **Sporadic** (passed on retry): $sp")
+        [void]$md.AppendLine()
+    }
+
+    $md.ToString() | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
 }
