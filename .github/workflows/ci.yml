@@ -1,5 +1,7 @@
 name: Build all driver samples
 on:
+  # Allows the workflow to be triggered manually from the Actions tab ("Run workflow").
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -11,13 +13,39 @@ on:
     # Runs every Saturday at 00:00 PST (08:00 UTC)
     - cron: '0 8 * * 6'
 jobs:
+  # Auto-discover the available _NT_TARGET_VERSION values from the active WDK so the build
+  # matrix never needs a hand-maintained version list. Change -Newest to build more/fewer.
+  discover:
+    name: discover _NT_TARGET_VERSIONs
+    runs-on: windows-2025-vs2026
+    outputs:
+      versions: ${{ steps.nt.outputs.versions }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Install Nuget Packages
+        run: nuget restore .\packages.config -PackagesDirectory .\packages\
+
+      - name: Discover the newest _NT_TARGET_VERSION values
+        id: nt
+        shell: pwsh
+        run: |
+          $json = .\Get-NtTargetVersions.ps1 -Newest 4 -AsMatrixJson
+          "versions=$json" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          Write-Host "Discovered _NT_TARGET_VERSION matrix: $json"
+
   build:
-    name: Build driver samples
+    name: build ${{ matrix.nt.tag }} ${{ matrix.configuration }} ${{ matrix.platform }}
+    needs: discover
     strategy:
       fail-fast: false
       matrix:
         configuration: [Debug, Release]
         platform: [x64, arm64]
+        # _NT_TARGET_VERSION values are auto-discovered by the 'discover' job from the active
+        # WDK, so there is no version list to maintain here.
+        nt: ${{ fromJSON(needs.discover.outputs.versions) }}
     runs-on: windows-2025-vs2026
     steps:
       - name: Check out repository code
@@ -33,13 +61,14 @@ jobs:
         env:
           WDS_Configuration: ${{ matrix.configuration }}
           WDS_Platform: ${{ matrix.platform }}
-          WDS_ReportFileName: _overview.${{ matrix.configuration }}.${{ matrix.platform }}
+          WDS_NtTargetVersion: ${{ matrix.nt.version }}
+          WDS_ReportFileName: _overview.${{ matrix.nt.tag }}.${{ matrix.configuration }}.${{ matrix.platform }}
 
       - name: Archive build logs and overview build reports
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: logs-${{ matrix.configuration }}-${{ matrix.platform }}
+          name: logs-${{ matrix.nt.tag }}-${{ matrix.configuration }}-${{ matrix.platform }}
           path: _logs
 
   report:

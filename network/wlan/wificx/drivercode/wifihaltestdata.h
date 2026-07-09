@@ -1,0 +1,8290 @@
+// Copyright (C) Microsoft Corporation. All rights reserved.
+#pragma once
+
+#define TESTMP_BAND_IHV 0x00000010
+
+// clang-format on
+
+#define ConnectEntryId_MAX ARRAYSIZE(g_ConnectEntries)
+
+//
+//===============================================================================
+// Set alternate local addresses based on simulation parameters
+//===============================================================================
+//
+UCHAR s_ArubaSimLocalAddress[] = {0xd4, 0x6a, 0x6a, 0x52, 0x18, 0x07}; // For Wpa3SuiteB - Aruba
+UCHAR g_IntelSimLocalAddress[] = {0x34, 0x13, 0xe8, 0xb3, 0x14, 0x4c}; // For Wpa3SuiteB - Intel
+UCHAR g_SaeSimLocalAddress[] = {0x9c, 0xda, 0x3e, 0xf2, 0x7d, 0xd5};   // For Wpa3Sae
+
+#ifdef WPA3_ARUBA_SIM
+PUCHAR g_AlternateLocalAddress = s_ArubaSimLocalAddress;
+#elif WPA3_INTEL_SIM
+PUCHAR g_AlternateLocalAddress = g_IntelSimLocalAddress;
+#elif WPA3_SAE
+PUCHAR g_AlternateLocalAddress = g_SaeSimLocalAddress;
+#else
+PUCHAR g_AlternateLocalAddress = NULL;
+#endif
+
+// clang-format off
+
+//
+//===============================================================================
+//
+
+UCHAR s_DeviceServiceTestBlob[] =
+{
+    0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa
+};
+
+//
+//===============================================================================
+//
+
+UCHAR s_TLV_AssociationParametersRequestedType[] =
+{
+    // WDI_TLV_ASSOCIATION_PARAMETERS_REQUESTED_TYPE
+    0xBB, 0x00,
+    0x02, 0x00,
+        0x9F, 0x00  // PMKID
+};
+
+UCHAR s_TLV_RoamingNeededIndication[] =
+{
+    // WDI_TLV_ROAMING_NEEDED_PARAMETERS
+    0x55, 0x00,
+    0x04, 0x00,
+        0x0a, 0x00, 0x00, 0x00
+};
+
+UCHAR s_TLV_NeighborReport[] =
+{
+    // WDI_TLV_BSSID
+    0x02, 0x00,
+    0x06, 0x00,
+        0x00, 0x20, 0x30, 0x40, 0x50, 0x60,
+
+    // WDI_TLV_ACTION_FRAME_BODY
+    0xBE, 0x00,
+    0x14, 0x00,
+        0x05,                               // Category = Radio Measurement
+        0x05,                               // Action = Neighbor Report Response
+        0x01,                               // Dialog Token
+        0x34,                               // Element ID = Neighbor Report
+        0x0F,                               // Length
+        0x00, 0x20, 0x30, 0x40, 0x50, 0x60, // BSSID
+        0x00, 0x00, 0x00, 0x00,             // BSSID Information
+        0x00,                               // Operating class
+        0x06,                               // Channel Number
+        0x00,                               // PHY Type
+        0x00, 0x00,                         // Optional IEs
+};
+
+//
+//===============================================================================
+//
+
+//
+//===============================================================================
+// BSs entries
+//===============================================================================
+//
+
+WDI_MAC_ADDRESS s_Connect_Addr = {0x00, 0x20, 0x30, 0x40, 0x50, 0x60};
+
+UCHAR s_TLV_BSS_Entry_1 [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x63, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0x20, 0x30, 0x40, 0x50, 0x60,
+
+        // WDI_TLV_PROBE_RESPONSE_FRAME
+        0x09, 0x00, // Type
+        0x35, 0x00, // Length
+            0x00, 0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x00, 0x04, // Capability
+            0x00, 0x08,
+                'W', 'F', 'C', '_', 'O', 'P', 'E', 'N',     // SSID
+            0x01, 0x04,                                     // Supported Rates
+                0x02, 0x04, 0x0B, 0x16,
+            0x03, 0x01,                                     // DSSS Parameter
+                0x01,
+            0x05, 0x04,                                     // TIM
+                0x00, 0x01, 0x00, 0x00,
+            0x46, 0x05,                                     // RM Enabled Capabilities
+                0x02, 0x00, 0x00, 0x00, 0x00,
+            0xDD, 0x07,                                     // Vendor specific - MBO-OCE IE
+                0x50, 0x6F, 0x9A,                           // WFA OUI
+                0x16,                                       // MBO-OCE IE OUI Type
+                    0x01,                                   // Attribute ID - AP capability
+                    0x01,                                   // Attrib length
+                    0x00,                                   // Not cellular data aware
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x04, 0x00,
+            0x04, 0x05, 0x06, 0x07,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_CHANNEL_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x06, 0x00, 0x00, 0x00,     // Channel
+            0x01, 0x00, 0x00, 0x00      // Band ID
+};
+
+UCHAR s_TLV_SuccessOpenAssociationResult[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xD7, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0x20, 0x30, 0x40, 0x50, 0x60,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x01, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x00, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x01, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x30, 0x00,
+            0x21, 0x04, // Capabilities
+            0x0A, 0x00, // Listen Interval
+            0x00, 0x08,
+                'W', 'F', 'C', '_', 'O', 'P', 'E', 'N',                 // SSID
+            0x01, 0x08,                                                 // Rates
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,
+            0x21, 0x02,                                                 // Power Capability
+                0x07, 0x12,
+            0x24, 0x02,                                                 // Supported Channels
+                0x01, 0x0B,
+            0x32, 0x04,                                                 // Extended Rates
+                0x0C, 0x12, 0x18, 0x60,
+            0xDD, 0x07,                                                 // WMM settings
+                0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x30, 0x00,
+            0x01, 0x04, //Capability
+            0x00, 0x00, //Status
+            0x01, 0xC0, //Association ID
+            0x01, 0x08,                         //Rates
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,
+            0x32, 0x04,                         //Extended Rates
+                0x0C, 0x12, 0x18, 0x60,
+            0xDD, 0x18,                         //WMM settings
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+
+        // WDI_TLV_BEACON_PROBE_RESPONSE
+        0x30, 0x00,                                 // Type
+        0x25, 0x00,                                 // Length
+            0x00, 0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                 // Beacon Interval
+            0x00, 0x04,                                 // Capability
+            0x00, 0x08,
+                'W', 'F', 'C', '_', 'O', 'P', 'E', 'N',     // SSID
+            0x01, 0x04, 0x02, 0x04, 0x0B, 0x16, // Supported Rates
+            0x03, 0x01, 0x01,                   // DSSS Parameter
+            0x05, 0x04, 0x00, 0x01, 0x00, 0x00, // TIM
+
+        // WDI_TLV_ETHERTYPE_ENCAP_TABLE (optional)
+        // 0x00, 0x00,
+        // 0x04, 0x00,
+        // 0x00, 0x00, 0x00, 0x00
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x07, 0x00, 0x00, 0x00,
+
+};
+
+
+UCHAR s_TLV_OpenDisassociation[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0xBC, 0x00,
+    0x0A, 0x00,
+        0x00, 0x20, 0x30, 0x40, 0x50, 0x60,
+        0x01, 0x00, 0x00, 0x00,
+
+    // WDI_TLV Need Peer Cleanup Params
+    0xb4, 0x00,
+    0x01, 0x00,
+        0x00
+};
+
+WDI_MAC_ADDRESS s_Connect_Addr_2_Open = {0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE2};
+
+UCHAR s_TLV_BSS_Entry_2_Open [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x59, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE2,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x26, 0x00,
+            0x44, 0x55, 0x66, 0x77, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x00, 0x04, // Capability
+            0x00, 0x08, // SSID
+                'W', 'D', 'I', '_', 'O', 'P', 'E', 'N',
+            0x03, 0x01,                                     // DSSS Parameter
+                0x01,
+            0x01, 0x04,                                     // Supported Rates
+                0x02, 0x04, 0x0B, 0x16,
+            0x46, 0x05,                                     // RM Enabled Capabilities
+                0x02, 0x00, 0x00, 0x00, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x28, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_CHANNEL_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x06, 0x00, 0x00, 0x00,     // Channel
+            0x01, 0x00, 0x00, 0x00      // Band ID
+
+};
+
+UCHAR s_TLV_Success_AssociationResult_2_Open[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xD7, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE2,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+        0x00, 0x00, 0x00, 0x00, //Association Status
+        0x00, 0x00, 0x00, 0x00, //Status Code
+        0x00,                   //ReAssociationRequest
+        0x01, 0x00, 0x00, 0x00, //AuthAlgorithm
+        0x00, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+        0x00, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+        0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+        0x00,                   //FourAddressSupported
+        0x00,                   //Port Authorized
+        0x00,                   // WMM QoS Enabled
+        0x00, 0x00, 0x00, 0x00, //DSInfo
+        0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+        0x01, 0x00, 0x00, 0x00, // Band ID
+        0x00, 0x00, 0x00, 0x00, // IHV Association Status
+        0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x30, 0x00,
+            0x21, 0x04, // Capabilities
+            0x0A, 0x00, // Listen Interval
+            0x00, 0x08, // SSID
+                'W', 'D', 'I', '_', 'O', 'P', 'E', 'N',
+            0x01, 0x08,                                             // Rates
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,
+            0x21, 0x02,                                             // Power Capability
+                0x07, 0x12,
+            0x24, 0x02,                                             // Supported Channels
+                0x01, 0x0B,
+            0x32, 0x04,                                             // Extended Rates
+                0x0C, 0x12, 0x18, 0x60,
+            0xDD, 0x07,                                             // WMM settings
+                0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x30, 0x00,
+            0x01, 0x04,                                             // Capability
+            0x00, 0x00,                                             // Status
+            0x01, 0xC0,                                             // Association ID
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,     // Rates
+            0x32, 0x04,                                             // Extended Rates
+                0x0C, 0x12, 0x18, 0x60,
+            0xDD, 0x18,                                             // WMM settings
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+
+        // WDI_TLV_BEACON_PROBE_RESPONSE
+        0x30, 0x00,
+        0x25, 0x00,
+            0x00, 0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00,     // Timestamp
+            0x64, 0x00,                                         // Beacon Interval
+            0x00, 0x04,                                         // Capability
+            0x00, 0x08,                                         // SSID
+                'W', 'D', 'I', '_', 'O', 'P', 'E', 'N',
+            0x01, 0x04,
+                0x02, 0x04, 0x0B, 0x16, // Supported Rates
+            0x03, 0x01,                                         // DSSS Parameter
+                0x01,
+            0x05, 0x04,                                         // TIM
+                0x00, 0x01, 0x00, 0x00,
+
+        // WDI_TLV_ETHERTYPE_ENCAP_TABLE (optional)
+        // 0x00, 0x00,
+        // 0x04, 0x00,
+        // 0x00, 0x00, 0x00, 0x00
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x04, 0x00, 0x00, 0x00,
+
+};
+
+//
+//===============================================================================
+//
+
+WDI_MAC_ADDRESS s_Connect_Addr_3_WEP = {0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE3};
+
+UCHAR  s_TLV_BSS_Entry_3_WEP [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x52, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE3,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x1f, 0x00,
+            0x44, 0x55, 0x66, 0x77, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x10, 0x04, // Capability
+            0x00, 0x08, // SSID
+                'W', 'D', 'I', '_', '_', 'W', 'E', 'P',
+            0x03, 0x01, 0x01,                       // DSSS Parameter (Offset: 42)
+            0x01, 0x04, 0x02, 0x04, 0x0B, 0x16,     // Supported Rates
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x3C, 0x00, 0x00, 0x00,     // Link Quality (Offset: 57)
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x06, 0x00, 0x00, 0x00,     // Channel (Offset: 64)
+            0x01, 0x00, 0x00, 0x00,     // Band ID
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00
+};
+
+
+UCHAR s_TLV_Success_AssociationResult_3_WEP[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xD9, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+        0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE3,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+        0x00, 0x00, 0x00, 0x00, //Association Status
+        0x00, 0x00, 0x00, 0x00, //Status Code
+        0x00,                   //ReAssociationRequest
+        0x00, 0x00, 0x00, 0x00, //AuthAlgorithm
+        0x00, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+        0x00, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+        0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+        0x00,                   //FourAddressSupported
+        0x00,                   //Port Authorized
+        0x00,                   // WMM QoS Enabled
+        0x00, 0x00, 0x00, 0x00, //DSInfo
+        0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+        0x01, 0x00, 0x00, 0x00, // Band ID
+        0x00, 0x00, 0x00, 0x00, // IHV Association Status
+        0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x32, 0x00,
+                0x10, 0x04, // Capability
+                0x21, 0x04, // Capabilities
+                0x0A, 0x00, // Listen Interval
+                0x00, 0x08, // SSID
+                    'W', 'D', 'I', '_', '_', 'W', 'E', 'P',
+                0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Rates
+                0x21, 0x02, 0x07, 0x12,  //Power Capability
+                0x24, 0x02, 0x01, 0x0B, //Supported Channels
+                0x32, 0x04, 0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x07, 0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03, // WMM settings
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x30, 0x00,
+                0x01, 0x04, //Capability
+                0x00, 0x00, //Status
+                0x01, 0xC0, //Association ID
+                0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,  //Rates
+                0x32, 0x04, 0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x18, 0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00, //WMM settings
+
+        // WDI_TLV_BEACON_PROBE_RESPONSE
+        0x30, 0x00,                                 // Type
+        0x25, 0x00,                                 // Length
+                0x00, 0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00, // Timestamp
+                0x64, 0x00,                                 // Beacon Interval
+                0x10, 0x04, // Capability
+                0x00, 0x08, // SSID
+                    'W', 'D', 'I', '_', '_', 'W', 'E', 'P',
+                0x01, 0x04, 0x02, 0x04, 0x0B, 0x16, // Supported Rates
+                0x03, 0x01, 0x01,                   // DSSS Parameter
+                0x05, 0x04, 0x00, 0x01, 0x00, 0x00, // TIM
+
+        // WDI_TLV_ETHERTYPE_ENCAP_TABLE (optional)
+        // 0x00, 0x00,
+        // 0x04, 0x00,
+        // 0x00, 0x00, 0x00, 0x00
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+        0x04, 0x00, 0x00, 0x00,
+
+};
+
+
+//
+//===============================================================================
+//
+
+WDI_MAC_ADDRESS s_Connect_Addr_4_RSNA_CCMP = {0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE4};
+
+#define WFA_TEST_MIN_RSN_IE   1
+
+UCHAR  s_TLV_BSS_Entry_4_RSNA_CCMP [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+#ifdef WFA_TEST_MIN_RSN_IE
+    0x79, 0x00, //Len
+#else
+    0x8B, 0x00, //Len
+#endif  // WFA_TEST_MIN_RSN_IE
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+            0x06, 0x00, // Length
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE4,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+#ifdef WFA_TEST_MIN_RSN_IE
+        0x46, 0x00,
+#else
+        0x58, 0x00,
+#endif  // WFA_TEST_MIN_RSN_IE
+
+            0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x31, 0x04, // Capability
+            0x00, 0x0A, // SSID
+                'W', 'D', 'I', '_', 'S', 'E', 'C', 'U', 'R', 'E',
+            0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+            0x03, 0x01, 0x06, // DSS Parameters
+            0x05, 0x04, 0x00, 0x01, 0x00, 0x00,     // TIM
+            0x2A, 0x01, 0x00, // ERP
+            0x2F, 0x01, 0x00, // Reserved
+#ifdef WFA_TEST_MIN_RSN_IE
+            0x30, 0x02,
+                0x01, 0x00,
+#else
+            0x30, 0x14,
+                0x01, 0x00,                         // Version
+                0x00, 0x0F, 0xAC, 0x04,             // Group Cipher             -- CCMP
+                0x01, 0x00,                         // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x04,             // Pairwise Cipher          -- CCMP
+                0x01, 0x00,                         // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x02,             // AKM Suite                -- RSNA_PSK
+                0x00, 0x00,                         // RSN Capability
+#endif  // WFA_TEST_MIN_RSN_IE
+            0x32, 0x04, 0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+            0xDD, 0x09, 0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x0B, 0x00, 0x00, 0x00,     // Channel
+            0x01, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_4_RSNA_CCMP[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x22, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+        0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE4,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+        0x00, 0x00, 0x00, 0x00, //Association Status
+        0x00, 0x00, 0x00, 0x00, //Status Code
+        0x00,                   //ReAssociationRequest
+        0x07, 0x00, 0x00, 0x00, //AuthAlgorithm
+        0x04, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+        0x04, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+        0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+        0x00,                   //FourAddressSupported
+        0x00,                   //Port Authorized
+        0x00,                   // WMM QoS Enabled
+        0x00, 0x00, 0x00, 0x00, //DSInfo
+        0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+        0x01, 0x00, 0x00, 0x00, // Band ID
+        0x00, 0x00, 0x00, 0x00, // IHV Association Status
+        0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x48, 0x00,
+                0x21, 0x04, // Capabilities
+                0x0A, 0x00, // Listen Interval
+                0x00, 0x0A, // SSID
+                    'W', 'D', 'I', '_', 'S', 'E', 'C', 'U', 'R', 'E',
+                0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Rates
+                0x21, 0x02, 0x07, 0x12,  //Power Capability
+                0x24, 0x02, 0x01, 0x0B, //Supported Channels
+                0x32, 0x04, 0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x08, 0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03, // WMM settings
+                0x30, 0x14, 0x01, 0x00, 0x00, 0x0F, 0xAC, 0x04, 0x01, 0x00, 0x00, 0x0F, 0xAC, 0x04, 0x01, 0x00, 0x00, 0x0F, 0xAC, 0x02, 0x00, 0x00, // RSN
+
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x30, 0x00,
+                0x01, 0x04, //Capability
+                0x00, 0x00, //Status
+                0x01, 0xC0, //Association ID
+                0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,  //Rates
+                0x32, 0x04, 0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x18, 0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00, //WMM settings
+
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0x58, 0x00,
+
+                0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+                0x64, 0x00, // Beacon Interval
+                0x31, 0x04, // Capability
+                0x00, 0x0A, // SSID
+                    'W', 'D', 'I', '_', 'S', 'E', 'C', 'U', 'R', 'E',
+                0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+                0x03, 0x01, 0x06, // DSS Parameters
+                0x05, 0x04, 0x00, 0x01, 0x00, 0x00,     // TIM
+                0x2A, 0x01, 0x00, // ERP
+                0x2F, 0x01, 0x00, // Reserved
+                0x30, 0x14, 0x01, 0x00, 0x00, 0x0F, 0xAC, 0x04, 0x01, 0x00, 0x00, 0x0F, 0xAC, 0x04, 0x01, 0x00, 0x00, 0x0F, 0xAC, 0x02, 0x00, 0x00, // RSN
+                0x32, 0x04, 0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+                0xDD, 0x09, 0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+        0x04, 0x00, 0x00, 0x00,
+
+};
+
+
+//
+//===============================================================================
+//
+
+WDI_MAC_ADDRESS s_Connect_Addr_5_IHV = {0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE5};
+
+UCHAR  s_TLV_BSS_Entry_5_IHV [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x52, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+        0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE5,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x1f, 0x00,
+        0x44, 0x55, 0x66, 0x77, 0x00, 0x00, 0x00, 0x00, // Timestamp
+        0x64, 0x00, // Beacon Interval
+        0x10, 0x04, // Capability
+        0x00, 0x08, // SSID
+            'W', 'D', 'I', '_', '_', 'I', 'H', 'V',
+        0x03, 0x01, 0x01,                       // DSSS Parameter
+        0x01, 0x04, 0x02, 0x04, 0x0B, 0x16,     // Supported Rates
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+        0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+        0x3C, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+        0x24, 0x00, 0x00, 0x00,     // Channel = 36
+        0x08, 0x00, 0x00, 0x00,     // Band ID = Custom
+//        0x02, 0x00, 0x00, 0x00,     // Band ID
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+        0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00
+};
+
+
+UCHAR s_TLV_Success_AssociationResult_5_IHV[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xD9, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+        0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE5,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+        0x00, 0x00, 0x00, 0x00, //Association Status
+        0x00, 0x00, 0x00, 0x00, //Status Code
+        0x00,                   //ReAssociationRequest
+        0x02, 0x00, 0x00, 0x80, //AuthAlgorithm   = Custom
+        0x01, 0x00, 0x00, 0x80, //UnicastCipherAlgorithm
+        0x01, 0x00, 0x00, 0x80, //MulticastDataCipherAlgorithm
+        0x01, 0x00, 0x00, 0x80, //MulticastMgmtCipherAlgorithm
+        0x00,                   //FourAddressSupported
+        0x00,                   //Port Authorized
+        0x00,                   // WMM QoS Enabled
+        0x00, 0x00, 0x00, 0x00, //DSInfo
+        0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+        0x01, 0x00, 0x00, 0x80, // Band ID
+        0x00, 0x00, 0x00, 0x00, // IHV Association Status
+        0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x32, 0x00,
+                0x10, 0x04, // Capability
+                0x21, 0x04, // Capabilities
+                0x0A, 0x00, // Listen Interval
+                0x00, 0x08, // SSID
+                    'W', 'D', 'I', '_', '_', 'I', 'H', 'V',
+                0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Rates
+                0x21, 0x02, 0x07, 0x12,  //Power Capability
+                0x24, 0x02, 0x24, 0x0B, //Supported Channels
+                0x32, 0x04, 0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x07, 0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03, // WMM settings
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x30, 0x00,
+                0x01, 0x04, //Capability
+                0x00, 0x00, //Status
+                0x01, 0xC0, //Association ID
+                0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,  //Rates
+                0x32, 0x04, 0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x18, 0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00, //WMM settings
+
+        // WDI_TLV_BEACON_PROBE_RESPONSE
+        0x30, 0x00,                                 // Type
+        0x25, 0x00,                                 // Length
+                0x00, 0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00, // Timestamp
+                0x64, 0x00,                                 // Beacon Interval
+                0x10, 0x04, // Capability
+                0x00, 0x08, // SSID
+                    'W', 'D', 'I', '_', '_', 'I', 'H', 'V',
+                0x01, 0x04, 0x02, 0x04, 0x0B, 0x16, // Supported Rates
+                0x03, 0x01, 0x01,                   // DSSS Parameter
+                0x05, 0x04, 0x00, 0x01, 0x00, 0x00, // TIM
+
+        // WDI_TLV_ETHERTYPE_ENCAP_TABLE (optional)
+        // 0x00, 0x00,
+        // 0x04, 0x00,
+        // 0x00, 0x00, 0x00, 0x00
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+        0x02, 0x00, 0x00, 0x80, // Phy = IHV Phy 2
+
+};
+
+
+UCHAR s_TLV_IhvRequestComplete[] =
+{
+    // WDI_TLV_IHV_DATA
+    0xBD, 0x00,
+    0x0A, 0x00,
+
+    0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE5,
+    0x00, 0x00, 0x00, 0x01
+};
+
+
+UCHAR s_TLV_IhvIndication[] =
+{
+    // WDI_TLV_IHV_DATA
+    0xBD, 0x00,
+    0x30, 0x00,
+
+    0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE5,
+    0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE5,
+    0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE5,
+    0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE5,
+    0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE5,
+    0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE5,
+    0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE5,
+    0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE5
+};
+
+//===============================================================================
+
+WDI_MAC_ADDRESS s_Connect_Addr_6_FT_CCMP = {0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE6};
+
+UCHAR  s_TLV_BSS_Entry_6_FT_CCMP [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xEA, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE6,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0xB7, 0x00,
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,     // TimeStamp
+            0x64, 0x00,                                         // Beacon Interval
+            0x31, 0x04,                                         // Capability
+            0x00, 0x07,                                         // SSID
+                'W', 'D', 'I', '_', '_', 'F', 'T',                  // WDI__FT
+            0x01, 0x08,                                         // Supported Rates
+                0x0C, 0x12, 0x96, 0x18, 0x24, 0x30, 0x48, 0x60,
+            0x03, 0x01,                                         // DSS Parameters
+                0x01,
+            0x05, 0x04,                                         // TIM
+                0x00, 0x01, 0x00, 0x00,
+            0x07, 0x06,                                         // Country
+                0x55, 0x53, 0x20, 0x01, 0x0B, 0x1E,
+            0x0B, 0x05,
+                0x00, 0x00, 0x53, 0x8D, 0x5B,
+            0x2A, 0x01,
+                0x00,
+            0x30, 0x14,                                         // RSN IE
+                0x01, 0x00,                 // Version
+                0x00, 0x0F, 0xAC, 0x04,     // Group Cipher
+                0x01, 0x00,                 // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x04,     // Pairwise Cipher
+                0x01, 0x00,                 // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x03,     // AKM Suite
+                0x28, 0x00,                 // RSN Capability
+            0x32, 0x01,
+                0x6C,
+            0x36, 0x03,                                         // MDID IE
+                0x0B, 0x47,                 // MDID
+                0x00,                       // FT Capability and Policy
+            0x85, 0x1E,
+                0x00, 0x00, 0x8F, 0x00, 0x0F, 0x00, 0xFF, 0x03, 0x59, 0x00, 0x41, 0x50, 0x30, 0x30, 0x31, 0x34,
+                0x2E, 0x36, 0x39, 0x34, 0x30, 0x2E, 0x38, 0x35, 0x32, 0x00, 0x00, 0x00, 0x00, 0x27,
+            0x96, 0x06,
+                0x00, 0x40, 0x96, 0x00, 0x0B, 0x00,
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+            0xDD, 0x06,
+                0x00, 0x40, 0x96, 0x01, 0x01, 0x04,
+            0xDD, 0x05,
+                0x00, 0x40, 0x96, 0x03, 0x05,
+            0xDD, 0x05,
+                0x00, 0x40, 0x96, 0x0B, 0x09,
+            0xDD, 0x05,
+                0x00, 0x40, 0x96, 0x14, 0x01,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xC1, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x4A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+        0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+        0x01, 0x00, 0x00, 0x00,     // Channel
+        0x01, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_6_FT_CCMP[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x0C, 0x02,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE6,
+
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x06, 0x00, 0x00, 0x00, //AuthAlgorithm                     -- RSNA
+            0x04, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x04, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x01,                   // WMM QoS Enabled
+            0x03, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x01, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x3E, 0x00,
+            0x31, 0x04,         // Capabilities
+            0x01, 0x00,         // Listen Interval
+            0x00, 0x07,                                         // SSID
+                'W', 'D', 'I', '_', '_', 'F', 'T',                  // WDI__FT
+            0x01, 0x08,         // Supported Rates
+                0x0C, 0x12, 0x96, 0x18, 0x24, 0x30, 0x48, 0x60,
+            0x30, 0x14,                                         // RSN IE
+                0x01, 0x00,                 // Version
+                0x00, 0x0F, 0xAC, 0x04,     // Group Cipher             -- CCMP
+                0x01, 0x00,                 // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x04,     // Pairwise Cipher          -- CCMP
+                0x01, 0x00,                 // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x03,     // AKM Suite                -- FT
+                0x0C, 0x00,                 // RSN Capability
+            0x32, 0x01,         // Extended Rates
+                0x6C,
+            0x36, 0x03,                                         // MDID IE
+                0x0B, 0x47,                                         // MDID
+                0x00,                                               // FT Capability and Policy
+            0xDD, 0x07,
+                0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0xC5, 0x00,
+            0x31, 0x04,             // Capability
+            0x00, 0x00,             // Status
+            0x01, 0xC0,             // Association ID
+            0x01, 0x08,             // Supported Rates
+                0x96, 0x0C, 0x12, 0x18, 0x24, 0x30, 0x48, 0x60,
+            0x30, 0x26,                                         // RSN IE
+                0x01, 0x00,                 // Version
+                0x00, 0x0F, 0xAC, 0x04,     // Group Cipher             -- CCMP
+                0x01, 0x00,                 // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x04,     // Pairwise Cipher          -- CCMP
+                0x01, 0x00,                 // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x03,     // AKM Suite                -- FT
+                0x28, 0x00,                 // RSN Capability
+                0x01, 0x00,                 // PMKID Count              -- PMKR1Name
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //PMKID
+            0x32, 0x01,             // Extended Rates
+                0x6C,
+            0x36, 0x03,                                                 // MDID IE
+                0x0B, 0x47,                                                 // MDID
+                0x00,                                                       // FT Capability and Policy
+            0x37, 0x69,                                                 // FTE IE
+                0x00, 0x00,                                                 // MIC Control - 0 => no MIC
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //MIC
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //ANonce
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //SNonce
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x01, 0x06,                 // R1KH-ID
+                    0xB4, 0xC7, 0x99, 0x8A, 0xB6, 0x30,
+                0x03, 0x0D,     // R0KH-ID
+                    'a', 'p', '8', '1', '3', '2', '-', '7', '3', '4', 'E', 'B', '0',
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0xB7, 0x00,
+            0xDD, 0x50, 0x3D, 0xF7, 0xE2, 0x01, 0x00, 0x00,             // Supported Rates
+            0x64, 0x00,                                                 // Beacon Interval
+            0x31, 0x04,                                                 // Capability
+            0x00, 0x07,                                                 // SSID
+                'W', 'D', 'I', '_', '_', 'F', 'T',                          // WDI__FT
+            0x01, 0x08,
+                0x0C, 0x12, 0x96, 0x18, 0x24, 0x30, 0x48, 0x60,
+            0x03, 0x01,                 // DSS Parameters
+                0x01,
+            0x05, 0x04,                 // TIM
+                0x00, 0x01, 0x00, 0x00,
+            0x07, 0x06,                 // Country
+                0x55, 0x53, 0x20, 0x01, 0x0B, 0x1E,
+            0x0B, 0x05,
+                0x00, 0x00, 0x6E, 0x8D, 0x5B,
+            0x2A, 0x01,                 // ERP
+                0x00,
+            0x30, 0x14,                 // RSN
+                0x01, 0x00,                 // Version
+                0x00, 0x0F, 0xAC, 0x04,     // Group Cipher
+                0x01, 0x00,                 // Pairwise cipher count
+                0x00, 0x0F, 0xAC, 0x04,     // Pairwise cipher
+                0x01, 0x00,                 // AKM Suite Count
+                0x00, 0x0F, 0xAC, 0x03,     // AKM Suite
+                0x0C, 0x00,                 // RSN Capability
+            0x32, 0x01,                 // Extended Supported Rates
+                0x6C,
+            0x36, 0x03,                 // MDID IE
+                0x0B, 0x47,                 // MDID
+                0x00,                       // FT Capability and Policy
+            0x85, 0x1E,
+                0x03, 0x00, 0x8F, 0x00, 0x0F, 0x00, 0xFF, 0x03, 0x59, 0x00, 0x41, 0x50, 0x30, 0x30, 0x31, 0x34,
+                0x2E, 0x36, 0x39, 0x34, 0x30, 0x2E, 0x38, 0x31, 0x65, 0x00, 0x00, 0x00, 0x00, 0x27,
+            0x96, 0x06,
+                0x00, 0x40, 0x96, 0x00, 0x0E, 0x00,
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+            0xDD, 0x06,
+                0x00, 0x40, 0x96, 0x01, 0x01, 0x04,
+            0xDD, 0x05,
+                0x00, 0x40, 0x96, 0x03, 0x05,
+            0xDD, 0x05,
+                0x00, 0x40, 0x96, 0x0B, 0x09,
+            0xDD, 0x05,
+                0x00, 0x40, 0x96, 0x14, 0x01,
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x06, 0x00, 0x00, 0x00
+};
+
+
+//===============================================================================
+
+WDI_MAC_ADDRESS s_Connect_Addr_7_FT_PSK_CCMP = {0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE7};
+
+UCHAR  s_TLV_BSS_Entry_7_FT_PSK_CCMP [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xED, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE7,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0xBA, 0x00,
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,     // TimeStamp
+            0x64, 0x00,                                         // Beacon Interval
+            0x31, 0x04,                                         // Capability
+            0x00, 0x0A,                                         // SSID
+                'W', 'D', 'I', '_', '_', 'F', 'T', 'P', 'S', 'K',   // WDI__FTPSK
+            0x01, 0x08,                                         // Supported Rates
+                0x0C, 0x12, 0x96, 0x18, 0x24, 0x30, 0x48, 0x60,
+            0x03, 0x01,                                         // DSS Parameters
+                0x01,
+            0x05, 0x04,                                         // TIM
+                0x00, 0x01, 0x00, 0x00,
+            0x07, 0x06,                                         // Country
+                0x55, 0x53, 0x20, 0x01, 0x0B, 0x1E,
+            0x0B, 0x05,
+                0x00, 0x00, 0x53, 0x8D, 0x5B,
+            0x2A, 0x01,
+                0x00,
+            0x30, 0x14,                                         // RSN IE
+                0x01, 0x00,                 // Version
+                0x00, 0x0F, 0xAC, 0x04,     // Group Cipher
+                0x01, 0x00,                 // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x04,     // Pairwise Cipher
+                0x01, 0x00,                 // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x04,     // AKM Suite
+                0x28, 0x00,                 // RSN Capability
+            0x32, 0x01,
+                0x6C,
+            0x36, 0x03,                                         // MDID IE
+                0x12, 0x34,                                         // MDID
+                0x80,                                               // FT Capability and Policy
+            0x85, 0x1E,
+                0x00, 0x00, 0x8F, 0x00, 0x0F, 0x00, 0xFF, 0x03, 0x59, 0x00, 0x41, 0x50, 0x30, 0x30, 0x31, 0x34,
+                0x2E, 0x36, 0x39, 0x34, 0x30, 0x2E, 0x38, 0x35, 0x32, 0x00, 0x00, 0x00, 0x00, 0x27,
+            0x96, 0x06,
+                0x00, 0x40, 0x96, 0x00, 0x0B, 0x00,
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+            0xDD, 0x06,
+                0x00, 0x40, 0x96, 0x01, 0x01, 0x04,
+            0xDD, 0x05,
+                0x00, 0x40, 0x96, 0x03, 0x05,
+            0xDD, 0x05,
+                0x00, 0x40, 0x96, 0x0B, 0x09,
+            0xDD, 0x05,
+                0x00, 0x40, 0x96, 0x14, 0x01,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xC1, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x4A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+        0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+        0x01, 0x00, 0x00, 0x00,     // Channel
+        0x01, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_7_FT_PSK_CCMP[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x0C, 0x02,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE7,
+
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x07, 0x00, 0x00, 0x00, //AuthAlgorithm                     -- RSNA_PSK
+            0x04, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x04, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x01,                   // WMM QoS Enabled
+            0x03, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x01, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x41, 0x00,
+            0x31, 0x04,         // Capabilities
+            0x01, 0x00,         // Listen Interval
+            0x00, 0x0A,         // SSID
+                'W', 'D', 'I', '_', '_', 'F', 'T', 'P', 'S', 'K',   // WDI__FTPSK
+            0x01, 0x08,         // Supported Rates
+                0x0C, 0x12, 0x96, 0x18, 0x24, 0x30, 0x48, 0x60,
+            0x30, 0x14,         // RSN IE
+                0x01, 0x00, 0x00, 0x0F, 0xAC, 0x04, 0x01, 0x00, 0x00, 0x0F, 0xAC, 0x04, 0x01, 0x00, 0x00, 0x0F,
+                0xAC, 0x01, 0x00, 0x00,
+            0x32, 0x01,         // Extended Rates
+                0x6C,
+            0x36, 0x03,                                             // MDID IE
+                0x12, 0x34,                                             // MDID
+                0x80,                                                   // FT Capability and Policy
+            0xDD, 0x07,
+                0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0xBF, 0x00,
+            0x31, 0x04,             // Capability
+            0x00, 0x00,             // Status
+            0x01, 0xC0,             // Association ID
+            0x01, 0x08,             // Supported Rates
+                0x96, 0x0C, 0x12, 0x18, 0x24, 0x30, 0x48, 0x60,
+            0x30, 0x26,                                         // RSN IE
+                0x01, 0x00,                 // Version
+                0x00, 0x0F, 0xAC, 0x04,     // Group Cipher             -- CCMP
+                0x01, 0x00,                 // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x04,     // Pairwise Cipher          -- CCMP
+                0x01, 0x00,                 // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x04,     // AKM Suite                -- FT-PSK
+                0x28, 0x00,                 // RSN Capability
+                0x01, 0x00,                 // PMKID Count              -- PMKR1Name
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //PMKID
+            0x32, 0x01,                                         // Extended Rates
+                0x6C,
+            0x36, 0x03,                                         // MDID IE
+                0x12, 0x34,                                         // MDID
+                0x80,                                               // FT Capability and Policy
+            0x37, 0x63,                                         // FTE IE
+                0x00, 0x02,                                         // MIC Control
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //MIC
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //ANonce
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //SNonce
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x01, 0x06,                 // R1KH-ID
+                    0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE7,
+                0x03, 0x07,     // R0KH-ID
+                    'x', '@', 'y', '.', 'c', 'o', 'm',
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0xBA, 0x00,
+            0xDD, 0x50, 0x3D, 0xF7, 0xE2, 0x01, 0x00, 0x00,             // Supported Rates
+            0x64, 0x00,                                                 // Beacon Interval
+            0x31, 0x04,                                                 // Capability
+            0x00, 0x0A,                                                 // SSID
+                'W', 'D', 'I', '_', '_', 'F', 'T', 'P', 'S', 'K',           // WDI__FTPSK
+            0x01, 0x08,
+                0x0C, 0x12, 0x96, 0x18, 0x24, 0x30, 0x48, 0x60,
+            0x03, 0x01,                 // DSS Parameters
+                0x01,
+            0x05, 0x04,                 // TIM
+                0x00, 0x01, 0x00, 0x00,
+            0x07, 0x06,                 // Country
+                0x55, 0x53, 0x20, 0x01, 0x0B, 0x1E,
+            0x0B, 0x05,
+                0x00, 0x00, 0x6E, 0x8D, 0x5B,
+            0x2A, 0x01,                 // ERP
+                0x00,
+            0x30, 0x14,                 // RSN
+                0x01, 0x00,                 // Version
+                0x00, 0x0F, 0xAC, 0x04,     // Group Cipher
+                0x01, 0x00,                 // Pairwise cipher count
+                0x00, 0x0F, 0xAC, 0x04,     // Pairwise cipher
+                0x01, 0x00,                 // AKM Suite Count
+                0x00, 0x0F, 0xAC, 0x04,     // AKM Suite
+                0x28, 0x00,                 // RSN Capability
+            0x32, 0x01,                 // Extended Supported Rates
+                0x6C,
+            0x36, 0x03,                 // MDID IE
+                0x12, 0x34,                 // MDID
+                0x80,                       // FT Capability and Policy
+            0x85, 0x1E,
+                0x03, 0x00, 0x8F, 0x00, 0x0F, 0x00, 0xFF, 0x03, 0x59, 0x00, 0x41, 0x50, 0x30, 0x30, 0x31, 0x34,
+                0x2E, 0x36, 0x39, 0x34, 0x30, 0x2E, 0x38, 0x31, 0x65, 0x00, 0x00, 0x00, 0x00, 0x27,
+            0x96, 0x06,
+                0x00, 0x40, 0x96, 0x00, 0x0E, 0x00,
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+            0xDD, 0x06,
+                0x00, 0x40, 0x96, 0x01, 0x01, 0x04,
+            0xDD, 0x05,
+                0x00, 0x40, 0x96, 0x03, 0x05,
+            0xDD, 0x05,
+                0x00, 0x40, 0x96, 0x0B, 0x09,
+            0xDD, 0x05,
+                0x00, 0x40, 0x96, 0x14, 0x01,
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x06, 0x00, 0x00, 0x00
+};
+
+
+//
+//===============================================================================
+//
+
+WDI_MAC_ADDRESS s_Connect_Addr_8_Hidden = {0x00, 0xA0, 0xB0, 0xC0, 0xD0,0xE8};
+
+UCHAR s_TLV_BSS_Entry_Beacon_8_Hidden [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x52, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+        0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE8,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x24, 0x00, // Length
+        0x00, 0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00, // Timestamp
+        0x64, 0x00, // Beacon Interval
+        0x00, 0x04, // Capability
+        0x00, 0x00, // SSID
+        0x01, 0x04, 0x02, 0x04, 0x0B, 0x16,     // Supported Rates
+        0x03, 0x01, 0x01,                       // DSSS Parameter
+        0x05, 0x04, 0x00, 0x01, 0x00, 0x00,     // TIM
+        0x46, 0x05, 0x02, 0x00, 0x00, 0x00, 0x00, // RM Enabled Capabilities
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x04, 0x00,
+        0x04, 0x05, 0x06, 0x07,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+        0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+        0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+        0x06, 0x00, 0x00, 0x00,     // Channel
+        0x01, 0x00, 0x00, 0x00      // Band ID
+};
+
+UCHAR s_TLV_BSS_Entry_ProbeResponse_8_Hidden [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x5a, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+        0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE8,
+
+        // WDI_TLV_PROBE_RESPONSE_FRAME
+        0x09, 0x00, // Type
+        0x2C, 0x00, // Length
+        0x00, 0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00, // Timestamp
+        0x64, 0x00, // Beacon Interval
+        0x00, 0x04, // Capability
+        0x00, 0x08, // SSID
+            'W', 'D', 'I', '_', 'H', 'I', 'D', 'E',
+        0x01, 0x04, 0x02, 0x04, 0x0B, 0x16,     // Supported Rates
+        0x03, 0x01, 0x01,                       // DSSS Parameter
+        0x05, 0x04, 0x00, 0x01, 0x00, 0x00,     // TIM
+        0x46, 0x05, 0x02, 0x00, 0x00, 0x00, 0x00, // RM Enabled Capabilities
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x04, 0x00,
+        0x04, 0x05, 0x06, 0x07,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+        0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+        0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+        0x06, 0x00, 0x00, 0x00,     // Channel
+        0x01, 0x00, 0x00, 0x00      // Band ID
+};
+
+
+UCHAR s_TLV_Success_AssociationResult_8_Hidden[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xD7, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+        0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE8,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+        0x00, 0x00, 0x00, 0x00, //Association Status
+        0x00, 0x00, 0x00, 0x00, //Status Code
+        0x00,                   //ReAssociationRequest
+        0x01, 0x00, 0x00, 0x00, //AuthAlgorithm
+        0x00, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+        0x00, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+        0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+        0x00,                   //FourAddressSupported
+        0x00,                   //Port Authorized
+        0x00,                   // WMM QoS Enabled
+        0x00, 0x00, 0x00, 0x00, //DSInfo
+        0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+        0x01, 0x00, 0x00, 0x00, // Band ID
+        0x00, 0x00, 0x00, 0x00, // IHV Association Status
+        0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x30, 0x00,
+                0x21, 0x04, // Capabilities
+                0x0A, 0x00, // Listen Interval
+                0x00, 0x08, // SSID
+                    'W', 'D', 'I', '_', 'H', 'I', 'D', 'E',
+                0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Rates
+                0x21, 0x02, 0x07, 0x12,  //Power Capability
+                0x24, 0x02, 0x01, 0x0B, //Supported Channels
+                0x32, 0x04, 0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x07, 0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03, // WMM settings
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x30, 0x00,
+                0x01, 0x04, //Capability
+                0x00, 0x00, //Status
+                0x01, 0xC0, //Association ID
+                0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,  //Rates
+                0x32, 0x04, 0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x18, 0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00, //WMM settings
+
+        // WDI_TLV_BEACON_PROBE_RESPONSE
+        0x30, 0x00,                                 // Type
+        0x25, 0x00,                                 // Length
+                0x00, 0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00, // Timestamp
+                0x64, 0x00,                                 // Beacon Interval
+                0x00, 0x04,                                 // Capability
+                0x00, 0x08, // SSID
+                    'W', 'D', 'I', '_', 'H', 'I', 'D', 'E',
+                0x01, 0x04, 0x02, 0x04, 0x0B, 0x16, // Supported Rates
+                0x03, 0x01, 0x01,                   // DSSS Parameter
+                0x05, 0x04, 0x00, 0x01, 0x00, 0x00, // TIM
+
+        // WDI_TLV_ETHERTYPE_ENCAP_TABLE (optional)
+        // 0x00, 0x00,
+        // 0x04, 0x00,
+        // 0x00, 0x00, 0x00, 0x00
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+        0x04, 0x00, 0x00, 0x00,
+
+};
+
+
+//===============================================================================
+//
+// 11ad
+//
+//===============================================================================
+
+WDI_MAC_ADDRESS s_Connect_Addr_9_11ad_PSK = {0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE9};
+
+UCHAR  s_TLV_BSS_Entry_9_11ad_Beacon_PSK [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x3F, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE9,
+
+        // WDI_TLV_BEACON_FRAME (8.3.3.2, Table 8-33a)
+        0x0A, 0x00,
+        0x0C, 0x00,                                                 // For WiFi Beacon
+            // WiFi Beacon
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,         // TimeStamp (9.4.1.10)
+            0x64, 0x00,                                             // Beacon Interval (8.4.1.3)
+            0x31, 0x04,                                             // Capability
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xC1, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x64, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_CHANNEL_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00,     // Channel
+            0x03, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR  s_TLV_BSS_Entry_9_11ad_Beacon_Dmg_PSK [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x47, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE9,
+
+        // WDI_TLV_BEACON_FRAME (8.3.3.2, Table 8-33a)
+        0x0A, 0x00,
+        0x14, 0x00,                                                 // For WiFi Beacon
+            // DMG Beacon
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,         // TimeStamp (9.4.1.10)
+            0x00, 0x0c, 0x38,                                       // 3 - Sector Sweep (9.5.1)
+            0x64, 0x00,                                             // 2 - Beacon Interval (9.4.1.3)
+            0xc0, 0x7c, 0x18, 0x08, 0x20, 0x18,                     // 6 - Beacon Interval Control (Fig 9-60)
+            0x07,                                                   // 1 - DMG Parameters (9.4.1.47)
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xC1, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x64, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_CHANNEL_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00,     // Channel
+            0x03, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR  s_TLV_BSS_Entry_9_11ad_ProbeResponse_PSK [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xCB, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE9,
+
+        // WDI_TLV_PROBE_RESPONSE_FRAME (8.3.3.2, Table 8-33a)
+        0x09, 0x00,
+        0x98, 0x00,                                                 // For WiFi Beacon
+            // WiFi Beacon
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,         // TimeStamp (9.4.1.10)
+            0x64, 0x00,                                             // Beacon Interval (8.4.1.3)
+            0x31, 0x04,                                             // Capability
+
+            0x00, 0x09,                                             // SSID
+                'W', 'D', 'I', '_', 'a', 'd', 'P', 'S', 'K',     // WDI_adPSK
+            0x03, 0x01,                                             // DSS Parameters
+                0x02,
+            0x30, 0x14,                                             // RSN IE
+                0x01, 0x00,                                             // Version
+                0x00, 0x0F, 0xAC, 0x08,                                 // Group Cipher
+                0x01, 0x00,                                             // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x08,                                     // Pairwise Cipher
+                0x01, 0x00,                                             // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x02,                                     // AKM Suite
+                0x00, 0x00,                                             // RSN Capability
+            0x7F, 0x04,
+                0x00, 0x00, 0x00, 0x02,
+            0x94, 0x11,
+                0x04, 0xCE, 0x14, 0x07, 0x34, 0x6B, 0x01, 0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x00, 0x00,
+                0x00,
+            0x97, 0x0A,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14,
+            0xBE, 0x04,
+                0x00, 0x00, 0x00, 0x00,
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x00, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+            0xDD, 0x21,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xC1, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x64, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_CHANNEL_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00,     // Channel
+            0x03, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR  s_TLV_BSS_Entry_9_11ad_ProbeResponse_Dmg_PSK [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xCB, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE9,
+
+        // WDI_TLV_PROBE_RESPONSE_FRAME (8.3.3.2, Table 8-33a)
+        0x09, 0x00,
+        0x98, 0x00,                                                 // For WiFi Beacon
+            // Dmg
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,         // TimeStamp (9.4.1.10)
+            0x64, 0x00,                                             // Beacon Interval (8.4.1.3)
+            0x17, 0x00,                                             // Capability
+
+            0x00, 0x09,                                             // SSID
+                'W', 'D', 'I', '_', 'a', 'd', 'P', 'S', 'K',            // WDI_adPSK
+            0x03, 0x01,                                             // DSS Parameters
+                0x02,
+            0x30, 0x14,                                             // RSN IE
+                0x01, 0x00,                                             // Version
+                0x00, 0x0F, 0xAC, 0x08,                                 // Group Cipher
+                0x01, 0x00,                                             // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x08,                                     // Pairwise Cipher
+                0x01, 0x00,                                             // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x02,                                     // AKM Suite
+                0x00, 0x00,                                             // RSN Capability
+            0x7F, 0x04,
+                0x00, 0x00, 0x00, 0x02,
+            0x94, 0x11,
+                0x04, 0xCE, 0x14, 0x07, 0x34, 0x6B, 0x01, 0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x00, 0x00,
+                0x00,
+            0x97, 0x0A,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14,
+            0xBE, 0x04,
+                0x00, 0x00, 0x00, 0x00,
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x00, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+            0xDD, 0x21,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xC1, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x64, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_CHANNEL_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00,     // Channel
+            0x03, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_9_11ad_PSK [] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x96, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE9,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x07, 0x00, 0x00, 0x00, //AuthAlgorithm                     -- RSNA_PSK
+            0x08, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x08, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x01,                   // WMM QoS Enabled
+            0x03, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x03, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x65, 0x00,
+            0x31, 0x04,         // Capabilities
+            0x01, 0x00,         // Listen Interval
+            0x00, 0x09,         // SSID
+                'W', 'D', 'I', '_', 'a', 'd', 'P', 'S', 'K',   // WDI_adPSK
+            0x01, 0x08,         // Supported Rates
+                0x0C, 0x12, 0x96, 0x18, 0x24, 0x30, 0x48, 0x60,
+
+            0x30, 0x14,             // RSN IE
+                0x01, 0x00,             // Version
+                0x00, 0x0F, 0xAC, 0x08,     // Group Cipher
+                0x01, 0x00,             // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x08,     // Pairwise Cipher
+                0x01, 0x00,             // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x02,     // AKM Suite
+                0x00, 0x00,             // RSN Capability
+            0x94, 11,
+                0x04, 0xCE, 0x14, 0x0A, 0x3B, 0x61, 0x01, 0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x00, 0x00,
+                0x00,
+            0xDD, 0x21,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x47, 0x00,
+            0x17, 0x00,                                         // Capabilities
+            0x00, 0x00,                                         // Status code
+            0x02, 0x00,                                         // Association ID
+            0x00, 0x09,                                         // SSID
+                'W', 'D', 'I', '_',  'a', 'd', 'P', 'S', 'K',   // WDI_adPSK
+            0x94, 0x11,                                         // DMG Capabilities
+                0x04, 0xCE, 0x14, 0x07, 0x34, 0x6B,                 // STA address
+                0x03,                                               // AID
+                0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x00,     // DOT11_DMG_STA_CAPABILITY_INFO
+                0x00, 0x00,                                         // DOT11_DMG_PCP_AP_CAPABILITY_INFO
+            0xDD, 0x21,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00,
+
+        // WDI_TLV_BEACON_PROBE_RESPONSE
+        0x30, 0x00,
+        0x98, 0x00,
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,     // TimeStamp
+            0x64, 0x00,                                         // Beacon Interval
+            0x31, 0x04,                                         // Capability
+            0x00, 0x09,                                         // SSID
+                'W', 'D', 'I', '_',  'a', 'd', 'P', 'S', 'K',   // WDI_adPSK
+            0x03, 0x01,                                                 // DSS Parameters
+                0x02,
+            0x30, 0x14,                                                 // RSN IE
+                0x01, 0x00,                                                 // Version
+                0x00, 0x0F, 0xAC, 0x08,                                         // Group Cipher
+                0x01, 0x00,                                                 // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x08,                                         // Pairwise Cipher
+                0x01, 0x00,                                                 // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x02,                                         // AKM Suite
+                0x00, 0x00,                                                 // RSN Capability
+            0x7F, 0x04,
+                0x00, 0x00, 0x00, 0x02,
+            0x94, 0x11,
+                0x04, 0xCE, 0x14, 0x07, 0x34, 0x6B, 0x01, 0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x00, 0x00,
+                0x00,
+            0x97, 0x0A,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14,
+            0xBE, 0x04,
+                0x00, 0x00, 0x00, 0x00,
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x00, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+            0xDD, 0x21,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00,
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x09, 0x00, 0x00, 0x00
+};
+
+
+UCHAR s_TLV_Success_AssociationResult_9_11ad_Dmg_PSK [] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x96, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xE9,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x07, 0x00, 0x00, 0x00, //AuthAlgorithm                     -- RSNA_PSK
+            0x08, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x08, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x01,                   // WMM QoS Enabled
+            0x03, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x03, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x65, 0x00,
+            0x05, 0x00,         // Capabilities
+            0x01, 0x00,         // Listen Interval
+            0x00, 0x09,         // SSID
+                'W', 'D', 'I', '_', 'a', 'd', 'P', 'S', 'K',   // WDI_adPSK
+            0x01, 0x08,         // Supported Rates
+                0x0C, 0x12, 0x96, 0x18, 0x24, 0x30, 0x48, 0x60,
+
+            0x30, 0x14,             // RSN IE
+                0x01, 0x00,             // Version
+                0x00, 0x0F, 0xAC, 0x08,     // Group Cipher
+                0x01, 0x00,             // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x08,     // Pairwise Cipher
+                0x01, 0x00,             // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x02,     // AKM Suite
+                0x00, 0x00,             // RSN Capability
+            0x94, 11,
+                0x04, 0xCE, 0x14, 0x0A, 0x3B, 0x61, 0x01, 0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x00, 0x00,
+                0x00,
+            0xDD, 0x21,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x47, 0x00,
+            0x17, 0x00,                                         // Capabilities
+            0x00, 0x00,                                         // Status code
+            0x02, 0x00,                                         // Association ID
+            0x00, 0x09,                                         // SSID
+                'W', 'D', 'I', '_',  'a', 'd', 'P', 'S', 'K',   // WDI_adPSK
+            0x94, 0x11,                                         // DMG Capabilities
+                0x04, 0xCE, 0x14, 0x07, 0x34, 0x6B,                 // STA address
+                0x03,                                               // AID
+                0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x00,     // DOT11_DMG_STA_CAPABILITY_INFO
+                0x00, 0x00,                                         // DOT11_DMG_PCP_AP_CAPABILITY_INFO
+            0xDD, 0x21,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00,
+
+        // WDI_TLV_BEACON_PROBE_RESPONSE
+        0x30, 0x00,
+        0x98, 0x00,
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,     // TimeStamp
+            0x64, 0x00,                                         // Beacon Interval
+            0x31, 0x04,                                         // Capability
+            0x00, 0x09,                                         // SSID
+                'W', 'D', 'I', '_',  'a', 'd', 'P', 'S', 'K',   // WDI_adPSK
+            0x03, 0x01,                                                 // DSS Parameters
+                0x02,
+            0x30, 0x14,                                                 // RSN IE
+                0x01, 0x00,                                                 // Version
+                0x00, 0x0F, 0xAC, 0x08,                                         // Group Cipher
+                0x01, 0x00,                                                 // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x08,                                         // Pairwise Cipher
+                0x01, 0x00,                                                 // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x02,                                         // AKM Suite
+                0x00, 0x00,                                                 // RSN Capability
+            0x7F, 0x04,
+                0x00, 0x00, 0x00, 0x02,
+            0x94, 0x11,
+                0x04, 0xCE, 0x14, 0x07, 0x34, 0x6B, 0x01, 0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x00, 0x00,
+                0x00,
+            0x97, 0x0A,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14,
+            0xBE, 0x04,
+                0x00, 0x00, 0x00, 0x00,
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x00, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+            0xDD, 0x21,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00,
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x09, 0x00, 0x00, 0x00
+};
+
+
+//===============================================================================
+
+WDI_MAC_ADDRESS s_Connect_Addr_10_11ad_1x = {0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEA};
+
+UCHAR  s_TLV_BSS_Entry_10_11ad_Beacon_1x [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x3F, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEA,
+
+        // WDI_TLV_BEACON_FRAME (8.3.3.2, Table 8-33a)
+        0x0A, 0x00,
+        0x0C, 0x00,                                                 // For WiFi Beacon
+            // WiFi Beacon
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,         // TimeStamp (9.4.1.10)
+            0x64, 0x00,                                             // Beacon Interval (8.4.1.3)
+            0x31, 0x04,                                             // Capability
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xC1, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x64, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_CHANNEL_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00,     // Channel
+            0x03, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR  s_TLV_BSS_Entry_10_11ad_Beacon_Dmg_1x [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x47, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEA,
+
+        // WDI_TLV_BEACON_FRAME (8.3.3.2, Table 8-33a)
+        0x0A, 0x00,
+        0x14, 0x00,                                                 // For WiFi Beacon
+            // DMG Beacon
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,         // TimeStamp (9.4.1.10)
+            0x00, 0x0c, 0x38,                                       // 3 - Sector Sweep (9.5.1)
+            0x64, 0x00,                                             // 2 - Beacon Interval (9.4.1.3)
+            0xc0, 0x7c, 0x18, 0x08, 0x20, 0x18,                     // 6 - Beacon Interval Control (Fig 9-60)
+            0x07,                                                   // 1 - DMG Parameters (9.4.1.47)
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xC1, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x64, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_CHANNEL_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00,     // Channel
+            0x03, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR  s_TLV_BSS_Entry_10_11ad_ProbeResponse_1x [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xCB, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEA,
+
+        // WDI_TLV_PROBE_RESPONSE_FRAME (8.3.3.2, Table 8-33a)
+        0x09, 0x00,
+        0x98, 0x00,                                                 // For WiFi Beacon
+            // WiFi Beacon
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,         // TimeStamp (9.4.1.10)
+            0x64, 0x00,                                             // Beacon Interval (8.4.1.3)
+            0x31, 0x04,                                             // Capability
+
+            0x00, 0x09,                                             // SSID
+                'W', 'D', 'I', '_', 'a', 'd', '_', '1', 'x',            // WDI_ad_1x
+            0x03, 0x01,                                             // DSS Parameters
+                0x02,
+            0x30, 0x14,                                             // RSN IE
+                0x01, 0x00,                                             // Version
+                0x00, 0x0F, 0xAC, 0x08,                                 // Group Cipher
+                0x01, 0x00,                                             // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x08,                                     // Pairwise Cipher
+                0x01, 0x00,                                             // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x01,                                     // AKM Suite
+                0x00, 0x00,                                             // RSN Capability
+            0x7F, 0x04,
+                0x00, 0x00, 0x00, 0x02,
+            0x94, 0x11,
+                0x04, 0xCE, 0x14, 0x07, 0x34, 0x6B, 0x01, 0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x00, 0x00,
+                0x00,
+            0x97, 0x0A,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14,
+            0xBE, 0x04,
+                0x00, 0x00, 0x00, 0x00,
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x00, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+            0xDD, 0x21,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xC1, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x64, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_CHANNEL_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00,     // Channel
+            0x03, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR  s_TLV_BSS_Entry_10_11ad_ProbeResponse_Dmg_1x [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xCB, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEA,
+
+        // WDI_TLV_PROBE_RESPONSE_FRAME (8.3.3.2, Table 8-33a)
+        0x09, 0x00,
+        0x98, 0x00,                                                 // For WiFi Beacon
+            // Dmg
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,         // TimeStamp (9.4.1.10)
+            0x64, 0x00,                                             // Beacon Interval (8.4.1.3)
+            0x17, 0x00,                                             // Capability
+
+            0x00, 0x09,                                             // SSID
+                'W', 'D', 'I', '_', 'a', 'd', '_', '1', 'x',            // WDI_ad_1x
+            0x03, 0x01,                                             // DSS Parameters
+                0x02,
+            0x30, 0x14,                                             // RSN IE
+                0x01, 0x00,                                             // Version
+                0x00, 0x0F, 0xAC, 0x08,                                 // Group Cipher
+                0x01, 0x00,                                             // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x08,                                     // Pairwise Cipher
+                0x01, 0x00,                                             // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x01,                                     // AKM Suite
+                0x00, 0x00,                                             // RSN Capability
+            0x7F, 0x04,
+                0x00, 0x00, 0x00, 0x02,
+            0x94, 0x11,
+                0x04, 0xCE, 0x14, 0x07, 0x34, 0x6B, 0x01, 0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x00, 0x00,
+                0x00,
+            0x97, 0x0A,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14,
+            0xBE, 0x04,
+                0x00, 0x00, 0x00, 0x00,
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x00, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+            0xDD, 0x21,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xC1, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x64, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_CHANNEL_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00,     // Channel
+            0x03, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_10_11ad_1x [] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x96, 0x01,
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEA,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x07, 0x00, 0x00, 0x00, //AuthAlgorithm                     -- RSNA_PSK
+            0x08, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x08, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x01,                   // WMM QoS Enabled
+            0x03, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x03, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x65, 0x00,
+            0x31, 0x04,         // Capabilities
+            0x01, 0x00,         // Listen Interval
+            0x00, 0x09,         // SSID
+                'W', 'D', 'I', '_', 'a', 'd', '_', '1', 'x',            // WDI_ad_1x
+            0x01, 0x08,         // Supported Rates
+                0x0C, 0x12, 0x96, 0x18, 0x24, 0x30, 0x48, 0x60,
+
+            0x30, 0x14,             // RSN IE
+                0x01, 0x00,             // Version
+                0x00, 0x0F, 0xAC, 0x08,     // Group Cipher
+                0x01, 0x00,             // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x08,     // Pairwise Cipher
+                0x01, 0x00,             // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x01,     // AKM Suite
+                0x00, 0x00,             // RSN Capability
+            0x94, 11,
+                0x04, 0xCE, 0x14, 0x0A, 0x3B, 0x61, 0x01, 0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x00, 0x00,
+                0x00,
+            0xDD, 0x21,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x47, 0x00,
+            0x17, 0x00,                                         // Capabilities
+            0x00, 0x00,                                         // Status code
+            0x02, 0x00,                                         // Association ID
+            0x00, 0x09,                                         // SSID
+                'W', 'D', 'I', '_',  'a', 'd', 'P', 'S', 'K',   // WDI_adPSK
+            0x94, 0x11,                                         // DMG Capabilities
+                0x04, 0xCE, 0x14, 0x07, 0x34, 0x6B,                 // STA address
+                0x03,                                               // AID
+                0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x00,     // DOT11_DMG_STA_CAPABILITY_INFO
+                0x00, 0x00,                                         // DOT11_DMG_PCP_AP_CAPABILITY_INFO
+            0xDD, 0x21,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00,
+
+        // WDI_TLV_BEACON_PROBE_RESPONSE
+        0x30, 0x00,
+        0x98, 0x00,
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,     // TimeStamp
+            0x64, 0x00,                                         // Beacon Interval
+            0x31, 0x04,                                         // Capability
+            0x00, 0x09,                                         // SSID
+                'W', 'D', 'I', '_',  'a', 'd', 'P', 'S', 'K',   // WDI_adPSK
+            0x03, 0x01,                                                 // DSS Parameters
+                0x02,
+            0x30, 0x14,                                                 // RSN IE
+                0x01, 0x00,                                                 // Version
+                0x00, 0x0F, 0xAC, 0x08,                                         // Group Cipher
+                0x01, 0x00,                                                 // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x08,                                         // Pairwise Cipher
+                0x01, 0x00,                                                 // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x01,                                         // AKM Suite
+                0x00, 0x00,                                                 // RSN Capability
+            0x7F, 0x04,
+                0x00, 0x00, 0x00, 0x02,
+            0x94, 0x11,
+                0x04, 0xCE, 0x14, 0x07, 0x34, 0x6B, 0x01, 0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x00, 0x00,
+                0x00,
+            0x97, 0x0A,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14,
+            0xBE, 0x04,
+                0x00, 0x00, 0x00, 0x00,
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x00, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+            0xDD, 0x21,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00,
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x09, 0x00, 0x00, 0x00
+};
+
+
+UCHAR s_TLV_Success_AssociationResult_10_11ad_Dmg_1x [] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x96, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEA,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x07, 0x00, 0x00, 0x00, //AuthAlgorithm                     -- RSNA_PSK
+            0x08, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x08, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x01,                   // WMM QoS Enabled
+            0x03, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x03, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x65, 0x00,
+            0x05, 0x00,         // Capabilities
+            0x01, 0x00,         // Listen Interval
+            0x00, 0x09,         // SSID
+                'W', 'D', 'I', '_', 'a', 'd', 'P', 'S', 'K',   // WDI_adPSK
+            0x01, 0x08,         // Supported Rates
+                0x0C, 0x12, 0x96, 0x18, 0x24, 0x30, 0x48, 0x60,
+
+            0x30, 0x14,             // RSN IE
+                0x01, 0x00,             // Version
+                0x00, 0x0F, 0xAC, 0x08,     // Group Cipher
+                0x01, 0x00,             // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x08,     // Pairwise Cipher
+                0x01, 0x00,             // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x01,     // AKM Suite
+                0x00, 0x00,             // RSN Capability
+            0x94, 11,
+                0x04, 0xCE, 0x14, 0x0A, 0x3B, 0x61, 0x01, 0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x00, 0x00,
+                0x00,
+            0xDD, 0x21,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x47, 0x00,
+            0x17, 0x00,                                         // Capabilities
+            0x00, 0x00,                                         // Status code
+            0x02, 0x00,                                         // Association ID
+            0x00, 0x09,                                         // SSID
+                'W', 'D', 'I', '_',  'a', 'd', 'P', 'S', 'K',   // WDI_adPSK
+            0x94, 0x11,                                         // DMG Capabilities
+                0x04, 0xCE, 0x14, 0x07, 0x34, 0x6B,                 // STA address
+                0x03,                                               // AID
+                0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x00,     // DOT11_DMG_STA_CAPABILITY_INFO
+                0x00, 0x00,                                         // DOT11_DMG_PCP_AP_CAPABILITY_INFO
+            0xDD, 0x21,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00,
+
+        // WDI_TLV_BEACON_PROBE_RESPONSE
+        0x30, 0x00,
+        0x98, 0x00,
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,     // TimeStamp
+            0x64, 0x00,                                         // Beacon Interval
+            0x31, 0x04,                                         // Capability
+            0x00, 0x09,                                         // SSID
+                'W', 'D', 'I', '_',  'a', 'd', 'P', 'S', 'K',   // WDI_adPSK
+            0x03, 0x01,                                                 // DSS Parameters
+                0x02,
+            0x30, 0x14,                                                 // RSN IE
+                0x01, 0x00,                                                 // Version
+                0x00, 0x0F, 0xAC, 0x08,                                         // Group Cipher
+                0x01, 0x00,                                                 // Pairwise Cipher Count
+                0x00, 0x0F, 0xAC, 0x08,                                         // Pairwise Cipher
+                0x01, 0x00,                                                 // AKM Suite count
+                0x00, 0x0F, 0xAC, 0x01,                                         // AKM Suite
+                0x00, 0x00,                                                 // RSN Capability
+            0x7F, 0x04,
+                0x00, 0x00, 0x00, 0x02,
+            0x94, 0x11,
+                0x04, 0xCE, 0x14, 0x07, 0x34, 0x6B, 0x01, 0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x00, 0x00,
+                0x00,
+            0x97, 0x0A,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14,
+            0xBE, 0x04,
+                0x00, 0x00, 0x00, 0x00,
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x00, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+            0xDD, 0x21,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00,
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x09, 0x00, 0x00, 0x00
+};
+
+
+//===============================================================================
+
+WDI_MAC_ADDRESS s_Connect_Addr_11_11ad_Open = {0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEB};
+
+UCHAR  s_TLV_BSS_Entry_11_11ad_Beacon_Open [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x3F, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEB,
+
+        // WDI_TLV_BEACON_FRAME (8.3.3.2, Table 8-33a)
+        0x0A, 0x00,
+        0x0C, 0x00,                                                 // For WiFi Beacon
+            // WiFi Beacon
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,         // TimeStamp (9.4.1.10)
+            0x64, 0x00,                                             // Beacon Interval (8.4.1.3)
+            0x05, 0x00,                                             // Capability
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xC1, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x64, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_CHANNEL_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00,     // Channel
+            0x03, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR  s_TLV_BSS_Entry_11_11ad_Beacon_Dmg_Open [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x47, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEB,
+
+        // WDI_TLV_BEACON_FRAME (8.3.3.2, Table 8-33a)
+        0x0A, 0x00,
+        0x05, 0x00,                                                 // For WiFi Beacon
+            // DMG Beacon
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,         // TimeStamp (9.4.1.10)
+            0x00, 0x0c, 0x38,                                       // 3 - Sector Sweep (9.5.1)
+            0x64, 0x00,                                             // 2 - Beacon Interval (9.4.1.3)
+            0xc0, 0x7c, 0x18, 0x08, 0x20, 0x18,                     // 6 - Beacon Interval Control (Fig 9-60)
+            0x07,                                                   // 1 - DMG Parameters (9.4.1.47)
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xC1, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x64, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_CHANNEL_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00,     // Channel
+            0x03, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR  s_TLV_BSS_Entry_11_11ad_ProbeResponse_Open [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xC9, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEB,
+
+        // WDI_TLV_PROBE_RESPONSE_FRAME (8.3.3.2, Table 8-33a)
+        0x09, 0x00,
+        0x96, 0x00,                                                 // For WiFi Beacon
+            // WiFi Beacon
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,         // TimeStamp (9.4.1.10)
+            0x64, 0x00,                                             // Beacon Interval (8.4.1.3)
+            0x05, 0x00,                                             // Capability
+
+            0x00, 0x09,                                             // SSID
+                'W', 'D', 'I', '_', 'a', 'd', '_', 'O', 'N',            // WDI_ad_ON
+            0x03, 0x01,                                             // DSS Parameters
+                0x02,
+            0x7F, 0x04,
+                0x00, 0x00, 0x00, 0x02,
+            0x94, 0x11,
+                0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEB,                     // STA address
+                0x00,                                                   // AID
+                0x01, 0xD2, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x10,         // DOT11_DMG_STA_CAPABILITY_INFO
+                0x00, 0x00,                                             // DOT11_DMG_PCP_AP_CAPABILITY_INFO
+            0x97, 0x0A,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14,
+            0xBE, 0x04,
+                0x00, 0x00, 0x00, 0x00,
+            0x0C, 0x12,
+                0x00, 0x00, 0x03, 0xA4, 0x28, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x40, 0x00, 0x62, 0x32,
+                0x10, 0x00,
+            0x2E, 0x01,
+                0x28,
+            0xDD, 0x27,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x10, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00, 0x07, 0x00, 0x02, 0x00, 0x01, 0x00,
+            0xDD, 0x0F,
+                0x50, 0x6F, 0x9A, 0x17, 0x01, 0x09, 0x00, 0x07, 0x04, 0xCE, 0x14, 0x07, 0xA3, 0x66, 0x00,
+
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xC1, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x64, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_CHANNEL_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00,     // Channel
+            0x03, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR  s_TLV_BSS_Entry_11_11ad_ProbeResponse_Dmg_Open [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xC9, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEB,
+
+        // WDI_TLV_PROBE_RESPONSE_FRAME (8.3.3.2, Table 8-33a)
+        0x09, 0x00,
+        0x96, 0x00,                                                 // For WiFi Beacon
+            // WiFi Beacon
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,         // TimeStamp (9.4.1.10)
+            0x64, 0x00,                                             // Beacon Interval (8.4.1.3)
+            0x05, 0x00,                                             // Capability
+
+            0x00, 0x09,                                             // SSID
+                'W', 'D', 'I', '_', 'a', 'd', '_', 'O', 'N',            // WDI_ad_ON
+            0x03, 0x01,                                             // DSS Parameters
+                0x02,
+            0x7F, 0x04,
+                0x00, 0x00, 0x00, 0x02,
+            0x94, 0x11,
+                0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEB,                     // STA address
+                0x00,                                                   // AID
+                0x01, 0xD2, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x10,         // DOT11_DMG_STA_CAPABILITY_INFO
+                0x00, 0x00,                                             // DOT11_DMG_PCP_AP_CAPABILITY_INFO
+            0x97, 0x0A,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14,
+            0xBE, 0x04,
+                0x00, 0x00, 0x00, 0x00,
+            0x0C, 0x12,
+                0x00, 0x00, 0x03, 0xA4, 0x28, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x40, 0x00, 0x62, 0x32,
+                0x10, 0x00,
+            0x2E, 0x01,
+                0x28,
+            0xDD, 0x27,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x10, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00, 0x07, 0x00, 0x02, 0x00, 0x01, 0x00,
+            0xDD, 0x0F,
+                0x50, 0x6F, 0x9A, 0x17, 0x01, 0x09, 0x00, 0x07, 0x04, 0xCE, 0x14, 0x07, 0xA3, 0x66, 0x00,
+
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xC1, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x64, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_CHANNEL_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00,     // Channel
+            0x03, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_11_11ad_Open [] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x71, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEB,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x01, 0x00, 0x00, 0x00, //AuthAlgorithm                     -- RSNA_PSK
+            0x00, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x03, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x03, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x36, 0x00,
+            0x05, 0x00,         // Capabilities
+            0x01, 0x00,         // Listen Interval
+            0x00, 0x09,         // SSID
+                'W', 'D', 'I', '_', 'a', 'd', '_', 'O', 'N',   // WDI_ad_ON
+            0x2E, 0x01,
+                0x08,
+            0x94, 11,
+                0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEB,                 // STA address
+                0x00,                                               // AID
+                0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x10,     // DOT11_DMG_STA_CAPABILITY_INFO
+                0x00, 0x00,                                         // DOT11_DMG_PCP_AP_CAPABILITY_INFO
+            0xDD, 0x0F,
+                0x50, 0x6F, 0x9A, 0x17, 0x01, 0x09, 0x00, 0x07, 0x04, 0xCE, 0x14, 0x07, 0x49, 0x2D, 0x00,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x53, 0x00,
+            0x07, 0x00,                                         // Capabilities
+            0x00, 0x00,                                         // Status code
+            0x02, 0x00,                                         // Association ID
+            0x7F, 0x04,
+                0x00, 0x00, 0x00, 0x02,
+            0x94, 0x11,                                         // DMG Capabilities
+                0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEB,                 // STA address
+                0x02,                                               // AID
+                0x01, 0xD2, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x10,     // DOT11_DMG_STA_CAPABILITY_INFO
+                0x00, 0x00,                                         // DOT11_DMG_PCP_AP_CAPABILITY_INFO
+            0x97, 0x0A,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14,
+            0x0C, 0x12,
+                0x00, 0x00, 0x03, 0xA4, 0x28, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x40, 0x00, 0x62, 0x32,
+                0x10, 0x00,
+            0x2E, 0x01,
+                0x2C,
+            0xDD, 0x0F,
+                0x50, 0x6F, 0x9A, 0x17, 0x01, 0x09, 0x00, 0x07, 0x04, 0xCE, 0x14, 0x07, 0xA3, 0x66, 0x00,
+
+        // WDI_TLV_BEACON_PROBE_RESPONSE
+        0x30, 0x00,
+        0x96, 0x00,                                                 // For WiFi Beacon
+            // WiFi Beacon
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,         // TimeStamp (9.4.1.10)
+            0x64, 0x00,                                             // Beacon Interval (8.4.1.3)
+            0x05, 0x00,                                             // Capability
+
+            0x00, 0x09,                                             // SSID
+                'W', 'D', 'I', '_', 'a', 'd', '_', 'O', 'N',            // WDI_ad_ON
+            0x03, 0x01,                                             // DSS Parameters
+                0x02,
+            0x7F, 0x04,
+                0x00, 0x00, 0x00, 0x02,
+            0x94, 0x11,
+                0x04, 0xCE, 0x14, 0x07, 0xA3, 0x66, 0x00, 0x01, 0xD2, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x10, 0x00,
+                0x00,
+            0x97, 0x0A,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14,
+            0xBE, 0x04,
+                0x00, 0x00, 0x00, 0x00,
+            0x0C, 0x12,
+                0x00, 0x00, 0x03, 0xA4, 0x28, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x40, 0x00, 0x62, 0x32,
+                0x10, 0x00,
+            0x2E, 0x01,
+                0x28,
+            0xDD, 0x27,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x10, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00, 0x07, 0x00, 0x02, 0x00, 0x01, 0x00,
+            0xDD, 0x0F,
+                0x50, 0x6F, 0x9A, 0x17, 0x01, 0x09, 0x00, 0x07, 0x04, 0xCE, 0x14, 0x07, 0xA3, 0x66, 0x00,
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x09, 0x00, 0x00, 0x00
+};
+
+
+UCHAR s_TLV_Success_AssociationResult_11_11ad_Dmg_Open [] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x71, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEB,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x01, 0x00, 0x00, 0x00, //AuthAlgorithm                     -- RSNA_PSK
+            0x00, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x03, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x03, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x36, 0x00,
+            0x05, 0x00,         // Capabilities
+            0x01, 0x00,         // Listen Interval
+            0x00, 0x09,         // SSID
+                'W', 'D', 'I', '_', 'a', 'd', '_', 'O', 'N',   // WDI_ad_ON
+            0x2E, 0x01,
+                0x08,
+            0x94, 11,
+                0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEB,                 // STA address
+                0x00,                                               // AID
+                0x11, 0xD1, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x10,     // DOT11_DMG_STA_CAPABILITY_INFO
+                0x00, 0x00,                                         // DOT11_DMG_PCP_AP_CAPABILITY_INFO
+            0xDD, 0x0F,
+                0x50, 0x6F, 0x9A, 0x17, 0x01, 0x09, 0x00, 0x07, 0x04, 0xCE, 0x14, 0x07, 0x49, 0x2D, 0x00,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x53, 0x00,
+            0x07, 0x00,                                         // Capabilities
+            0x00, 0x00,                                         // Status code
+            0x02, 0x00,                                         // Association ID
+            0x7F, 0x04,
+                0x00, 0x00, 0x00, 0x02,
+            0x94, 0x11,                                         // DMG Capabilities
+                0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEB,                 // STA address
+                0x02,                                               // AID
+                0x01, 0xD2, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x10,     // DOT11_DMG_STA_CAPABILITY_INFO
+                0x00, 0x00,                                         // DOT11_DMG_PCP_AP_CAPABILITY_INFO
+            0x97, 0x0A,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14,
+            0x0C, 0x12,
+                0x00, 0x00, 0x03, 0xA4, 0x28, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x40, 0x00, 0x62, 0x32,
+                0x10, 0x00,
+            0x2E, 0x01,
+                0x2C,
+            0xDD, 0x0F,
+                0x50, 0x6F, 0x9A, 0x17, 0x01, 0x09, 0x00, 0x07, 0x04, 0xCE, 0x14, 0x07, 0xA3, 0x66, 0x00,
+
+        // WDI_TLV_BEACON_PROBE_RESPONSE
+        0x30, 0x00,
+        0x96, 0x00,                                                 // For WiFi Beacon
+            // WiFi Beacon
+            0x38, 0xE3, 0x3B, 0x64, 0x11, 0x00, 0x00, 0x00,         // TimeStamp (9.4.1.10)
+            0x64, 0x00,                                             // Beacon Interval (8.4.1.3)
+            0x05, 0x00,                                             // Capability
+
+            0x00, 0x09,                                             // SSID
+                'W', 'D', 'I', '_', 'a', 'd', '_', 'O', 'N',            // WDI_ad_ON
+            0x03, 0x01,                                             // DSS Parameters
+                0x02,
+            0x7F, 0x04,
+                0x00, 0x00, 0x00, 0x02,
+            0x94, 0x11,
+                0x04, 0xCE, 0x14, 0x07, 0xA3, 0x66, 0x00, 0x01, 0xD2, 0xB7, 0x06, 0x00, 0x00, 0x40, 0x10, 0x00,
+                0x00,
+            0x97, 0x0A,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14,
+            0xBE, 0x04,
+                0x00, 0x00, 0x00, 0x00,
+            0x0C, 0x12,
+                0x00, 0x00, 0x03, 0xA4, 0x28, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x40, 0x00, 0x62, 0x32,
+                0x10, 0x00,
+            0x2E, 0x01,
+                0x28,
+            0xDD, 0x27,
+                0x04, 0xCE, 0x14, 0x05, 0x00, 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02,
+                0x00, 0x02, 0x00, 0x10, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x05,
+                0x00, 0x07, 0x00, 0x02, 0x00, 0x01, 0x00,
+            0xDD, 0x0F,
+                0x50, 0x6F, 0x9A, 0x17, 0x01, 0x09, 0x00, 0x07, 0x04, 0xCE, 0x14, 0x07, 0xA3, 0x66, 0x00,
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x09, 0x00, 0x00, 0x00
+};
+
+
+//===============================================================================
+//
+// 11ax
+//
+//===============================================================================
+
+//
+// Open on 2.4 GHz
+//
+WDI_MAC_ADDRESS s_Connect_Addr_12_11ax_24_Open = {0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEC};
+
+
+UCHAR s_TLV_BSS_Entry_12_11ax_24_Open [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x78, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEC,
+
+        // WDI_TLV_PROBE_RESPONSE_FRAME
+        0x09, 0x00, // Type
+        0x4A, 0x00, // Length
+            0x00, 0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x00, 0x04, // Capability
+            0x00, 0x11, // SSID
+                'W', 'D', 'I', '_', 'O', 'P', 'E', 'N', '_', '1', '1', 'a', 'x', '.', '2', '.', '4',
+            0x01, 0x04,
+                0x02, 0x04, 0x0B, 0x16,     // Supported Rates
+            0x03, 0x01,
+                0x01,                       // DSSS Parameter
+            0x05, 0x04,
+                0x00, 0x01, 0x00, 0x00,     // TIM
+            0x46, 0x05,
+                0x02, 0x00, 0x00, 0x00, 0x00, // RM Enabled Capabilities
+            0xFF, 0x13,                             // Extension IE
+                0x23,                                   // HE Capabilities
+                0x00, 0x00, 0x00, 0x00, 0x00,           // MAC Capabilities
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // PHY Capabilities
+                0x00,
+                0x00, 0x00, 0x00, 0x00,                 // HE-MCS and NSS
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x04, 0x00,
+            0x04, 0x05, 0x06, 0x07,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x06, 0x00, 0x00, 0x00,     // Channel
+            0x01, 0x00, 0x00, 0x00      // Band ID
+};
+
+UCHAR s_TLV_Success_AssociationResult_12_11ax_24_Open [] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x28, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEC,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x01, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x00, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x01, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x4E, 0x00,
+            0x21, 0x04, // Capabilities
+            0x0A, 0x00, // Listen Interval
+            0x00, 0x11, // SSID
+                'W', 'D', 'I', '_', 'O', 'P', 'E', 'N', '_', '1', '1', 'a', 'x', '.', '2', '.', '4',
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Rates
+            0x21, 0x02,
+                0x07, 0x12,  //Power Capability
+            0x24, 0x02,
+                0x01, 0x0B, //Supported Channels
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60, //Extended Rates
+            0xDD, 0x08,
+                0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03, // WMM settings
+            0xFF, 0x13,                             // Extension IE
+                0x23,                                   // HE Capabilities
+                0x00, 0x00, 0x00, 0x00, 0x00,           // MAC Capabilities
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // PHY Capabilities
+                0x00,
+                0x00, 0x00, 0x00, 0x00,                 // HE-MCS and NSS
+
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x45, 0x00,
+                0x01, 0x04, //Capability
+                0x00, 0x00, //Status
+                0x01, 0xC0, //Association ID
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,  //Rates
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x18,
+                    0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                    0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00, //WMM settings
+                0xFF, 0x13,                             // Extension IE
+                    0x23,                                   // HE Capabilities
+                    0x00, 0x00, 0x00, 0x00, 0x00,           // MAC Capabilities
+                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // PHY Capabilities
+                    0x00,
+                    0x00, 0x00, 0x00, 0x00,                 // HE-MCS and NSS
+
+
+        // WDI_TLV_BEACON_PROBE_RESPONSE
+        0x30, 0x00,                                 // Type
+        0x43, 0x00,                                 // Length
+                0x00, 0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00, // Timestamp
+                0x64, 0x00,                                 // Beacon Interval
+                0x00, 0x04,                                 // Capability
+                0x00, 0x11, // SSID
+                    'W', 'D', 'I', '_', 'O', 'P', 'E', 'N', '_', '1', '1', 'a', 'x', '.', '2', '.', '4',
+                0x01, 0x04,
+                    0x02, 0x04, 0x0B, 0x16, // Supported Rates
+                0x03, 0x01,
+                    0x01,                   // DSSS Parameter
+                0x05, 0x04,
+                    0x00, 0x01, 0x00, 0x00, // TIM
+                0xFF, 0x13,                             // Extension IE
+                    0x23,                                   // HE Capabilities
+                    0x00, 0x00, 0x00, 0x00, 0x00,           // MAC Capabilities
+                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // PHY Capabilities
+                    0x00,
+                    0x00, 0x00, 0x00, 0x00,                 // HE-MCS and NSS
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0A, 0x00, 0x00, 0x00,
+
+};
+
+
+//===============================================================================
+
+//
+// Open on 5 GHz
+//
+WDI_MAC_ADDRESS s_Connect_Addr_13_11ax_5_Open = {0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xED};
+
+
+UCHAR s_TLV_BSS_Entry_13_11ax_5_Open [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x76, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xED,
+
+        // WDI_TLV_PROBE_RESPONSE_FRAME
+        0x09, 0x00, // Type
+        0x48, 0x00, // Length
+            0x00, 0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x00, 0x04, // Capability
+            0x00, 0x0F, // SSID
+                'W', 'D', 'I', '_', 'O', 'P', 'E', 'N', '_', '1', '1', 'a', 'x', '.', '5',
+            0x01, 0x04,
+                0x02, 0x04, 0x0B, 0x16,     // Supported Rates
+            0x03, 0x01,
+                0x01,                       // DSSS Parameter
+            0x05, 0x04,
+                0x00, 0x01, 0x00, 0x00,     // TIM
+            0x46, 0x05,
+                0x02, 0x00, 0x00, 0x00, 0x00, // RM Enabled Capabilities
+            0xFF, 0x13,                             // Extension IE
+                0x23,                                   // HE Capabilities
+                0x00, 0x00, 0x00, 0x00, 0x00,           // MAC Capabilities
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // PHY Capabilities
+                0x00,
+                0x00, 0x00, 0x00, 0x00,                 // HE-MCS and NSS
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x04, 0x00,
+            0x04, 0x05, 0x06, 0x07,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x24, 0x00, 0x00, 0x00,     // Channel 36
+            0x02, 0x00, 0x00, 0x00      // Band ID
+};
+
+UCHAR s_TLV_Success_AssociationResult_13_11ax_5_Open [] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x0F, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xED,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x01, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x00, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x02, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x4C, 0x00,
+            0x21, 0x04, // Capabilities
+            0x0A, 0x00, // Listen Interval
+            0x00, 0xF, // SSID
+                'W', 'D', 'I', '_', 'O', 'P', 'E', 'N', '_', '1', '1', 'a', 'x', '.', '5',
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Rates
+            0x21, 0x02,
+                0x07, 0x12,  //Power Capability
+            0x24, 0x02,
+                0x24, 0x30, //Supported Channels
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60, //Extended Rates
+            0xDD, 0x08,
+                0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03, // WMM settings
+            0xFF, 0x13,                             // Extension IE
+                0x23,                                   // HE Capabilities
+                0x00, 0x00, 0x00, 0x00, 0x00,           // MAC Capabilities
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // PHY Capabilities
+                0x00,
+                0x00, 0x00, 0x00, 0x00,                 // HE-MCS and NSS
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x45, 0x00,
+            0x01, 0x04, //Capability
+            0x00, 0x00, //Status
+            0x01, 0xC0, //Association ID
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,  //Rates
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60, //Extended Rates
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00, //WMM settings
+            0xFF, 0x13,                             // Extension IE
+                0x23,                                   // HE Capabilities
+                0x00, 0x00, 0x00, 0x00, 0x00,           // MAC Capabilities
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // PHY Capabilities
+                0x00,
+                0x00, 0x00, 0x00, 0x00,                 // HE-MCS and NSS
+
+        // WDI_TLV_BEACON_PROBE_RESPONSE
+        0x30, 0x00,                                 // Type
+        0x2C, 0x00,                                 // Length
+            0x00, 0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                 // Beacon Interval
+            0x00, 0x04,                                 // Capability
+            0x00, 0xF, // SSID
+                'W', 'D', 'I', '_', 'O', 'P', 'E', 'N', '_', '1', '1', 'a', 'x', '.', '5',
+            0x01, 0x04,
+                0x02, 0x04, 0x0B, 0x16, // Supported Rates
+            0x03, 0x01,
+                0x01,                   // DSSS Parameter
+            0x05, 0x04,
+                0x00, 0x01, 0x00, 0x00, // TIM
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0A, 0x00, 0x00, 0x00,
+
+};
+
+//
+//===============================================================================
+//
+
+// #define SAE_MIXED_MODE  1
+
+WDI_MAC_ADDRESS s_Connect_Addr_14_WPA3_SAE_CCMP = { 0x34, 0x13, 0xe8, 0xbc, 0x4d, 0x32 };
+
+UCHAR  s_TLV_BSS_Entry_14_WPA3_SAE_CCMP [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+#ifdef SAE_MIXED_MODE
+    0x91, 0x00, //Len
+#else
+    0x8D, 0x00, //Len
+#endif  // SAE_MIXED_MODE
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x34, 0x13, 0xe8, 0xbc, 0x4d, 0x32,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+#ifdef SAE_MIXED_MODE
+        0x5E, 0x00,
+#else
+        0x5A, 0x00,
+#endif  // SAE_MIXED_MODE
+
+            0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x31, 0x04, // Capability
+            0x00, 0x0C, // SSID
+                'W', 'D', 'I', '_', 'W', 'P', 'A', '3', '-', 'S', 'A', 'E',
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+            0x03, 0x01,
+                0x06, // DSS Parameters
+            0x05, 0x04,
+                0x00, 0x01, 0x00, 0x00,     // TIM
+            0x2A, 0x01,
+                0x00, // ERP
+            0x2F, 0x01,
+                0x00, // Reserved
+#ifdef SAE_MIXED_MODE
+            0x30, 0x18,
+#else
+            0x30, 0x14,
+#endif  // SAE_MIXED_MODE
+                0x01, 0x00,                     // Version
+                0x00, 0x0F, 0xAC, 0x04,         // Group Cipher
+                0x01, 0x00,                     // Pairwise Cipher Count
+                    0x00, 0x0F, 0xAC, 0x04,     // Pairwise Cipher
+#ifdef SAE_MIXED_MODE
+                0x02, 0x00,                     // AKM Suite Count
+                    0x00, 0x0F, 0xAC, 0x02,     // AKM Suite    - WPA2PSK
+                    0x00, 0x0F, 0xAC, 0x08,     // AKM Suite    - WPA3SAE
+                0x80, 0x00,                     // RSN Capability - no MFPR or MFPC
+#else
+                0x01, 0x00,                     // AKM Suite Count
+                    0x00, 0x0F, 0xAC, 0x08,     // AKM Suite    - WPA3SAE
+                0xC0, 0x00,                     // RSN Capability = MFP-Capable
+#endif  // SAE_MIXED_MODE
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+            0xDD, 0x09,
+                0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x0B, 0x00, 0x00, 0x00,     // Channel
+            0x01, 0x00, 0x00, 0x00      // BandId
+
+};
+
+UCHAR s_TLV_Success_AssociationResult_14_WPA3_SAE_CCMP[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+#ifdef SAE_MIXED_MODE
+    0x2A, 0x01,
+#else
+    0x26, 0x01,
+#endif  // SAE_MIXED_MODE
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x34, 0x13, 0xe8, 0xbc, 0x4d, 0x32,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x07, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x04, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x04, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x01, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x4A, 0x00,
+            0x21, 0x04, // Capabilities
+            0x0A, 0x00, // Listen Interval
+            0x00, 0x0C, // SSID
+                'W', 'D', 'I', '_', 'W', 'P', 'A', '3', '-', 'S', 'A', 'E',
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Rates
+            0x21, 0x02,
+                0x07, 0x12,  //Power Capability
+            0x24, 0x02,
+                0x01, 0x0B, //Supported Channels
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60, //Extended Rates
+            0xDD, 0x08,
+                0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03, // WMM settings
+            0x30, 0x14,
+                0x01, 0x00,                 // Version
+                0x00, 0x0F, 0xAC, 0x04,     // Group Cipher
+                0x01, 0x00,                 // Pairwise cipher count
+                    0x00, 0x0F, 0xAC, 0x04, // Pairwise Cipher
+                0x01, 0x00,                 // AMK Suite Count
+                    0x00, 0x0F, 0xAC, 0x08, // AMK Suite    - WPA3SAE
+                0xC0, 0x00,                 // RSN Capability = MFP-Capable + MFP-Required
+
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x30, 0x00,
+            0x01, 0x04, //Capability
+            0x00, 0x00, //Status
+            0x01, 0xC0, //Association ID
+            0x01, 0x08,                                             // Rates
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,
+            0x32, 0x04,                                             // Extended Rates
+                0x0C, 0x12, 0x18, 0x60,
+            0xDD, 0x18,                                             // WMM settings
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+#ifdef SAE_MIXED_MODE
+        0x5E, 0x00,
+#else
+        0x5A, 0x00,
+#endif  // SAE_MIXED_MODE
+            0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x31, 0x04, // Capability
+            0x00, 0x0C, // SSID
+                'W', 'D', 'I', '_', 'W', 'P', 'A', '3', '-', 'S', 'A', 'E',
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+            0x03, 0x01,
+                0x06, // DSS Parameters
+            0x05, 0x04,
+                0x00, 0x01, 0x00, 0x00,     // TIM
+            0x2A, 0x01,
+                0x00, // ERP
+            0x2F, 0x01,
+                0x00, // Reserved
+#ifdef SAE_MIXED_MODE
+            0x30, 0x18,
+#else
+            0x30, 0x14,
+#endif  // SAE_MIXED_MODE
+                0x01, 0x00,                     // Version
+                0x00, 0x0F, 0xAC, 0x04,         // Multicast Cipher
+                0x01, 0x00,                     // Pairwise Cipher Count
+                    0x00, 0x0F, 0xAC, 0x04,     // Pairwise Cipher
+#ifdef SAE_MIXED_MODE
+                0x02, 0x00,                     // AKM Suite Count
+                    0x00, 0x0F, 0xAC, 0x02,     // AKM Suite - WPA2PSK
+                    0x00, 0x0F, 0xAC, 0x08,     // AKM Suite - WPA3SAE
+                0x80, 0x00, // RSN Cap = MFP-Capable
+#else
+                0x01, 0x00,                     // AKM Suite Count
+                    0x00, 0x0F, 0xAC, 0x08,     // AKM Suite - WPA3SAE
+                0xC0, 0x00, // RSN Cap = MFP-Capable + MFP required
+#endif  // SAE_MIXED_MODE
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+            0xDD, 0x09,
+                0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0A, 0x00, 0x00, 0x00,
+
+};
+
+
+//
+// SAE-Specific definitions :: Start
+//
+DWORD  g_dwSaeResendConfirmRequested = 0;
+
+UCHAR  pucSAECommitResponse [] =
+    {
+        0x03, 0x00,                 // [1] usAlgorithmNumber = DOT11_AUTH_SAE               (not-IE, 2 octets)
+        0x01, 0x00,                 // [2] usXid: Commit=1, Confirm=2                       (not-IE, 2 octets)
+        0x00, 0x00,                 // [3] usStatusCode = 0 or 76 (ANTI_CLOGGING_TOKEN_REQUIRED) (not-IE, 2 octets)
+            0x13, 0x00,                 // [10] FiniteCyclicGroup                           (not-IE, 2 octets)
+//            0x00, 0x00, 0x00, 0x00,     // [11] AntiCloggingToken                         (not-IE, variable octets)
+                                        // [13] AP Scalar
+            0x93, 0x48, 0x89, 0xab, 0x38, 0x6b, 0x72, 0xd5, 0xff, 0x0d, 0x3c, 0xaa, 0x09, 0x56, 0x50, 0x20,
+            0x2b, 0xd0, 0x3e, 0x26, 0x96, 0xb5, 0x90, 0x5f, 0x7b, 0x49, 0x5f, 0x3b, 0x7d, 0xc3, 0x5b, 0x48,
+
+                                        // [14] AP Element
+            0x58, 0x54, 0x5e, 0x6c, 0xa0, 0xe8, 0x86, 0xef, 0xfb, 0x05, 0x2a, 0xfb, 0x63, 0x2c, 0xa2, 0x19,
+            0x5b, 0xb0, 0xb0, 0xa8, 0x25, 0xe5, 0x9d, 0xba, 0x6b, 0xaa, 0x0e, 0x93, 0xaf, 0x04, 0x6e, 0xf4,
+            0xc9, 0x45, 0x5f, 0xec, 0x43, 0xfe, 0x5e, 0xb0, 0x2a, 0x6b, 0x8a, 0xbc, 0x8f, 0xd7, 0x07, 0x87,
+            0x87, 0x3d, 0xd1, 0xd5, 0xd7, 0xfd, 0xe3, 0x07, 0x3a, 0x4c, 0xf3, 0xc2, 0xc7, 0x6f, 0x59, 0x5c,
+    };
+UCHAR  pucSAECommitResponseReflection [] =
+    {
+        0x03, 0x00,                 // [1] usAlgorithmNumber = DOT11_AUTH_SAE               (not-IE, 2 octets)
+        0x01, 0x00,                 // [2] usXid: Commit=1, Confirm=2                       (not-IE, 2 octets)
+        0x00, 0x00,                 // [3] usStatusCode = 0 or 76 (ANTI_CLOGGING_TOKEN_REQUIRED) (not-IE, 2 octets)
+            0x13, 0x00,                 // [10] FiniteCyclicGroup                           (not-IE, 2 octets)
+//            0x00, 0x00, 0x00, 0x00,     // [11] AntiCloggingToken                         (not-IE, variable octets)
+                                        // [13] AP Scalar
+
+            0x49, 0x5c, 0x2c, 0xb4, 0x20, 0xec, 0xc9, 0xe8, 0xe8, 0x03, 0x2d, 0x00, 0x8d, 0xab, 0x4d, 0x91,
+            0x70, 0x16, 0x06, 0x28, 0x40, 0x83, 0xb9, 0x8d, 0x19, 0xc6, 0x43, 0xcb, 0x63, 0x29, 0x9f, 0x03,
+
+                                        // [14] AP Element
+            0x13, 0x2e, 0xfc, 0x90, 0xb9, 0xd7, 0xb5, 0xc1, 0x2a, 0x1d, 0xe9, 0x05, 0x9c, 0xb3, 0xba, 0xc8,
+            0xa6, 0x93, 0xff, 0xbf, 0x23, 0x02, 0x42, 0x3e, 0x58, 0xc2, 0x0d, 0x00, 0x10, 0xe8, 0x44, 0x60,
+            0x9d, 0xfc, 0x34, 0x5e, 0x98, 0x8e, 0xf2, 0x12, 0x67, 0x24, 0xd0, 0x80, 0xfb, 0x2f, 0x1e, 0x7a,
+            0xe6, 0x54, 0x01, 0x00, 0x50, 0xd4, 0xfe, 0x66, 0x47, 0x62, 0xc0, 0x3c, 0x9f, 0x7a, 0x10, 0x27,
+    };
+
+UCHAR  pucSAEConfirmResponse [] =
+    {
+        0x03, 0x00,                 // [1] usAlgorithmNumber = DOT11_AUTH_SAE               (not-IE, 2 octets)
+        0x02, 0x00,                 // [2] usXid: Commit=1, Confirm=2                       (not-IE, 2 octets)
+        0x00, 0x00,                 // [3] usStatusCode = 0 or 76 (DOT11_FRAME_STATUS_ANTI_CLOGGING_TOKEN_REQUIRED) (not-Element, 2 octets)
+            0x00, 0x00,                 // [12] SendConfirm                                 (not-IE, 2 octets)
+                                        // [15] Confirm
+            0xc7, 0xd1, 0x04, 0x94, 0x29, 0xec, 0xdf, 0x25, 0xda, 0xaa, 0x79, 0x6f, 0xda, 0xe9, 0x91, 0x9f,
+            0x4b, 0x83, 0xad, 0xa3, 0x08, 0xde, 0x62, 0xca, 0xcd, 0x59, 0xfc, 0xf5, 0xc5, 0x4d, 0xeb, 0xd9,
+    };
+
+UCHAR pucM1SaeFrame[] =
+{
+    // DOT11_MGMT_HEADER - DOT11_DATA_SHORT_HEADER
+    0x88, 0x02,                             // Frame Control: Version = 0x0, Type = DOT11_FRAME_TYPE_DATA, Subtype = DOT11_DATA_SUBTYPE_DATA
+    0x30, 0x00,                             // Duration
+    0x9c, 0xda, 0x3e, 0xf2, 0x7d, 0xd5,     // Address1: Receiver/Destination/STA address
+    0x34, 0x13, 0xe8, 0xbc, 0x4d, 0x32,     // Address2: Transmittor/Bssid address
+    0x34, 0x13, 0xe8, 0xbc, 0x4d, 0x32,     // Address3: Source address
+    0x00, 0x00, 0x07, 0x00,                 // Sequence Control
+    // IEEE_8022_LLC_SNAP
+    0xaa, 0xaa, 0x03, 0x00, 0x00, 0x00,     // NWF_802_LLC_SNAP
+    0x88, 0x8e,                             // sh_etype = DOT11_ETH_TYPE_EAPOL
+    // NWF_EAPOL_HEADER
+    0x02,                                   // Version = NWF_EAPOL_PROTOCOL_VERSION_V1 = 1 OR NWF_EAPOL_PROTOCOL_VERSION_V2 = 2
+    0x03,                                   // Type = EAPOL_Key = 2
+    0x00, 0x75,                             // Length
+    // NWF_EAPOL_RSNA_KEY_DESC
+    0x02,                                   // Type
+    0x00, 0x8a,                             // Info
+    0x00, 0x10,                             // Length
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,         // Replay Counter
+    0x57, 0x63, 0xf3, 0xb6, 0x6e, 0xc8, 0x90, 0xe4, 0xae, 0xfc, 0x2c, 0x50, 0xb0, 0xa9, 0x04, 0x29,     // Nonce
+    0x97, 0xb9, 0x80, 0x26, 0x13, 0x1a, 0xe2, 0xf0, 0x24, 0x30, 0x4b, 0x87, 0x57, 0x15, 0xcf, 0x87,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     // IV
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,         // RSC
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,         // Reserved
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     // MIC
+    0x00, 0x16,                             // Key length
+    0xdd, 0x14,                                                         // KeyData -> DOT11_INFO_ELEMENT_ID_VENDOR_SPECIFIC + Len
+        0x00, 0x0f, 0xac, 0x04,                                         // OUI -> RSN_KEY_DATA_OUI + RSN_KEY_DATA_OUI_TYPE_PMKID -> {0x00,0x0F,0xAC} + {0x04)
+        0x37, 0xfb, 0x9a, 0x24, 0xc1, 0x57, 0x8c, 0xce, 0xc3, 0x60, 0x6c, 0x6f, 0x39, 0xe0, 0xb7, 0x02, // PMKID
+};
+
+
+UCHAR pucExpectedM2SaeFrame[] =
+{
+    // DOT11_MGMT_HEADER - DOT11_DATA_SHORT_HEADER
+    0x88, 0x01,                             // Frame Control
+    0x2c, 0x00,                             // Duration
+    0x34, 0x13, 0xe8, 0xbc, 0x4d, 0x32,     // Receiver/Destination/STA address
+    0x9c, 0xda, 0x3e, 0xf2, 0x7d, 0xd5,     // Transmittor/Bssid address
+    0x34, 0x13, 0xe8, 0xbc, 0x4d, 0x32,     // Source address
+    0x00, 0x00, 0x07, 0x00,
+    // IEEE_8022_LLC_SNAP
+    0xaa, 0xaa, 0x03, 0x00, 0x00, 0x00,     // NWF_802_LLC_SNAP
+    0x88, 0x8e,                             // sh_etype
+    // NWF_EAPOL_HEADER
+    0x01,                                   // Version = bProtocolVersion = NWF_EAPOL_PROTOCOL_VERSION_V1 = 1
+    0x03,                                   // Type = EAPOL_Key = 2
+    0x00, 0x75,                             // Length
+    // NWF_EAPOL_RSNA_KEY_DESC
+    0x02,                                   // Type = bKeyDesc = NWF_EAPOL_KEY_DESC_RSNA = 2
+    0x01, 0x0a,                             // Info = usKeyInfo, ResponseKeyInfo.Version = KEY_DESC_VERSION_AES, Type=RSN_KEY_TYPE_PAIRWISE, MIC=1, Secure=0
+    0x00, 0x00,                             // Length
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,         // Replay Counter
+    0x80, 0xf8, 0x10, 0x83, 0x4f, 0x0f, 0x40, 0xa1, 0xe5, 0x5d, 0x51, 0x92, 0x83, 0x4f, 0x8e, 0x98,     // Nonce
+    0x09, 0xca, 0xd5, 0x14, 0xc6, 0x08, 0x4c, 0xa9, 0xed, 0xc3, 0xa8, 0xff, 0xce, 0xc9, 0x36, 0xb6,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     // IV
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,         // RSC
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,         // Reserved
+    0xa1, 0x79, 0x5f, 0x05, 0xa4, 0x12, 0x84, 0xf2, 0xf9, 0x0c, 0x79, 0x88, 0xeb, 0x92, 0x71, 0x62,     // MIC
+    0x00, 0x16,                             // Key Length
+    0x30, 0x14, 0x01, 0x00, 0x00, 0x0f, 0xac, 0x04, 0x01, 0x00, 0x00, 0x0f, 0xac, 0x04, 0x01, 0x00,     // Key Data = RSN
+    0x00, 0x0f, 0xac, 0x08, 0x80, 0x00
+
+};
+
+UCHAR pucM3SaeFrame[] =
+{
+    // DOT11_MGMT_HEADER - DOT11_DATA_SHORT_HEADER
+    0x88, 0x02,                             // Frame Control
+    0x30, 0x00,                             // Duration
+    0x9c, 0xda, 0x3e, 0xf2, 0x7d, 0xd5,     // Receiver/Destination/STA address
+    0x34, 0x13, 0xe8, 0xbc, 0x4d, 0x32,     // Transmittor/Bssid address
+    0x34, 0x13, 0xe8, 0xbc, 0x4d, 0x32,     // Source address
+    0x00, 0x00, 0x07, 0x00,                 // Sequence Control
+    // IEEE_8022_LLC_SNAP
+    0xaa, 0xaa, 0x03, 0x00, 0x00, 0x00,     // NWF_802_LLC_SNAP
+    0x88, 0x8e,                             // sh_etype
+    // NWF_EAPOL_HEADER
+    0x02,                                   // Version
+    0x03,                                   // Type
+    0x00, 0x97,                             // Length
+    // NWF_EAPOL_RSNA_KEY_DESC
+    0x02,                                   // Type
+    0x13, 0xca,                             // Info
+    0x00, 0x10,                             // Length
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02,         // Replay Counter
+    0x57, 0x63, 0xf3, 0xb6, 0x6e, 0xc8, 0x90, 0xe4, 0xae, 0xfc, 0x2c, 0x50, 0xb0, 0xa9, 0x04, 0x29,     // Nonce
+    0x97, 0xb9, 0x80, 0x26, 0x13, 0x1a, 0xe2, 0xf0, 0x24, 0x30, 0x4b, 0x87, 0x57, 0x15, 0xcf, 0x87,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     // IV
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,         // RSC
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,         // Reserved
+    0xa5, 0xea, 0xdc, 0xfd, 0x97, 0xc7, 0x72, 0x76, 0x24, 0xe2, 0x7e, 0x71, 0x45, 0x3a, 0x24, 0xca,     // MIC
+    0x00, 0x38,                             // Key Length
+    0x6f, 0x39, 0x30, 0x2c, 0x46, 0xb4, 0x3c, 0xf8, 0x42, 0x07, 0x8e, 0xc9, 0x65, 0x05, 0x2c, 0xd0,     // Encrypted Key data
+    0xe1, 0x7b, 0xdd, 0x2e, 0xbd, 0x69, 0x09, 0x1e, 0x39, 0xcc, 0x1a, 0xb3, 0x6e, 0x55, 0xd1, 0xad,
+    0x5c, 0x45, 0x52, 0x4b, 0x83, 0x5d, 0x39, 0xe3, 0x1c, 0xb6, 0xed, 0x35, 0x52, 0x76, 0xb1, 0xc6,
+    0x5a, 0x2c, 0x96, 0x07, 0x77, 0x15, 0x15, 0x5c,
+};
+
+
+UCHAR pucExpectedM4SaeFrame[] =
+{
+    // DOT11_MGMT_HEADER - DOT11_DATA_SHORT_HEADER
+    0x88, 0x01,                             // Frame Control
+    0x2c, 0x00,                             // Duration
+    0x34, 0x13, 0xe8, 0xbc, 0x4d, 0x32,     // Receiver/Destination/STA address
+    0x9c, 0xda, 0x3e, 0xf2, 0x7d, 0xd5,     // Transmittor/Bssid address
+    0x34, 0x13, 0xe8, 0xbc, 0x4d, 0x32,     // Source address
+    0x10, 0x00, 0x07, 0x00,                 // Sequence Control
+    // IEEE_8022_LLC_SNAP
+    0xaa, 0xaa, 0x03, 0x00, 0x00, 0x00,     // NWF_802_LLC_SNAP
+    0x88, 0x8e,                             // sh_etype
+    // NWF_EAPOL_HEADER
+    0x01,                                   // Version
+    0x03,                                   // Type
+    0x00, 0x5f,                             // Length
+    // NWF_EAPOL_RSNA_KEY_DESC
+    0x02,                                   // Type
+    0x03, 0x0a,                             // Info
+    0x00, 0x00,                             // Length
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02,         // Replay Counter
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,         // Nonce
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,         // IV
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,         // RSC
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,         // Reserved
+    0x52, 0x97, 0x0f, 0x90, 0x69, 0x7d, 0xcd, 0xeb, 0x98, 0xbf, 0xb1, 0x2a, 0xb2, 0x3e, 0xcc, 0x49,         // MIC
+    0x00, 0x00,                             // Key Length
+};
+
+//
+// SAE-Specific definitions :: End
+//
+
+//
+//===============================================================================
+//
+
+WDI_MAC_ADDRESS s_Connect_Addr_15_WPA2PSK_SHA256 = {0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEF};
+
+UCHAR  s_TLV_BSS_Entry_15_WPA2PSK_SHA256 [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x91, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+            0x06, 0x00, // Length
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEF,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x5e, 0x00,
+
+            0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x31, 0x04, // Capability
+            0x00, 0x0A, // SSID
+                'W', 'D', 'I', '_', 'S', 'H', 'A', '2', '5', '6',
+            0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+            0x03, 0x01, 0x06, // DSS Parameters
+            0x05, 0x04, 0x00, 0x01, 0x00, 0x00,     // TIM
+            0x2A, 0x01, 0x00, // ERP
+            0x2F, 0x01, 0x00, // Reserved
+            0x30, 0x1a,                                                 // RSN IE
+                0x01, 0x00,                                                 // Version
+                    0x00, 0x0F, 0xAC, 0x04,                                 // Group Cipher
+                0x01, 0x00,                                                 // Pairwise Cipher Count
+                    0x00, 0x0F, 0xAC, 0x04,                                 // Pairwise Cipher
+                0x01, 0x00,                                                 // AKM Suite count
+                    0x00, 0x0F, 0xAC, 0x06,                                 // AKM Suite
+                0xCC, 0x00,                                                 // RSN Capability
+                0x00, 0x00,
+                    0x00, 0x0F, 0xAC, 0x06,                                 // Group Cipher
+            0x32, 0x04, 0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+            0xDD, 0x09, 0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x0B, 0x00, 0x00, 0x00,     // Channel
+            0x01, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_15_WPA2PSK_SHA256[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x28, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xEF,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+        0x00, 0x00, 0x00, 0x00, //Association Status
+        0x00, 0x00, 0x00, 0x00, //Status Code
+        0x00,                   //ReAssociationRequest
+        0x07, 0x00, 0x00, 0x00, //AuthAlgorithm
+        0x04, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+        0x04, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+        0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+        0x00,                   //FourAddressSupported
+        0x00,                   //Port Authorized
+        0x00,                   // WMM QoS Enabled
+        0x00, 0x00, 0x00, 0x00, //DSInfo
+        0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+        0x01, 0x00, 0x00, 0x00, // Band ID
+        0x00, 0x00, 0x00, 0x00, // IHV Association Status
+        0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x48, 0x00,
+                0x21, 0x04, // Capabilities
+                0x0A, 0x00, // Listen Interval
+                0x00, 0x0A, // SSID
+                    'W', 'D', 'I', '_', 'S', 'E', 'C', 'U', 'R', 'E',
+                0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Rates
+                0x21, 0x02, 0x07, 0x12,  //Power Capability
+                0x24, 0x02, 0x01, 0x0B, //Supported Channels
+                0x32, 0x04, 0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x08, 0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03, // WMM settings
+                0x30, 0x14,
+                    0x01, 0x00,                         // Version
+                        0x00, 0x0F, 0xAC, 0x04,         // Group Cipher
+                    0x01, 0x00,                         // Pairwise cipher count
+                        0x00, 0x0F, 0xAC, 0x04,         // Pairwise Cipher
+                    0x01, 0x00,                         // AMK Suite Count
+                        0x00, 0x0F, 0xAC, 0x06,         // AMK Suite    - WPA2PSK_SHA256
+                    0xC0, 0x00,                         // RSN Capability = MFP-Capable + MFP-Required
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x30, 0x00,
+                0x01, 0x04, //Capability
+                0x00, 0x00, //Status
+                0x01, 0xC0, //Association ID
+                0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,  //Rates
+                0x32, 0x04, 0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x18, 0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00, //WMM settings
+
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0x5e, 0x00,
+
+                0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+                0x64, 0x00, // Beacon Interval
+                0x31, 0x04, // Capability
+                0x00, 0x0A, // SSID
+                    'W', 'D', 'I', '_', 'S', 'E', 'C', 'U', 'R', 'E',
+                0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+                0x03, 0x01, 0x06, // DSS Parameters
+                0x05, 0x04, 0x00, 0x01, 0x00, 0x00,     // TIM
+                0x2A, 0x01, 0x00, // ERP
+                0x2F, 0x01, 0x00, // Reserved
+                0x30, 0x1a,                                                 // RSN IE
+                    0x01, 0x00,                                                 // Version
+                        0x00, 0x0F, 0xAC, 0x04,                                 // Group Cipher
+                    0x01, 0x00,                                                 // Pairwise Cipher Count
+                        0x00, 0x0F, 0xAC, 0x04,                                 // Pairwise Cipher
+                    0x01, 0x00,                                                 // AKM Suite count
+                            0x00, 0x0F, 0xAC, 0x02,                                 // AKM Suite
+                        0xCC, 0x00,                                                 // RSN Capability
+                    0x00, 0x00,
+                        0x00, 0x0F, 0xAC, 0x06,                                 // Group Cipher
+                0x32, 0x04, 0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+                0xDD, 0x09, 0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+        0x04, 0x00, 0x00, 0x00,
+
+};
+
+
+//
+//===============================================================================
+//
+
+#ifdef WPA3_ARUBA_SIM
+WDI_MAC_ADDRESS s_Connect_Addr_16_WPA3_SUITEB = {0xa8, 0xbd, 0x27, 0xcd, 0xe0, 0xa5};       // For Aruba
+#elif WPA3_INTEL_SIM
+WDI_MAC_ADDRESS s_Connect_Addr_16_WPA3_SUITEB = {0x8c, 0xfd, 0xf0, 0x0f, 0x7f, 0x4a};       // For Intel
+#else
+WDI_MAC_ADDRESS s_Connect_Addr_16_WPA3_SUITEB = {0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xF0};
+#endif
+
+UCHAR  s_TLV_BSS_Entry_16_WPA3_SUITEB [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x97, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+#ifdef WPA3_ARUBA_SIM
+            0xa8, 0xbd, 0x27, 0xcd, 0xe0, 0xa5,             // For Aruba
+#elif WPA3_INTEL_SIM
+            0x8c, 0xfd, 0xf0, 0x0f, 0x7f, 0x4a,             // For Intel
+#else
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xF0,
+#endif
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x64, 0x00,
+
+            0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x31, 0x04, // Capability
+            0x00, 0x10, // SSID
+                'W', 'D', 'I', '_', 'W', 'P', 'A', '3', '-', 'S', 'U', 'I', 'T', 'E', '_', 'B',
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+            0x03, 0x01,
+                0x06, // DSS Parameters
+            0x05, 0x04,
+                0x00, 0x01, 0x00, 0x00,     // TIM
+            0x2A, 0x01,
+                0x00, // ERP
+            0x2F, 0x01,
+                0x00, // Reserved
+            0x30, 0x1A,
+                0x01, 0x00,                     // Version
+                0x00, 0x0F, 0xAC, 0x09,         // Group Cipher = GCMP
+                0x01, 0x00,                     // Pairwise Cipher Count
+                    0x00, 0x0F, 0xAC, 0x09,     // Pairwise Cipher = GCMP
+                0x01, 0x00,                     // AKM Suite Count
+                    0x00, 0x0F, 0xAC, 0x0C,     // AKM Suite    - WPA3-SuiteB
+                0xC0, 0x00,                     // RSN Capability = MFPC + MFPR + ...
+                0x00, 0x00,                     // PMKID Count
+                0x00, 0x0F, 0xAC, 0x0C,         // Group Mgmt Cipher = GMAC
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+            0xDD, 0x09,
+                0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x0B, 0x00, 0x00, 0x00,     // Channel
+            0x01, 0x00, 0x00, 0x00      // BandId
+
+};
+
+UCHAR s_TLV_Success_AssociationResult_16_WPA3_SUITEB[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x3A, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+#ifdef WPA3_ARUBA_SIM
+            0xa8, 0xbd, 0x27, 0xcd, 0xe0, 0xa5,             // For Aruba
+#elif WPA3_INTEL_SIM
+            0x8c, 0xfd, 0xf0, 0x0f, 0x7f, 0x4a,             // For Intel
+#else
+            0x00, 0xA0, 0xB0, 0xC0, 0xD0, 0xF0,
+#endif
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00,             // Association Status
+            0x00, 0x00, 0x00, 0x00,             // Status Code
+            0x00,                               // ReAssociationRequest
+            0x08, 0x00, 0x00, 0x00,             // AuthAlgorithm = WDI_AUTH_ALGO_WPA3_ENT_192 = 8
+            0x09, 0x00, 0x00, 0x00,             // UnicastCipherAlgorithm = WDI_CIPHER_ALGO_GCMP_256 = 9
+            0x09, 0x00, 0x00, 0x00,             // MulticastDataCipherAlgorithm = WDI_CIPHER_ALGO_GCMP_256 = 9
+            0x0C, 0x00, 0x00, 0x00,             // MulticastMgmtCipherAlgorithm = WDI_CIPHER_ALGO_BIP_GMAC_256 = C
+            0x00,                               // FourAddressSupported
+            0x00,                               // Port Authorized
+            0x00,                               // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00,             // DSInfo
+            0x00, 0x00, 0x00, 0x00,             // AssociationComebackTime
+            0x01, 0x00, 0x00, 0x00,             // Band ID
+            0x00, 0x00, 0x00, 0x00,             // IHV Association Status
+            0x00, 0x00, 0x00, 0x00,             //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x54, 0x00,
+                0x21, 0x04, // Capabilities
+                0x0A, 0x00, // Listen Interval
+                0x00, 0x10, // SSID
+                    'W', 'D', 'I', '_', 'W', 'P', 'A', '3', '-', 'S', 'U', 'I', 'T', 'E', '_', 'B',
+                0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Rates
+                0x21, 0x02, 0x07, 0x12,  //Power Capability
+                0x24, 0x02, 0x01, 0x0B, //Supported Channels
+                0x32, 0x04, 0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x08, 0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03, // WMM settings
+                0x30, 0x1A,
+                    0x01, 0x00,                     // Version
+                    0x00, 0x0F, 0xAC, 0x09,         // Group Cipher = GCMP
+                    0x01, 0x00,                     // Pairwise Cipher Count
+                        0x00, 0x0F, 0xAC, 0x09,     // Pairwise Cipher = GCMP
+                    0x01, 0x00,                     // AKM Suite Count
+                        0x00, 0x0F, 0xAC, 0x0C,     // AKM Suite    - WPA3-SuiteB
+                    0xC0, 0x00,                     // RSN Capability = MFPC + MFPR + ...
+                    0x00, 0x00,                     // PMKID Count
+                    0x00, 0x0F, 0xAC, 0x0C,         // Group Mgmt Cipher = GMAC
+
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x30, 0x00,
+                0x01, 0x04, //Capability
+                0x00, 0x00, //Status
+                0x01, 0xC0, //Association ID
+                0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,  //Rates
+                0x32, 0x04, 0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x18, 0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00, //WMM settings
+
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0x64, 0x00,
+
+                0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+                0x64, 0x00, // Beacon Interval
+                0x31, 0x04, // Capability
+                0x00, 0x10, // SSID
+                    'W', 'D', 'I', '_', 'W', 'P', 'A', '3', '-', 'S', 'U', 'I', 'T', 'E', '_', 'B',
+                0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+                0x03, 0x01, 0x06, // DSS Parameters
+                0x05, 0x04, 0x00, 0x01, 0x00, 0x00,     // TIM
+                0x2A, 0x01, 0x00, // ERP
+                0x2F, 0x01, 0x00, // Reserved
+                0x30, 0x1A,
+                    0x01, 0x00,                     // Version
+                    0x00, 0x0F, 0xAC, 0x09,         // Group Cipher = GCMP
+                    0x01, 0x00,                     // Pairwise Cipher Count
+                        0x00, 0x0F, 0xAC, 0x09,     // Pairwise Cipher = GCMP
+                    0x01, 0x00,                     // AKM Suite Count
+                        0x00, 0x0F, 0xAC, 0x0C,     // AKM Suite    - WPA3-SuiteB
+                    0xC0, 0x00,                     // RSN Capability = MFPC + MFPR + ...
+                    0x00, 0x00,                     // PMKID Count
+                    0x00, 0x0F, 0xAC, 0x0C,         // Group Mgmt Cipher = GMAC
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+            0xDD, 0x09,
+                0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x04, 0x00, 0x00, 0x00,
+
+};
+
+//===============================================================================
+//
+// 6 GHz
+//
+//===============================================================================
+
+//
+// RNR IE has the following format (only care about TBTT length = 8 or 12):
+//  0xc9, 0x<IELength>
+//      0x<TBTTInformationHeader>                   -> 2 bytes (contains number and size of each element)
+//          0x<OperatingClass>, 0x<Channel>         -> 2 bytes (applies to all element in this list)
+//              0x<TBTTOffset>                      -> 1 byte
+//              0x<Bssid>                           -> 6 bytes
+//              [0x<SHortSsid>]                     -> 4 bytes
+//              0x<BssParameters>                   -> 1 byte
+//
+
+//
+// Mac addresses have  the following nomenclature for 6GHz Ssids
+//
+//  1st 3 bytes are 0x00 0xA1, 0xB0
+//  4th byte is for SSID:
+//      01 = 6E__1
+//      02 = 6E__2
+//      03 = SSID3
+//      04 = SSID4
+//  5th Byte is for band:
+//      02 = 2.4 GHz
+//      05 = 5 GHz
+//      06 = 6 GHz
+//  6th byte is instance
+//      01 = 1st instance
+//      02 - 2nd instance
+//          :
+//
+
+//===============================================================================
+// SIX_G:   6E__1:
+//      (1 * 2.4 GHz) + (1 * 5 GHz) + (2 * 6 GHz)
+//          2.4 GHz:
+//              S1_24_1:    S1_5_1 (In+Out) + S1_6_1 (Out) + S1_6_2 (Out)
+//          5 GHz:
+//              S1_5_1:     S1_24_1 (In+Out) + S1_6_1 (Out) + S1_6_2 (Out)
+//          6 GHz:
+//              S1_6_1:     S1_24_1 (In) + S1_5_1 (In)
+//              S1_6_2:     S1_24_1 (In) + S1_5_1 (In)
+//===============================================================================
+
+//
+// 6E__1: 1 * 2.4 GHz Bss's
+// 1 RNR IE with 3 entries:  Band:Channel = [5:36 + 6:101 + 6:133]
+//
+WDI_MAC_ADDRESS s_Connect_Addr_17_6G_S1_2_4_Ghz = {0x00, 0xA1, 0xB0, 0x01, 0x02, 0x01};
+UCHAR  s_TLV_BSS_Entry_17_6G_S1_2_4_Ghz [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xE9, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0xA1, 0xB0, 0x01, 0x02, 0x01,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0xB6, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '1',
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x03, 0x01,                                     // DS Parameter Set
+                0x01,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0x6c,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0x76, 0x08, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates 24, 36, 48, 54 [Mbits/sec]
+                0x30, 0x48, 0x60, 0x6c,
+            0x3d, 0x16,                                     // HT Information (802.11n D1.10)
+                0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+
+            0xc9, 0x30,                                 // RNR IE
+                0x04, 0x0c,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x73, 0x24,                             // Operating Class = 115 (5 GHz), Channel = 36
+                        0x00, 0x00, 0xA1, 0xB0, 0x01, 0x05, 0x01, 0x18, 0x3a, 0x94, 0x4f, 0x40,     // 6E__1 on 5 GHz
+                0x00, 0x0c,                                 // TBTT: 0x00 => B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x83, 0x65,                             // Operating Class = 131, Channel = 101
+                        0x00, 0x00, 0xA1, 0xB0, 0x01, 0x06, 0x01, 0x18, 0x3a, 0x94, 0x4f, 0x40,     // 6E__1 on 6 Ghz
+                0x0c, 0x0c,                                 // TBTT: 0x0c => B2:3=1(FilteredAP:Reserved),B4-B7=f(TBTT Information Count=3+1) :: 0x0c = TBTT Length
+                    0x83, 0x85,                             // Operating Class = 131, Channel = 133
+                        0x00, 0x00, 0xA1, 0xB0, 0x01, 0x06, 0x02, 0x18, 0x3a, 0x94, 0x4f, 0x40,     // 6E__1 on 6 GHz
+
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00,     // Channel  / Freq = 2412 MHz
+            0x01, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_17_6G_S1_2_4_Ghz[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x0B, 0x02,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA1, 0xB0, 0x01, 0x02, 0x01,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x07, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x04, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x04, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x01, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, // DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x8B, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0xfa, 0x00,                                     // Listen Interval
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '1',
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x21, 0x02,                                     // Power Capability Min: 0, Max: 15
+                0x00, 0x0f,
+            0x24, 0x32,                                     // Supported Channels
+                0x24, 0x01, 0x28, 0x01, 0x2c, 0x01, 0x30, 0x01, 0x34, 0x01, 0x38, 0x01, 0x3c, 0x01, 0x40, 0x01,
+                0x64, 0x01, 0x68, 0x01, 0x6c, 0x01, 0x70, 0x01, 0x74, 0x01, 0x78, 0x01, 0x7c, 0x01, 0x80, 0x01,
+                0x84, 0x01, 0x88, 0x01, 0x8c, 0x01, 0x90, 0x01, 0x95, 0x01, 0x99, 0x01, 0x9d, 0x01, 0xa1, 0x01,
+                0xa5, 0x01,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0xa5, 0x09, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates
+                0x30, 0x48, 0x60, 0x6c,
+            0x46, 0x05,                                     // RM Enabled Capabilities
+                0x72, 0x00, 0x00, 0x00, 0x00,
+            0x7f, 0x0a,                                     // Extended Capabilities
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x00, 0x00,
+            0xdd, 0x07,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Information Element
+                0x00, 0x50, 0xf2, 0x02, 0x00, 0x01, 0x00,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x78, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0x00, 0x00,                                     // Status Code: Successful
+            0x00, 0xc0,                                     // Association ID: 0x0000
+            0x00, 0x05,                                     // SSID Parameter set
+                0x53, 0x53, 0x49, 0x44, 0x31,
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x03, 0x01,                                     // DS Parameter set: Current Channel: 10
+                0x01,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0x76, 0x08, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates 24, 36, 48, 54 [Mbit/sec]
+                0x30, 0x48, 0x60, 0x6c,
+            0x3d, 0x16,                                     // HT Information (802.11n D1.10)
+                0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0xb6, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '1',
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x03, 0x01,                                     // DS Parameter Set
+                0x01,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0x6c,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0x76, 0x08, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates 24, 36, 48, 54 [Mbits/sec]
+                0x30, 0x48, 0x60, 0x6c,
+            0x3d, 0x16,                                     // HT Information (802.11n D1.10)
+                0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xc9, 0x30,                                 // RNR IE
+                0x04, 0x0c,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x73, 0x24,                             // Operating Class = 115 (5 GHz), Channel = 36
+                        0x00, 0x00, 0xA1, 0xB0, 0x01, 0x05, 0x01, 0x18, 0x3a, 0x94, 0x4f, 0x40,     // 6E__1 on 5 GHz
+                0x00, 0x0c,                                 // TBTT: 0x00 => B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x83, 0x65,                             // Operating Class = 131, Channel = 101
+                        0x00, 0x00, 0xA1, 0xB0, 0x01, 0x06, 0x01, 0x18, 0x3a, 0x94, 0x4f, 0x40,     // 6E__1 on 6 Ghz
+                0x0c, 0x0c,                                 // TBTT: 0x0c => B2:3=1(FilteredAP:Reserved),B4-B7=f(TBTT Information Count=3+1) :: 0x0c = TBTT Length
+                    0x83, 0x85,                             // Operating Class = 131, Channel = 133
+                        0x00, 0x00, 0xA1, 0xB0, 0x01, 0x06, 0x02, 0x18, 0x3a, 0x94, 0x4f, 0x40,     // 6E__1 on 6 GHz
+
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0A, 0x00, 0x00, 0x00,
+
+};
+
+//
+// 6E__1: 1 * 5 GHz Bss's
+// 1 RNR IE with 3 entries:  Band:Channel = [2.4:1 + 6:101 + 6:133]
+//
+WDI_MAC_ADDRESS s_Connect_Addr_18_6G_S1_5_Ghz = {0x00, 0xA1, 0xB0, 0x01, 0x05, 0x01};
+UCHAR  s_TLV_BSS_Entry_18_6G_S1_5_Ghz [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xe9, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0xA1, 0xB0, 0x01, 0x05, 0x01,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0xb6, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '1',
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x03, 0x01,                                     // DS Parameter Set
+                0x24,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0x6c,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0x76, 0x08, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates 24, 36, 48, 54 [Mbits/sec]
+                0x30, 0x48, 0x60, 0x6c,
+            0x3d, 0x16,                                     // HT Information (802.11n D1.10)
+                0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xc9, 0x30,                                 // RNR IE
+                0x04, 0x0c,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x01,                             // Operating Class = 81 (2.4 GHz), Channel = 1
+                        0x00, 0x00, 0xA1, 0xB0, 0x01, 0x02, 0x01, 0x18, 0x3a, 0x94, 0x4f, 0x40,     // 6E__1 on 2.4 GHz
+                0x00, 0x0c,                                 // TBTT: 0x00 => B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x83, 0x65,                              // Operating Class = 131, Channel = 101
+                        0x00, 0x00, 0xA1, 0xB0, 0x01, 0x06, 0x01, 0x18, 0x3a, 0x94, 0x4f, 0x40,     // 6E__1 on 6 Ghz
+                0x0c, 0x0c,                                 // TBTT: 0x0c => B2:3=1(FilteredAP:Reserved),B4-B7=f(TBTT Information Count=3+1) :: 0x0c = TBTT Length
+                    0x83, 0x85,                             // Operating Class = 131, Channel = 133
+                        0x00, 0x00, 0xA1, 0xB0, 0x01, 0x06, 0x02, 0x18, 0x3a, 0x94, 0x4f, 0x40,     // 6E__1 on 6 GHz
+
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x24, 0x00, 0x00, 0x00,     // Channel  / Freq = 36 / 5180 MHz
+            0x02, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_18_6G_S1_5_Ghz[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x0B, 0x02,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA1, 0xB0, 0x01, 0x05, 0x01,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x07, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x04, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x04, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x02, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, // DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x8B, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0xfa, 0x00,                                     // Listen Interval
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '1',
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x21, 0x02,                                     // Power Capability Min: 0, Max: 15
+                0x00, 0x0f,
+            0x24, 0x32,                                     // Supported Channels
+                0x24, 0x01, 0x28, 0x01, 0x2c, 0x01, 0x30, 0x01, 0x34, 0x01, 0x38, 0x01, 0x3c, 0x01, 0x40, 0x01,
+                0x64, 0x01, 0x68, 0x01, 0x6c, 0x01, 0x70, 0x01, 0x74, 0x01, 0x78, 0x01, 0x7c, 0x01, 0x80, 0x01,
+                0x84, 0x01, 0x88, 0x01, 0x8c, 0x01, 0x90, 0x01, 0x95, 0x01, 0x99, 0x01, 0x9d, 0x01, 0xa1, 0x01,
+                0xa5, 0x01,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0xa5, 0x09, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates
+                0x30, 0x48, 0x60, 0x6c,
+            0x46, 0x05,                                     // RM Enabled Capabilities
+                0x72, 0x00, 0x00, 0x00, 0x00,
+            0x7f, 0x0a,                                     // Extended Capabilities
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x00, 0x00,
+            0xdd, 0x07,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Information Element
+                0x00, 0x50, 0xf2, 0x02, 0x00, 0x01, 0x00,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x78, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0x00, 0x00,                                     // Status Code: Successful
+            0x00, 0xc0,                                     // Association ID: 0x0000
+            0x00, 0x05,                                     // SSID Parameter set
+                0x53, 0x53, 0x49, 0x44, 0x31,
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x03, 0x01,                                     // DS Parameter set: Current Channel: 10
+                0x24,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0x76, 0x08, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates 24, 36, 48, 54 [Mbit/sec]
+                0x30, 0x48, 0x60, 0x6c,
+            0x3d, 0x16,                                     // HT Information (802.11n D1.10)
+                0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0xb6, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '1',
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x03, 0x01,                                     // DS Parameter Set
+                0x24,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0x6c,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0x76, 0x08, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates 24, 36, 48, 54 [Mbits/sec]
+                0x30, 0x48, 0x60, 0x6c,
+            0x3d, 0x16,                                     // HT Information (802.11n D1.10)
+                0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xc9, 0x30,                                 // RNR IE
+                0x04, 0x0c,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x01,                             // Operating Class = 81 (2.4 GHz), Channel = 1
+                        0x00, 0x00, 0xA1, 0xB0, 0x01, 0x02, 0x01, 0x18, 0x3a, 0x94, 0x4f, 0x40,     // 6E__1 on 2.4 GHz
+                0x00, 0x0c,                                 // TBTT: 0x00 => B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x83, 0x65,                             // Operating Class = 131, Channel = 101
+                        0x00, 0x00, 0xA1, 0xB0, 0x01, 0x06, 0x01, 0x18, 0x3a, 0x94, 0x4f, 0x40,     // 6E__1 on 6 Ghz
+                0x0c, 0x0c,                                 // TBTT: 0x0c => B2:3=1(FilteredAP:Reserved),B4-B7=f(TBTT Information Count=3+1) :: 0x0c = TBTT Length
+                    0x83, 0x85,                             // Operating Class = 131, Channel = 133
+                        0x00, 0x00, 0xA1, 0xB0, 0x01, 0x06, 0x02, 0x18, 0x3a, 0x94, 0x4f, 0x40,     // 6E__1 on 6 GHz
+
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0A, 0x00, 0x00, 0x00,
+
+};
+
+//
+// 6E__1: 1/2 * 6 GHz Bss's
+//
+WDI_MAC_ADDRESS s_Connect_Addr_19_6G_S1a_6_Ghz = {0x00, 0xA1, 0xB0, 0x01, 0x06, 0x01};
+UCHAR  s_TLV_BSS_Entry_19_6G_S1a_6_Ghz [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xC6, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0xA1, 0xB0, 0x01, 0x06, 0x01,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x93, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '1',
+            0x01, 0x08,                                     // Supported Rates
+                0x8c, 0x12, 0x98, 0xa4, 0x30, 0x48, 0x60, 0x6c,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0xa4,
+            0x0b, 0x05,
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+            0xff, 0x03,                                     // Ext Tag: HE Extended Capabilities (802.11ax/D3.0)
+                0x3b,
+                    0xbd, 0x02,
+            0xff, 0x27,                                     // Ext Tag: HE Capabilities (802.11ax/D3.0)
+                0x23,
+                    0xf7, 0x70, 0x99, 0x16, 0x64, 0x00, 0x0e, 0x30, 0x0c, 0xb6, 0x02, 0x1b, 0xb4, 0x0c, 0xcf, 0x30,
+                    0x00, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0x7b, 0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+                    0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+            0xff, 0x0c,                                     // Ext Tag: HE Operation (802.11ax/D3.0)
+                0x24,
+                    0xf4, 0x3f, 0x02, 0x00, 0xf0, 0xff, 0x05, 0x03, 0x07, 0x0f, 0x00,
+            0xff, 0x0e,                                     // Ext Tag: MU EDCA Parameter Set
+                0x26,
+                    0xc0, 0x07, 0xa4, 0x01, 0x23, 0xa4, 0x01, 0x42, 0x43, 0x01, 0x62, 0x32, 0x01,
+
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x65, 0x00, 0x00, 0x00,     // Channel  / Freq = 101 / 6445 MHz
+            0x05, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_19_6G_S1a_6_Ghz[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xfD, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA1, 0xB0, 0x01, 0x06, 0x01,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x07, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x04, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x04, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x05, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, // DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x8E, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0xfa, 0x00,                                     // Listen Interval
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '1',
+            0x01, 0x08,                                     // Supported Rates
+                0x8c, 0x12, 0x98, 0xa4, 0x30, 0x48, 0x60, 0x6c,
+            0x21, 0x02,                                     // Power Capability Min: 0, Max: 15
+                0x00, 0x0f,
+            0x24, 0x32,                                     // Supported Channels
+                0x24, 0x01, 0x28, 0x01, 0x2c, 0x01, 0x30, 0x01, 0x34, 0x01, 0x38, 0x01, 0x3c, 0x01, 0x40, 0x01,
+                0x64, 0x01, 0x68, 0x01, 0x6c, 0x01, 0x70, 0x01, 0x74, 0x01, 0x78, 0x01, 0x7c, 0x01, 0x80, 0x01,
+                0x84, 0x01, 0x88, 0x01, 0x8c, 0x01, 0x90, 0x01, 0x95, 0x01, 0x99, 0x01, 0x9d, 0x01, 0xa1, 0x01,
+                0xa5, 0x01,
+            0x46, 0x05,                                     // RM Enabled Capabilities
+                0x72, 0x00, 0x00, 0x00, 0x00,
+            0x7f, 0x0a,                                     // Extended Capabilities
+                0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xdd, 0x07,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Information Element
+                0x00, 0x50, 0xf2, 0x02, 0x00, 0x01, 0x00,
+            0xff, 0x1e,                                     // Ext Tag: HE Capabilities (802.11ax/D3.0)
+                0x23,
+                    0x01, 0x78, 0x20, 0x0a, 0xc0, 0x8b, 0x0e, 0x30, 0x02, 0x00, 0xfd, 0x09, 0x8c, 0x0e, 0xcf, 0xf2,
+                    0x00, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0x61, 0x1c, 0xc7, 0x71,
+            0xff, 0x03,                                     // Ext Tag: HE Extended Capabilities (802.11ax/D3.0)
+                0x3b,
+                    0x7d, 0x02,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x8A, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0x00, 0x00,                                     // Status Code: Successful
+            0x00, 0xc0,                                     // Association ID: 0x0000
+            0x00, 0x05,                                     // SSID Parameter set
+                '6', 'E', '_', '_', '1',
+            0x01, 0x08,                                     // Supported Rates
+                0x8c, 0x12, 0x98, 0xa4, 0x30, 0x48, 0x60, 0x6c,
+            0x03, 0x01,                                     // DS Parameter set: Current Channel: 10
+                0x65,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+            0xff, 0x03,                                     // Ext Tag: HE Extended Capabilities (802.11ax/D3.0)
+                0x3b,
+                    0xbd, 0x02,
+            0xff, 0x27,                                     // Ext Tag: HE Capabilities (802.11ax/D3.0)
+                0x23,
+                    0xf7, 0x70, 0x99, 0x16, 0x64, 0x00, 0x0e, 0x30, 0x0c, 0xb6, 0x02, 0x1b, 0xb4, 0x0c, 0xcf, 0x30,
+                    0x00, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0x7b, 0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+                    0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+            0xff, 0x0c,                                     // Ext Tag: HE Operation (802.11ax/D3.0)
+                0x24,
+                    0xf4, 0x3f, 0x02, 0x00, 0xf0, 0xff, 0x05, 0x03, 0x07, 0x0f, 0x00,
+            0xff, 0x0e,                                     // Ext Tag: MU EDCA Parameter Set
+                0x26,
+                    0xc0, 0x07, 0xa4, 0x01, 0x23, 0xa4, 0x01, 0x42, 0x43, 0x01, 0x62, 0x32, 0x01,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x93, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '1',
+            0x01, 0x08,                                     // Supported Rates
+                0x8c, 0x12, 0x98, 0xa4, 0x30, 0x48, 0x60, 0x6c,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0xa4,
+            0x0b, 0x05,
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x65,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+            0xff, 0x03,                                     // Ext Tag: HE Extended Capabilities (802.11ax/D3.0)
+                0x3b,
+                    0xbd, 0x02,
+            0xff, 0x27,                                     // Ext Tag: HE Capabilities (802.11ax/D3.0)
+                0x23,
+                    0xf7, 0x70, 0x99, 0x16, 0x64, 0x00, 0x0e, 0x30, 0x0c, 0xb6, 0x02, 0x1b, 0xb4, 0x0c, 0xcf, 0x30,
+                    0x00, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0x7b, 0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+                    0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+            0xff, 0x0c,                                     // Ext Tag: HE Operation (802.11ax/D3.0)
+                0x24,
+                    0xf4, 0x3f, 0x02, 0x00, 0xf0, 0xff, 0x05, 0x03, 0x07, 0x0f, 0x00,
+            0xff, 0x0e,                                     // Ext Tag: MU EDCA Parameter Set
+                0x26,
+                    0xc0, 0x07, 0xa4, 0x01, 0x23, 0xa4, 0x01, 0x42, 0x43, 0x01, 0x62, 0x32, 0x01,
+
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0A, 0x00, 0x00, 0x00,
+
+};
+
+//
+// 6E__1: 2/2 * 6 GHz Bss's
+//
+WDI_MAC_ADDRESS s_Connect_Addr_20_6G_S1b_6_Ghz = {0x00, 0xA1, 0xB0, 0x01, 0x06, 0x02};
+UCHAR  s_TLV_BSS_Entry_20_6G_S1b_6_Ghz [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xC6, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0xA1, 0xB0, 0x01, 0x06, 0x02,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x93, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '1',
+            0x01, 0x08,                                     // Supported Rates
+                0x8c, 0x12, 0x98, 0xa4, 0x30, 0x48, 0x60, 0x6c,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0xa4,
+            0x0b, 0x05,
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+            0xff, 0x03,                                     // Ext Tag: HE Extended Capabilities (802.11ax/D3.0)
+                0x3b,
+                    0xbd, 0x02,
+            0xff, 0x27,                                     // Ext Tag: HE Capabilities (802.11ax/D3.0)
+                0x23,
+                    0xf7, 0x70, 0x99, 0x16, 0x64, 0x00, 0x0e, 0x30, 0x0c, 0xb6, 0x02, 0x1b, 0xb4, 0x0c, 0xcf, 0x30,
+                    0x00, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0x7b, 0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+                    0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+            0xff, 0x0c,                                     // Ext Tag: HE Operation (802.11ax/D3.0)
+                0x24,
+                    0xf4, 0x3f, 0x02, 0x00, 0xf0, 0xff, 0x05, 0x03, 0x07, 0x0f, 0x00,
+            0xff, 0x0e,                                     // Ext Tag: MU EDCA Parameter Set
+                0x26,
+                    0xc0, 0x07, 0xa4, 0x01, 0x23, 0xa4, 0x01, 0x42, 0x43, 0x01, 0x62, 0x32, 0x01,
+
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x85, 0x00, 0x00, 0x00,     // Channel  / Freq = 133 / 6605 MHz
+            0x05, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_20_6G_S1b_6_Ghz[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xFD, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA1, 0xB0, 0x01, 0x06, 0x02,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x07, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x04, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x04, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x05, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, // DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x8E, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0xfa, 0x00,                                     // Listen Interval
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '1',
+            0x01, 0x08,                                     // Supported Rates
+                0x8c, 0x12, 0x98, 0xa4, 0x30, 0x48, 0x60, 0x6c,
+            0x21, 0x02,                                     // Power Capability Min: 0, Max: 15
+                0x00, 0x0f,
+            0x24, 0x32,                                     // Supported Channels
+                0x24, 0x01, 0x28, 0x01, 0x2c, 0x01, 0x30, 0x01, 0x34, 0x01, 0x38, 0x01, 0x3c, 0x01, 0x40, 0x01,
+                0x64, 0x01, 0x68, 0x01, 0x6c, 0x01, 0x70, 0x01, 0x74, 0x01, 0x78, 0x01, 0x7c, 0x01, 0x80, 0x01,
+                0x84, 0x01, 0x88, 0x01, 0x8c, 0x01, 0x90, 0x01, 0x95, 0x01, 0x99, 0x01, 0x9d, 0x01, 0xa1, 0x01,
+                0xa5, 0x01,
+            0x46, 0x05,                                     // RM Enabled Capabilities
+                0x72, 0x00, 0x00, 0x00, 0x00,
+            0x7f, 0x0a,                                     // Extended Capabilities
+                0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xdd, 0x07,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Information Element
+                0x00, 0x50, 0xf2, 0x02, 0x00, 0x01, 0x00,
+            0xff, 0x1e,                                     // Ext Tag: HE Capabilities (802.11ax/D3.0)
+                0x23,
+                    0x01, 0x78, 0x20, 0x0a, 0xc0, 0x8b, 0x0e, 0x30, 0x02, 0x00, 0xfd, 0x09, 0x8c, 0x0e, 0xcf, 0xf2,
+                    0x00, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0x61, 0x1c, 0xc7, 0x71,
+            0xff, 0x03,                                     // Ext Tag: HE Extended Capabilities (802.11ax/D3.0)
+                0x3b,
+                    0x7d, 0x02,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x8A, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0x00, 0x00,                                     // Status Code: Successful
+            0x00, 0xc0,                                     // Association ID: 0x0000
+            0x00, 0x05,                                     // SSID Parameter set
+                '6', 'E', '_', '_', '1',
+            0x01, 0x08,                                     // Supported Rates
+                0x8c, 0x12, 0x98, 0xa4, 0x30, 0x48, 0x60, 0x6c,
+            0x03, 0x01,                                     // DS Parameter set: Current Channel: 10
+                0x85,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+            0xff, 0x03,                                     // Ext Tag: HE Extended Capabilities (802.11ax/D3.0)
+                0x3b,
+                    0xbd, 0x02,
+            0xff, 0x27,                                     // Ext Tag: HE Capabilities (802.11ax/D3.0)
+                0x23,
+                    0xf7, 0x70, 0x99, 0x16, 0x64, 0x00, 0x0e, 0x30, 0x0c, 0xb6, 0x02, 0x1b, 0xb4, 0x0c, 0xcf, 0x30,
+                    0x00, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0x7b, 0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+                    0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+            0xff, 0x0c,                                     // Ext Tag: HE Operation (802.11ax/D3.0)
+                0x24,
+                    0xf4, 0x3f, 0x02, 0x00, 0xf0, 0xff, 0x05, 0x03, 0x07, 0x0f, 0x00,
+            0xff, 0x0e,                                     // Ext Tag: MU EDCA Parameter Set
+                0x26,
+                    0xc0, 0x07, 0xa4, 0x01, 0x23, 0xa4, 0x01, 0x42, 0x43, 0x01, 0x62, 0x32, 0x01,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x93, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '1',
+            0x01, 0x08,                                     // Supported Rates
+                0x8c, 0x12, 0x98, 0xa4, 0x30, 0x48, 0x60, 0x6c,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0xa4,
+            0x0b, 0x05,
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+            0xff, 0x03,                                     // Ext Tag: HE Extended Capabilities (802.11ax/D3.0)
+                0x3b,
+                    0xbd, 0x02,
+            0xff, 0x27,                                     // Ext Tag: HE Capabilities (802.11ax/D3.0)
+                0x23,
+                    0xf7, 0x70, 0x99, 0x16, 0x64, 0x00, 0x0e, 0x30, 0x0c, 0xb6, 0x02, 0x1b, 0xb4, 0x0c, 0xcf, 0x30,
+                    0x00, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0x7b, 0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+                    0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+            0xff, 0x0c,                                     // Ext Tag: HE Operation (802.11ax/D3.0)
+                0x24,
+                    0xf4, 0x3f, 0x02, 0x00, 0xf0, 0xff, 0x05, 0x03, 0x07, 0x0f, 0x00,
+            0xff, 0x0e,                                     // Ext Tag: MU EDCA Parameter Set
+                0x26,
+                    0xc0, 0x07, 0xa4, 0x01, 0x23, 0xa4, 0x01, 0x42, 0x43, 0x01, 0x62, 0x32, 0x01,
+
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0A, 0x00, 0x00, 0x00,
+
+};
+
+//===============================================================================
+// SIX_G:   6E__2:
+//      (1 * 2.4 GHz) + (1 * 5 GHz) + (1 * 6 GHz)
+//          2.4 GHz:
+//              S2_24_1:    S2_5_1 (In+Out) + [S2_6_2 (Out)]
+//          5 GHz:
+//              S2_5_1:     S2_24_1 (In+Out) + S2_6_1 (Out) + [S2_6_2 (Out)]
+//          6 GHz:
+//              S2_6_1:     S2_5_1 (In)
+//===============================================================================
+
+//
+// 6E__2: 1 * 2.4 GHz Bss's
+// 2 RNR IEs with 1 entry each:  Band:Channel = [5:44] + [6:101]
+//
+WDI_MAC_ADDRESS s_Connect_Addr_21_6G_S2_2_4_Ghz = {0x00, 0xA1, 0xB0, 0x02, 0x24, 0x01};
+UCHAR  s_TLV_BSS_Entry_21_6G_S2_2_4_Ghz [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xD3, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0xA1, 0xB0, 0x02, 0x02, 0x01,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0xA0, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '2',
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x03, 0x01,                                     // DS Parameter Set
+                0x06,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0x6c,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0x76, 0x08, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates 24, 36, 48, 54 [Mbits/sec]
+                0x30, 0x48, 0x60, 0x6c,
+            0x3d, 0x16,                                     // HT Information (802.11n D1.10)
+                0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+
+            0xc9, 0x0c,                                 // RNR IE
+                0x04, 0x08,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x08 = TBTT Length
+                    0x73, 0x2e,                             // Operating Class = 115 (5 GHz), Channel = 44
+                        0x00, 0x00, 0xA1, 0xB0, 0x02, 0x05, 0x01, 0x40,     // 6E__2 on 5 GHz
+            0xc9, 0x0c,                                 // RNR IE
+                0x00, 0x08,                                 // TBTT: 0x00 => B4-B7=0(TBTT Information Count=0+1) :: 0x08 = TBTT Length
+                    0x83, 0x65,                             // Operating Class = 131, Channel = 101
+                        0x00, 0x00, 0xA1, 0xB0, 0x02, 0x06, 0x02, 0x42,     // 6E__2 on 6 Ghz (Sabe Ssid)
+
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x06, 0x00, 0x00, 0x00,     // Channel  / Freq = 2437 MHz
+            0x01, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_21_6G_S2_2_4_Ghz[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xF5, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA1, 0xB0, 0x02, 0x02, 0x01,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x07, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x04, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x04, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x01, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, // DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x8B, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0xfa, 0x00,                                     // Listen Interval
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '2',
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x21, 0x02,                                     // Power Capability Min: 0, Max: 15
+                0x00, 0x0f,
+            0x24, 0x32,                                     // Supported Channels
+                0x24, 0x01, 0x28, 0x01, 0x2c, 0x01, 0x30, 0x01, 0x34, 0x01, 0x38, 0x01, 0x3c, 0x01, 0x40, 0x01,
+                0x64, 0x01, 0x68, 0x01, 0x6c, 0x01, 0x70, 0x01, 0x74, 0x01, 0x78, 0x01, 0x7c, 0x01, 0x80, 0x01,
+                0x84, 0x01, 0x88, 0x01, 0x8c, 0x01, 0x90, 0x01, 0x95, 0x01, 0x99, 0x01, 0x9d, 0x01, 0xa1, 0x01,
+                0xa5, 0x01,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0xa5, 0x09, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates
+                0x30, 0x48, 0x60, 0x6c,
+            0x46, 0x05,                                     // RM Enabled Capabilities
+                0x72, 0x00, 0x00, 0x00, 0x00,
+            0x7f, 0x0a,                                     // Extended Capabilities
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x00, 0x00,
+            0xdd, 0x07,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Information Element
+                0x00, 0x50, 0xf2, 0x02, 0x00, 0x01, 0x00,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x78, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0x00, 0x00,                                     // Status Code: Successful
+            0x00, 0xc0,                                     // Association ID: 0x0000
+            0x00, 0x05,                                     // SSID Parameter set
+                0x53, 0x53, 0x49, 0x44, 0x31,
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x03, 0x01,                                     // DS Parameter set: Current Channel: 10
+                0x06,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0x76, 0x08, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates 24, 36, 48, 54 [Mbit/sec]
+                0x30, 0x48, 0x60, 0x6c,
+            0x3d, 0x16,                                     // HT Information (802.11n D1.10)
+                0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0xa0, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '2',
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x03, 0x01,                                     // DS Parameter Set
+                0x06,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0x6c,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0x76, 0x08, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates 24, 36, 48, 54 [Mbits/sec]
+                0x30, 0x48, 0x60, 0x6c,
+            0x3d, 0x16,                                     // HT Information (802.11n D1.10)
+                0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+
+            0xc9, 0x0c,                                 // RNR IE
+                0x04, 0x08,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x08 = TBTT Length
+                    0x73, 0x2e,                             // Operating Class = 115 (5 GHz), Channel = 44
+                        0x00, 0x00, 0xA1, 0xB0, 0x02, 0x05, 0x01, 0x40,     // 6E__2 on 5 GHz
+            0xc9, 0x0c,                                 // RNR IE
+                0x00, 0x08,                                 // TBTT: 0x00 => B4-B7=0(TBTT Information Count=0+1) :: 0x08 = TBTT Length
+                    0x83, 0x65,                             // Operating Class = 131, Channel = 101
+                        0x00, 0x00, 0xA1, 0xB0, 0x02, 0x06, 0x02, 0x42,     // 6E__2 on 6 Ghz (Sabe Ssid)
+
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0A, 0x00, 0x00, 0x00,
+
+};
+
+//
+// 6E__2: 1 * 5 GHz Bss's
+// 3 RNR IEs with 1 entry each:  Band:Channel = [2.4:6] + [6:101] + [6:133]
+//
+WDI_MAC_ADDRESS s_Connect_Addr_22_6G_S2_5_Ghz = {0x00, 0xA1, 0xB0, 0x02, 0x05, 0x01};
+UCHAR  s_TLV_BSS_Entry_22_6G_S2_5_Ghz [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xed, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0xA1, 0xB0, 0x02, 0x05, 0x01,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0xba, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '2',
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x03, 0x01,                                     // DS Parameter Set
+                0x2c,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0x6c,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0x76, 0x08, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates 24, 36, 48, 54 [Mbits/sec]
+                0x30, 0x48, 0x60, 0x6c,
+            0x3d, 0x16,                                     // HT Information (802.11n D1.10)
+                0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+
+            0xc9, 0x10,                                 // RNR IE
+                0x04, 0x0c,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00, 0x00, 0xA1, 0xB0, 0x02, 0x02, 0x01, 0xa2, 0x6b, 0x9d, 0xd6, 0x40,     // 6E__2 on 2.4 GHz
+            0xc9, 0x10,                                 // RNR IE
+                0x00, 0x0c,                                 // TBTT: 0x00 => B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x83, 0x65,                             // Operating Class = 131, (6 GHz) Channel = 101
+                        0x00, 0x00, 0xA1, 0xB0, 0x02, 0x06, 0x01, 0xa2, 0x6b, 0x9d, 0xd6, 0x42,     // 6E__2 on 6 Ghz
+            0xc9, 0x10,                                 // RNR IE
+                0x0c, 0x0c,                                 // TBTT: 0x0c => B2:3=1(FilteredAP:Reserved),B4-B7=f(TBTT Information Count=3+1) :: 0x0c = TBTT Length
+                    0x83, 0x85,                             // Operating Class = 131, (6 GHz) Channel = 133
+                        0x00, 0x00, 0xA1, 0xB0, 0x02, 0x06, 0x02, 0xa2, 0x6b, 0x9d, 0xd6, 0x00,     // 6E__2 on 6 GHz
+
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x2c, 0x00, 0x00, 0x00,     // Channel  / Freq = 44 / 5220 MHz
+            0x02, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_22_6G_S2_5_Ghz[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x0F, 0x02,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA1, 0xB0, 0x02, 0x05, 0x01,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x07, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x04, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x04, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x02, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, // DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x8B, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0xfa, 0x00,                                     // Listen Interval
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '2',
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x21, 0x02,                                     // Power Capability Min: 0, Max: 15
+                0x00, 0x0f,
+            0x24, 0x32,                                     // Supported Channels
+                0x24, 0x01, 0x28, 0x01, 0x2c, 0x01, 0x30, 0x01, 0x34, 0x01, 0x38, 0x01, 0x3c, 0x01, 0x40, 0x01,
+                0x64, 0x01, 0x68, 0x01, 0x6c, 0x01, 0x70, 0x01, 0x74, 0x01, 0x78, 0x01, 0x7c, 0x01, 0x80, 0x01,
+                0x84, 0x01, 0x88, 0x01, 0x8c, 0x01, 0x90, 0x01, 0x95, 0x01, 0x99, 0x01, 0x9d, 0x01, 0xa1, 0x01,
+                0xa5, 0x01,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0xa5, 0x09, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates
+                0x30, 0x48, 0x60, 0x6c,
+            0x46, 0x05,                                     // RM Enabled Capabilities
+                0x72, 0x00, 0x00, 0x00, 0x00,
+            0x7f, 0x0a,                                     // Extended Capabilities
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x00, 0x00,
+            0xdd, 0x07,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Information Element
+                0x00, 0x50, 0xf2, 0x02, 0x00, 0x01, 0x00,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x78, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0x00, 0x00,                                     // Status Code: Successful
+            0x00, 0xc0,                                     // Association ID: 0x0000
+            0x00, 0x05,                                     // SSID Parameter set
+                0x53, 0x53, 0x49, 0x44, 0x31,
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x03, 0x01,                                     // DS Parameter set: Current Channel: 10
+                0x2c,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0x76, 0x08, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates 24, 36, 48, 54 [Mbit/sec]
+                0x30, 0x48, 0x60, 0x6c,
+            0x3d, 0x16,                                     // HT Information (802.11n D1.10)
+                0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0xba, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '2',
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x03, 0x01,                                     // DS Parameter Set
+                0x2c,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0x6c,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0x76, 0x08, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates 24, 36, 48, 54 [Mbits/sec]
+                0x30, 0x48, 0x60, 0x6c,
+            0x3d, 0x16,                                     // HT Information (802.11n D1.10)
+                0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xc9, 0x10,                                 // RNR IE
+                0x04, 0x0c,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00, 0x00, 0xA1, 0xB0, 0x02, 0x02, 0x01, 0xa2, 0x6b, 0x9d, 0xd6, 0x40,     // 6E__2 on 2.4 GHz
+            0xc9, 0x10,                                 // RNR IE
+                0x00, 0x0c,                                 // TBTT: 0x00 => B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x83, 0x65,                             // Operating Class = 131, (6 GHz) Channel = 101
+                        0x00, 0x00, 0xA1, 0xB0, 0x02, 0x06, 0x01, 0xa2, 0x6b, 0x9d, 0xd6, 0x42,     // 6E__2 on 6 Ghz
+            0xc9, 0x10,                                 // RNR IE
+                0x0c, 0x0c,                                 // TBTT: 0x0c => B2:3=1(FilteredAP:Reserved),B4-B7=f(TBTT Information Count=3+1) :: 0x0c = TBTT Length
+                    0x83, 0x85,                             // Operating Class = 131, (6 GHz) Channel = 133
+                        0x00, 0x00, 0xA1, 0xB0, 0x02, 0x06, 0x02, 0xa2, 0x6b, 0x9d, 0xd6, 0x00,     // 6E__2 on 6 GHz
+
+
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0A, 0x00, 0x00, 0x00,
+
+};
+
+//
+// 6E__2: 1 * 6 GHz Bss's
+//
+WDI_MAC_ADDRESS s_Connect_Addr_23_6G_S2_6_Ghz = {0x00, 0xA1, 0xB0, 0x02, 0x06, 0x01};
+UCHAR  s_TLV_BSS_Entry_23_6G_S2_6_Ghz [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xC6, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0xA1, 0xB0, 0x02, 0x06, 0x01,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x93, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '2',
+            0x01, 0x08,                                     // Supported Rates
+                0x8c, 0x12, 0x98, 0xa4, 0x30, 0x48, 0x60, 0x6c,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0xa4,
+            0x0b, 0x05,
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+            0xff, 0x03,                                     // Ext Tag: HE Extended Capabilities (802.11ax/D3.0)
+                0x3b,
+                    0xbd, 0x02,
+            0xff, 0x27,                                     // Ext Tag: HE Capabilities (802.11ax/D3.0)
+                0x23,
+                    0xf7, 0x70, 0x99, 0x16, 0x64, 0x00, 0x0e, 0x30, 0x0c, 0xb6, 0x02, 0x1b, 0xb4, 0x0c, 0xcf, 0x30,
+                    0x00, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0x7b, 0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+                    0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+            0xff, 0x0c,                                     // Ext Tag: HE Operation (802.11ax/D3.0)
+                0x24,
+                    0xf4, 0x3f, 0x02, 0x00, 0xf0, 0xff, 0x05, 0x03, 0x07, 0x0f, 0x00,
+            0xff, 0x0e,                                     // Ext Tag: MU EDCA Parameter Set
+                0x26,
+                    0xc0, 0x07, 0xa4, 0x01, 0x23, 0xa4, 0x01, 0x42, 0x43, 0x01, 0x62, 0x32, 0x01,
+
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x79, 0x00, 0x00, 0x00,     // Channel  / Freq = 121 / 6545 MHz
+            0x05, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_23_6G_S2_6_Ghz[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xFD, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA1, 0xB0, 0x02, 0x06, 0x01,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x07, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x04, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x04, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x05, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, // DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x8E, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0xfa, 0x00,                                     // Listen Interval
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '2',
+            0x01, 0x08,                                     // Supported Rates
+                0x8c, 0x12, 0x98, 0xa4, 0x30, 0x48, 0x60, 0x6c,
+            0x21, 0x02,                                     // Power Capability Min: 0, Max: 15
+                0x00, 0x0f,
+            0x24, 0x32,                                     // Supported Channels
+                0x24, 0x01, 0x28, 0x01, 0x2c, 0x01, 0x30, 0x01, 0x34, 0x01, 0x38, 0x01, 0x3c, 0x01, 0x40, 0x01,
+                0x64, 0x01, 0x68, 0x01, 0x6c, 0x01, 0x70, 0x01, 0x74, 0x01, 0x78, 0x01, 0x7c, 0x01, 0x80, 0x01,
+                0x84, 0x01, 0x88, 0x01, 0x8c, 0x01, 0x90, 0x01, 0x95, 0x01, 0x99, 0x01, 0x9d, 0x01, 0xa1, 0x01,
+                0xa5, 0x01,
+            0x46, 0x05,                                     // RM Enabled Capabilities
+                0x72, 0x00, 0x00, 0x00, 0x00,
+            0x7f, 0x0a,                                     // Extended Capabilities
+                0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xdd, 0x07,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Information Element
+                0x00, 0x50, 0xf2, 0x02, 0x00, 0x01, 0x00,
+            0xff, 0x1e,                                     // Ext Tag: HE Capabilities (802.11ax/D3.0)
+                0x23,
+                    0x01, 0x78, 0x20, 0x0a, 0xc0, 0x8b, 0x0e, 0x30, 0x02, 0x00, 0xfd, 0x09, 0x8c, 0x0e, 0xcf, 0xf2,
+                    0x00, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0x61, 0x1c, 0xc7, 0x71,
+            0xff, 0x03,                                     // Ext Tag: HE Extended Capabilities (802.11ax/D3.0)
+                0x3b,
+                    0x7d, 0x02,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x8A, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0x00, 0x00,                                     // Status Code: Successful
+            0x00, 0xc0,                                     // Association ID: 0x0000
+            0x00, 0x05,                                     // SSID Parameter set
+                '6', 'E', '_', '_', '2',
+            0x01, 0x08,                                     // Supported Rates
+                0x8c, 0x12, 0x98, 0xa4, 0x30, 0x48, 0x60, 0x6c,
+            0x03, 0x01,                                     // DS Parameter set: Current Channel: 10
+                0x79,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+            0xff, 0x03,                                     // Ext Tag: HE Extended Capabilities (802.11ax/D3.0)
+                0x3b,
+                    0xbd, 0x02,
+            0xff, 0x27,                                     // Ext Tag: HE Capabilities (802.11ax/D3.0)
+                0x23,
+                    0xf7, 0x70, 0x99, 0x16, 0x64, 0x00, 0x0e, 0x30, 0x0c, 0xb6, 0x02, 0x1b, 0xb4, 0x0c, 0xcf, 0x30,
+                    0x00, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0x7b, 0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+                    0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+            0xff, 0x0c,                                     // Ext Tag: HE Operation (802.11ax/D3.0)
+                0x24,
+                    0xf4, 0x3f, 0x02, 0x00, 0xf0, 0xff, 0x05, 0x03, 0x07, 0x0f, 0x00,
+            0xff, 0x0e,                                     // Ext Tag: MU EDCA Parameter Set
+                0x26,
+                    0xc0, 0x07, 0xa4, 0x01, 0x23, 0xa4, 0x01, 0x42, 0x43, 0x01, 0x62, 0x32, 0x01,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x93, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '2',
+            0x01, 0x08,                                     // Supported Rates
+                0x8c, 0x12, 0x98, 0xa4, 0x30, 0x48, 0x60, 0x6c,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0xa4,
+            0x0b, 0x05,
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+            0xff, 0x03,                                     // Ext Tag: HE Extended Capabilities (802.11ax/D3.0)
+                0x3b,
+                    0xbd, 0x02,
+            0xff, 0x27,                                     // Ext Tag: HE Capabilities (802.11ax/D3.0)
+                0x23,
+                    0xf7, 0x70, 0x99, 0x16, 0x64, 0x00, 0x0e, 0x30, 0x0c, 0xb6, 0x02, 0x1b, 0xb4, 0x0c, 0xcf, 0x30,
+                    0x00, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0x7b, 0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+                    0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+            0xff, 0x0c,                                     // Ext Tag: HE Operation (802.11ax/D3.0)
+                0x24,
+                    0xf4, 0x3f, 0x02, 0x00, 0xf0, 0xff, 0x05, 0x03, 0x07, 0x0f, 0x00,
+            0xff, 0x0e,                                     // Ext Tag: MU EDCA Parameter Set
+                0x26,
+                    0xc0, 0x07, 0xa4, 0x01, 0x23, 0xa4, 0x01, 0x42, 0x43, 0x01, 0x62, 0x32, 0x01,
+
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0A, 0x00, 0x00, 0x00,
+
+};
+
+//===============================================================================
+// SIX_G:   SSID3:
+//      (1 * 2.4 GHz)
+//          2.4 GHz:
+//              S3_24_1:    *S2_5_1 (Out)*
+//===============================================================================
+
+//
+// SSID3: 1 * 2.4 GHz Bss's
+// 2 RNR IEs with 1 entry each Band:Channel = [5:44 + 6:133]
+//
+WDI_MAC_ADDRESS s_Connect_Addr_24_6G_S3_2_4_Ghz = {0x00, 0xA1, 0xB0, 0x03, 0x02, 0x01};
+UCHAR  s_TLV_BSS_Entry_24_6G_S3_2_4_Ghz [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xDB, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0xA1, 0xB0, 0x03, 0x02, 0x01,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0xa8, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '3',
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x03, 0x01,                                     // DS Parameter Set
+                0x0a,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0x6c,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0x76, 0x08, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates 24, 36, 48, 54 [Mbits/sec]
+                0x30, 0x48, 0x60, 0x6c,
+            0x3d, 0x16,                                     // HT Information (802.11n D1.10)
+                0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+
+            0xc9, 0x10,                                 // RNR IE
+                0x00, 0x0c,                                 // TBTT: 0x00,B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x73, 0x2e,                             // Operating Class = 115 (5 GHz), Channel = 44
+                        0x00, 0x00, 0xA1, 0xB0, 0x02, 0x05, 0x01, 0xa2, 0x6b, 0x9d, 0xd6, 0x40,     // 6E__2 on 5 GHz
+            0xc9, 0x10,                                 // RNR IE
+                0x00, 0x0c,                                 // TBTT: 0x00,B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x83, 0x85,                             // Operating Class = 131 (6 GHz), Channel = 133
+                        0x00, 0x00, 0xA1, 0xB0, 0x02, 0x06, 0x02, 0xa2, 0x6b, 0x9d, 0xd6, 0x40,     // 6E__2 on 6 GHz
+
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x0B, 0x00, 0x00, 0x00,     // Channel  / Freq = 2457 MHz
+            0x01, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_24_6G_S3_2_4_Ghz[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xFD, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA1, 0xB0, 0x03, 0x02, 0x01,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x07, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x04, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x04, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x01, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, // DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x8B, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0xfa, 0x00,                                     // Listen Interval
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '3',
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x21, 0x02,                                     // Power Capability Min: 0, Max: 15
+                0x00, 0x0f,
+            0x24, 0x32,                                     // Supported Channels
+                0x24, 0x01, 0x28, 0x01, 0x2c, 0x01, 0x30, 0x01, 0x34, 0x01, 0x38, 0x01, 0x3c, 0x01, 0x40, 0x01,
+                0x64, 0x01, 0x68, 0x01, 0x6c, 0x01, 0x70, 0x01, 0x74, 0x01, 0x78, 0x01, 0x7c, 0x01, 0x80, 0x01,
+                0x84, 0x01, 0x88, 0x01, 0x8c, 0x01, 0x90, 0x01, 0x95, 0x01, 0x99, 0x01, 0x9d, 0x01, 0xa1, 0x01,
+                0xa5, 0x01,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0xa5, 0x09, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates
+                0x30, 0x48, 0x60, 0x6c,
+            0x46, 0x05,                                     // RM Enabled Capabilities
+                0x72, 0x00, 0x00, 0x00, 0x00,
+            0x7f, 0x0a,                                     // Extended Capabilities
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x00, 0x00,
+            0xdd, 0x07,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Information Element
+                0x00, 0x50, 0xf2, 0x02, 0x00, 0x01, 0x00,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x78, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0x00, 0x00,                                     // Status Code: Successful
+            0x00, 0xc0,                                     // Association ID: 0x0000
+            0x00, 0x05,                                     // SSID Parameter set
+                0x53, 0x53, 0x49, 0x44, 0x31,
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x03, 0x01,                                     // DS Parameter set: Current Channel: 10
+                0x0a,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0x76, 0x08, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates 24, 36, 48, 54 [Mbit/sec]
+                0x30, 0x48, 0x60, 0x6c,
+            0x3d, 0x16,                                     // HT Information (802.11n D1.10)
+                0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0xa8, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '3',
+            0x01, 0x08,                                     // Supported Rates
+                0x82, 0x84, 0x0b, 0x16, 0x8c, 0x12, 0x98, 0xa4,
+            0x03, 0x01,                                     // DS Parameter Set
+                0x0a,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0x6c,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0x2d, 0x1a,                                     // HT Capabilities (802.11n D1.10)
+                0x76, 0x08, 0x17, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x32, 0x04,                                     // Extended Supported Rates 24, 36, 48, 54 [Mbits/sec]
+                0x30, 0x48, 0x60, 0x6c,
+            0x3d, 0x16,                                     // HT Information (802.11n D1.10)
+                0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+
+            0xc9, 0x10,                                 // RNR IE
+                0x00, 0x0c,                                 // TBTT: 0x00,B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x73, 0x2e,                             // Operating Class = 115 (5 GHz), Channel = 44
+                        0x00, 0x00, 0xA1, 0xB0, 0x02, 0x05, 0x01, 0xa2, 0x6b, 0x9d, 0xd6, 0x40,     // 6E__2 on 5 GHz
+            0xc9, 0x10,                                 // RNR IE
+                0x00, 0x0c,                                 // TBTT: 0x00,B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x83, 0x85,                             // Operating Class = 131 (6 GHz), Channel = 133
+                        0x00, 0x00, 0xA1, 0xB0, 0x02, 0x06, 0x02, 0xa2, 0x6b, 0x9d, 0xd6, 0x40,     // 6E__2 on 6 GHz
+
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0A, 0x00, 0x00, 0x00,
+
+};
+
+
+//===============================================================================
+// SIX_G:   SSID4 (non-colocated AP):
+//      (1 * 6 GHz)
+//          6 GHz:
+//              S4_6_1:
+//===============================================================================
+
+//
+// SSID4: 1 * 6 GHz Bss's
+//
+WDI_MAC_ADDRESS s_Connect_Addr_25_6G_S4_6_Ghz = {0x00, 0xA1, 0xB0, 0x04, 0x06, 0x01};
+UCHAR  s_TLV_BSS_Entry_25_6G_S4_6_Ghz [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xC6, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0xA1, 0xB0, 0x04, 0x06, 0x01,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x93, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '4',
+            0x01, 0x08,                                     // Supported Rates
+                0x8c, 0x12, 0x98, 0xa4, 0x30, 0x48, 0x60, 0x6c,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0xa4,
+            0x0b, 0x05,
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+            0xff, 0x03,                                     // Ext Tag: HE Extended Capabilities (802.11ax/D3.0)
+                0x3b,
+                    0xbd, 0x02,
+            0xff, 0x27,                                     // Ext Tag: HE Capabilities (802.11ax/D3.0)
+                0x23,
+                    0xf7, 0x70, 0x99, 0x16, 0x64, 0x00, 0x0e, 0x30, 0x0c, 0xb6, 0x02, 0x1b, 0xb4, 0x0c, 0xcf, 0x30,
+                    0x00, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0x7b, 0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+                    0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+            0xff, 0x0c,                                     // Ext Tag: HE Operation (802.11ax/D3.0)
+                0x24,
+                    0xf4, 0x3f, 0x02, 0x00, 0xf0, 0xff, 0x05, 0x03, 0x07, 0x0f, 0x00,
+            0xff, 0x0e,                                     // Ext Tag: MU EDCA Parameter Set
+                0x26,
+                    0xc0, 0x07, 0xa4, 0x01, 0x23, 0xa4, 0x01, 0x42, 0x43, 0x01, 0x62, 0x32, 0x01,
+
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0xe5, 0x00, 0x00, 0x00,     // Channel  / Freq = 229 / 7085 MHz
+            0x05, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_25_6G_S4_6_Ghz[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xFD, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA1, 0xB0, 0x04, 0x06, 0x01,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x07, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x04, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x04, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x05, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, // DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x8E, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0xfa, 0x00,                                     // Listen Interval
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '4',
+            0x01, 0x08,                                     // Supported Rates
+                0x8c, 0x12, 0x98, 0xa4, 0x30, 0x48, 0x60, 0x6c,
+            0x21, 0x02,                                     // Power Capability Min: 0, Max: 15
+                0x00, 0x0f,
+            0x24, 0x32,                                     // Supported Channels
+                0x24, 0x01, 0x28, 0x01, 0x2c, 0x01, 0x30, 0x01, 0x34, 0x01, 0x38, 0x01, 0x3c, 0x01, 0x40, 0x01,
+                0x64, 0x01, 0x68, 0x01, 0x6c, 0x01, 0x70, 0x01, 0x74, 0x01, 0x78, 0x01, 0x7c, 0x01, 0x80, 0x01,
+                0x84, 0x01, 0x88, 0x01, 0x8c, 0x01, 0x90, 0x01, 0x95, 0x01, 0x99, 0x01, 0x9d, 0x01, 0xa1, 0x01,
+                0xa5, 0x01,
+            0x46, 0x05,                                     // RM Enabled Capabilities
+                0x72, 0x00, 0x00, 0x00, 0x00,
+            0x7f, 0x0a,                                     // Extended Capabilities
+                0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xdd, 0x07,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Information Element
+                0x00, 0x50, 0xf2, 0x02, 0x00, 0x01, 0x00,
+            0xff, 0x1e,                                     // Ext Tag: HE Capabilities (802.11ax/D3.0)
+                0x23,
+                    0x01, 0x78, 0x20, 0x0a, 0xc0, 0x8b, 0x0e, 0x30, 0x02, 0x00, 0xfd, 0x09, 0x8c, 0x0e, 0xcf, 0xf2,
+                    0x00, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0x61, 0x1c, 0xc7, 0x71,
+            0xff, 0x03,                                     // Ext Tag: HE Extended Capabilities (802.11ax/D3.0)
+                0x3b,
+                    0x7d, 0x02,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x8A, 0x00,
+
+            0x01, 0x11,                                     // Capabilities
+            0x00, 0x00,                                     // Status Code: Successful
+            0x00, 0xc0,                                     // Association ID: 0x0000
+            0x00, 0x05,                                     // SSID Parameter set
+                '6', 'E', '_', '_', '2',
+            0x01, 0x08,                                     // Supported Rates
+                0x8c, 0x12, 0x98, 0xa4, 0x30, 0x48, 0x60, 0x6c,
+            0x03, 0x01,                                     // DS Parameter set: Current Channel: 10
+                0xe5,
+            0x0b, 0x05,                                     // QBSS Load Element 802.11e CCA Version
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+            0xff, 0x03,                                     // Ext Tag: HE Extended Capabilities (802.11ax/D3.0)
+                0x3b,
+                    0xbd, 0x02,
+            0xff, 0x27,                                     // Ext Tag: HE Capabilities (802.11ax/D3.0)
+                0x23,
+                    0xf7, 0x70, 0x99, 0x16, 0x64, 0x00, 0x0e, 0x30, 0x0c, 0xb6, 0x02, 0x1b, 0xb4, 0x0c, 0xcf, 0x30,
+                    0x00, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0x7b, 0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+                    0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+            0xff, 0x0c,                                     // Ext Tag: HE Operation (802.11ax/D3.0)
+                0x24,
+                    0xf4, 0x3f, 0x02, 0x00, 0xf0, 0xff, 0x05, 0x03, 0x07, 0x0f, 0x00,
+            0xff, 0x0e,                                     // Ext Tag: MU EDCA Parameter Set
+                0x26,
+                    0xc0, 0x07, 0xa4, 0x01, 0x23, 0xa4, 0x01, 0x42, 0x43, 0x01, 0x62, 0x32, 0x01,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x93, 0x00,
+
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                     // Beacon Inteval
+            0x01, 0x00,                                     // Capabilities
+            0x00, 0x05,                                     // SSID
+                '6', 'E', '_', '_', '4',
+            0x01, 0x08,                                     // Supported Rates
+                0x8c, 0x12, 0x98, 0xa4, 0x30, 0x48, 0x60, 0x6c,
+            0x05, 0x04,                                     // TIM - DTIM 0 of 0
+                0x00, 0x02, 0x00, 0xa4,
+            0x0b, 0x05,
+                0x00, 0x00, 0x00, 0x12, 0x7a,
+            0x2a, 0x01,                                     // ERP Information
+                0x00,
+            0xdd, 0x18,                                     // Vendor Specific: Microsoft Corp.: WMM/WME: Parameter Element
+                0x00, 0x50, 0xf2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xa4, 0x00, 0x00, 0x27, 0xa4, 0x00, 0x00,
+                0x42, 0x43, 0x5e, 0x00, 0x62, 0x32, 0x2f, 0x00,
+            0xff, 0x03,                                     // Ext Tag: HE Extended Capabilities (802.11ax/D3.0)
+                0x3b,
+                    0xbd, 0x02,
+            0xff, 0x27,                                     // Ext Tag: HE Capabilities (802.11ax/D3.0)
+                0x23,
+                    0xf7, 0x70, 0x99, 0x16, 0x64, 0x00, 0x0e, 0x30, 0x0c, 0xb6, 0x02, 0x1b, 0xb4, 0x0c, 0xcf, 0x30,
+                    0x00, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0xfa, 0xff, 0x7b, 0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+                    0x1c, 0xc7, 0x71, 0x1c, 0xc7, 0x71,
+            0xff, 0x0c,                                     // Ext Tag: HE Operation (802.11ax/D3.0)
+                0x24,
+                    0xf4, 0x3f, 0x02, 0x00, 0xf0, 0xff, 0x05, 0x03, 0x07, 0x0f, 0x00,
+            0xff, 0x0e,                                     // Ext Tag: MU EDCA Parameter Set
+                0x26,
+                    0xc0, 0x07, 0xa4, 0x01, 0x23, 0xa4, 0x01, 0x42, 0x43, 0x01, 0x62, 0x32, 0x01,
+
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0A, 0x00, 0x00, 0x00,
+
+};
+
+//===============================================================================
+// WDI_OWE_RNR
+//===============================================================================
+
+
+/// WDI_OWE_RNR
+///
+/// Description
+/// - Non-Transition mode OWE network
+/// - Advertises Reduced Neighbor Reports (RNRs) for the OWE Transition Mode BSSes WDI_OWE_TM_OWE and WDI_OWE_TM_OPEN
+///     - Note: The OWE TM BSSes do not advertise RNR IEs
+///     - Definitions for these two Transition Mode networks follows this one
+///
+/// Intention
+/// - Test Non-Transition Mode OWE networks
+///     - Test discovery of OWE Transition Mode network via RNR prior to receiving beacon or probe
+///     - Since the networks are indicated in order during scans (i.e. the OWE TM networks will be indicated after this one)
+///         it is expected that RNR for the OWE TM networks will be received before their beacons and probes.
+///
+/// Expectation
+/// - Scan results display WDI_OWE_RNR as an Enhanced Open network to which connections are supported
+/// - The RNR will not effect connections to or display of OWE Transition Mode networks that it contains
+///
+/// Limitations
+/// - Connections to this network will fail because the driver does not OWE DH Handshake
+WDI_MAC_ADDRESS s_ConnectAddr_26_OWE_With_RNR = {00, 0xA0, 0xB0, 0xC0, 0xD1, 0xFF};
+UCHAR s_TLV_BSS_Entry_26_OWE_With_RNR [] =
+{
+ // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xB6, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+            0x06, 0x00, // Length
+            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0xFF,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x83, 0x00,
+
+            0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x31, 0x04, // Capability
+            0x00, 0x0B, // SSID
+                'W', 'D', 'I', '_', 'O', 'W', 'E', '_', 'R', 'N', 'R',
+            0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+            0x03, 0x01, 0x06, // DSS Parameters
+            0x05, 0x04, 0x00, 0x01, 0x00, 0x00,     // TIM
+            0x2A, 0x01, 0x00, // ERP
+            0x2F, 0x01, 0x00, // Reserved
+            0x30, 0x1a,                                                 // RSN IE
+                0x01, 0x00,                                                 // Version
+                    0x00, 0x0F, 0xAC, 0x04,                                 // Group Cipher
+                0x01, 0x00,                                                 // Pairwise Cipher Count
+                    0x00, 0x0F, 0xAC, 0x04,                                 // Pairwise Cipher
+                0x01, 0x00,                                                 // AKM Suite count
+                    0x00, 0x0F, 0xAC, 0x12,                                 // AKM Suite - OWE
+                0xC0, 0x00,                                                 // RSN Capability - MFP Req + Capable
+                0x00, 0x00,
+                    0x00, 0x0F, 0xAC, 0x06,                                 // Group Cipher
+            0x32, 0x04, 0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+
+            0xc9, 0x10,                                 // RNR IE
+                0x00, 0x0c,                                 // TBTT: 0x00,B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x0B,                             // Operating Class = 81 (2.4 GHz), Channel = B
+                        0x00,                               // TBTT Offset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x00, // MAC Address --> OWE Transition Mode OWE (Defined below)
+                        0xFD, 0x1F, 0x3F, 0x49,            // Short SSID for WDI_OWE_TM_OWE
+                        0x00,                               // BssParameters
+
+            0xc9, 0x10,                                 // RNR IE
+                0x00, 0x0c,                                 // TBTT: 0x00,B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x0B,                             // Operating Class = 81 (2.4 GHz), Channel = B
+                        0x00,                               // TBTT Offset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x01, // MAC Address --> OWE Transition Mode Open (Defined below)
+                        0x21, 0x24, 0x6C, 0x85,             // Short SSID for WDI_OWE_TM_OPEN
+                        0x00,                               // BssParameters
+
+            0xDD, 0x09, 0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x0B, 0x00, 0x00, 0x00,     // Channel
+            0x01, 0x00, 0x00, 0x00      // BandId
+};
+
+// Test client hasn't implemented OWE DH handshake, so just indicate assoc failure
+UCHAR s_TLV_Failure_AssociationResult_26_OWE_With_RNR [] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x46, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA1, 0xB0, 0xC0, 0xD1, 0xFF,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x01, 0x00, 0x00, 0x00, // Association Status: WDI_ASSOC_STATUS_FAILURE
+            0x00, 0x00, 0x00, 0x00, // Status Code
+            0x00,                   // ReAssociationRequest
+            0x00, 0x00, 0x00, 0x00, // AuthAlgorithm
+            0x00, 0x00, 0x00, 0x00, // UnicastCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, // MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, // MulticastMgmtCipherAlgorithm
+            0x00,                   // FourAddressSupported
+            0x00,                   // Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, // DSInfo
+            0x00, 0x00, 0x00, 0x00, // AssociationComebackTime
+            0x00, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, // DisableDataPathOffloadsScenario
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x00, 0x00, 0x00, 0x00
+};
+
+/// WDI_OWE_TM_OWE
+/// Description
+/// - OWE BSS of OWE Transition Mode network
+///     - Auth Type is OWE
+///     - Partner BSS is the OWE Transition Mode Open BSS "WDI_OWE_TM_OPEN"
+///     - Per the spec, this network is hidden and contains an OWE TM element listing information about the partner BSS
+/// - Listed in RNR of BSS WDI_OWE_RNR
+///     - RNR IEs are not avertised by this BSS
+///
+/// Intention
+///     - Test OWE Transition Mode
+///     - Test discovery of OWE Transition Mode network via RNR prior to receiving a beacon or probe
+///         - Since the networks are indicated in order during scans, the RNR for this network will be received before its beacon.
+///
+/// Expectation
+///     - The OWE spec requires the STA to display the SSID of the Open BSS to the user for interoperability. User initiated connections to the SSID of the Open BSS
+///     will initiate a connection to the OWE BSS and this is reflected in the security type in the UI. This allows STAs to view the same network SSID regardless of their
+///     support for OWE, while also allowing the most secure connection to be made.
+///
+///     - The UI will display:
+///         - SSID: "WDI_OWE_TM_OPEN" (The SSID of the Open BSS)
+///             - A hidden BSS may also be displayed, but only a single entry with an SSID is expected
+///         - Security Description: "Enhanced Open"
+///             - "Secured" or a lock icon should not be displayed
+///         - No password prompt on connect
+///         - "Connect" will initiate a connection to the OWE Transition Mode BSS Entry
+///     - In the entry containing the BSSID of the OWE TM OWE BSS, "netsh wlan show networks mode=bss" displays
+///         - SSID: "WDI_OWE_TM_OPEN"
+///         - Authentication: OWE
+///         - Encryption: CCMP
+///         - MFP Required: 1
+///
+/// Limitations
+///     - Connections to this network will fail because the driver does not OWE DH Handshake
+WDI_MAC_ADDRESS s_ConnectAddr_27_OWE_TM_OWE = {0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x00};
+UCHAR s_TLV_BSS_Entry_27_OWE_TM_OWE [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xA1, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+            0x06, 0x00, // Length
+            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x00,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x6e, 0x00,
+
+                0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+                0x64, 0x00, // Beacon Interval
+                0x31, 0x04, // Capability
+                0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+                0x03, 0x01, 0x06, // DSS Parameters
+                0x05, 0x04, 0x00, 0x01, 0x00, 0x00,     // TIM
+                0x2A, 0x01, 0x00, // ERP
+                0x2F, 0x01, 0x00, // Reserved
+                0x30, 0x1a,                                                 // RSN IE
+                    0x01, 0x00,                                                 // Version
+                        0x00, 0x0F, 0xAC, 0x04,                                 // Group Cipher
+                    0x01, 0x00,                                                 // Pairwise Cipher Count
+                        0x00, 0x0F, 0xAC, 0x04,                                 // Pairwise Cipher
+                    0x01, 0x00,                                                 // AKM Suite count
+                        0x00, 0x0F, 0xAC, 0x12,                                 // AKM Suite - OWE
+                    0xC0, 0x00,                                                 // RSN Capability - MFP Req + Capable
+                    0x00, 0x00,
+                        0x00, 0x0F, 0xAC, 0x06,                                 // Group Cipher
+                0x32, 0x04, 0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+                0xDD, 0x09, 0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+                0xDD, 0x1A,                                             // Vendor specific - OWE Transition Mode
+                    0x50, 0x6F, 0x9A, 0x1C,                             // WFA OUI + OWE TM OUI (0x1C)
+                    0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x01,                 // Partner BSS BSSID
+                        0x0F,                                           // Partner BSS SSID Length
+                    'W', 'D', 'I', '_', 'O', 'W', 'E', '_', 'T', 'M', '_', 'O', 'P', 'E', 'N', // Partner BSS SSID
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x0B, 0x00, 0x00, 0x00,     // Channel
+            0x01, 0x00, 0x00, 0x00      // BandId
+};
+
+// Test client hasn't implemented simulated OWE DH handshake, so just indicate assoc failure
+UCHAR s_TLV_Failure_AssociationResult_27_OWE_TM_OWE [] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x46, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA1, 0xB0, 0xC0, 0xD1, 0x00,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x01, 0x00, 0x00, 0x00, //Association Status: WDI_ASSOC_STATUS_FAILURE
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x00, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x00, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x00, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, // DisableDataPathOffloadsScenario
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x00, 0x00, 0x00, 0x00
+};
+
+/// WDI_OWE_TM_OPEN
+/// Description
+/// - Open BSS of OWE Transition Mode network
+///     - Open network
+///     - Partner BSS is the OWE Transition Mode OWE BSS "WDI_OWE_TM_OWE"
+///     - Per the spec, this network is hidden and contains an OWE TM element listing information about the partner BSS
+/// - Listed in RNR of BSS WDI_OWE_RNR
+///     - RNR IEs are not avertised by this BSS
+///
+/// Intention
+///     - Test OWE Transition Mode
+///     - Test discovery of OWE Transition Mode network via RNR prior to receiving a beacon or probe
+///         - Since the networks are indicated in order during scans, the RNR for this network will be received before its beacon.
+///
+/// Expectation
+///     - The OWE spec requires the STA to display the SSID of the Open BSS to the user for interoperability. User initiated connections to the SSID of the Open BSS
+///     will initiate a connection to the OWE BSS and this is reflected in the security type in the UI. This allows STAs to view the same network SSID regardless of their
+///     support for OWE, while also allowing the most secure connection to be made.
+///
+///     - The UI will display:
+///         - SSID: "WDI_OWE_TM_OPEN" (The SSID of the Open BSS)
+///             - A hidden BSS may also be displayed, but only a single entry with an SSID is expected
+///         - Security Description: "Enhanced Open"
+///             - "Secured" or a lock icon should not be displayed
+///         - No password prompt on connect
+///         - "Connect" will initiate a connection to the OWE Transition Mode BSS Entry
+///     - In the entry containing the BSSID of this BSS, "netsh wlan show networks mode=bss" displays
+///         - SSID: (Hidden)
+///         - Authentication: Open
+///         - Encryption: None
+///
+/// Limitations
+///     - Connections to this network will fail because the driver does not OWE DH Handshake
+WDI_MAC_ADDRESS s_ConnectAddr_28_OWE_TM_Open = {0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x01};
+UCHAR s_TLV_BSS_Entry_28_OWE_TM_Open_Beacon [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x95, 0x00, // Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+            0x06, 0x00, // Length
+            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x01,
+
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x62, 0x00, // Length
+
+            0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x00, 0x04, // Capability
+            0x00, 0x0F, // SSID
+                'W', 'D', 'I', '_', 'O', 'W', 'E', '_', 'T', 'M', '_', 'O', 'P', 'E', 'N',
+            0x01, 0x08, 0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+            0x03, 0x01, 0x06, // DSS Parameters
+            0x05, 0x04, 0x00, 0x01, 0x00, 0x00,     // TIM
+            0x2A, 0x01, 0x00, // ERP
+            0x2F, 0x01, 0x00, // Reserved
+            0x32, 0x04, 0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+            0xDD, 0x09, 0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+            0xDD, 0x19,                                             // Vendor specific - OWE Transition Mode
+                0x50, 0x6F, 0x9A, 0x1C,                             // WFA OUI + OWE TM OUI (0x1C)
+                0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x00,                 // Partner BSS BSSID
+                    0x0E,                                           // Partner BSS SSID Length
+                'W', 'D', 'I', '_', 'O', 'W', 'E', '_', 'T', 'M', '_', 'O', 'W', 'E', // Partner BSS SSID
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x0B, 0x00, 0x00, 0x00,     // Channel
+            0x01, 0x00, 0x00, 0x00      // BandId
+};
+
+// Test client hasn't implemented OWE DH handshake, so just indicate assoc failure
+UCHAR s_TLV_Failure_AssociationResult_28_OWE_TM_Open [] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0x46, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x01,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x01, 0x00, 0x00, 0x00, //Association Status: WDI_ASSOC_STATUS_FAILURE
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x00, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x00, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x00, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, // DisableDataPathOffloadsScenario
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x00, 0x00, 0x00, 0x00
+};
+
+//===============================================================================
+//
+// Wi-Fi 7
+//
+//===============================================================================
+
+WDI_MAC_ADDRESS s_Connect_Addr_29_WiFi7_Mixed_MLD = {0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x02};
+WDI_MAC_ADDRESS s_Connect_Addr_30_WiFi7_Mixed_Link_1 = {0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x03};
+WDI_MAC_ADDRESS s_Connect_Addr_31_WiFi7_Mixed_Link_2 = {0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x04};
+WDI_MAC_ADDRESS s_Connect_Addr_32_WiFi7_Mixed_Link_3 = {0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x05};
+
+UCHAR  s_TLV_BSS_Entry_30_WiFi7_Mixed_Link_1 [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xfa, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x03,                                 // Link 1 MAC address
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0xc7, 0x00,
+
+            0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x31, 0x04, // Capability
+            0x00, 0x0f, // SSID
+                'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'M', 'i', 'x', 'e', 'd',
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+            0x03, 0x01,
+                0x06, // DSS Parameters
+            0x05, 0x04,
+                0x00, 0x01, 0x00, 0x00,     // TIM
+            0x2A, 0x01,
+                0x00, // ERP
+            0x2F, 0x01,
+                0x00, // Reserved
+            0x32, 0x01,                         // DOT11_INFO_ELEMENT_ID_EXTD_SUPPORTED_RATES
+                0xFB,                           // BSS_MEMBERSHIP_SELECTOR_SAE_H2E_ONLY
+            0x30, 0x2a,
+                0x01, 0x00,                     // Version
+                0x00, 0x0F, 0xAC, 0x04,         // Group Cipher = CCMP
+                0x03, 0x00,                     // Pairwise Cipher Count
+                    0x00, 0x0F, 0xAC, 0x04,     // Pairwise Cipher = CCMP-128
+                    0x00, 0x0F, 0xAC, 0x08,     // Pairwise Cipher = GCMP-128
+                    0x00, 0x0F, 0xAC, 0x09,     // Pairwise Cipher = GCMP-256
+                0x03, 0x00,                     // AKM Suite Count
+                    0x00, 0x0F, 0xAC, 0x02,     // AKM Suite    - PSK
+                    0x00, 0x0F, 0xAC, 0x08,     // AKM Suite    - SAE-256
+                    0x00, 0x0F, 0xAC, 0x18,     // AKM Suite    - SAE-384 (Wi-Fi 7)
+                0xCC, 0x00,                     // RSN Capability = MFPC + MFPR + ...
+                0x00, 0x00,                     // PMKID Count
+                0x00, 0x0F, 0xAC, 0x0C,         // Group Mgmt Cipher = GMAC
+
+            0xff, 0x23,                     // Multilink Extension Element
+                0x6B,                       // Multilink Extension ID
+                                                                    // [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                                                                    // [EML=0 + Medium=0 + BSS=1 + LinkID=1] [Reserved=0 + Basic=0] [Reserved=0000] [Reserved=000 MLD=0]
+                0x20, 0x00,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                0x09,                                               // Common Info length
+                    0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x02,                 // AP MLD Mac address (required for Basic)
+                        0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                        // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                        // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                        // [ EML Capabilities (2 octets) ]
+                        0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                // Per-Sta profile - 1/2 (Link 2)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                                                                    // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                0x33, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                    0x06,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x04,             // STA Info : AP Link 1 MAC address
+                    // Remaining STA Profile for Link 2
+                // Per-Sta profile - 2/2 (Link 3)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                                                                    // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                0x33, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                    0x06,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x05,             // STA Info : AP Link 2 MAC address
+                    // Remaining STA Profile for Link 3
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x04,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x03, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x05,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x07, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+            0xDD, 0x09,
+                0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x24, 0x00, 0x00, 0x00,     // Channel
+            0x02, 0x00, 0x00, 0x00      // BandId
+
+};
+
+UCHAR s_TLV_Success_AssociationResult_30_WiFi7_Mixed_Link_1[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xc0, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x03,                             // AP Link 1 Mac Address
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00,             // Association Status
+            0x00, 0x00, 0x00, 0x00,             // Status Code
+            0x00,                               // ReAssociationRequest
+            0x08, 0x00, 0x00, 0x00,             // AuthAlgorithm = WDI_AUTH_ALGO_WPA3_SAE = 9
+            0x09, 0x00, 0x00, 0x00,             // UnicastCipherAlgorithm = WDI_CIPHER_ALGO_GCMP_256 = 9
+            0x09, 0x00, 0x00, 0x00,             // MulticastDataCipherAlgorithm = WDI_CIPHER_ALGO_GCMP_256 = 9
+            0x0C, 0x00, 0x00, 0x00,             // MulticastMgmtCipherAlgorithm = WDI_CIPHER_ALGO_BIP_GMAC_256 = C
+            0x00,                               // FourAddressSupported
+            0x00,                               // Port Authorized
+            0x00,                               // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00,             // DSInfo
+            0x00, 0x00, 0x00, 0x00,             // AssociationComebackTime
+            0x01, 0x00, 0x00, 0x00,             // Band ID
+            0x00, 0x00, 0x00, 0x00,             // IHV Association Status
+            0x00, 0x00, 0x00, 0x00,             //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x7e, 0x00,
+                0x21, 0x04, // Capabilities
+                0x0A, 0x00, // Listen Interval
+                0x00, 0x0f, // SSID
+                    'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'M', 'i', 'x', 'e', 'd',
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Rates
+                0x21, 0x02,
+                    0x07, 0x12,  //Power Capability
+                0x24, 0x02,
+                    0x01, 0x0B, //Supported Channels
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x08,
+                    0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03, // WMM settings
+                0x30, 0x1A,
+                    0x01, 0x00,                     // Version
+                    0x00, 0x0F, 0xAC, 0x04,         // Group Cipher = CCMP
+                    0x01, 0x00,                     // Pairwise Cipher Count
+                        0x00, 0x0F, 0xAC, 0x09,     // Pairwise Cipher = GCMP-256
+                    0x01, 0x00,                     // AKM Suite Count
+                        0x00, 0x0F, 0xAC, 0x18,     // AKM Suite    - SAE-384 (Wi-Fi 7)
+                    0xC0, 0x00,                     // RSN Capability = MFPC + MFPR + ...
+                    0x00, 0x00,                     // PMKID Count
+                    0x00, 0x0F, 0xAC, 0x0C,         // Group Mgmt Cipher = GMAC
+                0xff, 0x23,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                    0x01, 0x10,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                    0x09,                                               // Common Info length
+                        0x00, 0x01, 0x02, 0x03, 0x04, 0x05,                 // Sta MLD Mac address (required for Basic)
+                            0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                            // [ EML Capabilities (2 octets) ]
+                            0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x22,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x11, 0x01, 0x02, 0x03, 0x04, 0x21,             // STA Info : STA Link 1 MAC address
+                                                                            // STA Profile
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x23,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x11, 0x01, 0x02, 0x03, 0x04, 0x22,             // STA Info : Sta Link 2 MAC address
+                                                                // STA Profile
+
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x55, 0x00,
+            0x01, 0x04, //Capability
+            0x00, 0x00, //Status
+            0x01, 0xC0, //Association ID
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,  //Rates
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60, //Extended Rates
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00,
+                0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00, //WMM settings
+            0xff, 0x23,                     // Multilink Extension Element
+                0x6B,                       // Multilink Extension ID
+                0x01, 0x10,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                0x09,                                               // Common Info length
+                    0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x02,                 // AP MLD Mac address (required for Basic)
+                        0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                        // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                        // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                        // [ EML Capabilities (2 octets) ]
+                        0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                // Per-Sta profile - 1/2 (Link 2)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                    0x00, 0x22,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                    0x00,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x04,             // STA Info : AP Link 1 MAC address
+                                                                        // STA Profile
+                // Per-Sta profile - 2/2 (Link 3)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                    0x00, 0x23,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                    0x00,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x05,             // STA Info : AP Link 2 MAC address
+                                                            // STA Profile
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0x9b, 0x00,
+            0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x31, 0x04, // Capability
+            0x00, 0x0f, // SSID
+                'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'M', 'i', 'x', 'e', 'd',
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+            0x03, 0x01, 0x06, // DSS Parameters
+            0x05, 0x04, 0x00, 0x01, 0x00, 0x00,     // TIM
+            0x2A, 0x01, 0x00, // ERP
+            0x2F, 0x01, 0x00, // Reserved
+            0x32, 0x01,
+                0xFB,                           // H2E Only
+            0x30, 0x2a,
+                0x01, 0x00,                     // Version
+                0x00, 0x0F, 0xAC, 0x09,         // Group Cipher = GCMP
+                0x03, 0x00,                     // Pairwise Cipher Count
+                    0x00, 0x0F, 0xAC, 0x04,     // Pairwise Cipher = CCMP-128
+                    0x00, 0x0F, 0xAC, 0x08,     // Pairwise Cipher = GCMP-128
+                    0x00, 0x0F, 0xAC, 0x09,     // Pairwise Cipher = GCMP-256
+                0x03, 0x00,                     // AKM Suite Count
+                    0x00, 0x0F, 0xAC, 0x02,     // AKM Suite    - PSK
+                    0x00, 0x0F, 0xAC, 0x08,     // AKM Suite    - SAE-256
+                    0x00, 0x0F, 0xAC, 0x18,     // AKM Suite    - SAE-384 (Wi-Fi 7)
+                0xC0, 0x00,                     // RSN Capability = MFPC + MFPR + ...
+                0x00, 0x00,                     // PMKID Count
+                0x00, 0x0F, 0xAC, 0x0C,         // Group Mgmt Cipher = GMAC
+            0xff, 0x23,                     // Multilink Extension Element
+                0x6B,                       // Multilink Extension ID
+                0x01, 0x10,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                0x09,                                               // Common Info length
+                    0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x02,                 // MLD Mac address (required for Basic)
+                        0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                        // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                        // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                        // [ EML Capabilities (2 octets) ]
+                        0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                // Per-Sta profile - 1/2 (Link 2)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                    0x00, 0x22,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                    0x00,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x04,             // STA Info : MAC address
+                                                                        // STA Profile
+                // Per-Sta profile - 2/2 (Link 3)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                    0x00, 0x23,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                    0x00,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x05,             // STA Info : MAC address
+                                                            // STA Profile
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+            0xDD, 0x09,
+                0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0b, 0x00, 0x00, 0x00,                                     // dot11_phy_type_eht
+
+};
+
+//===============================================================================
+
+WDI_MAC_ADDRESS s_Connect_Addr_33_WiFi7_Open_MLD = {0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x06};
+WDI_MAC_ADDRESS s_Connect_Addr_34_WiFi7_Open_Link_1 = {0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x07};
+WDI_MAC_ADDRESS s_Connect_Addr_35_WiFi7_Open_Link_2 = {0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08};
+WDI_MAC_ADDRESS s_Connect_Addr_36_WiFi7_Open_Link_3 = {0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09};
+
+UCHAR  s_TLV_BSS_Entry_34_WiFi7_Open_Link_1 [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xca, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x07,                                     // AP Link 1 address
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x97, 0x00,
+            0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x01, 0x00, // Capability
+            0x00, 0x0e, // SSID
+                'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'O', 'p', 'e', 'n',
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+            0x03, 0x01,
+                0x06, // DSS Parameters
+            0x05, 0x04,
+                0x00, 0x01, 0x00, 0x00,     // TIM
+            0x2A, 0x01,
+                0x00, // ERP
+            0x2F, 0x01,
+                0x00, // Reserved
+            0xff, 0x23,                     // Multilink Extension Element
+                0x6B,                       // Multilink Extension ID
+                                                                    // [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                                                                    // [EML=0 + Medium=0 + BSS=1 + LinkID=1] [Reserved=0 + Basic=0] [Reserved=0000] [Reserved=000 MLD=0]
+                0x20, 0x00,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                0x09,                                               // Common Info length
+                    0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x06,                 // AP MLD Mac address (required for Basic)
+                        0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                        // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                        // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                        // [ EML Capabilities (2 octets) ]
+                        0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                // Per-Sta profile - 1/2 (Link 2)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                                                                    // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                0x33, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                    0x06,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,             // STA Info : AP Link2 MAC address
+                    // Remaining STA Profile for Link 2
+                // Per-Sta profile - 2/2 (Link 3)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                                                                    // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                0x37, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                    0x06,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,             // STA Info : AP Link 3 MAC address
+                    // Remaining STA Profile for Link 3
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x03, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x07, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+            0xDD, 0x09,
+                0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x9d, 0x00, 0x00, 0x00,     // Channel
+            0x02, 0x00, 0x00, 0x00      // BandId
+
+};
+
+UCHAR s_TLV_Success_AssociationResult_34_WiFi7_Open_Link_1[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xb3, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x07,                                 // AP Link 1 Mac Address
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00,             // Association Status
+            0x00, 0x00, 0x00, 0x00,             // Status Code
+            0x00,                               // ReAssociationRequest
+            0x00, 0x00, 0x00, 0x00,             // AuthAlgorithm = WDI_CIPHER_ALGO_NONE = 0
+            0x00, 0x00, 0x00, 0x00,             // UnicastCipherAlgorithm = WDI_AUTH_ALGO_80211_OPEN = 0
+            0x00, 0x00, 0x00, 0x00,             // MulticastDataCipherAlgorithm = WDI_AUTH_ALGO_80211_OPEN = 0
+            0x00, 0x00, 0x00, 0x00,             // MulticastMgmtCipherAlgorithm = WDI_AUTH_ALGO_80211_OPEN = 0
+            0x00,                               // FourAddressSupported
+            0x00,                               // Port Authorized
+            0x00,                               // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00,             // DSInfo
+            0x00, 0x00, 0x00, 0x00,             // AssociationComebackTime
+            0x02, 0x00, 0x00, 0x00,             // Band ID
+            0x00, 0x00, 0x00, 0x00,             // IHV Association Status
+            0x00, 0x00, 0x00, 0x00,             //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x75, 0x00,
+                0x21, 0x04, // Capabilities
+                0x0A, 0x00, // Listen Interval
+                0x00, 0x0e, // SSID
+                    'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'O', 'p', 'e', 'n',
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Rates
+                0x21, 0x02,
+                    0x07, 0x12,  //Power Capability
+                0x24, 0x02,
+                    0x01, 0x0B, //Supported Channels
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x08,
+                    0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03, // WMM settings
+                0xff, 0x3d,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                                                                        // Multi-Link Control =  [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                    0x80, 0x01,                                         // [EML=1 + Medium=0 + BSS=0 + LinkID=0] [Reserved=0 + Basic=0] [Reserved=0000] [Reserved=000 MLD=1]
+                    0x0b,                                               // Common Info length
+                        0x00, 0x01, 0x02, 0x03, 0x04, 0x05,                 // Local STA MLD Mac address (required for Basic)
+                                                                            // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                            0x81, 0x00, 0x00,                               // [ EML Capabilities (3 octets) ]
+                            0x02, 0x00,                                     // [ MLD Capabilities (2 octets) - (2 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x15,                                               // Length
+                                                                            // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                        0x32, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0010] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                        0x06,                                           // Length
+                            0x11, 0x01, 0x02, 0x03, 0x04, 0x21,             // STA Info : Local Link 1 MAC address
+                                                                            // STA Profile
+                            // Remaining STA Profile for Link 2
+                            0x11, 0x15, 0x21, 0x02, 0x00, 0x0e, 0xff, 0x03, 0x38, 0x01, 0x30, 0x00,
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x15,                                               // Length = 21
+                                                                            // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                        0x33, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                        0x06,                                           // Length
+                            0x11, 0x01, 0x02, 0x03, 0x04, 0x22,             // STA Info : Local Sta Link 2 MAC address
+                                                                            // STA Profile
+                            // Remaining STA Profile for Link 3
+                            0x11, 0x15, 0x21, 0x02, 0x00, 0x0e, 0xff, 0x03, 0x38, 0x01, 0x30, 0x00,
+
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x55, 0x00,
+                0x01, 0x04, //Capability
+                0x00, 0x00, //Status
+                0x01, 0xC0, //Association ID
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,  //Rates
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x18,
+                    0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00, //WMM settings
+                0xff, 0x23,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                    0x01, 0x10,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                    0x09,                                               // Common Info length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x06,                 // AP MLD Mac address (required for Basic)
+                            0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                            // [ EML Capabilities (2 octets) ]
+                            0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x22,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x07,             // STA Info : AP Link 1 MAC address
+                                                                            // STA Profile
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x23,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,             // STA Info : AP Link 2 MAC address
+                                                                // STA Profile
+
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0x97, 0x00,
+
+                0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+                0x01, 0x00, // Beacon Interval
+                0x31, 0x04, // Capability
+                0x00, 0x0e, // SSID
+                    'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'O', 'p', 'e', 'n',
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+                0x03, 0x01,
+                    0x06, // DSS Parameters
+                0x05, 0x04,
+                    0x00, 0x01, 0x00, 0x00,     // TIM
+                0x2A, 0x01,
+                    0x00, // ERP
+                0x2F, 0x01,
+                    0x00, // Reserved
+                0xff, 0x23,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                    0x01, 0x10,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                    0x09,                                               // Common Info length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x06,                 // AP MLD Mac address (required for Basic)
+                            0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                            // [ EML Capabilities (2 octets) ]
+                            0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x22,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,             // STA Info : AP Link 1 MAC address
+                                                                            // STA Profile
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x23,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,             // STA Info : AP Link 2 MAC address
+                                                                // STA Profile
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x03, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x07, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+                0xDD, 0x09,
+                    0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0b, 0x00, 0x00, 0x00,                                     // dot11_phy_type_eht
+
+};
+
+//===============================================================================
+
+WDI_MAC_ADDRESS s_Connect_Addr_37_WiFi7_Only_MLD = {0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0a};
+WDI_MAC_ADDRESS s_Connect_Addr_38_WiFi7_Only_Link_1 = {0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0b};
+WDI_MAC_ADDRESS s_Connect_Addr_39_WiFi7_Only_Link_2 = {0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0c};
+WDI_MAC_ADDRESS s_Connect_Addr_40_WiFi7_Only_Link_3 = {0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0d};
+
+UCHAR  s_TLV_BSS_Entry_38_WiFi7_Only_Link_1 [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xe8, 0x00, //Len
+
+        // WDI_TLV_BSSID = 10 = 0xa
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0b,                                 // Link 1 MAC address
+
+        // WDI_TLV_BEACON_FRAME = 143 = 0x8f
+        0x0a, 0x00,
+        0xb5, 0x00,
+            0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x31, 0x04, // Capability
+            0x00, 0x10, // SSID
+                'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'a', 'k', 'm', ':', '2', '4',
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+            0x03, 0x01,
+                0x06, // DSS Parameters
+            0x05, 0x04,
+                0x00, 0x01, 0x00, 0x00,     // TIM
+            0x2A, 0x01,
+                0x00, // ERP
+            0x2F, 0x01,
+                0x00, // Reserved
+            0x30, 0x1a,
+                0x01, 0x00,                     // Version
+                0x00, 0x0F, 0xAC, 0x04,         // Group Cipher = CCMP
+                0x01, 0x00,                     // Pairwise Cipher Count
+                    0x00, 0x0F, 0xAC, 0x09,     // Pairwise Cipher = GCMP-256
+                0x01, 0x00,                     // AKM Suite Count
+                    0x00, 0x0F, 0xAC, 0x18,     // AKM Suite    - SAE-384 (Wi-Fi 7)
+                0xCC, 0x00,                     // RSN Capability = MFPC + MFPR + ...
+                0x00, 0x00,                     // PMKID Count
+                0x00, 0x0F, 0xAC, 0x0C,         // Group Mgmt Cipher = GMAC
+            0xff, 0x23,                     // Multilink Extension Element
+                0x6B,                       // Multilink Extension ID
+                                                                    // [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                                                                    // [EML=0 + Medium=0 + BSS=1 + LinkID=1] [Reserved=0 + Basic=0] [Reserved=0000] [Reserved=000 MLD=0]
+                0x20, 0x00,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                0x09,                                               // Common Info length
+                    0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0a,                 // AP MLD Mac address (required for Basic)
+                        0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                        // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                        // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                        // [ EML Capabilities (2 octets) ]
+                        0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                // Per-Sta profile - 1/2 (Link 2)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                                                                    // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                0x33, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                    0x06,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0c,             // STA Info : AP Link 1 MAC address
+                    // Remaining STA Profile for Link 2
+                // Per-Sta profile - 2/2 (Link 3)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                                                                    // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                0x33, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                    0x06,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0d,             // STA Info : AP Link 2 MAC address
+                    // Remaining STA Profile for Link 3
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0c,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x32, 0x01, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0d,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x32, 0x03, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+
+            0x32, 0x04,                         // Extended Supported Rates: DOT11_INFO_ELEMENT_ID_EXTD_SUPPORTED_RATES
+                0x0C, 0x12, 0x18, 0xFB,         // 0xFB = BSS_MEMBERSHIP_SELECTOR_SAE_H2E_ONLY
+            0xDD, 0x09,
+                0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00,     // Channel
+            0x05, 0x00, 0x00, 0x00      // BandId
+};
+
+UCHAR s_TLV_Success_AssociationResult_38_WiFi7_Only_Link_1[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xaf, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0b,                             // AP Link 1 Mac Address
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00,             // Association Status
+            0x00, 0x00, 0x00, 0x00,             // Status Code
+            0x00,                               // ReAssociationRequest
+            0x08, 0x00, 0x00, 0x00,             // AuthAlgorithm = WDI_AUTH_ALGO_WPA3_SAE = 9
+            0x09, 0x00, 0x00, 0x00,             // UnicastCipherAlgorithm = WDI_CIPHER_ALGO_GCMP_256 = 9
+            0x09, 0x00, 0x00, 0x00,             // MulticastDataCipherAlgorithm = WDI_CIPHER_ALGO_GCMP_256 = 9
+            0x0C, 0x00, 0x00, 0x00,             // MulticastMgmtCipherAlgorithm = WDI_CIPHER_ALGO_BIP_GMAC_256 = C
+            0x00,                               // FourAddressSupported
+            0x00,                               // Port Authorized
+            0x00,                               // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00,             // DSInfo
+            0x00, 0x00, 0x00, 0x00,             // AssociationComebackTime
+            0x01, 0x00, 0x00, 0x00,             // Band ID
+            0x00, 0x00, 0x00, 0x00,             // IHV Association Status
+            0x00, 0x00, 0x00, 0x00,             //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x7f, 0x00,
+                0x21, 0x04, // Capabilities
+                0x0A, 0x00, // Listen Interval
+                0x00, 0x10, // SSID
+                    'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'a', 'k', 'm', ':', '2', '4',
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Rates
+                0x21, 0x02,
+                    0x07, 0x12,  //Power Capability
+                0x24, 0x02,
+                    0x01, 0x0B, //Supported Channels
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x08,
+                    0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03, // WMM settings
+                0x30, 0x1A,
+                    0x01, 0x00,                     // Version
+                    0x00, 0x0F, 0xAC, 0x04,         // Group Cipher = CCMP
+                    0x01, 0x00,                     // Pairwise Cipher Count
+                        0x00, 0x0F, 0xAC, 0x09,     // Pairwise Cipher = GCMP
+                    0x01, 0x00,                     // AKM Suite Count
+                        0x00, 0x0F, 0xAC, 0x18,     // AKM Suite    - SAE-384 (Wi-Fi 7)
+                    0xC0, 0x00,                     // RSN Capability = MFPC + MFPR + ...
+                    0x00, 0x00,                     // PMKID Count
+                    0x00, 0x0F, 0xAC, 0x0C,         // Group Mgmt Cipher = GMAC
+                0xff, 0x23,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                    0x01, 0x10,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                    0x09,                                               // Common Info length
+                        0x00, 0x01, 0x02, 0x03, 0x04, 0x05,                 // Sta MLD Mac address (required for Basic)
+                            0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                            // [ EML Capabilities (2 octets) ]
+                            0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x22,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x11, 0x01, 0x02, 0x03, 0x04, 0x21,             // STA Info : STA Link 1 MAC address
+                                                                            // STA Profile
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x23,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x11, 0x01, 0x02, 0x03, 0x04, 0x22,             // STA Info : Sta Link 2 MAC address
+                                                                // STA Profile
+
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x55, 0x00,
+            0x01, 0x04, //Capability
+            0x00, 0x00, //Status
+            0x01, 0xC0, //Association ID
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,  //Rates
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60, //Extended Rates
+            0xDD, 0x18,
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00,
+                0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00, //WMM settings
+            0xff, 0x23,                     // Multilink Extension Element
+                0x6B,                       // Multilink Extension ID
+                0x01, 0x10,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                0x09,                                               // Common Info length
+                    0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0a,                 // AP MLD Mac address (required for Basic)
+                        0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                        // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                        // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                        // [ EML Capabilities (2 octets) ]
+                        0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                // Per-Sta profile - 1/2 (Link 2)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                    0x00, 0x22,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                    0x00,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0c,             // STA Info : AP Link 1 MAC address
+                                                                        // STA Profile
+                // Per-Sta profile - 2/2 (Link 3)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                    0x00, 0x23,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                    0x00,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0d,             // STA Info : AP Link 2 MAC address
+                                                            // STA Profile
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0x89, 0x00,
+            0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x31, 0x04, // Capability
+            0x00, 0x10, // SSID
+                'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'a', 'k', 'm', ':', '2', '4',
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+            0x03, 0x01, 0x06, // DSS Parameters
+            0x05, 0x04, 0x00, 0x01, 0x00, 0x00,     // TIM
+            0x2A, 0x01, 0x00, // ERP
+            0x2F, 0x01, 0x00, // Reserved
+            0x30, 0x1a,
+                0x01, 0x00,                     // Version
+                0x00, 0x0F, 0xAC, 0x09,         // Group Cipher = GCMP
+                0x01, 0x00,                     // Pairwise Cipher Count
+                    0x00, 0x0F, 0xAC, 0x09,     // Pairwise Cipher = GCMP
+                0x01, 0x00,                     // AKM Suite Count
+                    0x00, 0x0F, 0xAC, 0x18,     // AKM Suite    - SAE-384 (Wi-Fi 7)
+                0xC0, 0x00,                     // RSN Capability = MFPC + MFPR + ...
+                0x00, 0x00,                     // PMKID Count
+                0x00, 0x0F, 0xAC, 0x0C,         // Group Mgmt Cipher = GMAC
+            0xff, 0x23,                     // Multilink Extension Element
+                0x6B,                       // Multilink Extension ID
+                0x01, 0x10,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                0x09,                                               // Common Info length
+                    0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0a,                 // MLD Mac address (required for Basic)
+                        0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                        // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                        // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                        // [ EML Capabilities (2 octets) ]
+                        0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                // Per-Sta profile - 1/2 (Link 2)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                    0x00, 0x22,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                    0x00,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0c,             // STA Info : MAC address
+                                                                        // STA Profile
+                // Per-Sta profile - 2/2 (Link 3)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                    0x00, 0x23,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                    0x00,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x0d,             // STA Info : MAC address
+                                                            // STA Profile
+            0x32, 0x04,                         // Extended Supported Rates: DOT11_INFO_ELEMENT_ID_EXTD_SUPPORTED_RATES
+                0x0C, 0x12, 0x18, 0xFB,         // 0xFB = BSS_MEMBERSHIP_SELECTOR_SAE_H2E_ONLY
+            0xDD, 0x09,
+                0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0b, 0x00, 0x00, 0x00,                                     // dot11_phy_type_eht
+
+};
+
+//===============================================================================
+// DualSta networks
+//===============================================================================
+//
+
+WDI_MAC_ADDRESS s_Connect_Addr_41_DualSta_5Ghz = {0x00, 0x51, 0x30, 0x40, 0x50, 0x60};
+UCHAR s_TLV_BSS_Entry_41_DualSta_5Ghz [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x63, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0x51, 0x30, 0x40, 0x50, 0x60,
+
+        // WDI_TLV_PROBE_RESPONSE_FRAME
+        0x09, 0x00, // Type
+        0x35, 0x00, // Length
+            0x00, 0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x00, 0x04, // Capability
+            0x00, 0x08,
+                'D', 'u', 'a', 'l', '-', 'S', 't', 'a',     // SSID
+            0x01, 0x04,                                     // Supported Rates
+                0x02, 0x04, 0x0B, 0x16,
+            0x03, 0x01,                                     // DSSS Parameter
+                0x01,
+            0x05, 0x04,                                     // TIM
+                0x00, 0x01, 0x00, 0x00,
+            0x46, 0x05,                                     // RM Enabled Capabilities
+                0x02, 0x00, 0x00, 0x00, 0x00,
+            0xDD, 0x07,                                     // Vendor specific - MBO-OCE IE
+                0x50, 0x6F, 0x9A,                           // WFA OUI
+                0x16,                                       // MBO-OCE IE OUI Type
+                    0x01,                                   // Attribute ID - AP capability
+                    0x01,                                   // Attrib length
+                    0x00,                                   // Not cellular data aware
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x04, 0x00,
+            0x04, 0x05, 0x06, 0x07,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_CHANNEL_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x24, 0x00, 0x00, 0x00,     // Channel
+            0x02, 0x00, 0x00, 0x00      // Band ID
+};
+
+UCHAR s_TLV_SuccessOpenAssociationResult_41_DualSta_5Ghz[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xD7, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0x51, 0x30, 0x40, 0x50, 0x60,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x01, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x00, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x02, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x30, 0x00,
+            0x21, 0x04, // Capabilities
+            0x0A, 0x00, // Listen Interval
+            0x00, 0x08,
+                'D', 'u', 'a', 'l', '-', 'S', 't', 'a',                 // SSID
+            0x01, 0x08,                                                 // Rates
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,
+            0x21, 0x02,                                                 // Power Capability
+                0x07, 0x12,
+            0x24, 0x02,                                                 // Supported Channels
+                0x01, 0x0B,
+            0x32, 0x04,                                                 // Extended Rates
+                0x0C, 0x12, 0x18, 0x60,
+            0xDD, 0x07,                                                 // WMM settings
+                0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x30, 0x00,
+            0x01, 0x04, //Capability
+            0x00, 0x00, //Status
+            0x01, 0xC0, //Association ID
+            0x01, 0x08,                         //Rates
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,
+            0x32, 0x04,                         //Extended Rates
+                0x0C, 0x12, 0x18, 0x60,
+            0xDD, 0x18,                         //WMM settings
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+
+        // WDI_TLV_BEACON_PROBE_RESPONSE
+        0x30, 0x00,                                 // Type
+        0x25, 0x00,                                 // Length
+            0x00, 0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                 // Beacon Interval
+            0x00, 0x04,                                 // Capability
+            0x00, 0x08,
+                'D', 'u', 'a', 'l', '-', 'S', 't', 'a', // SSID
+            0x01, 0x04, 0x02, 0x04, 0x0B, 0x16, // Supported Rates
+            0x03, 0x01, 0x01,                   // DSSS Parameter
+            0x05, 0x04, 0x00, 0x01, 0x00, 0x00, // TIM
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x07, 0x00, 0x00, 0x00,
+
+};
+
+// -----
+
+WDI_MAC_ADDRESS s_Connect_Addr_42_DualSta_6Ghz = {0x00, 0x52, 0x30, 0x40, 0x50, 0x60};
+UCHAR s_TLV_BSS_Entry_42_DualSta_6Ghz [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0x63, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x00, 0x52, 0x30, 0x40, 0x50, 0x60,
+
+        // WDI_TLV_PROBE_RESPONSE_FRAME
+        0x09, 0x00, // Type
+        0x35, 0x00, // Length
+            0x00, 0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x00, 0x04, // Capability
+            0x00, 0x08,
+                'D', 'u', 'a', 'l', '-', 'S', 't', 'a',     // SSID
+            0x01, 0x04,                                     // Supported Rates
+                0x02, 0x04, 0x0B, 0x16,
+            0x03, 0x01,                                     // DSSS Parameter
+                0x01,
+            0x05, 0x04,                                     // TIM
+                0x00, 0x01, 0x00, 0x00,
+            0x46, 0x05,                                     // RM Enabled Capabilities
+                0x02, 0x00, 0x00, 0x00, 0x00,
+            0xDD, 0x07,                                     // Vendor specific - MBO-OCE IE
+                0x50, 0x6F, 0x9A,                           // WFA OUI
+                0x16,                                       // MBO-OCE IE OUI Type
+                    0x01,                                   // Attribute ID - AP capability
+                    0x01,                                   // Attrib length
+                    0x00,                                   // Not cellular data aware
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x04, 0x00,
+            0x04, 0x05, 0x06, 0x07,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_CHANNEL_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x09, 0x00, 0x00, 0x00,     // Channel
+            0x05, 0x00, 0x00, 0x00      // Band ID
+};
+
+UCHAR s_TLV_SuccessOpenAssociationResult_42_DualSta_6Ghz[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xD7, 0x00,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x00, 0x52, 0x30, 0x40, 0x50, 0x60,
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00, //Association Status
+            0x00, 0x00, 0x00, 0x00, //Status Code
+            0x00,                   //ReAssociationRequest
+            0x01, 0x00, 0x00, 0x00, //AuthAlgorithm
+            0x00, 0x00, 0x00, 0x00, //UnicastCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastDataCipherAlgorithm
+            0x00, 0x00, 0x00, 0x00, //MulticastMgmtCipherAlgorithm
+            0x00,                   //FourAddressSupported
+            0x00,                   //Port Authorized
+            0x00,                   // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00, //DSInfo
+            0x00, 0x00, 0x00, 0x00, //AssociationComebackTime
+            0x05, 0x00, 0x00, 0x00, // Band ID
+            0x00, 0x00, 0x00, 0x00, // IHV Association Status
+            0x00, 0x00, 0x00, 0x00, //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x30, 0x00,
+            0x21, 0x04, // Capabilities
+            0x0A, 0x00, // Listen Interval
+            0x00, 0x08,
+                'D', 'u', 'a', 'l', '-', 'S', 't', 'a',                 // SSID
+            0x01, 0x08,                                                 // Rates
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,
+            0x21, 0x02,                                                 // Power Capability
+                0x07, 0x12,
+            0x24, 0x02,                                                 // Supported Channels
+                0x01, 0x0B,
+            0x32, 0x04,                                                 // Extended Rates
+                0x0C, 0x12, 0x18, 0x60,
+            0xDD, 0x07,                                                 // WMM settings
+                0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03,
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x30, 0x00,
+            0x01, 0x04, //Capability
+            0x00, 0x00, //Status
+            0x01, 0xC0, //Association ID
+            0x01, 0x08,                         //Rates
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,
+            0x32, 0x04,                         //Extended Rates
+                0x0C, 0x12, 0x18, 0x60,
+            0xDD, 0x18,                         //WMM settings
+                0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00,
+                0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00,
+
+        // WDI_TLV_BEACON_PROBE_RESPONSE
+        0x30, 0x00,                                 // Type
+        0x25, 0x00,                                 // Length
+            0x00, 0x11, 0x22, 0x33, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00,                                 // Beacon Interval
+            0x00, 0x04,                                 // Capability
+            0x00, 0x08,
+                'D', 'u', 'a', 'l', '-', 'S', 't', 'a',                 // SSID
+            0x01, 0x04, 0x02, 0x04, 0x0B, 0x16, // Supported Rates
+            0x03, 0x01, 0x01,                   // DSSS Parameter
+            0x05, 0x04, 0x00, 0x01, 0x00, 0x00, // TIM
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x07, 0x00, 0x00, 0x00,
+
+};
+
+//===============================================================================
+// Data throughput test networks
+//===============================================================================
+//
+
+__declspec(selectany) WDI_MAC_ADDRESS s_Connect_Addr_43_Speed_01_WiFi7_Open_Link_1 = {0x22, 0x22, 0x22, 0x22, 0x00, 0x01};
+__declspec(selectany) WDI_MAC_ADDRESS s_Connect_Addr_44_Speed_02_WiFi7_Open_Link_1 = {0x22, 0x22, 0x22, 0x22, 0x00, 0x02};
+__declspec(selectany) UCHAR  s_TLV_BSS_Entry_43_WiFi7_Open_Link_1 [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xca, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x22, 0x22, 0x22, 0X22, 0x00, 0x01,                                     // AP Link 1 address
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x97, 0x00,
+            0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x01, 0x00, // Capability
+            0x00, 0x0e, // SSID
+                'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'D', 'T', '0', '1',
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+            0x03, 0x01,
+                0x06, // DSS Parameters
+            0x05, 0x04,
+                0x00, 0x01, 0x00, 0x00,     // TIM
+            0x2A, 0x01,
+                0x00, // ERP
+            0x2F, 0x01,
+                0x00, // Reserved
+            0xff, 0x23,                     // Multilink Extension Element
+                0x6B,                       // Multilink Extension ID
+                                                                    // [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                                                                    // [EML=0 + Medium=0 + BSS=1 + LinkID=1] [Reserved=0 + Basic=0] [Reserved=0000] [Reserved=000 MLD=0]
+                0x20, 0x00,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                0x09,                                               // Common Info length
+                    0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x06,                 // AP MLD Mac address (required for Basic)
+                        0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                        // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                        // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                        // [ EML Capabilities (2 octets) ]
+                        0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                // Per-Sta profile - 1/2 (Link 2)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                                                                    // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                0x33, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                    0x06,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,             // STA Info : AP Link2 MAC address
+                    // Remaining STA Profile for Link 2
+                // Per-Sta profile - 2/2 (Link 3)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                                                                    // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                0x37, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                    0x06,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,             // STA Info : AP Link 3 MAC address
+                    // Remaining STA Profile for Link 3
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x03, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x07, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+            0xDD, 0x09,
+                0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x9d, 0x00, 0x00, 0x00,     // Channel
+            0x02, 0x00, 0x00, 0x00      // BandId
+
+};
+
+__declspec(selectany) UCHAR s_TLV_Success_AssociationResult_43_WiFi7_Open_Link_1[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xb3, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x22, 0x22, 0x22, 0x22, 0x00, 0x01,                                 // AP Link 1 Mac Address
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00,             // Association Status
+            0x00, 0x00, 0x00, 0x00,             // Status Code
+            0x00,                               // ReAssociationRequest
+            0x00, 0x00, 0x00, 0x00,             // AuthAlgorithm = WDI_CIPHER_ALGO_NONE = 0
+            0x00, 0x00, 0x00, 0x00,             // UnicastCipherAlgorithm = WDI_AUTH_ALGO_80211_OPEN = 0
+            0x00, 0x00, 0x00, 0x00,             // MulticastDataCipherAlgorithm = WDI_AUTH_ALGO_80211_OPEN = 0
+            0x00, 0x00, 0x00, 0x00,             // MulticastMgmtCipherAlgorithm = WDI_AUTH_ALGO_80211_OPEN = 0
+            0x00,                               // FourAddressSupported
+            0x00,                               // Port Authorized
+            0x00,                               // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00,             // DSInfo
+            0x00, 0x00, 0x00, 0x00,             // AssociationComebackTime
+            0x02, 0x00, 0x00, 0x00,             // Band ID
+            0x00, 0x00, 0x00, 0x00,             // IHV Association Status
+            0x00, 0x00, 0x00, 0x00,             //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x75, 0x00,
+                0x21, 0x04, // Capabilities
+                0x0A, 0x00, // Listen Interval
+                0x00, 0x0e, // SSID
+                    'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'D', 'T', '0', '1',
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Rates
+                0x21, 0x02,
+                    0x07, 0x12,  //Power Capability
+                0x24, 0x02,
+                    0x01, 0x0B, //Supported Channels
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x08,
+                    0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03, // WMM settings
+                0xff, 0x3d,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                                                                        // Multi-Link Control =  [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                    0x80, 0x01,                                         // [EML=1 + Medium=0 + BSS=0 + LinkID=0] [Reserved=0 + Basic=0] [Reserved=0000] [Reserved=000 MLD=1]
+                    0x0b,                                               // Common Info length
+                        0x00, 0x01, 0x02, 0x03, 0x04, 0x05,                 // Local STA MLD Mac address (required for Basic)
+                                                                            // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                            0x81, 0x00, 0x00,                               // [ EML Capabilities (3 octets) ]
+                            0x02, 0x00,                                     // [ MLD Capabilities (2 octets) - (2 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x15,                                               // Length
+                                                                            // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                        0x32, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0010] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                        0x06,                                           // Length
+                            0x11, 0x01, 0x02, 0x03, 0x04, 0x21,             // STA Info : Local Link 1 MAC address
+                                                                            // STA Profile
+                            // Remaining STA Profile for Link 2
+                            0x11, 0x15, 0x21, 0x02, 0x00, 0x0e, 0xff, 0x03, 0x38, 0x01, 0x30, 0x00,
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x15,                                               // Length = 21
+                                                                            // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                        0x33, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                        0x06,                                           // Length
+                            0x11, 0x01, 0x02, 0x03, 0x04, 0x22,             // STA Info : Local Sta Link 2 MAC address
+                                                                            // STA Profile
+                            // Remaining STA Profile for Link 3
+                            0x11, 0x15, 0x21, 0x02, 0x00, 0x0e, 0xff, 0x03, 0x38, 0x01, 0x30, 0x00,
+
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x55, 0x00,
+                0x01, 0x04, //Capability
+                0x00, 0x00, //Status
+                0x01, 0xC0, //Association ID
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,  //Rates
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x18,
+                    0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00, //WMM settings
+                0xff, 0x23,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                    0x01, 0x10,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                    0x09,                                               // Common Info length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x06,                 // AP MLD Mac address (required for Basic)
+                            0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                            // [ EML Capabilities (2 octets) ]
+                            0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x22,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x22, 0x22, 0x22, 0x22, 0x00, 0x01,             // STA Info : AP Link 1 MAC address
+                                                                            // STA Profile
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x23,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x22, 0x22, 0x22, 0x22, 0x00, 0x02,             // STA Info : AP Link 2 MAC address
+                                                                // STA Profile
+
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0x97, 0x00,
+
+                0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+                0x01, 0x00, // Beacon Interval
+                0x31, 0x04, // Capability
+                0x00, 0x0e, // SSID
+                    'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'D', 'T', '0', '1',
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+                0x03, 0x01,
+                    0x06, // DSS Parameters
+                0x05, 0x04,
+                    0x00, 0x01, 0x00, 0x00,     // TIM
+                0x2A, 0x01,
+                    0x00, // ERP
+                0x2F, 0x01,
+                    0x00, // Reserved
+                0xff, 0x23,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                    0x01, 0x10,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                    0x09,                                               // Common Info length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x06,                 // AP MLD Mac address (required for Basic)
+                            0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                            // [ EML Capabilities (2 octets) ]
+                            0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x22,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,             // STA Info : AP Link 1 MAC address
+                                                                            // STA Profile
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x23,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,             // STA Info : AP Link 2 MAC address
+                                                                // STA Profile
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x03, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x07, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+                0xDD, 0x09,
+                    0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0b, 0x00, 0x00, 0x00,                                     // dot11_phy_type_eht
+
+};
+
+
+__declspec(selectany) UCHAR  s_TLV_BSS_Entry_44_WiFi7_Open_Link_1 [] =
+{
+    // WDI_TLV_BSS_ENTRY
+    0x08, 0x00, //Type
+    0xca, 0x00, //Len
+
+        // WDI_TLV_BSSID
+        0x02, 0x00, // Type
+        0x06, 0x00, // Length
+            0x22, 0x22, 0x22, 0x22, 0x00, 0x02,                                     // AP Link 1 address
+        // WDI_TLV_BEACON_FRAME
+        0x0a, 0x00,
+        0x97, 0x00,
+            0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+            0x64, 0x00, // Beacon Interval
+            0x01, 0x00, // Capability
+            0x00, 0x0e, // SSID
+                'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'D', 'T', '0', '2',
+            0x01, 0x08,
+                0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+            0x03, 0x01,
+                0x06, // DSS Parameters
+            0x05, 0x04,
+                0x00, 0x01, 0x00, 0x00,     // TIM
+            0x2A, 0x01,
+                0x00, // ERP
+            0x2F, 0x01,
+                0x00, // Reserved
+            0xff, 0x23,                     // Multilink Extension Element
+                0x6B,                       // Multilink Extension ID
+                                                                    // [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                                                                    // [EML=0 + Medium=0 + BSS=1 + LinkID=1] [Reserved=0 + Basic=0] [Reserved=0000] [Reserved=000 MLD=0]
+                0x20, 0x00,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                0x09,                                               // Common Info length
+                    0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x06,                 // AP MLD Mac address (required for Basic)
+                        0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                        // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                        // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                        // [ EML Capabilities (2 octets) ]
+                        0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                // Per-Sta profile - 1/2 (Link 2)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                                                                    // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                0x33, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                    0x06,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,             // STA Info : AP Link2 MAC address
+                    // Remaining STA Profile for Link 2
+                // Per-Sta profile - 2/2 (Link 3)
+                0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                0x09,                                               // Length
+                                                                    // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                0x37, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                    0x06,                                               // STA Info : Length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,             // STA Info : AP Link 3 MAC address
+                    // Remaining STA Profile for Link 3
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x03, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x07, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0x32, 0x04,
+                0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+            0xDD, 0x09,
+                0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_BSS_ENTRY_DEVICE_CONTEXT
+        0x0d, 0x00,
+        0x09, 0x00,
+            0x04, 0x05, 0x06, 0x07, 0x04, 0x05, 0x06, 0x07, 0x00,
+
+        // WDI_TLV_BSS_ENTRY_SIGNAL_INFO
+        0x0b, 0x00,
+        0x08, 0x00,
+            0xCE, 0xFF, 0xFF, 0xFF,     // RSSI
+            0x5A, 0x00, 0x00, 0x00,     // Link Quality
+
+        // WDI_TLV_BSS_ENTRY_PHY_INFO
+        0x3a, 0x00,
+        0x08, 0x00,
+            0x9d, 0x00, 0x00, 0x00,     // Channel
+            0x02, 0x00, 0x00, 0x00      // BandId
+
+};
+
+__declspec(selectany) UCHAR s_TLV_Success_AssociationResult_44_WiFi7_Open_Link_1[] =
+{
+    // WDI_TLV_ASSOCIATION_RESULT
+    0x35, 0x00,
+    0xb3, 0x01,
+
+        // WDI_TLV_BSSID
+        0x02, 0x00,
+        0x06, 0x00,
+            0x22, 0x22, 0x22, 0x22, 0x00, 0x02,                                 // AP Link 1 Mac Address
+
+        // WDI_TLV_ASSOCIATION_RESULT_PARAMETERS
+        0x2D, 0x00,
+        0x30, 0x00,
+            0x00, 0x00, 0x00, 0x00,             // Association Status
+            0x00, 0x00, 0x00, 0x00,             // Status Code
+            0x00,                               // ReAssociationRequest
+            0x00, 0x00, 0x00, 0x00,             // AuthAlgorithm = WDI_CIPHER_ALGO_NONE = 0
+            0x00, 0x00, 0x00, 0x00,             // UnicastCipherAlgorithm = WDI_AUTH_ALGO_80211_OPEN = 0
+            0x00, 0x00, 0x00, 0x00,             // MulticastDataCipherAlgorithm = WDI_AUTH_ALGO_80211_OPEN = 0
+            0x00, 0x00, 0x00, 0x00,             // MulticastMgmtCipherAlgorithm = WDI_AUTH_ALGO_80211_OPEN = 0
+            0x00,                               // FourAddressSupported
+            0x00,                               // Port Authorized
+            0x00,                               // WMM QoS Enabled
+            0x00, 0x00, 0x00, 0x00,             // DSInfo
+            0x00, 0x00, 0x00, 0x00,             // AssociationComebackTime
+            0x02, 0x00, 0x00, 0x00,             // Band ID
+            0x00, 0x00, 0x00, 0x00,             // IHV Association Status
+            0x00, 0x00, 0x00, 0x00,             //DisableDataPathOffloadsScenario
+
+        // WDI_TLV_ASSOCIATION_REQUEST_FRAME
+        0x2E, 0x00,
+        0x75, 0x00,
+                0x21, 0x04, // Capabilities
+                0x0A, 0x00, // Listen Interval
+                0x00, 0x0e, // SSID
+                    'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'D', 'T', '0', '2',
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Rates
+                0x21, 0x02,
+                    0x07, 0x12,  //Power Capability
+                0x24, 0x02,
+                    0x01, 0x0B, //Supported Channels
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x08,
+                    0x00, 0x50, 0xF2, 0x02, 0x00, 0x01, 0x00, 0x03, // WMM settings
+                0xff, 0x3d,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                                                                        // Multi-Link Control =  [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                    0x80, 0x01,                                         // [EML=1 + Medium=0 + BSS=0 + LinkID=0] [Reserved=0 + Basic=0] [Reserved=0000] [Reserved=000 MLD=1]
+                    0x0b,                                               // Common Info length
+                        0x00, 0x01, 0x02, 0x03, 0x04, 0x05,                 // Local STA MLD Mac address (required for Basic)
+                                                                            // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                            0x81, 0x00, 0x00,                               // [ EML Capabilities (3 octets) ]
+                            0x02, 0x00,                                     // [ MLD Capabilities (2 octets) - (2 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x15,                                               // Length
+                                                                            // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                        0x32, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0010] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                        0x06,                                           // Length
+                            0x11, 0x01, 0x02, 0x03, 0x04, 0x21,             // STA Info : Local Link 1 MAC address
+                                                                            // STA Profile
+                            // Remaining STA Profile for Link 2
+                            0x11, 0x15, 0x21, 0x02, 0x00, 0x0e, 0xff, 0x03, 0x38, 0x01, 0x30, 0x00,
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x15,                                               // Length = 21
+                                                                            // STA Control = [B7-B4] [B3-B0] [B15-B12] [b11-B8]
+                        0x33, 0x00,                                         // [DTIM=0 + BeaconInt=0 + MAC=1 + Complete=1] [LinkID=0011] [Reserved=0000] [Reserved=0 + BSS=0 + NTSRBit=0 + NTSRPres=0]
+                        0x06,                                           // Length
+                            0x11, 0x01, 0x02, 0x03, 0x04, 0x22,             // STA Info : Local Sta Link 2 MAC address
+                                                                            // STA Profile
+                            // Remaining STA Profile for Link 3
+                            0x11, 0x15, 0x21, 0x02, 0x00, 0x0e, 0xff, 0x03, 0x38, 0x01, 0x30, 0x00,
+
+
+        // WDI_TLV_ASSOCIATION_RESPONSE_FRAME
+        0x2F, 0x00,
+        0x55, 0x00,
+                0x01, 0x04, //Capability
+                0x00, 0x00, //Status
+                0x01, 0xC0, //Association ID
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C,  //Rates
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60, //Extended Rates
+                0xDD, 0x18,
+                    0x00, 0x50, 0xF2, 0x02, 0x01, 0x01, 0x80, 0x00, 0x03, 0xA4, 0x00, 0x00, 0x27, 0xA4, 0x00, 0x00, 0x42, 0x43, 0x5E, 0x00, 0x62, 0x32, 0x2F, 0x00, //WMM settings
+                0xff, 0x23,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                    0x01, 0x10,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                    0x09,                                               // Common Info length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x06,                 // AP MLD Mac address (required for Basic)
+                            0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                            // [ EML Capabilities (2 octets) ]
+                            0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x22,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x22, 0x22, 0x22, 0x22, 0x00, 0x01,             // STA Info : AP Link 1 MAC address
+                                                                            // STA Profile
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x23,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x22, 0x22, 0x22, 0x22, 0x00, 0x02,             // STA Info : AP Link 2 MAC address
+                                                                // STA Profile
+
+
+        // WDI_TLV_BEACON_FRAME
+        0x30, 0x00,
+        0x97, 0x00,
+
+                0x22, 0x02, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, // Timestamp
+                0x01, 0x00, // Beacon Interval
+                0x31, 0x04, // Capability
+                0x00, 0x0e, // SSID
+                    'W', 'i', '-', 'F', 'i', ' ', '7', ' ', '-', ' ', 'D', 'T', '0', '2',
+                0x01, 0x08,
+                    0x82, 0x84, 0x8B, 0x96, 0x24, 0x30, 0x48, 0x6C, // Supported Rates
+                0x03, 0x01,
+                    0x06, // DSS Parameters
+                0x05, 0x04,
+                    0x00, 0x01, 0x00, 0x00,     // TIM
+                0x2A, 0x01,
+                    0x00, // ERP
+                0x2F, 0x01,
+                    0x00, // Reserved
+                0xff, 0x23,                     // Multilink Extension Element
+                    0x6B,                       // Multilink Extension ID
+                    0x01, 0x10,                                         // MultiLink Control ([Reserved=0000000 + MLDCapabilities=1 + 000 + LinkID=1 + Reserved=0 + Basic=000] = 0000000 1 000 1 0 000 = 0x0110)
+                    0x09,                                               // Common Info length
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x06,                 // AP MLD Mac address (required for Basic)
+                            0x01,                                           // [ Link ID (1 octet) - in Beacon/ProbeResp/(Re)AssocResp frames ]
+                                                                            // [ BSS Parameters Change Count (1 octet) - from AP only ]
+                                                                            // [ Medium Synchronization delay (2 octets) - from AP only]
+                                                                            // [ EML Capabilities (2 octets) ]
+                            0x00, 0x03,                                     // [ MLD Capabilities (2 octets) - (3 links max) in Beacon/ProbeResp/(Re)AssocReq/(Re)AssocResp frames ]
+                    // Per-Sta profile - 1/2 (Link 2)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x22,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,             // STA Info : AP Link 1 MAC address
+                                                                            // STA Profile
+                    // Per-Sta profile - 2/2 (Link 3)
+                    0x00,                                               // Subelement ID = 0 for Per-Sta Profile Element
+                    0x09,                                               // Length
+                        0x00, 0x23,                                         // STA Control = (Reserved=00000+BSSParam=0+NTSRBS=0+NTSRLP=0+DTIM=0+BeaconInt=0+MAC=1+CompleteP=0+LinkID=0001) = 0x0021
+                        0x00,                                               // STA Info : Length
+                            0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,             // STA Info : AP Link 2 MAC address
+                                                                // STA Profile
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x08,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x03, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+            0xc9, 0x14,                                 // RNR IE
+                0x04, 0x10,                                 // TBTT: 0x04 => B2=1(FilteredAP),B4-B7=0(TBTT Information Count=0+1) :: 0x0c = TBTT Length
+                    0x51, 0x06,                             // Operating Class = 81 (2.4 GHz), Channel = 6
+                        0x00,                                   // TBTTOffset
+                        0x00, 0xA0, 0xB0, 0xC0, 0xD1, 0x09,     // Bssid
+                        0x1d, 0xc5, 0x3b, 0x12,                 // ShortSsid
+                        0x40,                                   // BssParameters
+                        0x00,                                   // 20 MHz
+                        0x12, 0x07, 0x56,                       // Mld Parameters: MLD ID(8 bits) : LinkID (4 bits) + ...
+                0x32, 0x04,
+                    0x0C, 0x12, 0x18, 0x60,     // Extended Supported Rates
+                0xDD, 0x09,
+                    0x00, 0x10, 0x18, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,    // Vendor Specific
+
+        // WDI_TLV_PHY_TYPE_LIST
+        0x19, 0x00,
+        0x04, 0x00,
+            0x0b, 0x00, 0x00, 0x00,                                     // dot11_phy_type_eht
+
+};
+
+//===============================================================================
+//===============================================================================
+
+typedef struct
+{
+    UINT32 BandId;
+    WDI_MAC_ADDRESS* pMacAddress;
+    PUCHAR pTlvBssEntry;
+    UINT32 TlvBssEntrySize;
+    PUCHAR pTlvAssociationResult;
+    UINT32 TlvAssociationResultSize;
+
+} WdiTestConnectEntry, * PWdiTestConnectEntry;
+
+WdiTestConnectEntry g_ConnectEntries[] =
+{
+    // 0
+    {                                               // 0th Entry is disconnected state
+        0,
+        nullptr,
+        nullptr, 0,
+        nullptr, 0,
+    },
+
+    // 1 - WFC_OPEN
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr,
+        s_TLV_BSS_Entry_1, sizeof(s_TLV_BSS_Entry_1),
+        s_TLV_SuccessOpenAssociationResult, sizeof(s_TLV_SuccessOpenAssociationResult),
+    },
+
+    // 2 - WFC_OPEN
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_2_Open,
+        s_TLV_BSS_Entry_2_Open, sizeof(s_TLV_BSS_Entry_2_Open),
+        s_TLV_Success_AssociationResult_2_Open, sizeof(s_TLV_Success_AssociationResult_2_Open),
+    },
+
+    // 3 - WDI__WEP
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_3_WEP,
+        s_TLV_BSS_Entry_3_WEP, sizeof(s_TLV_BSS_Entry_3_WEP),
+        s_TLV_Success_AssociationResult_3_WEP, sizeof(s_TLV_Success_AssociationResult_3_WEP),
+    },
+
+    // 4 - WDI_SECURE
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_4_RSNA_CCMP,
+        s_TLV_BSS_Entry_4_RSNA_CCMP, sizeof(s_TLV_BSS_Entry_4_RSNA_CCMP),
+        s_TLV_Success_AssociationResult_4_RSNA_CCMP, sizeof(s_TLV_Success_AssociationResult_4_RSNA_CCMP),
+    },
+
+    // 5 - WDI__IHV
+    {
+        TESTMP_BAND_IHV,
+        &s_Connect_Addr_5_IHV,
+        s_TLV_BSS_Entry_5_IHV, sizeof(s_TLV_BSS_Entry_5_IHV),
+        s_TLV_Success_AssociationResult_5_IHV, sizeof(s_TLV_Success_AssociationResult_5_IHV),
+    },
+
+    // 6 - WDI__FT
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_6_FT_CCMP,
+        s_TLV_BSS_Entry_6_FT_CCMP, sizeof(s_TLV_BSS_Entry_6_FT_CCMP),
+        s_TLV_Success_AssociationResult_6_FT_CCMP, sizeof(s_TLV_Success_AssociationResult_6_FT_CCMP),
+    },
+
+    // 7 - WDI__FTPSK
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_7_FT_PSK_CCMP,
+        s_TLV_BSS_Entry_7_FT_PSK_CCMP, sizeof(s_TLV_BSS_Entry_7_FT_PSK_CCMP),
+        s_TLV_Success_AssociationResult_7_FT_PSK_CCMP, sizeof(s_TLV_Success_AssociationResult_7_FT_PSK_CCMP),
+    },
+
+    // 8 -
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_8_Hidden,
+        s_TLV_BSS_Entry_Beacon_8_Hidden, sizeof(s_TLV_BSS_Entry_Beacon_8_Hidden),
+        s_TLV_Success_AssociationResult_8_Hidden, sizeof(s_TLV_Success_AssociationResult_8_Hidden),
+    },
+
+    // 9 - WDI_adPSK
+    {
+        WDI_BAND_ID_60000,
+        &s_Connect_Addr_9_11ad_PSK,
+        s_TLV_BSS_Entry_9_11ad_ProbeResponse_PSK, sizeof(s_TLV_BSS_Entry_9_11ad_ProbeResponse_PSK),
+        s_TLV_Success_AssociationResult_9_11ad_PSK, sizeof(s_TLV_Success_AssociationResult_9_11ad_PSK),
+    },
+
+    // 10 - WDI_ad_1x
+    {
+        WDI_BAND_ID_60000,
+        &s_Connect_Addr_10_11ad_1x,
+        s_TLV_BSS_Entry_10_11ad_ProbeResponse_1x, sizeof(s_TLV_BSS_Entry_10_11ad_ProbeResponse_1x),
+        s_TLV_Success_AssociationResult_10_11ad_1x, sizeof(s_TLV_Success_AssociationResult_10_11ad_1x),
+    },
+
+    // 11 - WDI_ad_ON
+    {
+        WDI_BAND_ID_60000,
+        &s_Connect_Addr_11_11ad_Open,
+        s_TLV_BSS_Entry_11_11ad_ProbeResponse_Open, sizeof(s_TLV_BSS_Entry_11_11ad_ProbeResponse_Open),
+        s_TLV_Success_AssociationResult_11_11ad_Open, sizeof(s_TLV_Success_AssociationResult_11_11ad_Open),
+    },
+
+    // 12 - WDI_OPEN_11ax.2.4
+    {
+        WDI_BAND_ID_60000,
+        &s_Connect_Addr_12_11ax_24_Open,
+        s_TLV_BSS_Entry_12_11ax_24_Open, sizeof(s_TLV_BSS_Entry_12_11ax_24_Open),
+        s_TLV_Success_AssociationResult_12_11ax_24_Open, sizeof(s_TLV_Success_AssociationResult_12_11ax_24_Open),
+    },
+
+    // 13 - WDI_OPEN_11ax.5
+    {
+        WDI_BAND_ID_5000,
+        &s_Connect_Addr_13_11ax_5_Open,
+        s_TLV_BSS_Entry_13_11ax_5_Open, sizeof(s_TLV_BSS_Entry_13_11ax_5_Open),
+        s_TLV_Success_AssociationResult_13_11ax_5_Open, sizeof(s_TLV_Success_AssociationResult_13_11ax_5_Open),
+    },
+
+    // 14 - WDI_WPA3-SAE
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_14_WPA3_SAE_CCMP,
+        s_TLV_BSS_Entry_14_WPA3_SAE_CCMP, sizeof(s_TLV_BSS_Entry_14_WPA3_SAE_CCMP),
+        s_TLV_Success_AssociationResult_14_WPA3_SAE_CCMP, sizeof(s_TLV_Success_AssociationResult_14_WPA3_SAE_CCMP),
+    },
+
+    // 15 - WDI_SHA256
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_15_WPA2PSK_SHA256,
+        s_TLV_BSS_Entry_15_WPA2PSK_SHA256, sizeof(s_TLV_BSS_Entry_15_WPA2PSK_SHA256),
+        s_TLV_Success_AssociationResult_15_WPA2PSK_SHA256, sizeof(s_TLV_Success_AssociationResult_15_WPA2PSK_SHA256),
+    },
+
+    // 16 - WDI_WPA3-SUITE_B
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_16_WPA3_SUITEB,
+        s_TLV_BSS_Entry_16_WPA3_SUITEB, sizeof(s_TLV_BSS_Entry_16_WPA3_SUITEB),
+        s_TLV_Success_AssociationResult_16_WPA3_SUITEB, sizeof(s_TLV_Success_AssociationResult_16_WPA3_SUITEB),
+    },
+
+    // 17 - 6E__1
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_17_6G_S1_2_4_Ghz,
+        s_TLV_BSS_Entry_17_6G_S1_2_4_Ghz, sizeof(s_TLV_BSS_Entry_17_6G_S1_2_4_Ghz),
+        s_TLV_Success_AssociationResult_17_6G_S1_2_4_Ghz, sizeof(s_TLV_Success_AssociationResult_17_6G_S1_2_4_Ghz),
+    },
+
+    // 18 - 6E__1
+    {
+        WDI_BAND_ID_5000,
+        &s_Connect_Addr_18_6G_S1_5_Ghz,
+        s_TLV_BSS_Entry_18_6G_S1_5_Ghz, sizeof(s_TLV_BSS_Entry_18_6G_S1_5_Ghz),
+        s_TLV_Success_AssociationResult_18_6G_S1_5_Ghz, sizeof(s_TLV_Success_AssociationResult_18_6G_S1_5_Ghz),
+    },
+
+    // 19 - 6E__1
+    {
+        WDI_BAND_ID_6000,
+        &s_Connect_Addr_19_6G_S1a_6_Ghz,
+        s_TLV_BSS_Entry_19_6G_S1a_6_Ghz, sizeof(s_TLV_BSS_Entry_19_6G_S1a_6_Ghz),
+        s_TLV_Success_AssociationResult_19_6G_S1a_6_Ghz, sizeof(s_TLV_Success_AssociationResult_19_6G_S1a_6_Ghz),
+    },
+
+    // 20 - 6E__1
+    {
+        WDI_BAND_ID_6000,
+        &s_Connect_Addr_20_6G_S1b_6_Ghz,
+        s_TLV_BSS_Entry_20_6G_S1b_6_Ghz, sizeof(s_TLV_BSS_Entry_20_6G_S1b_6_Ghz),
+        s_TLV_Success_AssociationResult_20_6G_S1b_6_Ghz, sizeof(s_TLV_Success_AssociationResult_20_6G_S1b_6_Ghz),
+    },
+
+    // 21 - 6E__2
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_21_6G_S2_2_4_Ghz,
+        s_TLV_BSS_Entry_21_6G_S2_2_4_Ghz, sizeof(s_TLV_BSS_Entry_21_6G_S2_2_4_Ghz),
+        s_TLV_Success_AssociationResult_21_6G_S2_2_4_Ghz, sizeof(s_TLV_Success_AssociationResult_21_6G_S2_2_4_Ghz),
+    },
+
+    // 22 - 6E__2
+    {
+        WDI_BAND_ID_5000,
+        &s_Connect_Addr_22_6G_S2_5_Ghz,
+        s_TLV_BSS_Entry_22_6G_S2_5_Ghz, sizeof(s_TLV_BSS_Entry_22_6G_S2_5_Ghz),
+        s_TLV_Success_AssociationResult_22_6G_S2_5_Ghz, sizeof(s_TLV_Success_AssociationResult_22_6G_S2_5_Ghz),
+    },
+
+    // 23 - 6E__2
+    {
+        WDI_BAND_ID_6000,
+        &s_Connect_Addr_23_6G_S2_6_Ghz,
+        s_TLV_BSS_Entry_23_6G_S2_6_Ghz, sizeof(s_TLV_BSS_Entry_23_6G_S2_6_Ghz),
+        s_TLV_Success_AssociationResult_23_6G_S2_6_Ghz, sizeof(s_TLV_Success_AssociationResult_23_6G_S2_6_Ghz),
+    },
+
+    // 24 - 6E__3
+    {
+        WDI_BAND_ID_2400,
+        &s_Connect_Addr_24_6G_S3_2_4_Ghz,
+        s_TLV_BSS_Entry_24_6G_S3_2_4_Ghz, sizeof(s_TLV_BSS_Entry_24_6G_S3_2_4_Ghz),
+        s_TLV_Success_AssociationResult_24_6G_S3_2_4_Ghz, sizeof(s_TLV_Success_AssociationResult_24_6G_S3_2_4_Ghz),
+    },
+
+    // 25 - 6E__4
+    {
+        WDI_BAND_ID_6000,
+        &s_Connect_Addr_25_6G_S4_6_Ghz,
+        s_TLV_BSS_Entry_25_6G_S4_6_Ghz, sizeof(s_TLV_BSS_Entry_25_6G_S4_6_Ghz),
+        s_TLV_Success_AssociationResult_25_6G_S4_6_Ghz, sizeof(s_TLV_Success_AssociationResult_25_6G_S4_6_Ghz),
+    },
+
+    // 26 - WDI_OWE_RNR
+    {
+        WDI_BAND_ID_2400,
+        &s_ConnectAddr_26_OWE_With_RNR,
+        s_TLV_BSS_Entry_26_OWE_With_RNR, sizeof(s_TLV_BSS_Entry_26_OWE_With_RNR),
+        s_TLV_Failure_AssociationResult_26_OWE_With_RNR, sizeof(s_TLV_Failure_AssociationResult_26_OWE_With_RNR)
+    },
+    // 27 - <WDI_OWE_TM_OPEN>
+    {
+        WDI_BAND_ID_2400,
+        &s_ConnectAddr_27_OWE_TM_OWE,
+        s_TLV_BSS_Entry_27_OWE_TM_OWE, sizeof(s_TLV_BSS_Entry_27_OWE_TM_OWE),
+        s_TLV_Failure_AssociationResult_27_OWE_TM_OWE, sizeof(s_TLV_Failure_AssociationResult_27_OWE_TM_OWE)
+    },
+    // 28 - WDI_OWE_TM_OPEN
+    {
+        WDI_BAND_ID_2400,
+        &s_ConnectAddr_28_OWE_TM_Open,
+        s_TLV_BSS_Entry_28_OWE_TM_Open_Beacon, sizeof(s_TLV_BSS_Entry_28_OWE_TM_Open_Beacon),
+        s_TLV_Failure_AssociationResult_28_OWE_TM_Open, sizeof(s_TLV_Failure_AssociationResult_28_OWE_TM_Open)
+    },
+
+    // 29 is only MLD address for Wi-Fi 7
+    // 30 - Wi-Fi 7 - Mixed
+    {
+        WDI_BAND_ID_5000,
+        &s_Connect_Addr_30_WiFi7_Mixed_Link_1,
+        s_TLV_BSS_Entry_30_WiFi7_Mixed_Link_1, sizeof(s_TLV_BSS_Entry_30_WiFi7_Mixed_Link_1),
+        s_TLV_Success_AssociationResult_30_WiFi7_Mixed_Link_1, sizeof(s_TLV_Success_AssociationResult_30_WiFi7_Mixed_Link_1),
+    },
+    // 34 - Wi-Fi 7 - Open
+    {
+        WDI_BAND_ID_5000,
+        &s_Connect_Addr_34_WiFi7_Open_Link_1,
+        s_TLV_BSS_Entry_34_WiFi7_Open_Link_1, sizeof(s_TLV_BSS_Entry_34_WiFi7_Open_Link_1),
+        s_TLV_Success_AssociationResult_34_WiFi7_Open_Link_1, sizeof(s_TLV_Success_AssociationResult_34_WiFi7_Open_Link_1),
+    },
+    // 38 - Wi-Fi 7 - Only
+    {
+        WDI_BAND_ID_6000,
+        &s_Connect_Addr_38_WiFi7_Only_Link_1,
+        s_TLV_BSS_Entry_38_WiFi7_Only_Link_1, sizeof(s_TLV_BSS_Entry_38_WiFi7_Only_Link_1),
+        s_TLV_Success_AssociationResult_38_WiFi7_Only_Link_1, sizeof(s_TLV_Success_AssociationResult_38_WiFi7_Only_Link_1),
+    },
+
+    // 41 - Dual-Sta
+    {
+        WDI_BAND_ID_5000,
+        &s_Connect_Addr_41_DualSta_5Ghz,
+        s_TLV_BSS_Entry_41_DualSta_5Ghz, sizeof(s_TLV_BSS_Entry_41_DualSta_5Ghz),
+        s_TLV_SuccessOpenAssociationResult_41_DualSta_5Ghz, sizeof(s_TLV_SuccessOpenAssociationResult_41_DualSta_5Ghz),
+    },
+
+    // 42 - Dual-Sta
+    {
+        WDI_BAND_ID_6000,
+        &s_Connect_Addr_42_DualSta_6Ghz,
+        s_TLV_BSS_Entry_42_DualSta_6Ghz, sizeof(s_TLV_BSS_Entry_42_DualSta_6Ghz),
+        s_TLV_SuccessOpenAssociationResult_42_DualSta_6Ghz, sizeof(s_TLV_SuccessOpenAssociationResult_42_DualSta_6Ghz),
+    },
+
+    // 43 - Speed Test(01)
+    {
+        WDI_BAND_ID_5000,
+        &s_Connect_Addr_43_Speed_01_WiFi7_Open_Link_1,
+        s_TLV_BSS_Entry_43_WiFi7_Open_Link_1, sizeof(s_TLV_BSS_Entry_43_WiFi7_Open_Link_1),
+        s_TLV_Success_AssociationResult_43_WiFi7_Open_Link_1, sizeof(s_TLV_Success_AssociationResult_43_WiFi7_Open_Link_1),
+    },
+
+    // 44 - Speed Test(02)
+    {
+        WDI_BAND_ID_5000,
+        &s_Connect_Addr_44_Speed_02_WiFi7_Open_Link_1,
+        s_TLV_BSS_Entry_44_WiFi7_Open_Link_1, sizeof(s_TLV_BSS_Entry_44_WiFi7_Open_Link_1),
+        s_TLV_Success_AssociationResult_44_WiFi7_Open_Link_1, sizeof(s_TLV_Success_AssociationResult_44_WiFi7_Open_Link_1),
+    },
+};
+
+// clang-format on

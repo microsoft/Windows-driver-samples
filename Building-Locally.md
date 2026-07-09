@@ -120,6 +120,52 @@ Get-Help .\Build-Samples.ps1 -Detailed
 
 # Build a specific sample for Debug|x64 only:
 .\Build-Samples.ps1 -Samples 'tools.sdv.samples.sampledriver' -Configurations 'Debug' -Platforms 'x64'
+
+# Build every sample linking against an older WDK library set (default is the latest):
+.\Build-Samples.ps1 -NtTargetVersion 10.0.22000
+```
+
+`-NtTargetVersion` selects the WDK **`_NT_TARGET_VERSION`** — the OS version of the libraries
+the driver links against. It accepts the Windows build number (`10.0.<build>`) or the short
+`<build>` tag (e.g. `10.0.22000` or `22000`); when omitted it uses the latest. The valid
+values are **auto-discovered from the active WDK** — `Get-NtTargetVersions.ps1` parses the
+WDK's `DriverGeneral.xml` rule — so a new WDK version is picked up automatically with no edits.
+List what's available with:
+
+```powershell
+.\Get-NtTargetVersions.ps1
+```
+
+---
+
+## Excluding samples from the build
+
+Samples that are known not to build for a given environment are listed in `exclusions.csv`
+at the repo root. Each row excludes a path (with wildcards) for specific
+configuration/platform combinations, an optional WDK build-number range, and an optional
+`_NT_TARGET_VERSION` range:
+
+```
+Path,Configurations,MinBuild,MaxBuild,MinNtTargetVersion,MaxNtTargetVersion,Reason
+```
+
+| Column           | Meaning                                                                                  |
+| ---------------- | ---------------------------------------------------------------------------------------- |
+| `Path`           | Sample path (backslashes); supports `*`/`?` wildcards.                                    |
+| `Configurations` | `;`-separated `Config\|Platform` patterns, or `*` for all (e.g. `*\|ARM64`, `Debug\|x64`). |
+| `MinBuild`/`MaxBuild` | Inclusive WDK build-number range; blank = unbounded.                                |
+| `MinNtTargetVersion`/`MaxNtTargetVersion` | Inclusive `-NtTargetVersion` build-number range (e.g. `22621` matches `10.0.22621`); blank = unbounded. Use this for samples that fail only when linking against older libraries. |
+| `Reason`         | Human-readable explanation (keep this column last; quote it if it contains commas).      |
+
+A row is applied only when every populated condition matches the current run (path,
+configuration/platform, WDK build-number range, and NT target-version range are AND-ed
+together). Leave a column blank to ignore that dimension (the default for most rows).
+
+For example, to exclude a sample (Debug builds only) when linking against the `10.0.22621`
+library set or older, because it uses a newer API:
+
+```
+somepath,Debug|*,,,,22621,uses an API newer than the 10.0.22621 library
 ```
 
 ---
