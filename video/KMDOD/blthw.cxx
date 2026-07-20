@@ -281,8 +281,7 @@ BDD_HWBLT::ExecutePresentDisplayOnly(
     SIZE_T sizeRects = NumDirtyRects*sizeof(RECT);
     SIZE_T size = sizeof(DoPresentMemory) + sizeMoves + sizeRects;
 
-    DoPresentMemory* ctx = reinterpret_cast<DoPresentMemory*>
-                                (new (POOL_FLAG_PAGED) BYTE[size]);
+    DoPresentMemory* ctx = reinterpret_cast<DoPresentMemory*>(operator new[](size, POOL_FLAG_PAGED));
 
     if (!ctx)
     {
