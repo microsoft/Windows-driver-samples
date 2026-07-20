@@ -19,7 +19,7 @@ FONT 8, "MS Shell Dlg"
 BEGIN
     CONTROL         "Remove a Miniport",IDC_REMOVE,"Button",
                     BS_AUTORADIOBUTTON | WS_TABSTOP,39,73,75,10
-    CONTROL         "Add a Miniport",IDC_ADD,"Button",BS_AUTORADIOBUTTON | 
+    CONTROL         "Add a Miniport",IDC_ADD,"Button",BS_AUTORADIOBUTTON |
                     WS_TABSTOP,39,36,61,10
     LTEXT           "Removal of miniport happens in FIFO order",IDC_STATIC,
                     39,93,135,8

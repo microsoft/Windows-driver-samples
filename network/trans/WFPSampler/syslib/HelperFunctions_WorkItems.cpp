@@ -54,7 +54,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "HelperFunctions_Include.h"     /// .
-#include "HelperFunctions_WorkItems.tmh" /// $(OBJ_PATH)\$(O)\ 
+#include "HelperFunctions_WorkItems.tmh" /// $(OBJ_PATH)\$(O)\
 
 /**
  @kernel_helper_function="KrnlHlprWorkItemDataPurge"

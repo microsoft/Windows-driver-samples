@@ -79,7 +79,7 @@ NDIS_OID VElanSupportedOids[] =
     OID_PNP_REMOVE_WAKE_UP_PATTERN,
 #if IEEE_VLAN_SUPPORT
     OID_GEN_VLAN_ID,
-#endif    
+#endif
     OID_PNP_ENABLE_WAKE_UP
 };
 
@@ -121,8 +121,8 @@ Return Value:
     NET_IFINDEX                     HigherLayerIfIndex, LowerLayerIfIndex;
     NDIS_MINIPORT_ADAPTER_ATTRIBUTES MiniportAttributesContent;
     const PNDIS_MINIPORT_ADAPTER_ATTRIBUTES  MiniportAttributes = &MiniportAttributesContent;
-    
- 
+
+
 
 #if IEEE_VLAN_SUPPORT
     NDIS_STRING                     strVlanId = NDIS_STRING_CONST("VlanID");
@@ -136,9 +136,9 @@ Return Value:
 
 
     UNREFERENCED_PARAMETER(MiniportDriverContext);
-    
+
     //
-    // Start off by retrieving our virtual miniport context (VELAN) and 
+    // Start off by retrieving our virtual miniport context (VELAN) and
     // storing the Miniport handle in it.
     //
 
@@ -179,20 +179,20 @@ Return Value:
 
         MiniportAttributesContent.RegistrationAttributes.CheckForHangTimeInSeconds = 0;
         MiniportAttributesContent.RegistrationAttributes.InterfaceType = 0;
-        
 
-        
+
+
         NDIS_DECLARE_MINIPORT_ADAPTER_CONTEXT(VELAN);
         Status = NdisMSetMiniportAttributes(MiniportAdapterHandle,
                                             MiniportAttributes);
 
-        
+
 
         if (Status != NDIS_STATUS_SUCCESS)
         {
             break;
         }
-        
+
 
         //
         // Access configuration parameters for this miniport.
@@ -220,14 +220,14 @@ Return Value:
             ConfigurationHandle);
 
         //
-        // If there is a NetworkAddress override, use it 
+        // If there is a NetworkAddress override, use it
         //
-        if (((Status == NDIS_STATUS_SUCCESS) 
+        if (((Status == NDIS_STATUS_SUCCESS)
                 && (i == ETH_LENGTH_OF_ADDRESS))
-                && ((!ETH_IS_MULTICAST(NetworkAddress)) 
+                && ((!ETH_IS_MULTICAST(NetworkAddress))
                 && (ETH_IS_LOCALLY_ADMINISTERED (NetworkAddress))))
         {
-            
+
             ETH_COPY_NETWORK_ADDRESS(
                         pVElan->CurrentAddress,
                         NetworkAddress);
@@ -241,7 +241,7 @@ Return Value:
         // ignore error reading the network address
         //
         Status = NDIS_STATUS_SUCCESS;
-   
+
 #if IEEE_VLAN_SUPPORT
         //
         // Read VLAN ID
@@ -269,11 +269,11 @@ Return Value:
 
         else
         {
-            
+
             pVElan->VlanId = VLANID_DEFAULT;
             Status = NDIS_STATUS_SUCCESS;
         }
-#endif    
+#endif
 
 
         NdisCloseConfiguration(ConfigurationHandle);
@@ -286,7 +286,7 @@ Return Value:
 
         MiniportAttributesContent.GeneralAttributes.Header.Type = NDIS_OBJECT_TYPE_MINIPORT_ADAPTER_GENERAL_ATTRIBUTES;
         MiniportAttributesContent.GeneralAttributes.Header.Revision = NDIS_MINIPORT_ADAPTER_GENERAL_ATTRIBUTES_REVISION_1;
-        MiniportAttributesContent.GeneralAttributes.Header.Size = sizeof(NDIS_MINIPORT_ADAPTER_GENERAL_ATTRIBUTES);   
+        MiniportAttributesContent.GeneralAttributes.Header.Size = sizeof(NDIS_MINIPORT_ADAPTER_GENERAL_ATTRIBUTES);
 
         MiniportAttributesContent.GeneralAttributes.MediaType = VELAN_MEDIA_TYPE;
         MiniportAttributesContent.GeneralAttributes.MtuSize = pVElan->pAdapt->BindParameters.MtuSize;
@@ -294,10 +294,10 @@ Return Value:
         MiniportAttributesContent.GeneralAttributes.MaxRcvLinkSpeed = pVElan->pAdapt->BindParameters.MaxRcvLinkSpeed;
         MiniportAttributesContent.GeneralAttributes.XmitLinkSpeed = pVElan->pAdapt->BindParameters.XmitLinkSpeed;
         MiniportAttributesContent.GeneralAttributes.RcvLinkSpeed = pVElan->pAdapt->BindParameters.RcvLinkSpeed;
-        
+
 
         MUX_ACQUIRE_ADAPT_READ_LOCK(pVElan->pAdapt, &LockState);
-        
+
         //
         // Miniport below has indicated some status indication
         //
@@ -305,21 +305,21 @@ Return Value:
         MiniportAttributesContent.GeneralAttributes.MediaDuplexState = pVElan->pAdapt->LastIndicatedLinkState.MediaDuplexState;
         MiniportAttributesContent.GeneralAttributes.XmitLinkSpeed = pVElan->pAdapt->LastIndicatedLinkState.XmitLinkSpeed;
         MiniportAttributesContent.GeneralAttributes.RcvLinkSpeed = pVElan->pAdapt->LastIndicatedLinkState.RcvLinkSpeed;
-        
+
         pVElan->LastIndicatedStatus = NDIS_STATUS_LINK_STATE;
 
         pVElan->LastIndicatedLinkState = pVElan->pAdapt->LastIndicatedLinkState;
 
-        
+
         MiniportAttributesContent.GeneralAttributes.LookaheadSize = pVElan->pAdapt->BindParameters.LookaheadSize;
         MiniportAttributesContent.GeneralAttributes.MaxMulticastListSize = pVElan->pAdapt->BindParameters.MaxMulticastListSize;
         MiniportAttributesContent.GeneralAttributes.MacAddressLength = pVElan->pAdapt->BindParameters.MacAddressLength;
-        
+
         MiniportAttributesContent.GeneralAttributes.PhysicalMediumType = pVElan->pAdapt->BindParameters.PhysicalMediumType ;
-        MiniportAttributesContent.GeneralAttributes.AccessType = pVElan->pAdapt->BindParameters.AccessType ; 
-        MiniportAttributesContent.GeneralAttributes.DirectionType = pVElan->pAdapt->BindParameters.DirectionType;         
-        MiniportAttributesContent.GeneralAttributes.ConnectionType = pVElan->pAdapt->BindParameters.ConnectionType ; 
-        MiniportAttributesContent.GeneralAttributes.IfType = pVElan->pAdapt->BindParameters.IfType ; 
+        MiniportAttributesContent.GeneralAttributes.AccessType = pVElan->pAdapt->BindParameters.AccessType ;
+        MiniportAttributesContent.GeneralAttributes.DirectionType = pVElan->pAdapt->BindParameters.DirectionType;
+        MiniportAttributesContent.GeneralAttributes.ConnectionType = pVElan->pAdapt->BindParameters.ConnectionType ;
+        MiniportAttributesContent.GeneralAttributes.IfType = pVElan->pAdapt->BindParameters.IfType ;
         MiniportAttributesContent.GeneralAttributes.IfConnectorPresent = FALSE; // RFC 2665 TRUE if physical adapter
 
         if (pVElan->pAdapt->BindParameters.RcvScaleCapabilities)
@@ -330,7 +330,7 @@ Return Value:
         {
             MiniportAttributesContent.GeneralAttributes.RecvScaleCapabilities = NULL;
         }
-        
+
         MiniportAttributesContent.GeneralAttributes.MacOptions = NDIS_MAC_OPTION_NO_LOOPBACK;
 
 
@@ -339,7 +339,7 @@ Return Value:
                                         NDIS_MAC_OPTION_8021Q_VLAN);
 
 #endif
-        
+
         MiniportAttributesContent.GeneralAttributes.SupportedPacketFilters = pVElan->pAdapt->BindParameters.SupportedPacketFilters;
 
         MiniportAttributesContent.GeneralAttributes.SupportedStatistics = NDIS_STATISTICS_XMIT_OK_SUPPORTED |
@@ -351,7 +351,7 @@ Return Value:
                                                 NDIS_STATISTICS_TRANSMIT_QUEUE_LENGTH_SUPPORTED |
                                                 NDIS_STATISTICS_GEN_STATISTICS_SUPPORTED;
 
-        
+
         NdisMoveMemory(&MiniportAttributesContent.GeneralAttributes.CurrentMacAddress,
                        &pVElan->CurrentAddress,
                        ETH_LENGTH_OF_ADDRESS);
@@ -369,7 +369,7 @@ Return Value:
         pVElan->MiniportInitPending = FALSE;
     } while (FALSE);
 
-    
+
     //
     // If we had received an UnbindAdapter notification on the underlying
     // adapter, we would have blocked that thread waiting for the IM Init
@@ -391,13 +391,13 @@ Return Value:
         //
         HigherLayerIfIndex = MiniportInitParameters->IfIndex;
         LowerLayerIfIndex = pVElan->pAdapt->BindParameters.BoundIfIndex;
-            
+
         Status = NdisIfAddIfStackEntry(HigherLayerIfIndex,
                                        LowerLayerIfIndex);
 
         if (Status == NDIS_STATUS_SUCCESS)
         {
-            pVElan->IfIndex = HigherLayerIfIndex;                
+            pVElan->IfIndex = HigherLayerIfIndex;
         }
 
         //
@@ -407,7 +407,7 @@ Return Value:
 
     }
     else
-    {        
+    {
         pVElan->MiniportAdapterHandle = NULL;
     }
 
@@ -415,9 +415,9 @@ Return Value:
     {
         pVElan->MiniportInitPending = FALSE;
     }
-    
+
     // TODO: check to see if we can set the init event in a failure case?
-    
+
     NdisSetEvent(&pVElan->MiniportInitEvent);
 
     DBGPRINT(MUX_LOUD, ("<== MPInitialize: VELAN %p, Status %x\n", pVElan, Status));
@@ -445,7 +445,7 @@ Arguments:
 
 Return Value:
 
-    NDIS_STATUS_SUCCESS         
+    NDIS_STATUS_SUCCESS
     NDIS_STATUS_NOT_SUPPORTED
     Return code from the MPForwardOidRequest below.
 
@@ -472,14 +472,14 @@ Return Value:
 
 
     DBGPRINT(MUX_LOUD, ("==> MPQueryInformation: VElan %p, Request %p\n",pVElan, NdisRequest));
-    
+
     Oid = NdisRequest->DATA.QUERY_INFORMATION.Oid;
     InformationBuffer = NdisRequest->DATA.QUERY_INFORMATION.InformationBuffer;
     InformationBufferLength = NdisRequest->DATA.QUERY_INFORMATION.InformationBufferLength;
     BytesWritten = (ULONG*) &(NdisRequest->DATA.QUERY_INFORMATION.BytesWritten);
     BytesNeeded = (ULONG*) &(NdisRequest->DATA.QUERY_INFORMATION.BytesNeeded);
-    
-    
+
+
     // Initialize the result
     *BytesWritten = 0;
     *BytesNeeded = 0;
@@ -512,16 +512,16 @@ Return Value:
             break;
 
         case OID_GEN_CURRENT_LOOKAHEAD:
-        case OID_GEN_MAXIMUM_LOOKAHEAD:         
+        case OID_GEN_MAXIMUM_LOOKAHEAD:
             ulInfo = pVElan->LookAhead;
             pInfo = (PVOID) &ulInfo;
-            break;            
-            
+            break;
+
         case OID_GEN_MAXIMUM_FRAME_SIZE:
             ulInfo = ETH_MAX_PACKET_SIZE - ETH_HEADER_SIZE;
 #if IEEE_VLAN_SUPPORT
             ulInfo -= VLAN_TAG_HEADER_SIZE;
-            
+
 #endif
             pInfo = (PVOID) &ulInfo;
             break;
@@ -532,17 +532,17 @@ Return Value:
             ulInfo = (ULONG) ETH_MAX_PACKET_SIZE;
 #if IEEE_VLAN_SUPPORT
             ulInfo -= VLAN_TAG_HEADER_SIZE;
-#endif    
+#endif
             pInfo = (PVOID) &ulInfo;
             break;
-            
+
         case OID_GEN_MAC_OPTIONS:
-            ulInfo = NDIS_MAC_OPTION_COPY_LOOKAHEAD_DATA | 
+            ulInfo = NDIS_MAC_OPTION_COPY_LOOKAHEAD_DATA |
                      NDIS_MAC_OPTION_TRANSFERS_NOT_PEND |
                      NDIS_MAC_OPTION_NO_LOOPBACK;
 #if IEEE_VLAN_SUPPORT
             ulInfo |= (NDIS_MAC_OPTION_8021P_PRIORITY |
-                       NDIS_MAC_OPTION_8021Q_VLAN);        
+                       NDIS_MAC_OPTION_8021Q_VLAN);
 #endif
             pInfo = (PVOID) &ulInfo;
             break;
@@ -555,15 +555,15 @@ Return Value:
             ulInfo = ETH_MAX_PACKET_SIZE * pVElan->MaxBusySends;
 #if IEEE_VLAN_SUPPORT
             ulInfo -= VLAN_TAG_HEADER_SIZE * pVElan->MaxBusySends;
-#endif          
+#endif
             pInfo = (PVOID) &ulInfo;
             break;
 
         case OID_GEN_RECEIVE_BUFFER_SPACE:
             ulInfo = ETH_MAX_PACKET_SIZE * pVElan->MaxBusyRecvs;
 #if IEEE_VLAN_SUPPORT
-            ulInfo -= VLAN_TAG_HEADER_SIZE * pVElan->MaxBusyRecvs;        
-#endif            
+            ulInfo -= VLAN_TAG_HEADER_SIZE * pVElan->MaxBusyRecvs;
+#endif
              pInfo = (PVOID) &ulInfo;
             break;
 
@@ -576,7 +576,7 @@ Return Value:
             pInfo = VendorDesc;
             ulInfoLen = sizeof(VendorDesc);
             break;
-            
+
         case OID_GEN_VENDOR_DRIVER_VERSION:
             ulInfo = VELAN_VENDOR_ID;
             pInfo = (PVOID) &ulInfo;
@@ -644,7 +644,7 @@ Return Value:
             NeededLength = sizeof(ulInfo64);
 
             break;
-    
+
         case OID_GEN_RCV_OK:
             ulInfo64 = pVElan->GoodReceives;
             pInfo = &ulInfo64;
@@ -659,9 +659,9 @@ Return Value:
             }
 
             NeededLength = sizeof(ulInfo64);
-            
+
             break;
-    
+
         case OID_GEN_XMIT_ERROR:
             ulInfo = pVElan->TxAbortExcessCollisions +
                 pVElan->TxDmaUnderrun +
@@ -670,7 +670,7 @@ Return Value:
                 pVElan->TransmitFailuresOther;
             pInfo = (PVOID) &ulInfo;
             break;
-    
+
         case OID_GEN_RCV_ERROR:
             ulInfo = pVElan->RcvCrcErrors +
                 pVElan->RcvAlignmentErrors +
@@ -679,26 +679,26 @@ Return Value:
 #if IEEE_VLAN_SUPPORT
             ulInfo +=
                 (pVElan->RcvVlanIdErrors +
-                pVElan->RcvFormatErrors);           
+                pVElan->RcvFormatErrors);
 #endif
             pInfo = (PVOID) &ulInfo;
             break;
-    
+
         case OID_GEN_RCV_NO_BUFFER:
             ulInfo = pVElan->RcvResourceErrors;
             pInfo = (PVOID) &ulInfo;
             break;
-    
+
         case OID_GEN_RCV_CRC_ERROR:
             ulInfo = pVElan->RcvCrcErrors;
             pInfo = (PVOID) &ulInfo;
             break;
-    
+
         case OID_GEN_TRANSMIT_QUEUE_LENGTH:
             ulInfo = pVElan->RegNumTcb;
             pInfo = (PVOID) &ulInfo;
             break;
-        
+
         case OID_GEN_STATISTICS:
             ulInfoLen = sizeof (NDIS_STATISTICS_INFO);
             NdisZeroMemory(&StatisticsInfo, sizeof(NDIS_STATISTICS_INFO));
@@ -709,7 +709,7 @@ Return Value:
             StatisticsInfo.SupportedStatistics = NDIS_STATISTICS_FLAGS_VALID_RCV_DISCARDS          |
                                                  NDIS_STATISTICS_FLAGS_VALID_RCV_ERROR             |
                                                  NDIS_STATISTICS_FLAGS_VALID_XMIT_ERROR;
-                    
+
             StatisticsInfo.ifInDiscards =
                 (ULONG64)pVElan->RcvCrcErrors +
                 (ULONG64)pVElan->RcvAlignmentErrors +
@@ -735,53 +735,53 @@ Return Value:
             ulInfo = pVElan->RcvAlignmentErrors;
             pInfo = (PVOID) &ulInfo;
             break;
-    
+
         case OID_802_3_XMIT_ONE_COLLISION:
         	ulInfo = pVElan->OneRetry;
             pInfo = (PVOID) &ulInfo;
             break;
-    
+
         case OID_802_3_XMIT_MORE_COLLISIONS:
         	ulInfo = pVElan->MoreThanOneRetry;
             pInfo = (PVOID) &ulInfo;
             break;
-    
+
         case OID_802_3_XMIT_DEFERRED:
         	ulInfo = pVElan->TxOKButDeferred;
             pInfo = (PVOID) &ulInfo;
             break;
-    
+
         case OID_802_3_XMIT_MAX_COLLISIONS:
             ulInfo = pVElan->TxAbortExcessCollisions;
             pInfo = (PVOID) &ulInfo;
             break;
-    
+
         case OID_802_3_RCV_OVERRUN:
             ulInfo = pVElan->RcvDmaOverrunErrors;
             pInfo = (PVOID) &ulInfo;
             break;
-    
+
         case OID_802_3_XMIT_UNDERRUN:
             ulInfo = pVElan->TxDmaUnderrun;
             pInfo = (PVOID) &ulInfo;
             break;
-    
+
         case OID_802_3_XMIT_HEARTBEAT_FAILURE:
             ulInfo = pVElan->TxLostCRS;
             pInfo = (PVOID) &ulInfo;
             break;
-    
+
         case OID_802_3_XMIT_TIMES_CRS_LOST:
             ulInfo = pVElan->TxLostCRS;
             pInfo = (PVOID) &ulInfo;
             break;
-    
+
         case OID_802_3_XMIT_LATE_COLLISIONS:
             ulInfo = pVElan->TxLateCollisions;
             pInfo = (PVOID) &ulInfo;
             break;
-   
-#if IEEE_VLAN_SUPPORT            
+
+#if IEEE_VLAN_SUPPORT
         case OID_GEN_VLAN_ID:
             ulInfo = pVElan->VlanId;
             pInfo = (PVOID) &ulInfo;
@@ -808,27 +808,27 @@ Return Value:
                 if(ulInfoLen)
                 {
                     NdisMoveMemory(InformationBuffer, pInfo, ulInfoLen);
-                    
+
                     if (NeededLength > ulInfoLen)
                     {
                         *BytesNeeded = NeededLength;
                     }
                 }
-             
+
 
             }
             else
             {
                 // too short
                 *BytesNeeded = (NeededLength > ulInfoLen ? NeededLength : ulInfoLen);
-             
+
                 Status = NDIS_STATUS_BUFFER_TOO_SHORT;
             }
         }
     }
     else
     {
-     
+
 
         //
         // Send this request to the binding below.
@@ -843,10 +843,10 @@ Return Value:
                     pVElan, Oid, Status));
     }
 
- 
+
 
     DBGPRINT(MUX_LOUD, ("<== MPQueryInformation: VElan %p, Request %p returning %08lx\n",pVElan, NdisRequest, Status));
-    
+
     return(Status);
 
 }
@@ -887,13 +887,13 @@ Return Value:
     ULONG                   InformationBufferLength;
     PULONG                  BytesRead;
     PULONG                  BytesNeeded;
-    
+
     // Should we forward the request to the miniport below?
     BOOLEAN                 bForwardRequest = FALSE;
     NDIS_STATUS_INDICATION  StatusIndication;
 
     DBGPRINT(MUX_LOUD, ("==> MPSetInformation: VElan %p, Request %p\n", pVElan, NdisRequest));
-    
+
     NdisZeroMemory(&StatusIndication, sizeof(NDIS_STATUS_INDICATION));
     Oid = NdisRequest->DATA.SET_INFORMATION.Oid;
     InformationBuffer = NdisRequest->DATA.SET_INFORMATION.InformationBuffer;
@@ -925,48 +925,48 @@ Return Value:
                 Status = NDIS_STATUS_INVALID_LENGTH;
                 break;
             }
-           
+
             NewDeviceState = (*(PNDIS_DEVICE_POWER_STATE)InformationBuffer);
-            
+
             //
             // Check if the VELAN adapter goes from lower power state to D0
-            // 
-            if ((MUX_IS_LOW_POWER_STATE(pVElan->MPDevicePowerState)) 
+            //
+            if ((MUX_IS_LOW_POWER_STATE(pVElan->MPDevicePowerState))
                     && (!MUX_IS_LOW_POWER_STATE(NewDeviceState)))
             {
                 //
                 // Indicate the media status is necessary
-                // 
+                //
                 if (pVElan->LastIndicatedStatus != pVElan->LatestUnIndicateStatus)
                 {
-                    
+
                     StatusIndication.Header.Type = NDIS_OBJECT_TYPE_STATUS_INDICATION;
                     StatusIndication.Header.Revision = NDIS_STATUS_INDICATION_REVISION_1;
                     StatusIndication.Header.Size = sizeof(NDIS_STATUS_INDICATION);
-                    
+
                     StatusIndication.SourceHandle = pVElan->MiniportAdapterHandle;
                     StatusIndication.StatusCode = pVElan->LatestUnIndicateStatus;
                     if (pVElan->LatestUnIndicateStatus == NDIS_STATUS_LINK_STATE)
                     {
                         StatusIndication.StatusBuffer = &pVElan->LatestUnIndicateLinkState;
                         StatusIndication.StatusBufferSize = sizeof(NDIS_LINK_STATE);
-                            
+
                     }
                     else
                     {
                         StatusIndication.StatusBuffer = NULL;
                         StatusIndication.StatusBufferSize = 0;
                     }
-                    
+
                     NdisMIndicateStatusEx(pVElan->MiniportAdapterHandle, &StatusIndication);
-                                        
+
                     pVElan->LastIndicatedStatus = pVElan->LatestUnIndicateStatus;
 
                     if (pVElan->LatestUnIndicateStatus == NDIS_STATUS_LINK_STATE)
                     {
                         pVElan->LastIndicatedLinkState = pVElan->LatestUnIndicateLinkState;
                     }
-                        
+
                 }
                 else
                 {
@@ -976,33 +976,33 @@ Return Value:
                                              &pVElan->LastIndicatedLinkState,
                                              sizeof(NDIS_LINK_STATE)))
                         {
-                        
+
                             StatusIndication.Header.Type = NDIS_OBJECT_TYPE_STATUS_INDICATION;
                             StatusIndication.Header.Revision = NDIS_STATUS_INDICATION_REVISION_1;
                             StatusIndication.Header.Size = sizeof(NDIS_STATUS_INDICATION);
-                    
+
                             StatusIndication.SourceHandle = pVElan->MiniportAdapterHandle;
                             StatusIndication.StatusCode = pVElan->LatestUnIndicateStatus;
                             StatusIndication.StatusBuffer = &pVElan->LatestUnIndicateLinkState;
                             StatusIndication.StatusBufferSize = sizeof(NDIS_LINK_STATE);
-                            
+
                             NdisMIndicateStatusEx(pVElan->MiniportAdapterHandle, &StatusIndication);
 
                             pVElan->LastIndicatedStatus = pVElan->LatestUnIndicateStatus;
                             pVElan->LastIndicatedLinkState = pVElan->LatestUnIndicateLinkState;
                         }
                     }
-                } 
+                }
             }
             //
             // Check if the VELAN adapter goes from D0 to lower power state
-            // 
-            if ((!MUX_IS_LOW_POWER_STATE(pVElan->MPDevicePowerState)) 
+            //
+            if ((!MUX_IS_LOW_POWER_STATE(pVElan->MPDevicePowerState))
                     && (MUX_IS_LOW_POWER_STATE(NewDeviceState)))
             {
                 //
-                //  Initialize LastUnIndicateStatus 
-                // 
+                //  Initialize LastUnIndicateStatus
+                //
                 pVElan->LatestUnIndicateStatus = pVElan->LastIndicatedStatus;
 
                 if (pVElan->LastIndicatedStatus == NDIS_STATUS_LINK_STATE)
@@ -1010,7 +1010,7 @@ Return Value:
                     pVElan->LatestUnIndicateLinkState = pVElan->LastIndicatedLinkState;
                 }
             }
-            
+
             NdisMoveMemory(&pVElan->MPDevicePowerState,
                            InformationBuffer,
                            *BytesNeeded);
@@ -1062,17 +1062,17 @@ Return Value:
                 pVElan->RestoreLookaheadSize = TRUE;
                 *(UNALIGNED PULONG)InformationBuffer += VLAN_TAG_HEADER_SIZE;
             }
-#endif            
+#endif
             bForwardRequest = TRUE;
             break;
-            
+
 #if IEEE_VLAN_SUPPORT
         case OID_GEN_VLAN_ID:
             if (InformationBufferLength == sizeof(ULONG))
             {
                 NdisMoveMemory((&pVElan->VlanId), InformationBuffer, sizeof(ULONG));
 
-            } 
+            }
             else
             {
                 *BytesNeeded = sizeof(ULONG);
@@ -1081,13 +1081,13 @@ Return Value:
 
             break;
 #endif
-            
+
         default:
             Status = NDIS_STATUS_NOT_SUPPORTED;
             break;
 
     }
-    
+
     if (bForwardRequest == FALSE)
     {
         if (Status == NDIS_STATUS_SUCCESS)
@@ -1104,7 +1104,7 @@ Return Value:
     }
 
     DBGPRINT(MUX_LOUD, ("<== MPSetInformation: VElan %p, Request %p returning %08lx\n",pVElan, NdisRequest, Status));
-    
+
     return(Status);
 }
 
@@ -1127,7 +1127,7 @@ Return Value:
 
     NDIS_STATUS_SUCCESS
     NDIS_STATUS_NOT_SUPPORTED
-   
+
 
 --*/
 {
@@ -1140,7 +1140,7 @@ Return Value:
     NDIS_STATUS     Status = NDIS_STATUS_SUCCESS;
 
     UNREFERENCED_PARAMETER(pVElan);
-    
+
     DBGPRINT(MUX_LOUD, ("==> MPMethodRequest: VElan %p, Request %p\n", pVElan, NdisRequest));
 
 
@@ -1250,7 +1250,7 @@ Routine Description:
 Arguments:
 
     MiniportAdapterContext    Pointer to the pVElan
-    HaltAction                The reason adapter is being halted 
+    HaltAction                The reason adapter is being halted
 
 Return Value:
 
@@ -1262,7 +1262,7 @@ Return Value:
     NET_IFINDEX       LowerLayerIfIndex;
 
     UNREFERENCED_PARAMETER(HaltAction);
-    
+
 
     DBGPRINT(MUX_LOUD, ("==> MPHalt: VELAN %p\n", pVElan));
 
@@ -1316,12 +1316,12 @@ Return Value:
     if (pVElan->IfIndex != 0)
     {
         LowerLayerIfIndex = pVElan->pAdapt->BindParameters.BoundIfIndex;
-        
+
         NdisIfDeleteIfStackEntry(pVElan->IfIndex,
                                  LowerLayerIfIndex);
         pVElan->IfIndex = 0;
     }
-    
+
 
     //
     // Unlink the VELAN from its parent ADAPT structure. This will
@@ -1329,7 +1329,7 @@ Return Value:
     //
     pVElan->MiniportAdapterHandle = NULL;
     PtUnlinkVElanFromAdapter(pVElan);
-    
+
     DBGPRINT(MUX_LOUD, ("<== MPHalt: pVElan %p\n", pVElan));
 }
 
@@ -1350,7 +1350,7 @@ Routine Description:
 Arguments:
 
     pVElan                Pointer to a VElan Adapter
-    Request               Pointer to an NDIS request to be forwarded to the below adapter.   
+    Request               Pointer to an NDIS request to be forwarded to the below adapter.
 
 Return Value:
 
@@ -1363,7 +1363,7 @@ Return Value:
     PMUX_NDIS_REQUEST            pMuxNdisRequest = &pVElan->Request;
 
     PADAPT                       pAdapt = pVElan->pAdapt;
-    
+
 
     DBGPRINT(MUX_LOUD, ("==> MPForwardOidRequest: VELAN %p, Request %p\n", pVElan, Request));
 
@@ -1373,7 +1373,7 @@ Return Value:
 
         //
         // If the miniport below is going away, fail the request
-        // 
+        //
         NdisAcquireSpinLock(&pVElan->Lock);
         if (pVElan->DeInitializing == TRUE)
         {
@@ -1382,7 +1382,7 @@ Return Value:
             Status = NDIS_STATUS_FAILURE;
             break;
         }
-        NdisReleaseSpinLock(&pVElan->Lock);    
+        NdisReleaseSpinLock(&pVElan->Lock);
 
         //
         // If the virtual miniport edge is at a low power
@@ -1394,14 +1394,14 @@ Return Value:
             Status = NDIS_STATUS_ADAPTER_NOT_READY;
             break;
         }
-        
+
         NdisAcquireSpinLock(&pVElan->Lock);
         pMuxNdisRequest->Cancelled = FALSE;
         pMuxNdisRequest->OrigRequest = Request;
         pMuxNdisRequest->pCallback = PtCompleteForwardedRequest;
         pMuxNdisRequest->Request.RequestType = Request->RequestType;
         pMuxNdisRequest->Refcount = 1;
-        NdisReleaseSpinLock(&pVElan->Lock);    
+        NdisReleaseSpinLock(&pVElan->Lock);
 
         pMuxNdisRequest->Request.Header.Type = NDIS_OBJECT_TYPE_OID_REQUEST;
         pMuxNdisRequest->Request.Header.Revision = NDIS_OID_REQUEST_REVISION_1;
@@ -1412,17 +1412,17 @@ Return Value:
             case NdisRequestQueryInformation:
             case NdisRequestQueryStatistics:
                 pMuxNdisRequest->Request.DATA.QUERY_INFORMATION.Oid = Request->DATA.QUERY_INFORMATION.Oid;
-                pMuxNdisRequest->Request.DATA.QUERY_INFORMATION.InformationBuffer = 
+                pMuxNdisRequest->Request.DATA.QUERY_INFORMATION.InformationBuffer =
                                             Request->DATA.QUERY_INFORMATION.InformationBuffer;
-                pMuxNdisRequest->Request.DATA.QUERY_INFORMATION.InformationBufferLength = 
+                pMuxNdisRequest->Request.DATA.QUERY_INFORMATION.InformationBufferLength =
                                             Request->DATA.QUERY_INFORMATION.InformationBufferLength;
                 break;
 
             case NdisRequestSetInformation:
                 pMuxNdisRequest->Request.DATA.SET_INFORMATION.Oid = Request->DATA.SET_INFORMATION.Oid;
-                pMuxNdisRequest->Request.DATA.SET_INFORMATION.InformationBuffer = 
+                pMuxNdisRequest->Request.DATA.SET_INFORMATION.InformationBuffer =
                                             Request->DATA.SET_INFORMATION.InformationBuffer;
-                pMuxNdisRequest->Request.DATA.SET_INFORMATION.InformationBufferLength = 
+                pMuxNdisRequest->Request.DATA.SET_INFORMATION.InformationBufferLength =
                                             Request->DATA.SET_INFORMATION.InformationBufferLength;
                 break;
 
@@ -1444,7 +1444,7 @@ Return Value:
             Status = NDIS_STATUS_FAILURE;
             break;
         }
-        
+
         // If the lower binding has been notified of a low
         // power state, queue this request; it will be picked
         // up again when the lower binding returns to D0.
@@ -1454,7 +1454,7 @@ Return Value:
             DBGPRINT(MUX_INFO, ("ForwardRequest: VELAN %p, Adapt %p power"
                                 " state is %d, queueing OID %x\n",
                                 pVElan, pVElan->pAdapt,
-                                pVElan->pAdapt->PtDevicePowerState, 
+                                pVElan->pAdapt->PtDevicePowerState,
                                 Request->DATA.QUERY_INFORMATION.Oid));
 
             pVElan->QueuedRequest = TRUE;
@@ -1471,19 +1471,19 @@ Return Value:
             break;
         }
         NdisReleaseSpinLock(&pVElan->Lock);
-        
+
         NdisAcquireSpinLock(&pAdapt->Lock);
 
         pAdapt->OutstandingRequests ++;
-        
+
         if ((pAdapt->Flags & MUX_BINDING_CLOSING)== MUX_BINDING_CLOSING)
         {
-            NdisReleaseSpinLock(&pAdapt->Lock);        
-            Status = NDIS_STATUS_CLOSING;           
+            NdisReleaseSpinLock(&pAdapt->Lock);
+            Status = NDIS_STATUS_CLOSING;
         }
         else
         {
-            NdisReleaseSpinLock(&pAdapt->Lock);        
+            NdisReleaseSpinLock(&pAdapt->Lock);
             Status  = NdisOidRequest(pVElan->BindingHandle,
                                     &pMuxNdisRequest->Request);
         }
@@ -1508,7 +1508,7 @@ Return Value:
         *(UNALIGNED PULONG)(Request->DATA.SET_INFORMATION.InformationBuffer) -= VLAN_TAG_HEADER_SIZE;
     }
 #endif
-    
+
     return (Status);
 }
 
@@ -1520,8 +1520,8 @@ MPSetPacketFilter(
 /*++
 Routine Description:
 
-    This routine will set up the VELAN so that it accepts packets 
-    that match the specified packet filter.  The only filter bits   
+    This routine will set up the VELAN so that it accepts packets
+    that match the specified packet filter.  The only filter bits
     that can truly be toggled are for broadcast and promiscuous.
 
     The MUX driver always sets the lower binding to promiscuous
@@ -1529,7 +1529,7 @@ Routine Description:
     receives too soon. That is, we set the packet filter on the lower
     binding to a non-zero value iff at least one of the VELANs
     has a non-zero filter value.
-    
+
     NOTE: setting the lower binding to promiscuous mode can
     impact CPU utilization. The only reason we set the lower binding
     to promiscuous mode in this sample is that we need to be able
@@ -1538,18 +1538,18 @@ Routine Description:
     are set to be equal to that of the adapter below, it is sufficient
     to set the lower packet filter to the bitwise OR'ed value of
     packet filter settings on all VELANs.
-                                    
+
 
 Arguments:
 
     pVElan - pointer to VELAN
-    PacketFilter - the new packet filter 
-    
+    PacketFilter - the new packet filter
+
 Return Value:
 
     NDIS_STATUS_SUCCESS
     NDIS_STATUS_NOT_SUPPORTED
-    
+
 --*/
 {
     NDIS_STATUS     Status = NDIS_STATUS_SUCCESS;
@@ -1561,7 +1561,7 @@ Return Value:
     LOCK_STATE      LockState;
 
     DBGPRINT(MUX_LOUD, ("==> MPSetPacketFilter VELAN %p, Filter %x\n", pVElan, PacketFilter));
-    
+
     do
     {
         //
@@ -1572,7 +1572,7 @@ Return Value:
             Status = NDIS_STATUS_NOT_SUPPORTED;
             break;
         }
-    
+
         AdapterFilter = 0;
         pAdapt = pVElan->pAdapt;
 
@@ -1622,7 +1622,7 @@ Return Value:
             bSendUpdate = TRUE;
             pAdapt->PacketFilter = MUX_ADAPTER_PACKET_FILTER;
         }
-        
+
         MUX_RELEASE_ADAPT_WRITE_LOCK(pAdapt, &LockState);
 
         if (bSendUpdate)
@@ -1640,7 +1640,7 @@ Return Value:
     while (FALSE);
 
     DBGPRINT(MUX_LOUD, ("<== MPSetPacketFilter VELAN %p, Status %x\n", pVElan, Status));
-    
+
     return(Status);
 }
 
@@ -1718,19 +1718,19 @@ Return Value:
 
         NdisZeroMemory(pVElan->McastAddrs,
                        VELAN_MAX_MCAST_LIST * sizeof(MUX_MAC_ADDRESS));
-        
+
         NdisMoveMemory(&pVElan->McastAddrs[0],
                        InformationBuffer,
                        InformationBufferLength);
-        
+
         pVElan->McastAddrCount = InformationBufferLength / sizeof(MUX_MAC_ADDRESS);
-        
+
         MUX_RELEASE_ADAPT_WRITE_LOCK(pAdapt, &LockState);
     }
     while (FALSE);
 
     DBGPRINT(MUX_LOUD, ("<== MPSetMulticastList VELAN %p, Status %8x\n", pVElan, Status));
-    
+
     return (Status);
 }
 
@@ -1746,7 +1746,7 @@ Routine Description:
 
     Careful! Uses static storage for string. Used to simplify DbgPrints
     of MAC addresses.
-    
+
 Arguments:
 
     IN            Pointer to MAC address array
@@ -1755,23 +1755,23 @@ Return Value:
 
     A string format of the given mac address
 
---*/    
+--*/
 {
     static UCHAR String[20];
     static PCHAR HexChars = "0123456789abcdef";
     PUCHAR EthAddr = (PUCHAR) In;
     UINT i;
     PUCHAR s;
-    
+
     for (i = 0, s = String; i < 6; i++, EthAddr++)
     {
-#pragma prefast(suppress: __WARNING_POTENTIAL_BUFFER_OVERFLOW, "s is bounded by check above");    
+#pragma prefast(suppress: __WARNING_POTENTIAL_BUFFER_OVERFLOW, "s is bounded by check above");
         *s++ = HexChars[(*EthAddr) >> 4];
         *s++ = HexChars[(*EthAddr) & 0xf];
     }
     *s = '\0';
-    
-    return String; 
+
+    return String;
 }
 
 
@@ -1788,7 +1788,7 @@ Routine Description:
     a MAC address for the VELAN. Other implementations are possible,
     including using the MAC address of the underlying adapter as
     the MAC address of the VELAN.
-    
+
 Arguments:
 
     pVElan  - Pointer to velan structure
@@ -1802,7 +1802,7 @@ Return Value:
     ETH_COPY_NETWORK_ADDRESS(
             pVElan->CurrentAddress,
             pVElan->PermanentAddress);
-    
+
     DBGPRINT(MUX_LOUD, ("%d CurrentAddress %s\n",
         pVElan->VElanNumber, MacAddrToString(&pVElan->CurrentAddress)));
     DBGPRINT(MUX_LOUD, ("%d PermanentAddress  %s\n",
@@ -1838,15 +1838,15 @@ Return Value:
 {
     // TBD - add code/comments about processing this.
     //
-    
+
     DBGPRINT(MUX_LOUD, ("==> MPDevicePnPEvent: AdapterContext %08lp, DevicePnPEvent %x\n",MiniportAdapterContext, NetDevicePnPEvent->DevicePnPEvent));
 
 	UNREFERENCED_PARAMETER(MiniportAdapterContext);
     UNREFERENCED_PARAMETER(NetDevicePnPEvent);
- 
+
 
     DBGPRINT(MUX_LOUD, ("<== MPDevicePnPEvent: AdapterContext %08lp, DevicePnPEvent %x\n",MiniportAdapterContext, NetDevicePnPEvent->DevicePnPEvent));
-    
+
     return;
 }
 
@@ -1882,7 +1882,7 @@ Return Value:
     UNREFERENCED_PARAMETER(ShutdownAction);
 
     DBGPRINT(MUX_LOUD,("<== MPAdapterShutdown: VElan %p, ShutdwonAction %x\n", pVElan, ShutdownAction));
-    
+
     return;
 }
 
@@ -1897,7 +1897,7 @@ Routine Description:
     This handler is used to unload the miniport
 
 Arguments:
-    DriverObject            Pointer to the system's driver object structure 
+    DriverObject            Pointer to the system's driver object structure
                             for this driver.
 
 Return Value:
@@ -1906,11 +1906,11 @@ Return Value:
 
 --*/
 {
-        
+
 #if !DBG
     UNREFERENCED_PARAMETER(DriverObject);
 #endif
-    
+
     DBGPRINT(MUX_LOUD, ("==> MPUnload: DriverObj %p\n", DriverObject));
     if (ProtHandle != NULL)
     {
@@ -1919,8 +1919,8 @@ Return Value:
     NdisMDeregisterMiniportDriver(DriverHandle);
 
     NdisFreeSpinLock(&GlobalLock);
-        
-    DBGPRINT(MUX_LOUD, ("<== MPUnload: DriverObj %p\n", DriverObject));     
+
+    DBGPRINT(MUX_LOUD, ("<== MPUnload: DriverObj %p\n", DriverObject));
 }
 
 NDIS_STATUS
@@ -1947,7 +1947,7 @@ Return Value:
     NDIS_STATUS        Status = NDIS_STATUS_SUCCESS;
 
     DBGPRINT(MUX_LOUD, ("==> MPPause: VElan %p\n", pVElan));
-    
+
     UNREFERENCED_PARAMETER(MiniportPauseParameters);
 
     DBGPRINT(MUX_LOUD,("==>MPPause  Adapter %08lp\n",MiniportAdapterContext));
@@ -1960,7 +1960,7 @@ Return Value:
 
     NdisReleaseSpinLock(&pVElan->PauseLock);
 
-       
+
 
     DBGPRINT(MUX_LOUD,("<== MPPause,VElan %p, Status %8x\n", pVElan, Status));
 
@@ -1993,41 +1993,41 @@ Return Value:
     NDIS_STATUS                       Status = NDIS_STATUS_SUCCESS;
     PNDIS_RESTART_ATTRIBUTES          NdisRestartAttributes;
     PNDIS_RESTART_GENERAL_ATTRIBUTES  NdisGeneralAttributes;
-    
+
     UNREFERENCED_PARAMETER(MiniportRestartParameters);
 
     DBGPRINT(MUX_LOUD,("==> MPRestart  Adapter %p\n",MiniportAdapterContext));
 
-     
+
     //
-    // Here the driver can change its restart attributes 
+    // Here the driver can change its restart attributes
     //
     NdisRestartAttributes = MiniportRestartParameters->RestartAttributes;
 
     //
     // If NdisRestartAttributes is not NULL, then miniport can modify generic attributes and add
-    // new media specific info attributes at the end. Otherwise, NDIS restarts the miniport because 
+    // new media specific info attributes at the end. Otherwise, NDIS restarts the miniport because
     // of other reason, miniport should not try to modify/add attributes
     //
     if (NdisRestartAttributes != NULL)
     {
 
         ASSERT(NdisRestartAttributes->Oid == OID_GEN_MINIPORT_RESTART_ATTRIBUTES);
-        
+
         NdisGeneralAttributes = (PNDIS_RESTART_GENERAL_ATTRIBUTES)NdisRestartAttributes->Data;
         UNREFERENCED_PARAMETER(NdisGeneralAttributes);
-    
+
         //
         // Check to see if we need to change any attributes, for example, the driver can change the current
         // MAC address here. Or the driver can add media specific info attributes.
         //
     }
-   
+
     NdisAcquireSpinLock(&pVElan->PauseLock);
     pVElan->Paused = FALSE;
 
     NdisReleaseSpinLock(&pVElan->PauseLock);
- 
+
 
     DBGPRINT(MUX_LOUD,("<== MPRestart: Adapter %p, Status %8x\n", MiniportAdapterContext, Status));
 
@@ -2066,7 +2066,7 @@ Return Value:
     PIM_NBL_ENTRY               SendContext;
     ULONG                       SendCompleteFlags = 0;
     BOOLEAN                     DispatchLevel = FALSE;
-    
+
     DBGPRINT(MUX_VERY_LOUD,("==> MPSendNetBufferLists: MiniportAdapterContext  %p, NetBufferLists %p\n",MiniportAdapterContext,NetBufferLists));
 
     DispatchLevel = NDIS_TEST_SEND_AT_DISPATCH_LEVEL(SendFlags);
@@ -2078,19 +2078,19 @@ Return Value:
         NET_BUFFER_LIST_NEXT_NBL(CurrentNetBufferList) = NULL;
 
         MUX_ACQUIRE_SPIN_LOCK(&pAdapt->Lock, DispatchLevel);
-            
+
         if (pAdapt->BindingState != MuxAdapterBindingRunning)
         {
             Status = NDIS_STATUS_REQUEST_ABORTED;
             MUX_RELEASE_SPIN_LOCK(&pAdapt->Lock, DispatchLevel);
-                
+
             break;
         }
-          
+
         pAdapt->OutstandingSends ++;
-            
+
         MUX_RELEASE_SPIN_LOCK(&pAdapt->Lock, DispatchLevel);
-        
+
         do
         {
             Status = NdisAllocateNetBufferListContext(CurrentNetBufferList,
@@ -2102,7 +2102,7 @@ Return Value:
             {
                 break;
             }
-            
+
             SendContext = (PIM_NBL_ENTRY)NET_BUFFER_LIST_CONTEXT_DATA_START(CurrentNetBufferList);
             NdisZeroMemory(SendContext, sizeof(IM_NBL_ENTRY));
             SendContext->PreviousSourceHandle = CurrentNetBufferList->SourceHandle;
@@ -2136,20 +2136,20 @@ Return Value:
                                    CurrentNetBufferList,
                                    PortNumber,
                                    SendFlags);
-                                   
+
         } while(FALSE);
 
         if (Status != NDIS_STATUS_SUCCESS)
         {
             MUX_ACQUIRE_SPIN_LOCK(&pAdapt->Lock, DispatchLevel);
             pAdapt->OutstandingSends --;
-            
+
             if ((pAdapt->OutstandingSends == 0) && (pAdapt->PauseEvent != NULL))
             {
                 NdisSetEvent(pAdapt->PauseEvent);
                 pAdapt->PauseEvent = NULL;
             }
-            
+
             MUX_RELEASE_SPIN_LOCK(&pAdapt->Lock, DispatchLevel);
             //
             // Handle failure case
@@ -2192,7 +2192,7 @@ Return Value:
     DBGPRINT(MUX_VERY_LOUD,("<== MPSendNetBufferLists, MiniportAdapterContext  %p, NetBufferLists %p\n",MiniportAdapterContext,NetBufferLists));
 }
 
-VOID 
+VOID
 MPReturnNetBufferLists(
     IN NDIS_HANDLE      MiniportAdapterContext,
     IN PNET_BUFFER_LIST NetBufferLists,
@@ -2218,10 +2218,10 @@ Return Value:
     PVELAN                  pVElan = (PVELAN)MiniportAdapterContext;
     PNET_BUFFER_LIST        CurrentNetBufferList = NULL;
     ULONG                   NumberOfNetBufferLists = 0;
-#ifdef IEEE_VLAN_SUPPORT  
+#ifdef IEEE_VLAN_SUPPORT
     NDIS_STATUS             Status;
 #endif
-    
+
     DBGPRINT(MUX_VERY_LOUD,("==> MPReturnNetBufferLists: MiniportAdapterContext %p, NetBufferList %p\n",MiniportAdapterContext,NetBufferLists));
 
     CurrentNetBufferList = NetBufferLists;
@@ -2242,12 +2242,12 @@ Return Value:
         // Free the context that was allocated in PtReceiveNBL
         //
         NdisFreeNetBufferListContext(CurrentNetBufferList,
-                                     sizeof(RECV_NBL_ENTRY));                    
-#endif        
+                                     sizeof(RECV_NBL_ENTRY));
+#endif
 
         CurrentNetBufferList = NET_BUFFER_LIST_NEXT_NBL(CurrentNetBufferList);
     }
-    
+
     NdisReturnNetBufferLists(pVElan->BindingHandle,
                              NetBufferLists,
                              ReturnFlags);
@@ -2256,9 +2256,9 @@ Return Value:
 
     DBGPRINT(MUX_VERY_LOUD,("<== MPReturnNetBufferLists: MiniportAdapterContext %p, NetBufferList %p\n",MiniportAdapterContext,NetBufferLists));
 }
-    
 
-VOID 
+
+VOID
 MPCancelSendNetBufferLists(
     IN NDIS_HANDLE MiniportAdapterContext,
     IN PVOID       CancelId
@@ -2289,13 +2289,13 @@ Return Value:
     PVELAN                      pVElan = (PVELAN)MiniportAdapterContext;
 
     DBGPRINT(MUX_LOUD,("==> MPCancelSendNetBufferLists: VElan %p, CancelId %p\n", pVElan, CancelId));
-    
+
     NdisCancelSendNetBufferLists(pVElan->pAdapt->BindingHandle,CancelId);
-    
+
     DBGPRINT(MUX_LOUD,("<== MPCancelSendNetBufferLists: VElan %p, CancelId %p\n", pVElan, CancelId));
 }
 
-VOID 
+VOID
 MPCancelOidRequest(
     IN NDIS_HANDLE MiniportAdapterContext,
     IN PVOID       RequestId
@@ -2304,9 +2304,9 @@ MPCancelOidRequest(
 
 Routine Description:
 
-    The miniport entry point to hanadle cancellation of a request. This function 
+    The miniport entry point to hanadle cancellation of a request. This function
     checks to see if the CancelRequest should be terminated at this level
-    or passed down to the next driver. 
+    or passed down to the next driver.
 
 Arguments:
 
@@ -2321,9 +2321,9 @@ Return Value:
     PVELAN                      pVElan = (PVELAN)MiniportAdapterContext;
     PMUX_NDIS_REQUEST           pMuxNdisRequest = &pVElan->Request;
     BOOLEAN                     fCancelRequest = FALSE;
-    
+
     DBGPRINT(MUX_LOUD, ("==> MPCancelOidRequest: VELAN %p, RequestId %p\n", pVElan, RequestId));
-        
+
     NdisAcquireSpinLock(&pVElan->Lock);
     if (pMuxNdisRequest->OrigRequest != NULL)
     {
@@ -2335,22 +2335,22 @@ Return Value:
         }
 
     }
-    
-    NdisReleaseSpinLock(&pVElan->Lock);    
+
+    NdisReleaseSpinLock(&pVElan->Lock);
 
     //
-    // If we find the request, just send down the cancel, otherwise return because there is only 
+    // If we find the request, just send down the cancel, otherwise return because there is only
     // one request pending from upper layer on the miniport
     //
     if (fCancelRequest)
     {
         NdisCancelOidRequest(pVElan->pAdapt->BindingHandle, &pMuxNdisRequest->Request);
 
-        PtCompleteForwardedRequest(pVElan->pAdapt, 
-                                    pMuxNdisRequest, 
+        PtCompleteForwardedRequest(pVElan->pAdapt,
+                                    pMuxNdisRequest,
                                     NDIS_STATUS_REQUEST_ABORTED);
     }
-   
+
     DBGPRINT(MUX_LOUD, ("<== MPCancelOidRequest: VELAN %p, RequestId %p\n", pVElan, RequestId));
 }
 
@@ -2365,13 +2365,13 @@ MuxAllocateMdl(
 /*++
 
 Routine Description:
-    This function is called by NDIS in order to allocate an MDL and memory when 
-    there isn't unused data space in the net buffer when NdisRetreatNetBufferDataStart 
+    This function is called by NDIS in order to allocate an MDL and memory when
+    there isn't unused data space in the net buffer when NdisRetreatNetBufferDataStart
     is called
 
 Arguments:
     BufferSize                      Pointer to allocation size being requested
-    
+
 Return Value:
 
 NOTE: This function always returns NULL. This is so that MUX can allocate memory and MDL
@@ -2384,7 +2384,7 @@ NOTE: This function always returns NULL. This is so that MUX can allocate memory
     return NULL;
 }
 
-NDIS_STATUS 
+NDIS_STATUS
 MPHandleSendTaggingNB(
     IN PVELAN pVElan,
     IN PNET_BUFFER_LIST NetBufferList
@@ -2420,15 +2420,15 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
     PVOID                   pVa;
     PMDL                    Mdl, FirstMdl, SecondMdl, PrevMdl;
     ULONG                   BytesToSkip;
-    ULONG                   BufferLength;  
+    ULONG                   BufferLength;
     PVOID                   Storage;
     PNET_BUFFER             MdlAllocatedNetBuffers = NULL;
 
     DBGPRINT(MUX_LOUD, ("==> MPHandleSendTaggingNB: VELAN %p, NetBufferList %p\n", pVElan, NetBufferList));
-    
+
     NdisPacket8021qInfo.Value = NET_BUFFER_LIST_INFO(NetBufferList, Ieee8021QNetBufferListInfo);
     SendContext = (PIM_NBL_ENTRY)NET_BUFFER_LIST_CONTEXT_DATA_START(NetBufferList);
-    
+
     do
     {
         Status = NDIS_STATUS_SUCCESS;
@@ -2474,7 +2474,7 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
         {
             //
             // Find the start address of the frame
-            // 
+            //
             Storage = NULL;
             pEthFrame = NdisGetDataBuffer(CurrentNetBuffer,
                                           ETH_HEADER_SIZE,
@@ -2490,7 +2490,7 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
 
             Mdl = NET_BUFFER_CURRENT_MDL(CurrentNetBuffer);
             PrevMdl = NULL;
-            
+
             //
             // Retreat the net buffer list
             //
@@ -2511,7 +2511,7 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
                 {
                     //
                     // Advance the NetBuffer so that we can allocate MDLs instead
-                    //                    
+                    //
                     NdisAdvanceNetBufferDataStart(CurrentNetBuffer,
                                                   VLAN_TAG_HEADER_SIZE,
                                                   FALSE,
@@ -2520,11 +2520,11 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
                     Status = NDIS_STATUS_RESOURCES;
                 }
             }
-            
+
             if (Status == NDIS_STATUS_RESOURCES)
             {
                 do
-                {                        
+                {
                     //
                     // There is no more unused data space in the NetBuffer, need to allocate
                     // a new MDL and memory
@@ -2537,7 +2537,7 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
                     // The following loop is to find the start address of the data after
                     // the ethernet header. This may be either in the first MDL
                     // or in the second.
-                    // 
+                    //
                     while (TRUE)
                     {
                         pVa = NULL;
@@ -2550,7 +2550,7 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
 
                         //
                         // Have we gone far enough into the packet?
-                        // 
+                        //
                         if (BytesToSkip == 0)
                         {
                             break;
@@ -2559,7 +2559,7 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
                         //
                         // Does the current buffer contain bytes past the Ethernet
                         // header? If so, stop.
-                        // 
+                        //
                         if (BufferLength > BytesToSkip)
                         {
                             pVa = (PVOID)((PUCHAR)pVa + BytesToSkip);
@@ -2572,7 +2572,7 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
                         // to the next buffer.
                         //
                         BytesToSkip -= BufferLength;
-                        Mdl = NDIS_MDL_LINKAGE(Mdl);                    
+                        Mdl = NDIS_MDL_LINKAGE(Mdl);
                     }
 
                     if (pVa == NULL)
@@ -2596,7 +2596,7 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
                     }
 
                     NdisZeroMemory((PVOID)pNetBufferContext, sizeof(IM_SEND_NB_ENTRY));
-                    
+
                     pEthFrameNew = ((PUCHAR) pNetBufferContext) + sizeof(IM_SEND_NB_ENTRY);
 
                     //
@@ -2606,7 +2606,7 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
                     SecondMdl = NdisAllocateMdl(pVElan->MiniportAdapterHandle,
                                                 pVa,    // byte following the Eth+tag headers
                                                 BufferLength);
-                    
+
                     FirstMdl = NdisAllocateMdl(pVElan->MiniportAdapterHandle,
                                                pEthFrameNew,
                                                ETH_HEADER_SIZE + VLAN_TAG_HEADER_SIZE);
@@ -2631,16 +2631,16 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
                         Status = NDIS_STATUS_RESOURCES;
                         break;
                     }
-                    
+
                     //
-                    // All allocations are successful. 
+                    // All allocations are successful.
                     // Copy the Ethernet header to the newly allocated memory
                     // Leave space for the VLAN tag
                     //
                     NdisMoveMemory(pEthFrameNew, pEthFrame, 2 * ETH_LENGTH_OF_ADDRESS);
-                    
-                    NdisMoveMemory(pEthFrameNew + (2 * ETH_LENGTH_OF_ADDRESS) + VLAN_TAG_HEADER_SIZE, 
-                                   pEthFrame + (2 * ETH_LENGTH_OF_ADDRESS), 
+
+                    NdisMoveMemory(pEthFrameNew + (2 * ETH_LENGTH_OF_ADDRESS) + VLAN_TAG_HEADER_SIZE,
+                                   pEthFrame + (2 * ETH_LENGTH_OF_ADDRESS),
                                    2);
 
                     //
@@ -2659,9 +2659,9 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
                             PrevMdl = NDIS_MDL_LINKAGE(PrevMdl);
                         }
 
-                        pNetBufferContext->PrevMdl = PrevMdl;                        
+                        pNetBufferContext->PrevMdl = PrevMdl;
                     }
-                    
+
                     pNetBufferContext->CurrentMdlOffset = NET_BUFFER_CURRENT_MDL_OFFSET(CurrentNetBuffer);
 
                     //
@@ -2685,10 +2685,10 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
                     // Adjust the NetBuffer to use the new Mdls
                     //
                     NDIS_MDL_LINKAGE(FirstMdl) = SecondMdl;
-                    
+
                     NDIS_MDL_LINKAGE(SecondMdl) = NDIS_MDL_LINKAGE(Mdl);
-                    
-                    NET_BUFFER_DATA_OFFSET(CurrentNetBuffer) = NET_BUFFER_DATA_OFFSET(CurrentNetBuffer) - 
+
+                    NET_BUFFER_DATA_OFFSET(CurrentNetBuffer) = NET_BUFFER_DATA_OFFSET(CurrentNetBuffer) -
                                                                NET_BUFFER_CURRENT_MDL_OFFSET(CurrentNetBuffer);
 
                     NET_BUFFER_DATA_LENGTH(CurrentNetBuffer) += VLAN_TAG_HEADER_SIZE;
@@ -2717,10 +2717,10 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
             else if (Status == NDIS_STATUS_SUCCESS)
             {
                 //
-                // There was enough unused space in the NetBuffer to 
-                // accomodate the VLAN tag. 
+                // There was enough unused space in the NetBuffer to
+                // accomodate the VLAN tag.
                 // Get new start address of frame
-                // 
+                //
                 Storage = NULL;
                 pEthFrameNew = NdisGetDataBuffer(CurrentNetBuffer,
                                                  VLAN_TAG_HEADER_SIZE,
@@ -2734,7 +2734,7 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
                                                   VLAN_TAG_HEADER_SIZE,
                                                   FALSE,
                                                   NULL);
-                    
+
                     Status = NDIS_STATUS_INVALID_PACKET;
                 }
                 else
@@ -2744,14 +2744,14 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
                     //
                     NdisMoveMemory(pEthFrameNew, pEthFrame, 2 * ETH_LENGTH_OF_ADDRESS);
                 }
-                
+
             }
 
             if (Status != NDIS_STATUS_SUCCESS)
             {
                 break;
             }
-            
+
             pTpid = (PUSHORT)((PUCHAR)pEthFrameNew + 2 * ETH_LENGTH_OF_ADDRESS);
             *pTpid = TPID;
             pTagHeader = (PVLAN_TAG_HEADER)(pTpid + 1);
@@ -2781,7 +2781,7 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
             {
                 SET_VLAN_ID_TO_TAG(pTagHeader, pVElan->VlanId);
             }
-            
+
             CurrentNetBuffer = NET_BUFFER_NEXT_NB(CurrentNetBuffer);
         }
 
@@ -2789,7 +2789,7 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
         {
             SendContext->Flags |= MUX_RETREAT_DATA;
             SendContext->MdlAllocatedNetBuffers = MdlAllocatedNetBuffers;
-            NET_BUFFER_LIST_INFO(NetBufferList, Ieee8021QNetBufferListInfo) = 0;            
+            NET_BUFFER_LIST_INFO(NetBufferList, Ieee8021QNetBufferListInfo) = 0;
         }
         else
         {
@@ -2806,7 +2806,7 @@ NOTE: This functio doesn't handle vlan tagging in an efficient way, please wait 
     return Status;
 }
 
-VOID 
+VOID
 MPRestoreSendNBL(
     IN PVELAN               pVElan,
     IN PNET_BUFFER_LIST     NetBufferList,
@@ -2825,20 +2825,20 @@ Arguments:
 Return Value:
 
 --*/
-    
+
 {
     PNET_BUFFER         CurrentNetBuffer;
     PNET_BUFFER         CurrentMdlAllocatedNetBuffer, SavedMdlAllocatedNetBuffer;
     PIM_SEND_NB_ENTRY   NetBufferContext;
     PVOID               pVa = NULL;
     ULONG               BufferLength;
-    PUCHAR              pFrame = NULL, pDst = NULL; 
+    PUCHAR              pFrame = NULL, pDst = NULL;
     PMDL                FirstMdl, SecondMdl;
     PVOID               Storage;
 
     CurrentNetBuffer = NET_BUFFER_LIST_FIRST_NB(NetBufferList);
     CurrentMdlAllocatedNetBuffer = MdlAllocatedNetBuffers;
-    
+
     while (CurrentNetBuffer != LastNetBuffer)
     {
         SavedMdlAllocatedNetBuffer = CurrentMdlAllocatedNetBuffer;
@@ -2848,9 +2848,9 @@ Return Value:
         //
         if (CurrentMdlAllocatedNetBuffer)
         {
-            NdisQueryMdl(NET_BUFFER_CURRENT_MDL(CurrentMdlAllocatedNetBuffer), 
-                         &pVa, 
-                         &BufferLength, 
+            NdisQueryMdl(NET_BUFFER_CURRENT_MDL(CurrentMdlAllocatedNetBuffer),
+                         &pVa,
+                         &BufferLength,
                          NormalPagePriority | MdlMappingNoExecute);
             if( pVa == NULL ){
                 //you may do something
@@ -2872,10 +2872,10 @@ Return Value:
                 //check why NetBufferContext is NULL
             }
             else{
-                NET_BUFFER_DATA_OFFSET(CurrentMdlAllocatedNetBuffer) = NET_BUFFER_DATA_OFFSET(CurrentMdlAllocatedNetBuffer) + 
+                NET_BUFFER_DATA_OFFSET(CurrentMdlAllocatedNetBuffer) = NET_BUFFER_DATA_OFFSET(CurrentMdlAllocatedNetBuffer) +
                                                                        NetBufferContext->CurrentMdlOffset;
-                
-                NET_BUFFER_DATA_LENGTH(CurrentMdlAllocatedNetBuffer) -= VLAN_TAG_HEADER_SIZE;   
+
+                NET_BUFFER_DATA_LENGTH(CurrentMdlAllocatedNetBuffer) -= VLAN_TAG_HEADER_SIZE;
 
                 NET_BUFFER_CURRENT_MDL_OFFSET(CurrentMdlAllocatedNetBuffer) = NetBufferContext->CurrentMdlOffset;
 
@@ -2889,22 +2889,22 @@ Return Value:
                 {
                     NET_BUFFER_FIRST_MDL(CurrentMdlAllocatedNetBuffer) = NetBufferContext->CurrentMdl;
                 }
-                
-                CurrentMdlAllocatedNetBuffer = NetBufferContext->NextNetBuffer;                   
+
+                CurrentMdlAllocatedNetBuffer = NetBufferContext->NextNetBuffer;
 
                 //
                 // Free the MDLs and the memory allocated
                 //
-                NdisFreeMdl(SecondMdl);        
+                NdisFreeMdl(SecondMdl);
 
                 NdisFreeMdl(FirstMdl);
 
-                NdisFreeToNPagedLookasideList(&pVElan->TagLookaside, (PVOID) NetBufferContext);          
+                NdisFreeToNPagedLookasideList(&pVElan->TagLookaside, (PVOID) NetBufferContext);
             }
         }
 
         //
-        // Advance the NET_BUFFERs until the NET_BUFFER for which 
+        // Advance the NET_BUFFERs until the NET_BUFFER for which
         // the MDLs were allocated
         //
         while ((CurrentNetBuffer != SavedMdlAllocatedNetBuffer) &&
@@ -2930,13 +2930,13 @@ Return Value:
 
                 RtlMoveMemory(pDst, pFrame, (2 * ETH_LENGTH_OF_ADDRESS));
             }
-                    
+
             NdisAdvanceNetBufferDataStart(CurrentNetBuffer,
                                           VLAN_TAG_HEADER_SIZE,
                                           FALSE,
-                                          NULL);    
-                
-            CurrentNetBuffer = NET_BUFFER_NEXT_NB(CurrentNetBuffer);                
+                                          NULL);
+
+            CurrentNetBuffer = NET_BUFFER_NEXT_NB(CurrentNetBuffer);
         }
 
         if (SavedMdlAllocatedNetBuffer)

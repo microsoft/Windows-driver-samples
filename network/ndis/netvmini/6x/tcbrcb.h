@@ -57,7 +57,7 @@ typedef struct _RCB
     LIST_ENTRY              RcbLink;
     PNET_BUFFER_LIST        Nbl;
     PVOID                   Data;
-#if (NDIS_SUPPORT_NDIS620)    
+#if (NDIS_SUPPORT_NDIS620)
     PVOID                   LookaheadData;
 #endif
 } RCB, *PRCB;

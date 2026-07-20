@@ -344,7 +344,7 @@ VOID
 MPAttachAdapter(
     _In_  PMP_ADAPTER Adapter)
 {
-    MP_LOCK_STATE LockState;    
+    MP_LOCK_STATE LockState;
 
     DEBUGP(MP_TRACE, "[%p] ---> MPAttachAdapter\n", Adapter);
 

@@ -9,8 +9,8 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 Module Name:
 
-    ndisprot.rc
- 
+    ndisprot630.rc
+
 Abstract:
 
     Internal resource file for driver.

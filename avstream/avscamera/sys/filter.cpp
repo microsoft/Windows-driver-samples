@@ -65,6 +65,7 @@ Return Value:
     m_pPerFrameSettings(nullptr),
     m_pinArray(nullptr),
     m_pMinimumRequestedFrames(nullptr),
+    m_PFSSize(0), // <-- Fix: Initialize m_PFSSize to 0
     m_PhotoModeNotifier( Filter, &KSEVENTSETID_ExtendedCameraControl, KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOMODE ),
     m_PhotoMaxFrameRateNotifier( Filter, &KSEVENTSETID_ExtendedCameraControl, KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOMAXFRAMERATE) ,
     m_FocusNotifier( Filter, &KSEVENTSETID_ExtendedCameraControl, KSPROPERTY_CAMERACONTROL_EXTENDED_FOCUSMODE ),
@@ -78,9 +79,9 @@ Return Value:
     m_ThumbnailNotifier( Filter, &KSEVENTSETID_ExtendedCameraControl, KSPROPERTY_CAMERACONTROL_EXTENDED_PHOTOTHUMBNAIL ),
     m_WarmStartNotifier( Filter, &KSEVENTSETID_ExtendedCameraControl, KSPROPERTY_CAMERACONTROL_EXTENDED_WARMSTART ),
     m_RoiNotifier( Filter, &KSEVENTSETID_ExtendedCameraControl, KSPROPERTY_CAMERACONTROL_EXTENDED_ROI_ISPCONTROL ),
-    m_ProfileNotifier( Filter, &KSEVENTSETID_ExtendedCameraControl, KSPROPERTY_CAMERACONTROL_EXTENDED_PROFILE )
+    m_ProfileNotifier( Filter, &KSEVENTSETID_ExtendedCameraControl, KSPROPERTY_CAMERACONTROL_EXTENDED_PROFILE ),
+    m_Sensor(nullptr)
 {
-
     PAGED_CODE();
 
     DBG_ENTER("(Filter=%p)", Filter);
@@ -2443,7 +2444,7 @@ Return Value:
                     pSettings[i] = pSettings[0];
                 }
 
-                while( ((pFrame+1)<=pEnd) )
+                while( ((((LPBYTE)pFrame) + pFrame->Size)<=pEnd) )
                 {
                     PKSCAMERA_PERFRAMESETTING_FRAME_HEADER  pNextFrame =
                         (PKSCAMERA_PERFRAMESETTING_FRAME_HEADER)

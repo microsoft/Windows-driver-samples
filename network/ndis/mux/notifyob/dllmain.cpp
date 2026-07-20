@@ -80,7 +80,7 @@ STDAPI DllCanUnloadNow(void)
 	TraceMsg( L"-->DllCanUnloadNow(HRESULT = %x).\n",
 	        hr );
 
-	return hr;  
+	return hr;
 }
 
 /////////////////////////////////////////////////////////////////////////////

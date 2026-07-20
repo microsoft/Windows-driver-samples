@@ -43,7 +43,7 @@ ndisprotAuditAllocMem(
 )
 {
 	PVOID				pBuffer;
-	PNPROTD_ALLOCATION	pAllocInfo;
+	PNPROTD_ALLOCATION	pAllocInfo = NULL;
 
 	if (!ndisprotdInitDone)
 	{
@@ -88,7 +88,7 @@ ndisprotAuditAllocMem(
 			ndisprotdMemoryTail->Next = pAllocInfo;
 		}
 		ndisprotdMemoryTail = pAllocInfo;
-		
+
 		ndisprotdAllocCount++;
 		NdisReleaseSpinLock(&(ndisprotdMemoryLock));
 	}
@@ -295,9 +295,9 @@ ndisprotFreeDbgLock(
     VOID
     )
 {
-    
+
     ASSERT(ndisprotdSpinLockInitDone == 1);
-    
+
     ndisprotdSpinLockInitDone = 0;
     NdisFreeSpinLock(&(ndisprotdLockLock));
 }

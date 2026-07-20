@@ -45,6 +45,8 @@ CCaptureDevice (
     , m_FilterDescriptorCount(0)
     , m_Sensor(nullptr)
     , m_Context(nullptr)
+	, m_DmaAdapterObject(nullptr)
+    , m_NumberOfMapRegisters(0)
 {
     PAGED_CODE();
 }
@@ -85,9 +87,10 @@ CCaptureDevice::
 GetFilterIndex(PKSFILTER Filter)
 {
     PAGED_CODE();
+
     ULONG i;
 
-    for( i=0; i<m_FilterDescriptorCount; i++ )
+    for( i=0; i<(ULONG)m_FilterDescriptorCount; i++ )
     {
         if( Filter->Descriptor->ReferenceGuid &&
             IsEqualGUID(*(m_Context[i].Descriptor->ReferenceGuid), *Filter->Descriptor->ReferenceGuid))
@@ -130,12 +133,18 @@ QueryForInterface(
     _In_ USHORT Size,
     _In_ USHORT Version,
     _In_opt_ PVOID InterfaceSpecificData
-    )
+)
 {
     PAGED_CODE();
 
     PIRP pIrp;
     NTSTATUS status;
+
+    // Ensure the output parameter is initialized to a known state.
+    if (Interface)
+    {
+        RtlZeroMemory(Interface, Size);
+    }
 
     if (TopOfStack == nullptr)
     {
@@ -181,7 +190,7 @@ QueryForInterface(
                 KernelMode,
                 FALSE, // Not alertable
                 NULL
-                );
+            );
 
             status = pIrp->IoStatus.Status;
         }
@@ -190,6 +199,12 @@ QueryForInterface(
     }
     else {
         status = STATUS_INSUFFICIENT_RESOURCES;
+    }
+
+    // If the call failed, ensure Interface is zeroed to avoid returning uninitialized memory.
+    if (!NT_SUCCESS(status) && Interface)
+    {
+        RtlZeroMemory(Interface, Size);
     }
 
     return status;

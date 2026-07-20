@@ -12,7 +12,7 @@ Module Name:
     ExCallbk.c
 
 Abstract: The routines in this module helps to solve driver load order
-          dependency between this sample and NDISWDM sample. These 
+          dependency between this sample and NDISWDM sample. These
           routines are not required in a typical protocol driver. By default
           this module is not included in the sample. You include these routines
           by adding EX_CALLBACK defines to the 'sources' file. Read the
@@ -52,7 +52,7 @@ typedef VOID (* NOTIFY_PRESENCE_CALLBACK)(OUT PVOID Source);
 
 #endif // ALLOC_PRAGMA
 
-BOOLEAN 
+BOOLEAN
 ndisprotRegisterExCallBack()
 {
     OBJECT_ATTRIBUTES   ObjectAttr;
@@ -63,9 +63,9 @@ ndisprotRegisterExCallBack()
     DEBUGP(DL_LOUD, ("--> ndisprotRegisterExCallBack\n"));
 
     PAGED_CODE();
-    
+
     do {
-        
+
         RtlInitUnicodeString(&CallBackObjectName, NDISPROT_CALLBACK_NAME);
 
         InitializeObjectAttributes(&ObjectAttr,
@@ -73,13 +73,13 @@ ndisprotRegisterExCallBack()
                                    OBJ_CASE_INSENSITIVE | OBJ_PERMANENT,
                                    NULL,
                                    NULL);
-                                   
+
         Status = ExCreateCallback(&CallbackObject,
                                   &ObjectAttr,
                                   TRUE,
                                   TRUE);
 
-        
+
         if (!NT_SUCCESS(Status))
         {
 
@@ -87,7 +87,7 @@ ndisprotRegisterExCallBack()
             bResult = FALSE;
             break;
         }
-       
+
         CallbackRegisterationHandle = ExRegisterCallback(CallbackObject,
                                                                  ndisprotCallback,
                                                                  (PVOID)NULL);
@@ -101,8 +101,8 @@ ndisprotRegisterExCallBack()
         ExNotifyCallback(CallbackObject,
                         (PVOID)CALLBACK_SOURCE_NDISPROT,
                         (PVOID)NULL);
-       
-    
+
+
     }while(FALSE);
 
     if(!bResult) {
@@ -116,16 +116,16 @@ ndisprotRegisterExCallBack()
         {
             ObDereferenceObject(CallbackObject);
             CallbackObject = NULL;
-        }        
+        }
     }
 
     DEBUGP(DL_LOUD, ("<-- ndisprotRegisterExCallBack\n"));
 
     return bResult;
-    
+
 }
 
-VOID 
+VOID
 ndisprotUnregisterExCallBack()
 {
     DEBUGP(DL_LOUD, ("--> ndisprotUnregisterExCallBack\n"));
@@ -142,10 +142,10 @@ ndisprotUnregisterExCallBack()
     {
         ObDereferenceObject(CallbackObject);
         CallbackObject = NULL;
-    }   
-    
+    }
+
     DEBUGP(DL_LOUD, ("<-- ndisprotUnregisterExCallBack\n"));
-    
+
 }
 
 VOID
@@ -156,40 +156,40 @@ ndisprotCallback(
     )
 {
     NOTIFY_PRESENCE_CALLBACK func;
-    
-    DEBUGP(DL_LOUD, ("==>ndisprotoCallback: Source %lx, CallbackAddr %p\n", 
+
+    DEBUGP(DL_LOUD, ("==>ndisprotoCallback: Source %lx, CallbackAddr %p\n",
                             Source, CallbackAddr));
-    
+
     //
     // if we are the one issuing this notification, just return
     //
-    if (Source == CALLBACK_SOURCE_NDISPROT) {        
+    if (Source == CALLBACK_SOURCE_NDISPROT) {
         return;
     }
-    
+
     //
     // Notification is coming from NDISWDM
     // let it know that you are here
     //
     ASSERT(Source == (PVOID)CALLBACK_SOURCE_NDISWDM);
-    
+
     if(Source == (PVOID)CALLBACK_SOURCE_NDISWDM) {
 
         ASSERT(CallbackAddr);
-        
+
         if (CallbackAddr == NULL)
         {
             DEBUGP(DL_ERROR, ("Callback called with invalid address %p\n", CallbackAddr));
-            return;     
+            return;
         }
 
         func = CallbackAddr;
-    
+
         func(CALLBACK_SOURCE_NDISPROT);
     }
-    
+
     DEBUGP(DL_LOUD, ("<==ndisprotoCallback: Source,  %lx\n", Source));
-    
+
 }
 
 #endif

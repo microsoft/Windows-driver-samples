@@ -61,14 +61,17 @@ Routine Description:
 
 Arguments:
 
+    ProtocolDriverContext - handle to the protocol driver context
+    BindContext - handle to the bind context provided by NDIS
+    BindParameters - parameters describing the adapter to which we are binding
 
 Return Value:
 
-    None
+    NDIS_STATUS_SUCCESS if successful, failure code otherwise.
 
 --*/
 {
-    PNDISPROT_OPEN_CONTEXT          pOpenContext;
+    PNDISPROT_OPEN_CONTEXT          pOpenContext = NULL;
     NDIS_STATUS                     Status;
     WDF_IO_QUEUE_CONFIG             queueConfig;
     NTSTATUS                        ntStatus;
@@ -1334,9 +1337,9 @@ Return Value:
     while (FALSE);
 
     DEBUGP(DL_LOUD, ("ValidateOpenAndDoReq: Open %p/%x, OID %x, Status %x\n",
-						pOpenContext, 
-						pOpenContext == NULL ? 0 : pOpenContext->Flags, 
-						Oid, 
+						pOpenContext,
+						pOpenContext == NULL ? 0 : pOpenContext->Flags,
+						Oid,
 						Status));
 
     return (Status);

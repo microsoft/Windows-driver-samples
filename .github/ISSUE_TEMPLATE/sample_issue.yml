@@ -1,0 +1,75 @@
+name: Issue with a sample
+description: Report a problem you have with a specific sample.
+title: '[path/to/sample]: '
+body:
+- type: dropdown
+  id: sample_area
+  attributes:
+    label: Which is the area where the sample lives?
+    description: Select the area where you're experiencing the problem.
+    options:
+    - /TrEE/
+    - /audio/
+    - /avstream/
+    - /bluetooth/
+    - /filesys/cdfs/
+    - /filesys/fastfat/
+    - /filesys/miniFilter/
+    - /general/DCHU/
+    - /general/PLX9x5x/
+    - /general/SimpleMediaSource/
+    - /general/SystemDma/
+    - /general/cancel/
+    - /general/echo/
+    - /general/event/
+    - /general/ioctl/
+    - /general/pcidrv/
+    - /general/perfcounters/
+    - /general/registry/
+    - /general/toaster/
+    - /general/tracing/
+    - /gnss/
+    - /gpio/
+    - /hid/
+    - /input/
+    - /network/config/
+    - /network/modem/
+    - /network/ndis/
+    - /network/radio/
+    - /network/trans/
+    - /network/wlan/
+    - /network/wsk/
+    - /network/wwan/
+    - /nfc/
+    - /pofx/PEP/
+    - /pofx/UMDF2/
+    - /pofx/WDF/
+    - /pos/
+    - /powerlimit/
+    - /print/
+    - /prm/
+    - /sd/
+    - /security/
+    - /sensors/
+    - /serial/
+    - /setup/
+    - /simbatt/
+    - /smartcrd/
+    - /spb/
+    - /storage/
+    - /thermal/
+    - /tools/
+    - /usb/
+    - /video/
+    - /wia/
+    - /wmi/wmiacpi/
+    - /wmi/wmisamp/
+  validations:
+    required: true
+- type: textarea
+  id: description
+  attributes:
+    label: Describe the issue
+    description: Provide a clear and concise description of what the issue is.
+  validations:
+    required: true

@@ -19,7 +19,7 @@ Abstract:
        1.  Set the correct driver version number for your versioning scheme.
        2.  Create unique memory allocation tags.
 
- --*/
+--*/
 
 
 #ifndef _MINIPORT_H

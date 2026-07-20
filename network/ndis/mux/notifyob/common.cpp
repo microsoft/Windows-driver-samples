@@ -103,8 +103,8 @@ void DumpBindingPath (INetCfgBindingPath *pncbp)
     IEnumNetCfgBindingInterface  *pencbi;
     INetCfgBindingInterface      *pncbi;
     DWORD                        dwIndex;
-    ULONG                        ulCount;  
-#endif 
+    ULONG                        ulCount;
+#endif
 
     hr = pncbp->GetPathToken( &lpsz );
 
@@ -190,9 +190,9 @@ void DumpBindingPath (INetCfgBindingPath *pncbp)
     else {
 
         TraceMsg( L"   EnumBindingInterfaces failed, (HRESULT = %x)\n",
-                  hr ); 
+                  hr );
     }
-#endif 
+#endif
     return;
 }
 
@@ -203,7 +203,7 @@ void DumpComponent (INetCfgComponent *pncc)
     ULONG   ulStatus;
     HRESULT hr;
     hr = pncc->GetDisplayName( &lpsz );
-   
+
     if ( hr == S_OK ) {
 
         TraceMsg( L"   \t\tComponent: %s\n",
@@ -393,7 +393,7 @@ HRESULT HrFindInstance (INetCfg *pnc,
                     *ppnccMiniport = pncc;
                 }
             }
-        }   
+        }
 
         ReleaseObj( pencc );
     }
@@ -552,14 +552,14 @@ DeleteFromMultiSzValue (
                 lpCurrentValueTemp[dwLen-1]='\0';
                 while( wcslen(lpCurrentValueTemp) > 0) {
 
-                    //if a register in the existing register sequence do not match szMiniportGuid, copy to new register sequence 
+                    //if a register in the existing register sequence do not match szMiniportGuid, copy to new register sequence
                     if ( _wcsicmp(lpCurrentValueTemp, szMiniportGuid) != 0 ) {
                         StringCchCopyW ( lpNewValueTemp,
                         wcslen(lpCurrentValueTemp), //size of the register
                         lpCurrentValueTemp );
-                                                
+
                         *(lpNewValueTemp+=wcslen(lpCurrentValueTemp)+1)='\0';
-                        
+
                         lpNewValueTemp += wcslen(lpNewValueTemp) + 1;
                         dwNewLen += (DWORD)wcslen(lpNewValueTemp) + 1;
                     }
@@ -605,7 +605,7 @@ AddDevicePrefix (
     LPWSTR lpNewStr;
 
     size_t cchNewStr = wcslen(lpStr) + wcslen(c_szDevicePrefix) + 1;
-    lpNewStr = (LPWSTR)malloc( cchNewStr * sizeof(WCHAR) );    
+    lpNewStr = (LPWSTR)malloc( cchNewStr * sizeof(WCHAR) );
     if ( lpNewStr )
     {
         StringCchCopyW (lpNewStr,

@@ -90,7 +90,7 @@ Return Value:
                     case CmResourceTypePort:
                         DEBUGP(MP_INFO, "[%p] IoBaseAddress = 0x%x\n", Adapter,
                                 NdisGetPhysicalAddressLow(pResDesc->u.Port.Start));
-                        DEBUGP(MP_INFO, "[%p] IoRange = x%x\n", Adapter, 
+                        DEBUGP(MP_INFO, "[%p] IoRange = x%x\n", Adapter,
                                 pResDesc->u.Port.Length);
                         break;
 
@@ -173,7 +173,7 @@ Return Value:
     NDIS_STATUS                   Status;
     PNDIS_CONFIGURATION_PARAMETER Parameter = NULL;
     NDIS_STRING                   PermanentAddressKey = RTL_CONSTANT_STRING(NETVMINI_MAC_ADDRESS_KEY);
- 
+
     UNREFERENCED_PARAMETER(Adapter);
     PAGED_CODE();
 
@@ -234,7 +234,7 @@ Return Value:
         PermanentMacAddress[2] = 0xF2;
 
         //
-        // Generated value based on the current tick count value. 
+        // Generated value based on the current tick count value.
         //
         KeQueryTickCount(&TickCountValue);
         do
@@ -455,9 +455,9 @@ HWCopyBytesFromNetBuffer(
 
 Routine Description:
 
-    Copies the first cbDest bytes from a NET_BUFFER. In order to show how the various data structures fit together, this 
+    Copies the first cbDest bytes from a NET_BUFFER. In order to show how the various data structures fit together, this
     implementation copies the data by iterating through the MDLs for the NET_BUFFER. The NdisGetDataBuffer API also allows you
-    to copy a contiguous block of data from a NET_BUFFER. 
+    to copy a contiguous block of data from a NET_BUFFER.
 
     Runs at IRQL <= DISPATCH_LEVEL.
 
@@ -496,8 +496,8 @@ Notes:
     while (DestOffset < *cbDest && CurrentMdl)
     {
         //
-        // Map MDL memory to System Address Space. LowPagePriority means mapping may fail if 
-        // system is low on memory resources. 
+        // Map MDL memory to System Address Space. LowPagePriority means mapping may fail if
+        // system is low on memory resources.
         //
         PUCHAR SrcMemory = MmGetSystemAddressForMdlSafe(CurrentMdl, LowPagePriority | MdlMappingNoExecute);
         ULONG Length = MmGetMdlByteCount(CurrentMdl);
@@ -526,7 +526,7 @@ Notes:
         DestOffset += Length;
 
         //
-        // Get next MDL (if any available) 
+        // Get next MDL (if any available)
         //
         CurrentMdl = NDIS_MDL_LINKAGE(CurrentMdl);
     }
@@ -837,12 +837,12 @@ Return Value:
 
 
         //
-        // For simplicity in the sample in order to support VLAN we extract the information from the NBL or frame and pass the 
+        // For simplicity in the sample in order to support VLAN we extract the information from the NBL or frame and pass the
         // NDIS_NET_BUFFER_LIST_8021Q_INFO structure to the code that simulates the send/receive. The code does nothing to convert
-        // modify the frame format. 
+        // modify the frame format.
         // In real HW, on send the code should extract the information from the NBL and covert it to 802.1Q format for transmission, and
         // on receive the adapter should detect if the packet is in 802.1Q format and if so convert it back to 802.3 before indicating it up to NDIS
-        // (populating the 8021Q info in the NBL being indicated). 
+        // (populating the 8021Q info in the NBL being indicated).
         //
         Nbl = NBL_FROM_SEND_NB(NetBuffer);
         Nbl1QInfo.Value = NET_BUFFER_LIST_INFO(Nbl, Ieee8021QNetBufferListInfo);
@@ -854,7 +854,7 @@ Return Value:
         else
         {
             DEBUGP(MP_TRACE, "[%p] Send NBL (%p) has no OOB VLAN tag, checking frame header.\n", Adapter, Nbl);
-            if(IS_FRAME_8021Q(Frame)) 
+            if(IS_FRAME_8021Q(Frame))
             {
                 //
                 // The frame has type of 802.1Q. Retrieve the VLAN information
@@ -864,9 +864,9 @@ Return Value:
             }
             else
             {
-                DEBUGP(MP_TRACE, "[%p] Send NBL (%p) has no VLAN information in its frame header.\n", Adapter, Nbl); 
+                DEBUGP(MP_TRACE, "[%p] Send NBL (%p) has no VLAN information in its frame header.\n", Adapter, Nbl);
             }
-        } 
+        }
 
         RXDeliverFrameToEveryAdapter(Adapter, &Nbl1QInfo, Frame, fAtDispatch);
 
@@ -923,8 +923,8 @@ HWBeginReceiveDma(
 
 Routine Description:
 
-    Simulate the hardware deciding to receive a FRAME into one of its RCBs. In VMQ enabled scenarios, it will 
-    find the matching queue and if matched retrieve the shared memory for the queue for the NBL. Otherwise, it 
+    Simulate the hardware deciding to receive a FRAME into one of its RCBs. In VMQ enabled scenarios, it will
+    find the matching queue and if matched retrieve the shared memory for the queue for the NBL. Otherwise, it
     uses the existing Frame for the NBL.
 
 Arguments:
@@ -949,7 +949,7 @@ Return Value:
         DEBUGP(MP_TRACE, "[%p] ---> HWBeginReceiveDma. Frame: 0x%p\n", Adapter, Frame);
 
         //
-        // Preserve 802.1Q information, if specified. 
+        // Preserve 802.1Q information, if specified.
         //
         if(Nbl1QInfo->Value)
         {
@@ -963,7 +963,7 @@ Return Value:
         }
 
         //
-        // If VMQ is enabled, and we're not using the default queue, 
+        // If VMQ is enabled, and we're not using the default queue,
         // we need to copy the FRAME to the NBL's shared memory area
         //
         if(VMQ_ENABLED(Adapter))
@@ -991,12 +991,12 @@ Return Value:
         NET_BUFFER_DATA_OFFSET(NetBuffer) = 0;
         NET_BUFFER_CURRENT_MDL(NetBuffer) = NET_BUFFER_FIRST_MDL(NetBuffer);
         NET_BUFFER_CURRENT_MDL_OFFSET(NetBuffer) = 0;
-    
+
     }
     while(FALSE);
-     
+
     DEBUGP(MP_TRACE, "[%p] <--- HWBeginReceiveDma Status 0x%08x\n", Adapter, Status);
     return Status;
 
 }
- 
+

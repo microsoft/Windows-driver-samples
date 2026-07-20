@@ -51,7 +51,7 @@ struct _RCB;
 
 typedef struct _VLAN_TAG_HEADER
 {
-    UCHAR       TagInfo[2];    
+    UCHAR       TagInfo[2];
 } VLAN_TAG_HEADER, *PVLAN_TAG_HEADER;
 
 #define GET_FRAME_VLAN_TAG_HEADER(_Frame)\

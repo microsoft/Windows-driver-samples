@@ -689,7 +689,7 @@ Return Value:
         case IOCTL_SERIAL_SET_HANDFLOW:
         case IOCTL_SERIAL_RESET_DEVICE: {
             //
-            // NOTE: The application expects STATUS_SUCCESS for these ioctsl.
+            // NOTE: The application expects STATUS_SUCCESS for these ioctls.
             //  so don't merge this with default.
             //
             break;

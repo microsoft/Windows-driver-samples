@@ -6,9 +6,9 @@
 //
 #pragma namespace("\\\\.\\root\\virtualization\\v2")
 
-[ Dynamic, 
+[ Dynamic,
  UUID("EB29F0F2-F5DC-45C6-81BB-3CD9F219BBBB"),
- ExtensionId("37d9eae6-5bae-48c5-bff1-63a7cdd7e4f4"), 
+ ExtensionId("37d9eae6-5bae-48c5-bff1-63a7cdd7e4f4"),
  Provider("VmmsWmiInstanceAndMethodProvider"),
  Locale(0x409),
  InterfaceVersion("1"),
@@ -16,7 +16,7 @@
 DisplayName("MSForwardExt MAC Address Policy") : Amended,
 Description("Source MAC Addresses to allow sends on MSForwardExt.") : Amended]
 class MSForwardExt_MacAddressRule : Msvm_EthernetSwitchFeatureSettingData {
-   
+
     //
     // MAC Address set on switch to allow sends from.
     //
@@ -29,4 +29,4 @@ class MSForwardExt_MacAddressRule : Msvm_EthernetSwitchFeatureSettingData {
       Description (
          "Mac Address") : Amended]
     uint8 MacAddress[] = {};
-};     
+};

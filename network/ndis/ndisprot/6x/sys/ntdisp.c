@@ -61,12 +61,12 @@ Arguments:
 Return Value:
 
     NT Status code
-    
+
 --*/
 {
     NDIS_PROTOCOL_DRIVER_CHARACTERISTICS   protocolChar = {0};
     NTSTATUS                        status = STATUS_SUCCESS;
-    NDIS_STRING                     protoName = NDIS_STRING_CONST("NDISPROT");     
+    NDIS_STRING                     protoName = NDIS_STRING_CONST("NDISPROT");
     UNICODE_STRING                  ntDeviceName;
     UNICODE_STRING                  win32DeviceName;
     BOOLEAN                         fSymbolicLink = FALSE;
@@ -74,7 +74,7 @@ Return Value:
     NDIS_HANDLE  ProtocolDriverContext={0};
 
     UNREFERENCED_PARAMETER(pRegistryPath);
-	
+
     DEBUGP(DL_LOUD, ("DriverEntry\n"));
 
     Globals.pDriverObject = pDriverObject;
@@ -96,7 +96,7 @@ Return Value:
                                  FILE_DEVICE_SECURE_OPEN,
                                  FALSE,
                                  &deviceObject);
-    
+
         if (!NT_SUCCESS (status))
         {
             //
@@ -117,7 +117,7 @@ Return Value:
         }
 
         fSymbolicLink = TRUE;
-    
+
         deviceObject->Flags |= DO_DIRECT_IO;
         Globals.ControlDeviceObject = deviceObject;
 
@@ -126,7 +126,7 @@ Return Value:
 
         //
         // Initialize the protocol characterstic structure
-        //     
+        //
 #if (NDIS_SUPPORT_NDIS630)
         {C_ASSERT(sizeof(protocolChar) >= NDIS_SIZEOF_PROTOCOL_DRIVER_CHARACTERISTICS_REVISION_2);}
         protocolChar.Header.Type        = NDIS_OBJECT_TYPE_PROTOCOL_DRIVER_CHARACTERISTICS,
@@ -159,7 +159,7 @@ Return Value:
         //
         // Register as a protocol driver
         //
-    
+
         status = NdisRegisterProtocolDriver(ProtocolDriverContext,           // driver context
                                             &protocolChar,
                                             &Globals.NdisProtocolHandle);
@@ -190,16 +190,16 @@ Return Value:
         pDriverObject->MajorFunction[IRP_MJ_CLEANUP]  = NdisprotCleanup;
 
         pDriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL]  = NdisprotIoControl;
-        
+
 
         pDriverObject->DriverUnload = NdisprotUnload;
 
         status = STATUS_SUCCESS;
 
-        
+
     }
     while (FALSE);
-       
+
 
     if (!NT_SUCCESS(status))
     {
@@ -216,14 +216,14 @@ Return Value:
             IoDeleteSymbolicLink(&win32DeviceName);
             fSymbolicLink = FALSE;
         }
-        
+
         if (Globals.NdisProtocolHandle)
         {
             NdisDeregisterProtocolDriver(Globals.NdisProtocolHandle);
             Globals.NdisProtocolHandle = NULL;
-        }        
+        }
     }
-    
+
     return status;
 }
 
@@ -252,7 +252,7 @@ Return Value:
     UNICODE_STRING     win32DeviceName;
     PAGED_CODE();
     UNREFERENCED_PARAMETER(DriverObject);
-	
+
     DEBUGP(DL_LOUD, ("Unload Enter\n"));
 
     //
@@ -261,7 +261,7 @@ Return Value:
     //
     RtlInitUnicodeString(&win32DeviceName, DOS_DEVICE_NAME);
 
-    IoDeleteSymbolicLink(&win32DeviceName);           
+    IoDeleteSymbolicLink(&win32DeviceName);
 
 
     if (Globals.ControlDeviceObject)
@@ -310,7 +310,7 @@ Return Value:
     NTSTATUS                NtStatus = STATUS_SUCCESS;
     PAGED_CODE();
     UNREFERENCED_PARAMETER(pDeviceObject);
-	
+
     pIrpSp = IoGetCurrentIrpStackLocation(pIrp);
     pIrpSp->FileObject->FsContext = NULL;
 
@@ -352,7 +352,7 @@ Return Value:
     PNDISPROT_OPEN_CONTEXT   pOpenContext;
     PAGED_CODE();
     UNREFERENCED_PARAMETER(pDeviceObject);
-	
+
     pIrpSp = IoGetCurrentIrpStackLocation(pIrp);
     pOpenContext = pIrpSp->FileObject->FsContext;
 
@@ -378,7 +378,7 @@ Return Value:
     return NtStatus;
 }
 
-    
+
 
 NTSTATUS
 NdisprotCleanup(
@@ -410,9 +410,9 @@ Return Value:
     ULONG                   PacketFilter;
     ULONG                   BytesProcessed;
 
-    
+
     UNREFERENCED_PARAMETER(pDeviceObject);
-	
+
     pIrpSp = IoGetCurrentIrpStackLocation(pIrp);
     pOpenContext = pIrpSp->FileObject->FsContext;
 
@@ -437,7 +437,7 @@ Return Value:
                         &BytesProcessed,
                         FALSE   // Don't wait for device to be powered on
                         );
-    
+
         if (NdisStatus != NDIS_STATUS_SUCCESS)
         {
             DEBUGP(DL_INFO, ("Cleanup: Open %p, set packet filter (%x) failed: %x\n",
@@ -449,7 +449,7 @@ Return Value:
             //
             NdisStatus = NDIS_STATUS_SUCCESS;
         }
-        
+
         //
         //  Mark this endpoint.
         //
@@ -533,7 +533,7 @@ Return Value:
             //  If we don't get this event in 5 seconds, time out.
             //
             NPROT_ASSERT((FunctionCode & 0x3) == METHOD_BUFFERED);
-            
+
             if (NPROT_WAIT_EVENT(&Globals.BindsComplete, 5000))
             {
                 NtStatus = STATUS_SUCCESS;
@@ -546,9 +546,9 @@ Return Value:
             break;
 
         case IOCTL_NDISPROT_QUERY_BINDING:
-            
+
             NPROT_ASSERT((FunctionCode & 0x3) == METHOD_BUFFERED);
-            
+
             Status = ndisprotQueryBinding(
                             pIrp->AssociatedIrp.SystemBuffer,
                             pIrpSp->Parameters.DeviceIoControl.InputBufferLength,
@@ -636,7 +636,7 @@ Return Value:
                 NtStatus = STATUS_DEVICE_NOT_CONNECTED;
             }
             break;
-                        
+
         default:
 
             NtStatus = STATUS_NOT_SUPPORTED;
@@ -715,9 +715,9 @@ Return Value:
             NPROT_ASSERT(pOpenContext->pFileObject != NULL);
 
             DEBUGP(DL_WARN, ("ndisprotOpenDevice: Open %p/%x already associated"
-                " with another FileObject %p\n", 
+                " with another FileObject %p\n",
                 pOpenContext, pOpenContext->Flags, pOpenContext->pFileObject));
-            
+
             NPROT_RELEASE_LOCK(&pOpenContext->Lock, FALSE);
 
             NPROT_DEREF_OPEN(pOpenContext); // ndisprotOpenDevice failure
@@ -729,17 +729,17 @@ Return Value:
         // pFileObject->FsContext with NULL, if they are equal, the function puts  pOpenContext
         // into FsContext, and return NULL. Otherwise, it return pFileObject->FsContext without
         // changing anything.
-        // 
-            
+        //
+
         if ((pCurrentOpenContext = InterlockedCompareExchangePointer (& (pFileObject->FsContext), pOpenContext, NULL)) != NULL)
         {
             //
             // pFileObject->FsContext already is used by other open
             //
             DEBUGP(DL_WARN, ("ndisprotOpenDevice: FileObject %p already associated"
-                " with another Open %p/%x\n", 
+                " with another Open %p/%x\n",
                 pFileObject, pCurrentOpenContext, pCurrentOpenContext->Flags));  //BUG
-            
+
             NPROT_RELEASE_LOCK(&pOpenContext->Lock, FALSE);
 
             NPROT_DEREF_OPEN(pOpenContext); // ndisprotOpenDevice failure
@@ -766,7 +766,7 @@ Return Value:
                         &BytesProcessed,
                         TRUE    // Do wait for power on
                         );
-    
+
         if (NdisStatus != NDIS_STATUS_SUCCESS)
         {
             DEBUGP(DL_WARN, ("openDevice: Open %p: set packet filter (%x) failed: %x\n",
@@ -781,10 +781,10 @@ Return Value:
             // for this file object later
             //
             pCurrentOpenContext = InterlockedCompareExchangePointer (& (pFileObject->FsContext), NULL, pOpenContext);
-            
-     
+
+
             NPROT_ASSERT(pCurrentOpenContext == pOpenContext);
-            
+
             NPROT_SET_FLAGS(pOpenContext->Flags, NPROTO_OPEN_FLAGS, NPROTO_OPEN_IDLE);
             pOpenContext->pFileObject = NULL;
 
@@ -797,7 +797,7 @@ Return Value:
         }
 
         *ppOpenContext = pOpenContext;
-        
+
         NtStatus = STATUS_SUCCESS;
     }
     while (FALSE);
@@ -859,7 +859,7 @@ Return Value:
     {
         DEBUGP(DL_INFO, ("DerefOpen: Open %p, Flags %x, ref count is zero!\n",
             pOpenContext, pOpenContext->Flags));
-        
+
         NPROT_ASSERT(pOpenContext->BindingHandle == NULL);
         NPROT_ASSERT(pOpenContext->RefCount == 0);
         NPROT_ASSERT(pOpenContext->pFileObject == NULL);

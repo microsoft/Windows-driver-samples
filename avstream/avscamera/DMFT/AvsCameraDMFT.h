@@ -226,11 +226,6 @@ public:
 
     static HRESULT CreateInstance(
         REFIID iid, void **ppMFT);
- 
-    __inline BOOL isPhotoModePhotoSequence()
-    {
-        return m_PhotoModeIsPhotoSequence;
-    }
 
     __inline DWORD GetQueueId()
     {
@@ -305,11 +300,9 @@ protected:
 private:
     ULONG                        m_InputPinCount;
     ULONG                        m_OutputPinCount;
-    ULONG                        m_CustomPinCount;
     DeviceStreamState            m_StreamingState;
     CBasePinArray                m_OutPins;
     CBasePinArray                m_InPins;
-    BOOL                         m_PhotoModeIsPhotoSequence;  // used to store if the filter is in photo sequence or not
     long                         m_nRefCount;                 // Reference count
     CCritSec                     m_critSec;                   // Control lock.. taken only durign state change operations   
     ComPtr <IUnknown>            m_spDeviceManagerUnk;        // D3D Manager set, when MFT_MESSAGE_SET_D3D_MANAGER is called through ProcessMessage

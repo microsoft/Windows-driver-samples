@@ -43,7 +43,7 @@ class CMuxNotify :
                // Must inherit from CComObjectRoot(Ex) for reference count
                // management and default threading model.
                //
- 
+
                public CComObjectRoot,
 
                //
@@ -185,7 +185,7 @@ class CMuxNotify :
       STDMETHOD (SysNotifyBindingPath) (
                    IN DWORD dwChangeFlag,
                    IN INetCfgBindingPath* pncbp);
-            
+
       STDMETHOD (SysNotifyComponent) (
                    IN DWORD dwChangeFlag,
                    IN INetCfgComponent* pncc);

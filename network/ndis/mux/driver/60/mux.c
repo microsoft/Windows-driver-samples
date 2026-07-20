@@ -1,8 +1,8 @@
 /*++
 Copyright (c) 1992-2000  Microsoft Corporation
- 
+
 Module Name:
- 
+
     mux.c
 
 Abstract:
@@ -31,7 +31,7 @@ Revision History:
 #if DBG
 //
 // Debug level for mux driver
-// 
+//
 INT     muxDebugLevel = MUX_WARN;
 
 #endif //DBG
@@ -103,9 +103,9 @@ Arguments:
 
     DriverObject - pointer to the system's driver object structure
         for this driver
-    
+
     RegistryPath - system's registry path for this driver
-    
+
 Return Value:
 
     STATUS_SUCCESS if all initialization is successful, STATUS_XXX
@@ -119,13 +119,13 @@ Return Value:
     NDIS_HANDLE  MiniportDriverContext;
     NDIS_HANDLE  ProtocolDriverContext;
     NDIS_STRING                     Name;
-    
+
 
     NdisInitializeListHead(&AdapterList);
     NdisInitializeListHead(&VElanList);
     MiniportDriverContext=NULL;
     ProtocolDriverContext=NULL;
-    
+
     MUX_INIT_MUTEX(&GlobalMutex);
     MUX_INIT_MUTEX(&ControlDeviceMutex);
     NdisAllocateSpinLock(&GlobalLock);
@@ -147,7 +147,7 @@ Return Value:
         MChars.Header.Type = NDIS_OBJECT_TYPE_DEFAULT;
         MChars.Header.Size = sizeof(NDIS_MINIPORT_DRIVER_CHARACTERISTICS);
         MChars.Header.Revision = NDIS_MINIPORT_DRIVER_CHARACTERISTICS_REVISION_1;
-        
+
         MChars.MajorNdisVersion = MUX_MAJOR_NDIS_VERSION;
         MChars.MinorNdisVersion = MUX_MINOR_NDIS_VERSION;
 
@@ -198,15 +198,15 @@ Return Value:
         PChars.Header.Type = NDIS_OBJECT_TYPE_DEFAULT;
         PChars.Header.Size = sizeof(NDIS_PROTOCOL_DRIVER_CHARACTERISTICS);
         PChars.Header.Revision = NDIS_PROTOCOL_DRIVER_CHARACTERISTICS_REVISION_1;
-            
+
         PChars.MajorNdisVersion = MUX_PROT_MAJOR_NDIS_VERSION;
         PChars.MinorNdisVersion = MUX_PROT_MINOR_NDIS_VERSION;
-        
+
         PChars.MajorDriverVersion = MUX_MAJOR_DRIVER_VERSION;
         PChars.MinorDriverVersion = MUX_MINOR_DRIVER_VERSION;
 
         PChars.SetOptionsHandler = PtSetOptions;
-        
+
         //
         // Make sure the protocol-name matches the service-name
         // (from the INF) under which this protocol is installed.
@@ -254,11 +254,11 @@ MpSetOptions(
 Routine Description:
     This routine registers the optional handlers for the MUX MINIPORT driver
     with NDIS.
-    
+
 Arguments:
 
     NdisDriverHandle           Mux miniport driver handle
-    DriverContext              Specifies a handle to a driver-allocated context area where the driver 
+    DriverContext              Specifies a handle to a driver-allocated context area where the driver
                                maintains state and configuration information
 
 Return Value:
@@ -283,11 +283,11 @@ PtSetOptions(
 Routine Description:
     This routine registers the optional handlers for the MUX PROTOCOL driver
     with NDIS.
-    
+
 Arguments:
 
     NdisDriverHandle            Mux protocol driver handle
-    DriverContext               Specifies a handle to a driver-allocated context area where the driver 
+    DriverContext               Specifies a handle to a driver-allocated context area where the driver
                                 maintains state and configuration information
 
 Return Value:
@@ -346,16 +346,16 @@ Return Value:
     MUX_ACQUIRE_MUTEX(&ControlDeviceMutex);
 
     ++MiniportCount;
-    
+
     if (1 == MiniportCount)
     {
         NdisZeroMemory(DispatchTable, (IRP_MJ_MAXIMUM_FUNCTION+1) * sizeof(PDRIVER_DISPATCH));
-        
+
         DispatchTable[IRP_MJ_CREATE] = PtDispatch;
         DispatchTable[IRP_MJ_CLEANUP] = PtDispatch;
         DispatchTable[IRP_MJ_CLOSE] = PtDispatch;
         DispatchTable[IRP_MJ_DEVICE_CONTROL] = PtDispatch;
-        
+
 
         NdisInitUnicodeString(&DeviceName, NTDEVICE_STRING);
         NdisInitUnicodeString(&DeviceLinkUnicodeString, GLOBAL_LINKNAME_STRING);
@@ -377,7 +377,7 @@ Return Value:
                     &DeviceObjectAttributes,
                     &ControlDeviceObject,
                     &NdisDeviceHandle);
-        
+
     }
 
     MUX_RELEASE_MUTEX(&ControlDeviceMutex);
@@ -416,36 +416,36 @@ Return Value:
     PVOID               buffer;
 
     UNREFERENCED_PARAMETER(DeviceObject);
-	
+
     irpStack = IoGetCurrentIrpStackLocation(Irp);
     DBGPRINT(MUX_LOUD, ("==>PtDispatch %d\n", irpStack->MajorFunction));
-      
+
     switch (irpStack->MajorFunction)
     {
         case IRP_MJ_CREATE:
             break;
-        
+
         case IRP_MJ_CLEANUP:
             break;
-        
+
         case IRP_MJ_CLOSE:
-            break;        
-        
-        case IRP_MJ_DEVICE_CONTROL: 
+            break;
+
+        case IRP_MJ_DEVICE_CONTROL:
         {
-          
-          buffer = Irp->AssociatedIrp.SystemBuffer;  
+
+          buffer = Irp->AssociatedIrp.SystemBuffer;
           inlen = irpStack->Parameters.DeviceIoControl.InputBufferLength;
           UNREFERENCED_PARAMETER(buffer);
           UNREFERENCED_PARAMETER(inlen);
-          
-          switch (irpStack->Parameters.DeviceIoControl.IoControlCode) 
+
+          switch (irpStack->Parameters.DeviceIoControl.IoControlCode)
           {
             //
             // Add code here to handle ioctl commands.
             //
           }
-          break;  
+          break;
         }
         default:
             break;
@@ -458,7 +458,7 @@ Return Value:
 
     return status;
 
-} 
+}
 
 
 NDIS_STATUS
@@ -492,7 +492,7 @@ Return Value:
     ASSERT(MiniportCount > 0);
 
     --MiniportCount;
-    
+
     if (0 == MiniportCount)
     {
         //
@@ -511,6 +511,6 @@ Return Value:
 
     DBGPRINT(MUX_INFO, ("<== PtDeregisterDevice: %x\n", Status));
     return Status;
-    
+
 }
 

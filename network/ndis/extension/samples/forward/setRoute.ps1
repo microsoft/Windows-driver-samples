@@ -10,7 +10,7 @@ function StringToMacAddress([String]$MacString)
 	$macArray = @();
 	$byteOne = 0;
 	$byteTwo = 0;
-	
+
 	for($i = 0; $i -lt 6; $i++)
 	{
 		$byteChars = $MacString.ToCharArray(2*$i, 2);
@@ -44,7 +44,7 @@ foreach($vm in $vmArr)
 {
     $vmName = $vm.Name
     $adapters = Get-VmNetworkAdapter -VmName $vmName
-    
+
     foreach($adapter in $adapters)
     {
         Write-Host "Setting Policy for $vmName..."
