@@ -14,11 +14,12 @@
 //
 // New and delete operators
 //
-void* __cdecl operator new(size_t Size, POOL_FLAGS Flags)
+void* __cdecl operator new(size_t Size, BDD_POOL_TYPE PoolType)
 {
     PAGED_CODE();
 
     Size = (Size != 0) ? Size : 1;
+    POOL_FLAGS Flags = PoolType == BDD_POOL_TYPE::NonPaged ? POOL_FLAG_NON_PAGED : POOL_FLAG_PAGED;
     
     // Note that ExAllocatePool2 replaces ExAllocatePool* APIs in OS's starting
     // with Windows 10, version 2004. If your driver targets previous versions it
@@ -35,11 +36,12 @@ void* __cdecl operator new(size_t Size, POOL_FLAGS Flags)
     return pObject;
 }
 
-void* __cdecl operator new[](size_t Size, POOL_FLAGS Flags)
+void* __cdecl operator new[](size_t Size, BDD_POOL_TYPE PoolType)
 {
     PAGED_CODE();
 
     Size = (Size != 0) ? Size : 1;
+    POOL_FLAGS Flags = PoolType == BDD_POOL_TYPE::NonPaged ? POOL_FLAG_NON_PAGED : POOL_FLAG_PAGED;
     
     void* pObject = ExAllocatePool2(Flags, Size, BDDTAG);
 
@@ -51,6 +53,24 @@ void* __cdecl operator new[](size_t Size, POOL_FLAGS Flags)
 #endif // DBG
 
     return pObject;
+}
+
+void __cdecl operator delete(void* pObject, BDD_POOL_TYPE PoolType)
+{
+    PAGED_CODE();
+
+    UNREFERENCED_PARAMETER(PoolType);
+
+    ::operator delete(pObject);
+}
+
+void __cdecl operator delete[](void* pObject, BDD_POOL_TYPE PoolType)
+{
+    PAGED_CODE();
+
+    UNREFERENCED_PARAMETER(PoolType);
+
+    ::operator delete[](pObject);
 }
 
 void __cdecl operator delete(void* pObject)

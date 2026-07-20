@@ -103,8 +103,7 @@ BddDdiAddDevice(
     }
     *ppDeviceContext = NULL;
 
-    void* pBDDMemory = operator new(sizeof(BASIC_DISPLAY_DRIVER), POOL_FLAG_NON_PAGED);
-    BASIC_DISPLAY_DRIVER* pBDD = pBDDMemory ? new(pBDDMemory) BASIC_DISPLAY_DRIVER(pPhysicalDeviceObject) : NULL;
+    BASIC_DISPLAY_DRIVER* pBDD = new(BDD_POOL_TYPE::NonPaged) BASIC_DISPLAY_DRIVER(pPhysicalDeviceObject);
     if (pBDD == NULL)
     {
         BDD_LOG_LOW_RESOURCE0("pBDD failed to be allocated");

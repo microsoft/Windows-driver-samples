@@ -626,12 +626,20 @@ IsEdidChecksumValid(_In_reads_bytes_(EDID_V1_BLOCK_SIZE) const BYTE* pEdid);
 // Memory handling
 //
 
-// Defaulting the value of Flags means that any call to new Foo()
+enum class BDD_POOL_TYPE
+{
+    Paged,
+    NonPaged
+};
+
+// Defaulting the value of PoolType means that any call to new Foo()
 // will raise a compiler error for being ambiguous. This is to help keep
 // any calls to allocate memory from accidentally NOT going through
 // these functions.
-void* __cdecl operator new(size_t Size, POOL_FLAGS Flags = POOL_FLAG_PAGED);
-void* __cdecl operator new[](size_t Size, POOL_FLAGS Flags = POOL_FLAG_PAGED);
+void* __cdecl operator new(size_t Size, BDD_POOL_TYPE PoolType = BDD_POOL_TYPE::Paged);
+void* __cdecl operator new[](size_t Size, BDD_POOL_TYPE PoolType = BDD_POOL_TYPE::Paged);
+void  __cdecl operator delete(void* pObject, BDD_POOL_TYPE PoolType);
+void  __cdecl operator delete[](void* pObject, BDD_POOL_TYPE PoolType);
 void  __cdecl operator delete(void* pObject);
 void  __cdecl operator delete(void* pObject, size_t s);
 void  __cdecl operator delete[](void* pObject);
