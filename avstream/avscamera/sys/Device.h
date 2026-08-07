@@ -71,7 +71,7 @@ protected:
     //
 
     //  Number of Filter descriptors & filter factories.
-    size_t  m_FilterDescriptorCount;
+    ULONG  m_FilterDescriptorCount;
 
     //  Pointer to an array of filter descriptor pointers.
     //  Typically it's one sensor for each filter factory.
@@ -407,6 +407,7 @@ public:
     static IO_COMPLETION_ROUTINE IrpSynchronousCompletion;
 
     virtual
+    _Must_inspect_result_
     NTSTATUS
     QueryForInterface(
         _In_ PDEVICE_OBJECT TopOfStack,
