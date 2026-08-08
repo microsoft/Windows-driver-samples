@@ -1,0 +1,40 @@
+[Version]
+Signature = "$WINDOWS NT$"
+Class = Extension
+ClassGuid = {e2f84ce7-8efa-411c-aa69-97454ca4cb57}
+Provider = %ManufacturerName%
+ExtensionId = {D4D9196A-105B-4B76-B693-84BD33A7A703}
+CatalogFile = psa.cat
+DriverVer = 05/19/2020,16.35.13.542
+
+[Manufacturer]
+%ManufacturerName% = Microsoft, NTamd64.6.3
+
+[Microsoft.NTamd64.6.3]
+%Device.ExtensionDesc% = PSA-Install, %PrinterHardwareId%
+%Device.ExtensionDesc% = PSA-Install, %PrinterHardwareId2%
+%Device.ExtensionDesc% = PSA-Install, %PrinterHardwareId3%
+
+[PSA-Install.NT]
+AddProperty = Add-PSA-Property
+
+[PSA-Install.NT.Software]
+AddSoftware = %SoftwareName%,, Microsoft-PSA-SoftwareInstall
+
+[Microsoft-PSA-SoftwareInstall]
+SoftwareType = %MicrosoftStoreType%
+SoftwareID = pfn://%PackageFamilyName%
+
+[Add-PSA-Property]
+{A925764B-88E0-426D-AFC5-B39768BE59EB}, 1, 0x12,, %AUMID%
+
+[Strings]
+ManufacturerName = "Microsoft"
+SoftwareName = "Microsoft Print Support App"
+Device.ExtensionDesc = "Print Support App Extension"
+MicrosoftStoreType = 2
+PackageFamilyName = "dd5de805-d9bb-4785-88e9-399cbff2130e_ph1m9x8skttmg"
+AUMID = "dd5de805-d9bb-4785-88e9-399cbff2130e_ph1m9x8skttmg!App"
+PrinterHardwareId = "PSA_CanoniP110_seriesD84F"
+PrinterHardwareId2 = "PSA_XeroxAltaLink_B8055C036"
+PrinterHardwareId3 = "PSA_BrotherMFC-J775DWF678"
