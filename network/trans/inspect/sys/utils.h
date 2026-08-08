@@ -14,9 +14,12 @@ Environment:
 --*/
 
 #include <limits.h>
+#include <traceloggingprovider.h>
 
 #ifndef _TL_INSPECT_UTILS_H_
 #define _TL_INSPECT_UTILS_H_
+
+TRACELOGGING_DECLARE_PROVIDER(gTlgHandle);
 
 __inline
 ADDRESS_FAMILY GetAddressFamilyForLayer(
@@ -247,7 +250,39 @@ GetNetwork5TupleIndexesForLayer(
    }
 }
 
+__inline
+void
+GetReauthReasonIndexForLayer(
+   _In_ UINT16 layerId,
+   _Out_ UINT* flagsIndex
+   )
+{
+   switch (layerId)
+   {
+   case FWPS_LAYER_ALE_AUTH_CONNECT_V4:
+      *flagsIndex = FWPS_FIELD_ALE_AUTH_CONNECT_V4_REAUTHORIZE_REASON;
+      break;
+   case FWPS_LAYER_ALE_AUTH_CONNECT_V6:
+      *flagsIndex = FWPS_FIELD_ALE_AUTH_CONNECT_V6_REAUTHORIZE_REASON;
+      break;
+   case FWPS_LAYER_ALE_AUTH_RECV_ACCEPT_V4:
+      *flagsIndex = FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V4_REAUTHORIZE_REASON;
+      break;
+   case FWPS_LAYER_ALE_AUTH_RECV_ACCEPT_V6:
+      *flagsIndex = FWPS_FIELD_ALE_AUTH_RECV_ACCEPT_V6_REAUTHORIZE_REASON;
+      break;
+   default:
+      *flagsIndex = UINT_MAX;
+      NT_ASSERT(0);
+      break;
+   }
+}
+
 BOOLEAN IsAleReauthorize(
+   _In_ const FWPS_INCOMING_VALUES* inFixedValues
+   );
+
+BOOLEAN IsAleReauthorizeDueToClassifyCompletion(
    _In_ const FWPS_INCOMING_VALUES* inFixedValues
    );
 
