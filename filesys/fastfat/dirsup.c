@@ -664,7 +664,7 @@ Arguments:
 
     FcbOrDcb - Supplies the Fcb/Dcb whose name will be going away
 
-    Ccb - Supplies the Ccb for the Fcb (not reqired for a Dcb) so
+    Ccb - Supplies the Ccb for the Fcb (not required for a Dcb) so
         that we know which name the Fcb was opened by
 
 Return Value:
