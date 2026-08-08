@@ -134,6 +134,39 @@ Revision History:
 #define USB_AUDIO_PROCESS_CHORUS            0x05
 #define USB_AUDIO_PROCESS_DYNRANGECOMP      0x06
 
+// A.8 Audio Class-Specific Endpoint Descriptor Subtypes
+//
+#define USB_AUDIO_CS_ENDPOINT_UNDEFINED     0x00
+#define USB_AUDIO_CS_ENDPOINT_GENERAL       0x01
+
+//
+// USB Device Class Definition for MIDI Devices
+// Appendix A.  Audio Device Class Codes: MIDIStreaming
+//
+
+// A.1 MS Class-Specific Interface Descriptor Subtypes
+//
+#define USB_AUDIO_CS_INTERFACE_MS_UNDEFINED     0x00
+#define USB_AUDIO_CS_INTERFACE_MS_HEADER        0x01
+#define USB_AUDIO_CS_INTERFACE_MIDI_IN_JACK     0x02
+#define USB_AUDIO_CS_INTERFACE_MIDI_OUT_JACK    0x03
+#define USB_AUDIO_CS_INTERFACE_ELEMENT          0x04
+
+// A.2 MS Class-Specific Endpoint Descriptor Subtypes
+//
+#define USB_AUDIO_CS_EP_MS_UNDEFINED            0x00
+#define USB_AUDIO_CS_EP_MS_GENERAL              0x01
+
+// A.3 MS MIDI IN and OUT Jack Types
+//
+#define USB_AUDIO_MS_JACK_TYPE_UNDEFINED        0x00
+#define USB_AUDIO_MS_JACK_TYPE_EMBEDDED         0x01
+#define USB_AUDIO_MS_JACK_TYPE_EXTERNAL         0x02
+
+// A.5.1 Endpoint Control Selectors
+//
+#define USB_AUDIO_CS_EP_CONTROL_MS_UNDEFINED    0x00
+#define USB_AUDIO_CS_EP_ASSOCIATION_CONTROL     0x01
 
 /*****************************************************************************
  T Y P E D E F S
@@ -339,15 +372,84 @@ typedef struct _USB_AUDIO_GENERAL_DESCRIPTOR {
 
 // 4.6.1.2 Class-Specific AS Endpoint Descriptor
 //
-typedef struct _USB_AUDIO_ENDPOINT_DESCRIPTOR {
+typedef struct _USB_AUDIO_AS_ENDPOINT_DESCRIPTOR {
     UCHAR  bLength;
     UCHAR  bDescriptorType;
     UCHAR  bDescriptorSubtype;
     UCHAR  bmAttributes;
     UCHAR  bLockDelayUnits;
     USHORT wLockDelay;
-} USB_AUDIO_ENDPOINT_DESCRIPTOR,
-*PUSB_AUDIO_ENDPOINT_DESCRIPTOR;
+} USB_AUDIO_AS_ENDPOINT_DESCRIPTOR,
+*PUSB_AUDIO_AS_ENDPOINT_DESCRIPTOR;
+
+//
+// USB Device Class Definition for MIDI Devices
+//
+typedef struct _USB_AUDIO_MS_INTERFACE_HEADER_DESCRIPTOR {
+    UCHAR bLength;
+    UCHAR bDescriptorType;
+    UCHAR bDescriptorSubtype;
+    USHORT bcdMSC;
+    USHORT wTotalLength;
+} USB_AUDIO_MS_INTERFACE_HEADER_DESCRIPTOR,
+*PUSB_AUDIO_MS_INTERFACE_HEADER_DESCRIPTOR;
+
+typedef struct _USB_AUDIO_MS_MIDI_IN_JACK_DESCRIPTOR {
+    UCHAR bLength;
+    UCHAR bDescriptorType;
+    UCHAR bDescriptorSubtype;
+    UCHAR bJackType;
+    UCHAR bJackID;
+    UCHAR iJack;
+} USB_AUDIO_MS_MIDI_IN_JACK_DESCRIPTOR,
+*PUSB_AUDIO_MS_MIDI_IN_JACK_DESCRIPTOR;
+
+typedef struct _USB_AUDIO_MS_MIDI_OUT_JACK_DESCRIPTOR {
+    UCHAR bLength;
+    UCHAR bDescriptorType;
+    UCHAR bDescriptorSubtype;
+    UCHAR bJackType;
+    UCHAR bJackID;
+    UCHAR bNrInputPins;
+} USB_AUDIO_MS_MIDI_OUT_JACK_DESCRIPTOR,
+*PUSB_AUDIO_MS_MIDI_OUT_JACK_DESCRIPTOR;
+
+typedef struct _USB_AUDIO_MS_MIDI_OUT_JACK_PIN_DESCRIPTOR {
+    UCHAR baSourceID;
+    UCHAR baSourcePin;
+} USB_AUDIO_MS_MIDI_OUT_JACK_PIN_DESCRIPTOR,
+*PUSB_AUDIO_MS_MIDI_OUT_JACK_PIN_DESCRIPTOR;
+
+typedef struct _USB_AUDIO_MS_ELEMENT_DESCRIPTOR {
+    UCHAR bLength;
+    UCHAR bDescriptorType;
+    UCHAR bDescriptorSubtype;
+    UCHAR bElementID;
+    UCHAR bNrInputPins;
+} USB_AUDIO_MS_ELEMENT_DESCRIPTOR,
+*PUSB_AUDIO_MS_ELEMENT_DESCRIPTOR;
+
+typedef struct _USB_AUDIO_MS_ELEMENT_SOURCE_DESCRIPTOR {
+    UCHAR baSourceID;
+    UCHAR baSourcePin;
+} USB_AUDIO_MS_ELEMENT_SOURCE_DESCRIPTOR,
+*PUSB_AUDIO_MS_ELEMENT_SOURCE_DESCRIPTOR;
+
+typedef struct _USB_AUDIO_MS_ELEMENT_FOOTER_DESCRIPTOR {
+    UCHAR bNrOutputPins;
+    UCHAR bInTerminalLink;
+    UCHAR bOutTerminalLink;
+    UCHAR bElCapsSize;
+} USB_AUDIO_MS_ELEMENT_FOOTER_DESCRIPTOR,
+*PUSB_AUDIO_MS_ELEMENT_FOOTER_DESCRIPTOR;
+
+typedef struct _USB_AUDIO_MS_ENDPOINT_DESCRIPTOR {
+    UCHAR bLength;
+    UCHAR bDescriptorType;
+    UCHAR bDescriptorSubtype;
+    UCHAR bNumEmbMIDIJack;
+} USB_AUDIO_MS_ENDPOINT_DESCRIPTOR,
+*PUSB_AUDIO_MS_ENDPOINT_DESCRIPTOR;
 
 //
 // USB Device Class Definition for Audio Data Formats
