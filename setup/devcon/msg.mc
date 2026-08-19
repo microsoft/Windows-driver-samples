@@ -12,7 +12,7 @@ For more information, type: %1 help
 .
 MessageId=60001 SymbolicName=MSG_FAILURE
 Language=English
-%1 failed.
+%1: command %2 failed
 .
 MessageId=60002 SymbolicName=MSG_COMMAND_USAGE
 Language=English

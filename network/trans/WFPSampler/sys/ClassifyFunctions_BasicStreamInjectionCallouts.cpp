@@ -54,7 +54,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Framework_WFPSamplerCalloutDriver.h"                /// .
-#include "ClassifyFunctions_BasicStreamInjectionCallouts.tmh" /// $(OBJ_PATH)\$(O)\ 
+#include "ClassifyFunctions_BasicStreamInjectionCallouts.tmh" /// $(OBJ_PATH)\$(O)\
 
 /**
  @private_function="PerformBasicPacketInjectionAtOutboundTransport"

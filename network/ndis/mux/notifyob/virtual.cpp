@@ -173,10 +173,10 @@ HRESULT CMuxVirtualMiniport::Install (VOID)
     INetCfgComponent   *pnccMiniport;
     HRESULT            hr;
     LPWSTR  *pmszwRefs=NULL;
-    OBO_TOKEN  *pOboToken=NULL;    
+    OBO_TOKEN  *pOboToken=NULL;
     DWORD  dwSetupFlags=0;
     LPCWSTR  pszwAnswerFile=NULL;
-    LPCWSTR  pszwAnswerSections=NULL; 
+    LPCWSTR  pszwAnswerSections=NULL;
 
 
     TraceMsg( L"-->CMuxVirtualMiniport::Install.\n" );
@@ -189,7 +189,7 @@ HRESULT CMuxVirtualMiniport::Install (VOID)
         hr = pncClass->QueryInterface( IID_INetCfgClassSetup,
                                        (void **)&pncClassSetup );
         if ( hr == S_OK ) {
-            
+
             hr = pncClassSetup->Install( c_szMuxMiniport,
                                          pOboToken,
                                          dwSetupFlags,
@@ -205,7 +205,7 @@ HRESULT CMuxVirtualMiniport::Install (VOID)
 
                     TraceMsg( L"   Failed to get the instance guid, uninstalling "
                               L" the miniport.\n" );
-                    
+
                     pncClassSetup->DeInstall( pnccMiniport,
                                               pOboToken,
                                               pmszwRefs );
@@ -278,7 +278,7 @@ HRESULT CMuxVirtualMiniport::DeInstall (VOID)
             if ( hr == S_OK ) {
 
                 TraceMsg( L"   Found the miniport instance to uninstall.\n" );
-                
+
                 hr = pncClassSetup->DeInstall( pnccMiniport,
                                                pOboToken,
                                                pmszwRefs );
@@ -351,7 +351,7 @@ HRESULT CMuxVirtualMiniport::ApplyRegistryChanges(ConfigAction eApplyAction)
                 L"%s\\%s",
                 c_szAdapterList,
                 szAdapterGuid );
-  
+
             szAdapterGuidKey[MAX_PATH]='\0';
             lResult = RegCreateKeyExW( HKEY_LOCAL_MACHINE,
                                        szAdapterGuidKey,
@@ -509,7 +509,7 @@ HRESULT CMuxVirtualMiniport::ApplyRegistryChanges(ConfigAction eApplyAction)
 //
 // Function:  CMuxVirtualMiniport::ApplyPnpChanges
 //
-// Purpose:   
+// Purpose:
 //
 // Arguments:
 //            IN eApplyAction: Action performed.

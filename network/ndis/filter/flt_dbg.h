@@ -4,7 +4,7 @@ Copyright (c) 2001  Microsoft Corporation
 
 Module Name:
 
-    debug.h
+    flt_dbg.h
 
 Abstract:
 
@@ -16,9 +16,6 @@ Revision History:
 Notes:
 
 --*/
-
-// disable warnings
-
 
 #ifndef _FILTDEBUG__H
 #define _FILTDEBUG__H

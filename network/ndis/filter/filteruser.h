@@ -1,5 +1,5 @@
 //
-//    Copyright (C) Microsoft.  All rights reserved.
+//    Copyright (C) Microsoft Corporation.  All rights reserved.
 //
 #ifndef __FILTERUSER_H__
 #define __FILTERUSER_H__

@@ -208,18 +208,20 @@ public:
 class CWhiteBalanceRoiIspControl : public CRoiIspControl
 {
 private:
-    KSCAMERA_EXTENDEDPROP_ROI_WHITEBALANCE  ROI[MAX_ROI];
+    KSCAMERA_EXTENDEDPROP_ROI_WHITEBALANCE  ROI[MAX_ROI] = {};
 
 public:
     CWhiteBalanceRoiIspControl(
         _In_    CRoiProperty *pRoiProperty
     )
+        : ROI{}
     {
         Init( pRoiProperty, KSPROPERTY_CAMERACONTROL_EXTENDED_WHITEBALANCEMODE );
     }
 
     CWhiteBalanceRoiIspControl()
         : CRoiIspControl( KSPROPERTY_CAMERACONTROL_EXTENDED_WHITEBALANCEMODE )
+        , ROI{}
     {}
 
     ULONGLONG
@@ -232,18 +234,20 @@ public:
 class CExposureRoiIspControl : public CRoiIspControl
 {
 private:
-    KSCAMERA_EXTENDEDPROP_ROI_EXPOSURE  ROI[MAX_ROI];
+    KSCAMERA_EXTENDEDPROP_ROI_EXPOSURE  ROI[MAX_ROI] = {};
 
 public:
     CExposureRoiIspControl(
         _In_    CRoiProperty *pRoiProperty
     )
+        : ROI{}
     {
         Init( pRoiProperty, KSPROPERTY_CAMERACONTROL_EXTENDED_EXPOSUREMODE );
     }
 
     CExposureRoiIspControl()
         : CRoiIspControl( KSPROPERTY_CAMERACONTROL_EXTENDED_EXPOSUREMODE )
+        , ROI{}
     {}
 
     ULONGLONG
@@ -256,18 +260,20 @@ public:
 class CFocusRoiIspControl : public CRoiIspControl
 {
 private:
-    KSCAMERA_EXTENDEDPROP_ROI_FOCUS  ROI[MAX_ROI];
+    KSCAMERA_EXTENDEDPROP_ROI_FOCUS ROI[MAX_ROI] = {};
 
 public:
     CFocusRoiIspControl(
         _In_    CRoiProperty *pRoiProperty
     )
+        : ROI{}
     {
         Init( pRoiProperty, KSPROPERTY_CAMERACONTROL_EXTENDED_FOCUSMODE );
     }
 
     CFocusRoiIspControl()
         : CRoiIspControl( KSPROPERTY_CAMERACONTROL_EXTENDED_EXPOSUREMODE )
+        , ROI{}
     {}
 
     ULONGLONG

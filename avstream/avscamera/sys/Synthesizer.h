@@ -231,6 +231,8 @@ public:
         , m_CommitCount(0)
         , m_CommitTime(0)
         , m_Rotation(AcpiPldRotation0)
+        , m_Colors(nullptr)
+        , m_StartTime(0)
     {
         m_Length = Height * m_SynthesisStride;
         KeQueryPerformanceCounter(&m_Frequency).QuadPart;

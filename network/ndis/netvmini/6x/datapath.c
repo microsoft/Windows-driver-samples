@@ -755,7 +755,7 @@ Arguments:
 
 Return Value:
 
-    NDIS_STATUS_SUCCESS if reference was acquired succesfully.
+    NDIS_STATUS_SUCCESS if reference was acquired successfully.
     NDIS_STATUS_ADAPTER_NOT_READY if the adapter state is such that we should not acquire new references to resources
 
 --*/

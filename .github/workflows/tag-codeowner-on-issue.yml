@@ -10,10 +10,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.x'
 
@@ -23,13 +23,15 @@ jobs:
       - name: Extract selected path and tag codeowner
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
           python3 - <<EOF
           import os
           import re
           import requests
 
-          issue_body = """${{ github.event.issue.body }}"""
+          issue_body = os.environ['ISSUE_BODY']
           selected_path = None
 
           # Try to extract the selected path from the issue body
@@ -68,8 +70,9 @@ jobs:
           comment = f"{codeowner} can you please take a look at this issue related to {selected_path}?"
           repo = os.environ['GITHUB_REPOSITORY']
           token = os.environ['GITHUB_TOKEN']
+          issue_number = os.environ['ISSUE_NUMBER']
 
-          url = f"https://api.github.com/repos/{repo}/issues/${{ github.event.issue.number }}/comments"
+          url = f"https://api.github.com/repos/{repo}/issues/{issue_number}/comments"
           headers = {
               "Authorization": f"Bearer {token}",
               "Accept": "application/vnd.github.v3+json"

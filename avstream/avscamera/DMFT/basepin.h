@@ -90,11 +90,16 @@ public:
       _Out_opt_ ULONG* pBytesReturned
       )
   {
-      UNREFERENCED_PARAMETER(pBytesReturned);
-      UNREFERENCED_PARAMETER(ulDataLength);
-      UNREFERENCED_PARAMETER(pMethodData);
       UNREFERENCED_PARAMETER(pMethod);
       UNREFERENCED_PARAMETER(ulMethodLength);
+      UNREFERENCED_PARAMETER(pMethodData);
+      UNREFERENCED_PARAMETER(ulDataLength);
+
+      // Ensure *pBytesReturned is initialized if provided
+      if (pBytesReturned != nullptr)
+      {
+          *pBytesReturned = 0;
+      }
       return S_OK;
   }
   
@@ -106,11 +111,16 @@ public:
       _Out_opt_ ULONG* pBytesReturned
       )
   {
-      UNREFERENCED_PARAMETER(pBytesReturned);
-      UNREFERENCED_PARAMETER(ulDataLength);
-      UNREFERENCED_PARAMETER(pEventData);
       UNREFERENCED_PARAMETER(pEvent);
       UNREFERENCED_PARAMETER(ulEventLength);
+      UNREFERENCED_PARAMETER(pEventData);
+      UNREFERENCED_PARAMETER(ulDataLength);
+
+      // Ensure *pBytesReturned is initialized if provided
+      if (pBytesReturned != nullptr)
+      {
+          *pBytesReturned = 0;
+      }
       return S_OK;
   }
 

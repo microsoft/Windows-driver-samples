@@ -1,0 +1,107 @@
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+; wificxsampleclientum.inf
+;
+
+[Version]
+Signature   = $Windows NT$
+Class       = NET
+ClassGuid   = {4d36e972-e325-11ce-bfc1-08002be10318}
+Provider    = %ManufacturerName%
+CatalogFile = wificxsampleclientum.cat
+DriverVer   = ; TODO: set DriverVer in stampinf property pages
+PnpLockdown = 1
+
+[Manufacturer]
+; This driver package is only installable on Win11+
+%ManufacturerName% = Standard,NT$ARCH$.10.0...22000 ; wudfrd.inf introduced in build 22000
+
+[Standard.NT$ARCH$.10.0...22000]
+%DeviceName% = Wificxsampleclientum_Device.ndi, Root\wificxsampleclientum
+
+;
+; Normal device - Networking Section
+;
+[Wificxsampleclientum_Device.ndi]
+Include=wudfrd.inf, netcxrd.inf
+Needs=WUDFRD.NT, netcxrd_Filter.NT
+
+Characteristics             = 0x1     ; NCF_VIRTUAL
+*IfType                     = 71      ; IF_TYPE_IEEE80211
+*MediaType                  = 16      ; NdisMediumNative802_11
+*PhysicalMediaType          = 9       ; NdisPhysicalMediumNative802_11
+BusType                     = 15      ; PnpBus
+NumberOfNetworkInterfaces   = 5
+AddReg                      = Wificxsampleclientum.reg, netvadapter.params
+CopyFiles                   = Wificxsampleclientum.Copy
+
+[Wificxsampleclientum_Device.ndi.Hw]
+Include=wudfrd.inf, netcxrd.inf
+Needs=WUDFRD.NT.HW, netcxrd_Filter.NT.HW
+
+[Wificxsampleclientum_Device.ndi.Filters]
+Include=netcxrd.inf
+Needs=netcxrd_Filter.NT.Filters
+
+[Wificxsampleclientum_Device.ndi.Services]
+Include=wudfrd.inf, netcxrd.inf
+Needs=WUDFRD.NT.Services, netcxrd_Filter.NT.Services
+
+[Wificxsampleclientum_Device.ndi.Wdf]
+UmdfService = "Wificxsampleclientum", wdf
+UmdfServiceOrder=wificxsampleclientum
+UmdfHostProcessSharing=ProcessSharingDisabled
+UmdfKernelModeClientPolicy=AllowKernelModeClients
+UmdfDirectHardwareAccess=AllowDirectHardwareAccessAndDma
+UmdfRegisterAccessMode=RegisterAccessUsingUserModeMapping
+UmdfFsContextUsePolicy=CanUseFsContext2
+
+[wdf]
+UmdfLibraryVersion = 2.33.0
+UmdfExtensions = NetAdapterCx0202,WifiCx0102
+ServiceBinary=%13%\wificxtestclient.dll
+;
+; Common - Generic INF sections
+;
+[Wificxsampleclientum.reg]
+HKR,    ,             BusNumber,  0, "0"
+HKR, Ndi,             Service,    0, "Wificxsampleclientum"
+HKR, Ndi\Interfaces,  UpperRange, 0, "ndis5"
+HKR, Ndi\Interfaces,  LowerRange, 0, "wlan,ethernet"
+
+; standard INF keywords for NetAdapter drivers
+; using AddReg directive so they will work when this INF being Includes/Needs
+HKR, NetworkInterface, *IfConnectorPresent, 0x00010001, 1
+HKR, NetworkInterface, *ConnectionType, 0x00010001, 1     
+HKR, NetworkInterface, *DirectionType, 0x00010001, 0      
+HKR, NetworkInterface, *AccessType, 0x00010001, 2         
+HKR, NetworkInterface, *HardwareLoopback, 0x00010001, 0   
+HKR, , NumberOfNetworkInterfaces, 0x00010001, 11
+
+[Wificxsampleclientum.Copy]
+wificxsampleclientum.dll
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[DestinationDirs]
+Wificxsampleclientum.Copy = 13
+
+[SourceDisksFiles]
+wificxsampleclientum.dll = 1
+
+; =================== Generic ==================================
+
+[Strings]
+ManufacturerName = "WDK Sample"
+DiskName = "wificxsampleclientum Installation Disk"
+DeviceName = "[UMDF] Wificx Sample Client Device"
+
+[netvadapter.params] 
+; MACLastByte
+ HKR, Ndi\params\MACLastByte,  ParamDesc,         0, "MACLastByte"
+ HKR, Ndi\params\MACLastByte,  default,           0, "1"
+ HKR, Ndi\params\MACLastByte,  type,              0, "int"
+ HKR, Ndi\params\MACLastByte,  min,               0, "1"
+ HKR, Ndi\params\MACLastByte,  max,               0, "254"
+ HKR, Ndi\params\MACLastByte,  step,              0, "1"
+ HKR, Ndi\params\MACLastByte,  Optional,          0, "0"

@@ -637,7 +637,7 @@ Return Value:
 
             IndicateParameters(Adapter, NDIS_STATUS_QOS_OPERATIONAL_PARAMETERS_CHANGE, OperationalParams);
 
-        
+
             NdisFreeMemoryWithTagPriority(NdisDriverHandle, OperationalParams, NIC_TAG_QOS_PARAMS);
         }
         else

@@ -26,7 +26,7 @@ on:
 jobs:
   analyze:
     name: Analysis
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     permissions:
       actions: read
       contents: read
@@ -41,18 +41,18 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: 'recursive'
       - name: Install Nuget Packages
         run: nuget restore .\packages.config -PackagesDirectory .\packages\
       - name: Get changed files
         id: get-changed-files
-        uses: tj-actions/changed-files@v41
+        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
         with:
           separator: ","
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
@@ -66,12 +66,12 @@ jobs:
           WDS_Platform: x64
           WDS_WipeOutputs: ${{ true }}
       - if: github.event_name == 'push'
-        run: .\Build-AllSamples.ps1 -Verbose -ThrottleLimit 1
+        run: .\Build-Samples.ps1 -Verbose -ThrottleLimit 1
         env:
           WDS_Configuration: Debug
           WDS_Platform: x64
           WDS_WipeOutputs: ${{ true }}
       - name: Perform CodeQL analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
         with:
           category: "/language:${{matrix.language}}"

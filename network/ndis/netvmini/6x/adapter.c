@@ -552,7 +552,7 @@ Routine Description:
     send requests must be completed, and new requests must be rejected with
     NDIS_STATUS_PAUSED.
 
-    Once all sends have been completed and all recieve NBLs have returned to
+    Once all sends have been completed and all receive NBLs have returned to
     the miniport, the miniport enters the Paused state.
 
     While paused, the miniport can still service interrupts from the hardware
@@ -2281,7 +2281,7 @@ Arguments:
 
 Return Value:
 
-    NDIS_STATUS_SUCCESS if reference was acquired succesfully.
+    NDIS_STATUS_SUCCESS if reference was acquired successfully.
     NDIS_STATUS_ADAPTER_NOT_READY if the adapter state is such that we should not acquire new references to resources
 
 --*/

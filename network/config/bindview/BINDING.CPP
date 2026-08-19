@@ -10,7 +10,7 @@
 //              o How to enumerate binding interfaces.
 //              o How to enable/disable bindings.
 //
-//  Notes:      
+//  Notes:
 //
 //  Author:     Alok Sinha    15-May-01
 //
@@ -183,7 +183,7 @@ VOID WriteBindingPath (FILE *fp,
                 fwprintf( fp, L"\n%s", lpszName );
             }
         }
-  
+
         ReleaseRef( pencbp );
     }
     else {
@@ -389,7 +389,7 @@ VOID ListBindings (INetCfgComponent *pncc,
     HTREEITEM                   hTreeItem;
     ULONG                       ulIndex;
     HRESULT                     hr;
-  
+
     hr = HrGetBindingPathEnum( pncc,
                                EBP_BELOW,
                                &pencbp );
@@ -429,7 +429,7 @@ VOID ListBindings (INetCfgComponent *pncc,
 
             ulIndex++;
         }
-  
+
         ReleaseRef( pencbp );
     }
     else {
@@ -533,7 +533,7 @@ VOID ListInterfaces (INetCfgBindingPath *pncbp,
 //
 // Function:  HandleBindingPathOperation
 //
-// Purpose:   
+// Purpose:
 //
 // Arguments:
 //    hwndOwner    [in]  Owner window.
@@ -778,7 +778,7 @@ FindBindingPath (
                              &pncc );
 
     if ( hr == S_OK ) {
-     
+
         hr = HrGetBindingPathEnum( pncc,
                                    EBP_BELOW,
                                    &pencbp );

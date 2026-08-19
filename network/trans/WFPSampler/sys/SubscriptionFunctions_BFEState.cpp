@@ -34,7 +34,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Framework_WFPSamplerCalloutDriver.h" /// .
-#include "SubscriptionFunctions_BFEState.tmh"  /// $(OBJ_PATH)\$(O)\ 
+#include "SubscriptionFunctions_BFEState.tmh"  /// $(OBJ_PATH)\$(O)\
 
 /**
  @notify_function="SubscriptionBFEStateChangeCallback"

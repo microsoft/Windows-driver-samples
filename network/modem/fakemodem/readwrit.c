@@ -9,14 +9,14 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 Module Name:
 
-    ioctl.c
+    readwrit.c
 
 Abstract:
 
     This is a simple form of function driver for Fm device. The driver
     doesn't handle any PnP and Power events because the framework provides
-    default behaviour for those events. This driver has enough support to
-    allow an user application (toast/notify.exe) to open the device
+    default behavior for those events. This driver has enough support to
+    allow a user application (toast/notify.exe) to open the device
     interface registered by the driver and send read, write or ioctl requests.
 
 Environment:
@@ -49,8 +49,8 @@ Arguments:
 
     Length - Length of the IO operation
                  The default property of the queue is to not dispatch
-                 zero lenght read & write requests to the driver and
-                 complete is with status success. So we will never get
+                 zero length read & write requests to the driver and
+                 complete it with status success. So we will never get
                  a zero length request.
 
 Return Value:
@@ -117,8 +117,8 @@ Arguments:
 
     Length - Length of the IO operation
                  The default property of the queue is to not dispatch
-                 zero lenght read & write requests to the driver and
-                 complete is with status success. So we will never get
+                 zero length read & write requests to the driver and
+                 complete it with status success. So we will never get
                  a zero length request.
 
 Return Value:
@@ -193,8 +193,8 @@ Arguments:
 
     Length - Length of the IO operation
                  The default property of the queue is to not dispatch
-                 zero lenght read & write requests to the driver and
-                 complete is with status success. So we will never get
+                 zero length read & write requests to the driver and
+                 complete it with status success. So we will never get
                  a zero length request.
 
 Return Value:

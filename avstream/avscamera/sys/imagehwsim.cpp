@@ -51,6 +51,14 @@ CImageHardwareSimulation (
     , m_GlobalFrameNumber(0)
     , m_bEndOfSequence(FALSE)
     , m_PastBufferCount(0)         // Zero only when the simulation inits.
+    , m_FlashStatus(0)
+	, m_PinMode(PinNormalMode)
+    , m_bFlashed(FALSE)
+	, m_bPastBufferTrigger(FALSE)
+    , m_pClone(nullptr)
+    , m_TriggerTime(0)
+	, m_bTriggered(FALSE)
+	, m_szwFramePath(nullptr)
 
 /*++
 
@@ -678,7 +686,7 @@ Return Value:
     if (0 != (pStreamHeader->OptionsFlags & KSSTREAM_HEADER_OPTIONSF_METADATA))
     {
         PKS_FRAME_INFO          pFrameInfo = (PKS_FRAME_INFO)(pStreamHeader + 1);
-        PKSSTREAM_METADATA_INFO pMetadata = (PKSSTREAM_METADATA_INFO) (pFrameInfo + 1);
+        PKSSTREAM_METADATA_INFO pMetadata = reinterpret_cast<PKSSTREAM_METADATA_INFO>(reinterpret_cast<BYTE*>(pFrameInfo) + sizeof(KS_FRAME_INFO));
         PCAMERA_METADATA_IMAGEAGGREGATION   pAggregation =
             (PCAMERA_METADATA_IMAGEAGGREGATION) (((PBYTE) pMetadata->SystemVa) + pMetadata->UsedSize);
         ULONG                   BytesLeft = pMetadata->BufferSize - pMetadata->UsedSize;

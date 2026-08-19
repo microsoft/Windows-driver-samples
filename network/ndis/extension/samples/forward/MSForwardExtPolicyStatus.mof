@@ -6,9 +6,9 @@
 //
 #pragma namespace("\\\\.\\root\\virtualization\\v2")
 
-[ Dynamic, 
+[ Dynamic,
  UUID("A3E2AFF5-E6FA-4E52-AB74-13250BF7E8CF"),
- ExtensionId("37d9eae6-5bae-48c5-bff1-63a7cdd7e4f4"), 
+ ExtensionId("37d9eae6-5bae-48c5-bff1-63a7cdd7e4f4"),
  Provider("VmmsWmiInstanceAndMethodProvider"),
  Applicability("2"),
  Locale(0x409),
@@ -17,7 +17,7 @@
 DisplayName("MSForwardExt MAC Address Policy Status") : Amended,
 Description("The current array of PortIds with policy set to allow sends") : Amended]
 class MSForwardExt_MacAddressRuleStatus : Msvm_EthernetSwitchData {
-   
+
     //
     // Array of PortId's currently allowing sends.
     //
@@ -28,4 +28,4 @@ class MSForwardExt_MacAddressRuleStatus : Msvm_EthernetSwitchData {
       Description (
          "Currently Allowed Port Ids") : Amended]
     uint32 AllowedPortIds[] = {};
-};     
+};

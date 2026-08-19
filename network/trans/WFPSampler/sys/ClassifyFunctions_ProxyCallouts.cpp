@@ -58,7 +58,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Framework_WFPSamplerCalloutDriver.h" /// .
-#include "ClassifyFunctions_ProxyCallouts.tmh" /// $(OBJ_PATH)\$(O)\ 
+#include "ClassifyFunctions_ProxyCallouts.tmh" /// $(OBJ_PATH)\$(O)\
 
 /**
  @private_function="PerformProxyInjectionAtInboundNetwork"

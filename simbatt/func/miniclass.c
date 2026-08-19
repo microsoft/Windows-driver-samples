@@ -239,9 +239,7 @@ Return Value:
         DevExt->State.BatteryStatus.Capacity = 100;
         DevExt->State.BatteryStatus.Voltage = BATTERY_UNKNOWN_VOLTAGE;
         DevExt->State.BatteryStatus.Rate = 0;
-        DevExt->State.BatteryInfo.Capabilities = BATTERY_SYSTEM_BATTERY |
-                                                 BATTERY_CAPACITY_RELATIVE;
-
+        DevExt->State.BatteryInfo.Capabilities = BATTERY_SYSTEM_BATTERY;
         DevExt->State.BatteryInfo.Technology = 1;
         DevExt->State.BatteryInfo.Chemistry[0] = 'F';
         DevExt->State.BatteryInfo.Chemistry[1] = 'a';

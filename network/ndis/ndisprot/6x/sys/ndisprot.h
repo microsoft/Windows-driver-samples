@@ -121,10 +121,10 @@ typedef struct _NDISPROT_OPEN_CONTEXT
     PFILE_OBJECT            pFileObject;    // Set on OPEN_DEVICE
 
     NDIS_HANDLE             BindingHandle;
-    NDIS_HANDLE             SendNetBufferListPool;  
+    NDIS_HANDLE             SendNetBufferListPool;
     // let every net buffer list contain one net buffer(don't know how many net buffers can be include in one list.
     NDIS_HANDLE             RecvNetBufferListPool;
-    
+
     ULONG                   MacOptions;
     ULONG                   MaxFrameSize;
     ULONG                   DataBackFillSize;
@@ -148,12 +148,12 @@ typedef struct _NDISPROT_OPEN_CONTEXT
 
     ULONG                   oc_sig;         // Signature for sanity
     NDISPROT_OPEN_STATE     State;
-    PNPROT_EVENT            ClosingEvent;      
+    PNPROT_EVENT            ClosingEvent;
     UCHAR                   CurrentAddress[NPROT_MAC_ADDR_LEN];
     UCHAR                   MCastAddress[MAX_MULTICAST_ADDRESS][NPROT_MAC_ADDR_LEN];
 } NDISPROT_OPEN_CONTEXT, *PNDISPROT_OPEN_CONTEXT;
 
-    
+
 #define oc_signature        'OiuN'
 
 //

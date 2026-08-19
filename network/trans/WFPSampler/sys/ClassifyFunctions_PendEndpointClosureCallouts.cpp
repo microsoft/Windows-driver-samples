@@ -44,7 +44,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Framework_WFPSamplerCalloutDriver.h"               /// .
-#include "ClassifyFunctions_PendEndpointClosureCallouts.tmh" /// $(OBJ_PATH)\$(O)\ 
+#include "ClassifyFunctions_PendEndpointClosureCallouts.tmh" /// $(OBJ_PATH)\$(O)\
 
 #if(NTDDI_VERSION >= NTDDI_WIN7)
 

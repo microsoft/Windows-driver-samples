@@ -282,7 +282,7 @@ BDD_HWBLT::ExecutePresentDisplayOnly(
     SIZE_T size = sizeof(DoPresentMemory) + sizeMoves + sizeRects;
 
     DoPresentMemory* ctx = reinterpret_cast<DoPresentMemory*>
-                                (new (PagedPool) BYTE[size]);
+                                (new (BDD_POOL_TYPE::Paged) BYTE[size]);
 
     if (!ctx)
     {

@@ -27,14 +27,14 @@
 
 enum ConfigAction {
 
-    eActUnknown, 
-    eActInstall, 
-    eActAdd, 
+    eActUnknown,
+    eActInstall,
+    eActAdd,
     eActRemove,
     eActUpdate,
     eActPropertyUIAdd,
     eActPropertyUIRemove
-};       
+};
 
 //
 // PnP ID, also referred to as Hardware ID, of the protocol interface.

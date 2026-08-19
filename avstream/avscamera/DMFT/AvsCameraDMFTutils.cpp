@@ -734,7 +734,9 @@ HRESULT ParseMetadata_FaceDetection(
     {
         return E_UNEXPECTED;
     }
-    PMETADATA_FACEDATA  pFaceData = (PMETADATA_FACEDATA)(pFaceHeader + 1);
+    PMETADATA_FACEDATA pFaceData = reinterpret_cast<PMETADATA_FACEDATA>(
+        reinterpret_cast<BYTE*>(pFaceHeader) + sizeof(CAMERA_METADATA_FACEHEADER));
+
     UINT32 cbRectSize = sizeof(FaceRectInfoBlobHeader) + (sizeof(FaceRectInfo) * (pFaceHeader->Count));
     BYTE* pRectBuf = new (std::nothrow) BYTE[cbRectSize];
     if (pRectBuf == NULL)

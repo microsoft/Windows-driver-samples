@@ -14,11 +14,20 @@ CMultipinMft::CMultipinMft()
 :   m_nRefCount( 0 ),
     m_InputPinCount( 0 ),
     m_OutputPinCount( 0 ),
-    m_dwWorkQueueId ( MFASYNC_CALLBACK_QUEUE_MULTITHREADED ),
-    m_lWorkQueuePriority ( 0 ),
-    m_spAttributes( nullptr ),
+    m_StreamingState( DeviceStreamState_Disabled ),
+    m_OutPins(),
+    m_InPins(),
+    m_critSec(),
+    m_spDeviceManagerUnk( nullptr ),
     m_spSourceTransform( nullptr ),
-    m_SymbolicLink(nullptr)
+    m_eShutdownStatus( MFSHUTDOWN_INITIATED ),
+    m_dwWorkQueueId( MFASYNC_CALLBACK_QUEUE_MULTITHREADED ),
+    m_lWorkQueuePriority( 0 ),
+    m_punValue( 0 ),
+    m_spIkscontrol( nullptr ),
+    m_spAttributes( nullptr ),
+    m_outputPinMap(),
+    m_SymbolicLink( nullptr )
 
 {
     HRESULT hr = S_OK;
@@ -189,7 +198,7 @@ IFACEMETHODIMP CMultipinMft::InitializeTransform (
         //
         // Create one on one mapping
         //
-        for (ULONG ulIndex = 0; ulIndex < m_InPins.size(); ulIndex++)
+        for (ULONG ulIndex = 0; ulIndex < (ULONG)(m_InPins.size()); ulIndex++)
         {
             
             ComPtr<CInPin> spInPin = (CInPin*)m_InPins[ulIndex].Get();
@@ -378,12 +387,16 @@ IFACEMETHODIMP  CMultipinMft::GetInputAvailableType(
     )
 {
     HRESULT hr = S_OK;
-        
+    
+    if (ppMediaType)
+    {
+        *ppMediaType = nullptr;
+    }
+
     ComPtr<CInPin> spiPin = GetInPin( dwInputStreamID );
     DMFTCHECKNULL_GOTO(ppMediaType, done, E_INVALIDARG);
     DMFTCHECKNULL_GOTO( spiPin, done, MF_E_INVALIDSTREAMNUMBER );
-    
-    *ppMediaType = nullptr;
+
 
     hr = spiPin->GetOutputAvailableType( dwTypeIndex,ppMediaType );
 
@@ -417,11 +430,14 @@ IFACEMETHODIMP CMultipinMft::GetOutputAvailableType(
     CAutoLock Lock(m_critSec);
 
     ComPtr<COutPin> spoPin = GetOutPin( dwOutputStreamID );
+    
+    if (ppMediaType)
+    {
+        *ppMediaType = nullptr;
+    }
 
     DMFTCHECKNULL_GOTO( spoPin.Get(), done, MF_E_INVALIDSTREAMNUMBER );
     DMFTCHECKNULL_GOTO(ppMediaType, done, E_INVALIDARG);
-
-    *ppMediaType = nullptr;
 
     hr = spoPin->GetOutputAvailableType( dwTypeIndex, ppMediaType );
 

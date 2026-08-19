@@ -52,7 +52,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Framework_WFPSamplerCalloutDriver.h"       /// .
-#include "ClassifyFunctions_BasicActionCallouts.tmh" /// $(OBJ_PATH)\$(O)\ 
+#include "ClassifyFunctions_BasicActionCallouts.tmh" /// $(OBJ_PATH)\$(O)\
 
 /**
  @private_function="PerformBasicAction"

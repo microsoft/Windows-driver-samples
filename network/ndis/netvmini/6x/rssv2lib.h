@@ -26,7 +26,7 @@ Revision History:
 //
 #if !defined(NDIS_STATUS_NO_QUEUES)
 #define NDIS_STATUS_NO_QUEUES       0xC0230031L
-#endif 
+#endif
 
 #ifdef __cplusplus
 extern "C"
@@ -98,7 +98,7 @@ RssV2SetCommandRangeStatus (
 
 //
 // Queue map for VPort (or for adapter's in NativeRSS mode)
-// 
+//
 #define BITS_PER_WORD                           (sizeof(ULONG_PTR) * 8)
 #define RSSV2_BITFIELD_OFFSET(_PROC_INDEX_)     ((_PROC_INDEX_) / BITS_PER_WORD)
 #define RSSV2_BITFIELD_SIZE(_MAX_PROC_) \
@@ -112,7 +112,7 @@ typedef struct _RSSV2_QUEUE_MAP
     //
     // Members to help enforce "NQ-violation" (per-VPort limit on number of queues)
     //
-    KSPIN_LOCK  SpinLock;    
+    KSPIN_LOCK  SpinLock;
 
     //
     // Maximum number of processors in adapter's RSS table.
@@ -124,7 +124,7 @@ typedef struct _RSSV2_QUEUE_MAP
     // Two variable-size fields follow this structure:
     //
     //  - Bitmask of referenced processors
-    //  - Array with reference counts for each RSS processor 
+    //  - Array with reference counts for each RSS processor
     //    (indexed by a local CPU index, which is relative to RSS table).
     //
     //
@@ -140,12 +140,12 @@ typedef struct _RSSV2_QUEUE_MAP
             (PRSSV2_QUEUE_MAP)_alloca(RssV2NQEnforcerGetQueueMapSize(_MAX_PROCS_))
 
 FORCEINLINE
-ULONG 
+ULONG
 RssV2NQEnforcerGetQueueMapSize (
     _In_ ULONG MaxNumberOfProcessorsInRssTable
     )
 {
-    return sizeof(RSSV2_QUEUE_MAP) + 
+    return sizeof(RSSV2_QUEUE_MAP) +
             RSSV2_BITFIELD_SIZE(MaxNumberOfProcessorsInRssTable) +
             RSSV2_REFERENCE_SIZE(MaxNumberOfProcessorsInRssTable);
 }
@@ -176,7 +176,7 @@ RssV2NQEnforcerDereference (
 VOID
 RssV2NQEnforcerUpdate (
     _Inout_ PRSSV2_QUEUE_MAP QueueMap,
-    _In_ UINT8 OldCpuIndex, 
+    _In_ UINT8 OldCpuIndex,
     _In_ UINT8 NewCpuIndex
     );
 

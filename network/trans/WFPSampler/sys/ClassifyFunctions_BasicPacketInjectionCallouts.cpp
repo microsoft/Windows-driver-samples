@@ -103,7 +103,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Framework_WFPSamplerCalloutDriver.h"                /// .
-#include "ClassifyFunctions_BasicPacketInjectionCallouts.tmh" /// $(OBJ_PATH)\$(O)\ 
+#include "ClassifyFunctions_BasicPacketInjectionCallouts.tmh" /// $(OBJ_PATH)\$(O)\
 
 #if DBG
 

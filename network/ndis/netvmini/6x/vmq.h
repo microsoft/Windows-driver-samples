@@ -13,7 +13,7 @@ Module Name:
 
 Abstract:
 
-   This module declares the VMQ related data types, flags, macros, and functions. 
+   This module declares the VMQ related data types, flags, macros, and functions.
 
 Revision History:
 
@@ -24,7 +24,7 @@ Notes:
 
 struct _FRAME;
 struct _RCB;
-    
+
 #if (NDIS_SUPPORT_NDIS620)
 
 
@@ -65,8 +65,8 @@ typedef struct _MP_ADAPTER_SHARED_MEMORY
 } MP_ADAPTER_SHARED_MEMORY, *PMP_ADAPTER_SHARED_MEMORY;
 
 //
-// The minimum number of shared memory blocks we require. Used when recovering from 
-// shared memory allocation failures. 
+// The minimum number of shared memory blocks we require. Used when recovering from
+// shared memory allocation failures.
 //
 #define NIC_MIN_RECV_ENTRY_ALLOCATION_COUNT 32
 
@@ -75,20 +75,20 @@ typedef struct _MP_ADAPTER_SHARED_MEMORY
 // lock.
 //
 //
-// The queue is initialized, but not yet completed. Receives disabled. 
+// The queue is initialized, but not yet completed. Receives disabled.
 //
 #define fMPAQI_INITIALIZED              0x1
 //
-// Completion of the queue has started. Receives disabled. 
+// Completion of the queue has started. Receives disabled.
 //
 #define fMPAQI_COMPLETION_STARTED       0x2
 //
-// Queue completed. Receives enabled. 
+// Queue completed. Receives enabled.
 //
 #define fMPAQI_COMPLETION_FINISHED      0x4
 //
-// Queue is being freed (pending RefCount). Receives disabled. 
-// 
+// Queue is being freed (pending RefCount). Receives disabled.
+//
 #define fMPAQI_FREEING                  0x8
 //
 // DMA is being performed for queue
@@ -153,7 +153,7 @@ typedef struct DECLSPEC_CACHEALIGN _MP_ADAPTER_QUEUE
     //
     PUCHAR                  RcbMemoryBlock;
     NDIS_HANDLE             RecvNblPoolHandle;
-    
+
     //
     // Shared memory information (MP_ADAPTER_SHARED_MEMORY)
     //
@@ -164,12 +164,12 @@ typedef struct DECLSPEC_CACHEALIGN _MP_ADAPTER_QUEUE
     LIST_ENTRY              LookaheadSharedMemoryList;
     LIST_ENTRY              PostLookaheadSharedMemoryList;
     //
-    // MP_ADAPTER_SHARED_MEMORY_BLOCK buffers to hold book-keeping info on subdivided shared memory buffers 
+    // MP_ADAPTER_SHARED_MEMORY_BLOCK buffers to hold book-keeping info on subdivided shared memory buffers
     //
     PUCHAR                  LookaheadBlocks;
     ULONG                   NumLookaheadBlocks;
-    PUCHAR                  PostLookaheadBlocks;     
-    ULONG                   NumPostLookaheadBlocks;    
+    PUCHAR                  PostLookaheadBlocks;
+    ULONG                   NumPostLookaheadBlocks;
 
     //
     // Data passed in through the VMQ Queue configuration related OIDs
@@ -187,7 +187,7 @@ typedef struct DECLSPEC_CACHEALIGN _MP_ADAPTER_QUEUE
 typedef struct _MP_ADAPTER_FILTER
 {
     //
-    // Whether the receive filter should be used 
+    // Whether the receive filter should be used
     //
     BOOLEAN Valid;
     //
@@ -214,11 +214,11 @@ typedef struct _MP_ADAPTER_FILTER
 //
 #define fMPVMQD_FILTERING_ENABLED       0x0001
 //
-// Lookahead split in VMQ indication is enabled on the adapter. 
+// Lookahead split in VMQ indication is enabled on the adapter.
 //
 #define fMPVMQD_LOOKAHEAD_ENABLED       0x0002
 //
-// VLAN filtering in VMQ is enabled on the adapter. 
+// VLAN filtering in VMQ is enabled on the adapter.
 //
 #define fMPVMQD_VLANFILTER_ENABLED      0x0004
 
@@ -237,7 +237,7 @@ typedef struct _MP_ADAPTER_FILTER
 
 //
 // The MP_ADAPTER_VMQ_DATA structure is used to track the global VMQ configuration for an adapter
-//        
+//
 typedef struct _MP_ADAPTER_VMQ_DATA
 {
     //
@@ -246,7 +246,7 @@ typedef struct _MP_ADAPTER_VMQ_DATA
     ULONG Flags;
     //
     // Individual Queues. The MP_ADAPTER_QUEUE array is not dynamically allocated to reduce
-    // pointer dereferencing during receives, which can affect performance. 
+    // pointer dereferencing during receives, which can affect performance.
     //
     MP_ADAPTER_QUEUE RxQueues[NIC_SUPPORTED_NUM_QUEUES];
     //
@@ -263,7 +263,7 @@ VOID
 FreeVMQData(
     _Inout_ struct _MP_ADAPTER *Adapter);
 
-NDIS_STATUS 
+NDIS_STATUS
 ReadRxQueueConfig(
     _In_ NDIS_HANDLE ConfigurationHandle,
     _Inout_ struct _MP_ADAPTER *Adapter);
@@ -315,7 +315,7 @@ SetRxFilter(
     );
 
 NDIS_STATUS
-ClearRxFilter( 
+ClearRxFilter(
     _Inout_ struct _MP_ADAPTER *Adapter,
     _In_ PNDIS_RECEIVE_FILTER_CLEAR_PARAMETERS FilterParams
     );
@@ -346,16 +346,16 @@ GetRcbForRxQueue(
     _In_  PNDIS_NET_BUFFER_LIST_8021Q_INFO Nbl1QInfo,
     _Outptr_result_maybenull_ struct _RCB **Rcb);
 
-NDIS_STATUS 
+NDIS_STATUS
 CopyFrameToRxQueueRcb(
     _In_  struct _MP_ADAPTER *Adapter,
     _In_  struct _FRAME *Frame,
     _In_  PNDIS_NET_BUFFER_LIST_8021Q_INFO Nbl1QInfo,
     _Inout_ struct _RCB *Rcb,
     _Out_ BOOLEAN *Copied);
-    
+
 VOID
-RecoverRxQueueRcb(    
+RecoverRxQueueRcb(
     _In_ struct _MP_ADAPTER *Adapter,
     _In_ struct _RCB *Rcb);
 
@@ -369,10 +369,10 @@ AddPendingRcbToRxQueue(
 #else
 
 //
-// In order to avoid excessible "#if defined(NDIS620_MINIPORT)" statements scattered 
-// through the miniport implementation, NDIS60 miniports define 
-// placeholder macros for the VMQ functions which cause the code to always proceed 
-// as if VMQ were disabled on the adapter. 
+// In order to avoid excessible "#if defined(NDIS620_MINIPORT)" statements scattered
+// through the miniport implementation, NDIS60 miniports define
+// placeholder macros for the VMQ functions which cause the code to always proceed
+// as if VMQ were disabled on the adapter.
 //
 
 #define VMQ_ENABLED(_Adapter) FALSE
@@ -380,7 +380,7 @@ AddPendingRcbToRxQueue(
 #define VLAN_FILTER_ENABLED(_Adapter) FALSE
 #define LOOKAHEAD_SPLIT_REQUIRED(_QueueInfo) FALSE
 #define AllocateDefaultRxQueue(Adapter) NDIS_STATUS_NOT_SUPPORTED
-#define AddPendingRcbToRxQueue(Adapter, Rcb) 
+#define AddPendingRcbToRxQueue(Adapter, Rcb)
 #define GetRxQueueDpc(Adapter, QueueId) NULL
 #define AllocateVMQData(Adapter) NDIS_STATUS_SUCCESS
 #define FreeVMQData(Adapter)
@@ -388,6 +388,6 @@ AddPendingRcbToRxQueue(
 #define InitializeRxQueueMPConfig(Adapter) NDIS_STATUS_SUCCESS
 #define CopyFrameToRxQueueRcb(Adapter, Frame, Nbl1QInfo, Rcb, Copied) FALSE
 #define GetRcbForRxQueue(Adapter, Frame, Nbl1QInfo, Rcb) NDIS_STATUS_NOT_SUPPORTED
-#define RecoverRxQueueRcb(Adapter, Rcb) 
+#define RecoverRxQueueRcb(Adapter, Rcb)
 
 #endif

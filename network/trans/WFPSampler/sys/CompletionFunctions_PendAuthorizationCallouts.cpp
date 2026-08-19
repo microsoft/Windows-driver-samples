@@ -53,7 +53,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Framework_WFPSamplerCalloutDriver.h"               /// . 
-#include "CompletionFunctions_PendAuthorizationCallouts.tmh" /// $(OBJ_PATH)\$(O)\ 
+#include "CompletionFunctions_PendAuthorizationCallouts.tmh" /// $(OBJ_PATH)\$(O)\
 
 /**
  @private_function="PendAuthorizationCompletionDataDestroy"

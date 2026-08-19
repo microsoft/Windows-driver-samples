@@ -1,0 +1,92 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.7.11903.348
+MinimumVisualStudioVersion = 12.0
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wificxsampleclientkm", "km\wificxsampleclientkm.vcxproj", "{272D3E7B-C7BA-66D1-E05D-B9723A6F0777}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9} = {E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wificxsampleclientum", "um\wificxsampleclientum.vcxproj", "{C804D7D0-80D8-1409-44DA-91EF3260D07F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{612F33AD-430C-4FE7-8000-35E15A5EB757} = {612F33AD-430C-4FE7-8000-35E15A5EB757}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OemDeviceServiceApplication", "OEM\OemDeviceService.vcxproj", "{B3C9A1E2-7F4D-4B2A-9C5E-1A2B3C4D5E6F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "netvadapterlibrarykm", "..\..\netadaptercx\netvadapterlibrary\wifi_km\netvadapterlibrarykm.vcxproj", "{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "netvadapterlibraryum", "..\..\netadaptercx\netvadapterlibrary\wifi_um\netvadapterlibraryum.vcxproj", "{612F33AD-430C-4FE7-8000-35E15A5EB757}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM64 = Debug|ARM64
+		Debug|x64 = Debug|x64
+		Release|ARM64 = Release|ARM64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{272D3E7B-C7BA-66D1-E05D-B9723A6F0777}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{272D3E7B-C7BA-66D1-E05D-B9723A6F0777}.Debug|ARM64.Build.0 = Debug|ARM64
+		{272D3E7B-C7BA-66D1-E05D-B9723A6F0777}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{272D3E7B-C7BA-66D1-E05D-B9723A6F0777}.Debug|x64.ActiveCfg = Debug|x64
+		{272D3E7B-C7BA-66D1-E05D-B9723A6F0777}.Debug|x64.Build.0 = Debug|x64
+		{272D3E7B-C7BA-66D1-E05D-B9723A6F0777}.Debug|x64.Deploy.0 = Debug|x64
+		{272D3E7B-C7BA-66D1-E05D-B9723A6F0777}.Release|ARM64.ActiveCfg = Release|ARM64
+		{272D3E7B-C7BA-66D1-E05D-B9723A6F0777}.Release|ARM64.Build.0 = Release|ARM64
+		{272D3E7B-C7BA-66D1-E05D-B9723A6F0777}.Release|ARM64.Deploy.0 = Release|ARM64
+		{272D3E7B-C7BA-66D1-E05D-B9723A6F0777}.Release|x64.ActiveCfg = Release|x64
+		{272D3E7B-C7BA-66D1-E05D-B9723A6F0777}.Release|x64.Build.0 = Release|x64
+		{272D3E7B-C7BA-66D1-E05D-B9723A6F0777}.Release|x64.Deploy.0 = Release|x64
+		{C804D7D0-80D8-1409-44DA-91EF3260D07F}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{C804D7D0-80D8-1409-44DA-91EF3260D07F}.Debug|ARM64.Build.0 = Debug|ARM64
+		{C804D7D0-80D8-1409-44DA-91EF3260D07F}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{C804D7D0-80D8-1409-44DA-91EF3260D07F}.Debug|x64.ActiveCfg = Debug|x64
+		{C804D7D0-80D8-1409-44DA-91EF3260D07F}.Debug|x64.Build.0 = Debug|x64
+		{C804D7D0-80D8-1409-44DA-91EF3260D07F}.Debug|x64.Deploy.0 = Debug|x64
+		{C804D7D0-80D8-1409-44DA-91EF3260D07F}.Release|ARM64.ActiveCfg = Release|ARM64
+		{C804D7D0-80D8-1409-44DA-91EF3260D07F}.Release|ARM64.Build.0 = Release|ARM64
+		{C804D7D0-80D8-1409-44DA-91EF3260D07F}.Release|ARM64.Deploy.0 = Release|ARM64
+		{C804D7D0-80D8-1409-44DA-91EF3260D07F}.Release|x64.ActiveCfg = Release|x64
+		{C804D7D0-80D8-1409-44DA-91EF3260D07F}.Release|x64.Build.0 = Release|x64
+		{C804D7D0-80D8-1409-44DA-91EF3260D07F}.Release|x64.Deploy.0 = Release|x64
+		{B3C9A1E2-7F4D-4B2A-9C5E-1A2B3C4D5E6F}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{B3C9A1E2-7F4D-4B2A-9C5E-1A2B3C4D5E6F}.Debug|ARM64.Build.0 = Debug|ARM64
+		{B3C9A1E2-7F4D-4B2A-9C5E-1A2B3C4D5E6F}.Debug|x64.ActiveCfg = Debug|x64
+		{B3C9A1E2-7F4D-4B2A-9C5E-1A2B3C4D5E6F}.Debug|x64.Build.0 = Debug|x64
+		{B3C9A1E2-7F4D-4B2A-9C5E-1A2B3C4D5E6F}.Release|ARM64.ActiveCfg = Release|ARM64
+		{B3C9A1E2-7F4D-4B2A-9C5E-1A2B3C4D5E6F}.Release|ARM64.Build.0 = Release|ARM64
+		{B3C9A1E2-7F4D-4B2A-9C5E-1A2B3C4D5E6F}.Release|x64.ActiveCfg = Release|x64
+		{B3C9A1E2-7F4D-4B2A-9C5E-1A2B3C4D5E6F}.Release|x64.Build.0 = Release|x64
+		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Debug|ARM64.Build.0 = Debug|ARM64
+		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Debug|x64.ActiveCfg = Debug|x64
+		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Debug|x64.Build.0 = Debug|x64
+		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Debug|x64.Deploy.0 = Debug|x64
+		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Release|ARM64.ActiveCfg = Release|ARM64
+		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Release|ARM64.Build.0 = Release|ARM64
+		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Release|ARM64.Deploy.0 = Release|ARM64
+		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Release|x64.ActiveCfg = Release|x64
+		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Release|x64.Build.0 = Release|x64
+		{E2A65EFD-25CC-4AF0-B180-0CD56EE277A9}.Release|x64.Deploy.0 = Release|x64
+		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Debug|ARM64.Build.0 = Debug|ARM64
+		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Debug|x64.ActiveCfg = Debug|x64
+		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Debug|x64.Build.0 = Debug|x64
+		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Debug|x64.Deploy.0 = Debug|x64
+		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Release|ARM64.ActiveCfg = Release|ARM64
+		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Release|ARM64.Build.0 = Release|ARM64
+		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Release|ARM64.Deploy.0 = Release|ARM64
+		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Release|x64.ActiveCfg = Release|x64
+		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Release|x64.Build.0 = Release|x64
+		{612F33AD-430C-4FE7-8000-35E15A5EB757}.Release|x64.Deploy.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {37680CDC-EACB-499B-BA11-7C376F53DB71}
+	EndGlobalSection
+EndGlobal
