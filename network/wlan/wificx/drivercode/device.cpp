@@ -87,6 +87,23 @@ NTSTATUS EvtWifiDeviceCreateAdapter(WDFDEVICE Device, NETADAPTER_INIT* AdapterIn
         return ntStatus;
     }
 
+    // WiFi adapters start disconnected — the framework manages the media
+    // state and will send WDI_TASK_CONNECT (not ROAM) for the first
+    // connection.  Without this the inherited SetLinkState(Connected) from
+    // NetvAdapter::Initialize causes the framework to treat every connect
+    // as a roam, skipping the association/data-path activation flow.
+    {
+        NET_ADAPTER_LINK_STATE linkState;
+        NET_ADAPTER_LINK_STATE_INIT(
+            &linkState,
+            1'000'000'000ull,
+            MediaConnectStateDisconnected,
+            MediaDuplexStateFull,
+            NetAdapterPauseFunctionTypeUnsupported,
+            NetAdapterAutoNegotiationFlagNone);
+        NetAdapterSetLinkState(netAdapter, &linkState);
+    }
+
     auto wifiNetvDevice = WifiGetIhvDeviceContext(Device);
     wifiNetvDevice->netAdapters[WifiAdapterGetPortId(netAdapter)] = netAdapter;
 
@@ -118,6 +135,8 @@ _Use_decl_annotations_
 NTSTATUS
 EvtAdapterCreateTxQueue(NETADAPTER Adapter, NETTXQUEUE_INIT* Init)
 {
+    WFC_TRACE(
+        "WiFiCx EvtAdapterCreateTxQueue called\n");
     TraceEntry();
     return WifiNetvAdapterGetContext(Adapter)->CreateTxQueue(Init);
 }
@@ -126,6 +145,8 @@ _Use_decl_annotations_
 NTSTATUS
 EvtAdapterCreateRxQueue(NETADAPTER Adapter, NETRXQUEUE_INIT* Init)
 {
+    WFC_TRACE(
+        "WiFiCx EvtAdapterCreateRxQueue called\n");
     TraceEntry();
     return WifiNetvAdapterGetContext(Adapter)->CreateRxQueue(Init);
 }
