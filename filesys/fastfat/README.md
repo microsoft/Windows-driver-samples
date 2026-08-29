@@ -44,7 +44,7 @@ You can build a driver from the command line using the Visual Studio Command Pro
 
 #### To select a configuration and build a driver or an application
 
-1. Open a Visual Studio Command Prompt window at the **Start** screen. From this window you can use MsBuild.exe to build any Visual Studio project by specifying the project (.VcxProj) or solutions (.Sln) file.
+1. Open a Visual Studio Command Prompt window at the **Start** screen. From this window you can use MsBuild.exe to build any Visual Studio project by specifying the project (.vcxproj) or solutions (.sln) file.
 
 1. Navigate to the project directory and enter the **MSbuild** command for your target. For example, to perform a clean build of a Visual Studio driver project called *filtername*.vcxproj, navigate to the project directory and enter the following MSBuild command:
 
