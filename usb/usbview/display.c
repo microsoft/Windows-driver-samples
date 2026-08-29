@@ -2159,7 +2159,9 @@ DisplayConfigDesc (
             case USB_DEVICE_CLASS_AUDIO:
                 displayUnknown = ! DisplayAudioDescriptor(
                     (PUSB_AUDIO_COMMON_DESCRIPTOR)commonDesc,
-                    bInterfaceSubClass);
+                    bInterfaceSubClass,
+                    StringDescs,
+                    info->DeviceInfoNode != NULL ? info->DeviceInfoNode->LatestDevicePowerState : PowerDeviceUnspecified);
                 break;
 
             case USB_DEVICE_CLASS_VIDEO:
