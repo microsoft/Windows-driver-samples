@@ -1,0 +1,146 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;Module Name:
+;
+;    SDCAVCodec.INF
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=SYSTEM
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%ProviderName%
+DriverVer=06/13/2016, 1.0.0.1
+CatalogFile=SDCAVad.cat
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+;*****************************************
+; Audio Device Install Section
+;*****************************************
+[Manufacturer]
+%StdMfg%=Standard,NT$ARCH$.10.0...19041
+
+[Standard.NT$ARCH$.10.0...19041]
+%WdfCodecDevice.DeviceDesc%=Audio_Device, ROOT\SDCAVCodec
+
+[Audio_Device.NT]
+CopyFiles=Audio_Device.NT.Copy
+
+[Audio_Device.NT.Copy]
+SDCAVCodec.sys
+
+
+[Audio_Device.NT.HW]
+AddReg=FilterLevelReg
+
+;****************************************************
+; SDCAXu filters are installed in filter level
+; SDCAXu
+;****************************************************
+[FilterLevelReg]
+HKR,,LowerFilterLevels,%REG_MULTI_SZ%,"SDCAXu","DefaultLowerFilter"
+HKR,,LowerFilterDefaultLevel,,"DefaultLowerFilter"
+
+;-------------- Service installation
+
+[Audio_Device.NT.Services]
+AddService = SDCAVCodec, %SPSVCINST_ASSOCSERVICE%, Audio_Service_Inst
+
+[Audio_Service_Inst]
+DisplayName    = %WdfCodecDevice.DeviceDesc%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\SDCAVCodec.sys
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+SDCAVCodec.sys  = 1,,
+
+
+[Audio_Device.NT.Wdf]
+KmdfService = SDCAVCodec, Audio_wdfsect
+[Audio_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+;
+; render interfaces: speaker
+;
+[Audio_Device.I.Speaker]
+AddReg=Audio_Device.I.Speaker.AddReg
+[Audio_Device.I.Speaker.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%Audio_Device.Speaker.szPname%
+; The following lines opt-in to pull mode.
+HKR,EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+
+;
+; capture interfaces: microphone
+;
+[Audio_Device.I.Microphone]
+AddReg=Audio_Device.I.Microphone.AddReg
+[Audio_Device.I.Microphone.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%Audio_Device.Microphone.szPname%
+; The following lines opt-in to pull mode.
+HKR,EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+
+;
+; PnP add interface directives for static enumerated audio endpoints.
+;
+[Audio_Device.NT.Interfaces]
+; Interfaces for render endpoint.
+AddInterface=%KSCATEGORY_AUDIO%,    %KSNAME_Speaker%,  Audio_Device.I.Speaker
+AddInterface=%KSCATEGORY_TOPOLOGY%, %KSNAME_Speaker%,  Audio_Device.I.Speaker
+
+; Interfaces for mic capture endpoint 
+AddInterface=%KSCATEGORY_AUDIO%,    %KSNAME_Microphone%, Audio_Device.I.Microphone
+AddInterface=%KSCATEGORY_TOPOLOGY%,  %KSNAME_Microphone%, Audio_Device.I.Microphone
+
+[Strings]
+;
+;Non-localizable
+;
+KSNAME_Speaker="Speaker0"
+KSNAME_Microphone="Microphone0"
+
+SPSVCINST_ASSOCSERVICE = 0x00000002
+ProviderName = "VS_Microsoft"
+
+Proxy.CLSID         = "{17CCA71B-ECD7-11D0-B908-00A0C9223196}"
+KSCATEGORY_AUDIO    = "{6994AD04-93EF-11D0-A3CC-00A0C9223196}"
+KSCATEGORY_RENDER   = "{65E8773E-8F56-11D0-A3B9-00A0C9223196}"
+KSCATEGORY_CAPTURE  = "{65E8773D-8F56-11D0-A3B9-00A0C9223196}"
+KSCATEGORY_REALTIME = "{EB115FFC-10C8-4964-831D-6DCB02E6F23F}"
+KSCATEGORY_TOPOLOGY = "{DDA54A40-1E4C-11D1-A050-405705C10000}"
+
+MediaCategories="SYSTEM\CurrentControlSet\Control\MediaCategories"
+KSNODETYPE_ANY      = "{00000000-0000-0000-0000-000000000000}"
+
+PKEY_AudioEndpoint_ControlPanelPageProvider  = "{1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E},1"
+PKEY_AudioEndpoint_Association               = "{1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E},2"
+PKEY_AudioEndpoint_Supports_EventDriven_Mode = "{1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E},7"
+PKEY_AudioEndpoint_Default_VolumeInDb        = "{1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E},9"
+REG_MULTI_SZ = 0x00010000
+;
+;Localizable
+;
+StdMfg = "SDCA Virtual Codec Audio Device"
+DiskId1 = "SDCA Virtual Codec Audio Driver Installation Disk"
+WdfCodecDevice.DeviceDesc = "SDCA Virtual Codec Audio Driver"
+
+;; friendly names
+Audio_Device.Speaker.szPname="SDCA Virtual Codec Speaker"
+Audio_Device.Microphone.szPname="SDCA Virtual Codec Microphone"
+
+

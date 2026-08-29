@@ -1,0 +1,144 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;Module Name:
+;
+;    SDCAVXu.INF
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Extension
+ClassGuid={e2f84ce7-8efa-411c-aa69-97454ca4cb57}
+Provider=%ProviderName%
+DriverVer=06/13/2016, 1.0.0.1
+CatalogFile=SDCAVad.cat
+ExtensionId={790C1DE0-AA33-4CB8-BB0C-F523C73B4AA1}
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+;*****************************************
+; Audio Device Install Section
+;*****************************************
+[Manufacturer]
+%StdMfg%=Standard,NT$ARCH$.10.0...19041
+
+;***************************************************************
+; XU filter is installed as Lower filter to SDCAVCodec
+; Match hw-id
+;***************************************************************
+[Standard.NT$ARCH$.10.0...19041]
+; Replace following with real Hardware Ids
+%WdfExtensionDevice.DeviceDesc%=Audio_Device, ROOT\SDCAVCodec
+%WdfExtensionDevice.DeviceDesc%=Audio_Device, SOUNDWIRE\AUDIOFUNCTION
+%WdfExtensionDevice.DeviceDesc%=Audio_Device, SDCA_10\AUDIOFUNCTION
+%WdfExtensionDevice.DeviceDesc%=Audio_Device, SDCA_11\AUDIOFUNCTION
+
+%WdfExtensionDevice.DeviceDesc%=Audio_APO_Device, SOUNDWIRE\DynamicEnumChild
+
+[Audio_Device.NT]
+CopyFiles=Audio_Device.NT.Copy
+
+[Audio_Device.NT.Copy]
+SDCAVXu.sys
+
+[Audio_Device.NT.Filters]
+AddFilter=SDCAVXu,,SDCAVXuInstall
+
+[Audio_APO_Device.NT]
+
+[Audio_APO_Device.NT.HW]
+; The FriendlyName_AddReg will change the name of the SdcaClass child device
+;AddReg = FriendlyName_AddReg
+
+;[FriendlyName_AddReg]
+;HKR,,FriendlyName,,%ExtendedFriendlyName%
+
+[Audio_APO_Device.NT.Components]
+AddComponent = SdcaVKwsApo,,Apo_AddComponent
+
+[Apo_AddComponent]
+ComponentIDs = VEN_SDCAV_SMPL&CID_APO
+Description = "Audio SDCAV APO Sample"
+
+[SDCAVXuInstall]
+FilterLevel=SDCAXu
+
+[DeviceExtensions.I.Microphone]
+AddReg=DeviceExtensions.I.Microphone.AddReg
+
+[DeviceExtensions.I.Microphone.AddReg]
+HKR,FX\0,%PKEY_FX_Association%,,%KSNODETYPE_ANY%
+HKR,FX\0,%PKEY_FX_KeywordDetector_ModeEffectClsid%,,%FX_DISCOVER_EFFECTS_APO_CLSID%
+HKR,FX\0,%PKEY_FX_KeywordDetector_EndpointEffectClsid%,,%KWS_FX_ENDPOINT_CLSID%
+
+; An EFX APO must support default mode to be loaded. This does not mean the keyword burst pin must support default mode, it
+; may still run in some other mode like speech mode. This simply means that the KWS EFX APO supports default mode.
+HKR,FX\0,%PKEY_EFX_KeywordDetector_ProcessingModes_Supported_For_Streaming%,%REG_MULTI_SZ%,%AUDIO_SIGNALPROCESSINGMODE_DEFAULT%
+
+[Audio_APO_Device.NT.Interfaces]
+AddInterface = %KSCATEGORY_AUDIO%,    %KSNAME_Microphone%, DeviceExtensions.I.Microphone
+AddInterface = %KSCATEGORY_CAPTURE%,  %KSNAME_Microphone%, DeviceExtensions.I.Microphone
+AddInterface = %KSCATEGORY_REALTIME%, %KSNAME_Microphone%, DeviceExtensions.I.Microphone
+
+
+;-------------- Service installation
+
+[Audio_Device.NT.Services]
+AddService = SDCAVXu,,Audio_Service_Inst
+
+[Audio_Service_Inst]
+DisplayName    = %WdfExtensionDevice.DeviceDesc%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\SDCAVXu.sys
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+SDCAVXu.sys  = 1,,
+
+[Audio_Device.NT.Wdf]
+KmdfService = SDCAVXu, Audio_wdfsect
+[Audio_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+
+ProviderName = "VS_Microsoft"
+
+;
+;Localizable
+;
+StdMfg = "SDCA Virtual XU Audio Device"
+DiskId1 = "SDCA Virtual XU Audio Driver Installation Disk"
+WdfExtensionDevice.DeviceDesc = "SDCA Virtual XU Audio Driver"
+
+ExtendedFriendlyName = "SDCAV (with APO Extensions)"
+PKEY_FX_Association                 = "{D04E05A6-594B-4FB6-A80D-01AF5EED7D1D},0"
+PKEY_FX_KeywordDetector_EndpointEffectClsid = "{D04E05A6-594B-4fb6-A80D-01AF5EED7D1D},10"
+PKEY_FX_KeywordDetector_ModeEffectClsid     = "{D04E05A6-594B-4fb6-A80D-01AF5EED7D1D},9"
+PKEY_EFX_KeywordDetector_ProcessingModes_Supported_For_Streaming =  "{D3993A3F-99C2-4402-B5EC-A92A0367664B},10"
+
+FX_DISCOVER_EFFECTS_APO_CLSID  = "{CABC2F7B-4AF5-47F8-A95D-3A6F23F53DD4}"
+
+KWS_FX_ENDPOINT_CLSID   = "{9D89F614-F9D6-40DD-9F21-5E69FA3981ED}"
+
+KSNODETYPE_ANY   = "{00000000-0000-0000-0000-000000000000}"
+
+KSNAME_Microphone="Microphone0"
+
+KSCATEGORY_AUDIO = "{6994AD04-93EF-11D0-A3CC-00A0C9223196}"
+KSCATEGORY_REALTIME = "{EB115FFC-10C8-4964-831D-6DCB02E6F23F}"
+KSCATEGORY_CAPTURE  = "{65E8773D-8F56-11D0-A3B9-00A0C9223196}"
+
+REG_MULTI_SZ = 0x00010000 ; FLG_ADDREG_TYPE_MULTI_SZ
+
+AUDIO_SIGNALPROCESSINGMODE_DEFAULT = "{C18E2F7E-933D-4965-B7D1-1EEF228D2AF3}"
+

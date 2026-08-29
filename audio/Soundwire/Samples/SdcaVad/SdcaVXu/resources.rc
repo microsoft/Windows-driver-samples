@@ -1,0 +1,12 @@
+#include <windows.h>
+
+#include <ntverp.h>
+
+#define VER_FILETYPE                VFT_DRV
+#define VER_FILESUBTYPE             VFT2_DRV_SYSTEM
+#define VER_FILEDESCRIPTION_STR     "ACX v1.0 SDCAXu Audio Driver"
+#define VER_INTERNALNAME_STR        "SDCAVXu.sys"
+#define VER_ORIGINALFILENAME_STR    "SDCAVXu.sys"
+
+#include "common.ver"
+
