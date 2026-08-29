@@ -20,6 +20,17 @@ DevCon is provided in ready-to-run form in tools\\devcon. For usage, refer to th
 
 You can build the sample in two ways: using the Visual Studio Integrated Development Environment (IDE) or from the command line using the Visual Studio Command Prompt window and the Microsoft Build Engine (MSBuild.exe).
 
+### Generate `msg.h`
+
+The program relies on having a `msg.h` file, which is generated using `mc.exe` which is part of Windows SDK.
+Locate your `mc.exe` and then run it.
+
+```cmd
+"C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\mc.exe" -h . -r . msg.mc
+```
+
+This generates the required msg.h file so that you proceed with the next steps.
+
 ### Building the sample using Visual Studio
 
 1. Open Visual Studio. From the **File** menu, select **Open Project/Solution**. Navigate to the DevCon sample folder and open the devcon.sln project file.
