@@ -4660,7 +4660,7 @@ Return Value:
 {
     UCHAR Log = 0;
 
-#if FASTFATDBG
+#ifdef FASTFATDBG
     ULONG OrigValue = Value;
 #endif
 
@@ -4684,7 +4684,9 @@ Return Value:
     if (Value != 0x1) {
 
         DebugTrace(+1, Dbg, "LogOf\n", 0);
+#ifdef FASTFATDBG
         DebugTrace( 0, Dbg, "  Value = %8lx\n", OrigValue);
+#endif
 
         DebugTrace( 0, Dbg, "Received non power of 2.\n", 0);
 

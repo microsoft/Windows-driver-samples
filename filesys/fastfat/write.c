@@ -2536,7 +2536,7 @@ Return Value:
 
             ULONG SectorSize;
 
-#if FASTFATDBG
+#ifdef FASTFATDBG
             if ( TypeOfOpen == DirectoryFile ) {
                 DebugTrace(0, Dbg, "Type of write is directoryfile\n", 0);                
             } else if ( TypeOfOpen == EaFile) {
