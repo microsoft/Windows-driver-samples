@@ -17,7 +17,7 @@ jobs:
       versions: ${{ steps.nt.outputs.versions }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install Nuget Packages
         run: nuget restore .\packages.config -PackagesDirectory .\packages\
@@ -44,7 +44,7 @@ jobs:
     runs-on: windows-2025-vs2026
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: 'recursive'
 
@@ -53,7 +53,7 @@ jobs:
 
       - name: Get changed files
         id: get-changed-files
-        uses: tj-actions/changed-files@v46
+        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
         with:
           separator: ","
 
@@ -68,7 +68,7 @@ jobs:
           WDS_ReportFileName: _overview.${{ matrix.nt.tag }}.${{ matrix.configuration }}.${{ matrix.platform }}
 
       - name: Archive build logs and overview build reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: logs-${{ matrix.nt.tag }}-${{ matrix.configuration }}-${{ matrix.platform }}
@@ -81,10 +81,10 @@ jobs:
     if: always()
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Retrieve overview reports
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           path: _logs
           pattern: logs-*
@@ -94,7 +94,7 @@ jobs:
         run: .\.github\scripts\Join-CsvReports.ps1
 
       - name: Archive global overview build reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: logs
           path: _logs/_overview.all.*
