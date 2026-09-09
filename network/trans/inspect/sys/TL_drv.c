@@ -508,6 +508,7 @@ TLInspectRegisterCallouts(
 
    BOOLEAN engineOpened = FALSE;
    BOOLEAN inTransaction = FALSE;
+   BOOLEAN sublayerCreated = FALSE;
 
    FWPM_SESSION session = {0};
 
@@ -550,6 +551,8 @@ TLInspectRegisterCallouts(
    {
       goto Exit;
    }
+   
+   sublayerCreated = TRUE;
 
    if (configInspectRemoteAddrV4 != NULL)
    {
@@ -656,6 +659,10 @@ Exit:
 
    if (!NT_SUCCESS(status))
    {
+	  if (sublayerCreated)
+	  {
+		 FwpmSubLayerDeleteByKey(gEngineHandle, &TL_INSPECT_SUBLAYER);  
+	  }
       if (inTransaction)
       {
          FwpmTransactionAbort(gEngineHandle);
