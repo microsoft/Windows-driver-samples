@@ -369,6 +369,8 @@ typedef struct _DEVICE_GUID_LIST {
  G L O B A L S
 *****************************************************************************/
 
+#if !defined(UVCVIEW_DISABLE_GLOBALS)
+
 //
 // USBVIEW.C
 //
@@ -428,6 +430,8 @@ int gDeviceSpeed;
 PUSB_CONFIGURATION_DESCRIPTOR   g_pConfigDesc;
 PSTRING_DESCRIPTOR_NODE         g_pStringDescs;
 PUCHAR                          g_descEnd;
+
+#endif
 
 /*****************************************************************************
  F U N C T I O N    P R O T O T Y P E S
