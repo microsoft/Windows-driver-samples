@@ -57,7 +57,7 @@
 
 #include "Framework_WFPSampler.h" /// .
 
-/// WFPSamplerProxyService.Exe's ports
+/// TODO: Your proxy service's ports
 #define PROXY_PORT_V4 17476
 #define PROXY_PORT_V6 26214
 
@@ -466,6 +466,7 @@ UINT32 PrvProxyScenarioParseProxyData(_In_reads_(stringCount) PCWSTR* ppCLPStrin
                                       &pPCProxyData->udpPortReservationToken);
 */
       if(pPCProxyData->targetProcessID == 0)
+         // TODO: Default to WFPSamplerProxyService.Exe's PID. But you can specify another process if needed.
          HlprProcessGetID(L"WFPSamplerProxyService.Exe",
                           &(pPCProxyData->targetProcessID));
    }
