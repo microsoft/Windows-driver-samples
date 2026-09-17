@@ -68,27 +68,16 @@ Return Value:
 
 --*/
 {
-    WDF_MEMORY_DESCRIPTOR       inputDescriptor, outputDescriptor;
-    NTSTATUS                    status;
-    HID_COLLECTION_INFORMATION  collectionInformation = {0};
-    PHIDP_PREPARSED_DATA        preparsedData;
-    HIDP_CAPS                   caps;
-    USAGE                       usage;
-    ULONG                       usageLength;
-    PCHAR                       report;
-    WDFIOTARGET                 hidTarget;
-    WDF_IO_TARGET_OPEN_PARAMS   openParams;
-
     PAGED_CODE();
 
     //
     // Preinit for error.
     //
-    preparsedData = NULL;
-    report = NULL;
-    hidTarget = NULL;
+    PHIDP_PREPARSED_DATA preparsedData = NULL;
+    PCHAR                report = NULL;
+    WDFIOTARGET          hidTarget = NULL;
     
-    status = WdfIoTargetCreate(WdfObjectContextGetObject(DeviceContext), 
+    NTSTATUS status = WdfIoTargetCreate(WdfObjectContextGetObject(DeviceContext), 
                             WDF_NO_OBJECT_ATTRIBUTES, 
                             &hidTarget);    
     if (!NT_SUCCESS(status)) {
@@ -99,6 +88,7 @@ Return Value:
     //
     // Open it up, write access only!
     //
+    WDF_IO_TARGET_OPEN_PARAMS openParams;
     WDF_IO_TARGET_OPEN_PARAMS_INIT_OPEN_BY_NAME(
                                     &openParams,
                                     &DeviceContext->PdoName,
@@ -117,6 +107,8 @@ Return Value:
     }
     
 
+    WDF_MEMORY_DESCRIPTOR      outputDescriptor;
+    HID_COLLECTION_INFORMATION collectionInformation = {0};
     WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&outputDescriptor,
                                       (PVOID) &collectionInformation,
                                       sizeof(HID_COLLECTION_INFORMATION));
@@ -165,6 +157,7 @@ Return Value:
     //
     // Now get the capabilities.
     //
+    HIDP_CAPS caps;
     RtlZeroMemory(&caps, sizeof(HIDP_CAPS));
 
     status = HidP_GetCaps(preparsedData, &caps);
@@ -195,8 +188,8 @@ Return Value:
         //
         // Edit the report to reflect the enabled feature
         //
-        usage = FeatureId;
-        usageLength = 1;
+        USAGE usage = FeatureId;
+        ULONG usageLength = 1;
 
         status = HidP_SetUsages(
             HidP_Feature,
@@ -214,6 +207,7 @@ Return Value:
         }
     }
 
+    WDF_MEMORY_DESCRIPTOR inputDescriptor;
     WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&inputDescriptor,
                                       report,
                                       caps.FeatureReportByteLength);

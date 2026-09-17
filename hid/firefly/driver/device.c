@@ -53,13 +53,6 @@ Return Value:
 
 --*/    
 {
-    WDF_OBJECT_ATTRIBUTES           attributes;
-    NTSTATUS                        status;
-    PDEVICE_CONTEXT                 pDeviceContext;
-    WDFDEVICE                       device;
-    WDFMEMORY                       memory;
-    size_t                          bufferLength;
-
     UNREFERENCED_PARAMETER(Driver);
 
     PAGED_CODE();
@@ -69,9 +62,11 @@ Return Value:
     //
     WdfFdoInitSetFilter(DeviceInit);
 
+    WDF_OBJECT_ATTRIBUTES attributes;
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, DEVICE_CONTEXT);
 
-    status = WdfDeviceCreate(&DeviceInit, &attributes, &device);
+    WDFDEVICE device;
+    NTSTATUS status = WdfDeviceCreate(&DeviceInit, &attributes, &device);
     if (!NT_SUCCESS(status)) {
         KdPrint(("FireFly: WdfDeviceCreate, Error %x\n", status));
         return status;
@@ -80,7 +75,7 @@ Return Value:
     //
     // Driver Framework always zero initializes an objects context memory
     //
-    pDeviceContext = WdfObjectGet_DEVICE_CONTEXT(device);
+    PDEVICE_CONTEXT pDeviceContext = WdfObjectGet_DEVICE_CONTEXT(device);
 
     //
     // Initialize our WMI support
@@ -104,6 +99,7 @@ Return Value:
     //
     attributes.ParentObject = device;
 
+    WDFMEMORY memory;
     status = WdfDeviceAllocAndQueryProperty(device,
                                     DevicePropertyPhysicalDeviceObjectName,
                                     NonPagedPoolNx,
@@ -115,6 +111,7 @@ Return Value:
         return STATUS_UNSUCCESSFUL;
     }
 
+    size_t bufferLength;
     pDeviceContext->PdoName.Buffer = WdfMemoryGetBuffer(memory, &bufferLength);
 
     if (pDeviceContext->PdoName.Buffer == NULL) {
