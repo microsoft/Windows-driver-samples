@@ -1052,7 +1052,8 @@ Return Value:
         commonDesc = (PUSB_COMMON_DESCRIPTOR)cd;
 
         while ((PUCHAR)commonDesc + sizeof(USB_COMMON_DESCRIPTOR) < descEnd &&
-           (PUCHAR)commonDesc + commonDesc->bLength <= descEnd)
+           (PUCHAR)commonDesc + commonDesc->bLength <= descEnd &&
+           commonDesc->bLength > 0)
         {
             displayUnknown = FALSE;
 
