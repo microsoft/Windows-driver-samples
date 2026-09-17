@@ -2808,8 +2808,8 @@ RoutineDescription:
     case HID_WRITE_REPORT:
 
         status = OpenHidDevice(pDevice -> DevicePath,
-                               TRUE,
                                FALSE,
+                               TRUE,
                                FALSE,
                                FALSE,
                                &writeDevice);
