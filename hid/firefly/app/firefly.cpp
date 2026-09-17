@@ -23,6 +23,7 @@ Environment:
 --*/
 #include "luminous.h"
 #include <dontuse.h>
+#include <memory>
 
 #define USAGE  \
 _T("Usage: Flicker <-0 | -1 | -2>\n\
@@ -36,11 +37,8 @@ main(
     _In_reads_(argc) PCHAR argv[]
     )
 {
-    int                                 i, j, k;
     BOOL                            bAdjustLight = FALSE;
-    BOOL                            bSuccessful;
     ULONG                          lightSetting = 0;
-    CLuminous                    *luminous;
 
     if (argc == 2) {
 
@@ -60,7 +58,7 @@ main(
         exit(0);
     }
 
-    luminous = new CLuminous();
+    auto luminous = std::make_unique<CLuminous>();
 
     if (luminous == NULL) {
 
@@ -71,10 +69,10 @@ main(
     if (!luminous->Open()) {
 
         _tprintf(_T("Problem opening Luminous\n"));
-        delete(luminous);
         return 0;
     }
 
+    BOOL bSuccessful;
     if (bAdjustLight) {
 
         if (lightSetting < 2) {
@@ -91,10 +89,9 @@ main(
             }
 
         } else {
-
-            k=0;
-            j=1;
-            for(i = 500; (i>0)&&(j>0); i-=j) {
+            int k=0;
+            int j=1;
+            for(int i = 500; (i>0)&&(j>0); i-=j) {
 
                 j = (i*9/100);
                 Sleep(i);
@@ -104,7 +101,7 @@ main(
                 }
                 k=1-k;
             }
-            for(i = 12; i<500; i+=j) {
+            for(int i = 12; i<500; i+=j) {
 
                 j = (i*9/100);
                 Sleep(i);
@@ -126,8 +123,6 @@ main(
 
 End:
     luminous->Close();
-
-    delete(luminous);
 
     return 0;
 }
