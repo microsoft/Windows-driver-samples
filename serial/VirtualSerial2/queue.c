@@ -449,6 +449,7 @@ EvtIoWrite(
     if( !NT_SUCCESS(status) ) {
         Trace(TRACE_LEVEL_ERROR,
             "Error: WdfRequestRetrieveInputMemory failed 0x%x", status);
+        WdfRequestComplete(Request, status);
         return;
     }
 
@@ -460,6 +461,9 @@ EvtIoWrite(
                             (PUCHAR)WdfMemoryGetBuffer(memory, NULL),
                             Length);
     if( !NT_SUCCESS(status) ) {
+        Trace(TRACE_LEVEL_ERROR,
+            "Error: QueueProcessWriteBytes failed 0x%x", status);
+        WdfRequestComplete(Request, status);
         return;
     }
 
