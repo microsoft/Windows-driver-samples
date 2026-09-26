@@ -27,14 +27,10 @@
 static PCWSTR g_pDeviceName              = L"\\Device\\WFPSampler";
 static PCWSTR g_pCompanyName             = L"Microsoft Corporation";
 static PCWSTR g_pBinaryDescription       = L"WFPSampler version 1.0.0.1, Copyright (c) 2012 Microsoft Corporation. All Rights Reserved.";
-static PCWSTR g_pProxyBinaryDescription  = L"WFPSamplerProxyService version 1.0.0.1, Copyright (c) 2012 Microsoft Corporation. All Rights Reserved.";
 static PCWSTR g_pServiceExe              = L"%SystemRoot%\\System32\\WFPSamplerService.Exe";
 static PCWSTR g_pServiceName             = L"WFPSampler";
 static PCWSTR g_pServiceDescription      = L"Microsoft Windows Filtering Platform (WFP) Sample Policy Service";
 static PCWSTR g_pCalloutServiceName      = L"WFPSamplerCallouts";
-static PCWSTR g_pProxyServiceExe         = L"%SystemRoot%\\System32\\WFPSamplerProxyService.Exe";
-static PCWSTR g_pProxyServiceName        = L"WFPSamplerProxy";
-static PCWSTR g_pProxyServiceDescription = L"Microsoft Windows Filtering Platform (WFP) Sample Proxy Service";
 static PCWSTR g_pRPCProtocolSequence     = L"ncalrpc";
 static PCWSTR g_pEndpoint                = L"ncalrpc:[WFPSampler]";
 
