@@ -662,8 +662,6 @@ Routine Description:
             // denial of service by enumerating large number of child devices.
             //
             value = min(value, MAX_STATICALLY_ENUMERATED_TOASTERS);
-        }else {
-            return STATUS_SUCCESS; // This is an optional property.
         }
     }
 
