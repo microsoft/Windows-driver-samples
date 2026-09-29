@@ -1,0 +1,159 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;Module Name:
+;
+;    SDCAVDsp.INF
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=MEDIA
+ClassGuid={4d36e96c-e325-11ce-bfc1-08002be10318}
+Provider=%ProviderName%
+DriverVer=06/13/2016, 1.0.0.1
+CatalogFile=SDCAVad.cat
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+;*****************************************
+; Audio Device Install Section
+;*****************************************
+[ControlFlags]
+ExcludeFromSelect = {4DCB0606-6415-4A36-BDC5-9B1792117DC9}\Render
+ExcludeFromSelect = {4DCB0606-6415-4A36-BDC5-9B1792117DC9}\Capture
+
+[Manufacturer]
+%StdMfg%=Standard,NT$ARCH$.10.0...19041
+
+[Standard.NT$ARCH$.10.0...19041]
+%WdfDspDevice.DeviceDesc%=Audio_Device, SOUNDWIRETEST\DSP
+%WdfDspDevice.DeviceDesc%=Audio_Child_Device, {4DCB0606-6415-4A36-BDC5-9B1792117DC9}\Render
+%WdfDspDevice.DeviceDesc%=Audio_Child_Device, {4DCB0606-6415-4A36-BDC5-9B1792117DC9}\Capture
+
+[Audio_Device.NT]
+CopyFiles=Audio_Device.NT.Copy
+AddReg=EVENTDETECTORCONTOSOADAPTER.AddReg
+
+[Audio_Child_Device.NT]
+CopyFiles=Audio_Device.NT.Copy
+
+[Audio_Device.NT.Copy]
+SDCAVDsp.sys
+EventDetectorContosoAdapter.dll
+
+;-------------- Service installation
+
+[Audio_Device.NT.Services]
+AddService = SDCAVDsp, %SPSVCINST_ASSOCSERVICE%, Audio_Service_Inst
+
+[Audio_Child_Device.NT.Services]
+;NULL Driver
+AddService = , %SPSVCINST_ASSOCSERVICE%
+
+[Audio_Service_Inst]
+DisplayName    = %WdfDspDevice.DeviceDesc%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\SDCAVDsp.sys
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+SDCAVDsp.sys  = 1,,
+EventDetectorContosoAdapter.dll = 1,,
+
+[Audio_Device.NT.Wdf]
+KmdfService = SDCAVDsp, Audio_wdfsect
+[Audio_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[EVENTDETECTORCONTOSOADAPTER.AddReg]
+HKCR,CLSID\%EVENTDETECTORCONTOSOADAPTER_CLSID2%,,,"EventDetectorContosoAdapter2 Class"
+HKCR,CLSID\%EVENTDETECTORCONTOSOADAPTER_CLSID2%\InProcServer32,,0x00020000,%13%\eventdetectorcontosoadapter.dll
+HKCR,CLSID\%EVENTDETECTORCONTOSOADAPTER_CLSID2%\InProcServer32,ThreadingModel,,"Apartment"
+HKCR,CLSID\%EVENTDETECTORCONTOSOADAPTER_CLSID2%\Version,,,"1.0"
+
+;
+; render interfaces: speaker
+;
+[Audio_Device.I.Speaker]
+AddReg=Audio_Device.I.Speaker.AddReg
+[Audio_Device.I.Speaker.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%Audio_Device.Speaker.szPname%
+; The following lines opt-in to pull mode.
+HKR,EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+
+;
+; capture interfaces: microphone
+;
+[Audio_Device.I.Microphone]
+AddReg=Audio_Device.I.Microphone.AddReg
+[Audio_Device.I.Microphone.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%Audio_Device.Microphone.szPname%
+; The following lines opt-in to pull mode.
+HKR,EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+
+;
+; PnP add interface directives for dynamic enumerated audio endpoints. 
+;
+[Audio_Child_Device.NT.Interfaces]
+; Interfaces for render endpoint. capture is used for loopback.
+AddInterface=%KSCATEGORY_AUDIO%,    %KSNAME_Speaker%,  Audio_Device.I.Speaker
+AddInterface=%KSCATEGORY_RENDER%,   %KSNAME_Speaker%,  Audio_Device.I.Speaker
+AddInterface=%KSCATEGORY_REALTIME%, %KSNAME_Speaker%,  Audio_Device.I.Speaker
+;AddInterface=%KSCATEGORY_CAPTURE%,  %KSNAME_Speaker%,  Audio_Device.I.Speaker
+
+; Interfaces for mic capture endpoint 
+AddInterface=%KSCATEGORY_AUDIO%,    %KSNAME_Microphone%, Audio_Device.I.Microphone
+AddInterface=%KSCATEGORY_CAPTURE%,  %KSNAME_Microphone%, Audio_Device.I.Microphone
+AddInterface=%KSCATEGORY_REALTIME%, %KSNAME_Microphone%, Audio_Device.I.Microphone
+
+[Strings]
+;
+;Non-localizable
+;
+KSNAME_Speaker="Speaker0"
+KSNAME_Microphone="Microphone0"
+
+SPSVCINST_ASSOCSERVICE = 0x00000002
+ProviderName = "VS_Microsoft"
+
+Proxy.CLSID         = "{17CCA71B-ECD7-11D0-B908-00A0C9223196}"
+KSCATEGORY_AUDIO    = "{6994AD04-93EF-11D0-A3CC-00A0C9223196}"
+KSCATEGORY_RENDER   = "{65E8773E-8F56-11D0-A3B9-00A0C9223196}"
+KSCATEGORY_CAPTURE  = "{65E8773D-8F56-11D0-A3B9-00A0C9223196}"
+KSCATEGORY_REALTIME = "{EB115FFC-10C8-4964-831D-6DCB02E6F23F}"
+
+MediaCategories="SYSTEM\CurrentControlSet\Control\MediaCategories"
+KSNODETYPE_ANY      = "{00000000-0000-0000-0000-000000000000}"
+
+PKEY_AudioEndpoint_ControlPanelPageProvider  = "{1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E},1"
+PKEY_AudioEndpoint_Association               = "{1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E},2"
+PKEY_AudioEndpoint_Supports_EventDriven_Mode = "{1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E},7"
+PKEY_AudioEndpoint_Default_VolumeInDb        = "{1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E},9"
+
+; Driver developers would replace this CLSID with their own keyword detector OEM adapter
+EVENTDETECTORCONTOSOADAPTER_CLSID2 = {207F3D0C-5C79-496F-A94C-D3D2934DBFA9}
+
+;
+;Localizable
+;
+StdMfg = "SDCA Virtual Dsp Audio Device"
+DiskId1 = "SDCA Virtual Dsp Audio Driver Installation Disk"
+WdfDspDevice.DeviceDesc = "SDCA Virtual Dsp Audio Driver"
+
+;; friendly names
+Audio_Device.Speaker.szPname="SDCA Virtual DSP Speaker"
+Audio_Device.Microphone.szPname="SDCA Virtual DSP Microphone"
+

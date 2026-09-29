@@ -1,0 +1,79 @@
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = AudioProcessingObject
+ClassGuid   = {5989fce8-9cd0-467d-8a6a-5419e31529d4}
+Provider    = %ProviderName%
+DriverVer   = 02/22/2016,1.0.0.1
+CatalogFile = sdcavad.cat
+PnpLockDown = 1
+
+[Manufacturer]
+%MfgName% = ApoComponents,NT$ARCH$.10.0...19041
+
+[ApoComponents.NT$ARCH$.10.0...19041]
+%Apo.ComponentDesc% = ApoComponent_Install,SWC\VEN_SDCAV_SMPL&CID_APO
+
+[ApoComponent_Install]
+CopyFiles = Apo_CopyFiles
+AddReg    = Apo_AddReg
+
+[Apo_CopyFiles]
+sdcavkwsapo.dll
+
+[Apo_AddReg]
+; Keyword Spotter Endpoint effect APO COM registration
+HKR,Classes\CLSID\%KWS_FX_ENDPOINT_CLSID%,,,%KWS_FriendlyName%
+HKR,Classes\CLSID\%KWS_FX_ENDPOINT_CLSID%\InProcServer32,,0x00020000,%13%\sdcavKWSApo.dll
+HKR,Classes\CLSID\%KWS_FX_ENDPOINT_CLSID%\InProcServer32,ThreadingModel,,"Both"
+
+; Keyword Spotter APO registration
+HKR,AudioEngine\AudioProcessingObjects\%KWS_FX_ENDPOINT_CLSID%,"FriendlyName", ,%KWS_FriendlyName%
+HKR,AudioEngine\AudioProcessingObjects\%KWS_FX_ENDPOINT_CLSID%,"Copyright", ,%Copyright%
+HKR,AudioEngine\AudioProcessingObjects\%KWS_FX_ENDPOINT_CLSID%,"MajorVersion", 0x00010001, 1
+HKR,AudioEngine\AudioProcessingObjects\%KWS_FX_ENDPOINT_CLSID%,"MinorVersion", 0x00010001, 1
+HKR,AudioEngine\AudioProcessingObjects\%KWS_FX_ENDPOINT_CLSID%,"Flags", 0x00010001, 0xC
+HKR,AudioEngine\AudioProcessingObjects\%KWS_FX_ENDPOINT_CLSID%,"MinInputConnections", 0x00010001, 1
+HKR,AudioEngine\AudioProcessingObjects\%KWS_FX_ENDPOINT_CLSID%,"MaxInputConnections", 0x00010001, 1
+HKR,AudioEngine\AudioProcessingObjects\%KWS_FX_ENDPOINT_CLSID%,"MinOutputConnections", 0x00010001, 1
+HKR,AudioEngine\AudioProcessingObjects\%KWS_FX_ENDPOINT_CLSID%,"MaxOutputConnections", 0x00010001, 1
+HKR,AudioEngine\AudioProcessingObjects\%KWS_FX_ENDPOINT_CLSID%,"MaxInstances", 0x00010001, 0xffffffff
+HKR,AudioEngine\AudioProcessingObjects\%KWS_FX_ENDPOINT_CLSID%,"NumAPOInterfaces", 0x00010001, 1
+HKR,AudioEngine\AudioProcessingObjects\%KWS_FX_ENDPOINT_CLSID%,"APOInterface0", ,"{FD7F2B29-24D0-4B5C-B177-592C39F9CA10}"
+
+[ApoComponent_Install.HW]
+AddReg = FriendlyName_AddReg
+
+[FriendlyName_AddReg]
+HKR,,FriendlyName,,%Apo.ComponentDesc%
+
+[ApoComponent_Install.Services]
+AddService=,2    ; no function driver, install a null driver.
+
+[SourceDisksNames]
+1 = Disk
+
+[SourceDisksFiles]
+sdcavkwsapo.dll   = 1
+
+[DestinationDirs]
+Apo_CopyFiles = 13 ; 13=Package's DriverStore directory
+
+[SignatureAttributes]
+sdcavkwsapo.dll = SignatureAttributes.PETrust
+
+[SignatureAttributes.PETrust]
+PETrust = true
+
+[Strings]
+MfgName           = "TODO-Set-Manufacturer"
+ProviderName      = "TODO-Set-Provider"
+Apo.ComponentDesc = "Audio SDCAV APO Sample"
+
+; Driver developers would replace these CLSIDs with those of their own APOs
+KWS_FX_ENDPOINT_CLSID  = "{9D89F614-F9D6-40DD-9F21-5E69FA3981ED}"
+
+; see audioenginebaseapo.idl for APO_FLAG enum values
+APO_FLAG_DEFAULT  = 0x0000000e
+
+KWS_FriendlyName  = "Keyword Spotter APO Sample (endpoint effect)"
+Copyright         = "Sample"
