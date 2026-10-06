@@ -951,6 +951,16 @@ EnumerateHubError:
         FREE(ConnectionInfo);
     }
 
+    if (ConnectionInfoV2)
+    {
+        FREE(ConnectionInfoV2);
+    }
+
+    if (PortConnectorProps)
+    {
+        FREE(PortConnectorProps);
+    }
+
     if (ConfigDesc)
     {
         FREE(ConfigDesc);
@@ -972,6 +982,16 @@ EnumerateHubError:
             StringDescs = Next;
 
         } while (StringDescs != NULL);
+    }
+
+    if(DevProps)
+    {
+        FreeDeviceProperties(&DevProps);
+    }
+
+    if (hubCapabilityEx)
+    {
+        FREE(hubCapabilityEx);
     }
 }
 
@@ -1366,6 +1386,24 @@ EnumerateHubPorts (
                 if (connectionInfoExV2 != NULL)
                 {
                     FREE(connectionInfoExV2);
+                }
+
+                if (stringDescs != NULL)
+                {
+                    PSTRING_DESCRIPTOR_NODE Next;
+
+                    do {
+
+                        Next = stringDescs->Next;
+                        FREE(stringDescs);
+                        stringDescs = Next;
+
+                    } while (stringDescs != NULL);
+                }
+
+                if(DevProps)
+                {
+                    FreeDeviceProperties(&DevProps);
                 }
                 break;
             }
