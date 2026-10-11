@@ -41,32 +41,30 @@ WmiInitialize(
     PDEVICE_CONTEXT DeviceContext
     )
 {
-    WDF_WMI_PROVIDER_CONFIG providerConfig;
-    WDF_WMI_INSTANCE_CONFIG instanceConfig;
-    WDF_OBJECT_ATTRIBUTES woa;
-    WDFWMIINSTANCE instance;
-    NTSTATUS status;
     DECLARE_CONST_UNICODE_STRING(mofRsrcName, MOFRESOURCENAME);
 
     UNREFERENCED_PARAMETER(DeviceContext);
 
     PAGED_CODE();
 
-    status = WdfDeviceAssignMofResourceName(Device, &mofRsrcName);
+    NTSTATUS status = WdfDeviceAssignMofResourceName(Device, &mofRsrcName);
     if (!NT_SUCCESS(status)) {
         KdPrint(("FireFly: Error in WdfDeviceAssignMofResourceName %x\n", status));
         return status;
     }
 
+    WDF_WMI_PROVIDER_CONFIG providerConfig;
     WDF_WMI_PROVIDER_CONFIG_INIT(&providerConfig, &FireflyDeviceInformation_GUID);
     providerConfig.MinInstanceBufferSize = sizeof(FireflyDeviceInformation);
 
+    WDF_WMI_INSTANCE_CONFIG instanceConfig;
     WDF_WMI_INSTANCE_CONFIG_INIT_PROVIDER_CONFIG(&instanceConfig, &providerConfig);
     instanceConfig.Register = TRUE;
     instanceConfig.EvtWmiInstanceQueryInstance = EvtWmiInstanceQueryInstance;
     instanceConfig.EvtWmiInstanceSetInstance = EvtWmiInstanceSetInstance;
     instanceConfig.EvtWmiInstanceSetItem = EvtWmiInstanceSetItem;
 
+    WDF_OBJECT_ATTRIBUTES woa;
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&woa, FireflyDeviceInformation);
 
     //
@@ -74,6 +72,7 @@ WmiInitialize(
     // passed back in the WMI instance callbacks and is not referenced outside
     // of those callbacks.
     //
+    WDFWMIINSTANCE instance;
     status = WdfWmiInstanceCreate(Device, &instanceConfig, &woa, &instance);
 
     if (NT_SUCCESS(status)) {
