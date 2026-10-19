@@ -1,146 +1,292 @@
-;-------------------------------------------------------------------------------਍㬀 䴀椀挀爀漀猀漀昀琀 嘀椀爀琀甀愀氀 䔀琀栀攀爀渀攀琀 䄀搀愀瀀琀攀爀ഀഀ
-;਍㬀 䌀漀瀀礀爀椀最栀琀 ⠀挀⤀ 䴀椀挀爀漀猀漀昀琀 䌀漀爀瀀漀爀愀琀椀漀渀⸀  䄀氀氀 爀椀最栀琀猀 爀攀猀攀爀瘀攀搀⸀ഀഀ
-਍ഀഀ
-[version]਍匀椀最渀愀琀甀爀攀   㴀 ∀␀圀椀渀搀漀眀猀 一吀␀∀ഀഀ
-Class       = Net਍䌀氀愀猀猀䜀唀䤀䐀   㴀 笀㐀搀㌀㘀攀㤀㜀㈀ⴀ攀㌀㈀㔀ⴀ㄀㄀挀攀ⴀ戀昀挀㄀ⴀ　㠀　　㈀戀攀㄀　㌀㄀㠀紀ഀഀ
-Provider    = %Msft%਍䐀爀椀瘀攀爀嘀攀爀   㴀 　㘀⼀㈀㈀⼀㈀　㄀　Ⰰ㘀⸀㄀⸀㜀　㘀㔀⸀　ഀഀ
-PnpLockDown = 1਍䌀愀琀愀氀漀最䘀椀氀攀 㴀 渀攀琀瘀愀搀愀瀀琀攀爀甀洀⸀挀愀琀ഀഀ
-਍嬀䴀愀渀甀昀愀挀琀甀爀攀爀崀ഀഀ
-%Msft% = Msft,NT$ARCH$਍ഀഀ
-[Msft]਍㬀 䔀洀瀀琀礀 猀攀挀琀椀漀渀 琀漀 戀氀漀挀欀 氀攀最愀挀礀 漀瀀攀爀愀琀椀渀最 猀礀猀琀攀洀猀 琀栀愀琀 搀漀渀✀琀 甀渀搀攀爀猀琀愀渀搀 吀愀爀最攀琀伀匀嘀攀爀猀椀漀渀ഀഀ
-਍嬀䴀猀昀琀⸀一吀␀䄀刀䌀䠀␀崀ഀഀ
-%netvadapter.DeviceDesc% = netvadapter.ndi, root\netvadapterum਍─渀攀琀瘀愀搀愀瀀琀攀爀⸀䐀攀瘀椀挀攀䐀攀猀挀─ 㴀 渀攀琀瘀愀搀愀瀀琀攀爀⸀渀搀椀Ⰰ 渀搀琀尀渀攀琀瘀愀搀愀瀀琀攀爀甀洀ഀഀ
-%netvadapter.DeviceDesc% = instance1.ndi, test\netvadapterum1਍─渀攀琀瘀愀搀愀瀀琀攀爀⸀䐀攀瘀椀挀攀䐀攀猀挀─ 㴀 椀渀猀琀愀渀挀攀㈀⸀渀搀椀Ⰰ 琀攀猀琀尀渀攀琀瘀愀搀愀瀀琀攀爀甀洀㈀ഀഀ
-਍㬀ⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀഀഀ
-; Microsoft Virtual Ethernet Adapter਍㬀ഀഀ
-[netvadapter.ndi]਍䤀渀挀氀甀搀攀㴀眀甀搀昀爀搀⸀椀渀昀Ⰰ 渀攀琀挀砀爀搀⸀椀渀昀ഀഀ
-Needs=WUDFRD.NT, netcxrd_Filter.NT਍ഀഀ
-Characteristics             = 0x1 ; NCF_VIRTUAL਍⨀䤀昀吀礀瀀攀                     㴀 　砀㘀 㬀 䤀䘀开吀夀倀䔀开䔀吀䠀䔀刀一䔀吀开䌀匀䴀䄀䌀䐀ഀഀ
-*MediaType                  = 0x0 ; NdisMedium802_3਍⨀倀栀礀猀椀挀愀氀䴀攀搀椀愀吀礀瀀攀          㴀 　 㬀 一搀椀猀倀栀礀猀椀挀愀氀䴀攀搀椀甀洀唀渀猀瀀攀挀椀昀椀攀搀ഀഀ
-*IfConnectorPresent         = 0਍⨀䄀挀挀攀猀猀吀礀瀀攀                 㴀 ㈀   㬀 一䔀吀开䤀䘀开䄀䌀䌀䔀匀匀开䈀刀伀䄀䐀䌀䄀匀吀ഀഀ
-*ConnectionType             = 1   ; NET_IF_CONNECTION_PASSIVE਍⨀䐀椀爀攀挀琀椀漀渀吀礀瀀攀              㴀 　   㬀 一䔀吀开䤀䘀开䐀䤀刀䔀䌀吀䤀伀一开匀䔀一䐀刀䔀䌀䔀䤀嘀䔀ഀഀ
-AddReg                      = netvadapter.reg, netvadapter.params, RSC.kw, UDPRSC.kw, USO.kw਍䈀甀猀吀礀瀀攀                     㴀 ㄀㔀ഀഀ
-CopyFiles                   = netvadapter.CopyFiles਍一甀洀戀攀爀伀昀一攀琀眀漀爀欀䤀渀琀攀爀昀愀挀攀猀   㴀 㔀ഀഀ
-AddProperty                 = PciS0WakeSupported_AddProperty਍ഀഀ
-[instance1.ndi]਍䤀渀挀氀甀搀攀㴀眀甀搀昀爀搀⸀椀渀昀Ⰰ 渀攀琀挀砀爀搀⸀椀渀昀ഀഀ
-Needs=WUDFRD.NT, netcxrd_Filter.NT਍ഀഀ
-Characteristics             = 0x1 ; NCF_VIRTUAL਍⨀䤀昀吀礀瀀攀                     㴀 　砀㘀 㬀 䤀䘀开吀夀倀䔀开䔀吀䠀䔀刀一䔀吀开䌀匀䴀䄀䌀䐀ഀഀ
-*MediaType                  = 0x0 ; NdisMedium802_3਍⨀倀栀礀猀椀挀愀氀䴀攀搀椀愀吀礀瀀攀          㴀 　 㬀 一搀椀猀倀栀礀猀椀挀愀氀䴀攀搀椀甀洀唀渀猀瀀攀挀椀昀椀攀搀ഀഀ
-*IfConnectorPresent         = 0਍⨀䄀挀挀攀猀猀吀礀瀀攀                 㴀 ㈀   㬀 一䔀吀开䤀䘀开䄀䌀䌀䔀匀匀开䈀刀伀䄀䐀䌀䄀匀吀ഀഀ
-*ConnectionType             = 1   ; NET_IF_CONNECTION_PASSIVE਍⨀䐀椀爀攀挀琀椀漀渀吀礀瀀攀              㴀 　   㬀 一䔀吀开䤀䘀开䐀䤀刀䔀䌀吀䤀伀一开匀䔀一䐀刀䔀䌀䔀䤀嘀䔀ഀഀ
-AddReg                      = instance1.reg, netvadapter.params, RSC.kw, UDPRSC.kw, USO.kw਍䈀甀猀吀礀瀀攀                     㴀 ㄀㔀ഀഀ
-CopyFiles                   = netvadapter.CopyFiles਍一甀洀戀攀爀伀昀一攀琀眀漀爀欀䤀渀琀攀爀昀愀挀攀猀   㴀 㔀ഀഀ
-AddProperty                 = PciS0WakeSupported_AddProperty਍ഀഀ
-[instance2.ndi]਍䤀渀挀氀甀搀攀㴀眀甀搀昀爀搀⸀椀渀昀Ⰰ 渀攀琀挀砀爀搀⸀椀渀昀ഀഀ
-Needs=WUDFRD.NT, netcxrd_Filter.NT਍ഀഀ
-Characteristics             = 0x1 ; NCF_VIRTUAL਍⨀䤀昀吀礀瀀攀                     㴀 　砀㘀 㬀 䤀䘀开吀夀倀䔀开䔀吀䠀䔀刀一䔀吀开䌀匀䴀䄀䌀䐀ഀഀ
-*MediaType                  = 0x0 ; NdisMedium802_3਍⨀倀栀礀猀椀挀愀氀䴀攀搀椀愀吀礀瀀攀          㴀 　 㬀 一搀椀猀倀栀礀猀椀挀愀氀䴀攀搀椀甀洀唀渀猀瀀攀挀椀昀椀攀搀ഀഀ
-*IfConnectorPresent         = 0਍⨀䄀挀挀攀猀猀吀礀瀀攀                 㴀 ㈀   㬀 一䔀吀开䤀䘀开䄀䌀䌀䔀匀匀开䈀刀伀䄀䐀䌀䄀匀吀ഀഀ
-*ConnectionType             = 1   ; NET_IF_CONNECTION_PASSIVE਍⨀䐀椀爀攀挀琀椀漀渀吀礀瀀攀              㴀 　   㬀 一䔀吀开䤀䘀开䐀䤀刀䔀䌀吀䤀伀一开匀䔀一䐀刀䔀䌀䔀䤀嘀䔀ഀഀ
-AddReg                      = instance2.reg, netvadapter.params, RSC.kw, UDPRSC.kw, USO.kw਍䈀甀猀吀礀瀀攀                     㴀 ㄀㔀ഀഀ
-CopyFiles                   = netvadapter.CopyFiles਍一甀洀戀攀爀伀昀一攀琀眀漀爀欀䤀渀琀攀爀昀愀挀攀猀   㴀 㔀ഀഀ
-AddProperty                 = PciS0WakeSupported_AddProperty਍ഀഀ
-[netvadapter.ndi.Hw]਍䤀渀挀氀甀搀攀㴀眀甀搀昀爀搀⸀椀渀昀Ⰰ 渀攀琀挀砀爀搀⸀椀渀昀ഀഀ
-Needs=WUDFRD.NT.HW, netcxrd_Filter.NT.HW਍䄀搀搀刀攀最 㴀 渀攀琀瘀愀搀愀瀀琀攀爀甀洀开䐀攀瘀椀挀攀开䠀圀开䄀搀搀刀攀最ഀഀ
-਍嬀椀渀猀琀愀渀挀攀㄀⸀渀搀椀⸀䠀眀崀ഀഀ
-Include=wudfrd.inf, netcxrd.inf਍一攀攀搀猀㴀圀唀䐀䘀刀䐀⸀一吀⸀䠀圀Ⰰ 渀攀琀挀砀爀搀开䘀椀氀琀攀爀⸀一吀⸀䠀圀ഀഀ
-AddReg = netvadapterum_Device_HW_AddReg਍ഀഀ
-[instance2.ndi.Hw]਍䤀渀挀氀甀搀攀㴀眀甀搀昀爀搀⸀椀渀昀Ⰰ 渀攀琀挀砀爀搀⸀椀渀昀ഀഀ
-Needs=WUDFRD.NT.HW, netcxrd_Filter.NT.HW਍䄀搀搀刀攀最 㴀 渀攀琀瘀愀搀愀瀀琀攀爀甀洀开䐀攀瘀椀挀攀开䠀圀开䄀搀搀刀攀最ഀഀ
-਍嬀渀攀琀瘀愀搀愀瀀琀攀爀甀洀开䐀攀瘀椀挀攀开䠀圀开䄀搀搀刀攀最崀ഀഀ
-HKR, "WUDF", "DeviceGroupId", %REG_SZ%, "netvadapterum_group"਍ഀഀ
-[netvadapter.ndi.Filters]਍䤀渀挀氀甀搀攀㴀渀攀琀挀砀爀搀⸀椀渀昀ഀഀ
-Needs=netcxrd_Filter.NT.Filters਍ഀഀ
-[netvadapter.ndi.Services]਍䤀渀挀氀甀搀攀㴀眀甀搀昀爀搀⸀椀渀昀Ⰰ 渀攀琀挀砀爀搀⸀椀渀昀ഀഀ
-Needs=WUDFRD.NT.Services, netcxrd_Filter.NT.Services਍ഀഀ
-[netvadapter.ndi.Wdf]਍唀洀搀昀匀攀爀瘀椀挀攀 㴀 ∀渀攀琀瘀愀搀愀瀀琀攀爀∀Ⰰ 眀搀昀ഀഀ
-UmdfServiceOrder=netvadapter਍唀洀搀昀䠀漀猀琀倀爀漀挀攀猀猀匀栀愀爀椀渀最㴀倀爀漀挀攀猀猀匀栀愀爀椀渀最䔀渀愀戀氀攀搀ഀഀ
-UmdfKernelModeClientPolicy=AllowKernelModeClients਍唀洀搀昀䐀椀爀攀挀琀䠀愀爀搀眀愀爀攀䄀挀挀攀猀猀㴀䄀氀氀漀眀䐀椀爀攀挀琀䠀愀爀搀眀愀爀攀䄀挀挀攀猀猀ഀഀ
-UmdfRegisterAccessMode=RegisterAccessUsingUserModeMapping਍唀洀搀昀䘀猀䌀漀渀琀攀砀琀唀猀攀倀漀氀椀挀礀㴀䌀愀渀唀猀攀䘀猀䌀漀渀琀攀砀琀㈀ഀഀ
-਍嬀椀渀猀琀愀渀挀攀㄀⸀渀搀椀⸀䘀椀氀琀攀爀猀崀ഀഀ
-Include=netcxrd.inf਍一攀攀搀猀㴀渀攀琀挀砀爀搀开䘀椀氀琀攀爀⸀一吀⸀䘀椀氀琀攀爀猀ഀഀ
-਍嬀椀渀猀琀愀渀挀攀㄀⸀渀搀椀⸀匀攀爀瘀椀挀攀猀崀ഀഀ
-Include=wudfrd.inf, netcxrd.inf਍一攀攀搀猀㴀圀唀䐀䘀刀䐀⸀一吀⸀匀攀爀瘀椀挀攀猀Ⰰ 渀攀琀挀砀爀搀开䘀椀氀琀攀爀⸀一吀⸀匀攀爀瘀椀挀攀猀ഀഀ
-਍嬀椀渀猀琀愀渀挀攀㄀⸀渀搀椀⸀圀搀昀崀ഀഀ
-UmdfService = "netvadapter", wdf਍唀洀搀昀匀攀爀瘀椀挀攀伀爀搀攀爀㴀渀攀琀瘀愀搀愀瀀琀攀爀ഀഀ
-UmdfHostProcessSharing=ProcessSharingEnabled਍唀洀搀昀䬀攀爀渀攀氀䴀漀搀攀䌀氀椀攀渀琀倀漀氀椀挀礀㴀䄀氀氀漀眀䬀攀爀渀攀氀䴀漀搀攀䌀氀椀攀渀琀猀ഀഀ
-UmdfDirectHardwareAccess=AllowDirectHardwareAccess਍唀洀搀昀刀攀最椀猀琀攀爀䄀挀挀攀猀猀䴀漀搀攀㴀刀攀最椀猀琀攀爀䄀挀挀攀猀猀唀猀椀渀最唀猀攀爀䴀漀搀攀䴀愀瀀瀀椀渀最ഀഀ
-UmdfFsContextUsePolicy=CanUseFsContext2਍ഀഀ
-[instance2.ndi.Filters]਍䤀渀挀氀甀搀攀㴀渀攀琀挀砀爀搀⸀椀渀昀ഀഀ
-Needs=netcxrd_Filter.NT.Filters਍ഀഀ
-[instance2.ndi.Services]਍䤀渀挀氀甀搀攀㴀眀甀搀昀爀搀⸀椀渀昀Ⰰ 渀攀琀挀砀爀搀⸀椀渀昀ഀഀ
-Needs=WUDFRD.NT.Services, netcxrd_Filter.NT.Services਍ഀഀ
-[instance2.ndi.Wdf]਍唀洀搀昀匀攀爀瘀椀挀攀 㴀 ∀渀攀琀瘀愀搀愀瀀琀攀爀∀Ⰰ 眀搀昀ഀഀ
-UmdfServiceOrder=netvadapter਍唀洀搀昀䠀漀猀琀倀爀漀挀攀猀猀匀栀愀爀椀渀最㴀倀爀漀挀攀猀猀匀栀愀爀椀渀最䔀渀愀戀氀攀搀ഀഀ
-UmdfKernelModeClientPolicy=AllowKernelModeClients਍唀洀搀昀䐀椀爀攀挀琀䠀愀爀搀眀愀爀攀䄀挀挀攀猀猀㴀䄀氀氀漀眀䐀椀爀攀挀琀䠀愀爀搀眀愀爀攀䄀挀挀攀猀猀ഀഀ
-UmdfRegisterAccessMode=RegisterAccessUsingUserModeMapping਍唀洀搀昀䘀猀䌀漀渀琀攀砀琀唀猀攀倀漀氀椀挀礀㴀䌀愀渀唀猀攀䘀猀䌀漀渀琀攀砀琀㈀ഀഀ
-਍嬀眀搀昀崀ഀഀ
-UmdfLibraryVersion = 2.33.0਍唀洀搀昀䔀砀琀攀渀猀椀漀渀猀 㴀 一攀琀䄀搀愀瀀琀攀爀䌀砀　㈀　㈀ഀഀ
-ServiceBinary=%13%\netvadapterum.dll਍ഀഀ
-;-----------------------------------------------------------------------------਍㬀 䴀椀挀爀漀猀漀昀琀 嘀椀爀琀甀愀氀 䴀椀渀椀瀀漀爀琀 䌀漀洀洀漀渀ഀഀ
-;਍嬀渀攀琀瘀愀搀愀瀀琀攀爀⸀爀攀最崀ഀഀ
-HKR,    ,                         BusNumber,           0, "0"਍䠀䬀刀Ⰰ 一搀椀Ⰰ                         匀攀爀瘀椀挀攀Ⰰ             　Ⰰ ∀渀攀琀瘀愀搀愀瀀琀攀爀∀ഀഀ
-HKR, Ndi\Interfaces,              UpperRange,          0, "ndis5"਍䠀䬀刀Ⰰ 一搀椀尀䤀渀琀攀爀昀愀挀攀猀Ⰰ              䰀漀眀攀爀刀愀渀最攀Ⰰ          　Ⰰ ∀攀琀栀攀爀渀攀琀∀ഀഀ
-HKR,,                             NetworkAddress,      0, "01-23-45-ab-cd-ef"਍䠀䬀刀ⰀⰀ                             䄀瀀瀀䴀漀搀甀氀攀䤀搀Ⰰ         　Ⰰ ∀笀䐀䐀䄀䈀㤀䈀㤀䌀ⴀ㘀䌀　䘀ⴀ㐀㌀䘀䈀ⴀ㤀䔀䄀㤀ⴀ㈀㔀㈀䘀㄀㠀䘀䐀㈀㠀㌀䈀紀∀ഀഀ
-; HKR,    ,                         AOACTest,   0x00010001, 0x1਍ഀഀ
-;-----------------------------------------------------------------------------਍ഀഀ
-;-----------------------------------------------------------------------------਍㬀 䴀椀挀爀漀猀漀昀琀 嘀椀爀琀甀愀氀 䴀椀渀椀瀀漀爀琀 䌀漀洀洀漀渀ഀഀ
-;਍嬀椀渀猀琀愀渀挀攀㄀⸀爀攀最崀ഀഀ
-HKR,    ,                         BusNumber,           0, "0"਍䠀䬀刀Ⰰ 一搀椀Ⰰ                         匀攀爀瘀椀挀攀Ⰰ             　Ⰰ ∀渀攀琀瘀愀搀愀瀀琀攀爀∀ഀഀ
-HKR, Ndi\Interfaces,              UpperRange,          0, "ndis5"਍䠀䬀刀Ⰰ 一搀椀尀䤀渀琀攀爀昀愀挀攀猀Ⰰ              䰀漀眀攀爀刀愀渀最攀Ⰰ          　Ⰰ ∀攀琀栀攀爀渀攀琀∀ഀഀ
-HKR,,                             NetworkAddress,      0, "01-23-45-ab-cd-ef"਍䠀䬀刀ⰀⰀ                             䄀瀀瀀䴀漀搀甀氀攀䤀搀Ⰰ         　Ⰰ ∀笀䐀䐀䄀䈀㤀䈀㤀䌀ⴀ㘀䌀　䘀ⴀ㐀㌀䘀䈀ⴀ㤀䔀䄀㤀ⴀ㈀㔀㈀䘀㄀㠀䘀䐀㈀㠀㌀䈀紀∀ഀഀ
-HKR,    ,                         MACLastByte,         0, "1"਍㬀ⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀഀഀ
-਍㬀ⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀഀഀ
-; Microsoft Virtual Miniport Common਍㬀ഀഀ
-[instance2.reg]਍䠀䬀刀Ⰰ    Ⰰ                         䈀甀猀一甀洀戀攀爀Ⰰ           　Ⰰ ∀　∀ഀഀ
-HKR, Ndi,                         Service,             0, "netvadapter"਍䠀䬀刀Ⰰ 一搀椀尀䤀渀琀攀爀昀愀挀攀猀Ⰰ              唀瀀瀀攀爀刀愀渀最攀Ⰰ          　Ⰰ ∀渀搀椀猀㔀∀ഀഀ
-HKR, Ndi\Interfaces,              LowerRange,          0, "ethernet"਍䠀䬀刀ⰀⰀ                             一攀琀眀漀爀欀䄀搀搀爀攀猀猀Ⰰ      　Ⰰ ∀　㄀ⴀ㈀㌀ⴀ㐀㔀ⴀ愀戀ⴀ挀搀ⴀ攀昀∀ഀഀ
-HKR,,                             AppModuleId,         0, "{DDAB9B9C-6C0F-43FB-9EA9-252F18FD283B}"਍䠀䬀刀Ⰰ    Ⰰ                         䴀䄀䌀䰀愀猀琀䈀礀琀攀Ⰰ         　Ⰰ ∀㈀∀ഀഀ
-;-----------------------------------------------------------------------------਍ഀഀ
-; Driver and Service Section਍㬀ഀഀ
-[netvadapter.CopyFiles]਍渀攀琀瘀愀搀愀瀀琀攀爀甀洀⸀搀氀氀ഀഀ
-਍嬀匀漀甀爀挀攀䐀椀猀欀猀一愀洀攀猀崀ഀഀ
-1 = %DiskId1%,,,""਍ഀഀ
-[SourceDisksFiles]਍渀攀琀瘀愀搀愀瀀琀攀爀甀洀⸀搀氀氀㴀㄀ഀഀ
-਍㬀ⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀഀഀ
-; DestinationDirs਍㬀ഀഀ
-[DestinationDirs]਍渀攀琀瘀愀搀愀瀀琀攀爀⸀䌀漀瀀礀䘀椀氀攀猀㴀㄀㌀ഀഀ
-਍㬀ⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀⴀഀഀ
-; Localizable Strings਍㬀ഀഀ
-[Strings]਍䴀猀昀琀                            㴀 ∀䴀椀挀爀漀猀漀昀琀∀ഀഀ
-netvadapter.DeviceDesc          = "UMDF Microsoft Virtual Ethernet Adapter (NDIS WDF)"਍渀攀琀瘀愀搀愀瀀琀攀爀⸀匀攀爀瘀椀挀攀⸀䐀椀猀瀀一愀洀攀    㴀 ∀唀䴀䐀䘀 䴀椀挀爀漀猀漀昀琀 嘀椀爀琀甀愀氀 䴀椀渀椀瀀漀爀琀 ⠀一䐀䤀匀 圀䐀䘀⤀∀ഀഀ
-DiskId1                         = "Microsoft Virtual Miniport Device Installation Disk #1"਍ഀഀ
-Disabled                     = "Disabled"਍䔀渀愀戀氀攀搀                      㴀 ∀䔀渀愀戀氀攀搀∀ഀഀ
-਍嬀渀攀琀瘀愀搀愀瀀琀攀爀⸀瀀愀爀愀洀猀崀ഀഀ
-; MACLastByte਍ 䠀䬀刀Ⰰ 一搀椀尀瀀愀爀愀洀猀尀䴀䄀䌀䰀愀猀琀䈀礀琀攀Ⰰ  倀愀爀愀洀䐀攀猀挀Ⰰ         　Ⰰ ∀䴀䄀䌀䰀愀猀琀䈀礀琀攀∀ഀഀ
- HKR, Ndi\params\MACLastByte,  default,           0, "0"਍ 䠀䬀刀Ⰰ 一搀椀尀瀀愀爀愀洀猀尀䴀䄀䌀䰀愀猀琀䈀礀琀攀Ⰰ  琀礀瀀攀Ⰰ              　Ⰰ ∀椀渀琀∀ഀഀ
- HKR, Ndi\params\MACLastByte,  min,               0, "0"਍ 䠀䬀刀Ⰰ 一搀椀尀瀀愀爀愀洀猀尀䴀䄀䌀䰀愀猀琀䈀礀琀攀Ⰰ  洀愀砀Ⰰ               　Ⰰ ∀㈀㔀㐀∀ഀഀ
- HKR, Ndi\params\MACLastByte,  step,              0, "1"਍ 䠀䬀刀Ⰰ 一搀椀尀瀀愀爀愀洀猀尀䴀䄀䌀䰀愀猀琀䈀礀琀攀Ⰰ  伀瀀琀椀漀渀愀氀Ⰰ          　Ⰰ ∀　∀ഀഀ
-਍ 㬀 䰀椀渀欀倀爀漀挀䤀渀搀攀砀ഀഀ
- HKR, Ndi\params\LinkProcIndex,  ParamDesc,         0, "LinkProcIndex"਍ 䠀䬀刀Ⰰ 一搀椀尀瀀愀爀愀洀猀尀䰀椀渀欀倀爀漀挀䤀渀搀攀砀Ⰰ  搀攀昀愀甀氀琀Ⰰ           　Ⰰ ∀㄀　　　∀ഀഀ
- HKR, Ndi\params\LinkProcIndex,  type,              0, "int"਍ 䠀䬀刀Ⰰ 一搀椀尀瀀愀爀愀洀猀尀䰀椀渀欀倀爀漀挀䤀渀搀攀砀Ⰰ  洀椀渀Ⰰ               　Ⰰ ∀　∀ഀഀ
- HKR, Ndi\params\LinkProcIndex,  max,               0, "1023"਍ 䠀䬀刀Ⰰ 一搀椀尀瀀愀爀愀洀猀尀䰀椀渀欀倀爀漀挀䤀渀搀攀砀Ⰰ  猀琀攀瀀Ⰰ              　Ⰰ ∀㄀∀ഀഀ
- HKR, Ndi\params\LinkProcIndex,  Optional,          0, "0"਍ ഀഀ
-; EnableUsoUro਍ 䠀䬀刀Ⰰ 一搀椀尀瀀愀爀愀洀猀尀䔀渀愀戀氀攀唀猀漀唀爀漀Ⰰ      倀愀爀愀洀䐀攀猀挀Ⰰ      　Ⰰ ∀䔀渀愀戀氀攀唀猀漀唀爀漀∀ഀഀ
- HKR, Ndi\params\EnableUsoUro,      default,        0, "0"਍ 䠀䬀刀Ⰰ 一搀椀尀瀀愀爀愀洀猀尀䔀渀愀戀氀攀唀猀漀唀爀漀Ⰰ      琀礀瀀攀Ⰰ           　Ⰰ ∀攀渀甀洀∀ഀഀ
- HKR, Ndi\Params\EnableUsoUro\Enum, "0",            0, %Disabled%਍ 䠀䬀刀Ⰰ 一搀椀尀倀愀爀愀洀猀尀䔀渀愀戀氀攀唀猀漀唀爀漀尀䔀渀甀洀Ⰰ ∀㄀∀Ⰰ            　Ⰰ ─䔀渀愀戀氀攀搀─ഀഀ
-਍ 㬀 倀爀攀愀氀氀漀挀愀琀攀搀刀砀䈀甀昀昀攀爀猀ഀഀ
- HKR, Ndi\params\PreallocatedRxBuffers,      ParamDesc,      0, "UsePreallocatedRxBuffers"਍ 䠀䬀刀Ⰰ 一搀椀尀瀀愀爀愀洀猀尀倀爀攀愀氀氀漀挀愀琀攀搀刀砀䈀甀昀昀攀爀猀Ⰰ      搀攀昀愀甀氀琀Ⰰ        　Ⰰ ∀　∀ഀഀ
- HKR, Ndi\params\PreallocatedRxBuffers,      type,           0, "enum"਍ 䠀䬀刀Ⰰ 一搀椀尀倀愀爀愀洀猀尀倀爀攀愀氀氀漀挀愀琀攀搀刀砀䈀甀昀昀攀爀猀尀䔀渀甀洀Ⰰ ∀　∀Ⰰ            　Ⰰ ─䐀椀猀愀戀氀攀搀─ഀഀ
- HKR, Ndi\Params\PreallocatedRxBuffers\Enum, "1",            0, %Enabled%਍ഀഀ
-[RSC.kw]਍䠀䬀刀Ⰰ一搀椀尀倀愀爀愀洀猀尀⨀刀猀挀䤀瀀瘀㐀Ⰰ                      倀愀爀愀洀䐀攀猀挀Ⰰ      　Ⰰ  ∀刀攀挀攀椀瘀攀 匀攀最洀攀渀琀 䌀漀愀氀攀猀挀椀渀最 ⠀䤀倀瘀㐀⤀∀ഀഀ
-HKR,Ndi\Params\*RscIpv4,                      Type,           0,  "enum"਍䠀䬀刀Ⰰ一搀椀尀倀愀爀愀洀猀尀⨀刀猀挀䤀瀀瘀㐀Ⰰ                      䐀攀昀愀甀氀琀Ⰰ        　Ⰰ  ∀　∀ഀഀ
-HKR,Ndi\Params\*RscIpv4\enum,                 "0",            0,  %Disabled%਍䠀䬀刀Ⰰ一搀椀尀倀愀爀愀洀猀尀⨀刀猀挀䤀瀀瘀㐀尀攀渀甀洀Ⰰ                 ∀㄀∀Ⰰ            　Ⰰ  ─䔀渀愀戀氀攀搀─ഀഀ
-਍䠀䬀刀Ⰰ一搀椀尀倀愀爀愀洀猀尀⨀刀猀挀䤀瀀瘀㘀Ⰰ                      倀愀爀愀洀䐀攀猀挀Ⰰ      　Ⰰ  ∀刀攀挀攀椀瘀攀 匀攀最洀攀渀琀 䌀漀愀氀攀猀挀椀渀最 ⠀䤀倀瘀㘀⤀∀ഀഀ
-HKR,Ndi\Params\*RscIpv6,                      Type,           0,  "enum"਍䠀䬀刀Ⰰ一搀椀尀倀愀爀愀洀猀尀⨀刀猀挀䤀瀀瘀㘀Ⰰ                      䐀攀昀愀甀氀琀Ⰰ        　Ⰰ  ∀　∀ഀഀ
-HKR,Ndi\Params\*RscIpv6\enum,                 "0",            0,  %Disabled%਍䠀䬀刀Ⰰ一搀椀尀倀愀爀愀洀猀尀⨀刀猀挀䤀瀀瘀㘀尀攀渀甀洀Ⰰ                 ∀㄀∀Ⰰ            　Ⰰ  ─䔀渀愀戀氀攀搀─ഀഀ
-਍嬀唀䐀倀刀匀䌀⸀欀眀崀ഀഀ
-HKR,Ndi\Params\*UdpRsc,                      ParamDesc,      0,  "UDP Receive Segment Coalescing"਍䠀䬀刀Ⰰ一搀椀尀倀愀爀愀洀猀尀⨀唀搀瀀刀猀挀Ⰰ                      吀礀瀀攀Ⰰ           　Ⰰ  ∀攀渀甀洀∀ഀഀ
-HKR,Ndi\Params\*UdpRsc,                      Default,        0,  "0"਍䠀䬀刀Ⰰ一搀椀尀倀愀爀愀洀猀尀⨀唀搀瀀刀猀挀尀攀渀甀洀Ⰰ                 ∀　∀Ⰰ            　Ⰰ  ─䐀椀猀愀戀氀攀搀─ഀഀ
-HKR,Ndi\Params\*UdpRsc\enum,                 "1",            0,  %Enabled%਍ഀഀ
-[USO.kw]਍䠀䬀刀Ⰰ 一搀椀尀倀愀爀愀洀猀尀⨀唀猀漀䤀倀瘀㐀Ⰰ               倀愀爀愀洀䐀攀猀挀Ⰰ      　Ⰰ ∀唀䐀倀 匀攀最洀攀渀琀愀琀椀漀渀 ⠀䤀倀瘀㐀⤀∀ഀഀ
-HKR, Ndi\Params\*UsoIPv4,               type,           0, "enum"਍䠀䬀刀Ⰰ 一搀椀尀倀愀爀愀洀猀尀⨀唀猀漀䤀倀瘀㐀Ⰰ               搀攀昀愀甀氀琀Ⰰ        　Ⰰ ∀　∀ഀഀ
-HKR, Ndi\Params\*UsoIPv4\Enum,          "0",            0, %Disabled%਍䠀䬀刀Ⰰ 一搀椀尀倀愀爀愀洀猀尀⨀唀猀漀䤀倀瘀㐀尀䔀渀甀洀Ⰰ          ∀㄀∀Ⰰ            　Ⰰ ─䔀渀愀戀氀攀搀─ഀഀ
-਍䠀䬀刀Ⰰ 一搀椀尀倀愀爀愀洀猀尀⨀唀猀漀䤀倀瘀㘀Ⰰ               倀愀爀愀洀䐀攀猀挀Ⰰ      　Ⰰ ∀唀䐀倀 匀攀最洀攀渀琀愀琀椀漀渀 ⠀䤀倀瘀㘀⤀∀ഀഀ
-HKR, Ndi\Params\*UsoIPv6,               type,           0, "enum"਍䠀䬀刀Ⰰ 一搀椀尀倀愀爀愀洀猀尀⨀唀猀漀䤀倀瘀㘀Ⰰ               搀攀昀愀甀氀琀Ⰰ        　Ⰰ ∀　∀ഀഀ
-HKR, Ndi\Params\*UsoIPv6\Enum,          "0",            0, %Disabled%਍䠀䬀刀Ⰰ 一搀椀尀倀愀爀愀洀猀尀⨀唀猀漀䤀倀瘀㘀尀䔀渀甀洀Ⰰ          ∀㄀∀Ⰰ            　Ⰰ ─䔀渀愀戀氀攀搀─ഀഀ
+;-------------------------------------------------------------------------------
+; Microsoft Virtual Ethernet Adapter
+;
+; Copyright (c) Microsoft Corporation.  All rights reserved.
+
+
+[version]
+Signature   = "$Windows NT$"
+Class       = Net
+ClassGUID   = {4d36e972-e325-11ce-bfc1-08002be10318}
+Provider    = %Msft%
+DriverVer   = 06/22/2010,6.1.7065.0
+PnpLockDown = 1
+CatalogFile = netvadapterum.cat
+
+[Manufacturer]
+%Msft% = Msft,NT$ARCH$
+
+[Msft]
+; Empty section to block legacy operating systems that don't understand TargetOSVersion
+
+[Msft.NT$ARCH$]
+%netvadapter.DeviceDesc% = netvadapter.ndi, root\netvadapterum
+%netvadapter.DeviceDesc% = netvadapter.ndi, ndt\netvadapterum
+%netvadapter.DeviceDesc% = instance1.ndi, test\netvadapterum1
+%netvadapter.DeviceDesc% = instance2.ndi, test\netvadapterum2
+
+;-------------------------------------------------------------------------------
+; Microsoft Virtual Ethernet Adapter
+;
+[netvadapter.ndi]
+Include=wudfrd.inf, netcxrd.inf
+Needs=WUDFRD.NT, netcxrd_Filter.NT
+
+Characteristics             = 0x1 ; NCF_VIRTUAL
+*IfType                     = 0x6 ; IF_TYPE_ETHERNET_CSMACD
+*MediaType                  = 0x0 ; NdisMedium802_3
+*PhysicalMediaType          = 0 ; NdisPhysicalMediumUnspecified
+*IfConnectorPresent         = 0
+*AccessType                 = 2   ; NET_IF_ACCESS_BROADCAST
+*ConnectionType             = 1   ; NET_IF_CONNECTION_PASSIVE
+*DirectionType              = 0   ; NET_IF_DIRECTION_SENDRECEIVE
+AddReg                      = netvadapter.reg, netvadapter.params, RSC.kw, UDPRSC.kw, USO.kw
+BusType                     = 15
+CopyFiles                   = netvadapter.CopyFiles
+NumberOfNetworkInterfaces   = 5
+AddProperty                 = PciS0WakeSupported_AddProperty
+
+[instance1.ndi]
+Include=wudfrd.inf, netcxrd.inf
+Needs=WUDFRD.NT, netcxrd_Filter.NT
+
+Characteristics             = 0x1 ; NCF_VIRTUAL
+*IfType                     = 0x6 ; IF_TYPE_ETHERNET_CSMACD
+*MediaType                  = 0x0 ; NdisMedium802_3
+*PhysicalMediaType          = 0 ; NdisPhysicalMediumUnspecified
+*IfConnectorPresent         = 0
+*AccessType                 = 2   ; NET_IF_ACCESS_BROADCAST
+*ConnectionType             = 1   ; NET_IF_CONNECTION_PASSIVE
+*DirectionType              = 0   ; NET_IF_DIRECTION_SENDRECEIVE
+AddReg                      = instance1.reg, netvadapter.params, RSC.kw, UDPRSC.kw, USO.kw
+BusType                     = 15
+CopyFiles                   = netvadapter.CopyFiles
+NumberOfNetworkInterfaces   = 5
+AddProperty                 = PciS0WakeSupported_AddProperty
+
+[instance2.ndi]
+Include=wudfrd.inf, netcxrd.inf
+Needs=WUDFRD.NT, netcxrd_Filter.NT
+
+Characteristics             = 0x1 ; NCF_VIRTUAL
+*IfType                     = 0x6 ; IF_TYPE_ETHERNET_CSMACD
+*MediaType                  = 0x0 ; NdisMedium802_3
+*PhysicalMediaType          = 0 ; NdisPhysicalMediumUnspecified
+*IfConnectorPresent         = 0
+*AccessType                 = 2   ; NET_IF_ACCESS_BROADCAST
+*ConnectionType             = 1   ; NET_IF_CONNECTION_PASSIVE
+*DirectionType              = 0   ; NET_IF_DIRECTION_SENDRECEIVE
+AddReg                      = instance2.reg, netvadapter.params, RSC.kw, UDPRSC.kw, USO.kw
+BusType                     = 15
+CopyFiles                   = netvadapter.CopyFiles
+NumberOfNetworkInterfaces   = 5
+AddProperty                 = PciS0WakeSupported_AddProperty
+
+[netvadapter.ndi.Hw]
+Include=wudfrd.inf, netcxrd.inf
+Needs=WUDFRD.NT.HW, netcxrd_Filter.NT.HW
+AddReg = netvadapterum_Device_HW_AddReg
+
+[instance1.ndi.Hw]
+Include=wudfrd.inf, netcxrd.inf
+Needs=WUDFRD.NT.HW, netcxrd_Filter.NT.HW
+AddReg = netvadapterum_Device_HW_AddReg
+
+[instance2.ndi.Hw]
+Include=wudfrd.inf, netcxrd.inf
+Needs=WUDFRD.NT.HW, netcxrd_Filter.NT.HW
+AddReg = netvadapterum_Device_HW_AddReg
+
+[netvadapterum_Device_HW_AddReg]
+HKR, "WUDF", "DeviceGroupId", %REG_SZ%, "netvadapterum_group"
+
+[netvadapter.ndi.Filters]
+Include=netcxrd.inf
+Needs=netcxrd_Filter.NT.Filters
+
+[netvadapter.ndi.Services]
+Include=wudfrd.inf, netcxrd.inf
+Needs=WUDFRD.NT.Services, netcxrd_Filter.NT.Services
+
+[netvadapter.ndi.Wdf]
+UmdfService = "netvadapter", wdf
+UmdfServiceOrder=netvadapter
+UmdfHostProcessSharing=ProcessSharingEnabled
+UmdfKernelModeClientPolicy=AllowKernelModeClients
+UmdfDirectHardwareAccess=AllowDirectHardwareAccess
+UmdfRegisterAccessMode=RegisterAccessUsingUserModeMapping
+UmdfFsContextUsePolicy=CanUseFsContext2
+
+[instance1.ndi.Filters]
+Include=netcxrd.inf
+Needs=netcxrd_Filter.NT.Filters
+
+[instance1.ndi.Services]
+Include=wudfrd.inf, netcxrd.inf
+Needs=WUDFRD.NT.Services, netcxrd_Filter.NT.Services
+
+[instance1.ndi.Wdf]
+UmdfService = "netvadapter", wdf
+UmdfServiceOrder=netvadapter
+UmdfHostProcessSharing=ProcessSharingEnabled
+UmdfKernelModeClientPolicy=AllowKernelModeClients
+UmdfDirectHardwareAccess=AllowDirectHardwareAccess
+UmdfRegisterAccessMode=RegisterAccessUsingUserModeMapping
+UmdfFsContextUsePolicy=CanUseFsContext2
+
+[instance2.ndi.Filters]
+Include=netcxrd.inf
+Needs=netcxrd_Filter.NT.Filters
+
+[instance2.ndi.Services]
+Include=wudfrd.inf, netcxrd.inf
+Needs=WUDFRD.NT.Services, netcxrd_Filter.NT.Services
+
+[instance2.ndi.Wdf]
+UmdfService = "netvadapter", wdf
+UmdfServiceOrder=netvadapter
+UmdfHostProcessSharing=ProcessSharingEnabled
+UmdfKernelModeClientPolicy=AllowKernelModeClients
+UmdfDirectHardwareAccess=AllowDirectHardwareAccess
+UmdfRegisterAccessMode=RegisterAccessUsingUserModeMapping
+UmdfFsContextUsePolicy=CanUseFsContext2
+
+[wdf]
+UmdfLibraryVersion = 2.33.0
+UmdfExtensions = NetAdapterCx0202
+ServiceBinary=%13%\netvadapterum.dll
+
+;-----------------------------------------------------------------------------
+; Microsoft Virtual Miniport Common
+;
+[netvadapter.reg]
+HKR,    ,                         BusNumber,           0, "0"
+HKR, Ndi,                         Service,             0, "netvadapter"
+HKR, Ndi\Interfaces,              UpperRange,          0, "ndis5"
+HKR, Ndi\Interfaces,              LowerRange,          0, "ethernet"
+HKR,,                             NetworkAddress,      0, "01-23-45-ab-cd-ef"
+HKR,,                             AppModuleId,         0, "{DDAB9B9C-6C0F-43FB-9EA9-252F18FD283B}"
+; HKR,    ,                         AOACTest,   0x00010001, 0x1
+
+;-----------------------------------------------------------------------------
+
+;-----------------------------------------------------------------------------
+; Microsoft Virtual Miniport Common
+;
+[instance1.reg]
+HKR,    ,                         BusNumber,           0, "0"
+HKR, Ndi,                         Service,             0, "netvadapter"
+HKR, Ndi\Interfaces,              UpperRange,          0, "ndis5"
+HKR, Ndi\Interfaces,              LowerRange,          0, "ethernet"
+HKR,,                             NetworkAddress,      0, "01-23-45-ab-cd-ef"
+HKR,,                             AppModuleId,         0, "{DDAB9B9C-6C0F-43FB-9EA9-252F18FD283B}"
+HKR,    ,                         MACLastByte,         0, "1"
+;-----------------------------------------------------------------------------
+
+;-----------------------------------------------------------------------------
+; Microsoft Virtual Miniport Common
+;
+[instance2.reg]
+HKR,    ,                         BusNumber,           0, "0"
+HKR, Ndi,                         Service,             0, "netvadapter"
+HKR, Ndi\Interfaces,              UpperRange,          0, "ndis5"
+HKR, Ndi\Interfaces,              LowerRange,          0, "ethernet"
+HKR,,                             NetworkAddress,      0, "01-23-45-ab-cd-ef"
+HKR,,                             AppModuleId,         0, "{DDAB9B9C-6C0F-43FB-9EA9-252F18FD283B}"
+HKR,    ,                         MACLastByte,         0, "2"
+;-----------------------------------------------------------------------------
+
+; Driver and Service Section
+;
+[netvadapter.CopyFiles]
+netvadapterum.dll
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+netvadapterum.dll=1
+
+;-----------------------------------------------------------------------------
+; DestinationDirs
+;
+[DestinationDirs]
+netvadapter.CopyFiles=13
+
+;-----------------------------------------------------------------------------
+; Localizable Strings
+;
+[Strings]
+Msft                            = "Microsoft"
+netvadapter.DeviceDesc          = "UMDF Microsoft Virtual Ethernet Adapter (NDIS WDF)"
+netvadapter.Service.DispName    = "UMDF Microsoft Virtual Miniport (NDIS WDF)"
+DiskId1                         = "Microsoft Virtual Miniport Device Installation Disk #1"
+
+Disabled                     = "Disabled"
+Enabled                      = "Enabled"
+
+[netvadapter.params]
+; MACLastByte
+ HKR, Ndi\params\MACLastByte,  ParamDesc,         0, "MACLastByte"
+ HKR, Ndi\params\MACLastByte,  default,           0, "0"
+ HKR, Ndi\params\MACLastByte,  type,              0, "int"
+ HKR, Ndi\params\MACLastByte,  min,               0, "0"
+ HKR, Ndi\params\MACLastByte,  max,               0, "254"
+ HKR, Ndi\params\MACLastByte,  step,              0, "1"
+ HKR, Ndi\params\MACLastByte,  Optional,          0, "0"
+
+ ; LinkProcIndex
+ HKR, Ndi\params\LinkProcIndex,  ParamDesc,         0, "LinkProcIndex"
+ HKR, Ndi\params\LinkProcIndex,  default,           0, "1000"
+ HKR, Ndi\params\LinkProcIndex,  type,              0, "int"
+ HKR, Ndi\params\LinkProcIndex,  min,               0, "0"
+ HKR, Ndi\params\LinkProcIndex,  max,               0, "1023"
+ HKR, Ndi\params\LinkProcIndex,  step,              0, "1"
+ HKR, Ndi\params\LinkProcIndex,  Optional,          0, "0"
+
+; EnableUsoUro
+ HKR, Ndi\params\EnableUsoUro,      ParamDesc,      0, "EnableUsoUro"
+ HKR, Ndi\params\EnableUsoUro,      default,        0, "0"
+ HKR, Ndi\params\EnableUsoUro,      type,           0, "enum"
+ HKR, Ndi\Params\EnableUsoUro\Enum, "0",            0, %Disabled%
+ HKR, Ndi\Params\EnableUsoUro\Enum, "1",            0, %Enabled%
+
+ ; PreallocatedRxBuffers
+ HKR, Ndi\params\PreallocatedRxBuffers,      ParamDesc,      0, "UsePreallocatedRxBuffers"
+ HKR, Ndi\params\PreallocatedRxBuffers,      default,        0, "0"
+ HKR, Ndi\params\PreallocatedRxBuffers,      type,           0, "enum"
+ HKR, Ndi\Params\PreallocatedRxBuffers\Enum, "0",            0, %Disabled%
+ HKR, Ndi\Params\PreallocatedRxBuffers\Enum, "1",            0, %Enabled%
+
+[RSC.kw]
+HKR,Ndi\Params\*RscIpv4,                      ParamDesc,      0,  "Receive Segment Coalescing (IPv4)"
+HKR,Ndi\Params\*RscIpv4,                      Type,           0,  "enum"
+HKR,Ndi\Params\*RscIpv4,                      Default,        0,  "0"
+HKR,Ndi\Params\*RscIpv4\enum,                 "0",            0,  %Disabled%
+HKR,Ndi\Params\*RscIpv4\enum,                 "1",            0,  %Enabled%
+
+HKR,Ndi\Params\*RscIpv6,                      ParamDesc,      0,  "Receive Segment Coalescing (IPv6)"
+HKR,Ndi\Params\*RscIpv6,                      Type,           0,  "enum"
+HKR,Ndi\Params\*RscIpv6,                      Default,        0,  "0"
+HKR,Ndi\Params\*RscIpv6\enum,                 "0",            0,  %Disabled%
+HKR,Ndi\Params\*RscIpv6\enum,                 "1",            0,  %Enabled%
+
+[UDPRSC.kw]
+HKR,Ndi\Params\*UdpRsc,                      ParamDesc,      0,  "UDP Receive Segment Coalescing"
+HKR,Ndi\Params\*UdpRsc,                      Type,           0,  "enum"
+HKR,Ndi\Params\*UdpRsc,                      Default,        0,  "0"
+HKR,Ndi\Params\*UdpRsc\enum,                 "0",            0,  %Disabled%
+HKR,Ndi\Params\*UdpRsc\enum,                 "1",            0,  %Enabled%
+
+[USO.kw]
+HKR, Ndi\Params\*UsoIPv4,               ParamDesc,      0, "UDP Segmentation (IPv4)"
+HKR, Ndi\Params\*UsoIPv4,               type,           0, "enum"
+HKR, Ndi\Params\*UsoIPv4,               default,        0, "0"
+HKR, Ndi\Params\*UsoIPv4\Enum,          "0",            0, %Disabled%
+HKR, Ndi\Params\*UsoIPv4\Enum,          "1",            0, %Enabled%
+
+HKR, Ndi\Params\*UsoIPv6,               ParamDesc,      0, "UDP Segmentation (IPv6)"
+HKR, Ndi\Params\*UsoIPv6,               type,           0, "enum"
+HKR, Ndi\Params\*UsoIPv6,               default,        0, "0"
+HKR, Ndi\Params\*UsoIPv6\Enum,          "0",            0, %Disabled%
+HKR, Ndi\Params\*UsoIPv6\Enum,          "1",            0, %Enabled%
