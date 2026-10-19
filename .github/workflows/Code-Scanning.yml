@@ -56,7 +56,7 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
-          config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@development
+          config-file: microsoft/Windows-Driver-Developer-Supplemental-Tools/config/codeql-config.yml@main
       - if: github.event_name == 'pull_request'
         run: |
           $changedFiles = "${{ steps.get-changed-files.outputs.all_changed_files }}".Split(',')
