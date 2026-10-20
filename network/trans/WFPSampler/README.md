@@ -18,8 +18,6 @@ WFPSamplerService.Exe is the service which instructs BFE to add or remove polici
 
 WFPSamplerCalloutDriver.Sys is the driver which houses the various callout functions.
 
-WFPSamplerProxyService.Exe is the service which listens for connections to proxy.
-
 WFPSampler.Lib is a library of user mode helper functions used throughout the project.
 
 WFPSamplerSys.Lib is a library of kernel mode helper functions used throughout the project.
