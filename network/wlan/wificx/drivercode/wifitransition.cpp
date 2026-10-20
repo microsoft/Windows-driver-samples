@@ -437,6 +437,37 @@ struct PropertyTraits<WDI_DEVICE_SERVICE_COMMAND>
     >
 {};
 
+// Map WDI_TASK_* command IDs to their WDI_INDICATION_*_COMPLETE IDs.
+// Returns 0 when messageId is not a task (i.e. a property SET/GET).
+static UINT16 GetTaskCompletionIndication(UINT16 messageId)
+{
+    switch (messageId)
+    {
+    case WDI_TASK_OPEN:                              return WDI_INDICATION_OPEN_COMPLETE;
+    case WDI_TASK_CLOSE:                             return WDI_INDICATION_CLOSE_COMPLETE;
+    case WDI_TASK_SCAN:                              return WDI_INDICATION_SCAN_COMPLETE;
+    case WDI_TASK_P2P_DISCOVER:                      return WDI_INDICATION_P2P_DISCOVERY_COMPLETE;
+    case WDI_TASK_CONNECT:                           return WDI_INDICATION_CONNECT_COMPLETE;
+    case WDI_TASK_DOT11_RESET:                       return WDI_INDICATION_DOT11_RESET_COMPLETE;
+    case WDI_TASK_DISCONNECT:                        return WDI_INDICATION_DISCONNECT_COMPLETE;
+    case WDI_TASK_P2P_SEND_REQUEST_ACTION_FRAME:     return WDI_INDICATION_P2P_SEND_REQUEST_ACTION_FRAME_COMPLETE;
+    case WDI_TASK_P2P_SEND_RESPONSE_ACTION_FRAME:    return WDI_INDICATION_P2P_SEND_RESPONSE_ACTION_FRAME_COMPLETE;
+    case WDI_TASK_SET_RADIO_STATE:                   return WDI_INDICATION_SET_RADIO_STATE_COMPLETE;
+    case WDI_TASK_CREATE_PORT:                       return WDI_INDICATION_CREATE_PORT_COMPLETE;
+    case WDI_TASK_DELETE_PORT:                        return WDI_INDICATION_DELETE_PORT_COMPLETE;
+    case WDI_TASK_START_AP:                          return WDI_INDICATION_START_AP_COMPLETE;
+    case WDI_TASK_STOP_AP:                           return WDI_INDICATION_STOP_AP_COMPLETE;
+    case WDI_TASK_SEND_AP_ASSOCIATION_RESPONSE:      return WDI_INDICATION_SEND_AP_ASSOCIATION_RESPONSE_COMPLETE;
+    case WDI_TASK_CHANGE_OPERATION_MODE:             return WDI_INDICATION_CHANGE_OPERATION_MODE_COMPLETE;
+    case WDI_TASK_ROAM:                              return WDI_INDICATION_ROAM_COMPLETE;
+    case WDI_TASK_SEND_REQUEST_ACTION_FRAME:         return WDI_INDICATION_SEND_REQUEST_ACTION_FRAME_COMPLETE;
+    case WDI_TASK_SEND_RESPONSE_ACTION_FRAME:        return WDI_INDICATION_SEND_RESPONSE_ACTION_FRAME_COMPLETE;
+    case WDI_TASK_IHV:                               return WDI_INDICATION_IHV_TASK_COMPLETE;
+    case WDI_TASK_REQUEST_FTM:                       return WDI_INDICATION_REQUEST_FTM_COMPLETE;
+    default:                                         return 0;
+    }
+}
+
 // Runtime dispatcher switches on MessageId and invokes the matching compile-time runner.
 NTSTATUS RunTransitionByMessage(TransitionContext& ctx, UINT16 messageId)
 {
@@ -459,8 +490,25 @@ NTSTATUS RunTransitionByMessage(TransitionContext& ctx, UINT16 messageId)
     case WDI_DEVICE_SERVICE_COMMAND:
         return RunPropertyM3<WDI_DEVICE_SERVICE_COMMAND>(ctx);
     default:
+    {
         UINT bytesWritten = sizeof(WDI_MESSAGE_HEADER);
-        WifiRequestComplete(ctx.WifiRequest, STATUS_NOT_SUPPORTED, bytesWritten);
-        return STATUS_NOT_SUPPORTED;
+        UINT16 indicationId = GetTaskCompletionIndication(messageId);
+        if (indicationId != 0)
+        {
+            WFC_TRACE(
+                "WiFiCx UNHANDLED task MessageId=0x%04X PortId=%u (M3+M4)\n",
+                messageId, ctx.Header->PortId);
+            WifiIhvNotifyM3Completion(ctx.WifiRequest, STATUS_SUCCESS, bytesWritten);
+            WifiIhvSendM4IndicationToOs(ctx.Device, indicationId, ctx.Header, STATUS_SUCCESS);
+        }
+        else
+        {
+            WFC_TRACE(
+                "WiFiCx UNHANDLED property MessageId=0x%04X PortId=%u (M3)\n",
+                messageId, ctx.Header->PortId);
+            WifiRequestComplete(ctx.WifiRequest, STATUS_SUCCESS, bytesWritten);
+        }
+        return STATUS_SUCCESS;
+    }
     }
 }

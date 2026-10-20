@@ -21,5 +21,5 @@ set PLAT=%~2
 if "%CONFIG%"=="" set CONFIG=Debug
 if "%PLAT%"=="" set PLAT=x64
 
-msbuild "%~dp0netvadapter.sln" /t:Build /p:Configuration=%CONFIG% /p:Platform=%PLAT% /p:UMDF_VERSION_MINOR=33 /p:UMDF_MINIMUM_VERSION_REQUIRED=33 /m
+msbuild "%~dp0netvadapter.sln" /t:Rebuild /p:Configuration=%CONFIG% /p:Platform=%PLAT% /p:UMDF_VERSION_MINOR=33 /p:UMDF_MINIMUM_VERSION_REQUIRED=33 /m
 endlocal

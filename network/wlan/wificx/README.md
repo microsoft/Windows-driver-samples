@@ -33,7 +33,7 @@ The sample interacts with three OS components:
   `netvxxxx` files and classes implement the **data path**, managing network buffers and synchronizing with the control path for transfer start/stop operations.
 
 ## Data Buffers from Firmware
-The control path uses hardcoded data since this sample does not target real hardware. The data path uses **Emulated Network Link (ENL)**, which connects two virtual network adapters directly. Packets sent over one adapter are delivered to the other and vice versa.
+The control path uses hardcoded data since this sample does not target real hardware. The data path uses **Emulated Network Link (ENL)**, which connects two virtual network adapters directly. Packets sent over one adapter are delivered to the other and vice versa. Because both instances associate to the same emulated access point, the ENL also performs the access point's relay role, rewriting each forwarded 802.11 frame so the receiving station accepts it.
 
 ## Supported Scenarios
 - [x] Scan access points and report BSS entries to the Windows UI.
