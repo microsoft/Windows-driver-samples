@@ -540,7 +540,7 @@ EnumerateDevices(
     HANDLE  Handle
     )
 {
-    typedef __declspec(align(MEMORY_ALLOCATION_ALIGNMENT)) QueryBindingCharBuf;
+    typedef __declspec(align(MEMORY_ALLOCATION_ALIGNMENT)) VOID* QueryBindingCharBuf;
     QueryBindingCharBuf		Buf[1024];
     DWORD       		BufLength = sizeof(Buf);
     DWORD       		BytesWritten;
