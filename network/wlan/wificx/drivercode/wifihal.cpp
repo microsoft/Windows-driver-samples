@@ -1,6 +1,7 @@
 // Copyright (C) Microsoft Corporation. All rights reserved.
 
 #include "precomp.h"
+#include "device.h"
 #include "wifirequest.h"
 #include "wifiHALtestdata.h"
 #include "WifiHal.h"
@@ -528,25 +529,25 @@ NTSTATUS WifiHAL::WifiIhvReset(const WDI_TASK_DOT11_RESET_PARAMETERS& ResetParam
 _Use_decl_annotations_
 NTSTATUS WifiHAL::WifiIhvSetRadioState(const WDI_SET_RADIO_STATE_PARAMETERS& RadioState, const PWDI_MESSAGE_HEADER pWdiHeader, UINT)
 {
-    WFCInfo("Setting OS requested Radio State: SoftwareRadioState=%u\n", RadioState.SoftwareRadioState);
-    if (RadioState.SoftwareRadioState != m_CurrentRadioState)
+    UNREFERENCED_PARAMETER(RadioState);
+    // Virtual loopback adapter: no physical radio to disable.
+    // Always report Software=On so the WLAN service allows scanning and
+    // connecting.  Without this the service initialises radio as Software Off
+    // and never issues WDI_TASK_CONNECT.
+    m_CurrentRadioState = 1;
+
+    WDI_INDICATION_RADIO_STATUS_PARAMETERS RadioStatusParams = {};
+    UINT8* pOutput = nullptr;
+    ULONG cbOutput = 0;
+
+    RadioStatusParams.RadioState.HardwareState = TRUE;
+    RadioStatusParams.RadioState.SoftwareState = TRUE;
+    if (GenerateWdiIndicationRadioStatus(&RadioStatusParams, 0, m_TlvContext, &cbOutput, &pOutput) == NDIS_STATUS_SUCCESS)
     {
-        // Change the radio state
-        m_CurrentRadioState = RadioState.SoftwareRadioState;
-
-        // Send the radio state indication
-        WDI_INDICATION_RADIO_STATUS_PARAMETERS RadioStatusParams = {};
-        UINT8* pOutput = nullptr;
-        ULONG cbOutput = 0;
-
-        RadioStatusParams.RadioState.HardwareState = TRUE;
-        RadioStatusParams.RadioState.SoftwareState = m_CurrentRadioState;
-        if (GenerateWdiIndicationRadioStatus(&RadioStatusParams, 0, m_TlvContext, &cbOutput, &pOutput) == NDIS_STATUS_SUCCESS)
-        {
-            WFCInfo("Indicate OS with Radio State: SoftwareRadioState=%u\n", m_CurrentRadioState);
-            WifiIhvSendUnsolicitedIndicationToOs(m_Device, pWdiHeader, WDI_INDICATION_RADIO_STATUS, pOutput, cbOutput);
-            FreeGenerated(pOutput);
-        }
+        WFC_TRACE(
+            "WiFiCx WifiIhvSetRadioState: forcing Software=On\n");
+        WifiIhvSendUnsolicitedIndicationToOs(m_Device, pWdiHeader, WDI_INDICATION_RADIO_STATUS, pOutput, cbOutput);
+        FreeGenerated(pOutput);
     }
 
     return STATUS_SUCCESS;
@@ -603,6 +604,9 @@ NTSTATUS WifiHAL::WifiIhvScan(const WDI_SCAN_PARAMETERS& ScanParameters, const P
 _Use_decl_annotations_
 NTSTATUS WifiHAL::WifiIhvConnect(const WDI_TASK_CONNECT_PARAMETERS& ConnectParameters, const PWDI_MESSAGE_HEADER pWdiHeader, UINT)
 {
+    WFC_TRACE(
+        "WiFiCx WifiIhvConnect ENTER PortId=%u BSSCount=%u\n",
+        pWdiHeader->PortId, ConnectParameters.PreferredBSSEntryList.ElementCount);
     NT_ASSERT(m_LastConnectEntryId == 0);
 #ifdef NETV_SUPPORT_TX_DEMUXING
     if (m_LastConnectEntryId != 0) // Not Disconnected State
@@ -612,9 +616,14 @@ NTSTATUS WifiHAL::WifiIhvConnect(const WDI_TASK_CONNECT_PARAMETERS& ConnectParam
             reinterpret_cast<NET_EUI48_ADDRESS*>(&m_ConnectedPeer));
     }
 #endif //NETV_SUPPORT_TX_DEMUXING
-    WX_RETURN_NTSTATUS_IF_NOT_NT_SUCCESS_MSG(WifiIhvPerformAssociation(
-        &ConnectParameters.PreferredBSSEntryList, &ConnectParameters.ConnectParameters.AuthenticationAlgorithms, pWdiHeader),
-        "Failed to perform association");
+    NTSTATUS assocStatus = WifiIhvPerformAssociation(
+        &ConnectParameters.PreferredBSSEntryList, &ConnectParameters.ConnectParameters.AuthenticationAlgorithms, pWdiHeader);
+    WFC_TRACE(
+        "WiFiCx WifiIhvPerformAssociation returned 0x%08X\n", assocStatus);
+    if (!NT_SUCCESS(assocStatus))
+    {
+        return assocStatus;
+    }
 
     //
     // WPA3-SAE requires the SAE Exchange, so do not complete the Connection request until the SAE exchange is complete
@@ -623,10 +632,34 @@ NTSTATUS WifiHAL::WifiIhvConnect(const WDI_TASK_CONNECT_PARAMETERS& ConnectParam
     {
         m_LastConnectTransactionId = pWdiHeader->TransactionId;
     }
-    else 
+    else
     {
         m_LastConnectTransactionId = 0;
     }
+
+    WFC_TRACE(
+        "WiFiCx WifiIhvConnect done PortId=%u AuthAlgo=%u EntryId=%u\n",
+        pWdiHeader->PortId, m_LastAuthAlgo, m_LastConnectEntryId);
+    NETADAPTER netAdapter = WifiGetIhvDeviceContext(m_Device)->netAdapters[pWdiHeader->PortId];
+    WFC_TRACE(
+        "WiFiCx netAdapter[%u]=%p\n",
+        pWdiHeader->PortId, (void*)netAdapter);
+    if (netAdapter != WDF_NO_HANDLE)
+    {
+        NET_ADAPTER_LINK_STATE linkState;
+        NET_ADAPTER_LINK_STATE_INIT(
+            &linkState,
+            1'000'000'000ull,
+            MediaConnectStateConnected,
+            MediaDuplexStateFull,
+            NetAdapterPauseFunctionTypeUnsupported,
+            NetAdapterAutoNegotiationFlagNone);
+        NetAdapterSetLinkState(netAdapter, &linkState);
+        WFC_TRACE(
+            "WiFiCx SetLinkState(Connected) PortId=%u\n",
+            pWdiHeader->PortId);
+    }
+
     return STATUS_SUCCESS;
 }
 

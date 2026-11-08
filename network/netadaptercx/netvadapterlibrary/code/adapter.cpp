@@ -307,7 +307,11 @@ EvtSetReceiveFilter(
     )
 {
     NetvAdapter* adapter = NetvAdapterGetContextFromWDFObject(NetAdapter);
-
+#if defined(_KERNEL_MODE) && defined(NETV_DATAPATH_DEBUG)
+    DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL,
+        "ENL EvtSetReceiveFilter port=%u filter=0x%x\n",
+        adapter->EnlPortIndex, (ULONG)NetReceiveFilterGetPacketFilter(Handle));
+#endif
     adapter->PacketFilter = NetReceiveFilterGetPacketFilter(Handle);
 
     adapter->NumMulticastAddresses = (ULONG)NetReceiveFilterGetMulticastAddressCount(Handle);
@@ -507,6 +511,11 @@ EvtTxQueueStart(
     NETPACKETQUEUE Queue
 )
 {
+#if defined(_KERNEL_MODE) && defined(NETV_DATAPATH_DEBUG)
+    DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL,
+        "ENL EvtTxQueueStart port=%u\n",
+        NetvTxQueueGetContext(Queue)->m_adapter.EnlPortIndex);
+#endif
     NetvTxQueueGetContext(Queue)->Start();
 }
 
@@ -525,6 +534,13 @@ EvtTxQueueAdvance(
     NETPACKETQUEUE Queue
 )
 {
+#if defined(_KERNEL_MODE) && defined(NETV_DATAPATH_DEBUG)
+    static LONG txAdvCount = 0;
+    if (InterlockedIncrement(&txAdvCount) <= 3)
+        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL,
+            "ENL EvtTxQueueAdvance port=%u\n",
+            NetvTxQueueGetContext(Queue)->m_adapter.EnlPortIndex);
+#endif
     NetvTxQueueGetContext(Queue)->Advance();
 }
 
@@ -553,6 +569,11 @@ EvtRxQueueStart(
     NETPACKETQUEUE Queue
 )
 {
+#if defined(_KERNEL_MODE) && defined(NETV_DATAPATH_DEBUG)
+    DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL,
+        "ENL EvtRxQueueStart port=%u\n",
+        NetvRxQueueGetContext(Queue)->m_adapter.EnlPortIndex);
+#endif
     NetvRxQueueGetContext(Queue)->Start();
 }
 
