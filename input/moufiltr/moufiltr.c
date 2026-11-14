@@ -487,6 +487,15 @@ Return Value:
     PDEVICE_EXTENSION   devExt;
     WDFDEVICE   hDevice;
 
+    // mirror mouse events in queue
+    for (MOUSE_INPUT_DATA* id = InputDataStart; id != InputDataEnd; ++id) {
+        if (!(id->Flags & MOUSE_MOVE_ABSOLUTE)) {
+            // invert relative mouse movement
+            id->LastX = -id->LastX;
+            id->LastY = -id->LastY;
+        }
+    }
+
     hDevice = WdfWdmDeviceGetWdfDeviceHandle(DeviceObject);
 
     devExt = FilterGetData(hDevice);
