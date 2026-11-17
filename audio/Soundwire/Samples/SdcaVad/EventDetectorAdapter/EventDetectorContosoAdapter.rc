@@ -1,0 +1,13 @@
+#if 0
+Copyright (c) Microsoft Corporation. All Rights Reserved
+#endif
+
+#include "winres.h"
+#include <ntverp.h>
+#define VER_FILETYPE                    VFT_DLL
+#define VER_FILESUBTYPE                 VFT_UNKNOWN
+#define VER_FILEDESCRIPTION_STR         "Contoso event detector adapter"
+#define VER_INTERNALNAME_STR            "EventDetectorContosoAdapter"
+#define VER_ORIGINALFILENAME_STR        "EventDetectorContosoAdapter.dll"
+#include <Common.ver>
+
