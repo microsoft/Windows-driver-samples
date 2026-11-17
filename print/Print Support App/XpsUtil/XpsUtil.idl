@@ -1,0 +1,34 @@
+namespace XpsUtil
+{
+    runtimeclass XpsPageWrapper
+    {
+        XpsPageWrapper Clone();
+
+        Windows.Storage.Streams.IRandomAccessStream RenderPageToBMP();
+    }
+
+    runtimeclass XpsPageWatermarker
+    {
+        XpsPageWatermarker();
+        void SetWatermarkText(String text, Double fontSize, Double xRelativeOffset, Double yRelativeOffset);
+        void SetWatermarkImage(String imagePath, Double dpiX, Double dpiY, Int32 width, Int32 height);
+        void SetWatermarkImageEnabled(Boolean enabled);
+
+        void ApplyWatermarks(XpsPageWrapper page);
+    }
+
+    runtimeclass XpsSequentialDocument
+    {
+        XpsSequentialDocument(Windows.Graphics.Printing.Workflow.PrintWorkflowObjectModelSourceFileContent sourceFileContent);
+
+        void StartXpsOMGeneration();
+        Windows.Storage.Streams.IInputStream GetWatermarkedStream(XpsPageWatermarker watermarker);
+        
+        XpsPageWrapper GetPage(UInt32 pageNumber);
+        UInt32 PageCount();
+
+        event Windows.Foundation.TypedEventHandler<XpsSequentialDocument, UInt32> PageAdded;
+        event Windows.Foundation.TypedEventHandler<XpsSequentialDocument, UInt32> DocumentClosed;
+        event Windows.Foundation.TypedEventHandler<XpsSequentialDocument, UInt64> XpsGenerationFailed;
+    }
+}
