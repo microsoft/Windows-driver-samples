@@ -6178,6 +6178,7 @@ ValidPersistentReserveScope(
 }
 
 __inline
+BOOLEAN
 ValidPersistentReserveType(
     UCHAR Type)
 {
