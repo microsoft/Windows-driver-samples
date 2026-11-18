@@ -17,7 +17,13 @@
 
 .PARAMETER XmlPath
     Optional explicit path to a DriverGeneral.xml. When omitted the newest available rule file
-    is auto-located.
+    in the selected RunMode is auto-located. An explicit path overrides RunMode discovery.
+
+.PARAMETER RunMode
+    Filters rule discovery to restored NuGet packages, the installed WDK, or the active EWDK
+    environment. Valid values: Auto, WDK, NuGet, EWDK. Defaults to Auto, which selects an
+    active EWDK first, then restored NuGet packages, then the installed WDK.
+    A selected source never falls back to another source if its rule file is missing.
 
 .PARAMETER Newest
     Return only the newest N versions (0 = all). Useful for bounding the CI build matrix.
@@ -31,30 +37,52 @@
 
 .EXAMPLE
     .\Get-NtTargetVersions.ps1 -Newest 4 -AsMatrixJson
+
+.EXAMPLE
+    .\Get-NtTargetVersions.ps1 -RunMode NuGet -Newest 1
 #>
 [CmdletBinding()]
 param(
     [string]$XmlPath,
     [int]$Newest = 0,
-    [switch]$AsMatrixJson
+    [switch]$AsMatrixJson,
+    [ValidateSet('Auto', 'WDK', 'NuGet', 'EWDK')]
+    [string]$RunMode = 'Auto'
 )
 
 function Find-DriverGeneralXml {
-    # Prefer the restored NuGet WDK package (matches what the build actually uses), then the
-    # installed WDK. Within each source, pick the highest build version.
-    $candidates = @()
-    $candidates += Get-ChildItem -Path (Join-Path $PSScriptRoot 'packages') -Recurse -Filter 'DriverGeneral.xml' -ErrorAction SilentlyContinue
-    foreach ($kitsRoot in @("${env:ProgramFiles(x86)}\Windows Kits\10\build", "${env:ProgramFiles}\Windows Kits\10\build")) {
-        if ($kitsRoot -and (Test-Path $kitsRoot)) {
-            $candidates += Get-ChildItem -Path $kitsRoot -Recurse -Filter 'DriverGeneral.xml' -ErrorAction SilentlyContinue
+    param([string]$RunMode)
+
+    if ($RunMode -eq 'Auto') {
+        if ($env:BuildLab -match '^(?<branch>[^.]+)\.(?<build>\d+)\.(?<qfe>[^.]+)$') {
+            $RunMode = 'EWDK'
+        }
+        elseif (Test-Path (Join-Path $PSScriptRoot 'packages\*')) {
+            $RunMode = 'NuGet'
+        }
+        else {
+            $RunMode = 'WDK'
         }
     }
-    # EWDK / arbitrary build environments expose the build tree via these variables.
-    foreach ($envRoot in @($env:WDKContentRoot, $env:WindowsSdkDir)) {
-        if ($envRoot -and (Test-Path $envRoot)) {
-            $buildDir = Join-Path $envRoot 'build'
-            if (Test-Path $buildDir) {
-                $candidates += Get-ChildItem -Path $buildDir -Recurse -Filter 'DriverGeneral.xml' -ErrorAction SilentlyContinue
+
+    $candidates = @()
+    if ($RunMode -eq 'NuGet') {
+        $candidates += Get-ChildItem -Path (Join-Path $PSScriptRoot 'packages') -Recurse -Filter 'DriverGeneral.xml' -ErrorAction SilentlyContinue
+    }
+    elseif ($RunMode -eq 'WDK') {
+        foreach ($kitsRoot in @("${env:ProgramFiles(x86)}\Windows Kits\10\build", "${env:ProgramFiles}\Windows Kits\10\build")) {
+            if ($kitsRoot -and (Test-Path $kitsRoot)) {
+                $candidates += Get-ChildItem -Path $kitsRoot -Recurse -Filter 'DriverGeneral.xml' -ErrorAction SilentlyContinue
+            }
+        }
+    }
+    elseif ($RunMode -eq 'EWDK') {
+        foreach ($envRoot in @($env:WDKContentRoot, $env:WindowsSdkDir)) {
+            if ($envRoot -and (Test-Path $envRoot)) {
+                $buildDir = Join-Path $envRoot 'build'
+                if (Test-Path $buildDir) {
+                    $candidates += Get-ChildItem -Path $buildDir -Recurse -Filter 'DriverGeneral.xml' -ErrorAction SilentlyContinue
+                }
             }
         }
     }
@@ -65,9 +93,9 @@ function Find-DriverGeneralXml {
         } -Descending | Select-Object -First 1).FullName
 }
 
-if (-not $XmlPath) { $XmlPath = Find-DriverGeneralXml }
+if (-not $XmlPath) { $XmlPath = Find-DriverGeneralXml -RunMode $RunMode }
 if (-not $XmlPath -or -not (Test-Path $XmlPath)) {
-    throw "Could not locate DriverGeneral.xml. Restore the WDK NuGet packages or install the WDK, or pass -XmlPath."
+    throw "Could not locate DriverGeneral.xml for RunMode '$RunMode'. Restore the NuGet WDK, install the WDK, or initialise the EWDK for the selected mode, or pass -XmlPath."
 }
 
 [xml]$xml = Get-Content -Path $XmlPath -Raw
