@@ -48,7 +48,7 @@
 
 .PARAMETER RunMode
     Selects the build environment mode. Valid values: Auto, WDK, NuGet, EWDK.
-    Defaults to 'Auto', which detects the environment automatically (NuGet → EWDK → WDK).
+    Defaults to 'Auto', which detects the environment automatically (EWDK → NuGet → WDK).
 
 .PARAMETER ThrottleLimit
     Maximum parallel build jobs. Defaults to 5 x logical processors.
@@ -441,7 +441,8 @@ else {
 # values (and their NTDDI codes) are auto-discovered from the active WDK by
 # Get-NtTargetVersions.ps1, so nothing here needs updating when a new WDK version ships.
 # msbuild takes the NTDDI code.
-$ntVersions = & (Join-Path $PSScriptRoot 'Get-NtTargetVersions.ps1')
+$ntRunMode = ($buildEnv.Name -split '\.', 2)[0]
+$ntVersions = & (Join-Path $PSScriptRoot 'Get-NtTargetVersions.ps1') -RunMode $ntRunMode
 if (-not $ntVersions) {
     Write-Error "Could not discover any _NT_TARGET_VERSION values from the active WDK."
     exit 1
