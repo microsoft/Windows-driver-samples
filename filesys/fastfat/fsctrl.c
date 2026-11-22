@@ -7101,8 +7101,6 @@ Return Value:
     //
     //  Validate the output buffer is the right size.
     //
-    //  Note that the default size of BOOT_AREA_INFO has enough room for 2 boot sectors, so we're fine.
-    //
 
     if (BufferLength < sizeof(RETRIEVAL_POINTER_BASE)) {
 
