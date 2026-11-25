@@ -375,6 +375,7 @@ Return Value:
     BOOLEAN                     bCreate = FALSE;
     NTSTATUS                    status;
     WDFQUEUE                    queue;
+    WDF_OBJECT_ATTRIBUTES       queueAttributes;
     DECLARE_CONST_UNICODE_STRING(ntDeviceName, NTDEVICE_NAME_STRING) ;
     DECLARE_CONST_UNICODE_STRING(symbolicLinkName, SYMBOLIC_NAME_STRING) ;
 
@@ -464,12 +465,19 @@ Return Value:
     ioQueueConfig.EvtIoDeviceControl = FilterEvtIoDeviceControl;
 
     //
+    // Ensure that queue event callbacks are always run at IRQL=PASSIVE_LEVEL,
+    // because we acquire a wait lock in FilterEvtIoDeviceControl.
+    //
+    WDF_OBJECT_ATTRIBUTES_INIT(&queueAttributes);
+    queueAttributes.ExecutionLevel = WdfExecutionLevelPassive;
+
+    //
     // Framework by default creates non-power managed queues for
     // filter drivers.
     //
     status = WdfIoQueueCreate(controlDevice,
                                         &ioQueueConfig,
-                                        WDF_NO_OBJECT_ATTRIBUTES,
+                                        &queueAttributes,
                                         &queue // pointer to default queue
                                         );
     if (!NT_SUCCESS(status)) {
@@ -537,8 +545,6 @@ Return Value:
     }
 }
 
-#pragma warning(push)
-#pragma warning(disable:28118) // this callback will run at IRQL=PASSIVE_LEVEL
 _Use_decl_annotations_
 VOID
 FilterEvtIoDeviceControl(
@@ -605,7 +611,3 @@ Return Value:
 
     WdfRequestCompleteWithInformation(Request, STATUS_SUCCESS, 0);
 }
-#pragma warning(pop) // enable 28118 again
-
-
-
