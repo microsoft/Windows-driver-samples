@@ -102,6 +102,11 @@ TLInspectALEConnectClassify(
    //
    if ((classifyOut->rights & FWPS_RIGHT_ACTION_WRITE) == 0)
    {
+      TraceLoggingWrite(
+         gTlgHandle,
+         "ClassifyFn",
+         TraceLoggingWideString(L"Exiting with no write access", "Message")
+         );
       goto Exit;
    }
 
@@ -119,6 +124,14 @@ TLInspectALEConnectClassify(
       if ((packetState == FWPS_PACKET_INJECTED_BY_SELF) ||
           (packetState == FWPS_PACKET_PREVIOUSLY_INJECTED_BY_SELF))
       {
+
+         TraceLoggingWrite(
+            gTlgHandle,
+            "ClassifyFn",
+            TraceLoggingWideString(L"Permitting due to injected by self", "Message"),
+            TraceLoggingUInt32(packetState, "PacketState")
+            );
+
          classifyOut->actionType = FWP_ACTION_PERMIT;
          if (filter->flags & FWPS_FILTER_FLAG_CLEAR_ACTION_RIGHT)
          {
@@ -133,6 +146,13 @@ TLInspectALEConnectClassify(
 
    if (!IsAleReauthorize(inFixedValues))
    {
+
+      TraceLoggingWrite(
+         gTlgHandle,
+         "ClassifyFn",
+         TraceLoggingWideString(L"Non-reauth connection", "Message")
+         );
+
       //
       // If the classify is the initial authorization for a connection, we 
       // queue it to the pended connection list and notify the worker thread
@@ -164,6 +184,13 @@ TLInspectALEConnectClassify(
                   inMetaValues->completionHandle,
                   &pendedConnect->completionContext
                   );
+
+      TraceLoggingWrite(
+         gTlgHandle,
+         "ClassifyFn",
+         TraceLoggingWideString(L"FwpsPendOperation() invoked", "Message"),
+         TraceLoggingUInt32(status, "FwpsPendOperation::ntStatus")
+         );
 
       if (!NT_SUCCESS(status))
       {
@@ -205,6 +232,12 @@ TLInspectALEConnectClassify(
    }
    else // re-auth @ ALE_AUTH_CONNECT
    {
+      TraceLoggingWrite(
+         gTlgHandle,
+         "ClassifyFn",
+         TraceLoggingWideString(L"[Reauth] Is re-auth", "Message")
+         );
+
       FWP_DIRECTION packetDirection;
       //
       // The classify is the re-authorization for an existing connection, it 
@@ -256,56 +289,26 @@ TLInspectALEConnectClassify(
                      connEntry
                   ) && (connEntry->authConnectDecision != 0))
             {
-               // We found a match.
+
+               TraceLoggingWrite(
+                  gTlgHandle,
+                  "ClassifyFn",
+                  TraceLoggingWideString(L"[Reauth] Found matching packet. Using packet's decision", "Message")
+                  );
+
                pendedConnect = connEntry;
 
                NT_ASSERT((pendedConnect->authConnectDecision == FWP_ACTION_PERMIT) ||
-                      (pendedConnect->authConnectDecision == FWP_ACTION_BLOCK));
-               
+                  (pendedConnect->authConnectDecision == FWP_ACTION_BLOCK));
+
                classifyOut->actionType = pendedConnect->authConnectDecision;
-               if (classifyOut->actionType == FWP_ACTION_BLOCK || 
-                     filter->flags & FWPS_FILTER_FLAG_CLEAR_ACTION_RIGHT)
+               if (classifyOut->actionType == FWP_ACTION_BLOCK ||
+                  filter->flags & FWPS_FILTER_FLAG_CLEAR_ACTION_RIGHT)
                {
                   classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
                }
 
-               RemoveEntryList(&pendedConnect->listEntry);
-               
-               if (!gDriverUnloading &&
-                   (pendedConnect->netBufferList != NULL) &&
-                   (pendedConnect->authConnectDecision == FWP_ACTION_PERMIT))
-               {
-                  //
-                  // Now the outbound connection has been authorized. If the
-                  // pended connect has a net buffer list in it, we need it
-                  // morph it into a data packet and queue it to the packet
-                  // queue for send injecition.
-                  //
-                  pendedConnect->type = TL_INSPECT_DATA_PACKET;
-
-                  KeAcquireInStackQueuedSpinLock(
-                     &gPacketQueueLock,
-                     &packetQueueLockHandle
-                     );
-
-                  signalWorkerThread = IsListEmpty(&gPacketQueue) &&
-                                       IsListEmpty(&gConnList);
-
-                  InsertTailList(&gPacketQueue, &pendedConnect->listEntry);
-                  pendedConnect = NULL; // ownership transferred
-
-                  KeReleaseInStackQueuedSpinLock(&packetQueueLockHandle);
-                  
-                  if (signalWorkerThread)
-                  {
-                     KeSetEvent(
-                        &gWorkerEvent, 
-                        0, 
-                        FALSE
-                        );
-                  }
-               }
-
+               pendedConnect = NULL; // Ownership remains with the thread which invoked FwpsCompletOperation
                authComplete = TRUE;
                break;
             }
@@ -320,13 +323,33 @@ TLInspectALEConnectClassify(
       }
 
       //
-      // If we reach here it means this is a policy change triggered re-auth
-      // for an pre-existing connection. For such a packet (inbound or 
-      // outbound) we queue it to the packet queue and inspect it just like
-      // other regular data packets from TRANSPORT layers.
+      // If we reach here it means either:
+      //    1 - This is a policy change triggered re-auth for an pre-existing connection.
+      //        For such a packet (inbound or outbound) we queue it to the packet queue and
+      //        inspect it just like other regular data packets from TRANSPORT layers.
+      //    2 - This is a re-auth triggered by FwpsCompleteOperation() for which we
+      //        did not find a previous packet. In this case layerData is NULL, so we
+      //        block the packet.
       //
 
-      NT_ASSERT(layerData != NULL);
+      if (layerData == NULL)
+      {
+         TraceLoggingWrite(
+            gTlgHandle,
+            "ClassifyFn",
+            TraceLoggingWideString(L"[Reauth] LayerData is NULL. Setting action to BLOCK and exiting", "Action")
+            );
+         classifyOut->actionType = FWP_ACTION_BLOCK;
+         classifyOut->rights &= ~FWPS_RIGHT_ACTION_WRITE;
+         classifyOut->flags |= FWPS_CLASSIFY_OUT_FLAG_ABSORB;
+         goto Exit;
+      }
+
+      TraceLoggingWrite(
+         gTlgHandle,
+         "ClassifyFn",
+         TraceLoggingWideString(L"[Reauth] Queuing packet for re-inject", "Message")
+         );
 
       pendedPacket = AllocateAndInitializePendedPacket(
                         inFixedValues,
@@ -956,6 +979,14 @@ TLInspectCloneReinjectOutbound(
                0,
                &clonedNetBufferList
                );
+
+   TraceLoggingWrite(
+      gTlgHandle,
+      "WorkerThread",
+      TraceLoggingWideString(L"[WorkerThread] Invoked FwpsAllocateCloneNetBufferList()", "Message"),
+      TraceLoggingUInt32(status, "FwpsAllocateCloneNetBufferList::ntStatus")
+      );
+
    if (!NT_SUCCESS(status))
    {
       goto Exit;
@@ -982,6 +1013,13 @@ TLInspectCloneReinjectOutbound(
                TLInspectInjectComplete,
                packet
                );
+
+   TraceLoggingWrite(
+      gTlgHandle,
+      "WorkerThread",
+      TraceLoggingWideString(L"[WorkerThread] Invoked FwpsInjectTransportSendAsync()", "Message"),
+      TraceLoggingUInt32(status, "FwpsInjectTransportSendAsync::ntStatus")
+      );
 
    if (!NT_SUCCESS(status))
    {
@@ -1166,7 +1204,8 @@ TlInspectCompletePendedConnection(
 
 -- */
 {
-
+   NTSTATUS status = STATUS_SUCCESS;
+   KLOCK_QUEUE_HANDLE connListLockHandle;
    TL_INSPECT_PENDED_PACKET* pendedConnectLocal = *pendedConnect;
 
    if (pendedConnectLocal->direction == FWP_DIRECTION_OUTBOUND)
@@ -1184,15 +1223,54 @@ TlInspectCompletePendedConnection(
       //
       pendedConnectLocal->completionContext = NULL;
 
+      TraceLoggingWrite(
+         gTlgHandle,
+         "WorkerThread",
+         TraceLoggingWideString(L"[WorkerThread] Invoking FwpsCompleteOperation()", "Message")
+         );
+
       FwpsCompleteOperation(
          completionContext,
          NULL
          );
 
-      *pendedConnect = NULL; // ownership transferred to the re-auth path.
+      //
+      // Now that the re-auth has completed the connection can be removed from the gConnList.
+      //
+      KeAcquireInStackQueuedSpinLock(
+         &gConnListLock,
+         &connListLockHandle
+         );
+
+      RemoveEntryList(&pendedConnectLocal->listEntry);
+
+      KeReleaseInStackQueuedSpinLock(&connListLockHandle);
+
+      //
+      // If we are permitting the traffic, clone and re-inject the packet.
+      //
+      if (permitTraffic)
+      {
+            status = TLInspectCloneReinjectOutbound(pendedConnectLocal);
+            if (NT_SUCCESS(status))
+            {
+               pendedConnectLocal = NULL; // Ownership transfered to the re-inject path.
+            }
+      }
+
+      //
+      // Free the packet as we are either blocking the packet or the re-inject failed.
+      //
+      if (pendedConnectLocal != NULL)
+      {
+         FreePendedPacket(pendedConnectLocal);
+      }
+
+      *pendedConnect = NULL; // Ownership transferred
    }
    else
    {
+      // TODO: Ensure that we invoke FwpsCompleteOperation even if we are blocking the packet.
       if (!configPermitTraffic)
       {
          FreePendedPacket(pendedConnectLocal);
@@ -1267,7 +1345,7 @@ TLInspectWorker(
          // Skip pended connections in the list, for which the auth decision is already taken.
          // They should not be for inbound connections.
          //
-         _Analysis_assume_(gConnList.Flink != NULL);         
+         _Analysis_assume_(gConnList.Flink != NULL);
          for (listEntry = gConnList.Flink;
               listEntry != &gConnList;
               listEntry = listEntry->Flink)
@@ -1316,52 +1394,56 @@ TLInspectWorker(
 
       if (listEntry == NULL)
       {
-         NT_ASSERT(!IsListEmpty(&gPacketQueue));
-
          KeAcquireInStackQueuedSpinLock(
             &gPacketQueueLock,
             &packetQueueLockHandle
             );
 
-         listEntry = RemoveHeadList(&gPacketQueue);
+         if (!IsListEmpty(&gPacketQueue))
+         {
+            listEntry = RemoveHeadList(&gPacketQueue);
 
-         packet = CONTAINING_RECORD(
-                           listEntry,
-                           TL_INSPECT_PENDED_PACKET,
-                           listEntry
-                           );
+            packet = CONTAINING_RECORD(
+                              listEntry,
+                              TL_INSPECT_PENDED_PACKET,
+                              listEntry
+                              );
+         }
 
          KeReleaseInStackQueuedSpinLock(&packetQueueLockHandle);
       }
 
-      if (packet->type == TL_INSPECT_CONNECT_PACKET)
-      {
-         TlInspectCompletePendedConnection(
-            &packet,
-            configPermitTraffic);
-      }
-
-      if ((packet != NULL) && configPermitTraffic)
-      {
-         if (packet->direction == FWP_DIRECTION_OUTBOUND)
-         {
-            status = TLInspectCloneReinjectOutbound(packet);
-         }
-         else
-         {
-            status = TLInspectCloneReinjectInbound(packet);
-         }
-
-         if (NT_SUCCESS(status))
-         {
-            packet = NULL; // ownership transferred.
-         }
-
-      }
-
       if (packet != NULL)
       {
-         FreePendedPacket(packet);
+         if (packet->type == TL_INSPECT_CONNECT_PACKET)
+         {
+            TlInspectCompletePendedConnection(
+               &packet,
+               configPermitTraffic);
+         }
+
+         if ((packet != NULL) && configPermitTraffic)
+         {
+            if (packet->direction == FWP_DIRECTION_OUTBOUND)
+            {
+               status = TLInspectCloneReinjectOutbound(packet);
+            }
+            else
+            {
+               status = TLInspectCloneReinjectInbound(packet);
+            }
+
+            if (NT_SUCCESS(status))
+            {
+               packet = NULL; // ownership transferred.
+            }
+
+         }
+
+         if (packet != NULL)
+         {
+            FreePendedPacket(packet);
+         }
       }
 
       KeAcquireInStackQueuedSpinLock(
