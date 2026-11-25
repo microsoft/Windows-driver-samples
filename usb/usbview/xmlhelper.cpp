@@ -1715,7 +1715,8 @@ array < UsbDeviceConfigurationType ^> ^ XmlGetConfigDescriptors(
     descEnd = (PUCHAR) configDescs + configDescs->wTotalLength;
 
     while ((PUCHAR)commonDesc + sizeof(USB_COMMON_DESCRIPTOR) < descEnd &&
-        (PUCHAR)commonDesc + commonDesc->bLength <= descEnd)
+        (PUCHAR)commonDesc + commonDesc->bLength <= descEnd &&
+        commonDesc->bLength > 0)
     {
         // Add the config descriptor
         deviceConf = gcnew UsbDeviceConfigurationType();
