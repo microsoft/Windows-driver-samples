@@ -984,7 +984,11 @@ NTSTATUS CMiniportWaveRTStream::GetReadPacket
     ULONGLONG deltaLinearPosition = ullLinearPosition + carryForwardBytes - linearPositionOfAvailablePacket;
     ULONGLONG deltaTimeInHns = deltaLinearPosition * 10000000 / m_ulDmaMovementRate;
     ULONGLONG timeOfAvailablePacketInHns = ullDmaTimeStamp - deltaTimeInHns;
-    ULONGLONG timeOfAvailablePacketInQpc = timeOfAvailablePacketInHns * m_ullPerformanceCounterFrequency.QuadPart / 10000000;
+    // Convert in two parts: timeOfAvailablePacketInHns * frequency would overflow 64 bits once the
+    // system has been up for about 2 days (at a 10 MHz performance counter frequency).
+    ULONGLONG qpcFrequency = (ULONGLONG)m_ullPerformanceCounterFrequency.QuadPart;
+    ULONGLONG timeOfAvailablePacketInQpc = (timeOfAvailablePacketInHns / 10000000) * qpcFrequency +
+                                           (timeOfAvailablePacketInHns % 10000000) * qpcFrequency / 10000000;
 
     *PerformanceCounterValue = timeOfAvailablePacketInQpc;
 
